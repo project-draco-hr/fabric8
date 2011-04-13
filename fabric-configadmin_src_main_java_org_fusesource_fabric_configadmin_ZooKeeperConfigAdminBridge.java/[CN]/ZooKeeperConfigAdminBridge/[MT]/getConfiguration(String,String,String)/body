@@ -1,0 +1,16 @@
+{
+  Configuration oldConfiguration=findExistingConfiguration(zooKeeperPid);
+  if (oldConfiguration != null) {
+    return oldConfiguration;
+  }
+ else {
+    Configuration newConfiguration;
+    if (factoryPid != null) {
+      newConfiguration=getConfigAdmin().createFactoryConfiguration(pid,null);
+    }
+ else {
+      newConfiguration=getConfigAdmin().getConfiguration(pid,null);
+    }
+    return newConfiguration;
+  }
+}

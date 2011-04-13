@@ -1,0 +1,13 @@
+{
+  Object obj=servers.remove(pid);
+  ServiceRegistration reg=services.remove(pid);
+  if (reg != null) {
+    reg.unregister();
+  }
+  if (obj instanceof QuorumPeer) {
+    ((QuorumPeer)obj).shutdown();
+  }
+ else   if (obj instanceof NIOServerCnxn.Factory) {
+    ((NIOServerCnxn.Factory)obj).shutdown();
+  }
+}

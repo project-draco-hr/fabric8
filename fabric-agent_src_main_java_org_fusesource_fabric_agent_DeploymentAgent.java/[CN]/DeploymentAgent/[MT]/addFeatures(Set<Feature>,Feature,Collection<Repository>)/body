@@ -1,0 +1,11 @@
+{
+  set.add(feature);
+  for (  Feature dep : feature.getDependencies()) {
+    Feature f=search(dep.getName(),dep.getVersion(),repositories);
+    if (f == null) {
+      throw new IllegalArgumentException("Unable to find feature " + feature.getName() + "/"+ feature.getVersion());
+    }
+    addFeatures(set,f,repositories);
+  }
+  return set;
+}

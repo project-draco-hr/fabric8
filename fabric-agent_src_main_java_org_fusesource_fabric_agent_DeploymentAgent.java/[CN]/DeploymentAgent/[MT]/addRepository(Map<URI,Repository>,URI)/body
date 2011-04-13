@@ -1,0 +1,11 @@
+{
+  if (!repositories.containsKey(uri)) {
+    FeatureValidationUtil.validate(uri);
+    RepositoryImpl repo=new RepositoryImpl(uri);
+    repositories.put(uri,repo);
+    repo.load();
+    for (    URI ref : repo.getRepositories()) {
+      addRepository(repositories,ref);
+    }
+  }
+}

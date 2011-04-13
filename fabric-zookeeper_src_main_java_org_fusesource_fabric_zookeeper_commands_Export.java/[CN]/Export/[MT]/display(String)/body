@@ -1,0 +1,16 @@
+{
+  List<String> paths=new ArrayList<String>();
+  for (  String child : getZooKeeper().getChildren(path)) {
+    String cp=path.endsWith("/") ? path + child : path + "/" + child;
+    if (getZooKeeper().exists(cp).getEphemeralOwner() == 0) {
+      paths.add(cp);
+    }
+  }
+  String data=getZooKeeper().getStringData(path);
+  if (data != null && !data.isEmpty() || paths.isEmpty()) {
+    System.out.println(data != null && !data.isEmpty() ? path + " = " + data : path);
+  }
+  for (  String child : paths) {
+    display(child);
+  }
+}

@@ -1,0 +1,10 @@
+{
+  InetAddress ip=InetAddress.getByName(host);
+  if (ip.isAnyLocalAddress()) {
+    return getLocalHostAddress() + ":" + port;
+  }
+ else   if (!ip.isLoopbackAddress()) {
+    return ip.getHostAddress() + ":" + port;
+  }
+  return null;
+}

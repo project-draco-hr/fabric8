@@ -1,0 +1,47 @@
+{
+  if (props == null) {
+    return;
+  }
+  Map<String,String> properties=new HashMap<String,String>();
+  for (Enumeration e=props.keys(); e.hasMoreElements(); ) {
+    Object key=e.nextElement();
+    Object val=props.get(key);
+    if (!"service.pid".equals(key) && !FABRIC_ZOOKEEPER_PID.equals(key)) {
+      properties.put(key.toString(),val.toString());
+    }
+  }
+  Map<URI,Repository> repositories=new HashMap<URI,Repository>();
+  for (  String key : properties.keySet()) {
+    if (key.startsWith("repository.")) {
+      String url=properties.get(key);
+      if (url == null || url.length() == 0) {
+        url=key.substring("repository.".length());
+      }
+      if (url != null && url.length() > 0) {
+        URI uri=URI.create(url);
+        addRepository(repositories,uri);
+      }
+    }
+  }
+  Set<Feature> features=new HashSet<Feature>();
+  for (  String key : properties.keySet()) {
+    if (key.startsWith("feature.")) {
+      String name=properties.get(key);
+      if (name == null || name.length() == 0) {
+        name=key.substring("feature.".length());
+      }
+      Feature feature=search(name,repositories.values());
+      if (feature == null) {
+        throw new IllegalArgumentException("Unable to find feature " + name);
+      }
+      features.add(feature);
+    }
+  }
+  updateDeployment(repositories,features);
+  for (  String key : properties.keySet()) {
+    if (key.equals("framework")) {
+      String url=properties.get(key);
+      updateFramework(url);
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  NullArgumentException.validateNotNull(connection,"url connection cannot be null");
+  URLConnection conn=connection;
+  if (conn instanceof JarURLConnection) {
+    try {
+      conn=((JarURLConnection)connection).getJarFileURL().openConnection();
+      conn.connect();
+    }
+ catch (    IOException e) {
+      throw new RuntimeException("Could not prepare connection for HTTPS.",e);
+    }
+  }
+  if (conn instanceof HttpsURLConnection) {
+    try {
+      SSLContext ctx=SSLContext.getInstance("SSLv3");
+      ctx.init(null,new TrustManager[]{new AllCertificatesTrustManager()},null);
+      ((HttpsURLConnection)conn).setSSLSocketFactory(ctx.getSocketFactory());
+    }
+ catch (    KeyManagementException e) {
+      throw new RuntimeException("Could not prepare connection for HTTPS.",e);
+    }
+catch (    NoSuchAlgorithmException e) {
+      throw new RuntimeException("Could not prepare connection for HTTPS.",e);
+    }
+  }
+  return connection;
+}

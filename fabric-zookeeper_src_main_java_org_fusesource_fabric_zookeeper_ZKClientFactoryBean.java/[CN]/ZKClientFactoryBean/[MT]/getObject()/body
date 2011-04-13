@@ -1,0 +1,15 @@
+{
+  LOG.debug("Connecting to ZooKeeper on " + connectString);
+  zkClient=new ZKClient(connectString,getTimeout(),watcher);
+  for (  LifecycleListener listener : dynListeners) {
+    zkClient.registerListener(listener);
+  }
+  for (  LifecycleListener listener : listeners) {
+    if (listener instanceof ZooKeeperAware) {
+      ((ZooKeeperAware)listener).setZooKeeper(zkClient);
+    }
+    zkClient.registerListener(listener);
+  }
+  zkClient.start();
+  return zkClient;
+}

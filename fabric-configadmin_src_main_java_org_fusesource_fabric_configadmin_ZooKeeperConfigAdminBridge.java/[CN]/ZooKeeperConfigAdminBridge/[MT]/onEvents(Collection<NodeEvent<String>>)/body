@@ -1,0 +1,46 @@
+{
+  LOGGER.entering(getClass().getName(),"onEvents",nodeEvents);
+  try {
+    if (!tracking) {
+      final Set<String> pids=getPids();
+      List<Configuration> configs=asList(getConfigAdmin().listConfigurations("(" + FABRIC_ZOOKEEPER_PID + "=*)"));
+      for (      String pid : pids) {
+        Dictionary c=load(pid);
+        String p[]=parsePid(pid);
+        Configuration config=getConfiguration(pid,p[0],p[1]);
+        configs.remove(config);
+        Dictionary props=config.getProperties();
+        Hashtable old=props != null ? new Hashtable() : null;
+        if (old != null) {
+          for (Enumeration e=props.keys(); e.hasMoreElements(); ) {
+            Object key=e.nextElement();
+            Object val=props.get(key);
+            old.put(key,val);
+          }
+          old.remove(FABRIC_ZOOKEEPER_PID);
+          old.remove(org.osgi.framework.Constants.SERVICE_PID);
+          old.remove(ConfigurationAdmin.SERVICE_FACTORYPID);
+        }
+        if (!c.equals(old)) {
+          LOGGER.info("Updating configuration " + config.getPid());
+          c.put(FABRIC_ZOOKEEPER_PID,pid);
+          if (config.getBundleLocation() != null) {
+            config.setBundleLocation(null);
+          }
+          config.update(c);
+        }
+ else {
+          LOGGER.info("Ignoring configuration " + config.getPid() + " (no changes)");
+        }
+      }
+      for (      Configuration config : configs) {
+        LOGGER.info("Deleting configuration " + config.getPid());
+        config.delete();
+      }
+    }
+    LOGGER.exiting(getClass().getName(),"onEvents");
+  }
+ catch (  Exception e) {
+    LOGGER.log(Level.WARNING,"Exception when tracking configurations",e);
+  }
+}

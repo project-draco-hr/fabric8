@@ -1,0 +1,10 @@
+{
+  String repository=repositoryURL.toExternalForm();
+  if (!repository.endsWith(org.ops4j.pax.url.mvn.internal.Parser.FILE_SEPARATOR)) {
+    repository=repository + org.ops4j.pax.url.mvn.internal.Parser.FILE_SEPARATOR;
+  }
+  configuration.enableProxy(repositoryURL);
+  final URL url=new URL(repository + path);
+  LOG.trace("Reading " + url.toExternalForm());
+  return URLUtils.prepareInputStream(url,!configuration.getCertificateCheck());
+}

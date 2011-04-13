@@ -1,0 +1,15 @@
+{
+  File file=manager.download(url).await().getFile();
+  String path=file.getPath();
+  if (path.startsWith(System.getProperty("karaf.home"))) {
+    path=path.substring(System.getProperty("karaf.home").length() + 1);
+  }
+  Properties properties=new Properties(new File(System.getProperty("karaf.base") + File.separator + "etc"+ File.separator+ "config.properties"));
+  if (!path.equals(properties.get("karaf.framework.felix"))) {
+    properties.put("karaf.framework","felix");
+    properties.put("karaf.framework.felix",path);
+    properties.save();
+    System.setProperty("karaf.restart","true");
+    bundleContext.getBundle(0).stop();
+  }
+}

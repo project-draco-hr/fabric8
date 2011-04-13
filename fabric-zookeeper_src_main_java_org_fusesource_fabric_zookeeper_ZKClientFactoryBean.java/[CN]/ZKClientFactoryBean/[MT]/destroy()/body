@@ -1,0 +1,12 @@
+{
+  if (zkClient != null) {
+    for (    LifecycleListener listener : dynListeners) {
+      zkClient.removeListener(listener);
+    }
+    for (    LifecycleListener listener : listeners) {
+      zkClient.removeListener(listener);
+    }
+    zkClient.destroy();
+    zkClient=null;
+  }
+}

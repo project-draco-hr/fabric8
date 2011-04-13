@@ -1,0 +1,18 @@
+{
+  NullArgumentException.validateNotNull(element,"Element ");
+  NullArgumentException.validateNotNull(path,"Element path");
+  Element current=element;
+  StringTokenizer st=new StringTokenizer(path,"/",false);
+  while (st.hasMoreTokens() && current != null) {
+    final String token=st.nextToken();
+    final NodeList childs=current.getChildNodes();
+    current=null;
+    for (int i=0; i < childs.getLength(); i++) {
+      final Node child=childs.item(i);
+      if (child instanceof Element && child.getNodeName().equals(token)) {
+        current=(Element)child;
+      }
+    }
+  }
+  return current;
+}

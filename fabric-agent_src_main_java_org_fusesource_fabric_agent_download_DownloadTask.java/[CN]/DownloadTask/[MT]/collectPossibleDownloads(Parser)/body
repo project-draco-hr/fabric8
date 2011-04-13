@@ -1,0 +1,8 @@
+{
+  final List<MavenRepositoryURL> repositories=new ArrayList<MavenRepositoryURL>();
+  repositories.addAll(configuration.getRepositories());
+  if (parser.getRepositoryURL() != null) {
+    repositories.add(repositories.size() == 0 ? 0 : 1,parser.getRepositoryURL());
+  }
+  return doCollectPossibleDownloads(parser,repositories);
+}

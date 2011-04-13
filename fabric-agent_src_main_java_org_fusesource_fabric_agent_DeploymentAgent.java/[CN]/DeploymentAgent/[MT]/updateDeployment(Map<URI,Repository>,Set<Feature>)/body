@@ -1,0 +1,97 @@
+{
+  Set<Feature> allFeatures=addFeatures(features,repositories.values());
+  downloadBundles(allFeatures);
+  List<Resource> bundles=getObrResolver().resolve(allFeatures);
+  System.out.println();
+  System.out.println("Configuration changed.  New bundles list:");
+  for (  Resource bundle : bundles) {
+    System.out.println("  " + bundle.getURI());
+  }
+  List<Resource> toInstall=new ArrayList<Resource>();
+  List<Bundle> toDelete=new ArrayList<Bundle>();
+  List<Bundle> toIgnore=new ArrayList<Bundle>();
+  Map<Bundle,Resource> toUpdate=new HashMap<Bundle,Resource>();
+  for (  Bundle bundle : bundleContext.getBundles()) {
+    if (bundle.getBundleId() != 0) {
+      Resource resource=null;
+      for (      Resource res : bundles) {
+        if (res.getSymbolicName().equals(bundle.getSymbolicName()) && res.getVersion().equals(bundle.getVersion())) {
+          resource=res;
+          break;
+        }
+      }
+      if (resource != null) {
+        toIgnore.add(bundle);
+        bundles.remove(resource);
+      }
+ else {
+        toDelete.add(bundle);
+      }
+    }
+  }
+  for (  Resource resource : bundles) {
+    TreeMap<Version,Bundle> matching=new TreeMap<Version,Bundle>();
+    VersionRange range=getMicroVersionRange(resource.getVersion());
+    for (    Bundle bundle : toDelete) {
+      if (bundle.getSymbolicName().equals(resource.getSymbolicName()) && range.contains(bundle.getVersion())) {
+        matching.put(bundle.getVersion(),bundle);
+      }
+    }
+    if (!matching.isEmpty()) {
+      Bundle bundle=matching.lastEntry().getValue();
+      toUpdate.put(bundle,resource);
+      toDelete.remove(bundle);
+    }
+ else {
+      toInstall.add(resource);
+    }
+  }
+  LOGGER.info("Changes to perform:");
+  LOGGER.info("  Bundles to uninstall:");
+  for (  Bundle bundle : toDelete) {
+    LOGGER.info("    " + bundle.getSymbolicName() + " / "+ bundle.getVersion());
+  }
+  LOGGER.info("  Bundles to update:");
+  for (  Map.Entry<Bundle,Resource> entry : toUpdate.entrySet()) {
+    LOGGER.info("    " + entry.getKey().getSymbolicName() + " / "+ entry.getKey().getVersion()+ " with "+ entry.getValue().getURI());
+  }
+  LOGGER.info("  Bundles to install:");
+  for (  Resource resource : toInstall) {
+    LOGGER.info("    " + resource.getURI());
+  }
+  Set<Bundle> toRefresh=new HashSet<Bundle>();
+  Set<Bundle> toStart=new HashSet<Bundle>();
+  for (  Bundle bundle : toDelete) {
+    bundle.uninstall();
+    toRefresh.add(bundle);
+  }
+  for (  Map.Entry<Bundle,Resource> entry : toUpdate.entrySet()) {
+    Bundle bundle=entry.getKey();
+    Resource resource=entry.getValue();
+    InputStream is=new URL(resource.getURI()).openStream();
+    bundle.update(is);
+    toRefresh.add(bundle);
+  }
+  for (  Resource resource : toInstall) {
+    Bundle bundle=bundleContext.installBundle(resource.getURI());
+    toRefresh.add(bundle);
+    toStart.add(bundle);
+  }
+  findBundlesWithOptionalPackagesToRefresh(toRefresh);
+  findBundlesWithFramentsToRefresh(toRefresh);
+  LOGGER.info("Refreshing bundles:");
+  for (  Bundle bundle : toRefresh) {
+    LOGGER.info("  " + bundle.getSymbolicName() + " / "+ bundle.getVersion());
+  }
+  if (!toRefresh.isEmpty()) {
+    refreshPackages(toRefresh.toArray(new Bundle[toRefresh.size()]));
+  }
+  LOGGER.info("Starting bundles:");
+  for (  Bundle bundle : toStart) {
+    String hostHeader=(String)bundle.getHeaders().get(Constants.FRAGMENT_HOST);
+    if (hostHeader == null) {
+      bundle.start();
+    }
+  }
+  LOGGER.info("Done.");
+}

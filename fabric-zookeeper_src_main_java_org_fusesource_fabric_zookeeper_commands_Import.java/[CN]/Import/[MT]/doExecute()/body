@@ -1,0 +1,19 @@
+{
+  InputStream in=new BufferedInputStream(new URL(url).openStream());
+  try {
+    Properties props=new Properties();
+    props.load(in);
+    for (Enumeration names=props.propertyNames(); names.hasMoreElements(); ) {
+      String name=(String)names.nextElement();
+      String value=props.getProperty(name);
+      if (value != null && value.isEmpty()) {
+        value=null;
+      }
+      getZooKeeper().createOrSetWithParents(name,value,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    }
+  }
+  finally {
+    in.close();
+  }
+  return null;
+}

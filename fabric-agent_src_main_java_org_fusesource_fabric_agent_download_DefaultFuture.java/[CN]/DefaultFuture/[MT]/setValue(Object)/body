@@ -1,0 +1,13 @@
+{
+synchronized (lock) {
+    if (ready) {
+      return;
+    }
+    result=newValue;
+    ready=true;
+    if (waiters > 0) {
+      lock.notifyAll();
+    }
+  }
+  notifyListeners();
+}

@@ -1,0 +1,27 @@
+{
+  ZooKeeperTreeTracker<String> tree=trees.get(path);
+  if (tree == null) {
+    if (zooKeeper.exists(path) != null) {
+      tree=new ZooKeeperTreeTracker<String>(zooKeeper,new ZKStringDataReader(),path);
+      trees.put(path,tree);
+      tree.track(this);
+      String data=tree.getTree().get(path).getData();
+      if (data != null) {
+        String[] parents=data.split(" ");
+        for (        String parent : parents) {
+          track(versionsNode + "/" + version+ "/profiles/"+ parent);
+        }
+      }
+    }
+ else {
+      String p=versionsNode + "/" + version+ "/profiles";
+      if (!trees.containsKey(p)) {
+        tree=new ZooKeeperTreeTracker<String>(zooKeeper,new ZKStringDataReader(),p,1);
+        trees.put(p,tree);
+        tree.track(this);
+      }
+      return null;
+    }
+  }
+  return tree;
+}

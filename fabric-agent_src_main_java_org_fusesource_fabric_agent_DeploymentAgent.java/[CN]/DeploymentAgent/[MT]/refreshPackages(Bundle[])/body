@@ -1,0 +1,8 @@
+{
+  if (getPackageAdmin() != null) {
+synchronized (refreshLock) {
+      getPackageAdmin().refreshPackages(bundles);
+      refreshLock.wait(refreshTimeout);
+    }
+  }
+}

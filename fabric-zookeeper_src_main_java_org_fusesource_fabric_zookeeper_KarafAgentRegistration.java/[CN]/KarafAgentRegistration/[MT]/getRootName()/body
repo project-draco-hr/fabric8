@@ -1,0 +1,17 @@
+{
+  String home=System.getProperty("karaf.home");
+  String base=System.getProperty("karaf.base");
+  if (home.equals(base)) {
+    return "";
+  }
+  File f=new File(home,"etc/system.properties");
+  InputStream is=new FileInputStream(f);
+  try {
+    Properties p=new Properties();
+    p.load(is);
+    return p.getProperty("karaf.name");
+  }
+  finally {
+    is.close();
+  }
+}

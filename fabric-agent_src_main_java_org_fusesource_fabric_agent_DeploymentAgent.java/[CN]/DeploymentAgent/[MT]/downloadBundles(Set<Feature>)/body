@@ -1,0 +1,19 @@
+{
+  Set<String> locations=new HashSet<String>();
+  for (  Feature feature : features) {
+    for (    BundleInfo bundle : feature.getBundles()) {
+      locations.add(bundle.getLocation());
+    }
+  }
+  final CountDownLatch latch=new CountDownLatch(locations.size());
+  final FutureListener listener=new FutureListener(){
+    public void operationComplete(    Future future){
+      latch.countDown();
+    }
+  }
+;
+  for (  String location : locations) {
+    manager.download(location).addListener(listener);
+  }
+  latch.await();
+}

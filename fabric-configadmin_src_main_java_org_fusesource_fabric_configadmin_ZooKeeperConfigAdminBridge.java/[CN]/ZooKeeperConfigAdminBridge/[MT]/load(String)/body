@@ -1,0 +1,30 @@
+{
+  try {
+    Hashtable props=new Hashtable();
+    load(pid,node,props);
+    InterpolationHelper.performSubstitution(props,new InterpolationHelper.SubstitutionCallback(){
+      public String getValue(      String key){
+        if (key.startsWith("zk:")) {
+          key=key.substring("zk:".length());
+          if (key.charAt(0) != '/') {
+            key="/fabric/registry/agents/config/" + key;
+          }
+          try {
+            return zooKeeper.getStringData(key);
+          }
+ catch (          Exception e) {
+          }
+        }
+        return null;
+      }
+    }
+);
+    return props;
+  }
+ catch (  InterruptedException e) {
+    throw (IOException)new InterruptedIOException("Error loading pid " + pid).initCause(e);
+  }
+catch (  KeeperException e) {
+    throw (IOException)new IOException("Error loading pid " + pid).initCause(e);
+  }
+}

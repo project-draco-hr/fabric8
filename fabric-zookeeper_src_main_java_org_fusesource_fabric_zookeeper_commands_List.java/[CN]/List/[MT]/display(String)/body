@@ -1,0 +1,10 @@
+{
+  java.util.List<String> children=getZooKeeper().getChildren(path);
+  for (  String child : children) {
+    String cp=path.endsWith("/") ? path + child : path + "/" + child;
+    System.out.println(cp);
+    if (recursive) {
+      display(cp);
+    }
+  }
+}

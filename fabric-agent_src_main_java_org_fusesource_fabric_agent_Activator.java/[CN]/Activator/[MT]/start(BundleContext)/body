@@ -1,0 +1,11 @@
+{
+  agent=new DeploymentAgent();
+  agent.setBundleContext(context);
+  agent.setObrResolver(new ObrResolver(new RepositoryAdminImpl(context,new Logger(context))));
+  agent.setPackageAdmin(getPackageAdmin(context));
+  agent.setStartLevel(getStartLevel(context));
+  agent.start();
+  Properties props=new Properties();
+  props.setProperty(Constants.SERVICE_PID,AGENT_PID);
+  registration=context.registerService(ManagedService.class.getName(),agent,props);
+}
