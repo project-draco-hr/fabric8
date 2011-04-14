@@ -1,0 +1,12 @@
+{
+  LOG.debug("Connecting to ZooKeeper on " + connectString);
+  zkClient=new ZKClient(connectString,getTimeout(),watcher);
+  zkClient.start();
+  try {
+    zkClient.waitForStart(connectTimeout);
+  }
+ catch (  TimeoutException e) {
+    throw new Exception("Failed to connect to ZooKeeper on " + connectString,e);
+  }
+  return zkClient;
+}
