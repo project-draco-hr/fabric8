@@ -1,0 +1,10 @@
+{
+  super.doStart();
+  if (zkClient == null) {
+    zkClient=new ZKClientFactoryBean().getObject();
+  }
+  checkZkConnected();
+  if (producerCache == null) {
+    producerCache=new ProducerCache(this,getCamelContext(),cacheSize);
+  }
+}

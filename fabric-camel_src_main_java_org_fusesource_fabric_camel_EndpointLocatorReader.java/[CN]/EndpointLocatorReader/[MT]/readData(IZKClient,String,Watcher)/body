@@ -1,0 +1,11 @@
+{
+  Stat stat=new Stat();
+  List<String> children=client.getChildren(path,true,stat);
+  List<String> uris=new ArrayList<String>();
+  for (  String child : children) {
+    String uri=client.getStringData(path + "/" + child);
+    uris.add(uri);
+  }
+  LOG.info("Children of path: " + path + " are now: "+ children+ " uris: "+ uris);
+  return new ZKData<EndpointLocator>(new EndpointLocator(uris),stat);
+}

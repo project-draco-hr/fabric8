@@ -1,0 +1,33 @@
+{
+  int idx=remaining.indexOf(':');
+  if (idx > 0) {
+    String name=remaining.substring(0,idx);
+    String path=getFabricPath(name);
+    String childUri=remaining.substring(idx + 1);
+    Endpoint childEndpoint=getCamelContext().getEndpoint(childUri);
+    registerEndpoint(path,childUri,childEndpoint);
+    return childEndpoint;
+  }
+ else {
+    String fabricPath=getFabricPath(remaining);
+    ZooKeeperTreeTracker<EndpointLocator> treeTracker=createTreeTracker(fabricPath);
+    treeTracker.registerListener(new NodeEventsListener<EndpointLocator>(){
+      public void onEvents(      Collection<NodeEvent<EndpointLocator>> nodeEvents){
+        for (        NodeEvent<EndpointLocator> event : nodeEvents) {
+          NodeEventType eventType=event.getEventType();
+          if (eventType == NodeEventType.DELETED) {
+            try {
+              event.getData().stop();
+            }
+ catch (            Exception e) {
+              LOG.error("Failed to stop EndpointLocator: " + e,e);
+            }
+          }
+        }
+      }
+    }
+);
+    treeTracker.track();
+    return new FabricEndpoint(uri,this,fabricPath,remaining,treeTracker);
+  }
+}
