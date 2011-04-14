@@ -1,0 +1,18 @@
+{
+  if (agents == null || agents.isEmpty()) {
+    System.out.println("ZooKeeper agents: ");
+    for (    String agent : service.getClusterAgents()) {
+      System.out.println("  " + agent);
+    }
+  }
+ else   if (add) {
+    service.addToCluster(agents);
+  }
+ else   if (remove) {
+    service.removeFromCluster(agents);
+  }
+ else {
+    service.createCluster(agents);
+  }
+  return null;
+}

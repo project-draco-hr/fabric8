@@ -1,0 +1,21 @@
+{
+  try {
+    return new JmxTemplate().execute(this,new ServiceStateCallback<ServiceInfo[]>(){
+      public ServiceInfo[] doWithServiceState(      ServiceStateMBean serviceState) throws Exception {
+        TabularData services=serviceState.listServices();
+        ServiceInfo[] info=new ServiceInfo[services.size()];
+        int i=0;
+        for (        Object data : services.values().toArray()) {
+          info[i++]=new JmxServiceInfo((CompositeData)data);
+        }
+        Arrays.sort(info,new ServiceInfoComparator());
+        return info;
+      }
+    }
+);
+  }
+ catch (  Exception e) {
+    logger.error("Error while retrieving services",e);
+    return new ServiceInfo[0];
+  }
+}

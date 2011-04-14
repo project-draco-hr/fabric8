@@ -1,0 +1,11 @@
+{
+  jmxTemplate.execute(parent,new JmxTemplate.AdminServiceCallback<Object>(){
+    public Object doWithAdminService(    AdminServiceMBean adminService) throws Exception {
+      adminService.stopInstance(name);
+      adminService.destroyInstance(name);
+      zooKeeper.deleteWithChildren("/fabric/configs/agents/" + name);
+      return null;
+    }
+  }
+);
+}

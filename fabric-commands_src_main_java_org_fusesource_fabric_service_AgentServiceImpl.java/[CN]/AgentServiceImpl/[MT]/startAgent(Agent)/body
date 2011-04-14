@@ -1,0 +1,12 @@
+{
+  if (agent.isRoot()) {
+    throw new IllegalArgumentException("Can not stop root agents");
+  }
+  jmxTemplate.execute(agent.getParent(),new JmxTemplate.AdminServiceCallback<Object>(){
+    public Object doWithAdminService(    AdminServiceMBean adminService) throws Exception {
+      adminService.startInstance(agent.getId(),null);
+      return null;
+    }
+  }
+);
+}

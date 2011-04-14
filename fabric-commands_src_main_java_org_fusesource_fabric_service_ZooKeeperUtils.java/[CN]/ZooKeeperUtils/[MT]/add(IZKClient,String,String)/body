@@ -1,0 +1,16 @@
+{
+  if (zooKeeper.exists(path) == null) {
+    zooKeeper.createOrSetWithParents(path,value,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+  }
+ else {
+    String data=zooKeeper.getStringData(path);
+    if (data == null) {
+      data="";
+    }
+    if (data.length() > 0) {
+      data+=" ";
+    }
+    data+=value;
+    zooKeeper.setData(path,data);
+  }
+}

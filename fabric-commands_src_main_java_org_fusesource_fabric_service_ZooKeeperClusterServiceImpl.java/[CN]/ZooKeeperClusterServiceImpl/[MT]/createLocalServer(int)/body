@@ -1,0 +1,49 @@
+{
+  try {
+    String karafName=System.getProperty("karaf.name");
+    Configuration config=configurationAdmin.createFactoryConfiguration("org.fusesource.fabric.zookeeper.server");
+    Properties properties=new Properties();
+    properties.put("tickTime","2000");
+    properties.put("initLimit","10");
+    properties.put("syncLimit","5");
+    properties.put("dataDir","data/zookeeper/0000");
+    properties.put("clientPort",Integer.toString(port));
+    properties.put("fabric.zookeeper.pid","org.fusesource.fabric.zookeeper.server-0000");
+    config.setBundleLocation(null);
+    config.update(properties);
+    config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
+    properties=new Properties();
+    String connectionUrl=getLocalHostAddress() + ":" + Integer.toString(port);
+    properties.put("zookeeper.url",connectionUrl);
+    config.setBundleLocation(null);
+    config.update(properties);
+    ZKClient client=new ZKClient(connectionUrl,Timespan.ONE_MINUTE,null);
+    client.start();
+    client.waitForStart();
+    set(client,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper/zookeeper.url",connectionUrl);
+    String profileNode="/fabric/configs/versions/" + version + "/profiles/zk-server-0000/org.fusesource.fabric.zookeeper.server-0000";
+    set(client,profileNode + "/tickTime","2000");
+    set(client,profileNode + "/initLimit","10");
+    set(client,profileNode + "/syncLimit","5");
+    set(client,profileNode + "/dataDir","data/zookeeper/0000");
+    set(client,"/fabric/configs/versions/" + version + "/profiles/zk-server-0000-1","zk-server-0000");
+    profileNode="/fabric/configs/versions/" + version + "/profiles/zk-server-0000-1/org.fusesource.fabric.zookeeper.server-0000";
+    set(client,profileNode + "/clientPort","2181");
+    set(client,"/fabric/configs/versions/" + version + "/general/zookeeper-cluster","0000");
+    set(client,"/fabric/configs/versions/" + version + "/general/zookeeper-cluster/0000",karafName);
+    createDefault(client,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.agent/repository.fabric","mvn:org.fusesource.fabric/fabric-distro/1.0-SNAPSHOT/xml/features");
+    createDefault(client,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.agent/feature.karaf","karaf");
+    createDefault(client,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.agent/feature.fabric-agent","fabric-agent");
+    createDefault(client,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.agent/framework","mvn:org.apache.felix/org.apache.felix.framework/3.0.9");
+    createDefault(client,"/fabric/configs/agents/" + karafName,version);
+    createDefault(client,"/fabric/configs/versions/" + version + "/agents/"+ karafName,"default zk-server-0000-1");
+    Bundle bundle=bundleContext.installBundle("mvn:org.fusesource.fabric/fabric-configadmin/1.0-SNAPSHOT");
+    if (bundle.getState() == Bundle.ACTIVE) {
+      bundle.stop();
+    }
+    bundle.start();
+  }
+ catch (  Exception e) {
+    throw new RuntimeException("Unable to create zookeeper server configuration",e);
+  }
+}

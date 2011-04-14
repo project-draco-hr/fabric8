@@ -1,0 +1,8 @@
+{
+  Configuration config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper",null);
+  final String zooKeeperUrl=(String)config.getProperties().get("zookeeper.url");
+  if (zooKeeperUrl == null) {
+    throw new IllegalStateException("Unable to find the zookeeper url");
+  }
+  return zooKeeperUrl;
+}

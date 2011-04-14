@@ -1,0 +1,10 @@
+{
+  for (  String child : source.getChildren(path)) {
+    child=path + "/" + child;
+    if (dest.exists(child) == null) {
+      byte[] data=source.getData(child);
+      dest.createBytesNodeWithParents(child,data,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      copy(source,dest,child);
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  String rootUrl=agent.getJmxUrl();
+  JMXConnector connector=JMXConnectorFactory.connect(new JMXServiceURL(rootUrl),getEnvCred(login,password));
+  try {
+    return callback.doWithJmxConnector(connector);
+  }
+  finally {
+    try {
+      connector.close();
+    }
+ catch (    IOException e) {
+    }
+  }
+}

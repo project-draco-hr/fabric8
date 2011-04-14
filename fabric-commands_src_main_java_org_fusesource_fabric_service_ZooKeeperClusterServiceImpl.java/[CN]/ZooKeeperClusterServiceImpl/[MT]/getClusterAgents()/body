@@ -1,0 +1,14 @@
+{
+  try {
+    List<String> list=new ArrayList<String>();
+    if (zooKeeper.exists("/fabric/configs/versions/" + version + "/general/zookeeper-cluster") != null) {
+      String clusterId=zooKeeper.getStringData("/fabric/configs/versions/" + version + "/general/zookeeper-cluster");
+      String agents=zooKeeper.getStringData("/fabric/configs/versions/" + version + "/general/zookeeper-cluster/"+ clusterId);
+      Collections.addAll(list,agents.split(","));
+    }
+    return list;
+  }
+ catch (  Exception e) {
+    throw new RuntimeException("Unable to load zookeeper quorum agents",e);
+  }
+}
