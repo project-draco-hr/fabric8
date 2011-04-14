@@ -1,0 +1,18 @@
+{
+  try {
+    String str="";
+    for (    Profile parent : parents) {
+      if (!version.equals(parent.getVersion())) {
+        throw new IllegalArgumentException("Bad profile: " + parent);
+      }
+      if (!str.isEmpty()) {
+        str+=" ";
+      }
+      str+=parent.getId();
+    }
+    zooKeeper.setData("/fabric/configs/versions/" + version + "/profiles/"+ id,str);
+  }
+ catch (  Exception e) {
+    throw new RuntimeException(e);
+  }
+}

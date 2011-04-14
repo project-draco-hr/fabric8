@@ -3,6 +3,12 @@
   if (agent == null) {
     throw new Exception("Unknown agent: " + parent);
   }
-  agentService.createChild(agent,name);
+  List<String> names=this.profiles;
+  if (names == null || names.isEmpty()) {
+    names=Collections.singletonList("default");
+  }
+  Profile[] profiles=getProfiles(version,names);
+  Agent child=agentService.createChild(agent,name);
+  child.setProfiles(profiles);
   return null;
 }
