@@ -1,0 +1,15 @@
+{
+  if (startCounter.addAndGet(1) == 1) {
+    running.set(true);
+    if (zkClient == null) {
+      zkClient=new ZKClientFactoryBean().getObject();
+    }
+    group=ZooKeeperGroupFactory.create(zkClient,"/fabric/activemq-clusters/" + groupName,acl);
+    group.add(new ChangeListener(){
+      public void changed(      byte[][] members){
+        update(members);
+      }
+    }
+);
+  }
+}
