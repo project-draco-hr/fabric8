@@ -1,0 +1,27 @@
+{
+  if (method.getDeclaringClass() == Object.class) {
+    if ("toString".equals(method.getName())) {
+      return description.toString();
+    }
+ else     if ("equals".equals(method.getName())) {
+      return description.equals(((Factory)Proxy.getInvocationHandler(args[0])).description);
+    }
+ else     if ("hashCode".equals(method.getName())) {
+      return description.hashCode();
+    }
+  }
+  final RemoteRequest request=new RemoteRequest(description,new Invocation(method.getName(),method.getParameterTypes(),args));
+  AtomicReference<RemoteResponse> result=new AtomicReference<RemoteResponse>();
+synchronized (result) {
+    requests.put(request.correlation,result);
+    doRequest(request);
+    result.wait();
+  }
+  RemoteResponse response=result.get();
+  if (response.throwable != null) {
+    throw response.throwable;
+  }
+ else {
+    return response.value;
+  }
+}

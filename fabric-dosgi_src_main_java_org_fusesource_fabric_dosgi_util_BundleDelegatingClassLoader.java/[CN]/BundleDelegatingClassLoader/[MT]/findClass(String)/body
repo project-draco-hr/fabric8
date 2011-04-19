@@ -1,0 +1,15 @@
+{
+  try {
+    return AccessController.doPrivileged(new PrivilegedExceptionAction<Class<?>>(){
+      public Class<?> run() throws ClassNotFoundException {
+        return bundle.loadClass(name);
+      }
+    }
+);
+  }
+ catch (  PrivilegedActionException e) {
+    Exception cause=e.getException();
+    if (cause instanceof ClassNotFoundException)     throw (ClassNotFoundException)cause;
+ else     throw (RuntimeException)cause;
+  }
+}

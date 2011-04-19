@@ -1,0 +1,12 @@
+{
+  if (isEmpty() && next_write_buffer.position() > 0) {
+    int prev_size=Math.min(Math.max(write_buffer.position() + 512,512),write_buffer_size);
+    write_buffer=next_write_buffer;
+    write_buffer.flip();
+    next_write_buffer=ByteBuffer.allocate(prev_size);
+  }
+  if (write_buffer.remaining() != 0) {
+    write_counter+=write_channel.write(write_buffer);
+  }
+  return isEmpty() ? BufferState.EMPTY : BufferState.NOT_EMPTY;
+}

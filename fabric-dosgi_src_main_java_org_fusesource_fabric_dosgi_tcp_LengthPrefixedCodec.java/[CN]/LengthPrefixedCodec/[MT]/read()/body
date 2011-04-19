@@ -1,0 +1,34 @@
+{
+  if (read_end == read_buffer.position()) {
+    if (read_buffer.remaining() == 0) {
+      int size=read_end - read_start;
+      int new_capacity=(read_start == 0) ? size + read_buffer_size : (size > read_buffer_size) ? size + read_buffer_size : read_buffer_size;
+      ByteBuffer new_buffer=ByteBuffer.allocate(new_capacity);
+      new_buffer.put(read_buffer.array(),read_start,size);
+      read_buffer=new_buffer;
+      read_start=0;
+      read_end=size;
+    }
+    int count=read_channel.read(read_buffer);
+    if (count == -1) {
+      throw new EOFException("Peer disconnected");
+    }
+ else     if (count == 0) {
+      return null;
+    }
+    read_counter+=count;
+    read_end+=count;
+  }
+  if (read_end - read_start < 4) {
+    return null;
+  }
+  int size=read_buffer.getInt(read_start);
+  if (read_end - read_start - 4 < size) {
+    return null;
+  }
+  byte[] data=new byte[size];
+  System.arraycopy(read_buffer.array(),read_start + 4,data,0,size);
+  assert(read_start <= read_end);
+  assert(read_end <= read_buffer.position());
+  return data;
+}

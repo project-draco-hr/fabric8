@@ -1,0 +1,19 @@
+{
+  Map<String,SimpleFilter> filters=new HashMap<String,SimpleFilter>();
+  if (scope instanceof String) {
+    filters.put((String)scope,SimpleFilter.parse((String)scope));
+  }
+ else   if (scope instanceof String[]) {
+    for (    String f : (String[])scope) {
+      filters.put(f,SimpleFilter.parse(f));
+    }
+  }
+ else   if (scope instanceof Collection) {
+    for (    Object o : (Collection)scope) {
+      if (o instanceof String) {
+        filters.put((String)o,SimpleFilter.parse((String)o));
+      }
+    }
+  }
+  return filters;
+}

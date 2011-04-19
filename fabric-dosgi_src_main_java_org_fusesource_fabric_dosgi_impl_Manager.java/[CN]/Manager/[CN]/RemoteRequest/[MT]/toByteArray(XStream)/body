@@ -1,0 +1,10 @@
+{
+  ByteArrayOutputStream baos=new ByteArrayOutputStream();
+  DataOutputStream dos=new DataOutputStream(baos);
+  dos.writeByte(0);
+  dos.writeUTF(correlation);
+  dos.writeUTF(serviceId);
+  xstream.toXML(invocation,dos);
+  dos.close();
+  return baos.toByteArray();
+}

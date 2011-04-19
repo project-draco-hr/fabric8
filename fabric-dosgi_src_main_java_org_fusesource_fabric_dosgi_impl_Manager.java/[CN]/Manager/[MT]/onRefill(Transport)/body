@@ -1,0 +1,13 @@
+{
+  List<RemoteRequest> pr=pending.get(transport.getRemoteAddress());
+  if (pr != null && !pr.isEmpty()) {
+    final RemoteRequest request=pr.remove(0);
+    final ExportRegistration registration=exportedServicesPerId.get(request.serviceId);
+    try {
+      transport.offer(request.toByteArray(registration.getXStream()));
+    }
+ catch (    IOException e) {
+      e.printStackTrace();
+    }
+  }
+}

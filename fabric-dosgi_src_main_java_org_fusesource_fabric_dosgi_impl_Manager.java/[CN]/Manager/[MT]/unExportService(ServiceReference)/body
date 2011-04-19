@@ -1,0 +1,11 @@
+{
+  try {
+    ExportRegistration registration=exportedServices.remove(reference);
+    if (registration != null) {
+      zooKeeper.delete(registration.getZooKeeperNode());
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.info("Error when unexporting endpoint",e);
+  }
+}

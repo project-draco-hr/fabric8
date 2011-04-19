@@ -1,0 +1,12 @@
+{
+  IZKClient zooKeeper=(IZKClient)this.context.getService(reference);
+  try {
+    Manager manager=new Manager(this.context,zooKeeper);
+    manager.init();
+    this.managers.put(zooKeeper,manager);
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+  return zooKeeper;
+}

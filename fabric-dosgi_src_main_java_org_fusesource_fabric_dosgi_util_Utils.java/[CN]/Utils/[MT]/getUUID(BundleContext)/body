@@ -1,0 +1,10 @@
+{
+synchronized (FRAMEWORK_UUID) {
+    String uuid=bundleContext.getProperty(FRAMEWORK_UUID);
+    if (uuid == null) {
+      uuid=UuidGenerator.getUUID();
+      System.setProperty(FRAMEWORK_UUID,uuid);
+    }
+    return uuid;
+  }
+}

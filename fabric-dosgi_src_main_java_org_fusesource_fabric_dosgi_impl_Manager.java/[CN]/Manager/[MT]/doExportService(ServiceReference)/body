@@ -1,0 +1,28 @@
+{
+  Map<String,Object> properties=new TreeMap<String,Object>(String.CASE_INSENSITIVE_ORDER);
+  for (  String k : reference.getPropertyKeys()) {
+    properties.put(k,reference.getProperty(k));
+  }
+  Set<String> intents=Utils.normalize(properties.get(SERVICE_EXPORTED_INTENTS));
+  Set<String> extraIntents=Utils.normalize(properties.get(SERVICE_EXPORTED_INTENTS_EXTRA));
+  if (!intents.isEmpty() || !extraIntents.isEmpty()) {
+    throw new UnsupportedOperationException();
+  }
+  Set<String> configs=Utils.normalize(properties.get(SERVICE_EXPORTED_CONFIGS));
+  if (configs.isEmpty()) {
+    configs.add(CONFIG);
+  }
+ else   if (!configs.contains(CONFIG)) {
+    throw new UnsupportedOperationException();
+  }
+  properties.remove(SERVICE_EXPORTED_CONFIGS);
+  properties.put(SERVICE_IMPORTED_CONFIGS,new String[]{CONFIG});
+  properties.put(ENDPOINT_FRAMEWORK_UUID,this.uuid);
+  properties.put(FABRIC_ADDRESS,this.server.getConnectAddress());
+  String uuid=UuidGenerator.getUUID();
+  properties.put(ENDPOINT_ID,uuid);
+  EndpointDescription description=new EndpointDescription(properties);
+  String descStr=Utils.getEndpointDescriptionXML(description);
+  final String nodePath=zooKeeper.create(DOSGI_REGISTRY + "/" + uuid,descStr.getBytes("UTF-8"),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
+  return new ExportRegistration(reference,description,nodePath);
+}

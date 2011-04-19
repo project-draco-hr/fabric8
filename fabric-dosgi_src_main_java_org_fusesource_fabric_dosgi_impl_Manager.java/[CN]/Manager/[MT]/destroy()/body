@@ -1,0 +1,11 @@
+{
+  for (  Map<Long,ImportRegistration> registrations : this.importedServices.values()) {
+    for (    ImportRegistration registration : registrations.values()) {
+      registration.getImportedService().unregister();
+    }
+  }
+  this.server.stop();
+  this.tree.destroy();
+  this.registration.unregister();
+  this.bundleContext.removeServiceListener(this);
+}

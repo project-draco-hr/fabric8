@@ -1,0 +1,29 @@
+{
+  try {
+    String address=(String)request.endpoint.getProperties().get(FABRIC_ADDRESS);
+    TcpTransport transport=transports.get(address);
+    if (transport == null) {
+      transport=new TcpTransportFactory().connect(address);
+      transports.put(address,transport);
+      transport.setDispatchQueue(queue);
+      transport.setProtocolCodec(new LengthPrefixedCodec());
+      transport.setTransportListener(this);
+      transport.start();
+      pending.put(transport.getRemoteAddress(),new CopyOnWriteArrayList<RemoteRequest>());
+    }
+    if (!transport.isConnected()) {
+      List<RemoteRequest> pr=pending.get(transport.getRemoteAddress());
+      pr.add(request);
+    }
+ else {
+      final ExportRegistration registration=exportedServicesPerId.get(request.serviceId);
+      transport.offer(request.toByteArray(registration.getXStream()));
+    }
+  }
+ catch (  Exception e) {
+    AtomicReference<RemoteResponse> response=requests.get(request.correlation);
+synchronized (response) {
+      response.set(new RemoteResponse(request.correlation,request.serviceId,e));
+    }
+  }
+}

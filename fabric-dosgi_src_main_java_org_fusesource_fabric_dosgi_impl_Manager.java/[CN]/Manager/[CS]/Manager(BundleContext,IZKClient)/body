@@ -1,0 +1,13 @@
+{
+  this.queue=Dispatch.createQueue();
+  this.importedServices=new ConcurrentHashMap<EndpointDescription,Map<Long,ImportRegistration>>();
+  this.exportedServices=new ConcurrentHashMap<ServiceReference,ExportRegistration>();
+  this.exportedServicesPerId=new ConcurrentHashMap<String,ExportRegistration>();
+  this.listeners=new ConcurrentHashMap<ListenerInfo,SimpleFilter>();
+  this.remoteEndpoints=new CapabilitySet<EndpointDescription>(Collections.singletonList(Constants.OBJECTCLASS),false);
+  this.bundleContext=context;
+  this.zooKeeper=zooKeeper;
+  this.transports=new ConcurrentHashMap<String,TcpTransport>();
+  this.requests=new ConcurrentHashMap<String,AtomicReference<RemoteResponse>>();
+  this.pending=new ConcurrentHashMap<String,List<RemoteRequest>>();
+}

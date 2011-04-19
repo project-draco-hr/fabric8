@@ -1,0 +1,28 @@
+{
+  try {
+    if (options.size() > 0) {
+      StringBuffer rc=new StringBuffer();
+      boolean first=true;
+      for (Iterator iter=options.keySet().iterator(); iter.hasNext(); ) {
+        if (first) {
+          first=false;
+        }
+ else {
+          rc.append("&");
+        }
+        String key=(String)iter.next();
+        String value=(String)options.get(key);
+        rc.append(URLEncoder.encode(key,"UTF-8"));
+        rc.append("=");
+        rc.append(URLEncoder.encode(value,"UTF-8"));
+      }
+      return rc.toString();
+    }
+ else {
+      return "";
+    }
+  }
+ catch (  UnsupportedEncodingException e) {
+    throw (URISyntaxException)new URISyntaxException(e.toString(),"Invalid encoding").initCause(e);
+  }
+}

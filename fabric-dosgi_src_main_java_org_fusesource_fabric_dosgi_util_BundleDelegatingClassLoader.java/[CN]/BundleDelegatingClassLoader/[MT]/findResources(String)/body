@@ -1,0 +1,20 @@
+{
+  Enumeration<URL> urls;
+  try {
+    urls=AccessController.doPrivileged(new PrivilegedExceptionAction<Enumeration<URL>>(){
+      @SuppressWarnings("unchecked") public Enumeration<URL> run() throws IOException {
+        return (Enumeration<URL>)bundle.getResources(name);
+      }
+    }
+);
+  }
+ catch (  PrivilegedActionException e) {
+    Exception cause=e.getException();
+    if (cause instanceof IOException)     throw (IOException)cause;
+ else     throw (RuntimeException)cause;
+  }
+  if (urls == null) {
+    urls=Collections.enumeration(new ArrayList<URL>());
+  }
+  return urls;
+}

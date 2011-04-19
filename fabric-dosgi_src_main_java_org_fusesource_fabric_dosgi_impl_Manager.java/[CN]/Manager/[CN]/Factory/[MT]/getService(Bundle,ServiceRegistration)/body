@@ -1,0 +1,12 @@
+{
+  ClassLoader classLoader=new BundleDelegatingClassLoader(bundle,Manager.class.getClassLoader());
+  List<Class> interfaces=new ArrayList<Class>();
+  for (  String interfaceName : description.getInterfaces()) {
+    try {
+      interfaces.add(classLoader.loadClass(interfaceName));
+    }
+ catch (    ClassNotFoundException e) {
+    }
+  }
+  return Proxy.newProxyInstance(classLoader,interfaces.toArray(new Class[interfaces.size()]),this);
+}
