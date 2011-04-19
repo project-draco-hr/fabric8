@@ -1,9 +1,0 @@
-{
-  checkZkConnected();
-  LOG.debug("Registering ZooKeeper entry at " + path + " for endpoint: "+ uri);
-  Stat stats=zkClient.exists(path);
-  if (stats == null) {
-    zkClient.createWithParents(path,"",accessControlList,CreateMode.PERSISTENT);
-  }
-  zkClient.create(path + "/e",uri,accessControlList,CreateMode.EPHEMERAL_SEQUENTIAL);
-}

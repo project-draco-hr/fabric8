@@ -1,0 +1,18 @@
+{
+  super.start();
+  if (loadBalancer == null) {
+    loadBalancer=createLoadBalancer();
+  }
+  group.add(new ChangeListener(){
+    public void changed(    byte[][] members){
+      for (      byte[] uri : members) {
+        try {
+          loadBalancer.addProcessor(getProcessor(new String(uri,"UTF-8")));
+        }
+ catch (        UnsupportedEncodingException ignore) {
+        }
+      }
+    }
+  }
+);
+}
