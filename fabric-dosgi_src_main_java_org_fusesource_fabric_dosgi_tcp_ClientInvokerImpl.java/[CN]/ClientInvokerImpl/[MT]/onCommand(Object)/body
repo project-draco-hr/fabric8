@@ -1,7 +1,8 @@
 {
   try {
-    ByteArrayInputStream bais=new ByteArrayInputStream((byte[])data);
+    ByteArrayInputStream bais=new ByteArrayInputStream((Buffer)data);
     ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(bais);
+    int size=ois.readInt();
     String correlation=ois.readUTF();
     ResponseFuture response=requests.remove(correlation);
     ois.setClassLoader(response.getClassLoader());

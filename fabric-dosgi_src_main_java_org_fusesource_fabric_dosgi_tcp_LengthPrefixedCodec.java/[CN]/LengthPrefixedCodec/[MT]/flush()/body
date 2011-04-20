@@ -1,9 +1,22 @@
 {
-  if (isEmpty() && next_write_buffer.position() > 0) {
-    int prev_size=Math.min(Math.max(write_buffer.position() + 512,512),write_buffer_size);
-    write_buffer=next_write_buffer;
-    write_buffer.flip();
-    next_write_buffer=ByteBuffer.allocate(prev_size);
+  if (isEmpty() && next_write_size > 0) {
+    if (next_write_buffers.size() == 1) {
+      write_buffer=next_write_buffers.get(0).toByteBuffer();
+    }
+ else {
+      if (write_buffer.capacity() < next_write_size) {
+        write_buffer=ByteBuffer.allocate(next_write_size);
+      }
+ else       if (next_write_size < write_buffer_size && write_buffer.capacity() > write_buffer_size) {
+        write_buffer=ByteBuffer.allocate(next_write_size);
+      }
+      write_buffer.clear();
+      for (      Buffer b : next_write_buffers) {
+        write_buffer.put(b.data,b.offset,b.length);
+      }
+      next_write_buffers.clear();
+      write_buffer.flip();
+    }
   }
   if (write_buffer.remaining() != 0) {
     write_counter+=write_channel.write(write_buffer);
