@@ -1,0 +1,18 @@
+{
+  DispatchQueue queue=Dispatch.createQueue();
+  ServerInvokerImpl server=new ServerInvokerImpl("tcp://localhost:3252",queue);
+  server.start();
+  ClientInvokerImpl client=new ClientInvokerImpl(queue);
+  client.start();
+  server.registerService("service-id",new ServerInvoker.ServiceFactory(){
+    public Object get(){
+      return new HelloImpl();
+    }
+    public void unget(){
+    }
+  }
+,HelloImpl.class.getClassLoader());
+  InvocationHandler handler=client.getProxy("tcp://localhost:3252","service-id",HelloImpl.class.getClassLoader());
+  Hello hello=(Hello)Proxy.newProxyInstance(HelloImpl.class.getClassLoader(),new Class[]{Hello.class},handler);
+  assertEquals("Hello Fabric!",hello.hello("Fabric"));
+}
