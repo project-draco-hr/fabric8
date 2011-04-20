@@ -7,7 +7,6 @@
   this.remoteEndpoints=new CapabilitySet<EndpointDescription>(Collections.singletonList(Constants.OBJECTCLASS),false);
   this.bundleContext=context;
   this.zooKeeper=zooKeeper;
-  this.transports=new ConcurrentHashMap<String,TcpTransport>();
-  this.requests=new ConcurrentHashMap<String,AtomicReference<RemoteResponse>>();
-  this.pending=new ConcurrentHashMap<String,List<RemoteRequest>>();
+  this.client=new ClientInvokerImpl(queue);
+  this.server=new ServerInvokerImpl(uri,queue);
 }

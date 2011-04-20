@@ -1,0 +1,14 @@
+{
+  if (pending.size() > 0) {
+    Object data=pending.remove(0);
+    if (transport.offer(data)) {
+      transports.put(transport,State.Writing);
+    }
+ else {
+      pending.add(data);
+    }
+  }
+ else {
+    transports.put(transport,State.Idle);
+  }
+}

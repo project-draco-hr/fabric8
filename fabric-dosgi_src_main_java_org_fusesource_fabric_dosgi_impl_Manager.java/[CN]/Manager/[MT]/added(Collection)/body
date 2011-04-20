@@ -1,18 +1,14 @@
 {
-  executor.execute(new Runnable(){
-    public void run(){
-      for (      ListenerInfo listenerInfo : (Collection<ListenerInfo>)listenerInfos) {
-        if (listenerInfo.getBundleContext() == bundleContext || listenerInfo.getFilter() == null) {
-          continue;
-        }
-        SimpleFilter exFilter=SimpleFilter.parse(extendFilter(listenerInfo.getFilter()));
-        listeners.put(listenerInfo,exFilter);
-        Set<EndpointDescription> matches=remoteEndpoints.match(exFilter);
-        for (        EndpointDescription endpoint : matches) {
-          doImportService(endpoint,listenerInfo);
-        }
-      }
+  for (  ListenerInfo listenerInfo : (Collection<ListenerInfo>)listenerInfos) {
+    if (listenerInfo.getBundleContext() == bundleContext || listenerInfo.getFilter() == null) {
+      continue;
+    }
+    String filter="(&" + listenerInfo.getFilter() + "(!("+ ENDPOINT_FRAMEWORK_UUID+ "="+ this.uuid+ ")))";
+    SimpleFilter exFilter=SimpleFilter.parse(filter);
+    listeners.put(listenerInfo,exFilter);
+    Set<EndpointDescription> matches=remoteEndpoints.match(exFilter);
+    for (    EndpointDescription endpoint : matches) {
+      doImportService(endpoint,listenerInfo);
     }
   }
-);
 }

@@ -2,6 +2,7 @@
   try {
     ExportRegistration registration=exportedServices.remove(reference);
     if (registration != null) {
+      server.unregisterService(registration.getExportedEndpoint().getId());
       zooKeeper.delete(registration.getZooKeeperNode());
     }
   }

@@ -7,9 +7,7 @@
   this.tree=new ZooKeeperTreeTracker<String>(this.zooKeeper,new ZKStringDataReader(),DOSGI_REGISTRY);
   this.tree.track(this);
   this.uuid=Utils.getUUID(this.bundleContext);
-  this.server=new TcpTransportFactory().bind(this.uri);
-  this.server.setDispatchQueue(queue);
-  this.server.setAcceptListener(this);
+  this.client.start();
   this.server.start();
   String filter="(" + RemoteConstants.SERVICE_EXPORTED_INTERFACES + "=*)";
   this.bundleContext.addServiceListener(this,filter);

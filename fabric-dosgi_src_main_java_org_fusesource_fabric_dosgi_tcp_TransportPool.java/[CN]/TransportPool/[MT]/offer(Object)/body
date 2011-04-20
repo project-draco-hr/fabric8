@@ -1,0 +1,17 @@
+{
+  if (!running.get()) {
+    throw new IllegalStateException("Transport pool stopped");
+  }
+  queue.execute(new Runnable(){
+    public void run(){
+      Transport idleTransport=getIdleTransport();
+      if (idleTransport != null) {
+        idleTransport.offer(data);
+      }
+ else {
+        pending.add(data);
+      }
+    }
+  }
+);
+}

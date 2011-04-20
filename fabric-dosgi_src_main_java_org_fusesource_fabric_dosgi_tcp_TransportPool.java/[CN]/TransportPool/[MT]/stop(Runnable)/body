@@ -1,0 +1,25 @@
+{
+  if (running.compareAndSet(true,false)) {
+    queue.execute(new Runnable(){
+      public void run(){
+        final AtomicInteger latch=new AtomicInteger(transports.size());
+        final Runnable coutDown=new Runnable(){
+          public void run(){
+            if (latch.decrementAndGet() == 0) {
+              pending.clear();
+              onComplete.run();
+            }
+          }
+        }
+;
+        for (        Map.Entry<Transport,State> entry : transports.entrySet()) {
+          entry.getKey().stop(coutDown);
+        }
+      }
+    }
+);
+  }
+ else {
+    onComplete.run();
+  }
+}

@@ -8,5 +8,7 @@
  catch (    ClassNotFoundException e) {
     }
   }
-  return Proxy.newProxyInstance(classLoader,interfaces.toArray(new Class[interfaces.size()]),this);
+  String address=(String)description.getProperties().get(FABRIC_ADDRESS);
+  InvocationHandler handler=client.getProxy(address,description.getId(),classLoader);
+  return Proxy.newProxyInstance(classLoader,interfaces.toArray(new Class[interfaces.size()]),handler);
 }

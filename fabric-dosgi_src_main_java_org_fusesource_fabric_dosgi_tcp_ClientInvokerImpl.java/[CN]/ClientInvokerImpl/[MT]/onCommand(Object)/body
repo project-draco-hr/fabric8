@@ -1,0 +1,20 @@
+{
+  try {
+    ByteArrayInputStream bais=new ByteArrayInputStream((byte[])data);
+    ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(bais);
+    String correlation=ois.readUTF();
+    ResponseFuture response=requests.remove(correlation);
+    ois.setClassLoader(response.getClassLoader());
+    Throwable error=(Throwable)ois.readObject();
+    Object value=ois.readObject();
+    if (error != null) {
+      response.setException(error);
+    }
+ else {
+      response.set(value);
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.info("Error while reading response",e);
+  }
+}

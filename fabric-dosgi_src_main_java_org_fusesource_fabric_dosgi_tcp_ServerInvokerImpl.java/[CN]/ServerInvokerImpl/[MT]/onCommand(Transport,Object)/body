@@ -1,0 +1,58 @@
+{
+  try {
+    ByteArrayInputStream bais=new ByteArrayInputStream((byte[])data);
+    ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(bais);
+    final String correlation=ois.readUTF();
+    final String service=ois.readUTF();
+    ClassLoader loader=loaders.get(service);
+    ois.setClassLoader(loader);
+    final String name=ois.readUTF();
+    final Class[] types=(Class[])ois.readObject();
+    final Object[] args=(Object[])ois.readObject();
+    executor.submit(new Runnable(){
+      public void run(){
+        ServiceFactory factory=handlers.get(service);
+        Object svc=factory.get();
+        Object value=null;
+        Throwable error=null;
+        try {
+          Method method=svc.getClass().getMethod(name,types);
+          value=method.invoke(svc,args);
+        }
+ catch (        Throwable t) {
+          if (t instanceof InvocationTargetException) {
+            error=t.getCause();
+          }
+ else {
+            error=t;
+          }
+        }
+ finally {
+          factory.unget();
+        }
+        final Throwable finalError=error;
+        final Object finalValue=value;
+        queue.execute(new Runnable(){
+          public void run(){
+            try {
+              ByteArrayOutputStream baos=new ByteArrayOutputStream();
+              ObjectOutputStream oos=new ObjectOutputStream(baos);
+              oos.writeUTF(correlation);
+              oos.writeObject(finalError);
+              oos.writeObject(finalValue);
+              transport.offer(baos.toByteArray());
+            }
+ catch (            Exception e) {
+              LOGGER.info("Error while writing answer");
+            }
+          }
+        }
+);
+      }
+    }
+);
+  }
+ catch (  Exception e) {
+    LOGGER.info("Error while reading response",e);
+  }
+}

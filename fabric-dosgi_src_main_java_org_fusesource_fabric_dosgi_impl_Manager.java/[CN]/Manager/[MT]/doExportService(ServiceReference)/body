@@ -22,6 +22,15 @@
   String uuid=UuidGenerator.getUUID();
   properties.put(ENDPOINT_ID,uuid);
   EndpointDescription description=new EndpointDescription(properties);
+  server.registerService(description.getId(),new ServerInvoker.ServiceFactory(){
+    public Object get(){
+      return reference.getBundle().getBundleContext().getService(reference);
+    }
+    public void unget(){
+      reference.getBundle().getBundleContext().ungetService(reference);
+    }
+  }
+,new BundleDelegatingClassLoader(reference.getBundle()));
   String descStr=Utils.getEndpointDescriptionXML(description);
   final String nodePath=zooKeeper.create(DOSGI_REGISTRY + "/" + uuid,descStr.getBytes("UTF-8"),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
   return new ExportRegistration(reference,description,nodePath);

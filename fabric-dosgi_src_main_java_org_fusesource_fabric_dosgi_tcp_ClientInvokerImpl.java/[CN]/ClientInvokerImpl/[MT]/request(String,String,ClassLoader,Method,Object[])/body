@@ -1,0 +1,30 @@
+{
+  final ResponseFuture future=new ResponseFuture(classLoader);
+  queue.execute(new Runnable(){
+    public void run(){
+      try {
+        TransportPool pool=transports.get(address);
+        if (pool == null) {
+          pool=new InvokerTransportPool(address,queue);
+          transports.put(address,pool);
+          pool.start();
+        }
+        String uuid=UuidGenerator.getUUID();
+        requests.put(uuid,future);
+        ByteArrayOutputStream baos=new ByteArrayOutputStream();
+        ObjectOutputStream oos=new ObjectOutputStream(baos);
+        oos.writeUTF(uuid);
+        oos.writeUTF(service);
+        oos.writeUTF(method.getName());
+        oos.writeObject(method.getParameterTypes());
+        oos.writeObject(args);
+        pool.offer(baos.toByteArray());
+      }
+ catch (      Exception e) {
+        LOGGER.info("Error while sending request",e);
+      }
+    }
+  }
+);
+  return future.get();
+}

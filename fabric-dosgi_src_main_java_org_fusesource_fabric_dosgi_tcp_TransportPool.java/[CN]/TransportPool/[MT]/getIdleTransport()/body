@@ -1,0 +1,16 @@
+{
+  for (  Map.Entry<Transport,State> entry : transports.entrySet()) {
+    if (entry.getValue() == State.Idle) {
+      return entry.getKey();
+    }
+  }
+  if (transports.size() < poolSize) {
+    try {
+      startNewTransport();
+    }
+ catch (    Exception e) {
+      LOGGER.info("Unable to start new transport",e);
+    }
+  }
+  return null;
+}
