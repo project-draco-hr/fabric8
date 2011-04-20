@@ -1,8 +1,8 @@
 {
   try {
-    ByteArrayInputStream bais=new ByteArrayInputStream((Buffer)data);
+    DataByteArrayInputStream bais=new DataByteArrayInputStream((Buffer)data);
+    final int size=bais.readInt();
     final ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(bais);
-    final int size=ois.readInt();
     final String correlation=ois.readUTF();
     final String service=ois.readUTF();
     ois.setClassLoader(loaders.get(service));
@@ -40,9 +40,9 @@
           factory.unget();
         }
         try {
-          ByteArrayOutputStream baos=new ByteArrayOutputStream();
+          DataByteArrayOutputStream baos=new DataByteArrayOutputStream();
+          baos.writeInt(0);
           ObjectOutputStream oos=new ObjectOutputStream(baos);
-          oos.writeInt(0);
           oos.writeUTF(correlation);
           oos.writeObject(error);
           oos.writeObject(value);
