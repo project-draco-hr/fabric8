@@ -22,7 +22,7 @@
           stack.add(0,new SimpleFilter(null,new ArrayList(),SimpleFilter.AND));
         }
  else {
-          stack.add(0,new Integer(idx));
+          stack.add(0,idx);
         }
       }
  else       if (filter.charAt(idx) == '|') {
@@ -32,7 +32,7 @@
           stack.add(0,new SimpleFilter(null,new ArrayList(),SimpleFilter.OR));
         }
  else {
-          stack.add(0,new Integer(idx));
+          stack.add(0,idx);
         }
       }
  else       if (filter.charAt(idx) == '!') {
@@ -42,11 +42,11 @@
           stack.add(0,new SimpleFilter(null,new ArrayList(),SimpleFilter.NOT));
         }
  else {
-          stack.add(0,new Integer(idx));
+          stack.add(0,idx);
         }
       }
  else {
-        stack.add(0,new Integer(idx));
+        stack.add(0,idx);
       }
     }
  else     if (!isEscaped && (filter.charAt(idx) == ')')) {
@@ -60,10 +60,10 @@
         }
       }
  else       if (!stack.isEmpty() && (stack.get(0) instanceof SimpleFilter)) {
-        ((List)((SimpleFilter)stack.get(0)).m_value).add(SimpleFilter.subfilter(filter,((Integer)top).intValue(),idx));
+        ((List)((SimpleFilter)stack.get(0)).m_value).add(SimpleFilter.subfilter(filter,(Integer)top,idx));
       }
  else {
-        sf=SimpleFilter.subfilter(filter,((Integer)top).intValue(),idx);
+        sf=SimpleFilter.subfilter(filter,(Integer)top,idx);
       }
     }
  else     if (!isEscaped && (filter.charAt(idx) == '\\')) {

@@ -32,15 +32,13 @@
     boxedType=type;
   }
   String javaType="java.lang." + boxedType;
+  if (boxedType.equals("Character")) {
+    return value.charAt(0);
+  }
   try {
-    if (boxedType.equals("Character")) {
-      return value.charAt(0);
-    }
- else {
-      Class<?> cls=ClassLoader.getSystemClassLoader().loadClass(javaType);
-      Constructor<?> ctor=cls.getConstructor(String.class);
-      return ctor.newInstance(value);
-    }
+    Class<?> cls=ClassLoader.getSystemClassLoader().loadClass(javaType);
+    Constructor<?> ctor=cls.getConstructor(String.class);
+    return ctor.newInstance(value);
   }
  catch (  Exception e) {
     return null;

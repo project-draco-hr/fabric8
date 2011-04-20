@@ -1,12 +1,12 @@
 {
-  List<String> pieces=new ArrayList();
+  List<String> pieces=new ArrayList<String>();
   StringBuffer ss=new StringBuffer();
   boolean wasStar=false;
   boolean leftstar=false;
   boolean rightstar=false;
   int idx=0;
   boolean escaped=false;
-  loop:   for (; ; ) {
+  for (; ; ) {
     if (idx >= value.length()) {
       if (wasStar) {
         rightstar=true;
@@ -15,7 +15,7 @@
         pieces.add(ss.toString());
       }
       ss.setLength(0);
-      break loop;
+      break;
     }
     char c=value.charAt(idx++);
     if (!escaped && ((c == '(') || (c == ')'))) {

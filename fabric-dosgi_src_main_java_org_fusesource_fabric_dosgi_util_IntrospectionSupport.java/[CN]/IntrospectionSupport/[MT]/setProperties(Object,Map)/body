@@ -6,8 +6,8 @@
   if (props == null) {
     throw new IllegalArgumentException("props was null.");
   }
-  for (Iterator iter=props.entrySet().iterator(); iter.hasNext(); ) {
-    Map.Entry entry=(Entry)iter.next();
+  for (Iterator<Entry> iter=props.entrySet().iterator(); iter.hasNext(); ) {
+    Map.Entry entry=iter.next();
     if (setProperty(target,(String)entry.getKey(),entry.getValue())) {
       iter.remove();
       rc=true;

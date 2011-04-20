@@ -3,15 +3,15 @@
     if (options.size() > 0) {
       StringBuffer rc=new StringBuffer();
       boolean first=true;
-      for (Iterator iter=options.keySet().iterator(); iter.hasNext(); ) {
+      for (      Map.Entry<String,String> entry : options.entrySet()) {
         if (first) {
           first=false;
         }
  else {
           rc.append("&");
         }
-        String key=(String)iter.next();
-        String value=(String)options.get(key);
+        String key=entry.getKey();
+        String value=entry.getValue();
         rc.append(URLEncoder.encode(key,"UTF-8"));
         rc.append("=");
         rc.append(URLEncoder.encode(value,"UTF-8"));
