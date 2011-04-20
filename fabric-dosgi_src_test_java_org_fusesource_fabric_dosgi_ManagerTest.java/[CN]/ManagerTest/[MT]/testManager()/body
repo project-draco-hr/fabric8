@@ -1,10 +1,12 @@
 {
   ZKServerFactoryBean zkServerFactoryBean=null;
   try {
+    int zooKeeperPort=getFreePort();
+    int serverPort=getFreePort();
     zkServerFactoryBean=new ZKServerFactoryBean();
-    zkServerFactoryBean.setClientPortAddress(new InetSocketAddress("localhost",2180));
+    zkServerFactoryBean.setClientPortAddress(new InetSocketAddress("localhost",zooKeeperPort));
     zkServerFactoryBean.afterPropertiesSet();
-    ZKClient zooKeeper=new ZKClient("localhost:2180",Timespan.ONE_MINUTE,null);
+    ZKClient zooKeeper=new ZKClient("localhost:" + zooKeeperPort,Timespan.ONE_MINUTE,null);
     final AtomicBoolean connected=new AtomicBoolean(false);
     zooKeeper.registerListener(new LifecycleListener(){
       public void onConnected(){
@@ -32,12 +34,15 @@ synchronized (connected) {
     Manager manager=new Manager(bundleContext,zooKeeper);
     bundleContext.addServiceListener(manager,"(service.exported.interfaces=*)");
     expect(bundleContext.getProperty("org.osgi.framework.uuid")).andReturn("the-framework-uuid");
-    expect(bundleContext.registerService(ListenerHook.class.getName(),manager,null)).andReturn(registration);
+    expect(bundleContext.registerService(EasyMock.<String[]>anyObject(),same(manager),EasyMock.<Dictionary>same(null))).andReturn(registration);
     expect(bundleContext.getServiceReferences(null,"(service.exported.interfaces=*)")).andReturn(null);
     replay(bundleContext,registration);
+    manager.setUri("tcp://localhost:" + serverPort);
     manager.init();
     verify(bundleContext,registration);
     reset(bundleContext,registration);
+    BundleContext expBundleContext=createMock(BundleContext.class);
+    Bundle expBundle=createMock(Bundle.class);
     ServiceReference reference=createMock(ServiceReference.class);
     final Properties props=new Properties();
     props.put(Constants.OBJECTCLASS,new String[]{ConfigurationAdmin.class.getName()});
@@ -48,10 +53,12 @@ synchronized (connected) {
     }
 ).anyTimes();
     expect(reference.getPropertyKeys()).andReturn(props.keySet().toArray(new String[0]));
-    replay(bundleContext,registration,reference);
+    expect(reference.getBundle()).andReturn(expBundle).anyTimes();
+    expect(expBundle.getBundleContext()).andReturn(expBundleContext).anyTimes();
+    replay(bundleContext,registration,reference,expBundleContext,expBundle);
     manager.serviceChanged(new ServiceEvent(ServiceEvent.REGISTERED,reference));
     Thread.sleep(1000);
-    verify(bundleContext,registration,reference);
+    verify(bundleContext,registration,reference,expBundleContext,expBundle);
   }
   finally {
     try {
