@@ -1,4 +1,16 @@
 {
+  final String uuid=UuidGenerator.getUUID();
+  ByteArrayOutputStream baos=new ByteArrayOutputStream();
+  ObjectOutputStream oos=new ObjectOutputStream(baos);
+  oos.writeInt(0);
+  oos.writeUTF(uuid);
+  oos.writeUTF(service);
+  oos.writeUTF(method.getName());
+  oos.writeObject(method.getParameterTypes());
+  oos.writeObject(args);
+  final Buffer command=baos.toBuffer();
+  BufferEditor editor=command.buffer().bigEndianEditor();
+  editor.writeInt(command.length);
   final ResponseFuture future=new ResponseFuture(classLoader);
   queue.execute(new Runnable(){
     public void run(){
@@ -9,19 +21,7 @@
           transports.put(address,pool);
           pool.start();
         }
-        String uuid=UuidGenerator.getUUID();
         requests.put(uuid,future);
-        ByteArrayOutputStream baos=new ByteArrayOutputStream();
-        ObjectOutputStream oos=new ObjectOutputStream(baos);
-        oos.writeInt(0);
-        oos.writeUTF(uuid);
-        oos.writeUTF(service);
-        oos.writeUTF(method.getName());
-        oos.writeObject(method.getParameterTypes());
-        oos.writeObject(args);
-        Buffer command=baos.toBuffer();
-        BufferEditor editor=command.buffer().bigEndianEditor();
-        editor.writeInt(command.length);
         pool.offer(command);
       }
  catch (      Exception e) {
