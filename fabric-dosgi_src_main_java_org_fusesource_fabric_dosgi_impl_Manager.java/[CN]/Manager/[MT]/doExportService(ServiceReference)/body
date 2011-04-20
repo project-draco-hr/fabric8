@@ -30,7 +30,7 @@
       reference.getBundle().getBundleContext().ungetService(reference);
     }
   }
-,new BundleDelegatingClassLoader(reference.getBundle()));
+,AriesFrameworkUtil.getClassLoader(reference.getBundle()));
   String descStr=Utils.getEndpointDescriptionXML(description);
   final String nodePath=zooKeeper.create(DOSGI_REGISTRY + "/" + uuid,descStr.getBytes("UTF-8"),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
   return new ExportRegistration(reference,description,nodePath);
