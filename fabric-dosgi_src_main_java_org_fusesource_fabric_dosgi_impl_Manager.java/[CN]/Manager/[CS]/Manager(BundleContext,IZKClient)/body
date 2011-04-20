@@ -4,7 +4,7 @@
   this.exportedServices=new ConcurrentHashMap<ServiceReference,ExportRegistration>();
   this.exportedServicesPerId=new ConcurrentHashMap<String,ExportRegistration>();
   this.listeners=new ConcurrentHashMap<ListenerInfo,SimpleFilter>();
-  this.remoteEndpoints=new CapabilitySet<EndpointDescription>(Collections.singletonList(Constants.OBJECTCLASS),false);
+  this.remoteEndpoints=new CapabilitySet<EndpointDescription>(Arrays.asList(Constants.OBJECTCLASS,ENDPOINT_FRAMEWORK_UUID),false);
   this.bundleContext=context;
   this.zooKeeper=zooKeeper;
   this.client=new ClientInvokerImpl(queue);
