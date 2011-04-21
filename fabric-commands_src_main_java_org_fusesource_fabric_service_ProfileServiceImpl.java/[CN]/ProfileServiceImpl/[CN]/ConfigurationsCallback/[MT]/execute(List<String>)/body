@@ -1,0 +1,17 @@
+{
+  final Map<String,Map<String,String>> configs=new HashMap<String,Map<String,String>>();
+  for (  String pid : children) {
+    final String localPid=pid;
+    configs.put(pid,template.execute(ZkPath.PROFILE_CONFIG_KEYS.getPath(version,name,pid),new ZooKeeperTemplate.ChildrenCallback<Map<String,String>>(){
+      public Map<String,String> execute(      List<String> children) throws Exception {
+        Map<String,String> configs=new HashMap<String,String>();
+        for (        String key : children) {
+          configs.put(key,template.execute(ZkPath.PROFILE_CONFIG_VALUE.getPath(version,name,localPid,key)));
+        }
+        return configs;
+      }
+    }
+));
+  }
+  return configs;
+}

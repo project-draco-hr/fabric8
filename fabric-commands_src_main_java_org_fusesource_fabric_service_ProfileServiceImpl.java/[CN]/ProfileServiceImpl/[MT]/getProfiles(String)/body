@@ -1,13 +1,3 @@
 {
-  try {
-    List<String> names=zooKeeper.getChildren("/fabric/configs/versions/" + version + "/profiles");
-    List<Profile> profiles=new ArrayList<Profile>();
-    for (    String name : names) {
-      profiles.add(new ProfileImpl(name,version,zooKeeper));
-    }
-    return profiles.toArray(new Profile[profiles.size()]);
-  }
- catch (  Exception e) {
-    throw new RuntimeException(e);
-  }
+  return template.execute(ZkPath.PROFILES.getPath(version),new ProfileReadCallback(version));
 }
