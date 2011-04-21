@@ -1,10 +1,11 @@
 {
-  final String uuid=UuidGenerator.getUUID();
+  final long correlation=correlationGenerator.incrementAndGet();
   DataByteArrayOutputStream baos=new DataByteArrayOutputStream();
   baos.writeInt(0);
+  baos.writeVarLong(correlation);
+  baos.writeVarInt(service.length);
+  baos.write(service);
   ObjectOutputStream oos=new ObjectOutputStream(baos);
-  oos.writeUTF(uuid);
-  oos.writeUTF(service);
   oos.writeUTF(method.getName());
   oos.writeObject(method.getParameterTypes());
   oos.writeObject(args);
@@ -21,7 +22,7 @@
           transports.put(address,pool);
           pool.start();
         }
-        requests.put(uuid,future);
+        requests.put(correlation,future);
         pool.offer(command);
       }
  catch (      Exception e) {

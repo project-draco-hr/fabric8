@@ -2,9 +2,9 @@
   try {
     DataByteArrayInputStream bais=new DataByteArrayInputStream((Buffer)data);
     final int size=bais.readInt();
+    final long correlation=bais.readVarLong();
+    final UTF8Buffer service=readUTF8Buffer(bais);
     final ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(bais);
-    final String correlation=ois.readUTF();
-    final String service=ois.readUTF();
     ois.setClassLoader(loaders.get(service));
     final ServiceFactory factory=handlers.get(service);
     executor.submit(new Runnable(){
@@ -42,8 +42,8 @@
         try {
           DataByteArrayOutputStream baos=new DataByteArrayOutputStream();
           baos.writeInt(0);
+          baos.writeVarLong(correlation);
           ObjectOutputStream oos=new ObjectOutputStream(baos);
-          oos.writeUTF(correlation);
           oos.writeObject(error);
           oos.writeObject(value);
           final Buffer command=baos.toBuffer();
