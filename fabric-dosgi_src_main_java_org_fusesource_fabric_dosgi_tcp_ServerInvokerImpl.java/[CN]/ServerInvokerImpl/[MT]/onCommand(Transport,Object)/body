@@ -1,0 +1,69 @@
+{
+  try {
+    DataByteArrayInputStream bais=new DataByteArrayInputStream((Buffer)data);
+    final int size=bais.readInt();
+    final long correlation=bais.readVarLong();
+    final UTF8Buffer service=readUTF8Buffer(bais);
+    final ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(bais);
+    ois.setClassLoader(loaders.get(service));
+    final ServiceFactory factory=handlers.get(service);
+    executor.submit(new Runnable(){
+      public void run(){
+        final String name;
+        final Class[] types;
+        final Object[] args;
+        try {
+          name=ois.readUTF();
+          types=(Class[])ois.readObject();
+          args=(Object[])ois.readObject();
+        }
+ catch (        Exception e) {
+          LOGGER.info("Error while reading request",e);
+          return;
+        }
+        Object svc=factory.get();
+        Object value=null;
+        Throwable error=null;
+        try {
+          Method method=svc.getClass().getMethod(name,types);
+          value=method.invoke(svc,args);
+        }
+ catch (        Throwable t) {
+          if (t instanceof InvocationTargetException) {
+            error=t.getCause();
+          }
+ else {
+            error=t;
+          }
+        }
+ finally {
+          factory.unget();
+        }
+        try {
+          DataByteArrayOutputStream baos=new DataByteArrayOutputStream();
+          baos.writeInt(0);
+          baos.writeVarLong(correlation);
+          ObjectOutputStream oos=new ObjectOutputStream(baos);
+          oos.writeObject(error);
+          oos.writeObject(value);
+          final Buffer command=baos.toBuffer();
+          BufferEditor editor=command.buffer().bigEndianEditor();
+          editor.writeInt(command.length);
+          queue.execute(new Runnable(){
+            public void run(){
+              transport.offer(command);
+            }
+          }
+);
+        }
+ catch (        Exception e) {
+          LOGGER.info("Error while writing answer");
+        }
+      }
+    }
+);
+  }
+ catch (  Exception e) {
+    LOGGER.info("Error while reading request",e);
+  }
+}

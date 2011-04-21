@@ -1,0 +1,74 @@
+{
+  int port=getFreePort();
+  DispatchQueue queue=Dispatch.createQueue();
+  ServerInvokerImpl server=new ServerInvokerImpl("tcp://localhost:" + port,queue);
+  server.start();
+  ClientInvokerImpl client=new ClientInvokerImpl(queue);
+  client.start();
+  try {
+    server.registerService("service-id",new ServerInvoker.ServiceFactory(){
+      public Object get(){
+        return new HelloImpl();
+      }
+      public void unget(){
+      }
+    }
+,HelloImpl.class.getClassLoader());
+    InvocationHandler handler=client.getProxy("tcp://localhost:" + port,"service-id",HelloImpl.class.getClassLoader());
+    final Hello hello=(Hello)Proxy.newProxyInstance(HelloImpl.class.getClassLoader(),new Class[]{Hello.class},handler);
+    final int nbThreads=100;
+    final int nbInvocationsPerThread=1000;
+    final AtomicInteger requests=new AtomicInteger(0);
+    final AtomicInteger failures=new AtomicInteger(0);
+    final long latencies[]=new long[nbThreads * nbInvocationsPerThread];
+    final long start=System.nanoTime();
+    Thread[] threads=new Thread[nbThreads];
+    for (int t=0; t < nbThreads; t++) {
+      final int thread_idx=t;
+      threads[t]=new Thread(){
+        public void run(){
+          for (int i=0; i < nbInvocationsPerThread; i++) {
+            try {
+              requests.incrementAndGet();
+              String response;
+              final long start=System.nanoTime();
+              response=hello.hello("Fabric");
+              final long end=System.nanoTime();
+              latencies[(thread_idx * nbInvocationsPerThread) + i]=end - start;
+              assertEquals("Hello Fabric!",response);
+            }
+ catch (            Throwable t) {
+              latencies[(thread_idx * nbInvocationsPerThread) + i]=-1;
+              failures.incrementAndGet();
+              if (t instanceof UndeclaredThrowableException) {
+                t=((UndeclaredThrowableException)t).getUndeclaredThrowable();
+              }
+              System.err.println("Error: " + t.getClass().getName() + (t.getMessage() != null ? " (" + t.getMessage() + ")" : ""));
+            }
+          }
+        }
+      }
+;
+      threads[t].start();
+    }
+    for (int t=0; t < nbThreads; t++) {
+      threads[t].join();
+    }
+    final long end=System.nanoTime();
+    long latency_sum=0;
+    for (int t=0; t < latencies.length; t++) {
+      if (latencies[t] != -1) {
+        latency_sum+=latencies[t];
+      }
+    }
+    double latency_avg=((latency_sum * 1.0d) / requests.get()) / MILLIS_IN_A_NANO;
+    double request_rate=((requests.get() * 1.0d) / (end - start)) * SECONDS_IN_A_NANO;
+    System.err.println(String.format("Requests/Second: %,.2f",request_rate));
+    System.err.println(String.format("Average request latency: %,.2f ms",latency_avg));
+    System.err.println("Error Ratio: " + failures.get() + " / "+ requests.get());
+  }
+  finally {
+    server.stop();
+    client.stop();
+  }
+}

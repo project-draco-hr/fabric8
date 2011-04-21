@@ -1,0 +1,11 @@
+{
+  read_channel=channel;
+  if (channel instanceof SocketChannel) {
+    try {
+      ((SocketChannel)channel).socket().setReceiveBufferSize(read_buffer_size);
+    }
+ catch (    SocketException e) {
+      e.printStackTrace();
+    }
+  }
+}

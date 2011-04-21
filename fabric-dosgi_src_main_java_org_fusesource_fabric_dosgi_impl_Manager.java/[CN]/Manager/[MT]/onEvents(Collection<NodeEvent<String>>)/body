@@ -1,0 +1,44 @@
+{
+  try {
+    for (    NodeEvent<String> event : nodeEvents) {
+      if (event.getDepth() == 0) {
+        continue;
+      }
+switch (event.getEventType()) {
+case ADDED:
+{
+          EndpointDescription endpoint=Utils.getEndpointDescription(event.getData());
+          remoteEndpoints.addCapability(endpoint);
+          for (          Map.Entry<ListenerInfo,SimpleFilter> entry : listeners.entrySet()) {
+            if (CapabilitySet.matches(endpoint,entry.getValue())) {
+              doImportService(endpoint,entry.getKey());
+            }
+          }
+        }
+      break;
+case UPDATED:
+{
+      EndpointDescription endpoint=Utils.getEndpointDescription(event.getData());
+      Map<Long,ImportRegistration> registrations=importedServices.get(endpoint);
+      for (      ImportRegistration reg : registrations.values()) {
+        reg.importedService.setProperties(new Hashtable<String,Object>(endpoint.getProperties()));
+      }
+    }
+  break;
+case DELETED:
+{
+  EndpointDescription endpoint=Utils.getEndpointDescription(event.getData());
+  remoteEndpoints.removeCapability(endpoint);
+  Map<Long,ImportRegistration> registrations=importedServices.remove(endpoint);
+  for (  ImportRegistration reg : registrations.values()) {
+    reg.getImportedService().unregister();
+  }
+}
+break;
+}
+}
+}
+ catch (Exception e) {
+LOGGER.info("Error when handling zookeeper events",e);
+}
+}
