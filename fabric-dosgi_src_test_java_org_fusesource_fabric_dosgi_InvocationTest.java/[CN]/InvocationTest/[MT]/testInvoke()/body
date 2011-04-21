@@ -17,6 +17,12 @@
     InvocationHandler handler=client.getProxy("tcp://localhost:" + port,"service-id",HelloImpl.class.getClassLoader());
     Hello hello=(Hello)Proxy.newProxyInstance(HelloImpl.class.getClassLoader(),new Class[]{Hello.class},handler);
     assertEquals("Hello Fabric!",hello.hello("Fabric"));
+    assertEquals('a',hello.mix(0));
+    assertEquals('b',hello.mix(new int[]{0}));
+    assertEquals('c',hello.mix(new Integer(0)));
+    assertEquals('d',hello.mix(new Integer[]{new Integer(0)}));
+    assertEquals('e',hello.mix(new int[0][0]));
+    assertEquals('f',hello.mix(new Integer[0][0]));
   }
   finally {
     server.stop();

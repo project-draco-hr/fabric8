@@ -3,13 +3,9 @@
   DataByteArrayOutputStream baos=new DataByteArrayOutputStream((int)(handler.lastRequestSize * 1.10));
   baos.writeInt(0);
   baos.writeVarLong(correlation);
-  baos.writeVarInt(service.length);
-  baos.write(service);
-  int p1=baos.position();
+  writeBuffer(baos,service);
+  writeBuffer(baos,encodeMethod(method));
   ObjectOutputStream oos=new ObjectOutputStream(baos);
-  oos.writeUTF(method.getName());
-  oos.writeObject(method.getParameterTypes());
-  int p2=baos.position();
   oos.writeObject(args);
   final Buffer command=baos.toBuffer();
   BufferEditor editor=command.buffer().bigEndianEditor();

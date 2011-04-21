@@ -1,0 +1,14 @@
+{
+  Method rc=method_cache.get(data);
+  if (rc == null) {
+    String[] parts=data.utf8().toString().split(",");
+    String name=parts[0];
+    Class params[]=new Class[parts.length - 1];
+    for (int i=0; i < params.length; i++) {
+      params[i]=decodeClass(parts[i + 1]);
+    }
+    rc=clazz.getMethod(name,params);
+    method_cache.put(data,rc);
+  }
+  return rc;
+}

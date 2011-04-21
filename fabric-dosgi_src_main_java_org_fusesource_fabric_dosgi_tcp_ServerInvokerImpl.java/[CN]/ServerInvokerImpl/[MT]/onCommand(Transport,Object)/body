@@ -1,43 +1,35 @@
 {
   try {
-    DataByteArrayInputStream bais=new DataByteArrayInputStream((Buffer)data);
+    final DataByteArrayInputStream bais=new DataByteArrayInputStream((Buffer)data);
     final int size=bais.readInt();
     final long correlation=bais.readVarLong();
-    final UTF8Buffer service=readUTF8Buffer(bais);
-    final ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(bais);
-    ois.setClassLoader(loaders.get(service));
-    final ServiceFactory factory=handlers.get(service);
+    final UTF8Buffer service=readBuffer(bais).utf8();
+    final Buffer encoded_method=readBuffer(bais);
+    final ServiceFactoryHolder holder=holders.get(service);
+    final Method method=holder.method(encoded_method);
     executor.submit(new Runnable(){
       public void run(){
-        final String name;
-        final Class[] types;
-        final Object[] args;
-        try {
-          name=ois.readUTF();
-          types=(Class[])ois.readObject();
-          args=(Object[])ois.readObject();
-        }
- catch (        Exception e) {
-          LOGGER.info("Error while reading request",e);
-          return;
-        }
-        Object svc=factory.get();
         Object value=null;
         Throwable error=null;
+        Object svc=holder.factory.get();
         try {
-          Method method=svc.getClass().getMethod(name,types);
-          value=method.invoke(svc,args);
-        }
- catch (        Throwable t) {
-          if (t instanceof InvocationTargetException) {
-            error=t.getCause();
+          try {
+            final ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(bais);
+            ois.setClassLoader(holder.loader);
+            final Object[] args=(Object[])ois.readObject();
+            value=method.invoke(svc,args);
           }
+ catch (          Throwable t) {
+            if (t instanceof InvocationTargetException) {
+              error=t.getCause();
+            }
  else {
-            error=t;
+              error=t;
+            }
           }
         }
- finally {
-          factory.unget();
+  finally {
+          holder.factory.unget();
         }
         try {
           DataByteArrayOutputStream baos=new DataByteArrayOutputStream();
