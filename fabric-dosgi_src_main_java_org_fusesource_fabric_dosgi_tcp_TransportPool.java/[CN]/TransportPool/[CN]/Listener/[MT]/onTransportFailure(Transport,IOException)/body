@@ -1,4 +1,7 @@
 {
-  transports.remove(transport);
-  transport.stop();
+  if (!transport.isDisposed()) {
+    LOGGER.info("Transport failure",error);
+    transports.remove(transport);
+    transport.stop();
+  }
 }

@@ -1,3 +1,5 @@
 {
-  LOGGER.info("Transport failure",error);
+  if (!transport.isDisposed() && !(error instanceof EOFException)) {
+    LOGGER.info("Transport failure",error);
+  }
 }
