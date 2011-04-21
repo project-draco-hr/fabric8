@@ -1,17 +1,20 @@
 {
   final long correlation=correlationGenerator.incrementAndGet();
-  DataByteArrayOutputStream baos=new DataByteArrayOutputStream();
+  DataByteArrayOutputStream baos=new DataByteArrayOutputStream((int)(lastRequestSize[0] * 1.10));
   baos.writeInt(0);
   baos.writeVarLong(correlation);
   baos.writeVarInt(service.length);
   baos.write(service);
+  int p1=baos.position();
   ObjectOutputStream oos=new ObjectOutputStream(baos);
   oos.writeUTF(method.getName());
   oos.writeObject(method.getParameterTypes());
+  int p2=baos.position();
   oos.writeObject(args);
   final Buffer command=baos.toBuffer();
   BufferEditor editor=command.buffer().bigEndianEditor();
   editor.writeInt(command.length);
+  lastRequestSize[0]=command.length;
   final ResponseFuture future=new ResponseFuture(classLoader);
   queue.execute(new Runnable(){
     public void run(){
