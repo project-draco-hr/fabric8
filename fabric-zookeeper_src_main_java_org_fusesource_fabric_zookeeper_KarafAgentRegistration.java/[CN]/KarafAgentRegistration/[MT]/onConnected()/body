@@ -1,19 +1,20 @@
 {
   try {
-    Stat stat=zooKeeper.exists(nodeAlive);
+    String aliveNode=AGENT_ALIVE.getPath(name);
+    Stat stat=zooKeeper.exists(aliveNode);
     if (stat != null) {
       if (stat.getEphemeralOwner() != zooKeeper.getSessionId()) {
-        zooKeeper.delete(nodeAlive);
-        zooKeeper.createWithParents(nodeAlive,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
+        zooKeeper.delete(aliveNode);
+        zooKeeper.createWithParents(aliveNode,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
       }
     }
  else {
-      zooKeeper.createWithParents(nodeAlive,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
+      zooKeeper.createWithParents(aliveNode,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
     }
-    zooKeeper.createOrSetWithParents(nodeConfig + "/jmx",getJmxUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    zooKeeper.createOrSetWithParents(nodeConfig + "/ssh",getSshUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    zooKeeper.createOrSetWithParents(nodeConfig + "/ip",getLocalHostAddress(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    zooKeeper.createOrSetWithParents(nodeConfig + "/root",getRootName(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    zooKeeper.createOrSetWithParents(AGENT_JMX.getPath(name),getJmxUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    zooKeeper.createOrSetWithParents(AGENT_SSH.getPath(name),getSshUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    zooKeeper.createOrSetWithParents(AGENT_IP.getPath(name),getLocalHostAddress(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    zooKeeper.createOrSetWithParents(AGENT_ROOT.getPath(name),getRootName(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
   }
  catch (  Exception e) {
     e.printStackTrace();

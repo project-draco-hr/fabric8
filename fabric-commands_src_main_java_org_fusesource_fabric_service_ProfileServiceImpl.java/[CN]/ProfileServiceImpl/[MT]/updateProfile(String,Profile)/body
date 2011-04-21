@@ -1,0 +1,27 @@
+{
+  String version=newProfile.getVersion();
+  Map<String,Profile> profiles=getProfiles(newProfile.getVersion());
+  if (!profiles.containsKey(name)) {
+    throw new IllegalArgumentException("Unknown profile " + name);
+  }
+  Profile oldProfile=profiles.get(name);
+  if (!Arrays.equals(oldProfile.getBundles(),newProfile.getBundles())) {
+    zooKeeper.setData(ZkPath.PROFILE_BUNDLES.getPath(version,name),arrayToString(newProfile.getBundles()));
+  }
+  if (!Arrays.equals(oldProfile.getFeatures(),newProfile.getFeatures())) {
+    zooKeeper.setData(ZkPath.PROFILE_FEATURES.getPath(version,name),arrayToString(newProfile.getFeatures()));
+  }
+  if (!Arrays.equals(oldProfile.getFeatureRepositories(),newProfile.getFeatureRepositories())) {
+    zooKeeper.setData(ZkPath.PROFILE_REPOSITORIES.getPath(version,name),arrayToString(newProfile.getFeatureRepositories()));
+  }
+  Map<String,Map<String,String>> cfg=newProfile.getConfigurations();
+  if (!oldProfile.getConfigurations().equals(cfg)) {
+    zooKeeper.deleteWithChildren(ZkPath.PROFILE_CONFIG_PIDS.getPath(version,name));
+    for (    String key : cfg.keySet()) {
+      zooKeeper.createWithParents(ZkPath.PROFILE_CONFIG_KEYS.getPath(version,name,key),"",ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      for (      Map.Entry<String,String> entry : cfg.get(key).entrySet()) {
+        zooKeeper.createWithParents(ZkPath.PROFILE_CONFIG_VALUE.getPath(version,name,key,entry.getKey()),entry.getValue(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      }
+    }
+  }
+}
