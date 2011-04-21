@@ -1,6 +1,6 @@
 {
   final long correlation=correlationGenerator.incrementAndGet();
-  DataByteArrayOutputStream baos=new DataByteArrayOutputStream((int)(lastRequestSize[0] * 1.10));
+  DataByteArrayOutputStream baos=new DataByteArrayOutputStream((int)(handler.lastRequestSize * 1.10));
   baos.writeInt(0);
   baos.writeVarLong(correlation);
   baos.writeVarInt(service.length);
@@ -14,7 +14,7 @@
   final Buffer command=baos.toBuffer();
   BufferEditor editor=command.buffer().bigEndianEditor();
   editor.writeInt(command.length);
-  lastRequestSize[0]=command.length;
+  handler.lastRequestSize=command.length;
   final ResponseFuture future=new ResponseFuture(classLoader);
   queue.execute(new Runnable(){
     public void run(){
