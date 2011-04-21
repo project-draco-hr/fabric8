@@ -1,25 +1,2 @@
 {
-  while (pending.size() > 0) {
-    Object data=pending.getFirst();
-    if (!transport.offer(data)) {
-      transports.put(transport,0L);
-      return;
-    }
- else {
-      pending.removeFirst();
-    }
-  }
-  final long time=System.currentTimeMillis();
-  transports.put(transport,time);
-  if (evictionDelay > 0) {
-    queue.executeAfter(evictionDelay,TimeUnit.MILLISECONDS,new Runnable(){
-      public void run(){
-        if (transports.get(transport) == time) {
-          transports.remove(transport);
-          transport.stop();
-        }
-      }
-    }
-);
-  }
 }
