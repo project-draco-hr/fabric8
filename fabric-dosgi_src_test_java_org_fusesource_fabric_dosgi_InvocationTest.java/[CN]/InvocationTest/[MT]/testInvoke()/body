@@ -2,6 +2,7 @@
   int port=getFreePort();
   DispatchQueue queue=Dispatch.createQueue();
   HashMap<String,SerializationStrategy> map=new HashMap<String,SerializationStrategy>();
+  map.put("extern",new ExternSerializationStrategy());
   ServerInvokerImpl server=new ServerInvokerImpl("tcp://localhost:" + port,queue,map);
   server.start();
   ClientInvokerImpl client=new ClientInvokerImpl(queue,map);
@@ -27,6 +28,7 @@
     final AsyncCallbackFuture<String> future=new AsyncCallbackFuture<String>();
     hello.hello("Hiram",future);
     assertEquals("Hello Hiram!",future.get(2,TimeUnit.SECONDS));
+    assertEquals("Hello Hiram!",hello.exernHello(new ExternValue("Hiram")).value);
   }
   finally {
     server.stop();
