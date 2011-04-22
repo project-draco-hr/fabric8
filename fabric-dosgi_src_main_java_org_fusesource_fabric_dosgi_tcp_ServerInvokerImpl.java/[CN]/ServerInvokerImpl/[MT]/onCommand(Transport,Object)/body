@@ -7,7 +7,13 @@
     final Buffer encoded_method=readBuffer(bais);
     final ServiceFactoryHolder holder=holders.get(service);
     final Method method=holder.method(encoded_method);
-    final RequestCodecStrategy strategy=new ObjectSerializationStrategy();
+    final RequestCodecStrategy strategy;
+    if (AsyncObjectSerializationStrategy.isAsyncMethod(method)) {
+      strategy=new AsyncObjectSerializationStrategy();
+    }
+ else {
+      strategy=new ObjectSerializationStrategy();
+    }
     executor.submit(new Runnable(){
       public void run(){
         final DataByteArrayOutputStream baos=new DataByteArrayOutputStream();

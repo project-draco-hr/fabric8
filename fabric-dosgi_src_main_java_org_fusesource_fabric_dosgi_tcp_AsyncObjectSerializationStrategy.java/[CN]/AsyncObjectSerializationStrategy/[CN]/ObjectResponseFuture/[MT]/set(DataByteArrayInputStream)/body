@@ -1,0 +1,17 @@
+{
+  ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(source);
+  ois.setClassLoader(loader);
+  Throwable error=(Throwable)ois.readObject();
+  Object value=ois.readObject();
+  try {
+    if (error != null) {
+      callback.onFailure(error);
+    }
+ else {
+      callback.onSuccess(value);
+    }
+  }
+ catch (  Throwable e) {
+    e.printStackTrace();
+  }
+}

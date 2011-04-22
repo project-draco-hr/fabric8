@@ -1,0 +1,24 @@
+{
+  if (responded.compareAndSet(false,true)) {
+    try {
+      ObjectOutputStream oos=new ObjectOutputStream(responseStream);
+      oos.writeObject(error);
+      oos.writeObject(value);
+      oos.flush();
+    }
+ catch (    IOException e) {
+      try {
+        responseStream.position(pos);
+        ObjectOutputStream oos=new ObjectOutputStream(responseStream);
+        oos.writeObject(new RemoteException(e.toString()));
+        oos.writeObject(null);
+      }
+ catch (      Exception unexpected) {
+        unexpected.printStackTrace();
+      }
+    }
+ finally {
+      onComplete.run();
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  if (!isAsyncMethod(method)) {
+    throw new IllegalArgumentException("Invalid async method declaration: last argument is not a RequestCallback");
+  }
+  ObjectOutputStream oos=new ObjectOutputStream(target);
+  Object[] new_args=new Object[args.length - 1];
+  System.arraycopy(args,0,new_args,0,new_args.length);
+  oos.writeObject(new_args);
+  oos.flush();
+  return new ObjectResponseFuture(loader,(RequestCallback)args[args.length - 1]);
+}
