@@ -4,9 +4,9 @@
     Object value=null;
     Throwable error=null;
     try {
-      final ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(requestStream);
-      ois.setClassLoader(loader);
-      final Object[] args=(Object[])ois.readObject();
+      Class<?>[] types=method.getParameterTypes();
+      final Object[] args=new Object[types.length];
+      serializationStrategy.decodeRequest(loader,types,requestStream,args);
       value=method.invoke(target,args);
     }
  catch (    Throwable t) {
@@ -17,17 +17,12 @@
         error=t;
       }
     }
-    ObjectOutputStream oos=new ObjectOutputStream(responseStream);
-    oos.writeObject(error);
-    oos.writeObject(value);
-    oos.flush();
+    serializationStrategy.encodeResponse(loader,method.getReturnType(),value,error,responseStream);
   }
  catch (  Exception e) {
     try {
       responseStream.position(pos);
-      ObjectOutputStream oos=new ObjectOutputStream(responseStream);
-      oos.writeObject(new RemoteException(e.toString()));
-      oos.writeObject(null);
+      serializationStrategy.encodeResponse(loader,method.getReturnType(),null,new RemoteException(e.toString()),responseStream);
     }
  catch (    Exception unexpected) {
       unexpected.printStackTrace();

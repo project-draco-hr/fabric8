@@ -1,17 +1,12 @@
 {
   if (responded.compareAndSet(false,true)) {
     try {
-      ObjectOutputStream oos=new ObjectOutputStream(responseStream);
-      oos.writeObject(error);
-      oos.writeObject(value);
-      oos.flush();
+      serializationStrategy.encodeResponse(loader,method.getReturnType(),value,error,responseStream);
     }
- catch (    IOException e) {
+ catch (    Exception e) {
       try {
         responseStream.position(pos);
-        ObjectOutputStream oos=new ObjectOutputStream(responseStream);
-        oos.writeObject(new RemoteException(e.toString()));
-        oos.writeObject(null);
+        serializationStrategy.encodeResponse(loader,method.getReturnType(),value,new RemoteException(e.toString()),responseStream);
       }
  catch (      Exception unexpected) {
         unexpected.printStackTrace();
