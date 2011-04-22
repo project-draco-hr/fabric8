@@ -7,8 +7,15 @@
     final Buffer encoded_method=readBuffer(bais);
     final ServiceFactoryHolder holder=holders.get(service);
     final Method method=holder.method(encoded_method);
-    final RequestCodecStrategy strategy=new ObjectSerializationStrategy();
-    executor.submit(new Runnable(){
+    final InvocationStrategy strategy;
+    if (AsyncInvocationStrategy.isAsyncMethod(method)) {
+      strategy=new AsyncInvocationStrategy();
+    }
+ else {
+      strategy=new BlockingInvocationStrategy();
+    }
+    final Object svc=holder.factory.get();
+    Runnable task=new Runnable(){
       public void run(){
         final DataByteArrayOutputStream baos=new DataByteArrayOutputStream();
         try {
@@ -18,7 +25,6 @@
  catch (        IOException e) {
           throw new RuntimeException(e);
         }
-        Object svc=holder.factory.get();
         strategy.service(holder.loader,method,svc,bais,baos,new Runnable(){
           public void run(){
             holder.factory.unget();
@@ -36,7 +42,15 @@
 );
       }
     }
-);
+;
+    Executor executor;
+    if (svc instanceof Dispatched) {
+      executor=((Dispatched)svc).getDispatchQueue();
+    }
+ else {
+      executor=blockingExecutor;
+    }
+    executor.execute(task);
   }
  catch (  Exception e) {
     LOGGER.info("Error while reading request",e);

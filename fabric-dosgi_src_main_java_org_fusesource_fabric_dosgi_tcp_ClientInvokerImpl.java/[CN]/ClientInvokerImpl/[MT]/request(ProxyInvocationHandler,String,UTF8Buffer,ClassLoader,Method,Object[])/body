@@ -5,7 +5,13 @@
   baos.writeVarLong(correlation);
   writeBuffer(baos,service);
   writeBuffer(baos,encodeMethod(method));
-  RequestCodecStrategy strategy=new ObjectSerializationStrategy();
+  final InvocationStrategy strategy;
+  if (AsyncInvocationStrategy.isAsyncMethod(method)) {
+    strategy=new AsyncInvocationStrategy();
+  }
+ else {
+    strategy=new BlockingInvocationStrategy();
+  }
   final ResponseFuture future=strategy.request(classLoader,method,args,baos);
   final Buffer command=baos.toBuffer();
   BufferEditor editor=command.buffer().bigEndianEditor();
