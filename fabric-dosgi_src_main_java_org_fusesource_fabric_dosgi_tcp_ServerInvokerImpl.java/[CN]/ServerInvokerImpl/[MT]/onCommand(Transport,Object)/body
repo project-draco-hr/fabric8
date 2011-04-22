@@ -6,7 +6,7 @@
     final UTF8Buffer service=readBuffer(bais).utf8();
     final Buffer encoded_method=readBuffer(bais);
     final ServiceFactoryHolder holder=holders.get(service);
-    final MethodMetadata methodMetaData=holder.method(encoded_method);
+    final MethodData methodData=holder.getMethodData(encoded_method);
     final Object svc=holder.factory.get();
     Runnable task=new Runnable(){
       public void run(){
@@ -18,7 +18,7 @@
  catch (        IOException e) {
           throw new RuntimeException(e);
         }
-        methodMetaData.strategy.service(holder.loader,methodMetaData.method,svc,bais,baos,new Runnable(){
+        methodData.invocationStrategy.service(methodData.serializationStrategy,holder.loader,methodData.method,svc,bais,baos,new Runnable(){
           public void run(){
             holder.factory.unget();
             final Buffer command=baos.toBuffer();

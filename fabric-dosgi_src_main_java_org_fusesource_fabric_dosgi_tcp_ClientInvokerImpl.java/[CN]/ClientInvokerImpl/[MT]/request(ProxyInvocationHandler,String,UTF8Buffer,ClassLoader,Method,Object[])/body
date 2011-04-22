@@ -4,9 +4,9 @@
   baos.writeInt(0);
   baos.writeVarLong(correlation);
   writeBuffer(baos,service);
-  MethodMetadata methodData=getMethodMetadata(method);
+  MethodData methodData=getMethodData(method);
   writeBuffer(baos,methodData.signature);
-  final ResponseFuture future=methodData.strategy.request(classLoader,method,args,baos);
+  final ResponseFuture future=methodData.invocationStrategy.request(methodData.serializationStrategy,classLoader,method,args,baos);
   final Buffer command=baos.toBuffer();
   BufferEditor editor=command.buffer().bigEndianEditor();
   editor.writeInt(command.length);
