@@ -7,50 +7,33 @@
     final Buffer encoded_method=readBuffer(bais);
     final ServiceFactoryHolder holder=holders.get(service);
     final Method method=holder.method(encoded_method);
+    final RequestCodecStrategy strategy=new ObjectSerializationStrategy();
     executor.submit(new Runnable(){
       public void run(){
-        Object value=null;
-        Throwable error=null;
-        Object svc=holder.factory.get();
+        final DataByteArrayOutputStream baos=new DataByteArrayOutputStream();
         try {
-          try {
-            final ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(bais);
-            ois.setClassLoader(holder.loader);
-            final Object[] args=(Object[])ois.readObject();
-            value=method.invoke(svc,args);
-          }
- catch (          Throwable t) {
-            if (t instanceof InvocationTargetException) {
-              error=t.getCause();
-            }
- else {
-              error=t;
-            }
-          }
-        }
-  finally {
-          holder.factory.unget();
-        }
-        try {
-          DataByteArrayOutputStream baos=new DataByteArrayOutputStream();
           baos.writeInt(0);
           baos.writeVarLong(correlation);
-          ObjectOutputStream oos=new ObjectOutputStream(baos);
-          oos.writeObject(error);
-          oos.writeObject(value);
-          final Buffer command=baos.toBuffer();
-          BufferEditor editor=command.buffer().bigEndianEditor();
-          editor.writeInt(command.length);
-          queue.execute(new Runnable(){
-            public void run(){
-              transport.offer(command);
+        }
+ catch (        IOException e) {
+          throw new RuntimeException(e);
+        }
+        Object svc=holder.factory.get();
+        strategy.service(holder.loader,method,svc,bais,baos,new Runnable(){
+          public void run(){
+            holder.factory.unget();
+            final Buffer command=baos.toBuffer();
+            BufferEditor editor=command.buffer().bigEndianEditor();
+            editor.writeInt(command.length);
+            queue.execute(new Runnable(){
+              public void run(){
+                transport.offer(command);
+              }
             }
-          }
 );
+          }
         }
- catch (        Exception e) {
-          LOGGER.info("Error while writing answer");
-        }
+);
       }
     }
 );

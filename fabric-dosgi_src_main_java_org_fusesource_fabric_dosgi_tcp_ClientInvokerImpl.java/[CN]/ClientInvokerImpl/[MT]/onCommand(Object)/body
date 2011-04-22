@@ -3,18 +3,9 @@
     DataByteArrayInputStream bais=new DataByteArrayInputStream((Buffer)data);
     int size=bais.readInt();
     long correlation=bais.readVarLong();
-    ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(bais);
     ResponseFuture response=requests.remove(correlation);
     if (response != null) {
-      ois.setClassLoader(response.getClassLoader());
-      Throwable error=(Throwable)ois.readObject();
-      Object value=ois.readObject();
-      if (error != null) {
-        response.setException(error);
-      }
- else {
-        response.set(value);
-      }
+      response.set(bais);
     }
   }
  catch (  Exception e) {

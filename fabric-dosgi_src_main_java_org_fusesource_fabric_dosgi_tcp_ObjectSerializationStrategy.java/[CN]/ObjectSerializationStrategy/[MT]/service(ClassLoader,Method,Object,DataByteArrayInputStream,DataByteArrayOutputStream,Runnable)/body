@@ -1,0 +1,39 @@
+{
+  int pos=responseStream.position();
+  try {
+    Object value=null;
+    Throwable error=null;
+    try {
+      final ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(requestStream);
+      ois.setClassLoader(loader);
+      final Object[] args=(Object[])ois.readObject();
+      value=method.invoke(target,args);
+    }
+ catch (    Throwable t) {
+      if (t instanceof InvocationTargetException) {
+        error=t.getCause();
+      }
+ else {
+        error=t;
+      }
+    }
+    ObjectOutputStream oos=new ObjectOutputStream(responseStream);
+    oos.writeObject(error);
+    oos.writeObject(value);
+    oos.flush();
+  }
+ catch (  Exception e) {
+    try {
+      responseStream.position(pos);
+      ObjectOutputStream oos=new ObjectOutputStream(responseStream);
+      oos.writeObject(new RemoteException(e.toString()));
+      oos.writeObject(null);
+    }
+ catch (    Exception unexpected) {
+      unexpected.printStackTrace();
+    }
+  }
+ finally {
+    onComplete.run();
+  }
+}
