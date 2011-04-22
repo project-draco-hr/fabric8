@@ -1,6 +1,4 @@
 {
-  ObjectOutputStream oos=new ObjectOutputStream(target);
-  oos.writeObject(args);
-  oos.flush();
-  return new ObjectResponseFuture(loader);
+  serializationStrategy.encodeRequest(loader,method.getParameterTypes(),args,target);
+  return new BlockingResponseFuture(loader,method);
 }

@@ -7,12 +7,13 @@
     final Buffer encoded_method=readBuffer(bais);
     final ServiceFactoryHolder holder=holders.get(service);
     final Method method=holder.method(encoded_method);
+    SerializationStrategy serializationStrategy=new ObjectSerializationStrategy();
     final InvocationStrategy strategy;
     if (AsyncInvocationStrategy.isAsyncMethod(method)) {
-      strategy=new AsyncInvocationStrategy();
+      strategy=new AsyncInvocationStrategy(serializationStrategy);
     }
  else {
-      strategy=new BlockingInvocationStrategy();
+      strategy=new BlockingInvocationStrategy(serializationStrategy);
     }
     final Object svc=holder.factory.get();
     Runnable task=new Runnable(){
