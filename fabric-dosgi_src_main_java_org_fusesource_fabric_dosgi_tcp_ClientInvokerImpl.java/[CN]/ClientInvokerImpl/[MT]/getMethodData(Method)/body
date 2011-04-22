@@ -15,7 +15,17 @@ synchronized (method_cache) {
       sb.append(encodeClassName(types[i]));
     }
     Buffer signature=new UTF8Buffer(sb.toString()).buffer();
-    SerializationStrategy serializationStrategy=ObjectSerializationStrategy.INSTANCE;
+    Serialization annotation=method.getAnnotation(Serialization.class);
+    SerializationStrategy serializationStrategy;
+    if (annotation != null) {
+      serializationStrategy=serializationStrategies.get(annotation.value());
+      if (serializationStrategy == null) {
+        throw new RuntimeException("Could not find the serialization strategy named: " + annotation.value());
+      }
+    }
+ else {
+      serializationStrategy=ObjectSerializationStrategy.INSTANCE;
+    }
     final InvocationStrategy strategy;
     if (AsyncInvocationStrategy.isAsyncMethod(method)) {
       strategy=AsyncInvocationStrategy.INSTANCE;

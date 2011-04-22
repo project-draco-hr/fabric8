@@ -24,7 +24,7 @@
             final Buffer command=baos.toBuffer();
             BufferEditor editor=command.buffer().bigEndianEditor();
             editor.writeInt(command.length);
-            queue.execute(new Runnable(){
+            queue().execute(new Runnable(){
               public void run(){
                 transport.offer(command);
               }
@@ -38,7 +38,7 @@
 ;
     Executor executor;
     if (svc instanceof Dispatched) {
-      executor=((Dispatched)svc).getDispatchQueue();
+      executor=((Dispatched)svc).queue();
     }
  else {
       executor=blockingExecutor;

@@ -8,7 +8,17 @@
       params[i]=decodeClass(parts[i + 1]);
     }
     Method method=clazz.getMethod(name,params);
-    SerializationStrategy serializationStrategy=ObjectSerializationStrategy.INSTANCE;
+    Serialization annotation=method.getAnnotation(Serialization.class);
+    SerializationStrategy serializationStrategy;
+    if (annotation != null) {
+      serializationStrategy=serializationStrategies.get(annotation.value());
+      if (serializationStrategy == null) {
+        throw new RuntimeException("Could not find the serialization strategy named: " + annotation.value());
+      }
+    }
+ else {
+      serializationStrategy=ObjectSerializationStrategy.INSTANCE;
+    }
     final InvocationStrategy invocationStrategy;
     if (AsyncInvocationStrategy.isAsyncMethod(method)) {
       invocationStrategy=AsyncInvocationStrategy.INSTANCE;

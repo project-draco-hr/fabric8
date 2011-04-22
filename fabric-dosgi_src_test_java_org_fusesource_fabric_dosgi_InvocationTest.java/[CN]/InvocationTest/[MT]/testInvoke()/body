@@ -1,9 +1,10 @@
 {
   int port=getFreePort();
   DispatchQueue queue=Dispatch.createQueue();
-  ServerInvokerImpl server=new ServerInvokerImpl("tcp://localhost:" + port,queue);
+  HashMap<String,SerializationStrategy> map=new HashMap<String,SerializationStrategy>();
+  ServerInvokerImpl server=new ServerInvokerImpl("tcp://localhost:" + port,queue,map);
   server.start();
-  ClientInvokerImpl client=new ClientInvokerImpl(queue);
+  ClientInvokerImpl client=new ClientInvokerImpl(queue,map);
   client.start();
   try {
     server.registerService("service-id",new ServerInvoker.ServiceFactory(){

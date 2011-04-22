@@ -11,12 +11,12 @@
   BufferEditor editor=command.buffer().bigEndianEditor();
   editor.writeInt(command.length);
   handler.lastRequestSize=command.length;
-  queue.execute(new Runnable(){
+  queue().execute(new Runnable(){
     public void run(){
       try {
         TransportPool pool=transports.get(address);
         if (pool == null) {
-          pool=new InvokerTransportPool(address,queue);
+          pool=new InvokerTransportPool(address,queue());
           transports.put(address,pool);
           pool.start();
         }
