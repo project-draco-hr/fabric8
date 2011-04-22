@@ -1,5 +1,5 @@
 {
-  Buffer rc=null;
+  MethodMetadata rc=null;
 synchronized (method_cache) {
     rc=method_cache.get(method);
   }
@@ -14,7 +14,15 @@ synchronized (method_cache) {
       }
       sb.append(encodeClassName(types[i]));
     }
-    rc=new UTF8Buffer(sb.toString()).buffer();
+    SerializationStrategy serializationStrategy=new ObjectSerializationStrategy();
+    final InvocationStrategy strategy;
+    if (AsyncInvocationStrategy.isAsyncMethod(method)) {
+      strategy=new AsyncInvocationStrategy(serializationStrategy);
+    }
+ else {
+      strategy=new BlockingInvocationStrategy(serializationStrategy);
+    }
+    rc=new MethodMetadata(strategy,new UTF8Buffer(sb.toString()).buffer());
 synchronized (method_cache) {
       method_cache.put(method,rc);
     }

@@ -4,16 +4,9 @@
   baos.writeInt(0);
   baos.writeVarLong(correlation);
   writeBuffer(baos,service);
-  writeBuffer(baos,encodeMethod(method));
-  SerializationStrategy serializationStrategy=new ObjectSerializationStrategy();
-  final InvocationStrategy strategy;
-  if (AsyncInvocationStrategy.isAsyncMethod(method)) {
-    strategy=new AsyncInvocationStrategy(serializationStrategy);
-  }
- else {
-    strategy=new BlockingInvocationStrategy(serializationStrategy);
-  }
-  final ResponseFuture future=strategy.request(classLoader,method,args,baos);
+  MethodMetadata methodData=getMethodMetadata(method);
+  writeBuffer(baos,methodData.signature);
+  final ResponseFuture future=methodData.strategy.request(classLoader,method,args,baos);
   final Buffer command=baos.toBuffer();
   BufferEditor editor=command.buffer().bigEndianEditor();
   editor.writeInt(command.length);
