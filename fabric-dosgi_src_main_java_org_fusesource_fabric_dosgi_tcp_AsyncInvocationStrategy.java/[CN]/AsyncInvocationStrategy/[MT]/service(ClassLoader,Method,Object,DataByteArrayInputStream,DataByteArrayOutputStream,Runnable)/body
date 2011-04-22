@@ -1,0 +1,23 @@
+{
+  final ServiceResponse helper=new ServiceResponse(responseStream,onComplete);
+  try {
+    final ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(requestStream);
+    ois.setClassLoader(loader);
+    final Object[] args=(Object[])ois.readObject();
+    Object[] new_args=new Object[args.length + 1];
+    System.arraycopy(args,0,new_args,0,args.length);
+    new_args[new_args.length - 1]=new AsyncCallback<Object>(){
+      public void onSuccess(      Object result){
+        helper.send(null,result);
+      }
+      public void onFailure(      Throwable failure){
+        helper.send(failure,null);
+      }
+    }
+;
+    method.invoke(target,new_args);
+  }
+ catch (  Throwable t) {
+    helper.send(t,null);
+  }
+}
