@@ -1,6 +1,7 @@
 {
   try {
-    String node="/fabric/configs/versions/" + version + "/profiles/"+ id;
+    String version=zooKeeper.getStringData("/fabric/configs/agents/" + id);
+    String node="/fabric/configs/versions/" + version + "/agents/"+ id;
     String str=zooKeeper.getStringData(node);
     if (str == null) {
       return new Profile[0];

@@ -1,12 +1,7 @@
 {
   try {
-    zooKeeper.createWithParents(ZkPath.PROFILE.getPath(version,name),null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    zooKeeper.createWithParents(ZkPath.PROFILE_PARENTS.getPath(version,name),null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    zooKeeper.createWithParents(ZkPath.PROFILE_BUNDLES.getPath(version,name),null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    zooKeeper.createWithParents(ZkPath.PROFILE_REPOSITORIES.getPath(version,name),null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    zooKeeper.createWithParents(ZkPath.PROFILE_FEATURES.getPath(version,name),null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    zooKeeper.createWithParents(ZkPath.PROFILE_CONFIG_PIDS.getPath(version,name),null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    return new ProfileImpl(name,version);
+    zooKeeper.createWithParents("/fabric/configs/versions/" + version + "/profiles/"+ name,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    return new ProfileImpl(name,version,zooKeeper);
   }
  catch (  Exception e) {
     throw new RuntimeException(e);

@@ -1,9 +1,6 @@
 {
   try {
-    zooKeeper.deleteWithChildren(ZkPath.PROFILE.getPath(profile.getVersion(),profile.getName()));
-    for (    Profile child : profile.getExtensions()) {
-      zooKeeper.delete(ZkPath.PROFILE_PARENT.getPath(profile.getVersion(),child.getName(),profile.getName()));
-    }
+    zooKeeper.deleteWithChildren("/fabric/configs/versions/" + profile.getVersion() + "/profiles/"+ profile.getId());
   }
  catch (  Exception e) {
     throw new RuntimeException(e);

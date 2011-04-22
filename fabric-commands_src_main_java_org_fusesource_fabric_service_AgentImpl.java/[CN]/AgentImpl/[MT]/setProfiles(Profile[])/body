@@ -1,7 +1,9 @@
 {
   try {
+    String version=zooKeeper.getStringData("/fabric/configs/agents/" + id);
+    String node="/fabric/configs/versions/" + version + "/agents/"+ id;
     String str="";
-    for (    Profile parent : parents) {
+    for (    Profile parent : profiles) {
       if (!version.equals(parent.getVersion())) {
         throw new IllegalArgumentException("Bad profile: " + parent);
       }
@@ -10,7 +12,7 @@
       }
       str+=parent.getId();
     }
-    zooKeeper.setData("/fabric/configs/versions/" + version + "/profiles/"+ id,str);
+    zooKeeper.setData(node,str);
   }
  catch (  Exception e) {
     throw new RuntimeException(e);

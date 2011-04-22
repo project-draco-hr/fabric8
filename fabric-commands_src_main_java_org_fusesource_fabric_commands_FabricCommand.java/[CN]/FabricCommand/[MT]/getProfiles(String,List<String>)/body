@@ -1,13 +1,13 @@
 {
-  Map<String,Profile> allProfiles=profileService.getProfiles(version);
+  Profile[] allProfiles=profileService.getProfiles(version);
   List<Profile> profiles=new ArrayList<Profile>();
   if (names == null) {
     return new Profile[0];
   }
   for (  String name : names) {
     Profile profile=null;
-    for (    Profile p : allProfiles.values()) {
-      if (name.equals(p.getName())) {
+    for (    Profile p : allProfiles) {
+      if (name.equals(p.getId())) {
         profile=p;
         break;
       }
