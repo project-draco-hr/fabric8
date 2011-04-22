@@ -5,13 +5,12 @@
   baos.writeVarLong(correlation);
   writeBuffer(baos,service);
   writeBuffer(baos,encodeMethod(method));
-  ObjectOutputStream oos=new ObjectOutputStream(baos);
-  oos.writeObject(args);
+  RequestCodecStrategy strategy=new ObjectSerializationStrategy();
+  final ResponseFuture future=strategy.request(classLoader,method,args,baos);
   final Buffer command=baos.toBuffer();
   BufferEditor editor=command.buffer().bigEndianEditor();
   editor.writeInt(command.length);
   handler.lastRequestSize=command.length;
-  final ResponseFuture future=new ResponseFuture(classLoader);
   queue.execute(new Runnable(){
     public void run(){
       try {

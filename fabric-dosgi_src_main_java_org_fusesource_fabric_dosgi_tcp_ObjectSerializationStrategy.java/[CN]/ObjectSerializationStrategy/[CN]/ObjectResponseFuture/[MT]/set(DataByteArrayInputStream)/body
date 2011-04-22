@@ -1,0 +1,12 @@
+{
+  ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(source);
+  ois.setClassLoader(loader);
+  Throwable error=(Throwable)ois.readObject();
+  Object value=ois.readObject();
+  if (error != null) {
+    super.setException(error);
+  }
+ else {
+    super.set(value);
+  }
+}
