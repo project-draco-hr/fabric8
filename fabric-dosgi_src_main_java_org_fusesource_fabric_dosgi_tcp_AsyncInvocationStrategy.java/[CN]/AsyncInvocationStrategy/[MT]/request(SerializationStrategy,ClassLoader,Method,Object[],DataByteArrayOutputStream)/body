@@ -6,5 +6,5 @@
   Object[] new_args=new Object[args.length - 1];
   System.arraycopy(args,0,new_args,0,new_args.length);
   serializationStrategy.encodeRequest(loader,new_types,new_args,target);
-  return new AsyncResponseFuture(loader,method,(AsyncCallback)args[args.length - 1],serializationStrategy);
+  return new AsyncResponseFuture(loader,method,(AsyncCallback)args[args.length - 1],serializationStrategy,Dispatch.getCurrentQueue());
 }

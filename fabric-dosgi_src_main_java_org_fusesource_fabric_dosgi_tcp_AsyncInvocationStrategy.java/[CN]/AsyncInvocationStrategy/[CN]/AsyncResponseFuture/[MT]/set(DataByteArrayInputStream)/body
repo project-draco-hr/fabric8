@@ -1,8 +1,13 @@
 {
-  try {
-    serializationStrategy.decodeResponse(loader,getResultType(method),source,callback);
+  if (queue != null) {
+    queue.execute(new Runnable(){
+      public void run(){
+        decodeIt(source);
+      }
+    }
+);
   }
- catch (  Throwable e) {
-    e.printStackTrace();
+ else {
+    decodeIt(source);
   }
 }
