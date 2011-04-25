@@ -1,7 +1,7 @@
 {
-  if (isEmpty() && next_write_size > 0) {
+  if (write_buffer.remaining() == 0 && next_write_size > 0) {
     if (next_write_buffers.size() == 1) {
-      write_buffer=next_write_buffers.get(0).toByteBuffer();
+      write_buffer=next_write_buffers.remove(0).toByteBuffer();
     }
  else {
       if (write_buffer.capacity() < next_write_size) {
@@ -22,5 +22,5 @@
   if (write_buffer.remaining() != 0) {
     write_counter+=write_channel.write(write_buffer);
   }
-  return isEmpty() ? BufferState.EMPTY : BufferState.NOT_EMPTY;
+  return empty() ? BufferState.EMPTY : BufferState.NOT_EMPTY;
 }

@@ -4,9 +4,12 @@
   }
   queue.execute(new Runnable(){
     public void run(){
-      Transport idleTransport=getIdleTransport();
-      if (idleTransport != null) {
-        idleTransport.offer(data);
+      Transport transport=getIdleTransport();
+      if (transport != null) {
+        transport.offer(data);
+        if (transport.full()) {
+          transports.put(transport,0L);
+        }
       }
  else {
         pending.add(data);

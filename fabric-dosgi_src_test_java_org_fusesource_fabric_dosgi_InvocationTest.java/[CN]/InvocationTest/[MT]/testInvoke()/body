@@ -1,18 +1,37 @@
 {
+  int port=getFreePort();
   DispatchQueue queue=Dispatch.createQueue();
-  ServerInvokerImpl server=new ServerInvokerImpl("tcp://localhost:3252",queue);
+  HashMap<String,SerializationStrategy> map=new HashMap<String,SerializationStrategy>();
+  map.put("extern",new ExternSerializationStrategy());
+  ServerInvokerImpl server=new ServerInvokerImpl("tcp://localhost:" + port,queue,map);
   server.start();
-  ClientInvokerImpl client=new ClientInvokerImpl(queue);
+  ClientInvokerImpl client=new ClientInvokerImpl(queue,map);
   client.start();
-  server.registerService("service-id",new ServerInvoker.ServiceFactory(){
-    public Object get(){
-      return new HelloImpl();
+  try {
+    server.registerService("service-id",new ServerInvoker.ServiceFactory(){
+      public Object get(){
+        return new HelloImpl();
+      }
+      public void unget(){
+      }
     }
-    public void unget(){
-    }
-  }
 ,HelloImpl.class.getClassLoader());
-  InvocationHandler handler=client.getProxy("tcp://localhost:3252","service-id",HelloImpl.class.getClassLoader());
-  Hello hello=(Hello)Proxy.newProxyInstance(HelloImpl.class.getClassLoader(),new Class[]{Hello.class},handler);
-  assertEquals("Hello Fabric!",hello.hello("Fabric"));
+    InvocationHandler handler=client.getProxy("tcp://localhost:" + port,"service-id",HelloImpl.class.getClassLoader());
+    Hello hello=(Hello)Proxy.newProxyInstance(HelloImpl.class.getClassLoader(),new Class[]{Hello.class},handler);
+    assertEquals("Hello Fabric!",hello.hello("Fabric"));
+    assertEquals('a',hello.mix(0));
+    assertEquals('b',hello.mix(new int[]{0}));
+    assertEquals('c',hello.mix(new Integer(0)));
+    assertEquals('d',hello.mix(new Integer[]{new Integer(0)}));
+    assertEquals('e',hello.mix(new int[0][0]));
+    assertEquals('f',hello.mix(new Integer[0][0]));
+    final AsyncCallbackFuture<String> future=new AsyncCallbackFuture<String>();
+    hello.hello("Hiram",future);
+    assertEquals("Hello Hiram!",future.get(2,TimeUnit.SECONDS));
+    assertEquals("Hello Hiram!",hello.exernHello(new ExternValue("Hiram")).value);
+  }
+  finally {
+    server.stop();
+    client.stop();
+  }
 }

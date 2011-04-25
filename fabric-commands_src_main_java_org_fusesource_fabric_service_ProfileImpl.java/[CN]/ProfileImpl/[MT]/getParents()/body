@@ -1,17 +1,3 @@
 {
-  try {
-    String node="/fabric/configs/versions/" + version + "/profiles/"+ id;
-    String str=zooKeeper.getStringData(node);
-    if (str == null) {
-      return new Profile[0];
-    }
-    List<Profile> profiles=new ArrayList<Profile>();
-    for (    String p : str.split(" ")) {
-      profiles.add(new ProfileImpl(p,version,zooKeeper));
-    }
-    return profiles.toArray(new Profile[profiles.size()]);
-  }
- catch (  Exception e) {
-    throw new RuntimeException(e);
-  }
+  return this.parents;
 }

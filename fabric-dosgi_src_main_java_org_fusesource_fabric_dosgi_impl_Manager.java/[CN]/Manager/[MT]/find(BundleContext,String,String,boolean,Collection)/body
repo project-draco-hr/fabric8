@@ -3,7 +3,7 @@
   for (Iterator<ServiceReference> iterator=references.iterator(); iterator.hasNext(); ) {
     ServiceReference reference=iterator.next();
     if (reference.getProperty(SERVICE_IMPORTED) != null && reference.getProperty(FABRIC_ADDRESS) != null) {
-      if (context != reference.getBundle().getBundleContext()) {
+      if (context != reference.getBundle().getBundleContext() && context != this.bundleContext) {
         iterator.remove();
       }
     }

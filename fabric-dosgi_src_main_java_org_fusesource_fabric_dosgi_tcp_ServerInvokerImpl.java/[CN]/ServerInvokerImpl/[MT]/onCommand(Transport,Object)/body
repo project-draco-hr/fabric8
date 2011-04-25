@@ -1,67 +1,49 @@
 {
   try {
-    DataByteArrayInputStream bais=new DataByteArrayInputStream((Buffer)data);
+    final DataByteArrayInputStream bais=new DataByteArrayInputStream((Buffer)data);
     final int size=bais.readInt();
-    final ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(bais);
-    final String correlation=ois.readUTF();
-    final String service=ois.readUTF();
-    ois.setClassLoader(loaders.get(service));
-    final ServiceFactory factory=handlers.get(service);
-    executor.submit(new Runnable(){
+    final long correlation=bais.readVarLong();
+    final UTF8Buffer service=readBuffer(bais).utf8();
+    final Buffer encoded_method=readBuffer(bais);
+    final ServiceFactoryHolder holder=holders.get(service);
+    final MethodData methodData=holder.getMethodData(encoded_method);
+    final Object svc=holder.factory.get();
+    Runnable task=new Runnable(){
       public void run(){
-        final String name;
-        final Class[] types;
-        final Object[] args;
+        final DataByteArrayOutputStream baos=new DataByteArrayOutputStream();
         try {
-          name=ois.readUTF();
-          types=(Class[])ois.readObject();
-          args=(Object[])ois.readObject();
-        }
- catch (        Exception e) {
-          LOGGER.info("Error while reading request",e);
-          return;
-        }
-        Object svc=factory.get();
-        Object value=null;
-        Throwable error=null;
-        try {
-          Method method=svc.getClass().getMethod(name,types);
-          value=method.invoke(svc,args);
-        }
- catch (        Throwable t) {
-          if (t instanceof InvocationTargetException) {
-            error=t.getCause();
-          }
- else {
-            error=t;
-          }
-        }
- finally {
-          factory.unget();
-        }
-        try {
-          DataByteArrayOutputStream baos=new DataByteArrayOutputStream();
           baos.writeInt(0);
-          ObjectOutputStream oos=new ObjectOutputStream(baos);
-          oos.writeUTF(correlation);
-          oos.writeObject(error);
-          oos.writeObject(value);
-          final Buffer command=baos.toBuffer();
-          BufferEditor editor=command.buffer().bigEndianEditor();
-          editor.writeInt(command.length);
-          queue.execute(new Runnable(){
-            public void run(){
-              transport.offer(command);
+          baos.writeVarLong(correlation);
+        }
+ catch (        IOException e) {
+          throw new RuntimeException(e);
+        }
+        methodData.invocationStrategy.service(methodData.serializationStrategy,holder.loader,methodData.method,svc,bais,baos,new Runnable(){
+          public void run(){
+            holder.factory.unget();
+            final Buffer command=baos.toBuffer();
+            BufferEditor editor=command.buffer().bigEndianEditor();
+            editor.writeInt(command.length);
+            queue().execute(new Runnable(){
+              public void run(){
+                transport.offer(command);
+              }
             }
-          }
 );
+          }
         }
- catch (        Exception e) {
-          LOGGER.info("Error while writing answer");
-        }
+);
       }
     }
-);
+;
+    Executor executor;
+    if (svc instanceof Dispatched) {
+      executor=((Dispatched)svc).queue();
+    }
+ else {
+      executor=blockingExecutor;
+    }
+    executor.execute(task);
   }
  catch (  Exception e) {
     LOGGER.info("Error while reading request",e);

@@ -1,0 +1,19 @@
+{
+  if (responded.compareAndSet(false,true)) {
+    try {
+      serializationStrategy.encodeResponse(loader,method.getReturnType(),value,error,responseStream);
+    }
+ catch (    Exception e) {
+      try {
+        responseStream.position(pos);
+        serializationStrategy.encodeResponse(loader,method.getReturnType(),value,new RemoteException(e.toString()),responseStream);
+      }
+ catch (      Exception unexpected) {
+        unexpected.printStackTrace();
+      }
+    }
+ finally {
+      onComplete.run();
+    }
+  }
+}

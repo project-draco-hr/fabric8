@@ -2,17 +2,10 @@
   try {
     DataByteArrayInputStream bais=new DataByteArrayInputStream((Buffer)data);
     int size=bais.readInt();
-    ClassLoaderObjectInputStream ois=new ClassLoaderObjectInputStream(bais);
-    String correlation=ois.readUTF();
+    long correlation=bais.readVarLong();
     ResponseFuture response=requests.remove(correlation);
-    ois.setClassLoader(response.getClassLoader());
-    Throwable error=(Throwable)ois.readObject();
-    Object value=ois.readObject();
-    if (error != null) {
-      response.setException(error);
-    }
- else {
-      response.set(value);
+    if (response != null) {
+      response.set(bais);
     }
   }
  catch (  Exception e) {

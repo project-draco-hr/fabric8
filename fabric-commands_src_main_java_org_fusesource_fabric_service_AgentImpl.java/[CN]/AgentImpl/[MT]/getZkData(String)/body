@@ -1,6 +1,6 @@
 {
   try {
-    return zooKeeper.getStringData("/fabric/registry/agents/config/" + id + "/"+ name);
+    return zooKeeper.getStringData(ZkPath.valueOf("AGENT_" + name).getPath(id));
   }
  catch (  Exception e) {
     throw new RuntimeException(e);
