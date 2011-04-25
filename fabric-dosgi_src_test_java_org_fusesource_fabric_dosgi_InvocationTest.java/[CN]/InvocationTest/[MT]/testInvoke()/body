@@ -1,9 +1,8 @@
 {
-  int port=getFreePort();
   DispatchQueue queue=Dispatch.createQueue();
   HashMap<String,SerializationStrategy> map=new HashMap<String,SerializationStrategy>();
-  map.put("extern",new ExternSerializationStrategy());
-  ServerInvokerImpl server=new ServerInvokerImpl("tcp://localhost:" + port,queue,map);
+  map.put("protobuf",new ProtobufSerializationStrategy());
+  ServerInvokerImpl server=new ServerInvokerImpl("tcp://localhost:0",queue,map);
   server.start();
   ClientInvokerImpl client=new ClientInvokerImpl(queue,map);
   client.start();
@@ -16,7 +15,7 @@
       }
     }
 ,HelloImpl.class.getClassLoader());
-    InvocationHandler handler=client.getProxy("tcp://localhost:" + port,"service-id",HelloImpl.class.getClassLoader());
+    InvocationHandler handler=client.getProxy(server.getConnectAddress(),"service-id",HelloImpl.class.getClassLoader());
     Hello hello=(Hello)Proxy.newProxyInstance(HelloImpl.class.getClassLoader(),new Class[]{Hello.class},handler);
     assertEquals("Hello Fabric!",hello.hello("Fabric"));
     assertEquals('a',hello.mix(0));
@@ -25,10 +24,13 @@
     assertEquals('d',hello.mix(new Integer[]{new Integer(0)}));
     assertEquals('e',hello.mix(new int[0][0]));
     assertEquals('f',hello.mix(new Integer[0][0]));
-    final AsyncCallbackFuture<String> future=new AsyncCallbackFuture<String>();
-    hello.hello("Hiram",future);
-    assertEquals("Hello Hiram!",future.get(2,TimeUnit.SECONDS));
-    assertEquals("Hello Hiram!",hello.exernHello(new ExternValue("Hiram")).value);
+    AsyncCallbackFuture<String> future1=new AsyncCallbackFuture<String>();
+    hello.hello("Hiram",future1);
+    assertEquals("Hello Hiram!",future1.get(2,TimeUnit.SECONDS));
+    assertEquals("Hello Hiram!",hello.protobuf(stringValue("Hiram")).getValue());
+    AsyncCallbackFuture<StringValue.Getter> future2=new AsyncCallbackFuture<StringValue.Getter>();
+    hello.protobuf(stringValue("Hiram Async"),future2);
+    assertEquals("Hello Hiram Async!",future2.get(2,TimeUnit.SECONDS).getValue());
   }
   finally {
     server.stop();
