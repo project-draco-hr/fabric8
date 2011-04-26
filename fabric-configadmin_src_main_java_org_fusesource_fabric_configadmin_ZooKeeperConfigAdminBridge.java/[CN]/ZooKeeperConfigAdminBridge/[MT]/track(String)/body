@@ -9,12 +9,12 @@
       if (data != null) {
         String[] parents=data.split(" ");
         for (        String parent : parents) {
-          track(versionsNode + "/" + version+ "/profiles/"+ parent);
+          track(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,parent));
         }
       }
     }
  else {
-      String p=versionsNode + "/" + version+ "/profiles";
+      String p=ZkPath.CONFIG_VERSIONS_PROFILES.getPath(version);
       if (!trees.containsKey(p)) {
         tree=new ZooKeeperTreeTracker<String>(zooKeeper,new ZKStringDataReader(),p,1);
         trees.put(p,tree);

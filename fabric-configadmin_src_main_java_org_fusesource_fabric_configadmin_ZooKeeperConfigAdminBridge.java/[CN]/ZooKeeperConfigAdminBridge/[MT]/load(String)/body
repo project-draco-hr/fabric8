@@ -7,7 +7,7 @@
         if (key.startsWith("zk:")) {
           key=key.substring("zk:".length());
           if (key.charAt(0) != '/') {
-            key="/fabric/registry/agents/config/" + key;
+            key=ZkPath.AGENT.getPath(key);
           }
           try {
             return zooKeeper.getStringData(key);

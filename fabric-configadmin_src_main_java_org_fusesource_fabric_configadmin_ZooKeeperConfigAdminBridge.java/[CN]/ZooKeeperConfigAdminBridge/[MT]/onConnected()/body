@@ -1,10 +1,10 @@
 {
   try {
-    version=zooKeeper.getStringData(agentNode + "/" + name);
+    version=zooKeeper.getStringData(ZkPath.CONFIG_AGENT.getPath(name));
     if (version == null) {
-      throw new IllegalStateException("Configuration for node " + name + " not found at "+ agentNode+ "/"+ name);
+      throw new IllegalStateException("Configuration for node " + name + " not found at "+ ZkPath.CONFIG_AGENT.getPath(name));
     }
-    node=versionsNode + "/" + version+ "/agents/"+ name;
+    node=ZkPath.CONFIG_VERSIONS_AGENT.getPath(version,name);
     if (zooKeeper.exists(node) == null) {
       zooKeeper.createWithParents(node,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
     }
