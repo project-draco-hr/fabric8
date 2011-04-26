@@ -1,10 +1,10 @@
 {
   Set<Feature> allFeatures=addFeatures(features,repositories.values());
-  downloadBundles(allFeatures);
-  List<Resource> bundles=getObrResolver().resolve(allFeatures);
+  downloadBundles(allFeatures,bundles);
+  List<Resource> toDeploy=getObrResolver().resolve(allFeatures,bundles);
   StringBuilder sb=new StringBuilder();
   sb.append("Configuration changed.  New bundles list:\n");
-  for (  Resource bundle : bundles) {
+  for (  Resource bundle : toDeploy) {
     sb.append("  ").append(bundle.getURI()).append("\n");
   }
   LOGGER.info(sb.toString());
@@ -15,7 +15,7 @@
   for (  Bundle bundle : bundleContext.getBundles()) {
     if (bundle.getBundleId() != 0) {
       Resource resource=null;
-      for (      Resource res : bundles) {
+      for (      Resource res : toDeploy) {
         if (res.getSymbolicName().equals(bundle.getSymbolicName()) && res.getVersion().equals(bundle.getVersion())) {
           resource=res;
           break;
@@ -23,14 +23,14 @@
       }
       if (resource != null) {
         toIgnore.add(bundle);
-        bundles.remove(resource);
+        toDeploy.remove(resource);
       }
  else {
         toDelete.add(bundle);
       }
     }
   }
-  for (  Resource resource : bundles) {
+  for (  Resource resource : toDeploy) {
     TreeMap<Version,Bundle> matching=new TreeMap<Version,Bundle>();
     VersionRange range=getMicroVersionRange(resource.getVersion());
     for (    Bundle bundle : toDelete) {

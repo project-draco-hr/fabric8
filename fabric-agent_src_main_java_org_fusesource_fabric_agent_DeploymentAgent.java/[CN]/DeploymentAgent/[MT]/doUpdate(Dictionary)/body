@@ -37,7 +37,19 @@
       features.add(feature);
     }
   }
-  updateDeployment(repositories,features);
+  Set<String> bundles=new HashSet<String>();
+  for (  String key : properties.keySet()) {
+    if (key.startsWith("bundle.")) {
+      String url=properties.get(key);
+      if (url == null || url.length() == 0) {
+        url=key.substring("bundle.".length());
+      }
+      if (url != null && url.length() > 0) {
+        bundles.add(url);
+      }
+    }
+  }
+  updateDeployment(repositories,features,bundles);
   for (  String key : properties.keySet()) {
     if (key.equals("framework")) {
       String url=properties.get(key);
