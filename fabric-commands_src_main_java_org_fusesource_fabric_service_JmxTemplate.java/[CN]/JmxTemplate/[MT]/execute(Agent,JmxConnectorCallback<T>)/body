@@ -1,10 +1,22 @@
 {
   String rootUrl=agent.getJmxUrl();
-  JMXConnector connector=JMXConnectorFactory.connect(new JMXServiceURL(rootUrl),getEnvCred(login,password));
+  JMXConnector connector;
+  try {
+    connector=JMXConnectorFactory.connect(new JMXServiceURL(rootUrl),getEnvCred(login,password));
+  }
+ catch (  IOException e) {
+    throw new FabricException(e);
+  }
   try {
     return callback.doWithJmxConnector(connector);
   }
-  finally {
+ catch (  FabricException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new FabricException(e);
+  }
+ finally {
     try {
       connector.close();
     }

@@ -1,23 +1,28 @@
 {
-  Map<String,Agent> agents=new HashMap<String,Agent>();
-  List<String> configs=zooKeeper.getChildren("/fabric/registry/agents/config");
-  for (  String name : configs) {
-    String root=zooKeeper.getStringData("/fabric/registry/agents/config/" + name + "/root").trim();
-    if (root.isEmpty()) {
-      if (!agents.containsKey(name)) {
-        Agent agent=new AgentImpl(null,name,zooKeeper);
+  try {
+    Map<String,Agent> agents=new HashMap<String,Agent>();
+    List<String> configs=zooKeeper.getChildren("/fabric/registry/agents/config");
+    for (    String name : configs) {
+      String root=zooKeeper.getStringData("/fabric/registry/agents/config/" + name + "/root").trim();
+      if (root.isEmpty()) {
+        if (!agents.containsKey(name)) {
+          Agent agent=new AgentImpl(null,name,zooKeeper);
+          agents.put(name,agent);
+        }
+      }
+ else {
+        Agent parent=agents.get(root);
+        if (parent == null) {
+          parent=new AgentImpl(null,root,zooKeeper);
+          agents.put(root,parent);
+        }
+        Agent agent=new AgentImpl(parent,name,zooKeeper);
         agents.put(name,agent);
       }
     }
- else {
-      Agent parent=agents.get(root);
-      if (parent == null) {
-        parent=new AgentImpl(null,root,zooKeeper);
-        agents.put(root,parent);
-      }
-      Agent agent=new AgentImpl(parent,name,zooKeeper);
-      agents.put(name,agent);
-    }
+    return agents;
   }
-  return agents;
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
 }
