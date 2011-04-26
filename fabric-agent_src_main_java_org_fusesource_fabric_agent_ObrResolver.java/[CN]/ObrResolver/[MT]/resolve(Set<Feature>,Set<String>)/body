@@ -17,6 +17,12 @@
         infos.put(req,bundleInfo);
       }
     }
+    for (    final String bundle : bundles) {
+      URL url=new URL(bundle);
+      Resource res=repositoryAdmin.getHelper().createResource(url);
+      ress.add(res);
+      infos.put(res,new SimpleBundleInfo(bundle));
+    }
   }
   Repository repository=repositoryAdmin.getHelper().repository(ress.toArray(new Resource[ress.size()]));
   List<Repository> repos=new ArrayList<Repository>();
