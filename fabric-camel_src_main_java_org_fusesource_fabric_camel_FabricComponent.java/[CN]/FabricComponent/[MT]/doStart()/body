@@ -1,7 +1,9 @@
 {
   super.doStart();
   if (zkClient == null) {
-    zkClient=new ZKClientFactoryBean().getObject();
+    ZKClient client=new ZKClient(System.getProperty("zookeeper.url","localhost:2181"),Timespan.parse("10s"),null);
+    client.start();
+    zkClient=client;
   }
   checkZkConnected();
   if (producerCache == null) {

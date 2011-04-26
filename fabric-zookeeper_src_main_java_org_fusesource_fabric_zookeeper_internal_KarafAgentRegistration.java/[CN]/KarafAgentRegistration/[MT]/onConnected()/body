@@ -1,0 +1,23 @@
+{
+  try {
+    String name=System.getProperty("karaf.name");
+    String nodeAlive=AGENT_ALIVE.getPath(name);
+    Stat stat=zooKeeper.exists(nodeAlive);
+    if (stat != null) {
+      if (stat.getEphemeralOwner() != zooKeeper.getSessionId()) {
+        zooKeeper.delete(nodeAlive);
+        zooKeeper.createWithParents(nodeAlive,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
+      }
+    }
+ else {
+      zooKeeper.createWithParents(nodeAlive,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
+    }
+    zooKeeper.createOrSetWithParents(AGENT_JMX.getPath(name),getJmxUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    zooKeeper.createOrSetWithParents(AGENT_SSH.getPath(name),getSshUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    zooKeeper.createOrSetWithParents(AGENT_IP.getPath(name),getLocalHostAddress(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    zooKeeper.createOrSetWithParents(AGENT_ROOT.getPath(name),getRootName(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+}
