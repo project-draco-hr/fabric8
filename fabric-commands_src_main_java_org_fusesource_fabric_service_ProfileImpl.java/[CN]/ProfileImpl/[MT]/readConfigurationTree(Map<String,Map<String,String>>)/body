@@ -1,0 +1,13 @@
+{
+  List<String> pids=zooKeeper.getChildren("/fabric/configs/versions/" + version + "/profiles/"+ id);
+  for (  String pid : pids) {
+    if (!configuration.containsKey(pid)) {
+      configuration.put(pid,new HashMap<String,String>());
+    }
+    List<String> keys=zooKeeper.getChildren("/fabric/configs/versions/" + version + "/profiles/"+ id+ "/"+ pid);
+    for (    String key : keys) {
+      configuration.get(pid).put(key,zooKeeper.getStringData("/fabric/configs/versions/" + version + "/profiles/"+ id+ "/"+ pid+ "/"+ key));
+    }
+  }
+  return configuration;
+}
