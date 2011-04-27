@@ -12,8 +12,14 @@
  else {
       zooKeeper.createWithParents(nodeAlive,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
     }
-    zooKeeper.createOrSetWithParents(AGENT_JMX.getPath(name),getJmxUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    zooKeeper.createOrSetWithParents(AGENT_SSH.getPath(name),getSshUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    String jmxUrl=getJmxUrl();
+    if (jmxUrl != null) {
+      zooKeeper.createOrSetWithParents(AGENT_JMX.getPath(name),getJmxUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    }
+    String sshUrl=getSshUrl();
+    if (sshUrl != null) {
+      zooKeeper.createOrSetWithParents(AGENT_SSH.getPath(name),getSshUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    }
     zooKeeper.createOrSetWithParents(AGENT_IP.getPath(name),getLocalHostAddress(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
     zooKeeper.createOrSetWithParents(AGENT_ROOT.getPath(name),getRootName(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
   }
