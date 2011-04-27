@@ -1,6 +1,11 @@
 {
   Configuration config=configurationAdmin.getConfiguration("org.apache.karaf.management");
-  String jmx=(String)config.getProperties().get("serviceUrl");
-  jmx=jmx.replace("service:jmx:rmi://localhost:","service:jmx:rmi://" + getLocalHostAddress() + ":");
-  return jmx;
+  if (config.getProperties() != null) {
+    String jmx=(String)config.getProperties().get("serviceUrl");
+    jmx=jmx.replace("service:jmx:rmi://localhost:","service:jmx:rmi://" + getLocalHostAddress() + ":");
+    return jmx;
+  }
+ else {
+    return null;
+  }
 }

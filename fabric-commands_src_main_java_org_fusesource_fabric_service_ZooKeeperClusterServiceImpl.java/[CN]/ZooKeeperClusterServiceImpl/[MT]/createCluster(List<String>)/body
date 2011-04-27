@@ -7,7 +7,7 @@
     String zooKeeperUrl=config != null && config.getProperties() != null ? (String)config.getProperties().get("zookeeper.url") : null;
     if (zooKeeperUrl == null) {
       if (agents.size() != 1 || !agents.get(0).equals(System.getProperty("karaf.name"))) {
-        throw new IllegalArgumentException("The first zookeeper cluster must be configured on this agent only.");
+        throw new FabricException("The first zookeeper cluster must be configured on this agent only.");
       }
       createLocalServer();
       return;
@@ -18,7 +18,7 @@
     }
     for (    String agent : agents) {
       if (zooKeeper.exists("/fabric/registry/agents/alive/" + agent) == null) {
-        throw new IllegalArgumentException("The agent " + agent + " is not alive");
+        throw new FabricException("The agent " + agent + " is not alive");
       }
     }
     Map<String,List<Integer>> usedPorts=new HashMap<String,List<Integer>>();
@@ -101,6 +101,6 @@
     }
   }
  catch (  Exception e) {
-    throw new RuntimeException("Unable to create zookeeper quorum: " + e.getMessage(),e);
+    throw new FabricException("Unable to create zookeeper quorum: " + e.getMessage(),e);
   }
 }
