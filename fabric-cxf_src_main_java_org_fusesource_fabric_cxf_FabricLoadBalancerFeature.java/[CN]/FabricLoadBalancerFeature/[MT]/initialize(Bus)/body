@@ -1,0 +1,10 @@
+{
+  FabricServerListener lister=new FabricServerListener(group);
+  ServerLifeCycleManager mgr=bus.getExtension(ServerLifeCycleManager.class);
+  if (mgr != null) {
+    mgr.registerListener(lister);
+  }
+ else {
+    LOG.warn("Cannot find the ServerLifeCycleManager ");
+  }
+}
