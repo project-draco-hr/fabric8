@@ -1,0 +1,12 @@
+{
+  try {
+    Map<String,Map<String,String>> oldCfg=readConfigurationTree(new HashMap());
+    if (!oldCfg.get(AGENT_PID).equals(configurations.get(AGENT_PID))) {
+      throw new FabricException("The " + AGENT_PID + " is read only. Use setBundles/Features/Repositories methods to modify deployment");
+    }
+    storeInternal(configurations);
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

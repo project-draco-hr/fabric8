@@ -1,0 +1,11 @@
+{
+  if (zkClient == null) {
+    zkClient=new ZKClientFactoryBean().getObject();
+  }
+  checkZkConnected();
+  group=ZooKeeperGroupFactory.create(getZkClient(),zkRoot + fabricPath,accessControlList);
+  if (loadBalanceStrategy == null) {
+    loadBalanceStrategy=new RandomLoadBalanceStrategy();
+  }
+  loadBalanceStrategy.setGroup(group);
+}

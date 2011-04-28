@@ -1,3 +1,12 @@
 {
-  return null;
+  try {
+    Map<String,Map<String,String>> configuration=new HashMap<String,Map<String,String>>();
+    for (    Profile parent : getParents()) {
+      configuration.putAll(parent.getConfigurations());
+    }
+    return readConfigurationTree(configuration);
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
 }

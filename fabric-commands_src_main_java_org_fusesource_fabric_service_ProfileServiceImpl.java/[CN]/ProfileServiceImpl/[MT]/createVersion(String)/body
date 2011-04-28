@@ -1,0 +1,9 @@
+{
+  try {
+    zooKeeper.createWithParents("/fabric/configs/versions/" + version,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    zooKeeper.createWithParents("/fabric/configs/versions/" + version + "/profiles",null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}
