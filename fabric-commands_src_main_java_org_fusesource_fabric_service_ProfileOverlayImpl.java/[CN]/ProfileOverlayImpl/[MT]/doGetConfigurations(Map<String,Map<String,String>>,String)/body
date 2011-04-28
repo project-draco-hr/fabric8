@@ -1,0 +1,29 @@
+{
+  String data=zooKeeper.getStringData(node);
+  String[] parents=data != null ? data.split(" ") : new String[0];
+  for (  String parent : parents) {
+    doGetConfigurations(configs,ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,parent));
+  }
+  for (  String pid : zooKeeper.getChildren(node)) {
+    data=zooKeeper.getStringData(node + "/" + pid);
+    if (DELETED.equals(data)) {
+      configs.remove(pid);
+    }
+ else {
+      Map<String,String> cfg=configs.get(pid);
+      if (cfg == null) {
+        cfg=new HashMap<String,String>();
+        configs.put(pid,cfg);
+      }
+      for (      String key : zooKeeper.getChildren(node + "/" + pid)) {
+        data=zooKeeper.getStringData(node + "/" + pid+ "/"+ key);
+        if (DELETED.equals(data)) {
+          cfg.remove(key);
+        }
+ else {
+          cfg.put(key,data != null ? data : "");
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
   try {
-    List<String> names=zooKeeper.getChildren("/fabric/configs/versions/" + version + "/profiles");
+    List<String> names=zooKeeper.getChildren(ZkPath.CONFIG_VERSIONS_PROFILES.getPath(version));
     List<Profile> profiles=new ArrayList<Profile>();
     for (    String name : names) {
       profiles.add(new ProfileImpl(name,version,zooKeeper));

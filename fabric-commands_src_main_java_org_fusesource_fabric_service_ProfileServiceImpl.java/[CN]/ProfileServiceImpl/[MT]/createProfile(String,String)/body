@@ -1,6 +1,6 @@
 {
   try {
-    zooKeeper.createWithParents("/fabric/configs/versions/" + version + "/profiles/"+ name,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    ZooKeeperUtils.create(zooKeeper,ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,name));
     return new ProfileImpl(name,version,zooKeeper);
   }
  catch (  Exception e) {

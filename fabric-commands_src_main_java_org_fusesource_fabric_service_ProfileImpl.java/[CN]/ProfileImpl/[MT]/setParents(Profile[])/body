@@ -10,7 +10,7 @@
       }
       str+=parent.getId();
     }
-    zooKeeper.setData("/fabric/configs/versions/" + version + "/profiles/"+ id,str);
+    zooKeeper.setData(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id),str);
   }
  catch (  Exception e) {
     throw new FabricException(e);

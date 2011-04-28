@@ -1,11 +1,7 @@
 {
   try {
-    if (zooKeeper.exists("/fabric/configs/agents/" + name) == null) {
-      zooKeeper.createWithParents("/fabric/configs/agents/" + name,configVersion,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    }
-    if (zooKeeper.exists("/fabric/configs/versions/" + configVersion + "/agents/"+ name) == null) {
-      zooKeeper.createWithParents("/fabric/configs/versions/" + configVersion + "/agents/"+ name,profile,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    }
+    ZooKeeperUtils.createDefault(zooKeeper,ZkPath.CONFIG_AGENT.getPath(name),configVersion);
+    ZooKeeperUtils.createDefault(zooKeeper,ZkPath.CONFIG_VERSIONS_AGENT.getPath(configVersion,name),profile);
   }
  catch (  Exception e) {
     throw new FabricException(e);

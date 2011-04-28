@@ -1,10 +1,34 @@
 {
   try {
-    Map<String,Map<String,String>> oldCfg=readConfigurationTree(new HashMap());
-    if (!oldCfg.get(AGENT_PID).equals(configurations.get(AGENT_PID))) {
-      throw new FabricException("The " + AGENT_PID + " is read only. Use setBundles/Features/Repositories methods to modify deployment");
+    Map<String,Map<String,String>> oldCfgs=getConfigurations();
+    String path=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id);
+    for (    String pid : configurations.keySet()) {
+      Map<String,String> oldCfg=oldCfgs.remove(pid);
+      Map<String,String> newCfg=configurations.get(pid);
+      if (newCfg.containsKey(DELETED)) {
+        if (!oldCfg.containsKey(DELETED)) {
+          ZooKeeperUtils.set(zooKeeper,path + "/" + pid,DELETED);
+        }
+        for (        String key : zooKeeper.getChildren(path + "/" + pid)) {
+          zooKeeper.deleteWithChildren(path + "/" + pid+ "/"+ key);
+        }
+      }
+ else {
+        ZooKeeperUtils.set(zooKeeper,path + "/" + pid,"");
+        for (        Map.Entry<String,String> entry : configurations.get(pid).entrySet()) {
+          String oldValue=oldCfg != null ? oldCfg.remove(entry.getKey()) : null;
+          if (oldValue == null || !oldValue.equals(entry.getValue())) {
+            ZooKeeperUtils.set(zooKeeper,path + "/" + pid+ "/"+ entry.getKey(),entry.getValue());
+          }
+        }
+        for (        String key : oldCfg.keySet()) {
+          zooKeeper.deleteWithChildren(path + "/" + pid+ "/"+ key);
+        }
+      }
     }
-    storeInternal(configurations);
+    for (    String key : oldCfgs.keySet()) {
+      zooKeeper.deleteWithChildren(path + "/" + key);
+    }
   }
  catch (  Exception e) {
     throw new FabricException(e);

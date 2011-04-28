@@ -1,9 +1,9 @@
 {
   try {
     Map<String,Agent> agents=new HashMap<String,Agent>();
-    List<String> configs=zooKeeper.getChildren("/fabric/registry/agents/config");
+    List<String> configs=zooKeeper.getChildren(ZkPath.AGENTS.getPath());
     for (    String name : configs) {
-      String root=zooKeeper.getStringData("/fabric/registry/agents/config/" + name + "/root").trim();
+      String root=zooKeeper.getStringData(ZkPath.AGENT_ROOT.getPath(name)).trim();
       if (root.isEmpty()) {
         if (!agents.containsKey(name)) {
           Agent agent=new AgentImpl(null,name,zooKeeper);
