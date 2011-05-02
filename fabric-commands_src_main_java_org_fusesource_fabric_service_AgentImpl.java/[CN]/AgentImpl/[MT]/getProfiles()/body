@@ -1,7 +1,7 @@
 {
   try {
-    String version=zooKeeper.getStringData("/fabric/configs/agents/" + id);
-    String node="/fabric/configs/versions/" + version + "/agents/"+ id;
+    String version=zooKeeper.getStringData(ZkPath.AGENT.getPath(id));
+    String node=ZkPath.CONFIG_VERSIONS_AGENT.getPath(version,id);
     String str=zooKeeper.getStringData(node);
     if (str == null) {
       return new Profile[0];
