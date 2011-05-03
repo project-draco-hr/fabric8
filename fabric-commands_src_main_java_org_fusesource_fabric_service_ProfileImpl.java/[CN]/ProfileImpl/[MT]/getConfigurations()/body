@@ -2,7 +2,7 @@
   try {
     Map<String,Map<String,String>> configurations=new HashMap<String,Map<String,String>>();
     String path=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id);
-    List<String> pids=zooKeeper.getChildren(path);
+    List<String> pids=service.getZooKeeper().getChildren(path);
     for (    String pid : pids) {
       configurations.put(pid,getConfiguration(pid));
     }

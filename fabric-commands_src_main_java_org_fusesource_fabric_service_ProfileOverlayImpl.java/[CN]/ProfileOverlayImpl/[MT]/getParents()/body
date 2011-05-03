@@ -1,5 +1,6 @@
 {
   try {
+    IZKClient zooKeeper=service.getZooKeeper();
     String node=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id);
     String str=zooKeeper.getStringData(node);
     if (str == null) {
@@ -7,7 +8,7 @@
     }
     List<Profile> profiles=new ArrayList<Profile>();
     for (    String p : str.split(" ")) {
-      profiles.add(new ProfileImpl(p,version,zooKeeper));
+      profiles.add(new ProfileImpl(p,version,service));
     }
     return profiles.toArray(new Profile[profiles.size()]);
   }

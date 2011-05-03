@@ -1,5 +1,6 @@
 {
   try {
+    IZKClient zooKeeper=service.getZooKeeper();
     Map<String,Map<String,String>> oldCfgs=getConfigurations();
     String path=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id);
     for (    String pid : configurations.keySet()) {
@@ -15,14 +16,16 @@
       }
  else {
         ZooKeeperUtils.set(zooKeeper,path + "/" + pid,"");
-        for (        Map.Entry<String,String> entry : configurations.get(pid).entrySet()) {
+        for (        Map.Entry<String,String> entry : newCfg.entrySet()) {
           String oldValue=oldCfg != null ? oldCfg.remove(entry.getKey()) : null;
           if (oldValue == null || !oldValue.equals(entry.getValue())) {
             ZooKeeperUtils.set(zooKeeper,path + "/" + pid+ "/"+ entry.getKey(),entry.getValue());
           }
         }
-        for (        String key : oldCfg.keySet()) {
-          zooKeeper.deleteWithChildren(path + "/" + pid+ "/"+ key);
+        if (oldCfg != null) {
+          for (          String key : oldCfg.keySet()) {
+            zooKeeper.deleteWithChildren(path + "/" + pid+ "/"+ key);
+          }
         }
       }
     }

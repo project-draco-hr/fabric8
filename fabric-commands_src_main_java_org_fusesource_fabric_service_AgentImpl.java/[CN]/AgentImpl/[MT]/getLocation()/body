@@ -1,0 +1,14 @@
+{
+  try {
+    String path=ZkPath.AGENT_LOCATION.getPath(id);
+    if (service.getZooKeeper().exists(path) != null) {
+      return service.getZooKeeper().getStringData(path);
+    }
+ else {
+      return "";
+    }
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

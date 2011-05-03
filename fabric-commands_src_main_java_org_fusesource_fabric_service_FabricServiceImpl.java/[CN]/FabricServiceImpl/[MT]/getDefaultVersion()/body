@@ -1,0 +1,17 @@
+{
+  try {
+    String version=null;
+    if (zooKeeper.exists(ZkPath.CONFIG_DEFAULT_VERSION.getPath()) != null) {
+      version=zooKeeper.getStringData(ZkPath.CONFIG_DEFAULT_VERSION.getPath());
+    }
+    if (version == null || version.isEmpty()) {
+      version=DEFAULT_VERSION;
+      ZooKeeperUtils.createDefault(zooKeeper,ZkPath.CONFIG_DEFAULT_VERSION.getPath(),version);
+      ZooKeeperUtils.createDefault(zooKeeper,ZkPath.CONFIG_VERSION.getPath(version),null);
+    }
+    return new VersionImpl(version,this);
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

@@ -1,14 +1,14 @@
 {
   try {
-    String version=zooKeeper.getStringData(ZkPath.AGENT.getPath(id));
+    String version=service.getZooKeeper().getStringData(ZkPath.CONFIG_AGENT.getPath(id));
     String node=ZkPath.CONFIG_VERSIONS_AGENT.getPath(version,id);
-    String str=zooKeeper.getStringData(node);
+    String str=service.getZooKeeper().getStringData(node);
     if (str == null) {
       return new Profile[0];
     }
     List<Profile> profiles=new ArrayList<Profile>();
     for (    String p : str.split(" ")) {
-      profiles.add(new ProfileImpl(p,version,zooKeeper));
+      profiles.add(new ProfileImpl(p,version,service));
     }
     return profiles.toArray(new Profile[profiles.size()]);
   }

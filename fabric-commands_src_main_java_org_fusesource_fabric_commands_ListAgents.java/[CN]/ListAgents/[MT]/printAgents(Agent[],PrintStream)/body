@@ -1,0 +1,13 @@
+{
+  out.println(String.format("%-30s %-10s %s","[id]","[alive]","[profiles]"));
+  for (  Agent agent : agents) {
+    if (agent.isRoot()) {
+      out.println(String.format("%-30s %-10s %s",agent.getId(),agent.isAlive(),toString(agent.getProfiles())));
+      for (      Agent child : agents) {
+        if (child.getParent() == agent) {
+          out.println(String.format("%-30s %-10s %s","  " + child.getId(),child.isAlive(),toString(child.getProfiles())));
+        }
+      }
+    }
+  }
+}

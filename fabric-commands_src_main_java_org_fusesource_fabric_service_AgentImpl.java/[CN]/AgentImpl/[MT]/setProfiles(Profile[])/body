@@ -1,6 +1,6 @@
 {
   try {
-    String version=zooKeeper.getStringData(ZkPath.AGENT.getPath(id));
+    String version=service.getZooKeeper().getStringData(ZkPath.CONFIG_AGENT.getPath(id));
     String node=ZkPath.CONFIG_VERSIONS_AGENT.getPath(version,id);
     String str="";
     for (    Profile parent : profiles) {
@@ -12,7 +12,7 @@
       }
       str+=parent.getId();
     }
-    zooKeeper.setData(node,str);
+    service.getZooKeeper().setData(node,str);
   }
  catch (  Exception e) {
     throw new FabricException(e);

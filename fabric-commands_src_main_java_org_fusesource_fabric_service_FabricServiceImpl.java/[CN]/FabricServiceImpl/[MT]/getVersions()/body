@@ -1,0 +1,13 @@
+{
+  try {
+    List<Version> versions=new ArrayList<Version>();
+    List<String> children=zooKeeper.getChildren(ZkPath.CONFIG_VERSIONS.getPath());
+    for (    String child : children) {
+      versions.add(new VersionImpl(child,this));
+    }
+    return versions.toArray(new Version[versions.size()]);
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}
