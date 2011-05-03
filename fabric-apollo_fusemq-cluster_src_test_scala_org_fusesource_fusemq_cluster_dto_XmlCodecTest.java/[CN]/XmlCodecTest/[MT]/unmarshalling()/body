@@ -1,0 +1,7 @@
+{
+  ClusterBrokerDTO dto=XmlCodec.decode(ClusterBrokerDTO.class,resource("simple.xml"));
+  assertNotNull(dto);
+  VirtualHostDTO host=dto.virtual_hosts.get(0);
+  assertNotNull(host.router);
+  assertTrue(host.router instanceof ClusterRouterDTO);
+}

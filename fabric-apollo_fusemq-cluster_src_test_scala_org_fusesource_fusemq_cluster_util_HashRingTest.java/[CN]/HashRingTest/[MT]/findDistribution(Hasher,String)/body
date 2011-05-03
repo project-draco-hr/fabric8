@@ -1,0 +1,27 @@
+{
+  double deviation;
+  final int NODE_COUNT=5;
+  final int KEYS_PER_NODE=100000;
+  final int KEY_COUNT=KEYS_PER_NODE * NODE_COUNT;
+  int counts[]=new int[NODE_COUNT];
+  System.out.println("Tesing key distribution of hasher: " + name);
+  random=new Random(RANDOM_SEED);
+  HashRing<String,String> ring=new HashRing<String,String>(hasher);
+  HashMap<String,Integer> nodes=new HashMap<String,Integer>();
+  for (int i=0; i < NODE_COUNT; i++) {
+    String node=randomWord(8);
+    ring.add(node);
+    nodes.put(node,i);
+  }
+  long start=System.currentTimeMillis();
+  for (int i=0; i < KEY_COUNT; i++) {
+    String node=ring.get(randomWord(15));
+    counts[nodes.get(node)]++;
+  }
+  long end=System.currentTimeMillis();
+  System.out.println("Hashed " + KEY_COUNT + " keys in "+ (end - start)+ " ms.");
+  deviation=stdDeviation(counts);
+  double deviationPercent=(deviation / KEYS_PER_NODE) * 100;
+  System.out.println(name + " stadard deviation: " + deviation+ ", as percent of keys/node: "+ deviationPercent+ "%");
+  return deviationPercent;
+}

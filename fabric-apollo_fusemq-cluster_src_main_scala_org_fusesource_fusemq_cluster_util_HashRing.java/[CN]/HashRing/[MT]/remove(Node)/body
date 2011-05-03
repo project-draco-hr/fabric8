@@ -1,0 +1,13 @@
+{
+  Wrapper<Node> wrapper=nodes.remove(node);
+  if (wrapper == null) {
+    return false;
+  }
+  ring.clear();
+  for (  Wrapper<Node> w : nodes.values()) {
+    for (int i=0; i < w.weight; i++) {
+      ring.put(hasher.hashNode(w.node,i),w);
+    }
+  }
+  return true;
+}

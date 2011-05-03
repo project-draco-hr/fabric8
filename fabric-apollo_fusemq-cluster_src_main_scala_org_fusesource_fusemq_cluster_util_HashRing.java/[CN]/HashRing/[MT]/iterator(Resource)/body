@@ -1,0 +1,37 @@
+{
+  final Map.Entry<Integer,Wrapper<Node>> first=getFirstEntry(resource);
+  return new Iterator<Node>(){
+    Map.Entry<Integer,Wrapper<Node>> removealCandidate;
+    Map.Entry<Integer,Wrapper<Node>> last;
+    Map.Entry<Integer,Wrapper<Node>> next=first;
+    public boolean hasNext(){
+      if (next != null)       return true;
+      if (last == null)       return false;
+      Map.Entry<Integer,Wrapper<Node>> next=ring.upperEntry(last.getKey());
+      if (next == null) {
+        next=ring.firstEntry();
+      }
+      last=null;
+      if (next.getKey() == first.getKey()) {
+        next=null;
+      }
+      return next != null;
+    }
+    public Node next(){
+      if (!hasNext()) {
+        throw new NoSuchElementException();
+      }
+      removealCandidate=last=next;
+      next=null;
+      return last.getValue().node;
+    }
+    public void remove(){
+      if (removealCandidate == null) {
+        throw new IllegalStateException();
+      }
+      HashRing.this.remove(last.getValue().node);
+      removealCandidate=null;
+    }
+  }
+;
+}
