@@ -1,0 +1,644 @@
+{
+  if (isDescribed()) {
+    AmqpClass describedType=descriptor.resolveDescribedType();
+    if (describedType.isList()) {
+      writer.newLine();
+      writer.write(Utils.tab(1) + "private static final ListDecoder<" + TypeRegistry.any().typeMapping+ "> DECODER = new ListDecoder<"+ TypeRegistry.any().typeMapping+ ">() {");
+      writer.newLine();
+      writer.write(Utils.tab(2) + "public final IAmqpList<" + TypeRegistry.any().typeMapping+ "> unmarshalType(int dataCount, int dataSize, DataInput in) throws AmqpEncodingError, IOException {");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "if (dataCount > " + fields.size()+ ") {");
+      writer.newLine();
+      writer.write(Utils.tab(4) + "throw new AmqpEncodingError(\"Too many fields for \" + SYMBOLIC_ID + \": \" + dataCount);");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "}");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "IAmqpList<" + TypeRegistry.any().typeMapping+ "> rc = new IAmqpList.ArrayBackedList<"+ TypeRegistry.any().typeMapping+ ">(new "+ TypeRegistry.any().typeMapping+ "["+ fields.size()+ "]);");
+      int f=0;
+      for (      AmqpField field : fields.values()) {
+        AmqpClass fieldType=field.resolveAmqpFieldType();
+        writer.newLine();
+        writer.write(Utils.tab(3) + "//" + field.getName()+ ":");
+        writer.newLine();
+        writer.write(Utils.tab(3) + "if(dataCount > 0) {");
+        writer.newLine();
+        if (fieldType.isAny()) {
+          writer.write(Utils.tab(4) + "rc.set(" + f+ ", AmqpMarshaller.SINGLETON.unmarshalType(in));");
+        }
+ else {
+          writer.write(Utils.tab(4) + "rc.set(" + f+ ", "+ fieldType.getBufferMapping()+ ".create("+ fieldType.getMarshaller()+ ".createEncoded(in)));");
+        }
+        writer.newLine();
+        writer.write(Utils.tab(4) + "dataCount--;");
+        writer.newLine();
+        writer.write(Utils.tab(3) + "}");
+        writer.newLine();
+        if (field.isRequired()) {
+          writer.write(Utils.tab(3) + "else {");
+          writer.newLine();
+          writer.write(Utils.tab(4) + "throw new AmqpEncodingError(\"Missing required field for \" + SYMBOLIC_ID + \": " + field.getName()+ "\");");
+          writer.newLine();
+          writer.write(Utils.tab(3) + "}");
+          writer.newLine();
+        }
+        f++;
+      }
+      writer.write(Utils.tab(3) + "return rc;");
+      writer.newLine();
+      writer.write(Utils.tab(2) + "}");
+      writer.newLine();
+      writer.newLine();
+      writer.write(Utils.tab(2) + "public IAmqpList<" + TypeRegistry.any().typeMapping+ "> decode(EncodedBuffer[] constituents) {");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "if (constituents.length > " + fields.size()+ ") {");
+      writer.newLine();
+      writer.write(Utils.tab(4) + "throw new AmqpEncodingError(\"Too many fields for \" + SYMBOLIC_ID + \":\" + constituents.length);");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "}");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "int dataCount = constituents.length;");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "IAmqpList<" + TypeRegistry.any().typeMapping+ "> rc = new IAmqpList.ArrayBackedList<"+ TypeRegistry.any().typeMapping+ ">(new "+ TypeRegistry.any().typeMapping+ "["+ fields.size()+ "]);");
+      f=0;
+      for (      AmqpField field : fields.values()) {
+        AmqpClass fieldType=field.resolveAmqpFieldType();
+        writer.newLine();
+        writer.write(Utils.tab(3) + "//" + field.getName()+ ":");
+        writer.newLine();
+        writer.write(Utils.tab(3) + "if(dataCount > 0) {");
+        writer.newLine();
+        if (fieldType.isAny()) {
+          writer.write(Utils.tab(4) + "rc.set(" + f+ ", AmqpMarshaller.SINGLETON.decodeType(constituents["+ f+ "]));");
+        }
+ else {
+          writer.write(Utils.tab(4) + "rc.set(" + f+ ", "+ fieldType.getBufferMapping()+ ".create("+ fieldType.getMarshaller()+ ".createEncoded(constituents["+ f+ "])));");
+        }
+        writer.newLine();
+        writer.write(Utils.tab(4) + "dataCount--;");
+        writer.newLine();
+        writer.write(Utils.tab(3) + "}");
+        writer.newLine();
+        if (field.isRequired()) {
+          writer.write(Utils.tab(3) + "else {");
+          writer.newLine();
+          writer.write(Utils.tab(4) + "throw new AmqpEncodingError(\"Missing required field for \" + SYMBOLIC_ID + \": " + field.getName()+ "\");");
+          writer.newLine();
+          writer.write(Utils.tab(3) + "}");
+          writer.newLine();
+        }
+        f++;
+      }
+      writer.write(Utils.tab(3) + "return rc;");
+      writer.newLine();
+      writer.write(Utils.tab(2) + "}");
+      writer.newLine();
+      writer.write(Utils.tab(1) + "};");
+      writer.newLine();
+    }
+ else     if (describedType.isMap()) {
+      writer.newLine();
+      writer.write(Utils.tab(1) + "private static final MapDecoder<AmqpSymbol, " + TypeRegistry.any().typeMapping+ "> DECODER = new MapDecoder<AmqpSymbol, "+ TypeRegistry.any().typeMapping+ ">() {");
+      writer.newLine();
+      writer.newLine();
+      writer.write(Utils.tab(2) + "public IAmqpMap<AmqpSymbol, AmqpType<?, ?>> decode(EncodedBuffer[] constituents) throws AmqpEncodingError {");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "IAmqpMap<AmqpSymbol, AmqpType<?, ?>> rc = new IAmqpMap.AmqpWrapperMap<AmqpSymbol, AmqpType<?,?>>(new HashMap<AmqpSymbol, AmqpType<?,?>>());");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "if (constituents.length % 2 != 0) {");
+      writer.newLine();
+      writer.write(Utils.tab(4) + "throw new AmqpEncodingError(\"Invalid number of compound constituents for \" + SYMBOLIC_ID + \": \" + constituents.length);");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "}");
+      writer.newLine();
+      for (      AmqpField field : fields.values()) {
+        if (field.isRequired()) {
+          writer.newLine();
+          writer.write(Utils.tab(4) + "boolean saw" + Utils.capFirst(field.getName())+ " = false;");
+        }
+      }
+      writer.write(Utils.tab(3) + "for (int i = 0; i < constituents.length; i += 2) {");
+      writer.newLine();
+      writer.write(Utils.tab(4) + "AmqpSymbol key = AmqpSymbol.AmqpSymbolBuffer.create(AmqpSymbolMarshaller.createEncoded(constituents[i]));");
+      writer.newLine();
+      writer.write(Utils.tab(4) + "if (key == null) {");
+      writer.newLine();
+      writer.write(Utils.tab(5) + "throw new AmqpEncodingError(\"Null Key for \" + SYMBOLIC_ID);");
+      writer.newLine();
+      writer.write(Utils.tab(4) + "} ");
+      int f=fields.size();
+      for (      AmqpField field : fields.values()) {
+        AmqpClass fieldType=field.resolveAmqpFieldType();
+        writer.write((--f >= 0 ? "else " : "") + "if (key.equals(" + typeMapping+ "."+ Utils.toJavaConstant(field.getName())+ "_KEY)){");
+        writer.newLine();
+        if (field.isRequired()) {
+          writer.write(Utils.tab(5) + "saw" + Utils.capFirst(field.getName())+ " = true;");
+          writer.newLine();
+        }
+        if (fieldType.isAny()) {
+          writer.write(Utils.tab(5) + "rc.put(" + typeMapping+ "."+ Utils.toJavaConstant(field.getName())+ "_KEY, AmqpMarshaller.SINGLETON.decodeType(constituents[i + 1]));");
+        }
+ else {
+          writer.write(Utils.tab(5) + "rc.put(" + typeMapping+ "."+ Utils.toJavaConstant(field.getName())+ "_KEY, "+ fieldType.getBufferMapping()+ ".create("+ fieldType.getMarshaller()+ ".createEncoded(constituents[i + 1])));");
+        }
+        writer.newLine();
+        writer.write(Utils.tab(4) + "} ");
+      }
+      writer.write("else {");
+      writer.newLine();
+      writer.write(Utils.tab(5) + "throw new UnexpectedTypeException(\"Invalid field key for \" + SYMBOLIC_ID + \" : \" + key);");
+      writer.newLine();
+      writer.write(Utils.tab(4) + "}");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "}");
+      for (      AmqpField field : fields.values()) {
+        if (field.isRequired()) {
+          writer.newLine();
+          writer.write(Utils.tab(3) + "if(!saw" + field.getName()+ ") {");
+          writer.newLine();
+          writer.write(Utils.tab(4) + "throw new AmqpEncodingError(\"Missing required field for \" + SYMBOLIC_ID + \": " + field.getName()+ "\");");
+          writer.newLine();
+          writer.write(Utils.tab(3) + "}");
+        }
+      }
+      writer.newLine();
+      writer.write(Utils.tab(3) + "return rc;");
+      writer.newLine();
+      writer.write(Utils.tab(2) + "}");
+      writer.newLine();
+      writer.newLine();
+      writer.write(Utils.tab(2) + "public IAmqpMap<AmqpSymbol, AmqpType<?, ?>> unmarshalType(int dataCount, int dataSize, DataInput in) throws IOException, AmqpEncodingError {");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "IAmqpMap<AmqpSymbol, AmqpType<?, ?>> rc = new IAmqpMap.AmqpWrapperMap<AmqpSymbol, AmqpType<?,?>>(new HashMap<AmqpSymbol, AmqpType<?,?>>());");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "if (dataCount % 2 != 0) {");
+      writer.newLine();
+      writer.write(Utils.tab(4) + "throw new AmqpEncodingError(\"Invalid number of compound constituents for \" + SYMBOLIC_ID + \": \" + dataCount);");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "}");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "for (int i = 0; i < dataCount; i += 2) {");
+      writer.newLine();
+      writer.write(Utils.tab(4) + "AmqpSymbol key = AmqpSymbol.AmqpSymbolBuffer.create(AmqpSymbolMarshaller.createEncoded(in));");
+      writer.newLine();
+      writer.write(Utils.tab(4) + "if (key == null) {");
+      writer.newLine();
+      writer.write(Utils.tab(5) + "throw new AmqpEncodingError(\"Null Key for \" + SYMBOLIC_ID);");
+      writer.newLine();
+      writer.write(Utils.tab(4) + "}");
+      writer.newLine();
+      writer.newLine();
+      for (      AmqpField field : fields.values()) {
+        if (field.isRequired()) {
+          writer.newLine();
+          writer.write(Utils.tab(4) + "boolean saw" + Utils.capFirst(field.getName())+ " = false;");
+        }
+      }
+      writer.newLine();
+      f=0;
+      for (      AmqpField field : fields.values()) {
+        AmqpClass fieldType=field.resolveAmqpFieldType();
+        writer.write(Utils.tab(4) + (f > 0 ? "else " : "") + "if (key.equals("+ typeMapping+ "."+ Utils.toJavaConstant(field.getName())+ "_KEY)){");
+        writer.newLine();
+        if (field.isRequired()) {
+          writer.write(Utils.tab(4) + "saw" + Utils.capFirst(field.getName())+ " = true;");
+          writer.newLine();
+        }
+        if (fieldType.isAny()) {
+          writer.write(Utils.tab(5) + "rc.put(" + typeMapping+ "."+ Utils.toJavaConstant(field.getName())+ "_KEY, AmqpMarshaller.SINGLETON.unmarshalType(in));");
+        }
+ else {
+          writer.write(Utils.tab(5) + "rc.put(" + typeMapping+ "."+ Utils.toJavaConstant(field.getName())+ "_KEY, "+ fieldType.getBufferMapping()+ ".create("+ fieldType.getMarshaller()+ ".createEncoded(in)));");
+        }
+        writer.newLine();
+        writer.write(Utils.tab(4) + "}");
+        writer.newLine();
+      }
+      writer.write(Utils.tab(4) + "else {");
+      writer.newLine();
+      writer.write(Utils.tab(5) + "throw new UnexpectedTypeException(\"Invalid field key for \" + SYMBOLIC_ID + \" : \" + key);");
+      writer.newLine();
+      writer.write(Utils.tab(4) + "}");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "}");
+      for (      AmqpField field : fields.values()) {
+        if (field.isRequired()) {
+          writer.newLine();
+          writer.write(Utils.tab(3) + "if(!saw" + field.getName()+ ") {");
+          writer.newLine();
+          writer.write(Utils.tab(4) + "throw new AmqpEncodingError(\"Missing required field for \" + SYMBOLIC_ID + \": " + field.getName()+ "\");");
+          writer.newLine();
+          writer.write(Utils.tab(3) + "}");
+        }
+      }
+      writer.newLine();
+      writer.write(Utils.tab(3) + "return rc;");
+      writer.newLine();
+      writer.write(Utils.tab(2) + "}");
+      writer.newLine();
+      writer.write(Utils.tab(1) + "};");
+      writer.newLine();
+    }
+ else {
+      throw new UnexpectedException("Unsupported described type: " + descriptor.getDescribedType());
+    }
+    writer.newLine();
+    writer.write(Utils.tab(1) + "public static class " + getJavaType()+ "Encoded extends DescribedEncoded<"+ getValueMapping()+ "> {");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "public " + getJavaType()+ "Encoded(DescribedBuffer buffer) {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "super(buffer);");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "public " + getJavaType()+ "Encoded("+ typeMapping+ " value) {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "super(" + describedType.getMarshaller()+ ".encode(value));");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "protected final String getSymbolicId() {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "return SYMBOLIC_ID;");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "protected final long getNumericId() {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "return NUMERIC_ID;");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "protected final Encoded<" + getValueMapping()+ "> decodeDescribed(EncodedBuffer encoded) throws AmqpEncodingError {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "return " + describedType.getMarshaller()+ ".createEncoded(encoded, DECODER);");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "protected final Encoded<" + getValueMapping()+ "> unmarshalDescribed(DataInput in) throws IOException {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "return " + describedType.getMarshaller()+ ".createEncoded(in, DECODER);");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "protected final EncodedBuffer getDescriptor() {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "return DESCRIPTOR;");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.write(Utils.tab(1) + "}");
+    writer.newLine();
+    return;
+  }
+  if (!hasMultipleEncodings() && !hasNonFixedEncoding()) {
+    writer.newLine();
+    writer.write(Utils.tab(1) + "public static final byte FORMAT_CODE = (byte) " + encodings.getFirst().getCode()+ ";");
+    writer.newLine();
+    writer.write(Utils.tab(1) + "public static final FormatSubCategory FORMAT_CATEGORY  = FormatSubCategory.getCategory(FORMAT_CODE);");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(1) + "public static class " + getJavaType()+ "Encoded  extends AbstractEncoded<"+ getValueMapping().getJavaType()+ "> {");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "public " + getJavaType()+ "Encoded (EncodedBuffer encoded) {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "super(encoded);");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "public " + getJavaType()+ "Encoded ("+ getValueMapping().getJavaType()+ " value) throws AmqpEncodingError {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "super(FORMAT_CODE, value);");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "public final void encode(" + getValueMapping().getJavaType()+ " value, Buffer encoded, int offset) throws AmqpEncodingError{");
+    writer.newLine();
+    if (hasNonZeroEncoding()) {
+      writer.write(Utils.tab(3) + "ENCODER.encode" + Utils.capFirst(Utils.toJavaName(name))+ "(value, encoded, offset);");
+    }
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "public final " + getValueMapping().getJavaType()+ " decode(EncodedBuffer encoded) throws AmqpEncodingError{");
+    writer.newLine();
+    if (hasNonZeroEncoding()) {
+      writer.write(Utils.tab(3) + "return ENCODER.decode" + Utils.capFirst(Utils.toJavaName(name))+ "(encoded.getBuffer(), encoded.getDataOffset());");
+    }
+ else {
+      writer.write(Utils.tab(3) + "return ENCODER.valueOf" + Utils.capFirst(Utils.toJavaName(name))+ "();");
+    }
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "public final void marshalData(DataOutput out) throws IOException {");
+    writer.newLine();
+    if (hasNonZeroEncoding()) {
+      writer.write(Utils.tab(3) + "ENCODER.write" + Utils.capFirst(Utils.toJavaName(name))+ "(value, out);");
+    }
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "public final " + getValueMapping().getJavaType()+ " unmarshalData(DataInput in) throws IOException {");
+    writer.newLine();
+    if (hasNonZeroEncoding()) {
+      writer.write(Utils.tab(3) + "return ENCODER.read" + Utils.capFirst(Utils.toJavaName(name))+ "(in);");
+    }
+ else {
+      writer.write(Utils.tab(3) + "return ENCODER.valueOf" + Utils.capFirst(Utils.toJavaName(name))+ "();");
+    }
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.write(Utils.tab(1) + "}");
+  }
+ else {
+    String encodingName=getEncodingName(false);
+    writer.newLine();
+    for (    AmqpEncoding encoding : encodings) {
+      writer.write(Utils.tab(1) + "public static final byte " + Utils.toJavaConstant(Utils.option(encoding.getName(),name))+ "_FORMAT_CODE = (byte) "+ encoding.getCode()+ ";");
+      writer.newLine();
+    }
+    writer.newLine();
+    writer.write(Utils.tab(1) + "public static enum " + encodingName+ " implements Encoding{");
+    writer.newLine();
+    int i=0;
+    for (    AmqpEncoding encoding : encodings) {
+      i++;
+      String eName=Utils.option(encoding.getName(),name);
+      if (eName == null) {
+        eName=name;
+      }
+      eName=Utils.toJavaConstant(eName);
+      writer.write(Utils.tab(2) + eName + " ("+ Utils.toJavaConstant(Utils.option(encoding.getName(),name))+ "_FORMAT_CODE)");
+      if (i < encodings.size()) {
+        writer.write(",");
+      }
+ else {
+        writer.write(";");
+      }
+      if (encoding.getLabel() != null) {
+        writer.write(" // " + encoding.getLabel());
+      }
+      writer.newLine();
+    }
+    writer.newLine();
+    writer.write(Utils.tab(2) + "public final byte FORMAT_CODE;");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "public final FormatSubCategory CATEGORY;");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + encodingName + "(byte formatCode) {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "this.FORMAT_CODE = formatCode;");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "this.CATEGORY = FormatSubCategory.getCategory(formatCode);");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "public final byte getEncodingFormatCode() {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "return FORMAT_CODE;");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "public final AmqpVersion getEncodingVersion() {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "return AmqpMarshaller.VERSION;");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "public static " + encodingName+ " getEncoding(byte formatCode) throws UnexpectedTypeException {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "switch(formatCode) {");
+    writer.newLine();
+    for (    AmqpEncoding encoding : encodings) {
+      writer.write(Utils.tab(3) + "case " + Utils.toJavaConstant(Utils.option(encoding.getName(),name))+ "_FORMAT_CODE: {");
+      writer.newLine();
+      writer.write(Utils.tab(4) + "return " + Utils.toJavaConstant(Utils.option(encoding.getName(),name))+ ";");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "}");
+      writer.newLine();
+    }
+    writer.write(Utils.tab(3) + "default: {");
+    writer.newLine();
+    writer.write(Utils.tab(4) + "throw new UnexpectedTypeException(\"Unexpected format code for " + Utils.capFirst(name)+ ": \" + formatCode);");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "}");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "}");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "static final " + getJavaType()+ "Encoded createEncoded(EncodedBuffer buffer) throws AmqpEncodingError {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "switch(buffer.getEncodingFormatCode()) {");
+    writer.newLine();
+    for (    AmqpEncoding encoding : encodings) {
+      writer.write(Utils.tab(3) + "case " + Utils.toJavaConstant(Utils.option(encoding.getName(),name))+ "_FORMAT_CODE: {");
+      writer.newLine();
+      writer.write(Utils.tab(4) + "return new " + getJavaType()+ Utils.capFirst(Utils.toJavaName(Utils.option(encoding.getName(),name)))+ "Encoded(buffer);");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "}");
+      writer.newLine();
+    }
+    writer.write(Utils.tab(3) + "default: {");
+    writer.newLine();
+    writer.write(Utils.tab(4) + "throw new UnexpectedTypeException(\"Unexpected format code for " + Utils.capFirst(name)+ ": \" + buffer.getEncodingFormatCode());");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "}");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "}");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "static final " + getJavaType()+ "Encoded createEncoded(byte formatCode, "+ getValueMapping().getJavaType()+ " value) throws AmqpEncodingError {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "switch(formatCode) {");
+    writer.newLine();
+    for (    AmqpEncoding encoding : encodings) {
+      writer.write(Utils.tab(3) + "case " + Utils.toJavaConstant(Utils.option(encoding.getName(),name))+ "_FORMAT_CODE: {");
+      writer.newLine();
+      writer.write(Utils.tab(4) + "return new " + getJavaType()+ Utils.capFirst(Utils.toJavaName(Utils.option(encoding.getName(),name)))+ "Encoded(value);");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "}");
+      writer.newLine();
+    }
+    writer.write(Utils.tab(3) + "default: {");
+    writer.newLine();
+    writer.write(Utils.tab(4) + "throw new UnexpectedTypeException(\"Unexpected format code for " + Utils.capFirst(name)+ ": \" + formatCode);");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "}");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "}");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.write(Utils.tab(1) + "}");
+    writer.newLine();
+    writer.write(Utils.tab(1) + "public static abstract class " + getJavaType()+ "Encoded extends AbstractEncoded <"+ getValueMapping().getJavaType()+ "> {");
+    if (isList()) {
+      writer.newLine();
+      writer.write(Utils.tab(2) + "ListDecoder decoder = Encoder.DEFAULT_LIST_DECODER;");
+      writer.newLine();
+    }
+    if (isMap()) {
+      writer.newLine();
+      writer.write(Utils.tab(2) + "MapDecoder decoder = Encoder.DEFAULT_MAP_DECODER;");
+      writer.newLine();
+    }
+    writer.newLine();
+    writer.write(Utils.tab(2) + "public " + getJavaType()+ "Encoded(EncodedBuffer encoded) {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "super(encoded);");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(2) + "public " + getJavaType()+ "Encoded(byte formatCode, "+ getValueMapping().getJavaType()+ " value) throws AmqpEncodingError {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "super(formatCode, value);");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    if (isList()) {
+      writer.newLine();
+      writer.write(Utils.tab(2) + "final void setDecoder(ListDecoder decoder) {");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "this.decoder = decoder;");
+      writer.newLine();
+      writer.write(Utils.tab(2) + "}");
+      writer.newLine();
+    }
+    if (isMap()) {
+      writer.newLine();
+      writer.write(Utils.tab(2) + "final void setDecoder(MapDecoder decoder) {");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "this.decoder = decoder;");
+      writer.newLine();
+      writer.write(Utils.tab(2) + "}");
+      writer.newLine();
+    }
+    writer.write(Utils.tab(1) + "}");
+    writer.newLine();
+    for (    AmqpEncoding encoding : encodings) {
+      String eName=Utils.capFirst(Utils.toJavaName(Utils.option(encoding.getName(),name)));
+      writer.newLine();
+      Utils.writeJavaComment(writer,1,encoding.getLabel());
+      writer.write(Utils.tab(1) + "private static class " + getJavaType()+ eName+ "Encoded extends "+ getJavaType()+ "Encoded {");
+      writer.newLine();
+      writer.newLine();
+      writer.write(Utils.tab(2) + "private final " + encodingName+ " encoding = "+ encodingName+ "."+ Utils.toJavaConstant(Utils.option(encoding.getName(),name))+ ";");
+      writer.newLine();
+      writer.write(Utils.tab(2) + "public " + getJavaType()+ eName+ "Encoded(EncodedBuffer encoded) {");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "super(encoded);");
+      writer.newLine();
+      writer.write(Utils.tab(2) + "}");
+      writer.newLine();
+      writer.newLine();
+      writer.write(Utils.tab(2) + "public " + getJavaType()+ eName+ "Encoded("+ getValueMapping().getJavaType()+ " value) throws AmqpEncodingError {");
+      writer.newLine();
+      writer.write(Utils.tab(3) + "super(" + encodingName+ "."+ Utils.toJavaConstant(Utils.option(encoding.getName(),name))+ ".FORMAT_CODE, value);");
+      writer.newLine();
+      writer.write(Utils.tab(2) + "}");
+      writer.newLine();
+      if (hasNonZeroEncoding()) {
+        writer.newLine();
+        writer.write(Utils.tab(2) + "protected final int computeDataSize() throws AmqpEncodingError {");
+        writer.newLine();
+        writer.write(Utils.tab(3) + "return ENCODER.getEncodedSizeOf" + Utils.capFirst(getName() + "(value, encoding);"));
+        writer.newLine();
+        writer.write(Utils.tab(2) + "}");
+        writer.newLine();
+      }
+      if (hasCompoundEncoding()) {
+        writer.newLine();
+        writer.write(Utils.tab(2) + "protected final int computeDataCount() throws AmqpEncodingError {");
+        writer.newLine();
+        writer.write(Utils.tab(3) + "return ENCODER.getEncodedCountOf" + Utils.capFirst(getName())+ "(value, encoding);");
+        writer.newLine();
+        writer.write(Utils.tab(2) + "}");
+        writer.newLine();
+      }
+      writer.newLine();
+      writer.write(Utils.tab(2) + "public final void encode(" + getValueMapping().getJavaType()+ " value, Buffer encoded, int offset) throws AmqpEncodingError {");
+      writer.newLine();
+      if (hasNonZeroEncoding()) {
+        writer.write(Utils.tab(3) + "ENCODER.encode" + Utils.capFirst(Utils.toJavaName(name))+ eName+ "(value, encoded, offset);");
+      }
+      writer.newLine();
+      writer.write(Utils.tab(2) + "}");
+      writer.newLine();
+      writer.newLine();
+      writer.write(Utils.tab(2) + "public final void marshalData(DataOutput out) throws IOException {");
+      writer.newLine();
+      if (hasNonZeroEncoding()) {
+        writer.write(Utils.tab(3) + "ENCODER.write" + Utils.capFirst(Utils.toJavaName(name))+ eName+ "(value, out);");
+      }
+      writer.newLine();
+      writer.write(Utils.tab(2) + "}");
+      writer.newLine();
+      writer.newLine();
+      writer.write(Utils.tab(2) + "public final " + getValueMapping().getJavaType()+ " decode(EncodedBuffer encoded) throws AmqpEncodingError {");
+      writer.newLine();
+      if (isList() || isMap()) {
+        writer.write(Utils.tab(3) + "return decoder.decode(encoded.asCompound().constituents());");
+      }
+ else       if (hasCompoundEncoding()) {
+        writer.write(Utils.tab(3) + "return ENCODER.decode" + Utils.capFirst(Utils.toJavaName(name))+ eName+ "(encoded.getBuffer(), encoded.getDataOffset(), encoded.getDataCount(), encoded.getDataSize());");
+      }
+ else       if (hasNonZeroEncoding() && hasVariableEncoding()) {
+        writer.write(Utils.tab(3) + "return ENCODER.decode" + Utils.capFirst(Utils.toJavaName(name))+ eName+ "(encoded.getBuffer(), encoded.getDataOffset(), encoded.getDataSize());");
+      }
+ else       if (hasNonZeroEncoding() && !hasVariableEncoding()) {
+        writer.write(Utils.tab(3) + "return ENCODER.decode" + Utils.capFirst(Utils.toJavaName(name))+ eName+ "(encoded.getBuffer(), encoded.getDataOffset());");
+      }
+ else {
+        writer.write(Utils.tab(3) + "return ENCODER.valueOf" + Utils.capFirst(Utils.toJavaName(name))+ "(encoding);");
+      }
+      writer.newLine();
+      writer.write(Utils.tab(2) + "}");
+      writer.newLine();
+      writer.newLine();
+      writer.write(Utils.tab(2) + "public final " + getValueMapping().getJavaType()+ " unmarshalData(DataInput in) throws IOException {");
+      writer.newLine();
+      if (isList() || isMap()) {
+        writer.write(Utils.tab(3) + "return decoder.unmarshalType(getDataCount(), getDataSize(), in);");
+      }
+ else       if (hasCompoundEncoding()) {
+        writer.write(Utils.tab(3) + "return ENCODER.read" + Utils.capFirst(Utils.toJavaName(name))+ eName+ "(getDataCount(), getDataSize(), in);");
+      }
+ else       if (hasNonZeroEncoding() && hasVariableEncoding()) {
+        writer.write(Utils.tab(3) + "return ENCODER.read" + Utils.capFirst(Utils.toJavaName(name))+ eName+ "(getDataSize(), in);");
+      }
+ else       if (hasNonZeroEncoding() && !hasVariableEncoding()) {
+        writer.write(Utils.tab(3) + "return ENCODER.read" + Utils.capFirst(Utils.toJavaName(name))+ eName+ "(in);");
+      }
+ else {
+        writer.write(Utils.tab(3) + "return ENCODER.valueOf" + Utils.capFirst(Utils.toJavaName(name))+ "(encoding);");
+      }
+      writer.newLine();
+      writer.write(Utils.tab(2) + "}");
+      writer.newLine();
+      writer.write(Utils.tab(1) + "}");
+      writer.newLine();
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  AmqpFlow flow=createAmqpFlow();
+  flow.setIncomingWindow(1);
+  flow.setOutgoingWindow(1);
+  flow.setNextIncomingId(10);
+  flow.setNextOutgoingId(11);
+  flow.setTransferCount(1);
+  flow.setLinkCredit(0);
+  flow.setAvailable(0);
+  flow.setHandle(0);
+  AmqpFrame in=new AmqpFrame(flow);
+  byte b[]=marshalAmqpFrame(in);
+  AmqpFrame out=unmarshalAmqpFrame(b);
+  Assert.assertTrue(in + " != " + out,in.equals(out));
+}

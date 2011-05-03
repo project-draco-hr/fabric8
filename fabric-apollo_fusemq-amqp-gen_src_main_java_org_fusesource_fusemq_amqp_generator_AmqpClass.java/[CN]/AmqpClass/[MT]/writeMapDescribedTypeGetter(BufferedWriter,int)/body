@@ -1,0 +1,32 @@
+{
+  writer.newLine();
+  writer.write(Utils.tab(indent) + "public " + getMapValueType()+ " get(Object key) {");
+  writer.newLine();
+  writer.write(Utils.tab(++indent) + "if ( key == null ) {");
+  writer.newLine();
+  writer.write(Utils.tab(++indent) + "return null;");
+  writer.newLine();
+  writer.write(Utils.tab(--indent) + "}");
+  writer.newLine();
+  writer.write(Utils.tab(indent) + "copyCheck();");
+  writer.newLine();
+  for (  AmqpField field : fields.values()) {
+    writer.newLine();
+    writer.write(Utils.tab(indent) + "if ( key.equals(" + typeMapping+ "."+ Utils.toJavaConstant(field.getName())+ "_KEY)) {");
+    writer.newLine();
+    AmqpClass fieldClass=field.resolveAmqpFieldType();
+    if (fieldClass.isEnumType()) {
+      writer.write(Utils.tab(++indent) + "return " + field.getJavaName()+ ".getValue();");
+    }
+ else {
+      writer.write(Utils.tab(++indent) + "return " + field.getJavaName()+ ";");
+    }
+    writer.newLine();
+    writer.write(Utils.tab(--indent) + "}");
+    writer.newLine();
+  }
+  writer.write(Utils.tab(indent) + "return null;");
+  writer.newLine();
+  writer.write(Utils.tab(--indent) + "}");
+  writer.newLine();
+}

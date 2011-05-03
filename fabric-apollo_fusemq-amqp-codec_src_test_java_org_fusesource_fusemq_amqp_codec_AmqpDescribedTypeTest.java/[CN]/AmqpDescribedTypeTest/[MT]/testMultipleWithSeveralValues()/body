@@ -1,0 +1,22 @@
+{
+  System.setProperty("org.fusesource.fusemq.amqp.codec.Use8BitListEncodings","true");
+  System.setProperty("org.fusesource.fusemq.amqp.codec.NoArrayEncoding","false");
+  List<AmqpSymbol> list=new ArrayList<AmqpSymbol>();
+  list.add(createAmqpSymbol("ASCII"));
+  list.add(createAmqpSymbol("EBCDIC"));
+  Multiple multiple=createMultiple();
+  multiple.setValue(createAmqpList(new IAmqpList.AmqpWrapperList(list)));
+  byte marshalled[]=CodecUtils.marshal(multiple);
+  print(marshalled);
+  Assert.assertEquals("Byte 0 should be the described type format code",0,BitUtils.getUByte(marshalled,0));
+  Assert.assertEquals("Byte 1 should be True (0x41)",0x41,BitUtils.getUByte(marshalled,1));
+  Assert.assertEquals("Byte 2 should be the array8 format code (0xE2)",0xFF & ARRAY8.getEncodingFormatCode(),BitUtils.getUByte(marshalled,2));
+  Assert.assertEquals("Byte 3 should be the size of the array, 15 bytes",0x0F,BitUtils.getUByte(marshalled,3));
+  Assert.assertEquals("Byte 4 should be the count of the array",0x02,BitUtils.getUByte(marshalled,4));
+  Assert.assertEquals("Byte 5 should be sym8 format code (0xA3)",0xA3,BitUtils.getUByte(marshalled,5));
+  Assert.assertEquals("Byte 6 should be the character count of the first element",0x05,BitUtils.getUByte(marshalled,6));
+  Assert.assertEquals("Byte 12 should be the character count of the second element",0x06,BitUtils.getUByte(marshalled,12));
+  Multiple out=unmarshalMultiple(marshalled);
+  print("Out: %s",out);
+  Assert.assertTrue("Type should be Multiple",out instanceof Multiple);
+}

@@ -1,0 +1,13 @@
+{
+  dataSize=encodedType.computeDataSize();
+  Buffer rc=new Buffer(1 + category.WIDTH + dataSize);
+  rc.data[0]=formatCode;
+  if (category.WIDTH == 1) {
+    BitUtils.setUByte(rc.data,1,(short)dataSize);
+  }
+ else {
+    BitUtils.setUInt(rc.data,1,dataSize);
+  }
+  encodedType.encode(rc,getDataOffset());
+  return rc;
+}

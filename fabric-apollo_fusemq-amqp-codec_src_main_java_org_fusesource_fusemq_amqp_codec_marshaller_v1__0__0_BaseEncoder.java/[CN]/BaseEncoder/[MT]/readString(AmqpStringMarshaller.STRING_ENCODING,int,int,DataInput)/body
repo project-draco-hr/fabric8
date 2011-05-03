@@ -1,0 +1,14 @@
+{
+  byte[] str=new byte[size];
+  dis.readFully(str);
+switch (encoding) {
+case STR32_UTF16:
+case STR8_UTF16:
+    return new String(str,"utf-16");
+case STR32_UTF8:
+case STR8_UTF8:
+  return new String(str,"utf-8");
+default :
+throw new UnsupportedEncodingException(encoding.name());
+}
+}

@@ -1,0 +1,31 @@
+{
+  if (!buffer) {
+    writer.newLine();
+    writeListDescribedTypeSetter(writer,indent);
+    writeListDescribedTypeGetter(writer,indent);
+    writer.newLine();
+    writer.write(Utils.tab(indent) + "public int getListCount() {");
+    writer.newLine();
+    writer.write(Utils.tab(++indent) + "return " + fields.size()+ ";");
+    writer.newLine();
+    writer.write(Utils.tab(--indent) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(indent) + "public " + descriptor.resolveDescribedType().getValueMapping()+ " getValue() {");
+    writer.newLine();
+    writer.write(Utils.tab(++indent) + "return bean;");
+    writer.newLine();
+    writer.write(Utils.tab(--indent) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(indent) + "public Iterator<AmqpType<?, ?>> iterator() {");
+    writer.newLine();
+    writer.write(Utils.tab(++indent) + "return new AmqpListIterator<" + TypeRegistry.any().typeMapping+ ">(bean);");
+    writer.newLine();
+    writer.write(Utils.tab(--indent) + "}");
+    writer.newLine();
+  }
+ else {
+    descriptor.resolveDescribedType().writeFieldAccessors(writer,indent,buffer);
+  }
+}

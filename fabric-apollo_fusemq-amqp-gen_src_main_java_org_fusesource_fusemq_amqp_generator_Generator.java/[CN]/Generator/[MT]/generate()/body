@@ -1,0 +1,78 @@
+{
+  TypeRegistry.init(this);
+  JAXBContext jc=JAXBContext.newInstance(Amqp.class.getPackage().getName());
+  for (  File inputFile : inputFiles) {
+    BufferedReader reader=new BufferedReader(new FileReader(inputFile));
+    String line=reader.readLine();
+    while (line != null) {
+      line=line.trim();
+      if (line.startsWith("<!-- -")) {
+        StringTokenizer tok=new StringTokenizer(line,"- ");
+        while (tok.hasMoreTokens()) {
+          String token=tok.nextToken();
+          if (token.equals("Control:")) {
+            CONTROLS.add(tok.nextToken());
+            break;
+          }
+ else           if (token.equals("Command:")) {
+            COMMANDS.add(tok.nextToken());
+            break;
+          }
+        }
+      }
+      line=reader.readLine();
+    }
+    reader.close();
+    Unmarshaller unmarshaller=jc.createUnmarshaller();
+    SAXParserFactory parserFactory;
+    parserFactory=SAXParserFactory.newInstance();
+    parserFactory.setNamespaceAware(false);
+    XMLReader xmlreader=parserFactory.newSAXParser().getXMLReader();
+    xmlreader.setEntityResolver(new EntityResolver(){
+      public InputSource resolveEntity(      String publicId,      String systemId) throws SAXException, IOException {
+        InputSource is=null;
+        if (systemId != null && systemId.endsWith("amqp.dtd")) {
+          is=new InputSource();
+          is.setPublicId(publicId);
+          is.setSystemId(Generator.class.getResource("amqp.dtd").toExternalForm());
+        }
+        return is;
+      }
+    }
+);
+    reader=new BufferedReader(new FileReader(inputFile));
+    Source er=new SAXSource(xmlreader,new InputSource(reader));
+    Amqp amqp=(Amqp)unmarshaller.unmarshal(er);
+    for (    Object docOrSection : amqp.getDocOrSection()) {
+      if (docOrSection instanceof Section) {
+        Section section=(Section)docOrSection;
+        for (        Object docOrDefinitionOrType : section.getDocOrDefinitionOrType()) {
+          if (docOrDefinitionOrType instanceof Type) {
+            generateClassFromType(amqp,section,(Type)docOrDefinitionOrType);
+          }
+ else           if (docOrDefinitionOrType instanceof Definition) {
+            Definition def=(Definition)docOrDefinitionOrType;
+            DEFINITIONS.put(def.getName(),new AmqpDefinition(def));
+          }
+        }
+      }
+    }
+    reader.close();
+  }
+  for (  AmqpClass amqpClass : TypeRegistry.getGeneratedTypes()) {
+    if (amqpClass.isRestricted()) {
+      amqpClass.restrictedType=TypeRegistry.getBasePrimitiveType(amqpClass.restrictedType);
+    }
+    Utils.LOG.debug(amqpClass.toString());
+  }
+  Utils.LOG.debug(TypeRegistry.dump());
+  for (  AmqpClass amqpClass : TypeRegistry.getGeneratedTypes()) {
+    amqpClass.generate(this);
+  }
+  generatePrimitiveEncoderInterface();
+  generateCommandHandler();
+  generateMarshallerInterface();
+  generateMarshaller();
+  generateTypeFactory();
+  generateDefinitions();
+}

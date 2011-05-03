@@ -1,0 +1,18 @@
+{
+  String comment="";
+  comment+="<ol>\n";
+  for (  Li li : ol.getLi()) {
+    comment+="<li>\n";
+    for (    Object uType : li.getPOrUl()) {
+      if (uType instanceof P) {
+        comment+=handleP((P)uType);
+      }
+ else {
+        comment+=handleUl((Ul)uType);
+      }
+    }
+    comment+="\n</li>\n";
+  }
+  comment+="\n</ol>\n";
+  return comment;
+}

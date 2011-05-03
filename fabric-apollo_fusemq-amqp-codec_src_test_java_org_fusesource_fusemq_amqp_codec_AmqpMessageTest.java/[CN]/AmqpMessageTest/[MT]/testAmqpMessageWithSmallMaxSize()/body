@@ -1,0 +1,9 @@
+{
+  AmqpMessage in=AmqpTestSupport.createMessage(10);
+  LinkedList<AmqpList> out=in.construct(300);
+  long encodedSize=getMessageSize(out);
+  printMessage(out);
+  assertEquals(2,out.size());
+  assertEquals(out.get(0).getListCount() + out.get(1).getListCount(),in.getCount());
+  assertEquals(in.getEncodedSize(),encodedSize);
+}

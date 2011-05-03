@@ -1,0 +1,62 @@
+{
+  this.name=type.getName();
+  this.restrictedType=type.getSource();
+  this.label=type.getLabel();
+  this.provides=type.getProvides();
+  if ("frame".equals(provides)) {
+    isCommand=true;
+    Generator.COMMANDS.add(this.name);
+  }
+  for (  Object typeAttribute : type.getEncodingOrDescriptorOrFieldOrChoiceOrErrorOrDoc()) {
+    if (typeAttribute instanceof Field) {
+      AmqpField field=new AmqpField();
+      field.parseFromField((Field)typeAttribute);
+      fields.put(field.getName(),field);
+    }
+ else     if (typeAttribute instanceof Descriptor) {
+      descriptor=new AmqpDescriptor();
+      descriptor.parseFromDescriptor((Descriptor)typeAttribute);
+    }
+ else     if (typeAttribute instanceof Choice) {
+      if (choice == null) {
+        choice=new AmqpChoice();
+      }
+      choice.parseFromChoice((Choice)typeAttribute);
+    }
+ else     if (typeAttribute instanceof Doc) {
+      doc.parseFromDoc((Doc)typeAttribute);
+    }
+ else     if (typeAttribute instanceof Encoding) {
+      if (encodings == null) {
+        encodings=new LinkedList<AmqpEncoding>();
+      }
+      AmqpEncoding encoding=new AmqpEncoding();
+      encoding.parseFromEncoding((Encoding)typeAttribute);
+      encodings.add(encoding);
+    }
+ else     if (typeAttribute instanceof org.fusesource.fusemq.amqp.jaxb.schema.Error) {
+      error=new AmqpError();
+      error.parseFromError((org.fusesource.fusemq.amqp.jaxb.schema.Error)typeAttribute);
+    }
+  }
+  if (label != null) {
+    doc.setLabel("Represents a " + label);
+  }
+  if (type.getClazz().equalsIgnoreCase("primitive")) {
+    setPrimitive(true);
+  }
+  if (type.getClazz().equalsIgnoreCase("restricted")) {
+    this.restricted=true;
+  }
+  typeMapping=new TypeRegistry.JavaTypeMapping(name,generator.getPackagePrefix() + ".types." + "Amqp"+ Utils.capFirst(Utils.toJavaName(name)));
+  if (isMarshallable()) {
+    beanMapping=new TypeRegistry.JavaTypeMapping(name + "-bean",generator.getPackagePrefix() + ".types",typeMapping + "." + typeMapping+ "Bean",true);
+    bufferMapping=new TypeRegistry.JavaTypeMapping(name + "-bean",generator.getPackagePrefix() + ".types",typeMapping + "." + typeMapping+ "Buffer",true);
+  }
+  if (isPrimitive()) {
+    valueMapping=TypeRegistry.getJavaTypeMapping(name);
+  }
+ else   if (isRestricted()) {
+    valueMapping=typeMapping;
+  }
+}

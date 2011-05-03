@@ -1,0 +1,11 @@
+{
+  if (formatCode == null) {
+    descriptor=FormatCategory.createBuffer(buffer,1 + offset);
+    describedBuffer=FormatCategory.createBuffer(buffer,1 + offset + descriptor.getEncodedSize());
+  }
+ else {
+    descriptor=FormatCategory.createBuffer(buffer.get(offset),buffer,1 + offset);
+    describedBuffer=FormatCategory.createBuffer(buffer.get(offset + descriptor.getEncodedSize()),buffer,1 + offset + descriptor.getEncodedSize());
+  }
+  return initializeEncoded();
+}

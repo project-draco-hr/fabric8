@@ -1,0 +1,29 @@
+{
+  String tableFormat="|%2s |%25s |%25s |%6s |%6s |%10s |";
+  String header=String.format(tableFormat,"#","Name","Type","Req","Mult","Default");
+  String ret="\n" + Utils.getTitle(header.length(),getJavaType() + ":" + name);
+  try {
+    ret=String.format("%s\nBase Type: %s:%s",ret,resolveBaseType().getJavaType(),resolveBaseType().name);
+  }
+ catch (  UnknownTypeException ut) {
+    ret=String.format("%s\nBase Type: Unknown",ret);
+  }
+  ret+=appendIfNotNull("\nEncoding(s) : %s",encodings);
+  ret+=appendIfNotNull("\nDescriptor {\n%s\n}",descriptor);
+  ret+=appendIfTrue("\nRestricted Type: %s",restrictedType,isRestricted());
+  ret+=appendIfNotNull("\nType Mapping: %s",typeMapping);
+  ret+=appendIfNotNull("\nValue Mapping: %s",valueMapping);
+  ret+=appendIfNotNull("\nBean Mapping: %s",beanMapping);
+  ret+=appendIfNotNull("\nBuffer Mapping: %s",bufferMapping);
+  if (!fields.isEmpty()) {
+    int num=0;
+    ret+="\n" + Utils.getTitle(header.length(),"Fields");
+    ret+="\n" + header + "\n";
+    ret+=Utils.getBar(header.length() - 1);
+    for (    AmqpField f : fields.values()) {
+      ret+=String.format("\n" + tableFormat,++num,f.getName(),f.getType(),f.isRequired(),f.isMultiple(),f.getDefaultValue());
+    }
+  }
+  ret+="\n" + Utils.getBar(header.length()) + "\n\n";
+  return ret;
+}

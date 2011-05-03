@@ -1,0 +1,29 @@
+{
+  boolean useArrayEncoding=useArrayEncoding(val);
+  if (!Boolean.parseBoolean(System.getProperty("org.fusesource.fusemq.amqp.codec.Use8BitListEncodings"))) {
+    if (useArrayEncoding) {
+      return AmqpListMarshaller.LIST_ENCODING.ARRAY32;
+    }
+ else {
+      return AmqpListMarshaller.LIST_ENCODING.LIST32;
+    }
+  }
+  int size=getEncodedSizeOfList(0,val,useArrayEncoding);
+  if (useArrayEncoding) {
+    size+=1;
+    if (size > 254) {
+      return AmqpListMarshaller.LIST_ENCODING.ARRAY32;
+    }
+ else {
+      return AmqpListMarshaller.LIST_ENCODING.ARRAY8;
+    }
+  }
+ else {
+    if (size > 254) {
+      return AmqpListMarshaller.LIST_ENCODING.LIST32;
+    }
+ else {
+      return AmqpListMarshaller.LIST_ENCODING.LIST8;
+    }
+  }
+}

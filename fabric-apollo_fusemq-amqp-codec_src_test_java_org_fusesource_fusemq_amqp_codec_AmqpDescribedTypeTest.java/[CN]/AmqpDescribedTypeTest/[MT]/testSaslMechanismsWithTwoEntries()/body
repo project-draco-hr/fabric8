@@ -1,0 +1,14 @@
+{
+  AmqpSaslMechanisms in=createAmqpSaslMechanisms();
+  in.setSaslServerMechanisms(createMultiple());
+  List<AmqpSymbol> list=new ArrayList<AmqpSymbol>();
+  list.add(createAmqpSymbol("blah"));
+  list.add(createAmqpSymbol("blah"));
+  in.getSaslServerMechanisms().setValue(createAmqpList(new IAmqpList.AmqpWrapperList(list)));
+  print("In: %s",in);
+  byte marshalled[]=CodecUtils.marshal(in);
+  print(marshalled);
+  AmqpSaslMechanisms out=CodecUtils.unmarshal(marshalled);
+  print("In: %s, Out: %s",in,out);
+  Assert.assertTrue(in.equals(out));
+}

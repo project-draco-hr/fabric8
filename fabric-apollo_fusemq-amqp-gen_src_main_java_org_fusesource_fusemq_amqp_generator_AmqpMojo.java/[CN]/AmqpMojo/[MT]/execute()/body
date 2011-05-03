@@ -1,0 +1,34 @@
+{
+  File[] mainFiles=null;
+  if (mainSourceDirectory.exists()) {
+    mainFiles=mainSourceDirectory.listFiles(new FileFilter(){
+      public boolean accept(      File pathname){
+        return pathname.getName().endsWith(".xml");
+      }
+    }
+);
+    if (mainFiles == null || mainFiles.length == 0) {
+      getLog().warn("No amqp spec files found in directory: " + mainSourceDirectory.getPath());
+    }
+ else {
+      processFiles(mainFiles,mainOutputDirectory);
+      this.project.addCompileSourceRoot(mainOutputDirectory.getAbsolutePath());
+    }
+  }
+  File[] testFiles=null;
+  if (testSourceDirectory.exists()) {
+    testFiles=testSourceDirectory.listFiles(new FileFilter(){
+      public boolean accept(      File pathname){
+        return pathname.getName().endsWith(".xml");
+      }
+    }
+);
+    if (testFiles == null || testFiles.length == 0) {
+      getLog().warn("No amqp spec files found in directory: " + testSourceDirectory.getPath());
+    }
+ else {
+      processFiles(testFiles,testOutputDirectory);
+      this.project.addTestCompileSourceRoot(testOutputDirectory.getAbsolutePath());
+    }
+  }
+}

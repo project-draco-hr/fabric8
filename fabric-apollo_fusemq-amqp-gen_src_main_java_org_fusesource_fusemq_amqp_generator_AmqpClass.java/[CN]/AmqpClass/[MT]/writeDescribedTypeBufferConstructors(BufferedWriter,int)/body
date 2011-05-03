@@ -1,0 +1,17 @@
+{
+  AmqpClass describedType=descriptor.resolveDescribedType();
+  writer.newLine();
+  writer.write(Utils.tab(indent++) + "public static class " + bufferMapping.getClassName()+ " extends "+ describedType.bufferMapping+ " implements "+ typeMapping+ "{");
+  writer.newLine();
+  writer.newLine();
+  writer.write(Utils.tab(indent) + "private " + beanMapping.getShortName()+ " bean;");
+  writer.newLine();
+  writer.newLine();
+  writer.write(Utils.tab(indent) + "protected " + bufferMapping.getShortName()+ "(Encoded<"+ getValueMapping()+ "> encoded) {");
+  writer.newLine();
+  writer.write(Utils.tab(++indent) + "super(encoded);");
+  writer.newLine();
+  writer.write(Utils.tab(--indent) + "}");
+  writer.newLine();
+  return indent;
+}
