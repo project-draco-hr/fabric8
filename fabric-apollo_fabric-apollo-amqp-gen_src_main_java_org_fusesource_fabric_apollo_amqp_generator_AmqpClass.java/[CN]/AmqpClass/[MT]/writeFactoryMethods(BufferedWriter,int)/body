@@ -1,0 +1,30 @@
+{
+  writer.newLine();
+  writer.write(Utils.tab(indent) + "public static " + bufferMapping+ " create(Encoded<"+ getEncodedType().valueMapping+ "> encoded) {");
+  writer.newLine();
+  writer.write(Utils.tab(++indent) + "if(encoded.isNull()) {");
+  writer.newLine();
+  writer.write(Utils.tab(++indent) + "return null;");
+  writer.newLine();
+  writer.write(Utils.tab(--indent) + "}");
+  writer.newLine();
+  writer.write(Utils.tab(indent) + "return new " + bufferMapping+ "(encoded);");
+  writer.newLine();
+  writer.write(Utils.tab(--indent) + "}");
+  writer.newLine();
+  writer.newLine();
+  writer.write(Utils.tab(indent) + "public static " + bufferMapping+ " create(DataInput in, AmqpMarshaller marshaller) throws IOException, AmqpEncodingError {");
+  writer.newLine();
+  writer.write(Utils.tab(++indent) + "return create(marshaller.unmarshal" + getEncodedType().typeMapping+ "(in));");
+  writer.newLine();
+  writer.write(Utils.tab(--indent) + "}");
+  writer.newLine();
+  writer.newLine();
+  writer.write(Utils.tab(indent) + "public static " + bufferMapping+ " create(Buffer buffer, int offset, AmqpMarshaller marshaller) throws AmqpEncodingError {");
+  writer.newLine();
+  writer.write(Utils.tab(++indent) + "return create(marshaller.decode" + getEncodedType().typeMapping+ "(buffer, offset));");
+  writer.newLine();
+  writer.write(Utils.tab(--indent) + "}");
+  writer.newLine();
+  return indent;
+}

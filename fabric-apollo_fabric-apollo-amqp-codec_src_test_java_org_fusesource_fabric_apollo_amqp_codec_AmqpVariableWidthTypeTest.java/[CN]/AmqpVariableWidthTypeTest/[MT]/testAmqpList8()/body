@@ -1,0 +1,12 @@
+{
+  List<AmqpType<?,?>> list=new ArrayList<AmqpType<?,?>>();
+  for (int i=0; i < 3; i++) {
+    list.add(createAmqpString(String.valueOf(i)));
+  }
+  for (int i=0; i < 3; i++) {
+    list.add(createAmqpLong((long)i));
+  }
+  AmqpList in=createAmqpList(new IAmqpList.AmqpWrapperList(list));
+  AmqpList out=marshalUnmarshal(in);
+  Assert.assertTrue(in + " != " + out,in.equals(out));
+}

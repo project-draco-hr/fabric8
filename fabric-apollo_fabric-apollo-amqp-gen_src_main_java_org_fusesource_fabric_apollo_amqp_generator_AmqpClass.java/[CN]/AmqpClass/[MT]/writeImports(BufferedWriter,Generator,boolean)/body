@@ -1,0 +1,113 @@
+{
+  TreeSet<String> imports=new TreeSet<String>();
+  for (  AmqpField field : fields.values()) {
+    AmqpClass fieldType=field.resolveAmqpFieldType();
+    if (!marshaller) {
+      filterOrAddImport(imports,fieldType.getValueMapping(),marshaller);
+    }
+    if (fieldType.isEnumType()) {
+      if (!marshaller) {
+        filterOrAddImport(imports,fieldType.getTypeMapping(),marshaller);
+      }
+      filterOrAddImport(imports,fieldType.resolveBaseType().getTypeMapping(),marshaller);
+    }
+ else {
+      filterOrAddImport(imports,fieldType.getTypeMapping(),marshaller);
+    }
+  }
+  if (!marshaller && isCommand()) {
+    imports.add(generator.getPackagePrefix() + ".AmqpCommandHandler");
+    imports.add(generator.getPackagePrefix() + ".AmqpCommand");
+  }
+  if (marshaller) {
+    filterOrAddImport(imports,typeMapping,marshaller);
+    if (isMap() || isList()) {
+      filterOrAddImport(imports,TypeRegistry.any().getTypeMapping(),marshaller);
+    }
+    imports.add("java.io.DataInput");
+    imports.add("java.io.IOException");
+    imports.add(generator.getPackagePrefix() + ".marshaller.AmqpEncodingError");
+    imports.add(generator.getPackagePrefix() + ".marshaller.Encoded");
+    imports.add(generator.getMarshallerPackage() + ".Encoder");
+    imports.add(generator.getMarshallerPackage() + ".Encoder.*");
+    imports.add("org.fusesource.hawtbuf.Buffer");
+    if (isDescribed()) {
+      filterOrAddImport(imports,getValueMapping(),marshaller);
+      imports.add(generator.getPackagePrefix() + ".marshaller.UnexpectedTypeException");
+      AmqpClass describedType=descriptor.resolveDescribedType();
+      if (describedType.getName().equals("list")) {
+        imports.add(TypeRegistry.resolveAmqpClass("list").getValueMapping().getImport());
+        imports.add(generator.getPackagePrefix() + ".types.AmqpType");
+      }
+ else       if (describedType.getName().equals("map")) {
+        imports.add(TypeRegistry.resolveAmqpClass("map").getValueMapping().getImport());
+        imports.add(generator.getPackagePrefix() + ".types.AmqpType");
+        imports.add("java.util.HashMap");
+        imports.add(TypeRegistry.resolveAmqpClass("symbol").getTypeMapping().getImport());
+      }
+      imports.add(generator.getPackagePrefix() + ".types.AmqpUlong");
+      imports.add(generator.getPackagePrefix() + ".types.AmqpSymbol");
+    }
+ else {
+      imports.add("java.io.DataOutput");
+    }
+    if (hasMultipleEncodings()) {
+      imports.add(generator.getPackagePrefix() + ".marshaller.UnexpectedTypeException");
+      imports.add(generator.getPackagePrefix() + ".marshaller.Encoding");
+      imports.add(generator.getPackagePrefix() + ".marshaller.AmqpVersion");
+    }
+    if (isPrimitive()) {
+      filterOrAddImport(imports,getValueMapping(),marshaller);
+    }
+  }
+ else   if (isMarshallable()) {
+    imports.add(generator.getPackagePrefix() + ".marshaller.AmqpEncodingError");
+    imports.add(generator.getPackagePrefix() + ".marshaller.AmqpMarshaller");
+    imports.add(generator.getPackagePrefix() + ".marshaller.Encoded");
+    imports.add("org.fusesource.hawtbuf.Buffer");
+    imports.add("java.io.IOException");
+    imports.add("java.io.DataOutput");
+    imports.add("java.io.DataInput");
+    imports.add(getValueMapping().getImport());
+    if (resolveBaseType().isList()) {
+      imports.add("java.util.Iterator");
+    }
+    if (isList()) {
+      imports.add("java.util.ArrayList");
+    }
+    if (resolveBaseType().isMap()) {
+      imports.add("java.util.Iterator");
+      imports.add("java.util.Map");
+      imports.add("java.util.HashMap");
+    }
+    if (descriptor != null) {
+      AmqpClass describedType=descriptor.resolveDescribedType();
+      if (describedType.getName().equals("list")) {
+        imports.add(TypeRegistry.resolveAmqpClass("list").getValueMapping().getImport());
+      }
+ else       if (describedType.getName().equals("map")) {
+        imports.add(TypeRegistry.resolveAmqpClass("map").getValueMapping().getImport());
+      }
+      filterOrAddImport(imports,describedType.getTypeMapping(),marshaller);
+    }
+    if (isCommand()) {
+      imports.add(generator.getPackagePrefix() + ".AmqpCommandHandler");
+      imports.add(generator.getPackagePrefix() + ".AmqpCommand");
+    }
+  }
+  if (!marshaller && isRestricted()) {
+    if (isEnumType()) {
+      imports.add(generator.getPackagePrefix() + ".marshaller.AmqpEncodingError");
+      imports.add("java.util.HashMap");
+    }
+    imports.add(TypeRegistry.resolveAmqpClass(restrictedType).getTypeMapping().getImport());
+    imports.add(resolveRestrictedType().getValueMapping().getImport());
+  }
+  boolean ret=false;
+  for (  String toImport : imports) {
+    ret=true;
+    writer.write("import " + toImport + ";");
+    writer.newLine();
+  }
+  return ret;
+}

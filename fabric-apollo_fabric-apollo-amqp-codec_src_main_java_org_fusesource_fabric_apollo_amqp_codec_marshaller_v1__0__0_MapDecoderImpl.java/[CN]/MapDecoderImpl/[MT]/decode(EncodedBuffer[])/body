@@ -1,0 +1,10 @@
+{
+  IAmqpMap.AmqpWrapperMap<AmqpType<?,?>,AmqpType<?,?>> rc=new IAmqpMap.AmqpWrapperMap<AmqpType<?,?>,AmqpType<?,?>>(new HashMap<AmqpType<?,?>,AmqpType<?,?>>());
+  if (constituents.length % 2 != 0) {
+    throw new AmqpEncodingError("Invalid number of compound constituents: " + constituents.length);
+  }
+  for (int i=0; i < constituents.length; i+=2) {
+    rc.put(Encoder.MARSHALLER.decodeType(constituents[i]),Encoder.MARSHALLER.decodeType(constituents[i + 1]));
+  }
+  return rc;
+}

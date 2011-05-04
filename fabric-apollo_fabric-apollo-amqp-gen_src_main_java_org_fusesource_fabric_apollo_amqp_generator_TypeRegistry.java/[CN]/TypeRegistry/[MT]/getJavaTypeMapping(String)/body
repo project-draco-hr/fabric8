@@ -1,0 +1,13 @@
+{
+  JavaTypeMapping mapping=JAVA_TYPE_MAP.get(name);
+  if (mapping == null) {
+    AmqpClass amqpClass=GENERATED_TYPE_MAP.get(name);
+    if (amqpClass != null) {
+      mapping=amqpClass.typeMapping;
+    }
+    if (mapping == null) {
+      throw new UnknownTypeException(name);
+    }
+  }
+  return mapping;
+}

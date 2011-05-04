@@ -1,0 +1,17 @@
+{
+  AmqpMessage in=new AmqpMessage();
+  in.add(new Buffer("create a fragment via buffer".getBytes()));
+  in.add("create a fragment via byte array".getBytes());
+  in.add(createAmqpLong(27));
+  in.add(createAmqpString("a fragment with a string in it"));
+  AmqpMap someMap=createAmqpMap();
+  someMap.put(createAmqpString("A map"),createAmqpString("with a value"));
+  in.add(someMap);
+  ArrayList<AmqpString> list=new ArrayList<AmqpString>();
+  list.add(createAmqpString("A list with a string in it"));
+  AmqpList someList=createAmqpList(new IAmqpList.AmqpWrapperList(list));
+  in.add(someList);
+  in.setHeader(createAmqpHeader());
+  in.getHeader().setDurable(false);
+  return in;
+}

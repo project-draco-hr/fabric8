@@ -1,0 +1,9 @@
+{
+  header=null;
+  if (fragment.getSectionCode() != HEADER) {
+    throw new IllegalArgumentException("Expecting fragment with HEADER format code, instead got " + fragment.getSectionCode());
+  }
+  if (fragment.getPayload().getLength() > 0) {
+    header=AmqpHeader.AmqpHeaderBuffer.create(fragment.getPayload(),0,getMarshaller());
+  }
+}

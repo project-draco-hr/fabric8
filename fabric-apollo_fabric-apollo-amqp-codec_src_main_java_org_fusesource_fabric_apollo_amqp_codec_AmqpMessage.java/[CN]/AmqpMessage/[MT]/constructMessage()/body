@@ -1,0 +1,18 @@
+{
+  LinkedList<AmqpFragment> rc=new LinkedList<AmqpFragment>(fragments);
+  if (properties != null) {
+    rc.addFirst(getPropertiesFragment());
+  }
+  long offset=0;
+  for (  AmqpFragment fragment : rc) {
+    fragment.setSectionNumber(1);
+    fragment.setSectionOffset(BigInteger.valueOf(offset++));
+  }
+  if (header != null) {
+    rc.addFirst(getHeaderFragment());
+  }
+  if (footer != null) {
+    rc.addLast(getFooterFragment());
+  }
+  return rc;
+}

@@ -1,0 +1,10 @@
+{
+  Multiple multiple=createMultiple();
+  byte marshalled[]=CodecUtils.marshal(multiple);
+  print(marshalled);
+  Assert.assertEquals("Should be a 1 element array",1,marshalled.length);
+  Assert.assertEquals("Array value should be NULL (0x40)",(byte)0x40,BitUtils.getUByte(marshalled,0));
+  Multiple out=unmarshalMultiple(marshalled);
+  print("Out: %s",out);
+  Assert.assertTrue("Type should be null",out == null);
+}

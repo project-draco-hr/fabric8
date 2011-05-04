@@ -1,0 +1,9 @@
+{
+  footer=null;
+  if (fragment.getSectionCode() != FOOTER) {
+    throw new IllegalArgumentException("Expecting fragment with FOOTER format code, instead got " + fragment.getSectionCode());
+  }
+  if (fragment.getPayload().getLength() > 0) {
+    footer=AmqpFooter.AmqpFooterBuffer.create(fragment.getPayload(),0,getMarshaller());
+  }
+}

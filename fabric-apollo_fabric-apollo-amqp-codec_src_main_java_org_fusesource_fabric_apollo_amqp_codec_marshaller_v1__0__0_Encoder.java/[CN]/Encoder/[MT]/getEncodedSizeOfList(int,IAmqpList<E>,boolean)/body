@@ -1,0 +1,19 @@
+{
+  int max=val.getListCount();
+  for (int i=0; i < max; i++) {
+    E le=val.get(i);
+    if (le == null) {
+      size+=1;
+    }
+ else {
+      Encoded<?> encoded=le.getBuffer(MARSHALLER).getEncoded();
+      if (!array) {
+        size+=encoded.getEncodedSize();
+      }
+ else {
+        size+=encoded.getEncodedSize() - 1;
+      }
+    }
+  }
+  return size;
+}

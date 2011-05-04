@@ -1,0 +1,17 @@
+{
+  int rc=0;
+  setDoff(calculateDataOffset());
+  setSize(getFrameSize());
+  rc+=channel.write(header.toByteBuffer());
+  rc+=channel.write(extHeader.toByteBuffer());
+  if (body == null && encodedBody != null) {
+    rc+=channel.write(encodedBody.toByteBuffer());
+  }
+ else   if (body != null) {
+    ByteArrayOutputStream bos=new ByteArrayOutputStream();
+    DataOutputStream out=new DataOutputStream(bos);
+    encodedBody=new Buffer(bos.toByteArray());
+    rc+=channel.write(encodedBody.toByteBuffer());
+  }
+  return rc;
+}

@@ -1,0 +1,10 @@
+{
+  byte[] s;
+  try {
+    s=val.getBytes("utf-8");
+  }
+ catch (  UnsupportedEncodingException e) {
+    throw new AmqpEncodingError(e.getMessage(),e);
+  }
+  System.arraycopy(s,0,buf.data,buf.offset + offset,s.length);
+}

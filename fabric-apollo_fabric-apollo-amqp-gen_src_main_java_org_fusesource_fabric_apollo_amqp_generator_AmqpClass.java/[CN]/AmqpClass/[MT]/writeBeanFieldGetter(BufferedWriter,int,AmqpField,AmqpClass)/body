@@ -1,0 +1,20 @@
+{
+  TypeRegistry.JavaTypeMapping returnType=fieldClass.isPrimitive() ? fieldClass.getValueMapping() : fieldClass.typeMapping;
+  writer.write(Utils.tab(indent) + "public final " + returnType+ " get"+ Utils.capFirst(field.getJavaName())+ "() {");
+  writer.newLine();
+  if (!fieldClass.isAny() && fieldClass.isPrimitive() && !fieldClass.isMutable()) {
+    writer.write(Utils.tab(++indent) + "if ( bean." + field.getJavaName()+ " == null ) {");
+    writer.newLine();
+    writer.write(Utils.tab(++indent) + "return null;");
+    writer.newLine();
+    writer.write(Utils.tab(--indent) + "}");
+    writer.newLine();
+    writer.write(Utils.tab(indent) + "return bean." + field.getJavaName()+ ".getValue();");
+  }
+ else {
+    writer.write(Utils.tab(++indent) + "return bean." + field.getJavaName()+ ";");
+  }
+  writer.newLine();
+  writer.write(Utils.tab(--indent) + "}");
+  writer.newLine();
+}

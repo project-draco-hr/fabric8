@@ -1,0 +1,10 @@
+{
+  if (weight < 1) {
+    throw new IllegalArgumentException("weight must be 1 or greater");
+  }
+  Wrapper<Node> wrapper=new Wrapper<Node>(node,weight);
+  nodes.put(node,wrapper);
+  for (int i=0; i < wrapper.weight; i++) {
+    ring.put(hasher.hashNode(node,i),wrapper);
+  }
+}

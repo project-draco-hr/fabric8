@@ -1,0 +1,11 @@
+{
+  AmqpTransfer transfer=createAmqpTransfer();
+  transfer.setDeliveryTag(new Buffer("This is my delivery tag".getBytes()));
+  transfer.setMore(false);
+  transfer.setHandle(0);
+  transfer.setFragments(createMultiple());
+  transfer.getFragments().setValue(createMessage(10).construct());
+  AmqpFrame in=new AmqpFrame(transfer);
+  AmqpFrame out=marshalUnmarshal(in);
+  Assert.assertTrue(in + " != " + out,in.equals(out));
+}

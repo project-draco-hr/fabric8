@@ -1,0 +1,24 @@
+{
+  int formatCodeOffset=0;
+  if (formatCode == null) {
+    formatCodeOffset=1;
+  }
+  offset=offset + source.offset;
+  if (category.WIDTH == 1) {
+    dataSize=0xff & source.data[formatCodeOffset + offset];
+    dataCount=0xff & source.data[formatCodeOffset + offset + 1];
+  }
+ else {
+    dataSize=(int)BitUtils.getUInt(source.data,formatCodeOffset + offset);
+    dataCount=(int)BitUtils.getUInt(source.data,formatCodeOffset + offset + category.WIDTH);
+  }
+  Buffer rc=new Buffer(1 + category.WIDTH + dataSize);
+  if (formatCode != null) {
+    System.arraycopy(source.data,offset,rc.data,1,rc.length - 1);
+    rc.data[0]=formatCode;
+  }
+ else {
+    System.arraycopy(source.data,offset,rc.data,0,rc.length);
+  }
+  return rc;
+}

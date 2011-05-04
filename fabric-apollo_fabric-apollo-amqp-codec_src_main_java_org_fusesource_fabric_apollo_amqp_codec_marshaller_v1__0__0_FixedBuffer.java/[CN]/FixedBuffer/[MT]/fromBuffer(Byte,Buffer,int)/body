@@ -1,0 +1,15 @@
+{
+  int formatCodeOffset=1;
+  if (formatCode == null) {
+    formatCodeOffset=0;
+  }
+  Buffer rc=new Buffer(1 + category.WIDTH);
+  if (formatCode != null) {
+    System.arraycopy(source.data,source.offset + offset,rc.data,1,rc.length - 1);
+    rc.data[0]=formatCode;
+  }
+ else {
+    System.arraycopy(source.data,source.offset + offset,rc.data,0,rc.length);
+  }
+  return rc;
+}

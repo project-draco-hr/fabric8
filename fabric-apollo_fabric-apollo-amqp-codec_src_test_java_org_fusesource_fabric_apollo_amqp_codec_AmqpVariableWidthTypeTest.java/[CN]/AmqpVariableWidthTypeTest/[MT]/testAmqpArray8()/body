@@ -1,0 +1,9 @@
+{
+  List<AmqpString> list=new ArrayList<AmqpString>();
+  for (int i=0; i < 5; i++) {
+    list.add(createAmqpString(String.valueOf(i)));
+  }
+  AmqpList in=createAmqpList(new IAmqpList.AmqpWrapperList(list));
+  AmqpList out=marshalUnmarshal(in);
+  Assert.assertTrue(in + " != " + out,in.equals(out));
+}

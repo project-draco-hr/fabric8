@@ -1,0 +1,8 @@
+{
+  AmqpFlow in=createAmqpFlow();
+  in.setHandle(1);
+  in.setOptions(createAmqpOptions());
+  in.getOptions().put(createAmqpString("Hello"),createAmqpUint(20));
+  AmqpFlow out=CodecUtils.marshalUnmarshal(in);
+  Assert.assertTrue(in.equals(out));
+}
