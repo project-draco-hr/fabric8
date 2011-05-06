@@ -10,6 +10,14 @@
       properties.put(key.toString(),val.toString());
     }
   }
+  for (  String key : properties.keySet()) {
+    if (key.equals("framework")) {
+      String url=properties.get(key);
+      if (updateFramework(url)) {
+        return;
+      }
+    }
+  }
   Map<URI,Repository> repositories=new HashMap<URI,Repository>();
   for (  String key : properties.keySet()) {
     if (key.startsWith("repository.")) {
@@ -50,10 +58,4 @@
     }
   }
   updateDeployment(repositories,features,bundles);
-  for (  String key : properties.keySet()) {
-    if (key.equals("framework")) {
-      String url=properties.get(key);
-      updateFramework(url);
-    }
-  }
 }
