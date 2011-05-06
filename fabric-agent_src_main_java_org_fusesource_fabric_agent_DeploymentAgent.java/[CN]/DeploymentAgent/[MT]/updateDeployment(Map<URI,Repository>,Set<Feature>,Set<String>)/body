@@ -70,8 +70,10 @@
     Bundle bundle=entry.getKey();
     Resource resource=entry.getValue();
     InputStream is=new URL(resource.getURI()).openStream();
+    bundle.stop(Bundle.STOP_TRANSIENT);
     bundle.update(is);
     toRefresh.add(bundle);
+    toStart.add(bundle);
   }
   for (  Resource resource : toInstall) {
     Bundle bundle=bundleContext.installBundle(resource.getURI());
