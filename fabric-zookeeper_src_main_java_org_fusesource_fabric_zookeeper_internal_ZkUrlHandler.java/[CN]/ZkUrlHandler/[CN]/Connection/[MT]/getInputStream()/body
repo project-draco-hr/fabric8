@@ -1,0 +1,9 @@
+{
+  try {
+    return new ByteArrayInputStream(zooKeeper.getData(url.getPath()));
+  }
+ catch (  Exception e) {
+    logger.error("Error opening zookeeper url",e);
+    throw (IOException)new IOException("Error opening zookeeper url").initCause(e);
+  }
+}

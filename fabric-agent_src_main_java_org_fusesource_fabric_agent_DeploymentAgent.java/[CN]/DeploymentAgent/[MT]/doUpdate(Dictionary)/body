@@ -2,6 +2,9 @@
   if (props == null) {
     return;
   }
+  final MavenConfigurationImpl config=new MavenConfigurationImpl(new DictionaryPropertyResolver(props,new PropertiesPropertyResolver(System.getProperties())),"org.ops4j.pax.url.mvn");
+  config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
+  manager=new DownloadManager(config);
   Map<String,String> properties=new HashMap<String,String>();
   for (Enumeration e=props.keys(); e.hasMoreElements(); ) {
     Object key=e.nextElement();
