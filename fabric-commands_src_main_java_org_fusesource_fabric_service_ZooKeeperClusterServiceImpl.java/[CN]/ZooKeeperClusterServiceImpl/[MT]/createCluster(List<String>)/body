@@ -12,7 +12,7 @@
       createLocalServer();
       return;
     }
-    String url=zooKeeper.getStringData("/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper/zookeeper.url");
+    String url=getSubstitutedData("/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper/zookeeper.url");
     if (!url.equals(zooKeeperUrl)) {
       throw new IllegalStateException("The zookeeper configuration is not properly backed in the zookeeper tree.");
     }
@@ -26,11 +26,11 @@
     if (oldClusterId != null) {
       for (      String node : zooKeeper.getAllChildren("/fabric/configs/versions/" + version + "/profiles/zk-server-"+ oldClusterId+ "/org.fusesource.fabric.zookeeper.server-"+ oldClusterId)) {
         if (node.startsWith("server.")) {
-          String data=zooKeeper.getStringData("/fabric/configs/versions/" + version + "/profiles/zk-server-"+ oldClusterId+ "/org.fusesource.fabric.zookeeper.server-"+ oldClusterId+ "/"+ node);
+          String data=getSubstitutedData("/fabric/configs/versions/" + version + "/profiles/zk-server-"+ oldClusterId+ "/org.fusesource.fabric.zookeeper.server-"+ oldClusterId+ "/"+ node);
           addUsedPorts(usedPorts,data);
         }
       }
-      String datas=zooKeeper.getStringData("/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper/zookeeper.url");
+      String datas=getSubstitutedData("/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper/zookeeper.url");
       for (      String data : datas.split(",")) {
         addUsedPorts(usedPorts,data);
       }

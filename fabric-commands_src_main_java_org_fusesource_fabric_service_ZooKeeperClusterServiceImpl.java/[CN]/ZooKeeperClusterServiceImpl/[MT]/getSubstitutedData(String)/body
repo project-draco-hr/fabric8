@@ -1,0 +1,23 @@
+{
+  String data=zooKeeper.getStringData(path);
+  Map<String,String> props=new HashMap<String,String>();
+  props.put("data",data);
+  InterpolationHelper.performSubstitution(props,new InterpolationHelper.SubstitutionCallback(){
+    @Override public String getValue(    String key){
+      if (key.startsWith("zk:")) {
+        key=key.substring("zk:".length());
+        if (key.charAt(0) != '/') {
+          key=ZkPath.AGENT.getPath(key);
+        }
+        try {
+          return zooKeeper.getStringData(key);
+        }
+ catch (        Exception e) {
+        }
+      }
+      return null;
+    }
+  }
+);
+  return props.get("data");
+}

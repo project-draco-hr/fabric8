@@ -1,0 +1,15 @@
+{
+  performSubstitution(properties,new SubstitutionCallback(){
+    public String getValue(    String key){
+      String value=null;
+      if (context != null) {
+        value=context.getProperty(key);
+      }
+      if (value == null) {
+        value=System.getProperty(value,"");
+      }
+      return value;
+    }
+  }
+);
+}
