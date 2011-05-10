@@ -24,6 +24,13 @@
     writer.newLine();
     writer.write(Utils.tab(--indent) + "}");
     writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(indent) + "public AmqpType<?, ?>[] toArray() {");
+    writer.newLine();
+    writer.write(Utils.tab(++indent) + "throw new IllegalArgumentException(\"toArray() cannot be called on described types\");");
+    writer.newLine();
+    writer.write(Utils.tab(--indent) + "}");
+    writer.newLine();
   }
  else {
     descriptor.resolveDescribedType().writeFieldAccessors(writer,indent,buffer);
