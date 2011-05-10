@@ -1,6 +1,6 @@
 {
   try {
-    return new JmxTemplate().execute(this,new ServiceStateCallback<ServiceInfo[]>(){
+    return new JmxTemplate().execute(getParent(),new JmxTemplate.ServiceStateCallback<ServiceInfo[]>(){
       public ServiceInfo[] doWithServiceState(      ServiceStateMBean serviceState) throws Exception {
         TabularData services=serviceState.listServices();
         ServiceInfo[] info=new ServiceInfo[services.size()];
