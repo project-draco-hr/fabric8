@@ -1,4 +1,7 @@
 {
+  if (!parent.isAlive()) {
+    return new Agent[0];
+  }
   List<Agent> agents=new JmxTemplate().execute(parent,new JmxTemplate.JmxConnectorCallback<List<Agent>>(){
     @Override public List<Agent> doWithJmxConnector(    JMXConnector connector) throws Exception {
       List<Agent> agents=new ArrayList<Agent>();
