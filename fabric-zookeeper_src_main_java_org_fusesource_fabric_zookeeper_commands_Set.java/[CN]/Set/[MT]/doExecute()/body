@@ -1,4 +1,8 @@
 {
-  getZooKeeper().setData(path,data);
+  String nodeData=data;
+  if (importUrl) {
+    nodeData=loadUrl(new URL(data));
+  }
+  getZooKeeper().setData(path,nodeData);
   return null;
 }

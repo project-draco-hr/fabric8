@@ -13,11 +13,15 @@
  else {
     mode=CreateMode.PERSISTENT;
   }
+  String nodeData=data;
+  if (importUrl) {
+    nodeData=loadUrl(new URL(data));
+  }
   if (recursive) {
-    getZooKeeper().createWithParents(path,data,acls,mode);
+    getZooKeeper().createWithParents(path,nodeData,acls,mode);
   }
  else {
-    getZooKeeper().create(path,data,acls,mode);
+    getZooKeeper().create(path,nodeData,acls,mode);
   }
   return null;
 }
