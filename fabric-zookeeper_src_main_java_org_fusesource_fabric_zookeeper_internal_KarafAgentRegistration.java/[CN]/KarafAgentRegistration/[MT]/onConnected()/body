@@ -12,6 +12,11 @@
  else {
       zooKeeper.createWithParents(nodeAlive,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
     }
+    String domainsNode=AGENT_DOMAINS.getPath(name);
+    stat=zooKeeper.exists(domainsNode);
+    if (stat != null) {
+      zooKeeper.deleteWithChildren(domainsNode);
+    }
     String jmxUrl=getJmxUrl();
     if (jmxUrl != null) {
       zooKeeper.createOrSetWithParents(AGENT_JMX.getPath(name),getJmxUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
@@ -22,6 +27,10 @@
     }
     zooKeeper.createOrSetWithParents(AGENT_IP.getPath(name),getLocalHostAddress(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
     zooKeeper.createOrSetWithParents(AGENT_ROOT.getPath(name),getRootName(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    for (    String domain : mbeanServer.getDomains()) {
+      zooKeeper.createOrSetWithParents(AGENT_DOMAIN.getPath(name,domain),null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    }
+    mbeanServer.addNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this,null,name);
   }
  catch (  Exception e) {
     e.printStackTrace();
