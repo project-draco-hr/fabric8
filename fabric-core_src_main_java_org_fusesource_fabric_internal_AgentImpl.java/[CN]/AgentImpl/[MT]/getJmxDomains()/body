@@ -1,10 +1,11 @@
 {
   try {
-    List<String> list=service.getZooKeeper().getChildren(ZkPath.AGENT_DOMAINS.getPath(id));
+    List<String> list=service.getZooKeeper().getChildren(ZkPath.AGENT_DOMAINS.getPath(getId()));
     Collections.sort(list);
-    return list.toArray(new String[list.size()]);
+    return Collections.unmodifiableList(list);
   }
  catch (  Exception e) {
-    throw new RuntimeException(e);
+    logger.error("Error while retrieving jmx domains",e);
+    return Collections.emptyList();
   }
 }
