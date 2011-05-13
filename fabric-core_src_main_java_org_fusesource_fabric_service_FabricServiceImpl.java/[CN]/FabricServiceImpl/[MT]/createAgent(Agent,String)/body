@@ -1,7 +1,7 @@
 {
   final String zooKeeperUrl=getZooKeeperUrl();
   createAgentConfig(name);
-  return jmxTemplate.execute(parent,new JmxTemplate.AdminServiceCallback<Agent>(){
+  return getAgentTemplate(parent).execute(new AgentTemplate.AdminServiceCallback<Agent>(){
     public Agent doWithAdminService(    AdminServiceMBean adminService) throws Exception {
       String javaOpts=zooKeeperUrl != null ? "-Dzookeeper.url=\"" + zooKeeperUrl + "\" -Xmx512M -server" : "";
       String features="fabric-agent";

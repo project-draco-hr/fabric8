@@ -1,0 +1,19 @@
+{
+  JMXConnector connector=createConnector();
+  try {
+    return callback.doWithJmxConnector(connector);
+  }
+ catch (  FabricException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new FabricException(e);
+  }
+ finally {
+    try {
+      connector.close();
+    }
+ catch (    IOException e) {
+    }
+  }
+}

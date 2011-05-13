@@ -1,0 +1,14 @@
+{
+  this.agent=agent;
+  if (cacheJmx) {
+    this.jmxTemplate=new AgentCachingJmxTemplate(this);
+  }
+ else {
+    this.jmxTemplate=new NonCachingJmxTemplate(){
+      @Override protected JMXConnector createConnector(){
+        return AgentTemplate.this.createConnector();
+      }
+    }
+;
+  }
+}
