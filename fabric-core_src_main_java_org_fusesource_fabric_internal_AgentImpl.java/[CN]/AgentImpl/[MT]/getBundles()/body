@@ -1,6 +1,6 @@
 {
   try {
-    return new JmxTemplate().execute(getParent(),new JmxTemplate.BundleStateCallback<BundleInfo[]>(){
+    return agentTemplate.execute(new AgentTemplate.BundleStateCallback<BundleInfo[]>(){
       public BundleInfo[] doWithBundleState(      BundleStateMBean bundleState) throws Exception {
         TabularData bundles=bundleState.listBundles();
         BundleInfo[] info=new BundleInfo[bundles.size()];

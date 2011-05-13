@@ -1,0 +1,13 @@
+{
+  if (connector != null) {
+    try {
+      connector.close();
+    }
+ catch (    IOException e) {
+      throw new FabricException("Failed to close connection: " + connector + " on "+ this+ ". "+ e,e);
+    }
+ finally {
+      connector=null;
+    }
+  }
+}
