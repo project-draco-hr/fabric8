@@ -1,0 +1,11 @@
+{
+  try {
+    String name=System.getProperty("karaf.name");
+    mbeanServer=(MBeanServer)bundleContext.getService(ref);
+    mbeanServer.addNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this,null,name);
+    registerDomains();
+  }
+ catch (  Exception e) {
+    logger.warn("An error occured during mbean server registration");
+  }
+}

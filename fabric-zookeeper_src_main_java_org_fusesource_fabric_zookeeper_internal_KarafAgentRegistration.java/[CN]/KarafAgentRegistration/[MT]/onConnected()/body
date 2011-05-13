@@ -1,5 +1,6 @@
 {
   try {
+    connected=true;
     String name=System.getProperty("karaf.name");
     String nodeAlive=AGENT_ALIVE.getPath(name);
     Stat stat=zooKeeper.exists(nodeAlive);
@@ -30,7 +31,7 @@
     for (    String domain : mbeanServer.getDomains()) {
       zooKeeper.createOrSetWithParents(AGENT_DOMAIN.getPath(name,domain),null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
     }
-    mbeanServer.addNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this,null,name);
+    registerDomains();
   }
  catch (  Exception e) {
     e.printStackTrace();

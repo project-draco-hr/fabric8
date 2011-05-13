@@ -1,5 +1,9 @@
 {
   Properties props=new Properties();
   props.put("url",zooKeeperUrl);
-  registration=bundleContext.registerService(IZKClient.class.getName(),zooKeeper,props);
+  clientRegistration=bundleContext.registerService(IZKClient.class.getName(),zooKeeper,props);
+  props=new Properties();
+  props.put("url",zooKeeperUrl);
+  props.put("url.handler.protocol","zk");
+  handlerRegistration=bundleContext.registerService(URLStreamHandlerService.class.getName(),new ZkUrlHandler(zooKeeper),props);
 }
