@@ -9,14 +9,27 @@
     locations.add(bundle);
   }
   final CountDownLatch latch=new CountDownLatch(locations.size());
-  final FutureListener listener=new FutureListener(){
-    public void operationComplete(    Future future){
-      latch.countDown();
+  final Map<String,File> downloads=new ConcurrentHashMap<String,File>();
+  final List<Throwable> errors=new CopyOnWriteArrayList<Throwable>();
+  for (  final String location : locations) {
+    manager.download(location).addListener(new FutureListener<DownloadFuture>(){
+      public void operationComplete(      DownloadFuture future){
+        try {
+          downloads.put(location,future.getFile());
+        }
+ catch (        IOException e) {
+          errors.add(e);
+        }
+ finally {
+          latch.countDown();
+        }
+      }
     }
-  }
-;
-  for (  String location : locations) {
-    manager.download(location).addListener(listener);
+);
   }
   latch.await();
+  if (!errors.isEmpty()) {
+    throw new MultiException("Error while downloading bundles",errors);
+  }
+  return downloads;
 }

@@ -1,19 +1,34 @@
 {
-  if (url.startsWith("wrap:")) {
-    url=url.substring("wrap:".length());
-    if (url.contains("$")) {
-      url=url.substring(0,url.lastIndexOf('$') - 1);
+  String mvnUrl=url;
+  if (mvnUrl.startsWith("wrap:")) {
+    mvnUrl=mvnUrl.substring("wrap:".length());
+    if (mvnUrl.contains("$")) {
+      mvnUrl=mvnUrl.substring(0,mvnUrl.lastIndexOf('$') - 1);
     }
   }
-  if (url.startsWith("blueprint:") || url.startsWith("spring:")) {
-    url=url.substring(url.indexOf(':') + 1);
+  if (mvnUrl.startsWith("blueprint:") || mvnUrl.startsWith("spring:")) {
+    mvnUrl=mvnUrl.substring(mvnUrl.indexOf(':') + 1);
   }
-  if (url.startsWith("mvn:")) {
-    DownloadTask task=new DownloadTask(url,system,configuration);
+  if (mvnUrl.startsWith("mvn:")) {
+    MavenDownloadTask task=new MavenDownloadTask(url,system,configuration,executor);
     executor.submit(task);
-    return task.getFuture();
+    if (!mvnUrl.equals(url)) {
+      final SimpleDownloadTask download=new SimpleDownloadTask(url,executor);
+      task.addListener(new FutureListener<DownloadFuture>(){
+        @Override public void operationComplete(        DownloadFuture future){
+          executor.submit(download);
+        }
+      }
+);
+      return download;
+    }
+ else {
+      return task;
+    }
   }
  else {
-    return new DoneDownload();
+    final SimpleDownloadTask download=new SimpleDownloadTask(url,executor);
+    executor.submit(download);
+    return download;
   }
 }

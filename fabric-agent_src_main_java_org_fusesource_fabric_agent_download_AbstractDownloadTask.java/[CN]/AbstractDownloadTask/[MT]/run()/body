@@ -1,0 +1,23 @@
+{
+  try {
+    try {
+      File file=download();
+      setFile(file);
+      return;
+    }
+ catch (    IOException e) {
+      if (++scheduleNbRun < 5) {
+        LOGGER.debug("Error downloading " + url + ": "+ e.getMessage()+ ". Retrying in approx "+ scheduleDelay * 2 + " ms.");
+        long delay=(long)(scheduleDelay * 3 / 2 + Math.random() * scheduleDelay / 2);
+        executor.schedule(this,delay,TimeUnit.MILLISECONDS);
+        scheduleDelay*=2;
+      }
+ else {
+        setException(initIOException("Error downloading " + url,e));
+      }
+    }
+  }
+ catch (  Throwable e) {
+    setException(initIOException("Error downloading " + url,e));
+  }
+}
