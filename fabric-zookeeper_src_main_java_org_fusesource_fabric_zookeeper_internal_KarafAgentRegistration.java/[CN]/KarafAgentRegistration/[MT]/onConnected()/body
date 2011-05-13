@@ -27,10 +27,7 @@
     }
     zooKeeper.createOrSetWithParents(AGENT_IP.getPath(name),getLocalHostAddress(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
     zooKeeper.createOrSetWithParents(AGENT_ROOT.getPath(name),getRootName(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    for (    String domain : mbeanServer.getDomains()) {
-      zooKeeper.createOrSetWithParents(AGENT_DOMAIN.getPath(name,domain),null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    }
-    mbeanServer.addNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this,null,name);
+    zooKeeper.createOrSetWithParents(AGENT_DOMAINS.getPath(name),"",ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
   }
  catch (  Exception e) {
     e.printStackTrace();

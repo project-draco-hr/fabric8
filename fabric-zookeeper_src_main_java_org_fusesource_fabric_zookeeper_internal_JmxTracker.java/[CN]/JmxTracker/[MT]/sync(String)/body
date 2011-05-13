@@ -1,0 +1,7 @@
+{
+  String path=AGENT_DOMAIN.getPath(name,domain);
+  if (zooKeeper.exists(path) == null) {
+    logger.debug("New domain {} was registered, add it to zookeeper",domain);
+    zooKeeper.createOrSetWithParents(path,"",ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+  }
+}

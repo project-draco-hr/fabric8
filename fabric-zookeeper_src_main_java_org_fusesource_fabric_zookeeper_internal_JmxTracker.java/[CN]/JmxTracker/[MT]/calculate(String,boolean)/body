@@ -1,0 +1,7 @@
+{
+  String path=AGENT_DOMAIN.getPath(name,domain);
+  if (Arrays.binarySearch(server.getDomains(),domain) < 0 || noCheck) {
+    logger.debug("Domain {} is not present any more in JMX tree. Try remove it from zookeeper",domain);
+    zooKeeper.delete(path);
+  }
+}

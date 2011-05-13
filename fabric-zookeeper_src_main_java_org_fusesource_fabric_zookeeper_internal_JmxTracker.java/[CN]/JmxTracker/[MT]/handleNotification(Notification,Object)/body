@@ -1,0 +1,17 @@
+{
+  if (notif instanceof MBeanServerNotification && zooKeeper.isConnected()) {
+    MBeanServerNotification notification=(MBeanServerNotification)notif;
+    String domain=notification.getMBeanName().getDomain();
+    try {
+      if (MBeanServerNotification.REGISTRATION_NOTIFICATION.equals(notification.getType())) {
+        sync(domain);
+      }
+ else       if (MBeanServerNotification.UNREGISTRATION_NOTIFICATION.equals(notification.getType())) {
+        calculate(domain,false);
+      }
+    }
+ catch (    Exception e) {
+      logger.error("Exception while jmx domain {} synchronization",domain,e);
+    }
+  }
+}

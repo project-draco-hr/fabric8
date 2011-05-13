@@ -1,0 +1,14 @@
+{
+  try {
+    if (registered) {
+      server.removeNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this);
+      registered=false;
+    }
+ else {
+      logger.debug("JMX listener not registered, skipping deregistration");
+    }
+  }
+ catch (  Exception e) {
+    logger.warn("An error occured during disconnecting to zookeeper",e);
+  }
+}

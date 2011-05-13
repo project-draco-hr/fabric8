@@ -1,0 +1,17 @@
+{
+  try {
+    List<String> unnecessary=zooKeeper.getChildren(AGENT_DOMAINS.getPath(name));
+    for (    String domain : server.getDomains()) {
+      sync(domain);
+      unnecessary.remove(domain);
+    }
+    for (    String child : unnecessary) {
+      calculate(child,true);
+    }
+    server.addNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this,null,null);
+    this.registered=true;
+  }
+ catch (  Exception e) {
+    logger.error("Error while connecting to zookeeper",e);
+  }
+}
