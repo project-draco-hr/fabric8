@@ -1,0 +1,22 @@
+{
+  Message message=session.createMessage();
+  message.addBodyPart(Buffer.ascii(message_prefix + current_count));
+  if (current_count >= count) {
+    message.onAck(new Runnable(){
+      public void run(){
+        sender.detach();
+      }
+    }
+);
+  }
+ else {
+    message.onAck(new Runnable(){
+      public void run(){
+        sendMessage(session,sender,current_count + 1);
+      }
+    }
+);
+  }
+  System.out.println("Sending message " + (current_count + 1));
+  sender.put(message);
+}

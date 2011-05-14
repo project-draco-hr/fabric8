@@ -1,0 +1,22 @@
+{
+  final Session session=connection.createSession();
+  final Sender sender=session.createSender();
+  sender.setOnDetach(new Runnable(){
+    public void run(){
+      session.end(new Runnable(){
+        public void run(){
+          connection.close();
+        }
+      }
+);
+    }
+  }
+);
+  sender.setAddress(address);
+  sender.attach(new Runnable(){
+    public void run(){
+      onAttach(connection,session,sender);
+    }
+  }
+);
+}
