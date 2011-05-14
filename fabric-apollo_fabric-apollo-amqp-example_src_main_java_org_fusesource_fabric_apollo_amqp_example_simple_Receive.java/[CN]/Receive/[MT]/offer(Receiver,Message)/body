@@ -1,6 +1,7 @@
 {
   received++;
-  System.out.println("Received message #" + received + " : "+ message);
+  Buffer msg=(Buffer)message.getBodyPart(0);
+  System.out.println("Received message #" + received + " : "+ msg.ascii());
   if (!message.getSettled()) {
     receiver.settle(message,Outcome.ACCEPTED);
   }
