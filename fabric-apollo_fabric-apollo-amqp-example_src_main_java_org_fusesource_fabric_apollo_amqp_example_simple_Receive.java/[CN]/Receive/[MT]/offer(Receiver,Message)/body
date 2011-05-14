@@ -1,0 +1,15 @@
+{
+  received++;
+  System.out.println("Received message #" + received + " : "+ message);
+  if (!message.getSettled()) {
+    receiver.settle(message,Outcome.ACCEPTED);
+  }
+  if (received >= count) {
+    receiver.detach();
+  }
+  Long credit=receiver.getAvailableLinkCredit();
+  if (credit != null && credit < 5) {
+    receiver.addLinkCredit(10 - credit);
+  }
+  return true;
+}
