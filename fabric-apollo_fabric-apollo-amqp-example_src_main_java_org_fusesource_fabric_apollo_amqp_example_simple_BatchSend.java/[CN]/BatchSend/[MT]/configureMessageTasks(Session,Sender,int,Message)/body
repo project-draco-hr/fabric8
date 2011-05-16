@@ -1,6 +1,7 @@
 {
   current_batch--;
-  if (current_batch > 0) {
+  println("Messages left in batch : %s, left overall : %s",current_batch,count - current_count);
+  if (current_batch > 0 && !(current_count >= count)) {
     message.onPut(new Runnable(){
       public void run(){
         sendMessage(session,sender,current_count + 1);
