@@ -1,0 +1,28 @@
+{
+  current_batch--;
+  if (current_batch > 0) {
+    message.onPut(new Runnable(){
+      public void run(){
+        sendMessage(session,sender,current_count + 1);
+      }
+    }
+);
+  }
+ else {
+    current_batch=batch_size;
+    message.onAck(new Runnable(){
+      public void run(){
+        sendMessage(session,sender,current_count + 1);
+      }
+    }
+);
+  }
+  if (current_count >= count) {
+    message.onAck(new Runnable(){
+      public void run(){
+        sender.detach();
+      }
+    }
+);
+  }
+}
