@@ -5,7 +5,9 @@
       alternateAddressList.clear();
       for (      byte[] uri : members) {
         try {
-          System.out.println("new address");
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("Added the CXF endpoint address " + new String(uri,"UTF-8"));
+          }
           alternateAddressList.add(new String(uri,"UTF-8"));
         }
  catch (        UnsupportedEncodingException ignore) {

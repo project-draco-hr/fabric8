@@ -1,0 +1,13 @@
+{
+  Message outMessage=exchange.getOutMessage();
+  Exception ex=outMessage.get(Exception.class) != null ? outMessage.get(Exception.class) : exchange.get(Exception.class);
+  getLogger().log(Level.FINE,"CHECK_LAST_INVOKE_FAILED",new Object[]{ex != null});
+  Throwable curr=ex;
+  boolean failOver=false;
+  while (curr != null) {
+    failOver=curr instanceof java.io.IOException;
+    curr=curr.getCause();
+  }
+  getLogger().log(Level.INFO,"CHECK_FAILURE_IN_TRANSPORT",new Object[]{ex,failOver});
+  return failOver;
+}
