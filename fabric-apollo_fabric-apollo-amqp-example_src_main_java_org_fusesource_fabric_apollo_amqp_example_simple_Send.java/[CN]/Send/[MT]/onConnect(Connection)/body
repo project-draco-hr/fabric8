@@ -2,6 +2,7 @@
   println("Connected, sending %s messages",count);
   final Session session=connection.createSession();
   final Sender sender=session.createSender();
+  sender.getSourceOptionsMap().put(createAmqpSymbol("batch-size"),createAmqpLong(batch_size));
   sender.setOnDetach(new Runnable(){
     public void run(){
       session.end(new Runnable(){
