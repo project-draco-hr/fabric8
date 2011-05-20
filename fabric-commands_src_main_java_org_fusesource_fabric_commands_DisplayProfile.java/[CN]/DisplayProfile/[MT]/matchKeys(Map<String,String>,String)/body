@@ -1,0 +1,15 @@
+{
+  Map<String,String> matched=new LinkedHashMap<String,String>();
+  for (  Map.Entry<String,String> entry : cfg.entrySet()) {
+    if (entry.getKey().startsWith(prefix)) {
+      String key=entry.getKey().substring(prefix.length());
+      if (entry.getValue() == null || entry.getValue().isEmpty()) {
+        matched.put(key,key);
+      }
+ else {
+        matched.put(key,entry.getValue());
+      }
+    }
+  }
+  return matched;
+}
