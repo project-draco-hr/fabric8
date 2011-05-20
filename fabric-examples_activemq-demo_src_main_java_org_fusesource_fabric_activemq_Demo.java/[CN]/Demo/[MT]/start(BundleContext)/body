@@ -1,0 +1,17 @@
+{
+  System.out.println("Starting ActiveMQ Demo");
+  System.out.println("Starting url " + "'discovery:(fabric:default)'");
+  ActiveMQConnectionFactory factory=new ActiveMQConnectionFactory("discovery:(fabric:default)");
+  Connection conn=factory.createConnection();
+  conn.start();
+  System.out.println("Connection started");
+  Session sess=conn.createSession(false,Session.AUTO_ACKNOWLEDGE);
+  Queue queue=sess.createQueue("TEST");
+  ProducerThread producer=new ProducerThread(sess,queue);
+  producer.setSleep(500);
+  producer.start();
+  System.out.println("Producer Started");
+  ConsumerThread consumer=new ConsumerThread(sess,queue);
+  consumer.start();
+  System.out.println("Consumer Started");
+}

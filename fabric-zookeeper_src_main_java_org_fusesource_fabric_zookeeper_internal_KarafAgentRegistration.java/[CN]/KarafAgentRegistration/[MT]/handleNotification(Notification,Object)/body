@@ -10,12 +10,16 @@
         }
       }
  else       if (MBeanServerNotification.UNREGISTRATION_NOTIFICATION.equals(notification.getType())) {
-        if (Arrays.binarySearch(mbeanServer.getDomains(),domain) == -1) {
+        if (Arrays.binarySearch(mbeanServer.getDomains(),domain) < 0) {
           zooKeeper.delete(path);
         }
       }
     }
- catch (    Exception e) {
+ catch (    KeeperException.SessionExpiredException e) {
+      logger.debug("Session expiry detected. Handling notification once again",e);
+      handleNotification(notif,o);
+    }
+catch (    Exception e) {
       logger.warn("Exception while jmx domain synchronization",e);
     }
   }
