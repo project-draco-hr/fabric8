@@ -12,11 +12,13 @@
     }
   }
 );
+  receiver.getSourceOptionsMap().put(createAmqpSymbol("batch-size"),createAmqpLong(batch_size));
   receiver.setAddress(address);
   receiver.setListener(this);
   receiver.attach(new Runnable(){
     public void run(){
-      System.out.println("Attached receiver...");
+      println("Attached receiver...");
+      receiver.addLinkCredit(batch_size);
     }
   }
 );

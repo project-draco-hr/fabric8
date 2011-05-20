@@ -1,22 +1,7 @@
 {
   Message message=session.createMessage();
   message.addBodyPart(Buffer.ascii(message_prefix + current_count));
-  if (current_count >= count) {
-    message.onAck(new Runnable(){
-      public void run(){
-        sender.detach();
-      }
-    }
-);
-  }
- else {
-    message.onAck(new Runnable(){
-      public void run(){
-        sendMessage(session,sender,current_count + 1);
-      }
-    }
-);
-  }
-  System.out.println("Sending message " + current_count);
+  configureMessageTasks(session,sender,current_count,message);
+  println("Sending message %s : %s",current_count,message.getBodyPart(0));
   sender.put(message);
 }
