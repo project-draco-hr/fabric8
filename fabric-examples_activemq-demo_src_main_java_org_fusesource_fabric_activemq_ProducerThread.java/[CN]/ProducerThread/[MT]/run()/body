@@ -1,0 +1,26 @@
+{
+  MessageProducer producer=null;
+  try {
+    producer=sess.createProducer(dest);
+    for (sentCount=0; sentCount < messageCount; sentCount++) {
+      producer.send(createMessage(sentCount));
+      LOG.info("Sent 'test message: " + sentCount + "'");
+      if (sleep > 0) {
+        Thread.sleep(sleep);
+      }
+    }
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+ finally {
+    if (producer != null) {
+      try {
+        producer.close();
+      }
+ catch (      JMSException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+}

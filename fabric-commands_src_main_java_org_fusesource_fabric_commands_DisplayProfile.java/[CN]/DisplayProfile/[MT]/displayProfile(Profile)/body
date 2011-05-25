@@ -1,0 +1,21 @@
+{
+  PrintStream output=session.getConsole();
+  output.println("Profile id: " + profile.getId());
+  output.println("Version   : " + profile.getVersion());
+  output.println("Parents   : " + toString(profile.getParents()) + "\n");
+  Map<String,Map<String,String>> configuration=overlay ? profile.getOverlay().getConfigurations() : profile.getConfigurations();
+  if (configuration.containsKey("org.fusesource.fabric.agent")) {
+    output.println("\nAgent settings");
+    Map<String,String> agentCfg=configuration.get("org.fusesource.fabric.agent");
+    displayAgentConfig(agentCfg);
+    configuration.remove("org.fusesource.fabric.agent");
+  }
+  output.println("\nConfiguration details");
+  for (  Map.Entry<String,Map<String,String>> cfg : configuration.entrySet()) {
+    output.println("PID: " + cfg.getKey());
+    for (    Map.Entry<String,String> values : cfg.getValue().entrySet()) {
+      output.println("  " + values.getKey() + " "+ values.getValue());
+    }
+    output.println("\n");
+  }
+}

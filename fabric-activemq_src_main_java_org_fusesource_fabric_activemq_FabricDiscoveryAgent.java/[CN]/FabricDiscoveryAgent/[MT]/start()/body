@@ -4,6 +4,7 @@
     if (zkClient == null) {
       ZKClient client=new ZKClient(System.getProperty("zookeeper.url","localhost:2181"),Timespan.parse("10s"),null);
       client.start();
+      client.waitForStart();
       zkClient=client;
     }
     group=ZooKeeperGroupFactory.create(zkClient,"/fabric/activemq-clusters/" + groupName,acl);
@@ -13,5 +14,8 @@
       }
     }
 );
+    if (serviceName != null) {
+      group.join(serviceName,serviceName.getBytes("UTF-8"));
+    }
   }
 }
