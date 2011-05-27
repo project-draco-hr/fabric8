@@ -1,0 +1,11 @@
+{
+  try {
+    while (!serverSocket.isClosed()) {
+      Socket sock=serverSocket.accept();
+      new Worker(sock).start();
+    }
+  }
+ catch (  IOException e) {
+    LOGGER.log(Level.SEVERE,"Exception caught in maven proxy",e);
+  }
+}

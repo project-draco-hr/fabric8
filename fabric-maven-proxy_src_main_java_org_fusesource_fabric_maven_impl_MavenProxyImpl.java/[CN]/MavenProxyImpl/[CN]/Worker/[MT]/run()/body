@@ -1,0 +1,41 @@
+{
+  InputStream inputStream=null;
+  BufferedOutputStream output=null;
+  try {
+    BufferedReader reader=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    output=new BufferedOutputStream(socket.getOutputStream());
+    String headLine=reader.readLine();
+    if (headLine == null || !headLine.startsWith("GET ") || !headLine.endsWith(" HTTP/1.0") && !headLine.endsWith(" HTTP/1.1")) {
+      output.write("HTTP/1.0 405 Invalid method.\r\n\r\n".getBytes());
+      return;
+    }
+    String path=headLine.substring(4,headLine.length() - 9);
+    if (path.startsWith("/")) {
+      path=path.substring(1);
+    }
+    String mvn=convertToMavenUrl(path);
+    try {
+      Artifact artifact=new DefaultArtifact(mvn,null);
+      ArtifactRequest request=new ArtifactRequest(artifact,repositories,null);
+      ArtifactResult result=system.resolveArtifact(session,request);
+      inputStream=new FileInputStream(result.getArtifact().getFile());
+    }
+ catch (    Exception e) {
+      output.write("HTTP/1.0 404 File not found.\r\n\r\n".getBytes());
+      return;
+    }
+    output.write(("HTTP/1.1 200 OK\r\n" + "Date: " + (new Date()).toString() + "\r\n"+ "Server: FON Proxy/"+ "1.0-SNAPSHOT"+ "\r\n"+ "Connection: close\r\n"+ "Content-Type: application/octet-stream\r\n"+ "Content-Length: "+ inputStream.available()+ "\r\n"+ "\r\n").getBytes());
+    byte buffer[]=new byte[4096];
+    int length;
+    while ((length=inputStream.read(buffer)) != -1) {
+      output.write(buffer,0,length);
+    }
+    output.close();
+  }
+ catch (  Exception e) {
+    LOGGER.log(Level.SEVERE,"Exception caught in maven proxy",e);
+  }
+ finally {
+    close(inputStream,output);
+  }
+}

@@ -1,0 +1,34 @@
+{
+  String[] p=location.split("/");
+  if (p.length >= 4 && p[p.length - 1].startsWith(p[p.length - 3] + "-" + p[p.length - 2])) {
+    String artifactId=p[p.length - 3];
+    String version=p[p.length - 2];
+    String classifier;
+    String type;
+    String artifactIdVersion=artifactId + "-" + version;
+    StringBuffer sb=new StringBuffer();
+    if (p[p.length - 1].charAt(artifactIdVersion.length()) == '-') {
+      classifier=p[p.length - 1].substring(artifactIdVersion.length() + 1,p[p.length - 1].lastIndexOf('.'));
+      artifactIdVersion+="-" + classifier;
+    }
+ else {
+      classifier="";
+    }
+    type=p[p.length - 1].substring(artifactIdVersion.length() + 1);
+    for (int j=0; j < p.length - 3; j++) {
+      if (j > 0) {
+        sb.append('.');
+      }
+      sb.append(p[j]);
+    }
+    sb.append(':').append(artifactId).append(':').append(type);
+    if (classifier.length() > 0) {
+      sb.append(":").append(classifier);
+    }
+    sb.append(":").append(version);
+    return sb.toString();
+  }
+ else {
+    return null;
+  }
+}
