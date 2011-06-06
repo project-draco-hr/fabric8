@@ -1,0 +1,11 @@
+{
+  try {
+    AbstractXmlApplicationContext appContext=new ClassPathXmlApplicationContext("org/fusesource/fabric/camel/c24io/spring/badElementName.xml");
+    appContext.start();
+    fail("should have failed!");
+  }
+ catch (  RuntimeCamelException e) {
+    System.out.println("Caught expected: " + e);
+    e.printStackTrace();
+  }
+}

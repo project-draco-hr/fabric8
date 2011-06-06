@@ -1,0 +1,9 @@
+{
+  return new RouteBuilder(){
+    public void configure(){
+      from("file:src/test/swift?noop=true").unmarshal(new SwiftFormat()).to("mock:result","direct:marshal");
+      from("direct:marshal").marshal(new SwiftFormat()).to("mock:marshalled");
+    }
+  }
+;
+}

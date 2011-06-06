@@ -1,0 +1,8 @@
+{
+  return new RouteBuilder(){
+    public void configure(){
+      from("file:src/test/data?noop=true").convertBodyTo(DocumentElement.class).to("mock:result");
+    }
+  }
+;
+}
