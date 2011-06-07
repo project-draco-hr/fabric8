@@ -1,7 +1,10 @@
 {
-  if (elementType.isAssignableFrom(ComplexDataObject.class) && !elementType.equals(ComplexDataObject.class)) {
+  if (Element.class.isAssignableFrom(elementType)) {
     try {
-      return (Element)elementType.getMethod("getInstance").invoke(null);
+      Object value=elementType.getMethod("getInstance").invoke(null);
+      if (value instanceof Element) {
+        return (Element)value;
+      }
     }
  catch (    InvocationTargetException e) {
       throw new RuntimeCamelException(e.getTargetException());
@@ -10,7 +13,13 @@ catch (    Exception e) {
       throw new RuntimeCamelException(e);
     }
   }
- else {
-    return null;
+  Object object=ObjectHelper.newInstance(elementType,Object.class);
+  if (object instanceof Element) {
+    return (Element)object;
   }
+ else   if (object instanceof ComplexDataObject) {
+    ComplexDataObject dataObject=(ComplexDataObject)object;
+    return dataObject.getDefiningElementDecl();
+  }
+  return null;
 }
