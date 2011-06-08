@@ -1,0 +1,15 @@
+{
+  if (source == null) {
+    C24IOContentType content=getContentType();
+    if (content != null) {
+      if (content == C24IOContentType.Auto) {
+        return discoverSource(exchange);
+      }
+      source=createSource(content);
+    }
+    if (source == null) {
+      source=getDefaultSource();
+    }
+  }
+  return source;
+}

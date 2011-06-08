@@ -1,0 +1,18 @@
+{
+  String mime=ExchangeHelper.getContentType(exchange);
+  if (mime != null) {
+    if (isXmlMimeType(mime)) {
+      return new XMLSink();
+    }
+ else     if (isJavaMimeType(mime)) {
+      return new JavaClassSink();
+    }
+ else     if (isBinaryMimeType(mime)) {
+      return new BinarySink();
+    }
+ else     if (isTextMimeType(mime)) {
+      return new TextualSink();
+    }
+  }
+  return getDefaultSink();
+}
