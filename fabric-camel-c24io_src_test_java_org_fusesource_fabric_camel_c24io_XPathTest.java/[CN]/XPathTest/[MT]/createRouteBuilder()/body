@@ -1,8 +1,8 @@
 {
   return new RouteBuilder(){
     public void configure(){
-      Namespaces ns=new Namespaces("foo","urn:iso:std:iso:20022:tech:xsd:pacs.008.001.01");
-      from("file:src/test/data?noop=true").unmarshal().c24io(Transactions.class,C24IOContentType.Xml).filter(ns.xquery("//foo:MsgId = 'PFSM1234'")).to("mock:result");
+      Namespaces ns=new Namespaces("foo","http://www.c24.biz/testTransactions");
+      from("file:src/test/data?noop=true").unmarshal().c24io(Transactions.class).filter(ns.xquery("//foo:Currency = 'GBP'")).to("mock:result");
     }
   }
 ;
