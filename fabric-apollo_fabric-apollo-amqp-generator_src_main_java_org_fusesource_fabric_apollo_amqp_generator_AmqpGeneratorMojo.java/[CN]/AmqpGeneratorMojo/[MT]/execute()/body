@@ -1,4 +1,9 @@
 {
+  Log.LOG=getLog();
+  Log.info("\tmain source directory at %s",mainSourceDirectory);
+  Log.info("\tmain output directory at %s",mainOutputDirectory);
+  Log.info("\ttest source directory at %s",testSourceDirectory);
+  Log.info("\ttest output directory at %s",testOutputDirectory);
   File[] mainFiles=null;
   if (mainSourceDirectory.exists()) {
     mainFiles=mainSourceDirectory.listFiles(new FileFilter(){
@@ -8,12 +13,15 @@
     }
 );
     if (mainFiles == null || mainFiles.length == 0) {
-      getLog().warn("No amqp spec files found in directory: " + mainSourceDirectory.getPath());
+      Log.warn("No AMQP XML definitions found in directory : %s",mainSourceDirectory.getPath());
     }
  else {
       processFiles(mainFiles,mainOutputDirectory);
       this.project.addCompileSourceRoot(mainOutputDirectory.getAbsolutePath());
     }
+  }
+ else {
+    Log.warn("Configured main source directory at %s does not exist",mainSourceDirectory);
   }
   File[] testFiles=null;
   if (testSourceDirectory.exists()) {
@@ -24,11 +32,14 @@
     }
 );
     if (testFiles == null || testFiles.length == 0) {
-      getLog().warn("No amqp spec files found in directory: " + testSourceDirectory.getPath());
+      Log.warn("No AMQP XML definitions found in directory : %s",testSourceDirectory.getPath());
     }
  else {
       processFiles(testFiles,testOutputDirectory);
       this.project.addTestCompileSourceRoot(testOutputDirectory.getAbsolutePath());
     }
+  }
+ else {
+    Log.warn("Configured test source directory at %s does not exist",testSourceDirectory);
   }
 }
