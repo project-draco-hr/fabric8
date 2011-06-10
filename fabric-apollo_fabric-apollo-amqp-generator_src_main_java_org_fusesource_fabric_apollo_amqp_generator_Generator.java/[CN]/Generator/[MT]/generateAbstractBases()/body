@@ -1,0 +1,21 @@
+{
+  for (  String section : provides.keySet()) {
+    for (    String base : provides.get(section)) {
+      boolean found=false;
+      for (      Type type : composites) {
+        if (sections.get(type.getName()).equals(section)) {
+          if (type.getName().equals(base)) {
+            found=true;
+            break;
+          }
+        }
+      }
+      if (found) {
+        continue;
+      }
+      String sectionPackage=sanitize(section);
+      String name=toJavaClassName(base);
+      JDefinedClass cls=cm._class(packagePrefix + "." + sectionPackage+ "."+ name,ClassType.INTERFACE);
+    }
+  }
+}

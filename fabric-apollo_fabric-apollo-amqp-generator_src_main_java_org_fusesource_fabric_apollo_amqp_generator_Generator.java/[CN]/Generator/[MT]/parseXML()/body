@@ -1,0 +1,60 @@
+{
+  JAXBContext jc=JAXBContext.newInstance(Amqp.class.getPackage().getName());
+  for (  File inputFile : inputFiles) {
+    BufferedReader reader=new BufferedReader(new FileReader(inputFile));
+    Unmarshaller unmarshaller=jc.createUnmarshaller();
+    SAXParserFactory parserFactory;
+    parserFactory=SAXParserFactory.newInstance();
+    parserFactory.setNamespaceAware(false);
+    XMLReader xmlreader=parserFactory.newSAXParser().getXMLReader();
+    xmlreader.setEntityResolver(new EntityResolver(){
+      public InputSource resolveEntity(      String publicId,      String systemId) throws SAXException, IOException {
+        InputSource is=null;
+        if (systemId != null && systemId.endsWith("amqp.dtd")) {
+          is=new InputSource();
+          is.setPublicId(publicId);
+          is.setSystemId(Generator.class.getResource("amqp.dtd").toExternalForm());
+        }
+        return is;
+      }
+    }
+);
+    Source er=new SAXSource(xmlreader,new InputSource(reader));
+    Amqp amqp=(Amqp)unmarshaller.unmarshal(er);
+    for (    Object docOrSection : amqp.getDocOrSection()) {
+      if (docOrSection instanceof Section) {
+        Section section=(Section)docOrSection;
+        for (        Object docOrDefinitionOrType : section.getDocOrDefinitionOrType()) {
+          if (docOrDefinitionOrType instanceof Type) {
+            Type type=(Type)docOrDefinitionOrType;
+            Log.info("Section : %s - Type name=%s class=%s provides=%s source=%s",section.getName(),type.getName(),type.getClazz(),type.getProvides(),type.getSource());
+            classes.add(type.getClazz());
+            sections.put(type.getName(),section.getName());
+            if (type.getProvides() != null) {
+              if (!provides.containsKey(section.getName())) {
+                provides.put(section.getName(),new HashSet<String>());
+              }
+              provides.get(section.getName()).add(type.getProvides());
+            }
+            if (type.getClazz().startsWith("primitive")) {
+              primitives.add(type);
+            }
+ else             if (type.getClazz().startsWith("restricted")) {
+              restricted.add(type);
+              restrictedMapping.put(type.getName(),type.getSource());
+            }
+ else             if (type.getClazz().startsWith("composite")) {
+              compositeMapping.put(type.getName(),packagePrefix + "." + sanitize(section.getName() + "." + toJavaClassName(type.getName())));
+              composites.add(type);
+            }
+          }
+ else           if (docOrDefinitionOrType instanceof Definition) {
+            Definition def=(Definition)docOrDefinitionOrType;
+            definitions.add(def);
+          }
+        }
+      }
+    }
+    reader.close();
+  }
+}

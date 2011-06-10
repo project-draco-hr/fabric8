@@ -1,0 +1,18 @@
+{
+  parseXML();
+  log();
+  outputDirectory.mkdirs();
+  try {
+    generateAbstractBases();
+    generateDescribedTypes();
+    generateDefinitions();
+    cm.build(outputDirectory);
+  }
+ catch (  Exception e) {
+    Log.error("Error generating code : %s",e);
+    for (    StackTraceElement s : e.getStackTrace()) {
+      Log.error("\tat %s.%s(%s:%s)",s.getClassName(),s.getMethodName(),s.getFileName(),s.getLineNumber());
+    }
+    throw e;
+  }
+}

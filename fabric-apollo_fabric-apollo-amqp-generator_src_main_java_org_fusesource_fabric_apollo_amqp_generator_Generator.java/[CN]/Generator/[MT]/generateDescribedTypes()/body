@@ -1,0 +1,58 @@
+{
+  for (  Type type : composites) {
+    String sectionPackage=sanitize(sections.get(type.getName()));
+    String name=toJavaClassName(type.getName());
+    name=packagePrefix + "." + sectionPackage+ "."+ name;
+    JDefinedClass cls=cm._getClass(name);
+    if (cls == null) {
+      cls=cm._class(name);
+    }
+    if (type.getProvides() != null && !type.getProvides().equals(type.getName())) {
+      cls._implements(cm.ref(packagePrefix + "." + sectionPackage+ "."+ toJavaClassName(type.getProvides())));
+    }
+    Log.info("");
+    Log.info("Generating %s",cls.binaryName());
+    for (    Object obj : type.getEncodingOrDescriptorOrFieldOrChoiceOrDoc()) {
+      if (obj instanceof Field) {
+        Field field=(Field)obj;
+        Log.info("Field name=%s type=%s",field.getName(),field.getType());
+        String fieldType=field.getType();
+        String fieldName=sanitize(field.getName());
+        if (fieldType.equals("*") && field.getRequires() != null) {
+          fieldType=getPackagePrefix() + "." + sectionPackage+ "."+ toJavaClassName(field.getRequires());
+          Log.info("Trying required type %s",fieldType);
+        }
+ else {
+          while (!mapping.containsKey(fieldType)) {
+            fieldType=restrictedMapping.get(fieldType);
+            if (fieldType == null) {
+              break;
+            }
+            Log.info("Trying field type %s for field %s",fieldType,fieldName);
+          }
+        }
+        if (fieldType == null) {
+          fieldType=compositeMapping.get(field.getType());
+        }
+        if (fieldType != null) {
+          Class clazz=mapping.get(fieldType);
+          if (clazz == null) {
+            Log.info("%s %s",fieldType,fieldName);
+            JDefinedClass c=cm._getClass(fieldType);
+            if (c == null) {
+              c=cm._class(fieldType);
+            }
+            cls.field(0,c,fieldName);
+          }
+ else {
+            Log.info("%s %s",mapping.get(fieldType).getSimpleName(),fieldName);
+            cls.field(0,mapping.get(fieldType),fieldName);
+          }
+        }
+ else {
+          Log.info("Skipping field %s, type not found",field.getName());
+        }
+      }
+    }
+  }
+}
