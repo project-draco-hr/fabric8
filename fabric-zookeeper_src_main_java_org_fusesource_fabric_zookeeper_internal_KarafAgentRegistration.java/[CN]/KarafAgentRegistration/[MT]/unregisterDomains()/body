@@ -3,7 +3,9 @@
     String name=System.getProperty("karaf.name");
     String domainsPath=AGENT_DOMAINS.getPath(name);
     if (zooKeeper.exists(domainsPath) != null) {
-      zooKeeper.deleteWithChildren(domainsPath);
+      for (      String child : zooKeeper.getChildren(domainsPath)) {
+        zooKeeper.delete(domainsPath + "/" + child);
+      }
     }
   }
 }
