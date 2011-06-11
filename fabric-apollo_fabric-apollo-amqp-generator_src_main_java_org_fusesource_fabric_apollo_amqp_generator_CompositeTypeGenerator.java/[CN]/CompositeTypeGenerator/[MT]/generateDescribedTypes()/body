@@ -1,13 +1,13 @@
 {
-  for (  Type type : composites) {
+  for (  Type type : generator.getComposites()) {
     String name=toJavaClassName(type.getName());
-    name=packagePrefix + "." + types+ "."+ name;
-    JDefinedClass cls=cm._getClass(name);
+    name=generator.getPackagePrefix() + "." + generator.getTypes()+ "."+ name;
+    JDefinedClass cls=generator.getCm()._getClass(name);
     if (cls == null) {
-      cls=cm._class(name);
+      cls=generator.getCm()._class(name);
     }
     if (type.getProvides() != null && !type.getProvides().equals(type.getName())) {
-      cls._implements(cm.ref(packagePrefix + "." + interfaces+ "."+ toJavaClassName(type.getProvides())));
+      cls._implements(generator.getCm().ref(generator.getPackagePrefix() + "." + generator.getInterfaces()+ "."+ toJavaClassName(type.getProvides())));
     }
     Log.info("");
     Log.info("Generating %s",cls.binaryName());
@@ -29,12 +29,12 @@
         String fieldType=field.getType();
         String fieldName=sanitize(field.getName());
         if (fieldType.equals("*") && field.getRequires() != null) {
-          fieldType=packagePrefix + "." + interfaces+ "."+ toJavaClassName(field.getRequires());
+          fieldType=generator.getPackagePrefix() + "." + generator.getInterfaces()+ "."+ toJavaClassName(field.getRequires());
           Log.info("Trying required type %s",fieldType);
         }
  else {
-          while (!mapping.containsKey(fieldType)) {
-            fieldType=restrictedMapping.get(fieldType);
+          while (!generator.getMapping().containsKey(fieldType)) {
+            fieldType=generator.getRestrictedMapping().get(fieldType);
             if (fieldType == null) {
               break;
             }
@@ -42,23 +42,23 @@
           }
         }
         if (fieldType == null) {
-          fieldType=compositeMapping.get(field.getType());
+          fieldType=generator.getCompositeMapping().get(field.getType());
         }
         if (fieldType != null) {
           boolean array=false;
           if (field.getMultiple() != null && field.getMultiple().equals("true")) {
             array=true;
           }
-          Class clazz=mapping.get(fieldType);
+          Class clazz=generator.getMapping().get(fieldType);
           JClass c=null;
           if (clazz == null) {
-            c=cm._getClass(fieldType);
+            c=generator.getCm()._getClass(fieldType);
             if (c == null) {
-              c=cm._class(fieldType);
+              c=generator.getCm()._class(fieldType);
             }
           }
  else {
-            c=cm.ref(clazz.getName());
+            c=generator.getCm().ref(clazz.getName());
           }
           if (array) {
             c=c.array();

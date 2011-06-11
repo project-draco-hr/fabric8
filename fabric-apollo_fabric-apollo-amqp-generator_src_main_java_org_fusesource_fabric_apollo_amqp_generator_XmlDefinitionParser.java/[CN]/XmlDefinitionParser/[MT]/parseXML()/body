@@ -1,6 +1,6 @@
 {
   JAXBContext jc=JAXBContext.newInstance(Amqp.class.getPackage().getName());
-  for (  File inputFile : inputFiles) {
+  for (  File inputFile : generator.getInputFiles()) {
     BufferedReader reader=new BufferedReader(new FileReader(inputFile));
     Unmarshaller unmarshaller=jc.createUnmarshaller();
     SAXParserFactory parserFactory;
@@ -28,26 +28,26 @@
           if (docOrDefinitionOrType instanceof Type) {
             Type type=(Type)docOrDefinitionOrType;
             Log.info("Section : %s - Type name=%s class=%s provides=%s source=%s",section.getName(),type.getName(),type.getClazz(),type.getProvides(),type.getSource());
-            classes.add(type.getClazz());
-            sections.put(type.getName(),section.getName());
+            generator.getClasses().add(type.getClazz());
+            generator.getSections().put(type.getName(),section.getName());
             if (type.getProvides() != null) {
-              provides.add(type.getProvides());
+              generator.getProvides().add(type.getProvides());
             }
             if (type.getClazz().startsWith("primitive")) {
-              primitives.add(type);
+              generator.getPrimitives().add(type);
             }
  else             if (type.getClazz().startsWith("restricted")) {
-              restricted.add(type);
-              restrictedMapping.put(type.getName(),type.getSource());
+              generator.getRestricted().add(type);
+              generator.getRestrictedMapping().put(type.getName(),type.getSource());
             }
  else             if (type.getClazz().startsWith("composite")) {
-              compositeMapping.put(type.getName(),packagePrefix + "." + types+ "."+ toJavaClassName(type.getName()));
-              composites.add(type);
+              generator.getCompositeMapping().put(type.getName(),generator.getPackagePrefix() + "." + generator.getTypes()+ "."+ Utilities.toJavaClassName(type.getName()));
+              generator.getComposites().add(type);
             }
           }
  else           if (docOrDefinitionOrType instanceof Definition) {
             Definition def=(Definition)docOrDefinitionOrType;
-            definitions.add(def);
+            generator.getDefinitions().add(def);
           }
         }
       }
