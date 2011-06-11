@@ -31,10 +31,7 @@
             classes.add(type.getClazz());
             sections.put(type.getName(),section.getName());
             if (type.getProvides() != null) {
-              if (!provides.containsKey(section.getName())) {
-                provides.put(section.getName(),new HashSet<String>());
-              }
-              provides.get(section.getName()).add(type.getProvides());
+              provides.add(type.getProvides());
             }
             if (type.getClazz().startsWith("primitive")) {
               primitives.add(type);
