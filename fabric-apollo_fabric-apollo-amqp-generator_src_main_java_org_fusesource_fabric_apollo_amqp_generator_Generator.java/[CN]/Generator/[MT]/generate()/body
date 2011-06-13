@@ -1,11 +1,14 @@
 {
+  primitiveEncoder=getPackagePrefix() + "." + getInterfaces()+ "."+ "PrimitiveEncoder";
   xmlDefinitionParser.parseXML();
-  log();
+  buildRestrictedTypeMapping();
+  generatePrimitiveEncoderDecoder();
+  Log.info("\n%s",this);
   outputDirectory.mkdirs();
   try {
     interfaceGenerator.generateAbstractBases();
-    generateEnumTypes();
-    compositeTypeGenerator.generateDescribedTypes();
+    describedTypeGenerator.createDescribedClasses(this);
+    describedTypeGenerator.generateDescribedTypes();
     generateDefinitions();
     cm.build(outputDirectory);
   }

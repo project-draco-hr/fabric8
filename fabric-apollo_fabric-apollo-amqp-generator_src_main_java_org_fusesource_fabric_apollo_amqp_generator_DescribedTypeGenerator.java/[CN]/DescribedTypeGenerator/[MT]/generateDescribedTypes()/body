@@ -1,0 +1,61 @@
+{
+  for (  String key : generator.getDescribed().keySet()) {
+    String className=generator.getDescribedJavaClass().get(key);
+    JDefinedClass cls=generator.getCm()._getClass(className);
+    Type type=generator.getDescribed().get(key);
+    Log.info("");
+    Log.info("Generating %s",cls.binaryName());
+    for (    Object obj : type.getEncodingOrDescriptorOrFieldOrChoiceOrDoc()) {
+      if (obj instanceof Field) {
+        Field field=(Field)obj;
+        Log.info("Field name=%s type=%s",field.getName(),field.getType());
+        String fieldType=field.getType();
+        String fieldName=sanitize(field.getName());
+        if (generator.getPrimitives().containsKey(fieldType)) {
+          if (fieldType.equals("*") && field.getRequires() != null) {
+            String requiredType=field.getRequires();
+            if (generator.getProvides().contains(requiredType)) {
+              fieldType=generator.getPackagePrefix() + "." + generator.getInterfaces()+ "."+ toJavaClassName(field.getRequires());
+            }
+ else {
+              fieldType="java.lang.Object";
+            }
+          }
+        }
+ else         if (generator.getDescribed().containsKey(fieldType)) {
+          fieldType=generator.getDescribedJavaClass().get(field.getType());
+        }
+ else         if (generator.getRestricted().containsKey(fieldType)) {
+          fieldType=generator.getRestrictedMapping().get(field.getType());
+        }
+        if (fieldType != null) {
+          boolean array=false;
+          if (field.getMultiple() != null && field.getMultiple().equals("true")) {
+            array=true;
+          }
+          Class clazz=generator.getMapping().get(fieldType);
+          JClass c=null;
+          if (clazz == null) {
+            c=generator.getCm()._getClass(fieldType);
+          }
+ else {
+            c=generator.getCm().ref(clazz.getName());
+          }
+          if (array) {
+            c=c.array();
+          }
+          Log.info("%s %s",c.binaryName(),fieldName);
+          JFieldVar fieldVar=cls.field(JMod.PROTECTED,c,fieldName);
+          String doc=field.getName() + ":" + field.getType();
+          if (field.getLabel() != null) {
+            doc+=" - " + field.getLabel();
+          }
+          fieldVar.javadoc().add(doc);
+        }
+ else {
+          Log.info("Skipping field %s, type not found",field.getName());
+        }
+      }
+    }
+  }
+}

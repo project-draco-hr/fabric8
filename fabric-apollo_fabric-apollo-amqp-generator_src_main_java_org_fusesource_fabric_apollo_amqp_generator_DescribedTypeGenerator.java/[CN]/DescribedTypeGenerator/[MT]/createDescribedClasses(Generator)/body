@@ -1,0 +1,25 @@
+{
+  Set<String> keys=generator.getDescribed().keySet();
+  for (  String key : keys) {
+    Type type=generator.getDescribed().get(key);
+    String className=generator.getPackagePrefix() + "." + generator.getTypes()+ "."+ toJavaClassName(key);
+    generator.getDescribedJavaClass().put(key,className);
+    JDefinedClass cls=generator.cm._class(className);
+    if (type.getProvides() != null) {
+      cls._implements(generator.cm.ref(generator.getPackagePrefix() + "." + generator.getInterfaces()+ "."+ toJavaClassName(type.getProvides())));
+    }
+    for (    Object obj : type.getEncodingOrDescriptorOrFieldOrChoiceOrDoc()) {
+      if (obj instanceof Descriptor) {
+        Descriptor desc=(Descriptor)obj;
+        int mods=JMod.PUBLIC | JMod.STATIC | JMod.FINAL;
+        cls.field(mods,String.class,"SYMBOLIC_ID",JExpr.lit(desc.getName()));
+        String code=desc.getCode();
+        String category=code.split(":")[0];
+        String descriptorId=code.split(":")[1];
+        cls.field(mods,long.class,"CATEGORY",JExpr.lit(Integer.parseInt(category.substring(2),16)));
+        cls.field(mods,long.class,"DESCRIPTOR_ID",JExpr.lit(Integer.parseInt(descriptorId.substring(2),16)));
+        cls.field(mods,long.class,"NUMERIC_ID",JExpr.direct("CATEGORY << 32 | DESCRIPTOR_ID"));
+      }
+    }
+  }
+}

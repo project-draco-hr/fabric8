@@ -30,19 +30,31 @@
             Log.info("Section : %s - Type name=%s class=%s provides=%s source=%s",section.getName(),type.getName(),type.getClazz(),type.getProvides(),type.getSource());
             generator.getClasses().add(type.getClazz());
             generator.getSections().put(type.getName(),section.getName());
+            for (            Object obj : type.getEncodingOrDescriptorOrFieldOrChoiceOrDoc()) {
+              if (obj instanceof Descriptor) {
+                generator.getDescribed().put(type.getName(),type);
+              }
+              if (obj instanceof Choice) {
+                generator.getEnums().put(type.getName(),type);
+              }
+              if (obj instanceof Field) {
+                Field field=(Field)obj;
+                if (field.getRequires() != null) {
+                  generator.getRequires().add(field.getRequires());
+                }
+              }
+            }
             if (type.getProvides() != null) {
               generator.getProvides().add(type.getProvides());
             }
             if (type.getClazz().startsWith("primitive")) {
-              generator.getPrimitives().add(type);
+              generator.getPrimitives().put(type.getName(),type);
             }
  else             if (type.getClazz().startsWith("restricted")) {
-              generator.getRestricted().add(type);
-              generator.getRestrictedMapping().put(type.getName(),type.getSource());
+              generator.getRestricted().put(type.getName(),type);
             }
  else             if (type.getClazz().startsWith("composite")) {
-              generator.getCompositeMapping().put(type.getName(),generator.getPackagePrefix() + "." + generator.getTypes()+ "."+ Utilities.toJavaClassName(type.getName()));
-              generator.getComposites().add(type);
+              generator.getComposites().put(type.getName(),type);
             }
           }
  else           if (docOrDefinitionOrType instanceof Definition) {
