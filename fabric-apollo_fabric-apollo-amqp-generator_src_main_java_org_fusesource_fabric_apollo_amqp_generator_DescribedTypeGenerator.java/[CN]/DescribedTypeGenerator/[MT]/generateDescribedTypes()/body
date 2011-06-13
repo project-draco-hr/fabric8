@@ -2,13 +2,27 @@
   for (  String key : generator.getDescribed().keySet()) {
     String className=generator.getDescribedJavaClass().get(key);
     JDefinedClass cls=generator.getCm()._getClass(className);
+    cls._implements(generator.getCm().ref("org.fusesource.fabric.apollo.amqp.codec.interfaces.AmqpType"));
+    JMethod write=cls.method(JMod.PUBLIC,generator.getCm().VOID,"write");
+    write._throws(java.lang.Exception.class);
+    write.param(java.io.DataOutput.class,"out");
+    JMethod read=cls.method(JMod.PUBLIC,generator.getCm().VOID,"read");
+    read._throws(java.lang.Exception.class);
+    read.param(java.io.DataInput.class,"in");
+    JMethod encodeTo=cls.method(JMod.PUBLIC,generator.getCm().VOID,"encodeTo");
+    encodeTo._throws(java.lang.Exception.class);
+    encodeTo.param(Buffer.class,"buffer");
+    encodeTo.param(generator.getCm().INT,"offset");
+    JMethod decodeFrom=cls.method(JMod.PUBLIC,generator.getCm().VOID,"decodeFrom");
+    decodeFrom._throws(java.lang.Exception.class);
+    decodeFrom.param(Buffer.class,"buffer");
+    decodeFrom.param(generator.getCm().INT,"offset");
     Type type=generator.getDescribed().get(key);
     Log.info("");
     Log.info("Generating %s",cls.binaryName());
     for (    Object obj : type.getEncodingOrDescriptorOrFieldOrChoiceOrDoc()) {
       if (obj instanceof Field) {
         Field field=(Field)obj;
-        Log.info("Field name=%s type=%s",field.getName(),field.getType());
         String fieldType=field.getType();
         String fieldName=sanitize(field.getName());
         if (generator.getPrimitives().containsKey(fieldType)) {
@@ -51,6 +65,11 @@
             doc+=" - " + field.getLabel();
           }
           fieldVar.javadoc().add(doc);
+          JMethod getter=cls.method(JMod.PUBLIC,fieldVar.type(),"get" + toJavaClassName(fieldName));
+          getter.body()._return(JExpr._this().ref(fieldVar));
+          JMethod setter=cls.method(JMod.PUBLIC,generator.getCm().VOID,"set" + toJavaClassName(fieldName));
+          JVar param=setter.param(fieldVar.type(),fieldName);
+          setter.body().assign(JExpr._this().ref(fieldVar),param);
         }
  else {
           Log.info("Skipping field %s, type not found",field.getName());
