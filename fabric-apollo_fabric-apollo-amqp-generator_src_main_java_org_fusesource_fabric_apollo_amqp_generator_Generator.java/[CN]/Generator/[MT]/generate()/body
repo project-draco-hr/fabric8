@@ -1,14 +1,26 @@
 {
   primitiveEncoder=getPackagePrefix() + "." + getInterfaces()+ "."+ "PrimitiveEncoder";
+  marshaller=getPackagePrefix() + "." + "AmqpMarshaller";
   xmlDefinitionParser.parseXML();
   buildRestrictedTypeMapping();
   generatePrimitiveEncoderDecoder();
+  JDefinedClass marshaller=generateMarshaller();
+  JBlock marshallerInit=marshaller.init();
   Log.info("\n%s",this);
   outputDirectory.mkdirs();
   try {
     interfaceGenerator.generateAbstractBases();
     describedTypeGenerator.createDescribedClasses(this);
     describedTypeGenerator.generateDescribedTypes();
+    JMethod formatCodeMap=marshaller.getMethod("getFormatCodeMap",new JType[]{});
+    JMethod symbolicCodeMap=marshaller.getMethod("getSymbolicCodeMap",new JType[]{});
+    for (    String key : describedJavaClass.keySet()) {
+      String value=describedJavaClass.get(key);
+      JDefinedClass clazz=cm._getClass(value);
+      marshallerInit.add(JExpr._new(clazz));
+      clazz.init().add(marshaller.staticInvoke("instance").invoke("getFormatCodeMap").invoke("put").arg(clazz.fields().get("NUMERIC_ID")).arg(clazz.dotclass()));
+      clazz.init().add(marshaller.staticInvoke("instance").invoke("getSymbolicCodeMap").invoke("put").arg(clazz.fields().get("SYMBOLIC_ID")).arg(clazz.dotclass()));
+    }
     generateDefinitions();
     cm.build(outputDirectory);
   }
