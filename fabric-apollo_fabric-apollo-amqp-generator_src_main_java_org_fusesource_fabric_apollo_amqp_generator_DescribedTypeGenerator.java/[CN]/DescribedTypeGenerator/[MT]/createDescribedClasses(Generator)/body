@@ -12,7 +12,7 @@
       if (obj instanceof Descriptor) {
         Descriptor desc=(Descriptor)obj;
         int mods=JMod.PUBLIC | JMod.STATIC | JMod.FINAL;
-        cls.field(mods,String.class,"SYMBOLIC_ID",JExpr.lit(desc.getName()));
+        cls.field(mods,Buffer.class,"SYMBOLIC_ID",JExpr._new(generator.getCm().ref(AsciiBuffer.class)).arg(desc.getName()));
         String code=desc.getCode();
         String category=code.split(":")[0];
         String descriptorId=code.split(":")[1];

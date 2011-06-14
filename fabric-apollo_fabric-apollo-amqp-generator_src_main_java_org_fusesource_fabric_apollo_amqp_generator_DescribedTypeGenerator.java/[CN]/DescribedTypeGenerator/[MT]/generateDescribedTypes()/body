@@ -21,9 +21,12 @@
     decodeFrom.param(generator.getCm().INT,"offset");
     decodeFrom.param(generator.getCm().INT,"size");
     decodeFrom.param(generator.getCm().INT,"count");
+    write.body().add(JExpr.ref("out").invoke("writeByte").arg(generator.registry().cls().staticRef("DESCRIBED_FORMAT_CODE")));
+    write.body().add(generator.registry().cls().staticInvoke("encoder").invoke("writeSymbol").arg(JExpr.ref("SYMBOLIC_ID")).arg(JExpr.ref("out")));
     Type type=generator.getDescribed().get(key);
     Log.info("");
     Log.info("Generating %s",cls.binaryName());
+    int count=0;
     for (    Object obj : type.getEncodingOrDescriptorOrFieldOrChoiceOrDoc()) {
       if (obj instanceof Field) {
         Field field=(Field)obj;
@@ -74,11 +77,13 @@
           JMethod setter=cls.method(JMod.PUBLIC,generator.getCm().VOID,"set" + toJavaClassName(fieldName));
           JVar param=setter.param(fieldVar.type(),fieldName);
           setter.body().assign(JExpr._this().ref(fieldVar),param);
+          count++;
         }
  else {
           Log.info("Skipping field %s, type not found",field.getName());
         }
       }
     }
+    cls.method(JMod.PUBLIC,generator.getCm().INT,"count").body()._return(JExpr.lit(count));
   }
 }
