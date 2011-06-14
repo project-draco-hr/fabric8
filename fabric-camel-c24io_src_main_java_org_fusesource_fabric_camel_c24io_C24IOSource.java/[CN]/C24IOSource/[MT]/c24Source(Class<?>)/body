@@ -1,12 +1,4 @@
 {
-  try {
-    Element element=(Element)elementType.getMethod("getInstance").invoke(null);
-    return c24Source(element);
-  }
- catch (  InvocationTargetException e) {
-    throw new RuntimeCamelException(e.getTargetException());
-  }
-catch (  Exception e) {
-    throw new RuntimeCamelException(e);
-  }
+  Element element=C24IOHelper.getMandatoryElement(elementType);
+  return c24Source(element);
 }
