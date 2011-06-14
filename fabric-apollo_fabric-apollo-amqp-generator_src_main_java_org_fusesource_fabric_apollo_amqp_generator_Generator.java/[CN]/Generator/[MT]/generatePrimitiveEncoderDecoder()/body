@@ -1,8 +1,28 @@
 {
   JDefinedClass enc=cm._class(primitiveEncoder,ClassType.INTERFACE);
+  JDefinedClass baseEnc=cm._class(baseEncoder,ClassType.INTERFACE);
+  List<String> filter=new ArrayList<String>();
+  filter.add("null");
+  int mods=JMod.PUBLIC;
+  JMethod encMethod=baseEnc.method(mods,cm.VOID,"encodeAny");
+  encMethod.param(cm.ref("java.lang.Object"),"value");
+  encMethod.param(Buffer.class,"buffer");
+  encMethod.param(cm.INT,"offset");
+  JMethod decMethod=baseEnc.method(mods,cm.ref("java.lang.Object"),"decodeAny");
+  decMethod.param(Buffer.class,"buffer");
+  decMethod.param(cm.INT,"offset");
+  JMethod readMethod=baseEnc.method(mods,cm.ref("java.lang.Object"),"readAny");
+  readMethod.param(DataInput.class,"in");
+  JMethod writeMethod=baseEnc.method(mods,cm.VOID,"writeAny");
+  writeMethod.param(cm.ref("java.lang.Object"),"value");
+  writeMethod.param(DataOutput.class,"out");
   for (  String key : primitives.keySet()) {
     Log.info("Adding encoder methods for type %s",key);
     Type type=primitives.get(key);
+    if (filter.contains(type.getName())) {
+      continue;
+    }
+    createEncodeDecodeMethods(baseEnc,mods,type,toJavaClassName(type.getName()));
     for (    Object obj : type.getEncodingOrDescriptorOrFieldOrChoiceOrDoc()) {
       if (obj instanceof Encoding) {
         Encoding encoding=(Encoding)obj;
@@ -10,23 +30,12 @@
         if (encoding.getName() != null) {
           methodName+=toJavaClassName(encoding.getName());
         }
+ else {
+          continue;
+        }
         methodName=toJavaClassName(methodName);
         Log.info("Writing encode/decode methods for type %s encoding %s using method name %s",type.getName(),encoding.getName(),methodName);
-        int mods=JMod.PUBLIC;
-        if (!type.getName().equals("null")) {
-          JMethod encMethod=enc.method(mods,cm.VOID,"encode" + methodName);
-          encMethod.param(mapping.get(type.getName()),"value");
-          encMethod.param(org.fusesource.hawtbuf.Buffer.class,"buffer");
-          encMethod.param(java.lang.Integer.class,"offset");
-          JMethod decMethod=enc.method(mods,mapping.get(type.getName()),"decode" + methodName);
-          decMethod.param(org.fusesource.hawtbuf.Buffer.class,"buffer");
-          decMethod.param(java.lang.Integer.class,"offset");
-          JMethod readMethod=enc.method(mods,mapping.get(type.getName()),"read" + methodName);
-          readMethod.param(DataInput.class,"in");
-          JMethod writeMethod=enc.method(mods,cm.VOID,"write" + methodName);
-          writeMethod.param(mapping.get(type.getName()),"value");
-          writeMethod.param(DataOutput.class,"out");
-        }
+        createEncodeDecodeMethods(enc,mods,type,methodName);
       }
     }
   }

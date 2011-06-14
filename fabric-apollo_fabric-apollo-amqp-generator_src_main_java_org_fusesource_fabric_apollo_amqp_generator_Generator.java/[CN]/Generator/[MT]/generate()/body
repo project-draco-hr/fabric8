@@ -1,10 +1,14 @@
 {
   primitiveEncoder=getPackagePrefix() + "." + getInterfaces()+ "."+ "PrimitiveEncoder";
-  marshaller=getPackagePrefix() + "." + "AmqpMarshaller";
+  baseEncoder=getPackagePrefix() + "." + getInterfaces()+ "."+ "BaseEncoder";
+  typeRegistry=getPackagePrefix() + "." + getMarshaller()+ "."+ "TypeRegistry";
   xmlDefinitionParser.parseXML();
   buildRestrictedTypeMapping();
   generatePrimitiveEncoderDecoder();
-  JDefinedClass marshaller=generateMarshaller();
+  JDefinedClass marshaller=generateTypeRegistry();
+  marshaller.field(JMod.PROTECTED | JMod.FINAL | JMod.STATIC,cm._getClass(baseEncoder),"ENCODER",JExpr.direct("Encoder.instance()"));
+  JMethod singletonAccessor=marshaller.method(JMod.PUBLIC | JMod.STATIC,cm._getClass(baseEncoder),"encoder");
+  singletonAccessor.body()._return(JExpr.ref("ENCODER"));
   JBlock marshallerInit=marshaller.init();
   Log.info("\n%s",this);
   outputDirectory.mkdirs();
