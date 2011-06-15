@@ -1,3 +1,12 @@
 {
-  return 0;
+  if (value == null) {
+    return TypeRegistry.NULL_FORMAT_CODE;
+  }
+  if (value == 0) {
+    return AMQPUInt.UINT_UINT0_CODE;
+  }
+  if (value < 255 && value > 0) {
+    return AMQPUInt.UINT_SMALLUINT_CODE;
+  }
+  return AMQPUInt.UINT_CODE;
 }

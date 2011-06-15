@@ -1,3 +1,11 @@
 {
-  return 0;
+  if (value == null) {
+    return TypeRegistry.NULL_FORMAT_CODE;
+  }
+  if (value.length() > 255) {
+    return AMQPBinary.BINARY_VBIN32_CODE;
+  }
+ else {
+    return AMQPBinary.BINARY_VBIN8_CODE;
+  }
 }

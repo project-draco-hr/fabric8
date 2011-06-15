@@ -1,3 +1,9 @@
 {
-  return 0;
+  if (value == null) {
+    return TypeRegistry.NULL_FORMAT_CODE;
+  }
+  if (value.length() < 255) {
+    return AMQPString.STRING_STR8_UTF8_CODE;
+  }
+  return AMQPString.STRING_STR32_UTF8_CODE;
 }

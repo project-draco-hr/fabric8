@@ -1,3 +1,9 @@
 {
-  return 0;
+  if (value == null) {
+    return TypeRegistry.NULL_FORMAT_CODE;
+  }
+  if (value < 128 && value > -127) {
+    return AMQPInt.INT_SMALLINT_CODE;
+  }
+  return AMQPInt.INT_CODE;
 }

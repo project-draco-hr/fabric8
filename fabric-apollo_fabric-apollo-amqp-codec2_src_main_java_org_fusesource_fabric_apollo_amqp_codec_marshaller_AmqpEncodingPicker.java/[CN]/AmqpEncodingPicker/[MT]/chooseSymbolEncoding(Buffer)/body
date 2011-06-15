@@ -1,3 +1,9 @@
 {
-  return 0;
+  if (value == null) {
+    return TypeRegistry.NULL_FORMAT_CODE;
+  }
+  if (value.length() < 255) {
+    return AMQPSymbol.SYMBOL_SYM8_CODE;
+  }
+  return AMQPSymbol.SYMBOL_SYM32_CODE;
 }

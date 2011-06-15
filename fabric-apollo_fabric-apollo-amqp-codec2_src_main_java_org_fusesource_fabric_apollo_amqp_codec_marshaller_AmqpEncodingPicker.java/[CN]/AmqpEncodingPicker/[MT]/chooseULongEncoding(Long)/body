@@ -1,3 +1,12 @@
 {
-  return 0;
+  if (value == null) {
+    return TypeRegistry.NULL_FORMAT_CODE;
+  }
+  if (value == 0) {
+    return AMQPULong.ULONG_ULONG0_CODE;
+  }
+  if (value < 255 && value > 0) {
+    return AMQPULong.ULONG_SMALLULONG_CODE;
+  }
+  return AMQPULong.ULONG_CODE;
 }
