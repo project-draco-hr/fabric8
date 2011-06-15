@@ -1,0 +1,65 @@
+{
+  Log.info("");
+  Log.info("Generating %s",cls().binaryName());
+  for (  Object obj : type.getEncodingOrDescriptorOrFieldOrChoiceOrDoc()) {
+    if (obj instanceof Field) {
+      Field field=(Field)obj;
+      String fieldType=field.getType();
+      String fieldName=sanitize(field.getName());
+      if (generator.getPrimitives().containsKey(fieldType)) {
+        if (fieldType.equals("*") && field.getRequires() != null) {
+          String requiredType=field.getRequires();
+          if (generator.getProvides().contains(requiredType)) {
+            fieldType=generator.getPackagePrefix() + "." + generator.getInterfaces()+ "."+ toJavaClassName(field.getRequires());
+          }
+ else {
+            fieldType="java.lang.Object";
+          }
+        }
+      }
+ else       if (generator.getDescribed().containsKey(fieldType)) {
+        fieldType=generator.getDescribedJavaClass().get(field.getType());
+      }
+ else       if (generator.getRestricted().containsKey(fieldType)) {
+        fieldType=generator.getRestrictedMapping().get(field.getType());
+      }
+      if (fieldType != null) {
+        boolean array=false;
+        if (field.getMultiple() != null && field.getMultiple().equals("true")) {
+          array=true;
+        }
+        Log.info("Using field type %s",fieldType);
+        Class clazz=generator.getMapping().get(fieldType);
+        JClass c=null;
+        if (clazz == null) {
+          c=cm._getClass(fieldType);
+        }
+ else {
+          c=cm.ref(clazz.getName());
+        }
+        if (array) {
+          c=c.array();
+        }
+        Log.info("%s %s",c.binaryName(),fieldName);
+        Attribute attribute=new Attribute();
+        attribute.attribute=cls().field(JMod.PROTECTED,c,fieldName);
+        String doc=field.getName() + ":" + field.getType();
+        if (field.getLabel() != null) {
+          doc+=" - " + field.getLabel();
+        }
+        attribute.attribute.javadoc().add(doc);
+        attribute.getter=cls().method(JMod.PUBLIC,attribute.attribute.type(),"get" + toJavaClassName(fieldName));
+        attribute.getter.body()._return(JExpr._this().ref(attribute.attribute));
+        attribute.setter=cls().method(JMod.PUBLIC,cm.VOID,"set" + toJavaClassName(fieldName));
+        JVar param=attribute.setter.param(attribute.attribute.type(),fieldName);
+        attribute.setter.body().assign(JExpr._this().ref(attribute.attribute),param);
+        amqpFields.add(attribute);
+      }
+ else {
+        Log.info("Skipping field %s, type not found",field.getName());
+      }
+    }
+  }
+  count=cls().method(JMod.PUBLIC,cm.INT,"count");
+  count().body()._return(JExpr.lit(amqpFields.size()));
+}

@@ -13,8 +13,16 @@
   outputDirectory.mkdirs();
   try {
     interfaceGenerator.generateAbstractBases();
-    describedTypeGenerator.createDescribedClasses(this);
-    describedTypeGenerator.generateDescribedTypes();
+    ArrayList<DescribedType> describedTypes=new ArrayList<DescribedType>();
+    for (    String key : getDescribed().keySet()) {
+      Type type=getDescribed().get(key);
+      String className=getPackagePrefix() + "." + getTypes()+ "."+ toJavaClassName(key);
+      getDescribedJavaClass().put(key,className);
+      describedTypes.add(new DescribedType(this,className,type));
+    }
+    for (    DescribedType type : describedTypes) {
+      type.generateDescribedFields();
+    }
     JMethod formatCodeMap=registry.cls().getMethod("getFormatCodeMap",new JType[]{});
     JMethod symbolicCodeMap=registry.cls().getMethod("getSymbolicCodeMap",new JType[]{});
     for (    String key : describedJavaClass.keySet()) {
