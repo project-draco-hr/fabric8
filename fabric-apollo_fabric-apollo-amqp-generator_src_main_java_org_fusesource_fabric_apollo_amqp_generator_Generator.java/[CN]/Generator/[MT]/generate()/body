@@ -12,8 +12,24 @@
   Log.info("\n%s",this);
   outputDirectory.mkdirs();
   try {
+    List<PrimitiveType> primitiveTypes=new ArrayList<PrimitiveType>();
+    List<String> filter=new ArrayList<String>();
+    filter.add("*");
+    filter.add("null");
+    filter.add("map");
+    filter.add("list");
+    filter.add("array");
+    for (    String key : getPrimitives().keySet()) {
+      if (filter.contains(key)) {
+        continue;
+      }
+      Type type=getPrimitives().get(key);
+      String className=getPackagePrefix() + "." + getTypes()+ "."+ "AMQP"+ toJavaClassName(key);
+      getPrimitiveJavaClass().put(key,className);
+      primitiveTypes.add(new PrimitiveType(this,className,type));
+    }
     interfaceGenerator.generateAbstractBases();
-    ArrayList<DescribedType> describedTypes=new ArrayList<DescribedType>();
+    List<DescribedType> describedTypes=new ArrayList<DescribedType>();
     for (    String key : getDescribed().keySet()) {
       Type type=getDescribed().get(key);
       String className=getPackagePrefix() + "." + getTypes()+ "."+ toJavaClassName(key);

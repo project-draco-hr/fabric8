@@ -1,0 +1,8 @@
+{
+  value=cls().field(JMod.PRIVATE,getJavaType(),"value");
+  getValue=cls().method(JMod.PUBLIC,getJavaType(),"getValue");
+  getValue.body()._return(JExpr._this().ref("value"));
+  setValue=cls().method(JMod.PUBLIC,cm.VOID,"setValue");
+  setValue.param(getJavaType(),"value");
+  setValue.body().block().assign(JExpr._this().ref("value"),JExpr.ref("value"));
+}

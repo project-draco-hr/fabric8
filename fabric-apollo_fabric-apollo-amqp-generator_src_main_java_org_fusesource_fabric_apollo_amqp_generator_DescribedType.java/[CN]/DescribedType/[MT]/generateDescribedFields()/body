@@ -6,14 +6,13 @@
       Field field=(Field)obj;
       String fieldType=field.getType();
       String fieldName=sanitize(field.getName());
-      if (generator.getPrimitives().containsKey(fieldType)) {
-        if (fieldType.equals("*") && field.getRequires() != null) {
+      Log.info("Field type for field %s : %s",fieldName,fieldType);
+      if (fieldType.equals("*")) {
+        fieldType=generator.getAmqpBaseType();
+        if (field.getRequires() != null) {
           String requiredType=field.getRequires();
           if (generator.getProvides().contains(requiredType)) {
             fieldType=generator.getPackagePrefix() + "." + generator.getInterfaces()+ "."+ toJavaClassName(field.getRequires());
-          }
- else {
-            fieldType="java.lang.Object";
           }
         }
       }
@@ -31,7 +30,10 @@
         Log.info("Using field type %s",fieldType);
         Class clazz=generator.getMapping().get(fieldType);
         JClass c=null;
-        if (clazz == null) {
+        if (fieldType.equals(generator.getAmqpBaseType())) {
+          c=cm.ref(fieldType);
+        }
+ else         if (clazz == null) {
           c=cm._getClass(fieldType);
         }
  else {
