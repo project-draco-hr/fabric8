@@ -1,39 +1,18 @@
 {
   JDefinedClass enc=cm._class(primitiveEncoder,ClassType.INTERFACE);
-  JDefinedClass baseEnc=cm._class(baseEncoder,ClassType.INTERFACE);
-  List<String> filter=new ArrayList<String>();
-  filter.add("null");
   int mods=JMod.PUBLIC;
-  JMethod encMethod=baseEnc.method(mods,cm.VOID,"encodeAny");
-  encMethod.param(cm.ref("java.lang.Object"),"value");
-  encMethod.param(Buffer.class,"buffer");
-  encMethod.param(cm.INT,"offset");
-  JMethod decMethod=baseEnc.method(mods,cm.ref("java.lang.Object"),"decodeAny");
-  decMethod.param(cm.BYTE,"formatCode");
-  decMethod.param(Buffer.class,"buffer");
-  decMethod.param(cm.INT,"offset");
-  JMethod readMethod=baseEnc.method(mods,cm.ref("java.lang.Object"),"readAny");
-  readMethod.param(cm.BYTE,"formatCode");
-  readMethod.param(DataInput.class,"in");
-  JMethod writeMethod=baseEnc.method(mods,cm.VOID,"writeAny");
-  writeMethod.param(cm.ref("java.lang.Object"),"value");
-  writeMethod.param(DataOutput.class,"out");
   for (  String key : primitives.keySet()) {
-    Log.info("Adding encoder methods for type %s",key);
-    Type type=primitives.get(key);
-    if (filter.contains(type.getName())) {
+    if (key.equals("null")) {
       continue;
     }
-    createEncodeDecodeMethods(baseEnc,mods,type,toJavaClassName(type.getName()));
+    Log.info("Adding encoder methods for type %s",key);
+    Type type=primitives.get(key);
     for (    Object obj : type.getEncodingOrDescriptorOrFieldOrChoiceOrDoc()) {
       if (obj instanceof Encoding) {
         Encoding encoding=(Encoding)obj;
         String methodName=type.getName();
         if (encoding.getName() != null) {
-          methodName+=toJavaClassName(encoding.getName());
-        }
- else {
-          continue;
+          methodName+="_" + encoding.getName();
         }
         methodName=toJavaClassName(methodName);
         Log.info("Writing encode/decode methods for type %s encoding %s using method name %s",type.getName(),encoding.getName(),methodName);

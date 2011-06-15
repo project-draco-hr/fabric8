@@ -1,13 +1,14 @@
 {
   primitiveEncoder=getPackagePrefix() + "." + getInterfaces()+ "."+ "PrimitiveEncoder";
-  baseEncoder=getPackagePrefix() + "." + getInterfaces()+ "."+ "BaseEncoder";
   String typeRegistry=getPackagePrefix() + "." + getMarshaller()+ "."+ "TypeRegistry";
+  String encodingPicker=getPackagePrefix() + "." + getInterfaces()+ "."+ "EncodingPicker";
   xmlDefinitionParser.parseXML();
   buildRestrictedTypeMapping();
   generatePrimitiveEncoderDecoder();
   registry=new TypeRegistry(cm,typeRegistry);
-  registry.cls().field(JMod.PROTECTED | JMod.FINAL | JMod.STATIC,cm._getClass(baseEncoder),"ENCODER",JExpr.direct("Encoder.instance()"));
-  JMethod singletonAccessor=registry.cls().method(JMod.PUBLIC | JMod.STATIC,cm._getClass(baseEncoder),"encoder");
+  picker=new EncodingPicker(this,encodingPicker);
+  registry.cls().field(JMod.PROTECTED | JMod.FINAL | JMod.STATIC,cm._getClass(primitiveEncoder),"ENCODER",JExpr.direct("Encoder.instance()"));
+  JMethod singletonAccessor=registry.cls().method(JMod.PUBLIC,cm._getClass(primitiveEncoder),"encoder");
   singletonAccessor.body()._return(JExpr.ref("ENCODER"));
   Log.info("\n%s",this);
   outputDirectory.mkdirs();
@@ -16,9 +17,6 @@
     List<String> filter=new ArrayList<String>();
     filter.add("*");
     filter.add("null");
-    filter.add("map");
-    filter.add("list");
-    filter.add("array");
     for (    String key : getPrimitives().keySet()) {
       if (filter.contains(key)) {
         continue;
@@ -38,15 +36,6 @@
     }
     for (    DescribedType type : describedTypes) {
       type.generateDescribedFields();
-    }
-    JMethod formatCodeMap=registry.cls().getMethod("getFormatCodeMap",new JType[]{});
-    JMethod symbolicCodeMap=registry.cls().getMethod("getSymbolicCodeMap",new JType[]{});
-    for (    String key : describedJavaClass.keySet()) {
-      String value=describedJavaClass.get(key);
-      JDefinedClass clazz=cm._getClass(value);
-      registry.cls().init().add(JExpr._new(clazz));
-      clazz.init().add(registry.cls().staticInvoke("instance").invoke("getFormatCodeMap").invoke("put").arg(clazz.fields().get("NUMERIC_ID")).arg(clazz.dotclass()));
-      clazz.init().add(registry.cls().staticInvoke("instance").invoke("getSymbolicCodeMap").invoke("put").arg(clazz.fields().get("SYMBOLIC_ID")).arg(clazz.dotclass()));
     }
     generateDefinitions();
     cm.build(outputDirectory);
