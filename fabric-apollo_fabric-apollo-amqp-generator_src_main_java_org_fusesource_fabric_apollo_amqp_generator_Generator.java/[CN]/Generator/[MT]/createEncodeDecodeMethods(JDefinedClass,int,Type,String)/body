@@ -1,17 +1,34 @@
 {
-  JMethod readMethod=clazz.method(mods,mapping.get(type.getName()),"read" + methodName);
+  JMethod readMethod;
+  Class m=mapping.get(type.getName());
+  if (m == null) {
+    readMethod=clazz.method(mods,cm.ref("java.lang.Object"),"read" + methodName);
+  }
+ else {
+    readMethod=clazz.method(mods,m,"read" + methodName);
+  }
   readMethod._throws(java.lang.Exception.class);
   readMethod.param(DataInput.class,"in");
   JMethod writeMethod=clazz.method(mods,cm.VOID,"write" + methodName);
   writeMethod._throws(java.lang.Exception.class);
-  writeMethod.param(mapping.get(type.getName()),"value");
+  if (m != null) {
+    writeMethod.param(m,"value");
+  }
   writeMethod.param(DataOutput.class,"out");
   JMethod encMethod=clazz.method(mods,cm.VOID,"encode" + methodName);
   encMethod._throws(java.lang.Exception.class);
-  encMethod.param(mapping.get(type.getName()),"value");
+  if (m != null) {
+    encMethod.param(m,"value");
+  }
   encMethod.param(Buffer.class,"buffer");
   encMethod.param(cm.INT,"offset");
-  JMethod decMethod=clazz.method(mods,mapping.get(type.getName()),"decode" + methodName);
+  JMethod decMethod;
+  if (m == null) {
+    decMethod=clazz.method(mods,cm.ref("java.lang.Object"),"decode" + methodName);
+  }
+ else {
+    decMethod=clazz.method(mods,m,"decode" + methodName);
+  }
   decMethod._throws(java.lang.Exception.class);
   decMethod.param(Buffer.class,"buffer");
   decMethod.param(cm.INT,"offset");
