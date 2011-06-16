@@ -13,13 +13,37 @@
       properties.put(key.toString(),val.toString());
     }
   }
+  boolean restart=false;
+  Properties configProps=new Properties(new File(System.getProperty("karaf.base") + File.separator + "etc"+ File.separator+ "config.properties"));
+  Properties systemProps=new Properties(new File(System.getProperty("karaf.base") + File.separator + "etc"+ File.separator+ "system.properties"));
   for (  String key : properties.keySet()) {
     if (key.equals("framework")) {
       String url=properties.get(key);
-      if (updateFramework(url)) {
-        return;
+      restart|=updateFramework(configProps,url);
+    }
+ else     if (key.startsWith("config.")) {
+      String k=key.substring("config.".length());
+      String v=properties.get(key);
+      if (!v.equals(configProps.get(k))) {
+        configProps.put(k,v);
+        restart=true;
       }
     }
+ else     if (key.startsWith("system.")) {
+      String k=key.substring("system.".length());
+      String v=properties.get(key);
+      if (!v.equals(systemProps.get(k))) {
+        systemProps.put(k,v);
+        restart=true;
+      }
+    }
+  }
+  if (restart) {
+    configProps.save();
+    systemProps.save();
+    System.setProperty("karaf.restart","true");
+    bundleContext.getBundle(0).stop();
+    return;
   }
   Map<URI,Repository> repositories=new HashMap<URI,Repository>();
   for (  String key : properties.keySet()) {
