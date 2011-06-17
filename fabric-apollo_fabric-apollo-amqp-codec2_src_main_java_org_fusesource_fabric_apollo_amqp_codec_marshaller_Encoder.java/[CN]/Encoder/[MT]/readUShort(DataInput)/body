@@ -1,3 +1,6 @@
 {
-  return in.readShort();
+  int rc=0;
+  rc=rc | (0xFFFF & (((int)in.readByte()) << 8));
+  rc=rc | (0xFFFF & (int)in.readByte());
+  return rc;
 }

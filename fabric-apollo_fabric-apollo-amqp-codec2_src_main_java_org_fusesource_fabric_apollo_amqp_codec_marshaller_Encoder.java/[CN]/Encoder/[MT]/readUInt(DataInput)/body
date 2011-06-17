@@ -1,3 +1,8 @@
 {
-  return in.readInt();
+  long rc=0;
+  rc=rc | (0xFFFFFFFFL & (((long)in.readByte()) << 24));
+  rc=rc | (0xFFFFFFFFL & (((long)in.readByte()) << 16));
+  rc=rc | (0xFFFFFFFFL & (((long)in.readByte()) << 8));
+  rc=rc | (0xFFFFFFFFL & (long)in.readByte());
+  return rc;
 }

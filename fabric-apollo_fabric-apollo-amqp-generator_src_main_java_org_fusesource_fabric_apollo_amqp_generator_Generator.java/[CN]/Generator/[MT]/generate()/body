@@ -1,8 +1,8 @@
 {
-  primitiveEncoder=getPackagePrefix() + "." + getInterfaces()+ "."+ "PrimitiveEncoder";
+  primitiveEncoder=getInterfaces() + "." + "PrimitiveEncoder";
   String typeRegistry=getPackagePrefix() + "." + getMarshaller()+ "."+ "TypeRegistry";
-  String encodingPicker=getPackagePrefix() + "." + getInterfaces()+ "."+ "EncodingPicker";
-  String encodingSizer=getPackagePrefix() + "." + getInterfaces()+ "."+ "Sizer";
+  String encodingPicker=getInterfaces() + "." + "EncodingPicker";
+  String encodingSizer=getInterfaces() + "." + "Sizer";
   xmlDefinitionParser.parseXML();
   buildRestrictedTypeMapping();
   generatePrimitiveEncoderDecoder();
@@ -24,7 +24,7 @@
         continue;
       }
       Type type=getPrimitives().get(key);
-      String className=getPackagePrefix() + "." + getTypes()+ "."+ "AMQP"+ toJavaClassName(key);
+      String className=getTypes() + "." + "AMQP"+ toJavaClassName(key);
       getPrimitiveJavaClass().put(key,className);
       primitiveTypes.add(new PrimitiveType(this,className,type));
     }
@@ -32,12 +32,20 @@
     List<DescribedType> describedTypes=new ArrayList<DescribedType>();
     for (    String key : getDescribed().keySet()) {
       Type type=getDescribed().get(key);
-      String className=getPackagePrefix() + "." + getTypes()+ "."+ toJavaClassName(key);
+      String className=getTypes() + "." + toJavaClassName(key);
       getDescribedJavaClass().put(key,className);
       describedTypes.add(new DescribedType(this,className,type));
     }
     for (    DescribedType type : describedTypes) {
       type.generateDescribedFields();
+    }
+    List<RestrictedType> restrictedTypes=new ArrayList<RestrictedType>();
+    for (    String key : getRestricted().keySet()) {
+      Type type=getRestricted().get(key);
+      if (type.getProvides() != null) {
+        String className=getTypes() + "." + toJavaClassName(key);
+        restrictedTypes.add(new RestrictedType(this,className,type));
+      }
     }
     generateDefinitions();
     cm.build(outputDirectory);
