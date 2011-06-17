@@ -1,8 +1,6 @@
 {
   Log.info("");
   Log.info("Generating %s",cls().binaryName());
-  size().body().decl(cm.LONG,"rc",JExpr.lit(1L));
-  size().body().block().assign(JExpr.ref("rc"),JExpr.ref("rc").plus(generator.registry().cls().staticInvoke("instance").invoke("sizer").invoke("sizeOfULong").arg(JExpr.ref("NUMERIC_ID"))));
   for (  Object obj : type.getEncodingOrDescriptorOrFieldOrChoiceOrDoc()) {
     if (obj instanceof Field) {
       Field field=(Field)obj;
@@ -70,27 +68,8 @@
       }
     }
   }
-  for (  Attribute attribute : amqpFields) {
-    if (generator.getMapping().get(attribute.type) != null) {
-      if (attribute.attribute.type().isArray()) {
-        size().body().block().assign(JExpr.ref("rc"),JExpr.ref("rc").plus(generator.registry().cls().staticInvoke("instance").invoke("sizer").invoke("sizeOfArray").arg(JExpr.ref(attribute.attribute.name()))));
-      }
- else {
-        size().body().block().assign(JExpr.ref("rc"),JExpr.ref("rc").plus(generator.registry().cls().staticInvoke("instance").invoke("sizer").invoke("sizeOf" + toJavaClassName(attribute.type)).arg(JExpr.ref(attribute.attribute.name()))));
-      }
-    }
- else {
-      if (attribute.attribute.type().isArray()) {
-        size().body().block().assign(JExpr.ref("rc"),JExpr.ref("rc").plus(generator.registry().cls().staticInvoke("instance").invoke("sizer").invoke("sizeOfArray").arg(JExpr.ref(attribute.attribute.name()))));
-      }
- else {
-        JConditional conditional=size().body().block()._if(JExpr.ref(attribute.attribute.name()).ne(JExpr._null()));
-        conditional._then().assign(JExpr.ref("rc"),JExpr.ref("rc").plus(JExpr.ref(attribute.attribute.name()).invoke("size")));
-        conditional._else().assign(JExpr.ref("rc"),JExpr.ref("rc").plus(JExpr.lit(1L)));
-      }
-    }
-  }
-  size().body().block()._return(JExpr.ref("rc"));
+  fillInWriteMethod();
+  fillInSizeMethod();
   count=cls().method(JMod.PUBLIC,cm.INT,"count");
   count().body()._return(JExpr.lit(amqpFields.size()));
 }

@@ -1,0 +1,13 @@
+{
+  write().body().block().invoke(JExpr.ref("out"),"writeByte").arg(generator.registry().cls().staticRef("DESCRIBED_FORMAT_CODE"));
+  write().body().block().staticInvoke(cm.ref(generator.getPrimitiveJavaClass().get("ulong")),"write").arg(JExpr.ref("NUMERIC_ID")).arg(JExpr.ref("out"));
+  for (  Attribute attribute : amqpFields) {
+    if (generator.getMapping().get(attribute.type) != null) {
+      if (attribute.attribute.type().isArray()) {
+      }
+ else {
+        write().body().block().staticInvoke(cm.ref(generator.getPrimitiveJavaClass().get(attribute.type)),"write").arg(JExpr._this().ref(attribute.attribute.name())).arg(JExpr.ref("out"));
+      }
+    }
+  }
+}
