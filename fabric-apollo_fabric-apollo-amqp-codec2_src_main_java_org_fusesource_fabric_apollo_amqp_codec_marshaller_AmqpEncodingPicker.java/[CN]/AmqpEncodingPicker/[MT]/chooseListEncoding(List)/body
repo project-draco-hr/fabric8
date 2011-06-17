@@ -8,7 +8,7 @@
   int size=0;
   for (  Object obj : value) {
     size+=((AmqpType)obj).size();
-    if (size > 255) {
+    if (size > (255 - AMQPList.LIST_LIST8_WIDTH)) {
       return AMQPList.LIST_LIST32_CODE;
     }
   }

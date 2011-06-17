@@ -1,2 +1,8 @@
 {
+  out.writeByte(AMQPMap.MAP_MAP8_CODE);
+  Long size=TypeRegistry.instance().sizer().sizeOfMap(value) - 1 - AMQPMap.MAP_MAP8_WIDTH;
+  Long count=(long)(value.keySet().size() + value.values().size());
+  out.writeByte(size.byteValue());
+  out.writeByte(count.byteValue());
+  writeMapData(value,out);
 }

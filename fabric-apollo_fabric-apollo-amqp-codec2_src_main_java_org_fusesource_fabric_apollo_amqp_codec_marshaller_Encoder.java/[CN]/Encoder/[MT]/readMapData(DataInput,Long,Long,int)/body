@@ -1,0 +1,15 @@
+{
+  if (count % 2 != 0) {
+    throw new RuntimeException(String.format("Map count (%s) is not divisible by 2",count));
+  }
+  Map rc=new HashMap();
+  while (count > 0) {
+    rc.put(TypeReader.read(in),TypeReader.read(in));
+    count-=2;
+  }
+  Long actualSize=TypeRegistry.instance().sizer().sizeOfMap(rc) - 1 - width;
+  if (size.longValue() != actualSize.longValue()) {
+    throw new RuntimeException(String.format("Encoded size of map (%s) does not match actual size of map (%s)",size,actualSize));
+  }
+  return rc;
+}

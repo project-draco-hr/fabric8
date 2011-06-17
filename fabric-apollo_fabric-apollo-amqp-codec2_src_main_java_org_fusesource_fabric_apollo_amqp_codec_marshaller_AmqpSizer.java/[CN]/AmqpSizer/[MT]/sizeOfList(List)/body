@@ -14,7 +14,12 @@ default :
 throw new RuntimeException("Unknown format code 0x" + String.format("%x",formatCode));
 }
 for (Object obj : value) {
+if (obj == null) {
+size+=1;
+}
+ else {
 size+=((AmqpType)obj).size();
+}
 }
 return size;
 }
