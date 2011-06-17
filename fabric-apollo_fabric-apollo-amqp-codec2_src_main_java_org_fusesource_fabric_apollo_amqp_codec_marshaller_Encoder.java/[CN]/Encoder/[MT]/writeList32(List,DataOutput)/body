@@ -1,2 +1,11 @@
 {
+  out.writeByte(AMQPList.LIST_LIST32_CODE);
+  Long size=TypeRegistry.instance().sizer().sizeOfList(value) - 1 - AMQPList.LIST_LIST32_WIDTH;
+  Long count=(long)value.size();
+  out.writeInt(size.intValue());
+  out.writeInt(count.intValue());
+  for (  Object obj : value) {
+    AmqpType element=(AmqpType)obj;
+    element.write(out);
+  }
 }

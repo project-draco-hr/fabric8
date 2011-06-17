@@ -1,0 +1,20 @@
+{
+  List in=new ArrayList();
+  for (int i=0; i < 128; i++) {
+    in.add(new AMQPByte((byte)i));
+  }
+  for (int i=0; i < 128; i++) {
+    in.add(new AMQPInt((int)i));
+  }
+  for (int i=0; i < 128; i++) {
+    in.add(new AMQPLong((long)i));
+  }
+  for (int i=0; i < 128; i++) {
+    in.add(new AMQPULong((long)i));
+  }
+  for (int i=0; i < 128; i++) {
+    in.add(new AMQPString("String number " + i));
+  }
+  List out=writeRead(new AMQPList(in)).getValue();
+  assertEquals(in,out);
+}

@@ -1,0 +1,5 @@
+{
+  sizer=generator.sizer().cls().method(JMod.PUBLIC,cm.LONG,"sizeOf" + toJavaClassName(type.getName()));
+  sizer.param(getJavaType(),"value");
+  size().body()._return(generator.registry().cls().staticInvoke("instance").invoke("sizer").invoke("sizeOf" + toJavaClassName(type.getName())).arg(JExpr.ref("value")));
+}

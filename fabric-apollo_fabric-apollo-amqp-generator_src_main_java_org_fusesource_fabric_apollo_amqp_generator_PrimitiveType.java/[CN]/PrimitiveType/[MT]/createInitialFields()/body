@@ -1,10 +1,6 @@
 {
   value=cls().field(JMod.PRIVATE,getJavaType(),"value");
-  noArgConstructor=cls().constructor(JMod.PUBLIC);
-  noArgConstructor.body().block().assign(JExpr._this().ref("value"),JExpr._null());
-  valueConstructor=cls().constructor(JMod.PUBLIC);
-  valueConstructor.param(getJavaType(),"value");
-  valueConstructor.body().block().assign(JExpr._this().ref("value"),JExpr.ref("value"));
+  generateConstructors();
   getValue=cls().method(JMod.PUBLIC,getJavaType(),"getValue");
   getValue.body()._return(JExpr._this().ref("value"));
   setValue=cls().method(JMod.PUBLIC,cm.VOID,"setValue");
@@ -12,7 +8,8 @@
   setValue.body().block().assign(JExpr._this().ref("value"),JExpr.ref("value"));
   encodingPicker=generator.picker().cls().method(JMod.PUBLIC,cm.BYTE,"choose" + toJavaClassName(type.getName() + "Encoding"));
   encodingPicker.param(getJavaType(),"value");
-  sizer=generator.sizer().cls().method(JMod.PUBLIC,cm.LONG,"sizeOf" + toJavaClassName(type.getName()));
-  sizer.param(getJavaType(),"value");
-  size().body()._return(generator.registry().cls().staticInvoke("instance").invoke("sizer").invoke("sizeOf" + toJavaClassName(type.getName())).arg(JExpr.ref("value")));
+  generateSize();
+  generateEquals();
+  generateHashCode();
+  generateToString();
 }
