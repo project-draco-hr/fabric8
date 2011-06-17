@@ -12,4 +12,7 @@
   setValue.body().block().assign(JExpr._this().ref("value"),JExpr.ref("value"));
   encodingPicker=generator.picker().cls().method(JMod.PUBLIC,cm.BYTE,"choose" + toJavaClassName(type.getName() + "Encoding"));
   encodingPicker.param(getJavaType(),"value");
+  sizer=generator.sizer().cls().method(JMod.PUBLIC,cm.LONG,"sizeOf" + toJavaClassName(type.getName()));
+  sizer.param(getJavaType(),"value");
+  size().body()._return(generator.registry().cls().staticInvoke("instance").invoke("sizer").invoke("sizeOf" + toJavaClassName(type.getName())).arg(JExpr.ref("value")));
 }

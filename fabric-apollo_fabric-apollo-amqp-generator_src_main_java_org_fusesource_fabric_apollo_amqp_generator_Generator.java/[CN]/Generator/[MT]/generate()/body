@@ -2,11 +2,13 @@
   primitiveEncoder=getPackagePrefix() + "." + getInterfaces()+ "."+ "PrimitiveEncoder";
   String typeRegistry=getPackagePrefix() + "." + getMarshaller()+ "."+ "TypeRegistry";
   String encodingPicker=getPackagePrefix() + "." + getInterfaces()+ "."+ "EncodingPicker";
+  String encodingSizer=getPackagePrefix() + "." + getInterfaces()+ "."+ "Sizer";
   xmlDefinitionParser.parseXML();
   buildRestrictedTypeMapping();
   generatePrimitiveEncoderDecoder();
   registry=new TypeRegistry(cm,typeRegistry);
   picker=new EncodingPicker(this,encodingPicker);
+  sizer=new Sizer(this,encodingSizer);
   registry.cls().field(JMod.PROTECTED | JMod.FINAL | JMod.STATIC,cm._getClass(primitiveEncoder),"ENCODER",JExpr.direct("Encoder.instance()"));
   JMethod singletonAccessor=registry.cls().method(JMod.PUBLIC,cm._getClass(primitiveEncoder),"encoder");
   singletonAccessor.body()._return(JExpr.ref("ENCODER"));
