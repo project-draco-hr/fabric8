@@ -1,0 +1,17 @@
+{
+  byte formatCode=(byte)in.readUnsignedByte();
+  if (formatCode == LIST_LIST8_CODE) {
+    in.readUnsignedByte();
+    return in.readUnsignedByte();
+  }
+ else   if (formatCode == LIST_LIST32_CODE) {
+    in.readInt();
+    return in.readInt();
+  }
+ else   if (formatCode == TypeRegistry.NULL_FORMAT_CODE) {
+    return 0;
+  }
+ else {
+    throw new RuntimeException(String.format("Unknown format code (%x) for list type",formatCode));
+  }
+}

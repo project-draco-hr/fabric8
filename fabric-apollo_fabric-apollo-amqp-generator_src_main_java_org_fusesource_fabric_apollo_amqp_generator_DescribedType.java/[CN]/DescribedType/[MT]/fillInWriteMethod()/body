@@ -5,14 +5,7 @@
   write().body().invoke("writeConstructor").arg(ref("out"));
   write().body().invoke("writeBody").arg(cast(cm.BYTE,lit((byte)0))).arg(ref("out"));
   writeBody().body().decl(cm.LONG,"fieldSize",_this().invoke("sizeOfFields"));
-  writeBody().body().decl(cm.BYTE,"code",_this().invoke("getListEncoding").arg(ref("fieldSize")));
-  writeBody().body().assignPlus(ref("fieldSize"),_this().invoke("getListWidth").arg(ref("formatCode")));
-  writeBody().body().invoke(ref("out"),"writeByte").arg(ref("code"));
-  JConditional condition=writeBody().body()._if(ref("code").eq(cm.ref("AMQPList").staticRef("LIST_LIST8_CODE")));
-  condition._then().invoke(ref("out"),"writeByte").arg(cast(cm.BYTE,ref("fieldSize")));
-  condition._then().invoke(ref("out"),"writeByte").arg(cast(cm.BYTE,_this().invoke("count")));
-  condition._else().invoke(ref("out"),"writeInt").arg(cast(cm.INT,ref("fieldSize")));
-  condition._else().invoke(ref("out"),"writeInt").arg(cast(cm.INT,_this().invoke("count")));
+  writeBody().body().staticInvoke(cm.ref(generator.getMarshaller() + ".DescribedTypeSupport"),"writeListHeader").arg(ref("fieldSize")).arg(_this().invoke("count")).arg(ref("out"));
   for (  Attribute attribute : amqpFields) {
     if (generator.getMapping().get(attribute.type) != null) {
       if (attribute.attribute.type().isArray()) {

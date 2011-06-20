@@ -6,6 +6,7 @@
   staticReadSwitchBlock._case(generator.registry().cls().staticRef("NULL_FORMAT_CODE")).body()._return(cast(cm._ref(getJavaType()),generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("readNull").arg(ref("in"))));
   JSwitch readSwitchBlock=read().body()._switch(ref("formatCode"));
   writeBodySwitchBlock._case(generator.registry().cls().staticRef("NULL_FORMAT_CODE")).body().add(generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("writeNull").arg(ref("out")))._break();
+  int highestWidth=0;
   for (  Object obj : type.getEncodingOrDescriptorOrFieldOrChoiceOrDoc()) {
     if (obj instanceof Encoding) {
       Encoding encoding=(Encoding)obj;
@@ -17,7 +18,12 @@
       String staticCodeFieldName=toStaticName(fieldName + "_CODE");
       cls().field(JMod.PUBLIC | JMod.STATIC | JMod.FINAL,cm.BYTE,staticCodeFieldName,direct("(byte)" + encoding.getCode()));
       cls().init().add(generator.registry().cls().staticInvoke("instance").invoke("getPrimitiveFormatCodeMap").invoke("put").arg(ref(staticCodeFieldName)).arg(cls().dotclass()));
-      cls().field(JMod.PUBLIC | JMod.STATIC | JMod.FINAL,cm.INT,toStaticName(fieldName + "_WIDTH"),lit(Integer.parseInt(encoding.getWidth())));
+      int width=Integer.parseInt(encoding.getWidth());
+      if (width > highestWidth) {
+        highestWidth=width;
+        highestWidthField=staticCodeFieldName;
+      }
+      cls().field(JMod.PUBLIC | JMod.STATIC | JMod.FINAL,cm.INT,toStaticName(fieldName + "_WIDTH"),lit(width));
       readSwitchBlock._case(ref(staticCodeFieldName)).body().assign(_this().ref("value"),generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("read" + toJavaClassName(fieldName)).arg(ref("in")))._break();
       staticReadSwitchBlock._case(ref(staticCodeFieldName)).body()._return(generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("read" + toJavaClassName(fieldName)).arg(ref("in")));
       writeBodySwitchBlock._case(ref(staticCodeFieldName)).body().add(generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("write" + toJavaClassName(fieldName)).arg(ref("value")).arg(ref("out")))._break();

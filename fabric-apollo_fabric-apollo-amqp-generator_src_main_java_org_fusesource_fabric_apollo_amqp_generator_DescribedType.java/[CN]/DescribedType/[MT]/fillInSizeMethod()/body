@@ -24,15 +24,5 @@
     }
   }
   sizeOfFields.body()._return(ref("fieldSize"));
-  JMethod getListEncoding=cls().method(JMod.PRIVATE,cm.BYTE,"getListEncoding");
-  getListEncoding.param(cm.LONG,"fieldSize");
-  JMethod getListWidth=cls().method(JMod.PRIVATE,cm.INT,"getListWidth");
-  getListWidth.param(cm.BYTE,"formatCode");
-  getListWidth.body()._if(ref("formatCode").eq(cm.ref("AMQPList").staticRef("LIST_LIST8_CODE")))._then()._return(cm.ref("AMQPList").staticRef("LIST_LIST8_WIDTH"));
-  getListWidth.body()._return(cm.ref("AMQPList").staticRef("LIST_LIST32_WIDTH"));
-  getListEncoding.body()._if(ref("fieldSize").lte(lit(255).minus(cm.ref("AMQPList").staticRef("LIST_LIST8_WIDTH"))))._then()._return(cm.ref("AMQPList").staticRef("LIST_LIST8_CODE"));
-  getListEncoding.body()._return(cm.ref("AMQPList").staticRef("LIST_LIST32_CODE"));
-  sizeOfBody().body().decl(cm.LONG,"fieldSize",invoke("sizeOfFields"));
-  sizeOfBody().body().decl(cm.LONG,"width",invoke("getListWidth").arg(invoke("getListEncoding").arg(ref("fieldSize"))).mul(lit(2)));
-  sizeOfBody().body()._return(lit(1).plus(ref("width").plus(ref("fieldSize"))));
+  sizeOfBody().body()._return(cm.ref(generator.getMarshaller() + ".DescribedTypeSupport").staticInvoke("fullSizeOfList").arg(_this().invoke("sizeOfFields")).arg(_this().invoke("count")));
 }
