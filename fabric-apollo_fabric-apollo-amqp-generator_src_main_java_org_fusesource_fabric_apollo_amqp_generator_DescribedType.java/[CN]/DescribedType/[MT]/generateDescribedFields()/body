@@ -57,10 +57,10 @@
         }
         attribute.attribute.javadoc().add(doc);
         attribute.getter=cls().method(JMod.PUBLIC,attribute.attribute.type(),"get" + toJavaClassName(fieldName));
-        attribute.getter.body()._return(JExpr._this().ref(attribute.attribute));
+        attribute.getter.body()._return(_this().ref(attribute.attribute));
         attribute.setter=cls().method(JMod.PUBLIC,cm.VOID,"set" + toJavaClassName(fieldName));
         JVar param=attribute.setter.param(attribute.attribute.type(),fieldName);
-        attribute.setter.body().assign(JExpr._this().ref(attribute.attribute),param);
+        attribute.setter.body().assign(_this().ref(attribute.attribute),param);
         amqpFields.add(attribute);
       }
  else {
@@ -71,5 +71,5 @@
   fillInWriteMethod();
   fillInSizeMethod();
   count=cls().method(JMod.PUBLIC,cm.INT,"count");
-  count().body()._return(JExpr.lit(amqpFields.size()));
+  count().body()._return(lit(amqpFields.size()));
 }

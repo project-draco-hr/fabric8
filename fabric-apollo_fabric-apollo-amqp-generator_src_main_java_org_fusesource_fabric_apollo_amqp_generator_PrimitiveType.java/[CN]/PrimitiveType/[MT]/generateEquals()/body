@@ -1,17 +1,17 @@
 {
   equalsGeneric=cls().method(JMod.PUBLIC,cm.BOOLEAN,"equals");
   equalsGeneric.param(cm.ref("java.lang.Object"),"other");
-  equalsGeneric.body().block()._if(JExpr._this().eq(JExpr.ref("other")))._then()._return(JExpr.TRUE);
-  equalsGeneric.body().block()._if(JExpr.ref("other").eq(JExpr._null()).cor((JExpr.ref("other")._instanceof(cls()).not())))._then()._return(JExpr.FALSE);
-  equalsGeneric.body().block()._return(JExpr._this().invoke("equals").arg(JExpr.cast(cls(),JExpr.ref("other"))));
+  equalsGeneric.body().block()._if(_this().eq(ref("other")))._then()._return(TRUE);
+  equalsGeneric.body().block()._if(ref("other").eq(_null()).cor((ref("other")._instanceof(cls()).not())))._then()._return(FALSE);
+  equalsGeneric.body().block()._return(_this().invoke("equals").arg(cast(cls(),ref("other"))));
   equalsTypeSpecific=cls().method(JMod.PUBLIC,cm.BOOLEAN,"equals");
   equalsTypeSpecific.param(cls(),"other");
-  equalsTypeSpecific.body().block()._if(JExpr.ref("other").eq(JExpr._null()))._then()._return(JExpr.FALSE);
-  JConditional test=equalsTypeSpecific.body().block()._if(JExpr._this().ref("value").eq(JExpr._null()).cand(JExpr.ref("other").invoke("getValue").ne(JExpr._null())));
-  test._then().block()._return(JExpr.FALSE);
-  JConditional test2=test._elseif(JExpr._this().ref("value").ne(JExpr._null()).cand(JExpr.ref("other").invoke("getValue").eq(JExpr._null())));
-  test2._then().block()._return(JExpr.FALSE);
-  JConditional test3=test2._elseif(JExpr._this().ref("value").eq(JExpr._null()).cand(JExpr.ref("other").invoke("getValue").eq(JExpr._null())));
-  test3._then().block()._return(JExpr.TRUE);
-  test3._else().block()._return(JExpr._this().ref("value").invoke("equals").arg(JExpr.ref("other").invoke("getValue")));
+  equalsTypeSpecific.body().block()._if(ref("other").eq(_null()))._then()._return(FALSE);
+  JConditional test=equalsTypeSpecific.body().block()._if(_this().ref("value").eq(_null()).cand(ref("other").invoke("getValue").ne(_null())));
+  test._then().block()._return(FALSE);
+  JConditional test2=test._elseif(_this().ref("value").ne(_null()).cand(ref("other").invoke("getValue").eq(_null())));
+  test2._then().block()._return(FALSE);
+  JConditional test3=test2._elseif(_this().ref("value").eq(_null()).cand(ref("other").invoke("getValue").eq(_null())));
+  test3._then().block()._return(TRUE);
+  test3._else().block()._return(_this().ref("value").invoke("equals").arg(ref("other").invoke("getValue")));
 }

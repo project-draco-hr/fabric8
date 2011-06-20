@@ -1,14 +1,11 @@
 {
-  staticRead().body().decl(cm.BYTE,"formatCode",JExpr.ref("in").invoke("readByte"));
-  JSwitch staticReadSwitchBlock=staticRead().body().block()._switch(JExpr.ref("formatCode"));
-  staticReadSwitchBlock._case(generator.registry().cls().staticRef("NULL_FORMAT_CODE")).body()._return(JExpr.cast(cm._ref(getJavaType()),generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("readNull").arg(JExpr.ref("in"))));
-  JSwitch readSwitchBlock=read().body()._switch(JExpr.ref("formatCode"));
-  staticWrite().body().decl(cm.BYTE,"formatCode",generator.registry().cls().staticInvoke("instance").invoke("picker").invoke("choose" + toJavaClassName(type.getName() + "Encoding")).arg(JExpr.ref("value")));
-  write().body().decl(cm.BYTE,"formatCode",generator.registry().cls().staticInvoke("instance").invoke("picker").invoke("choose" + toJavaClassName(type.getName() + "Encoding")).arg(JExpr.ref("value")));
-  JSwitch staticWriteSwitchBlock=staticWrite().body()._switch(JExpr.ref("formatCode"));
-  JSwitch writeSwitchBlock=write().body()._switch(JExpr.ref("formatCode"));
-  writeSwitchBlock._case(generator.registry().cls().staticRef("NULL_FORMAT_CODE")).body().add(generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("writeNull").arg(JExpr.ref("out")))._break();
-  staticWriteSwitchBlock._case(generator.registry().cls().staticRef("NULL_FORMAT_CODE")).body().add(generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("writeNull").arg(JExpr.ref("out")))._break();
+  initWriteMethods();
+  JSwitch writeBodySwitchBlock=staticWriteBody.body().block()._switch(ref("formatCode"));
+  staticRead().body().decl(cm.BYTE,"formatCode",ref("in").invoke("readByte"));
+  JSwitch staticReadSwitchBlock=staticRead().body().block()._switch(ref("formatCode"));
+  staticReadSwitchBlock._case(generator.registry().cls().staticRef("NULL_FORMAT_CODE")).body()._return(cast(cm._ref(getJavaType()),generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("readNull").arg(ref("in"))));
+  JSwitch readSwitchBlock=read().body()._switch(ref("formatCode"));
+  writeBodySwitchBlock._case(generator.registry().cls().staticRef("NULL_FORMAT_CODE")).body().add(generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("writeNull").arg(ref("out")))._break();
   for (  Object obj : type.getEncodingOrDescriptorOrFieldOrChoiceOrDoc()) {
     if (obj instanceof Encoding) {
       Encoding encoding=(Encoding)obj;
@@ -18,17 +15,15 @@
       }
       Log.info("encoding name %s",fieldName);
       String staticCodeFieldName=toStaticName(fieldName + "_CODE");
-      cls().field(JMod.PUBLIC | JMod.STATIC | JMod.FINAL,cm.BYTE,staticCodeFieldName,JExpr.direct("(byte)" + encoding.getCode()));
-      cls().init().add(generator.registry().cls().staticInvoke("instance").invoke("getPrimitiveFormatCodeMap").invoke("put").arg(JExpr.ref(staticCodeFieldName)).arg(cls().dotclass()));
-      cls().field(JMod.PUBLIC | JMod.STATIC | JMod.FINAL,cm.INT,toStaticName(fieldName + "_WIDTH"),JExpr.lit(Integer.parseInt(encoding.getWidth())));
-      readSwitchBlock._case(JExpr.ref(staticCodeFieldName)).body().assign(JExpr._this().ref("value"),generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("read" + toJavaClassName(fieldName)).arg(JExpr.ref("in")))._break();
-      staticReadSwitchBlock._case(JExpr.ref(staticCodeFieldName)).body()._return(generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("read" + toJavaClassName(fieldName)).arg(JExpr.ref("in")));
-      writeSwitchBlock._case(JExpr.ref(staticCodeFieldName)).body().add(generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("write" + toJavaClassName(fieldName)).arg(JExpr._this().ref("value")).arg(JExpr.ref("out")))._break();
-      staticWriteSwitchBlock._case(JExpr.ref(staticCodeFieldName)).body().add(generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("write" + toJavaClassName(fieldName)).arg(JExpr.ref("value")).arg(JExpr.ref("out")))._break();
+      cls().field(JMod.PUBLIC | JMod.STATIC | JMod.FINAL,cm.BYTE,staticCodeFieldName,direct("(byte)" + encoding.getCode()));
+      cls().init().add(generator.registry().cls().staticInvoke("instance").invoke("getPrimitiveFormatCodeMap").invoke("put").arg(ref(staticCodeFieldName)).arg(cls().dotclass()));
+      cls().field(JMod.PUBLIC | JMod.STATIC | JMod.FINAL,cm.INT,toStaticName(fieldName + "_WIDTH"),lit(Integer.parseInt(encoding.getWidth())));
+      readSwitchBlock._case(ref(staticCodeFieldName)).body().assign(_this().ref("value"),generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("read" + toJavaClassName(fieldName)).arg(ref("in")))._break();
+      staticReadSwitchBlock._case(ref(staticCodeFieldName)).body()._return(generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("read" + toJavaClassName(fieldName)).arg(ref("in")));
+      writeBodySwitchBlock._case(ref(staticCodeFieldName)).body().add(generator.registry().cls().staticInvoke("instance").invoke("encoder").invoke("write" + toJavaClassName(fieldName)).arg(ref("value")).arg(ref("out")))._break();
     }
   }
-  readSwitchBlock._default().body()._throw(JExpr._new(cm.ref(Exception.class)).arg(JExpr.lit("Unknown format code for " + type.getName() + " : 0x").plus(cm.ref("java.lang.String").staticInvoke("format").arg("%x").arg(JExpr.ref("formatCode")))));
-  staticReadSwitchBlock._default().body()._throw(JExpr._new(cm.ref(Exception.class)).arg(JExpr.lit("Unknown format code for " + type.getName() + " : 0x").plus(cm.ref("java.lang.String").staticInvoke("format").arg("%x").arg(JExpr.ref("formatCode")))));
-  writeSwitchBlock._default().body()._throw(JExpr._new(cm.ref(Exception.class)).arg(JExpr.lit("Unknown format code for " + type.getName() + " : 0x").plus(cm.ref("java.lang.String").staticInvoke("format").arg("%x").arg(JExpr.ref("formatCode")))));
-  staticWriteSwitchBlock._default().body()._throw(JExpr._new(cm.ref(Exception.class)).arg(JExpr.lit("Unknown format code for " + type.getName() + " : 0x").plus(cm.ref("java.lang.String").staticInvoke("format").arg("%x").arg(JExpr.ref("formatCode")))));
+  readSwitchBlock._default().body()._throw(_new(cm.ref(Exception.class)).arg(lit("Unknown format code for " + type.getName() + " : 0x").plus(cm.ref("java.lang.String").staticInvoke("format").arg("%x").arg(ref("formatCode")))));
+  staticReadSwitchBlock._default().body()._throw(_new(cm.ref(Exception.class)).arg(lit("Unknown format code for " + type.getName() + " : 0x").plus(cm.ref("java.lang.String").staticInvoke("format").arg("%x").arg(ref("formatCode")))));
+  writeBodySwitchBlock._default().body()._throw(_new(cm.ref(Exception.class)).arg(lit("Unknown format code for " + type.getName() + " : 0x").plus(cm.ref("java.lang.String").staticInvoke("format").arg("%x").arg(ref("formatCode")))));
 }

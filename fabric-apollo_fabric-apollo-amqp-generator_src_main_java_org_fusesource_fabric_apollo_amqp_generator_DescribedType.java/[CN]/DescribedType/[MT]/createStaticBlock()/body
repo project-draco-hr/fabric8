@@ -3,7 +3,8 @@
     if (obj instanceof Descriptor) {
       Descriptor desc=(Descriptor)obj;
       int mods=JMod.PUBLIC | JMod.STATIC | JMod.FINAL;
-      SYMBOLIC_ID=cls().field(mods,Buffer.class,"SYMBOLIC_ID",JExpr._new(cm.ref(AsciiBuffer.class)).arg(desc.getName()));
+      SYMBOLIC_ID=cls().field(mods,Buffer.class,"SYMBOLIC_ID",_new(cm.ref(AsciiBuffer.class)).arg(desc.getName()));
+      SYMBOLIC_ID_SIZE=cls().field(mods,Long.class,"SYMBOLIC_ID_SIZE",generator.registry().cls().staticInvoke("instance").invoke("sizer").invoke("sizeOfSymbol").arg(ref("SYMBOLIC_ID")));
       String code=desc.getCode();
       String category=code.split(":")[0];
       String descriptorId=code.split(":")[1];
@@ -11,9 +12,10 @@
       category=category.substring(4);
       descriptorId=descriptorId.substring(2);
       descriptorId=descriptorId.substring(4);
-      NUMERIC_ID=cls().field(mods,BigInteger.class,"NUMERIC_ID",JExpr._new(cm.ref("java.math.BigInteger")).arg(JExpr.lit(category + descriptorId)).arg(JExpr.lit(16)));
-      cls().init().add(generator.registry().cls().staticInvoke("instance").invoke("getFormatCodeMap").invoke("put").arg(JExpr.ref("NUMERIC_ID")).arg(cls().dotclass()));
-      cls().init().add(generator.registry().cls().staticInvoke("instance").invoke("getSymbolicCodeMap").invoke("put").arg(JExpr.ref("SYMBOLIC_ID")).arg(cls().dotclass()));
+      NUMERIC_ID=cls().field(mods,BigInteger.class,"NUMERIC_ID",_new(cm.ref("java.math.BigInteger")).arg(lit(category + descriptorId)).arg(lit(16)));
+      NUMERIC_ID_SIZE=cls().field(mods,Long.class,"NUMERIC_ID_SIZE",generator.registry().cls().staticInvoke("instance").invoke("sizer").invoke("sizeOfULong").arg(ref("NUMERIC_ID")));
+      cls().init().add(generator.registry().cls().staticInvoke("instance").invoke("getFormatCodeMap").invoke("put").arg(ref("NUMERIC_ID")).arg(cls().dotclass()));
+      cls().init().add(generator.registry().cls().staticInvoke("instance").invoke("getSymbolicCodeMap").invoke("put").arg(ref("SYMBOLIC_ID")).arg(cls().dotclass()));
     }
   }
 }

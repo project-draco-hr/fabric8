@@ -40,12 +40,10 @@
       type.generateDescribedFields();
     }
     List<RestrictedType> restrictedTypes=new ArrayList<RestrictedType>();
-    for (    String key : getRestricted().keySet()) {
+    for (    String key : getEnums().keySet()) {
       Type type=getRestricted().get(key);
-      if (type.getProvides() != null) {
-        String className=getTypes() + "." + toJavaClassName(key);
-        restrictedTypes.add(new RestrictedType(this,className,type));
-      }
+      String className=getTypes() + "." + toJavaClassName(key);
+      restrictedTypes.add(new RestrictedType(this,className,type));
     }
     generateDefinitions();
     cm.build(outputDirectory);
