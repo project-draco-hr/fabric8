@@ -9,12 +9,6 @@
       Log.info("Field type for field %s : %s",fieldName,fieldType);
       if (fieldType.equals("*")) {
         fieldType=generator.getAmqpBaseType();
-        if (field.getRequires() != null) {
-          String requiredType=field.getRequires();
-          if (generator.getProvides().contains(requiredType)) {
-            fieldType=generator.getInterfaces() + "." + toJavaClassName(field.getRequires());
-          }
-        }
       }
  else       if (generator.getDescribed().containsKey(fieldType)) {
         fieldType=generator.getDescribedJavaClass().get(field.getType());
@@ -68,8 +62,10 @@
       }
     }
   }
+  fillInReadMethod();
   fillInWriteMethod();
   fillInSizeMethod();
+  generateToString();
   count=cls().method(JMod.PUBLIC,cm.INT,"count");
   count().body()._return(lit(amqpFields.size()));
 }

@@ -1,0 +1,10 @@
+{
+  JMethod toString=cls().method(JMod.PUBLIC,cm.ref("java.lang.String"),"toString");
+  toString.body().decl(cm.ref("java.lang.String"),"rc",lit(toJavaClassName(type.getName()) + "{"));
+  for (  Attribute attr : amqpFields) {
+    toString.body()._if(_this().ref(attr.attribute).ne(_null()))._then().assignPlus(ref("rc"),lit(attr.attribute.name() + "=").plus(_this().ref(attr.attribute)).plus(lit(" ")));
+  }
+  toString.body().assign(ref("rc"),ref("rc").invoke("trim"));
+  toString.body().assignPlus(ref("rc"),lit("}"));
+  toString.body()._return(ref("rc"));
+}

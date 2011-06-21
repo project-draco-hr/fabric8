@@ -3,8 +3,8 @@
   if (formatCode == TypeRegistry.DESCRIBED_FORMAT_CODE) {
     AmqpType descriptor=read(in);
     AmqpType rc=null;
-    if (descriptor instanceof AMQPLong) {
-      rc=(AmqpType)TypeRegistry.instance().getFormatCodeMap().get(((AMQPLong)descriptor).getValue()).newInstance();
+    if (descriptor instanceof AMQPULong) {
+      rc=(AmqpType)TypeRegistry.instance().getFormatCodeMap().get(((AMQPULong)descriptor).getValue()).newInstance();
     }
  else     if (descriptor instanceof AMQPSymbol) {
       rc=(AmqpType)TypeRegistry.instance().getSymbolicCodeMap().get(((AMQPSymbol)descriptor).getValue()).newInstance();
@@ -13,7 +13,6 @@
       throw new IllegalArgumentException("Unknown AMQP descriptor type");
     }
     if (rc != null) {
-      formatCode=in.readByte();
       rc.read(formatCode,in);
     }
     return rc;

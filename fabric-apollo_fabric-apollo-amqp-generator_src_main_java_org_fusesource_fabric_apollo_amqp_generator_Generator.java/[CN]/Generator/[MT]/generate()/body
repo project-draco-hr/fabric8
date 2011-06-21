@@ -45,6 +45,13 @@
       String className=getTypes() + "." + toJavaClassName(key);
       restrictedTypes.add(new RestrictedType(this,className,type));
     }
+    for (    String key : getRestricted().keySet()) {
+      Type type=getRestricted().get(key);
+      if (type.getProvides() != null && !getEnums().containsKey(key)) {
+        String className=getTypes() + "." + toJavaClassName(key);
+        restrictedTypes.add(new RestrictedType(this,className,type));
+      }
+    }
     generateDefinitions();
     cm.build(outputDirectory);
   }
