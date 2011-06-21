@@ -1,7 +1,7 @@
 {
-  long size=AMQPArray.ARRAY_ARRAY8_WIDTH + getArrayConstructorSize(value) + getArrayBodySize(value);
-  long count=value.length;
-  out.writeByte((byte)size);
-  out.writeByte((byte)count);
+  Long size=AMQPArray.ARRAY_ARRAY8_WIDTH + getArrayConstructorSize(value) + getArrayBodySize(value);
+  Long count=(long)value.length;
+  writeUByte(size.shortValue(),out);
+  writeUByte(count.shortValue(),out);
   writeArrayBody(value,out);
 }

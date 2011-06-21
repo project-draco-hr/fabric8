@@ -6,7 +6,7 @@
     out.writeByte((byte)count);
   }
  else {
-    out.writeInt((byte)encodedListSize(size,count));
-    out.writeInt(count);
+    TypeRegistry.instance().encoder().writeUInt(encodedListSize(size,count),out);
+    TypeRegistry.instance().encoder().writeUInt((long)count,out);
   }
 }

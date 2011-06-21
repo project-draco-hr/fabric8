@@ -1,7 +1,7 @@
 {
   Long size=TypeRegistry.instance().sizer().sizeOfList(value) - 1 - AMQPList.LIST_LIST32_WIDTH;
   Long count=(long)value.size();
-  out.writeInt(size.intValue());
-  out.writeInt(count.intValue());
+  writeUInt(size,out);
+  writeUInt(count,out);
   writeListData(value,out);
 }

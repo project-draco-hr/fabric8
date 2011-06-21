@@ -1,7 +1,7 @@
 {
   long size=AMQPArray.ARRAY_ARRAY32_WIDTH + getArrayConstructorSize(value) + getArrayBodySize(value);
   long count=value.length;
-  out.writeInt((int)size);
-  out.writeInt((int)count);
+  writeUInt(size,out);
+  writeUInt(count,out);
   writeArrayBody(value,out);
 }
