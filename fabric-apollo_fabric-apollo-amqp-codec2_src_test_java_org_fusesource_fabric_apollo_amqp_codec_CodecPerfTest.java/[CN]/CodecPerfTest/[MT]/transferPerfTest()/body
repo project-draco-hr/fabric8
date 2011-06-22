@@ -10,13 +10,6 @@
         in.setDeliveryID(i.get() + 1);
         in.setHandle(0L);
         in.setMessageFormat(0L);
-        Fragment fragment=new Fragment();
-        fragment.setFirst(true);
-        fragment.setLast(true);
-        fragment.setSectionNumber(0L);
-        fragment.setSectionCode(3L);
-        fragment.setPayload(new Buffer(("Message : " + i).getBytes()));
-        in.setFragments(new Fragment[]{fragment});
         try {
           Transfer out=writeRead(in);
           in.toString().equals(out.toString());
