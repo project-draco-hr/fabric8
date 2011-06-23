@@ -1,0 +1,13 @@
+{
+  byte formatCode=TypeRegistry.instance().picker().chooseBinaryEncoding(value);
+switch (formatCode) {
+case TypeRegistry.NULL_FORMAT_CODE:
+    return 1;
+case AMQPBinary.BINARY_VBIN8_CODE:
+  return 1 + AMQPBinary.BINARY_VBIN8_WIDTH + value.length();
+case AMQPBinary.BINARY_VBIN32_CODE:
+return 1 + AMQPBinary.BINARY_VBIN32_WIDTH + value.length();
+default :
+throw new RuntimeException("Unknown format code 0x" + String.format("%x",formatCode));
+}
+}

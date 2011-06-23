@@ -1,0 +1,18 @@
+{
+  JMethod readMethod;
+  Class m=mapping.get(type.getName());
+  if (m == null) {
+    readMethod=clazz.method(mods,cm.ref("java.lang.Object"),"read" + methodName);
+  }
+ else {
+    readMethod=clazz.method(mods,m,"read" + methodName);
+  }
+  readMethod._throws(java.lang.Exception.class);
+  readMethod.param(DataInput.class,"in");
+  JMethod writeMethod=clazz.method(mods,cm.VOID,"write" + methodName);
+  writeMethod._throws(java.lang.Exception.class);
+  if (m != null) {
+    writeMethod.param(m,"value");
+  }
+  writeMethod.param(DataOutput.class,"out");
+}
