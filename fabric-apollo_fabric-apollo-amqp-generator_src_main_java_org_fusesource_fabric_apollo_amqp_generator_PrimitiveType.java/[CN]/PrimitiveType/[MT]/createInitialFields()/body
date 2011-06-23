@@ -1,0 +1,17 @@
+{
+  value=cls().field(JMod.PROTECTED,getJavaType(),"value");
+  generateConstructors();
+  getValue=cls().method(JMod.PUBLIC,getJavaType(),"getValue");
+  getValue.body()._return(_this().ref("value"));
+  setValue=cls().method(JMod.PUBLIC,cm.VOID,"setValue");
+  setValue.param(getJavaType(),"value");
+  setValue.body().block().assign(_this().ref("value"),ref("value"));
+  encodingPicker=generator.picker().cls().method(JMod.PUBLIC,cm.BYTE,"choose" + toJavaClassName(type.getName() + "Encoding"));
+  encodingPicker.param(getJavaType(),"value");
+  generateSize();
+  generateEquals();
+  generateHashCode();
+  generateToString();
+  sizeOfConstructor().body()._return(lit(1));
+  sizeOfBody().body()._return(invoke("size").minus(invoke(sizeOfConstructor)));
+}

@@ -1,0 +1,20 @@
+{
+  JDefinedClass enc=cm._class(primitiveEncoder,ClassType.INTERFACE);
+  int mods=JMod.PUBLIC;
+  for (  String key : primitives.keySet()) {
+    Log.info("Adding encoder methods for type %s",key);
+    Type type=primitives.get(key);
+    for (    Object obj : type.getEncodingOrDescriptorOrFieldOrChoiceOrDoc()) {
+      if (obj instanceof Encoding) {
+        Encoding encoding=(Encoding)obj;
+        String methodName=type.getName();
+        if (encoding.getName() != null) {
+          methodName+="_" + encoding.getName();
+        }
+        methodName=toJavaClassName(methodName);
+        Log.info("Writing encode/decode methods for type %s encoding %s using method name %s",type.getName(),encoding.getName(),methodName);
+        createEncodeDecodeMethods(enc,mods,type,methodName);
+      }
+    }
+  }
+}

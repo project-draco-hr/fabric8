@@ -1,0 +1,10 @@
+{
+  Object constructor=getArrayConstructor(value);
+  if (constructor instanceof Byte) {
+    return 1;
+  }
+ else   if (constructor instanceof DescribedConstructor) {
+    return ((DescribedConstructor)constructor).size();
+  }
+  throw new RuntimeException("Unknown array constructor type : " + constructor.getClass().getSimpleName());
+}

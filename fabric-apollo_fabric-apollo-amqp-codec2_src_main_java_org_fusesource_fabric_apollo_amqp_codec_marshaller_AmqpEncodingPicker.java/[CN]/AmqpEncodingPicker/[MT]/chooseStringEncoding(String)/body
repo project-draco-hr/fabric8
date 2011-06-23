@@ -1,0 +1,16 @@
+{
+  if (value == null) {
+    return NULL_FORMAT_CODE;
+  }
+  int size=0;
+  try {
+    size=value.getBytes("UTF-8").length;
+  }
+ catch (  UnsupportedEncodingException e) {
+    throw new RuntimeException("UTF-8 encoding not available : " + e.getLocalizedMessage());
+  }
+  if (size < 255) {
+    return STRING_STR8_UTF8_CODE;
+  }
+  return STRING_STR32_UTF8_CODE;
+}

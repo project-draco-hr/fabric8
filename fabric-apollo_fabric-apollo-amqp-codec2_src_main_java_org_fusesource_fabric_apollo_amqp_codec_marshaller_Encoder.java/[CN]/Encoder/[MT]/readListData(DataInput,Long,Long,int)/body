@@ -1,0 +1,12 @@
+{
+  List rc=new ArrayList();
+  while (count > 0) {
+    rc.add(TypeReader.read(in));
+    count--;
+  }
+  Long actualSize=TypeRegistry.instance().sizer().sizeOfList(rc) - 1 - width;
+  if (size.longValue() != actualSize.longValue()) {
+    throw new RuntimeException(String.format("Encoded size of list (%s) doesn't match actual size of list (%s)",size,actualSize));
+  }
+  return rc;
+}
