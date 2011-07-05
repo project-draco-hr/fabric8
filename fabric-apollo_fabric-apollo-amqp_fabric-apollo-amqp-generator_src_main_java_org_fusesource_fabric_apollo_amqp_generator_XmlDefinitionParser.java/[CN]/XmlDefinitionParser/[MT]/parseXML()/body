@@ -1,0 +1,77 @@
+{
+  JAXBContext jc=JAXBContext.newInstance(Amqp.class.getPackage().getName());
+  for (  File inputFile : generator.getInputFiles()) {
+    BufferedReader reader=new BufferedReader(new FileReader(inputFile));
+    Unmarshaller unmarshaller=jc.createUnmarshaller();
+    SAXParserFactory parserFactory;
+    parserFactory=SAXParserFactory.newInstance();
+    parserFactory.setNamespaceAware(false);
+    XMLReader xmlreader=parserFactory.newSAXParser().getXMLReader();
+    xmlreader.setEntityResolver(new EntityResolver(){
+      public InputSource resolveEntity(      String publicId,      String systemId) throws SAXException, IOException {
+        InputSource is=null;
+        if (systemId != null && systemId.endsWith("amqp.dtd")) {
+          is=new InputSource();
+          is.setPublicId(publicId);
+          is.setSystemId(Generator.class.getResource("amqp.dtd").toExternalForm());
+        }
+        return is;
+      }
+    }
+);
+    Source er=new SAXSource(xmlreader,new InputSource(reader));
+    Amqp amqp=(Amqp)unmarshaller.unmarshal(er);
+    for (    Object docOrSection : amqp.getDocOrSection()) {
+      if (docOrSection instanceof Section) {
+        Section section=(Section)docOrSection;
+        for (        Object docOrDefinitionOrType : section.getDocOrDefinitionOrType()) {
+          if (docOrDefinitionOrType instanceof Type) {
+            Type type=(Type)docOrDefinitionOrType;
+            Log.info("Section : %s - Type name=%s class=%s provides=%s source=%s",section.getName(),type.getName(),type.getClazz(),type.getProvides(),type.getSource());
+            generator.getClasses().add(type.getClazz());
+            generator.getSections().put(type.getName(),section.getName());
+            for (            Object obj : type.getEncodingOrDescriptorOrFieldOrChoiceOrDoc()) {
+              if (obj instanceof Descriptor) {
+                generator.getDescribed().put(type.getName(),type);
+              }
+              if (obj instanceof Choice) {
+                generator.getEnums().put(type.getName(),type);
+              }
+              if (obj instanceof Field) {
+                Field field=(Field)obj;
+                if (field.getRequires() != null) {
+                  generator.getRequires().add(field.getRequires());
+                }
+              }
+            }
+            if (type.getProvides() != null) {
+              Log.info("Adding provides : %s",type.getProvides());
+              String types[]=type.getProvides().split(", ");
+              for (              String t : types) {
+                generator.getProvides().add(t);
+              }
+              types=type.getProvides().split(",");
+              for (              String t : types) {
+                generator.getProvides().add(t);
+              }
+            }
+            if (type.getClazz().startsWith("primitive")) {
+              generator.getPrimitives().put(type.getName(),type);
+            }
+ else             if (type.getClazz().startsWith("restricted")) {
+              generator.getRestricted().put(type.getName(),type);
+            }
+ else             if (type.getClazz().startsWith("composite")) {
+              generator.getComposites().put(type.getName(),type);
+            }
+          }
+ else           if (docOrDefinitionOrType instanceof Definition) {
+            Definition def=(Definition)docOrDefinitionOrType;
+            generator.getDefinitions().add(def);
+          }
+        }
+      }
+    }
+    reader.close();
+  }
+}

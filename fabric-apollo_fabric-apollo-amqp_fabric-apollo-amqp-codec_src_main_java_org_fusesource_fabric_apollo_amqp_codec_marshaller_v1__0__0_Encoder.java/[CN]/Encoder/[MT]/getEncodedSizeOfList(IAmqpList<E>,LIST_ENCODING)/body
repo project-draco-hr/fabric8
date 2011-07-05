@@ -1,0 +1,20 @@
+{
+switch (encoding) {
+case ARRAY32:
+    return getEncodedSizeOfList(4 + 1,val,true);
+case ARRAY8:
+{
+    return getEncodedSizeOfList(1 + 1,val,true);
+  }
+case LIST32:
+return getEncodedSizeOfList(4,val,false);
+case LIST8:
+{
+return getEncodedSizeOfList(1,val,false);
+}
+default :
+{
+throw new IllegalArgumentException(encoding.name());
+}
+}
+}

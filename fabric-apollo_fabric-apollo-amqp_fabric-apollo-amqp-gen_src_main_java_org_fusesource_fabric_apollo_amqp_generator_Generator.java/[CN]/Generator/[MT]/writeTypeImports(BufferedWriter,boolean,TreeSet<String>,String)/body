@@ -1,0 +1,25 @@
+{
+  HashSet<String> filters=new HashSet<String>();
+  filters.add("java.lang");
+  for (  String filter : packageFilters) {
+    filters.add(filter);
+  }
+  for (  AmqpClass amqpClass : TypeRegistry.getGeneratedTypes()) {
+    if (primitiveOnly && (!amqpClass.isPrimitive() || amqpClass.isList() || amqpClass.isMap())) {
+      continue;
+    }
+    if (amqpClass.needsMarshaller()) {
+      imports.add(amqpClass.getTypeMapping().getImport());
+      TypeRegistry.JavaTypeMapping vMap=amqpClass.getValueMapping();
+      if (vMap != null && vMap.getImport() != null) {
+        imports.add(vMap.getImport());
+      }
+    }
+  }
+  for (  String i : imports) {
+    if (!filters.contains(Utils.javaPackageOf(i))) {
+      writer.write("import " + i + ";");
+      writer.newLine();
+    }
+  }
+}

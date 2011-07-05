@@ -1,0 +1,15 @@
+{
+  AmqpFragment fragment=fragments.get(index);
+switch (fragment.getSectionCode().intValue()) {
+case DATA:
+    return fragment.getPayload();
+case AMQP_DATA:
+  return unmarshal(fragment.getPayload().data);
+case AMQP_MAP:
+return AmqpMap.AmqpMapBuffer.create(fragment.getPayload(),0,getMarshaller());
+case AMQP_LIST:
+return AmqpList.AmqpListBuffer.create(fragment.getPayload(),0,getMarshaller());
+default :
+throw new RuntimeException("Format code " + fragment.getSectionCode() + " is unknown or does not belong in message body");
+}
+}

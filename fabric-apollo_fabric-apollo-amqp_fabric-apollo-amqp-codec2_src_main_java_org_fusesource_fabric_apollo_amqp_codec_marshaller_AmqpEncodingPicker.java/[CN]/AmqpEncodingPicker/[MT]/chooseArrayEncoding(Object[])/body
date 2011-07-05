@@ -1,0 +1,18 @@
+{
+  if (value == null) {
+    return NULL_FORMAT_CODE;
+  }
+  if (value.length > 255) {
+    return ARRAY_ARRAY32_CODE;
+  }
+  int size=0;
+  size+=getArrayConstructorSize(value);
+  for (  Object v : value) {
+    AmqpType t=(AmqpType)v;
+    size+=t.sizeOfBody();
+    if (size > 255 - ARRAY_ARRAY8_WIDTH) {
+      return ARRAY_ARRAY32_CODE;
+    }
+  }
+  return ARRAY_ARRAY8_CODE;
+}

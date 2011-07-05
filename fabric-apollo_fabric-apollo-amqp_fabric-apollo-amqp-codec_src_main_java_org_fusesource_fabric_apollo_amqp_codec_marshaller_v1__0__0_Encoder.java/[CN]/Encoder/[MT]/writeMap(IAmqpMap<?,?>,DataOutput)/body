@@ -1,0 +1,13 @@
+{
+  for (  Map.Entry<? extends AmqpType<?,?>,? extends AmqpType<?,?>> me : val) {
+    if (me.getKey() != null) {
+      me.getKey().marshal(out,MARSHALLER);
+    }
+    if (me.getValue() != null) {
+      me.getValue().marshal(out,MARSHALLER);
+    }
+ else {
+      createAmqpNull(null).marshal(out,MARSHALLER);
+    }
+  }
+}

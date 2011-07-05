@@ -1,0 +1,10 @@
+{
+  toString=cls().method(JMod.PUBLIC,cm.ref("java.lang.String"),"toString");
+  toString.body()._if(_this().ref("value").eq(_null()))._then().block()._return(lit("null"));
+  if (type.getName().equals("array")) {
+    toString.body()._return(cm.ref("java.util.Arrays").staticInvoke("toString").arg(_this().ref("value")));
+  }
+ else {
+    toString.body()._return(_this().ref("value").invoke("toString"));
+  }
+}

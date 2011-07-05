@@ -1,0 +1,11 @@
+{
+  header.readFrom(in);
+  initExtHeader();
+  extHeader.readFrom(in);
+  if (getDataSize() > 0) {
+    body=marshaller.unmarshalType(in);
+  }
+  if (getDataSize() == 0 || body instanceof AmqpNull) {
+    body=null;
+  }
+}

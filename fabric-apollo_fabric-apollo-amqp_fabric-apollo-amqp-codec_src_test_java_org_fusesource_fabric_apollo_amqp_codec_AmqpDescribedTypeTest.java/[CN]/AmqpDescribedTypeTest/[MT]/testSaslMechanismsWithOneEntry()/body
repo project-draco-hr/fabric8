@@ -1,0 +1,8 @@
+{
+  AmqpSaslMechanisms in=createAmqpSaslMechanisms();
+  in.setSaslServerMechanisms(createMultiple());
+  in.getSaslServerMechanisms().setValue(createAmqpSymbol("blah"));
+  AmqpSaslMechanisms out=CodecUtils.marshalUnmarshal(in);
+  print("In: %s, Out: %s",in,out);
+  Assert.assertTrue(in.equals(out));
+}

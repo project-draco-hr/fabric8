@@ -1,0 +1,12 @@
+{
+  String formatString="|%3s|%30s|%30s";
+  String header=String.format(formatString,"#","Key","Value");
+  String ret=Utils.getTitle(header.length(),title);
+  ret+="\n" + header + "\n";
+  int entry=0;
+  for (  Object key : map.keySet()) {
+    ret+=String.format(formatString + "\n",++entry,key,map.get(key));
+  }
+  ret+=getBar(header.length());
+  return ret;
+}

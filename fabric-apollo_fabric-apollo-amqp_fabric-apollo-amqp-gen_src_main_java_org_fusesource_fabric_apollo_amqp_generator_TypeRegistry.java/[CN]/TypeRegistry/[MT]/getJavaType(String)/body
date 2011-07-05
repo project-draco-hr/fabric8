@@ -1,0 +1,17 @@
+{
+  AmqpClass amqpClass=GENERATED_TYPE_MAP.get(type);
+  if (amqpClass == null) {
+    throw new UnknownTypeException("Type " + type + " not found");
+  }
+  if (amqpClass.isRestricted()) {
+    return getJavaType(amqpClass.getRestrictedType());
+  }
+  if (amqpClass.isPrimitive()) {
+    JavaTypeMapping mapping=JAVA_TYPE_MAP.get(amqpClass.getName());
+    if (mapping == null) {
+      throw new UnknownTypeException("Primitive Type " + type + " not found");
+    }
+    return mapping.javaType;
+  }
+  return amqpClass.getJavaType();
+}

@@ -1,0 +1,7 @@
+{
+  Long size=TypeRegistry.instance().sizer().sizeOfMap(value) - 1 - AMQPMap.MAP_MAP32_WIDTH;
+  Long count=(long)(value.keySet().size() + value.values().size());
+  writeUInt(size,out);
+  writeUInt(count,out);
+  writeMapData(value,out);
+}

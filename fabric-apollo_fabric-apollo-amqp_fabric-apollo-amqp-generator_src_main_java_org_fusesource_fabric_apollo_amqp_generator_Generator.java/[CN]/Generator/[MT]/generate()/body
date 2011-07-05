@@ -1,0 +1,65 @@
+{
+  primitiveEncoder=getInterfaces() + "." + "PrimitiveEncoder";
+  String typeRegistry=getMarshaller() + "." + "TypeRegistry";
+  String encodingPicker=getInterfaces() + "." + "EncodingPicker";
+  String encodingSizer=getInterfaces() + "." + "Sizer";
+  xmlDefinitionParser.parseXML();
+  buildRestrictedTypeMapping();
+  generatePrimitiveEncoderDecoder();
+  registry=new TypeRegistry(cm,typeRegistry);
+  picker=new EncodingPicker(this,encodingPicker);
+  sizer=new Sizer(this,encodingSizer);
+  registry.cls().field(JMod.PROTECTED | JMod.FINAL | JMod.STATIC,cm._getClass(primitiveEncoder),"ENCODER",JExpr.direct("Encoder.instance()"));
+  JMethod singletonAccessor=registry.cls().method(JMod.PUBLIC,cm._getClass(primitiveEncoder),"encoder");
+  singletonAccessor.body()._return(JExpr.ref("ENCODER"));
+  Log.info("\n%s",this);
+  outputDirectory.mkdirs();
+  try {
+    List<PrimitiveType> primitiveTypes=new ArrayList<PrimitiveType>();
+    List<String> filter=new ArrayList<String>();
+    filter.add("*");
+    filter.add("null");
+    for (    String key : getPrimitives().keySet()) {
+      if (filter.contains(key)) {
+        continue;
+      }
+      Type type=getPrimitives().get(key);
+      String className=getTypes() + "." + "AMQP"+ toJavaClassName(key);
+      getPrimitiveJavaClass().put(key,className);
+      primitiveTypes.add(new PrimitiveType(this,className,type));
+    }
+    interfaceGenerator.generateAbstractBases();
+    List<DescribedType> describedTypes=new ArrayList<DescribedType>();
+    for (    String key : getDescribed().keySet()) {
+      Type type=getDescribed().get(key);
+      String className=getTypes() + "." + toJavaClassName(key);
+      getDescribedJavaClass().put(key,className);
+      describedTypes.add(new DescribedType(this,className,type));
+    }
+    for (    DescribedType type : describedTypes) {
+      type.generateDescribedFields();
+    }
+    List<RestrictedType> restrictedTypes=new ArrayList<RestrictedType>();
+    for (    String key : getEnums().keySet()) {
+      Type type=getRestricted().get(key);
+      String className=getTypes() + "." + toJavaClassName(key);
+      restrictedTypes.add(new RestrictedType(this,className,type));
+    }
+    for (    String key : getRestricted().keySet()) {
+      Type type=getRestricted().get(key);
+      if (type.getProvides() != null && !getEnums().containsKey(key) && !getDescribed().containsKey(key)) {
+        String className=getTypes() + "." + toJavaClassName(key);
+        restrictedTypes.add(new RestrictedType(this,className,type));
+      }
+    }
+    generateDefinitions();
+    cm.build(outputDirectory);
+  }
+ catch (  Exception e) {
+    Log.error("Error generating code : %s",e);
+    for (    StackTraceElement s : e.getStackTrace()) {
+      Log.error("\tat %s.%s(%s:%s)",s.getClassName(),s.getMethodName(),s.getFileName(),s.getLineNumber());
+    }
+    throw e;
+  }
+}

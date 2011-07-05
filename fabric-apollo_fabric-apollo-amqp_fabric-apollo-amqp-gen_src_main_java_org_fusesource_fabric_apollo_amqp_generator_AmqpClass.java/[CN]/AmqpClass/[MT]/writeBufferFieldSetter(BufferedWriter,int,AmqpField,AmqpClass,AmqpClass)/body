@@ -1,0 +1,34 @@
+{
+  if (baseType.isPrimitive() && !baseType.isAny() && !fieldClass.isEnumType()&& !baseType.isDescribed()&& !baseType.isMutable()) {
+    writer.newLine();
+    writer.write(Utils.tab(indent) + "public void set" + Utils.capFirst(field.getJavaName())+ "("+ baseType.getValueMapping()+ " "+ Utils.toJavaName(field.getName())+ ") {");
+    writer.newLine();
+    writer.write(Utils.tab(++indent) + "dirty = true;");
+    writer.newLine();
+    writer.write(Utils.tab(indent) + "bean().set" + Utils.capFirst(field.getJavaName())+ "("+ Utils.toJavaName(field.getName())+ ");");
+    writer.newLine();
+    writer.write(Utils.tab(--indent) + "}");
+    writer.newLine();
+    if (baseType.getValueMapping().hasPrimitiveType()) {
+      writer.newLine();
+      writer.write(Utils.tab(indent) + "public void set" + Utils.capFirst(field.getJavaName())+ "("+ baseType.getValueMapping().getPrimitiveType()+ " "+ Utils.toJavaName(field.getName())+ ") {");
+      writer.newLine();
+      writer.write(Utils.tab(++indent) + "dirty = true;");
+      writer.newLine();
+      writer.write(Utils.tab(indent) + "bean().set" + Utils.capFirst(field.getJavaName())+ "("+ Utils.toJavaName(field.getName())+ ");");
+      writer.newLine();
+      writer.write(Utils.tab(--indent) + "}");
+      writer.newLine();
+      writer.newLine();
+    }
+  }
+  writer.newLine();
+  writer.write(Utils.tab(indent) + "public final void set" + Utils.capFirst(field.getJavaName())+ "("+ fieldClass.getTypeMapping()+ " "+ Utils.toJavaName(field.getName())+ ") {");
+  writer.newLine();
+  writer.write(Utils.tab(++indent) + "dirty = true;");
+  writer.newLine();
+  writer.write(Utils.tab(indent) + "bean().set" + Utils.capFirst(field.getJavaName())+ "("+ Utils.toJavaName(field.getName())+ ");");
+  writer.newLine();
+  writer.write(Utils.tab(--indent) + "}");
+  writer.newLine();
+}

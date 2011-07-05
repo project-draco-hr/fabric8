@@ -1,0 +1,39 @@
+{
+  writer.newLine();
+  writer.write(Utils.tab(indent) + "public " + TypeRegistry.any().typeMapping+ " get(int index) {");
+  writer.newLine();
+  writer.write(Utils.tab(++indent) + "switch(index) {");
+  writer.newLine();
+  int f=0;
+  for (  AmqpField field : fields.values()) {
+    writer.write(Utils.tab(indent) + "case " + f+ ": {");
+    writer.newLine();
+    AmqpClass fieldClass=field.resolveAmqpFieldType();
+    if (fieldClass.isEnumType()) {
+      writer.write(Utils.tab(++indent) + "if(" + field.getJavaName()+ " == null) {");
+      writer.newLine();
+      writer.write(Utils.tab(++indent) + "return null;");
+      writer.newLine();
+      writer.write(Utils.tab(--indent) + "}");
+      writer.newLine();
+      writer.write(Utils.tab(indent) + "return " + field.getJavaName()+ ".getValue();");
+    }
+ else {
+      writer.write(Utils.tab(++indent) + "return bean." + field.getJavaName()+ ";");
+    }
+    writer.newLine();
+    writer.write(Utils.tab(--indent) + "}");
+    writer.newLine();
+    f++;
+  }
+  writer.write(Utils.tab(indent) + "default : {");
+  writer.newLine();
+  writer.write(Utils.tab(++indent) + "throw new IndexOutOfBoundsException(String.valueOf(index));");
+  writer.newLine();
+  writer.write(Utils.tab(--indent) + "}");
+  writer.newLine();
+  writer.write(Utils.tab(indent) + "}");
+  writer.newLine();
+  writer.write(Utils.tab(--indent) + "}");
+  writer.newLine();
+}

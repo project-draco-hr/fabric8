@@ -1,0 +1,9 @@
+{
+  int rc=0;
+  rc+=channel.read(header.toByteBuffer());
+  initExtHeader();
+  rc+=channel.read(extHeader.toByteBuffer());
+  encodedBody=new Buffer((int)getDataSize());
+  rc+=channel.read(encodedBody.toByteBuffer());
+  return rc;
+}

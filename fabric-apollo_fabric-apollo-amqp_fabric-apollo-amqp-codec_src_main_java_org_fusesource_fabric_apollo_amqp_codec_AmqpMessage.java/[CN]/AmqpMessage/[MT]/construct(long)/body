@@ -1,0 +1,17 @@
+{
+  LinkedList<AmqpFragment> fragments=constructMessage();
+  LinkedList<AmqpList> rc=new LinkedList<AmqpList>();
+  LinkedList<AmqpFragment> currentFragments=new LinkedList<AmqpFragment>();
+  long currentSize=0;
+  for (  AmqpFragment fragment : fragments) {
+    if (currentSize > maxSize) {
+      currentSize=0;
+      rc.add(createList(currentFragments));
+      currentFragments=new LinkedList<AmqpFragment>();
+    }
+    currentSize+=getSize(fragment);
+    currentFragments.add(fragment);
+  }
+  rc.add(createList(currentFragments));
+  return rc;
+}

@@ -1,0 +1,33 @@
+{
+  LinkedList<String> rc=new LinkedList<String>();
+  String line="";
+  StringTokenizer lines=new StringTokenizer(s,"\r\n");
+  while (lines.hasMoreElements()) {
+    StringTokenizer tok=new StringTokenizer(lines.nextToken()," ");
+    int chars=0;
+    while (tok.hasMoreTokens()) {
+      String word=tok.nextToken();
+      chars+=word.length();
+      if (chars > charsPerLine) {
+        if (line.length() == 0) {
+          rc.add(word);
+        }
+ else {
+          rc.add(line);
+          line=word;
+          chars=word.length();
+          continue;
+        }
+      }
+      if (line.length() > 0) {
+        line+=" ";
+      }
+      line+=word;
+    }
+    if (line.length() > 0) {
+      rc.add(line);
+    }
+    line="";
+  }
+  return rc.toArray(new String[]{});
+}

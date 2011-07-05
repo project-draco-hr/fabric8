@@ -1,0 +1,8 @@
+{
+  Map in=new HashMap();
+  for (int i=0; i < 2048; i++) {
+    in.put(new AMQPString("key" + i),new AMQPString("value" + i));
+  }
+  Map out=writeRead(new AMQPMap(in)).getValue();
+  assertEquals(in,out);
+}

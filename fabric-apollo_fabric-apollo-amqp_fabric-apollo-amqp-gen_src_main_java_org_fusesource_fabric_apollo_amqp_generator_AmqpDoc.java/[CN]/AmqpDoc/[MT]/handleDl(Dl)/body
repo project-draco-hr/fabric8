@@ -1,0 +1,16 @@
+{
+  String comment="";
+  comment+="<dl>\n";
+  for (  Object dType : dl.getDtOrDd()) {
+    if (dType instanceof Dt) {
+      comment+="<dt>\n" + ((Dt)dType).getvalue() + "\n</dt>\n";
+    }
+ else {
+      for (      P p : ((Dd)dType).getP()) {
+        comment+=handleP(p);
+      }
+    }
+  }
+  comment+="\n</dl>\n";
+  return comment;
+}

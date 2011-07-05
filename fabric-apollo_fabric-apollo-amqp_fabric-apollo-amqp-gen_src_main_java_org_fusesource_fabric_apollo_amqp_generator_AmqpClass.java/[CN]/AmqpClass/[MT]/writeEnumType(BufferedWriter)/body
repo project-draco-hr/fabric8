@@ -1,0 +1,76 @@
+{
+  if (isEnumType()) {
+    writer.newLine();
+    int i=0;
+    AmqpClass amqpClass=TypeRegistry.resolveAmqpClass(restrictedType);
+    TypeRegistry.JavaTypeMapping amqpType=amqpClass.getTypeMapping();
+    TypeRegistry.JavaTypeMapping valueType=amqpClass.getValueMapping();
+    for (    Choice constant : choice.choices) {
+      i++;
+      if (constant.getDoc() != null) {
+        new AmqpDoc(constant.getDoc()).writeJavaDoc(writer,1);
+      }
+      writer.write(Utils.tab(1) + Utils.toJavaConstant(constant.getName()) + "(new "+ valueType+ "(\""+ constant.getValue()+ "\"))");
+      if (i < choice.choices.size()) {
+        writer.write(",");
+      }
+ else {
+        writer.write(";");
+      }
+      writer.newLine();
+    }
+    writer.newLine();
+    writer.write(Utils.tab(1) + "private static final HashMap<" + valueType+ ", "+ getJavaType()+ "> LOOKUP = new HashMap<"+ valueType+ ", "+ getJavaType()+ ">(2);");
+    writer.newLine();
+    writer.write(Utils.tab(1) + "static {");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "for (" + getJavaType()+ " "+ Utils.toJavaName(getName())+ " : "+ getJavaType()+ ".values()) {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "LOOKUP.put(" + Utils.toJavaName(getName())+ ".value.getValue(), "+ Utils.toJavaName(getName())+ ");");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.write(Utils.tab(1) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(1) + "private final " + amqpType+ " value;");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(1) + "private " + typeMapping+ "("+ valueType+ " value) {");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "this.value = new " + amqpClass.beanMapping+ "(value);");
+    writer.newLine();
+    writer.write(Utils.tab(1) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(1) + "public final " + amqpType+ " getValue() {");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "return value;");
+    writer.newLine();
+    writer.write(Utils.tab(1) + "}");
+    writer.newLine();
+    writer.newLine();
+    writer.write(Utils.tab(1) + "public static final " + getJavaType()+ " get("+ amqpType+ " value) throws AmqpEncodingError{");
+    writer.newLine();
+    writer.write(Utils.tab(2) + " if ( value == null ) {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "return null;");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.write(Utils.tab(2) + getJavaType() + " "+ Utils.toJavaName(getName())+ "= LOOKUP.get(value.getValue());");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "if (" + Utils.toJavaName(getName())+ " == null) {");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "//TODO perhaps this should be an IllegalArgumentException?");
+    writer.newLine();
+    writer.write(Utils.tab(3) + "throw new AmqpEncodingError(\"Unknown " + Utils.toJavaName(getName())+ ": \" + value + \" expected one of \" + LOOKUP.keySet());");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "}");
+    writer.newLine();
+    writer.write(Utils.tab(2) + "return " + Utils.toJavaName(getName())+ ";");
+    writer.newLine();
+    writer.write(Utils.tab(1) + "}");
+    writer.newLine();
+  }
+}
