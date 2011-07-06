@@ -46,7 +46,10 @@
             }
             if (type.getProvides() != null) {
               Log.info("Adding provides : %s",type.getProvides());
-              generator.getProvides().add(type.getProvides());
+              String types[]=type.getProvides().split(",");
+              for (              String t : types) {
+                generator.getProvides().add(t.trim());
+              }
             }
             if (type.getClazz().startsWith("primitive")) {
               generator.getPrimitives().put(type.getName(),type);
