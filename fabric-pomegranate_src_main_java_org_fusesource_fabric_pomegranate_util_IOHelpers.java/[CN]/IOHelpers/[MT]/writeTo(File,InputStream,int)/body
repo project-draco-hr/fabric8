@@ -1,0 +1,14 @@
+{
+  BufferedOutputStream out=new BufferedOutputStream(new FileOutputStream(file));
+  BufferedInputStream bufferedIn=new BufferedInputStream(in,bufferSize);
+  while (true) {
+    int b=bufferedIn.read();
+    if (b >= 0) {
+      out.write(b);
+    }
+ else {
+      out.close();
+      return;
+    }
+  }
+}

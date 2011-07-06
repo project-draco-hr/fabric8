@@ -1,0 +1,12 @@
+{
+  if (Objects.equal(groupId,getGroupId()) && Objects.equal(artifactId,getArtifactId())) {
+    return this;
+  }
+  for (  DependencyTree child : children) {
+    DependencyTree dependency=child.findDependency(groupId,artifactId);
+    if (dependency != null) {
+      return dependency;
+    }
+  }
+  return null;
+}

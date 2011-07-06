@@ -1,0 +1,9 @@
+{
+  if (!service.startsWith("/")) {
+    service=getServicePrefix() + "/" + service;
+  }
+ else {
+    service=getServicePrefix() + service;
+  }
+  return checkResult(doInvoke(getAuthorizeUrl(service,token,action)));
+}

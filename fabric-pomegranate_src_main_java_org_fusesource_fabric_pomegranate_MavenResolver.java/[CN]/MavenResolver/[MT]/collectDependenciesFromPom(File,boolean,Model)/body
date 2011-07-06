@@ -1,0 +1,56 @@
+{
+  Map<String,String> props=Collections.singletonMap(ArtifactProperties.LOCAL_PATH,rootPom.toString());
+  final MavenRepositorySystemSession session=new MavenRepositorySystemSession();
+  LocalRepository localRepository=new LocalRepository(getLocalRepo());
+  RepositorySystem repo=getRepositorySystem();
+  session.setLocalRepositoryManager(repo.newLocalRepositoryManager(localRepository));
+  session.setDependencySelector(new AndDependencySelector(new ScopeDependencySelector("test","provided"),new OptionalDependencySelector(),new ExclusionDependencySelector()));
+  session.setOffline(offline);
+  List<RemoteRepository> repos=new ArrayList<RemoteRepository>();
+  for (int i=0; i < repositories.length; i++) {
+    repos.add(new RemoteRepository("repos" + i,"default",repositories[i]));
+  }
+  String groupId=model.getGroupId();
+  String artifactId=model.getArtifactId();
+  String pomVersion=model.getVersion();
+  String packaging="pom";
+  if (groupId == null || artifactId == null || pomVersion == null) {
+    throw new IllegalArgumentException("Pomegranate pom.xml has missing groupId:artifactId:version " + groupId + ":"+ artifactId+ ":"+ pomVersion);
+  }
+  Artifact root=new DefaultArtifact(groupId,artifactId,null,packaging,pomVersion,props,rootPom);
+  ArtifactDescriptorResult artifactDescriptorResult=repo.readArtifactDescriptor(session,new ArtifactDescriptorRequest(root,repos,null));
+  Dependency rootDependency=new Dependency(root,null);
+  List<Dependency> dependencies=artifactDescriptorResult.getDependencies();
+  DefaultDependencyNode tmpNode=new DefaultDependencyNode(rootDependency);
+  GenericVersionScheme versionScheme=new GenericVersionScheme();
+  tmpNode.setVersion(versionScheme.parseVersion(pomVersion));
+  tmpNode.setVersionConstraint(versionScheme.parseVersionConstraint(pomVersion));
+  DependencyNode pomNode=tmpNode;
+  for (  Dependency dependency : dependencies) {
+    CollectRequest request=new CollectRequest(dependency,repos);
+    DependencyNode node=repo.collectDependencies(session,request).getRoot();
+    repo.resolveDependencies(session,node,null);
+    pomNode.getChildren().add(node);
+  }
+  DependencyGraphTransformationContext tranformContext=new DependencyGraphTransformationContext(){
+    Map map=new HashMap();
+    public RepositorySystemSession getSession(){
+      return session;
+    }
+    public Object get(    Object key){
+      return map.get(key);
+    }
+    public Object put(    Object key,    Object value){
+      return map.put(key,value);
+    }
+  }
+;
+  DependencyGraphTransformer transformer=new ReplaceConflictingVersionResolver();
+  pomNode=transformer.transformGraph(pomNode,tranformContext);
+  DependencyTreeResult result=new DependencyTreeResult(pomNode);
+  List<DependencyTree.DuplicateDependency> duplicates=result.getTree().checkForDuplicateDependencies();
+  for (  DependencyTree.DuplicateDependency duplicate : duplicates) {
+    LOGGER.warn("Duplicate dependency: " + duplicate);
+  }
+  return result;
+}
