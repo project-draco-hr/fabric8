@@ -1,7 +1,4 @@
 {
-  DependencyTree tree=collectDependencies(pomName).getTree();
-  Filter<DependencyTree> trueFilter=Filters.<DependencyTree>trueFilter();
-  DependencyClassLoader classLoader=registry.getClassLoader(tree,trueFilter);
-  assertNotNull("Could not create a class loader for " + pomName,classLoader);
-  return classLoader;
+  Filter<DependencyTree> shareFilter=getShareFilter();
+  return getClassLoaderForPom(pomName,shareFilter);
 }
