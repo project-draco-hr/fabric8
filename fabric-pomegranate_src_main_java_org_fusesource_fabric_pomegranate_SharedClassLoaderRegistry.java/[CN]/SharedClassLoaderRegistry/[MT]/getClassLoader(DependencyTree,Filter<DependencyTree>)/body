@@ -1,0 +1,16 @@
+{
+  DependencyClassLoader answer=null;
+  if (sharedFilter != null && sharedFilter.matches(tree)) {
+synchronized (cache) {
+      answer=cache.get(tree);
+      if (answer == null) {
+        answer=createClassLoader(tree,sharedFilter);
+        cache.put(tree,answer);
+      }
+    }
+  }
+ else {
+    answer=createClassLoader(tree,sharedFilter);
+  }
+  return answer;
+}
