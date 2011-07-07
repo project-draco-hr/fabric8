@@ -1,14 +1,14 @@
 {
   byte formatCode=TypeRegistry.instance().picker().chooseUIntEncoding(value);
 switch (formatCode) {
-case TypeRegistry.NULL_FORMAT_CODE:
+case NULL_FORMAT_CODE:
     return 1;
-case AMQPUInt.UINT_UINT0_CODE:
+case UINT_UINT0_CODE:
   return 1;
-case AMQPUInt.UINT_SMALLUINT_CODE:
-return 1 + AMQPUInt.UINT_SMALLUINT_WIDTH;
-case AMQPUInt.UINT_CODE:
-return 1 + AMQPUInt.UINT_WIDTH;
+case UINT_SMALLUINT_CODE:
+return 1 + UINT_SMALLUINT_WIDTH;
+case UINT_CODE:
+return 1 + UINT_WIDTH;
 default :
 throw new RuntimeException("Unknown format code 0x" + String.format("%x",formatCode));
 }

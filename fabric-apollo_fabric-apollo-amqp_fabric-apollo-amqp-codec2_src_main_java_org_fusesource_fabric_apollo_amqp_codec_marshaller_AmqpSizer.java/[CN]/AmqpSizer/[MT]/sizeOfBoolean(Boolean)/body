@@ -1,12 +1,12 @@
 {
   byte formatCode=TypeRegistry.instance().picker().chooseBooleanEncoding(value);
 switch (formatCode) {
-case TypeRegistry.NULL_FORMAT_CODE:
+case NULL_FORMAT_CODE:
     return 1;
-case AMQPBoolean.BOOLEAN_CODE:
-  return 1 + AMQPBoolean.BOOLEAN_WIDTH;
-case AMQPBoolean.BOOLEAN_FALSE_CODE:
-case AMQPBoolean.BOOLEAN_TRUE_CODE:
+case BOOLEAN_CODE:
+  return 1 + BOOLEAN_WIDTH;
+case BOOLEAN_FALSE_CODE:
+case BOOLEAN_TRUE_CODE:
 return 1;
 default :
 throw new RuntimeException("Unknown format code 0x" + String.format("%x",formatCode));
