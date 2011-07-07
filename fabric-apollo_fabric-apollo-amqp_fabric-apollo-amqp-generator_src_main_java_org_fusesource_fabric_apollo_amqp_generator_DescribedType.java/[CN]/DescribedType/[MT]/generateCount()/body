@@ -1,0 +1,10 @@
+{
+  count=cls().method(JMod.PUBLIC,cm.INT,"count");
+  count().body().decl(cm.INT,"rc",lit(amqpFields.size()));
+  for (int i=amqpFields.size(); i > 0; i--) {
+    JConditional _if=count().body()._if(amqpFields.get(i - 1).attribute.eq(_null()));
+    _if._then().assign(ref("rc"),ref("rc").minus(lit(1)));
+    _if._else()._return(ref("rc"));
+  }
+  count().body()._return(ref("rc"));
+}
