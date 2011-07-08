@@ -45,6 +45,13 @@
         Attribute attribute=new Attribute();
         attribute.attribute=cls().field(JMod.PROTECTED,c,fieldName);
         attribute.type=fieldType;
+        attribute.defaultValue=field.getDefault();
+        if (field.getMandatory() != null) {
+          attribute.required=Boolean.parseBoolean(field.getMandatory());
+        }
+ else {
+          attribute.required=Boolean.FALSE;
+        }
         String doc=field.getName() + ":" + field.getType();
         if (field.getLabel() != null) {
           doc+=" - " + field.getLabel();

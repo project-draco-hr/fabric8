@@ -17,4 +17,9 @@
       ifBody.assign(attribute.attribute,cast(attribute.attribute.type(),cm.ref(generator.getMarshaller() + ".TypeReader").staticInvoke("read").arg(ref("in"))));
     }
   }
+  for (  Attribute attribute : amqpFields) {
+    if (attribute.required) {
+      read().body()._if(attribute.attribute.eq(_null()))._then()._throw(_new(cm.ref(RuntimeException.class)).arg("No value specified for mandatory attribute " + attribute.attribute.name()));
+    }
+  }
 }
