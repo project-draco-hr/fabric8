@@ -3,9 +3,9 @@
   initExtHeader();
   extHeader.readFrom(in);
   if (getDataSize() > 0) {
-    body=marshaller.unmarshalType(in);
+    body=(Frame)TypeReader.read(in);
   }
-  if (getDataSize() == 0 || body instanceof AmqpNull) {
+  if (getDataSize() == 0) {
     body=null;
   }
 }
