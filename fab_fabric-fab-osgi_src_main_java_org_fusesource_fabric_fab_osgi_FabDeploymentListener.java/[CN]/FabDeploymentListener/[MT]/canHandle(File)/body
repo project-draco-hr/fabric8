@@ -1,0 +1,19 @@
+{
+  try {
+    if (!artifact.getPath().endsWith(".jar")) {
+      return false;
+    }
+    JarFile jar=new JarFile(artifact);
+    try {
+      Manifest manifest=jar.getManifest();
+      return manifest != null && manifest.getMainAttributes().getValue("Fabric-Bundle") != null;
+    }
+  finally {
+      jar.close();
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Unable to parse deployed file " + artifact.getAbsolutePath(),e);
+  }
+  return false;
+}
