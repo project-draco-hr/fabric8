@@ -1,0 +1,65 @@
+{
+  String fieldType=field.getType();
+  String fieldName=sanitize(field.getName());
+  Log.info("Field type for field %s : %s",fieldName,fieldType);
+  if (fieldType.equals("*")) {
+    fieldType=generator.getAmqpBaseType();
+  }
+ else   if (generator.getDescribed().containsKey(fieldType)) {
+    fieldType=generator.getDescribedJavaClass().get(field.getType());
+  }
+ else   if (generator.getRestricted().containsKey(fieldType)) {
+    fieldType=generator.getRestrictedMapping().get(field.getType());
+  }
+  if (fieldType != null) {
+    boolean array=false;
+    if (field.getMultiple() != null && field.getMultiple().equals("true")) {
+      array=true;
+    }
+    Log.info("Using field type %s",fieldType);
+    Class clazz=generator.getMapping().get(fieldType);
+    JClass c=null;
+    if (fieldType.equals(generator.getAmqpBaseType())) {
+      c=cm.ref(fieldType);
+    }
+ else     if (clazz == null) {
+      c=cm._getClass(fieldType);
+    }
+ else {
+      if (array) {
+        c=cm.ref(generator.getPrimitiveJavaClass().get(fieldType));
+      }
+ else {
+        c=cm.ref(clazz.getName());
+      }
+    }
+    if (array) {
+      c=c.array();
+    }
+    Log.info("%s %s",c.binaryName(),fieldName);
+    Attribute attribute=new Attribute();
+    attribute.attribute=cls().field(JMod.PROTECTED,c,fieldName);
+    attribute.type=fieldType;
+    attribute.defaultValue=field.getDefault();
+    if (field.getMandatory() != null) {
+      attribute.required=Boolean.parseBoolean(field.getMandatory());
+    }
+ else {
+      attribute.required=Boolean.FALSE;
+    }
+    String doc=field.getName() + ":" + field.getType();
+    if (field.getLabel() != null) {
+      doc+=" - " + field.getLabel();
+    }
+    attribute.attribute.javadoc().add(doc);
+    attribute.getter=cls().method(JMod.PUBLIC,attribute.attribute.type(),"get" + toJavaClassName(fieldName));
+    attribute.getter.body()._return(_this().ref(attribute.attribute));
+    attribute.setter=cls().method(JMod.PUBLIC,cm.VOID,"set" + toJavaClassName(fieldName));
+    JVar param=attribute.setter.param(attribute.attribute.type(),fieldName);
+    attribute.setter.body().assign(_this().ref(attribute.attribute),param);
+    amqpFields.add(attribute);
+  }
+ else {
+    Log.info("Skipping field %s, type not found",field.getName());
+  }
+}

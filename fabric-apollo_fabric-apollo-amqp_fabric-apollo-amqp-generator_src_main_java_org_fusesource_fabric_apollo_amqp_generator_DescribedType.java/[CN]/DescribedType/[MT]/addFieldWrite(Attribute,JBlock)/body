@@ -1,0 +1,13 @@
+{
+  if (attribute.attribute.type().isArray()) {
+    body.staticInvoke(cm.ref("AMQPArray"),"write").arg(_this().ref(attribute.attribute.name())).arg(ref("out"));
+  }
+ else   if (generator.getMapping().get(attribute.type) != null) {
+    body.staticInvoke(cm.ref(generator.getPrimitiveJavaClass().get(attribute.type)),"write").arg(_this().ref(attribute.attribute.name())).arg(ref("out"));
+  }
+ else {
+    JConditional conditional=body._if(ref(attribute.attribute.name()).ne(_null()));
+    conditional._then().invoke(ref(attribute.attribute.name()),"write").arg(ref("out"));
+    conditional._else().invoke(ref("out"),"writeByte").arg(generator.registry().cls().staticRef("NULL_FORMAT_CODE"));
+  }
+}

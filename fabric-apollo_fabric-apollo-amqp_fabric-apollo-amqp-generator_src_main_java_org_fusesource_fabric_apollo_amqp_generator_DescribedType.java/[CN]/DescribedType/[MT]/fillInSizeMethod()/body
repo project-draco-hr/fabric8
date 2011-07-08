@@ -3,29 +3,24 @@
   sizeOfConstructor().body()._return(ref("NUMERIC_ID_SIZE"));
   JMethod sizeOfFields=cls().method(JMod.PRIVATE,cm.LONG,"sizeOfFields");
   sizeOfFields.body().decl(cm.LONG,"fieldSize",lit(0L));
-  sizeOfFields.body().decl(cm.INT,"count",_this().invoke(count));
+  if (isComposite()) {
+    sizeOfFields.body().decl(cm.INT,"count",_this().invoke(count));
+  }
   for (  Attribute attribute : amqpFields) {
-    sizeOfFields.body().assign(ref("count"),ref("count").minus(lit(1)));
-    JBlock ifBody=sizeOfFields.body()._if(ref("count").gte(lit(0)))._then();
-    if (generator.getMapping().get(attribute.type) != null) {
-      if (attribute.attribute.type().isArray()) {
-        ifBody.assign(ref("fieldSize"),ref("fieldSize").plus(generator.registry().cls().staticInvoke("instance").invoke("sizer").invoke("sizeOfArray").arg(ref(attribute.attribute.name()))));
-      }
- else {
-        ifBody.assign(ref("fieldSize"),ref("fieldSize").plus(generator.registry().cls().staticInvoke("instance").invoke("sizer").invoke("sizeOf" + toJavaClassName(attribute.type)).arg(ref(attribute.attribute.name()))));
-      }
+    if (isComposite()) {
+      sizeOfFields.body().assign(ref("count"),ref("count").minus(lit(1)));
+      JBlock ifBody=sizeOfFields.body()._if(ref("count").gte(lit(0)))._then();
+      addFieldSize(attribute,ifBody);
     }
  else {
-      if (attribute.attribute.type().isArray()) {
-        ifBody.assign(ref("fieldSize"),ref("fieldSize").plus(generator.registry().cls().staticInvoke("instance").invoke("sizer").invoke("sizeOfArray").arg(ref(attribute.attribute.name()))));
-      }
- else {
-        JConditional conditional=ifBody._if(ref(attribute.attribute.name()).ne(_null()));
-        conditional._then().assign(ref("fieldSize"),ref("fieldSize").plus(ref(attribute.attribute.name()).invoke("size")));
-        conditional._else().assign(ref("fieldSize"),ref("fieldSize").plus(lit(1L)));
-      }
+      addFieldSize(attribute,sizeOfFields.body());
     }
   }
   sizeOfFields.body()._return(ref("fieldSize"));
-  sizeOfBody().body()._return(cm.ref(generator.getMarshaller() + ".DescribedTypeSupport").staticInvoke("fullSizeOfList").arg(_this().invoke("sizeOfFields")).arg(_this().invoke("count")));
+  if (isComposite()) {
+    sizeOfBody().body()._return(cm.ref(generator.getMarshaller() + ".DescribedTypeSupport").staticInvoke("fullSizeOfList").arg(_this().invoke("sizeOfFields")).arg(_this().invoke("count")));
+  }
+ else {
+    sizeOfBody().body()._return(_this().invoke("sizeOfFields"));
+  }
 }

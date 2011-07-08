@@ -1,0 +1,8 @@
+{
+  ApplicationProperties in=new ApplicationProperties();
+  in.setValue(new HashMap());
+  in.getValue().put(new AMQPSymbol(ascii("one").buffer()),new AMQPString("two"));
+  in.getValue().put(new AMQPSymbol(ascii("three").buffer()),new AMQPString("four"));
+  ApplicationProperties out=writeRead(in);
+  assertEquals(in.toString(),out.toString());
+}

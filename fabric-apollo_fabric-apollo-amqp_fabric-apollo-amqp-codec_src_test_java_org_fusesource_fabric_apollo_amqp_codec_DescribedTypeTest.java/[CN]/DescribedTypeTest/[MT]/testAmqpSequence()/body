@@ -1,0 +1,9 @@
+{
+  AmqpSequence in=new AmqpSequence();
+  in.setValue(new ArrayList());
+  in.getValue().add(new AMQPString("Hello world!"));
+  in.getValue().add(new AMQPString("and stuff"));
+  in.getValue().add(new AMQPLong(123L));
+  AmqpSequence out=writeRead(in);
+  assertEquals(in.toString(),out.toString());
+}
