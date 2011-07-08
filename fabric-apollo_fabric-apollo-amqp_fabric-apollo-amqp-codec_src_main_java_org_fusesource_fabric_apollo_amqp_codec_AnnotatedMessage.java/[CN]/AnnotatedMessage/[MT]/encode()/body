@@ -1,0 +1,23 @@
+{
+  int size=(int)size();
+  if (size == 0) {
+    return new Buffer(0);
+  }
+  DataByteArrayOutputStream out=new DataByteArrayOutputStream(size);
+  if (header != null) {
+    header.write(out);
+  }
+  if (deliveryAnnotations != null) {
+    deliveryAnnotations.write(out);
+  }
+  if (messageAnnotations != null) {
+    messageAnnotations.write(out);
+  }
+  if (message != null) {
+    message.write(out);
+  }
+  if (footer != null) {
+    footer.write(out);
+  }
+  return out.toBuffer();
+}
