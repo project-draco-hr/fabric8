@@ -1,0 +1,28 @@
+{
+  final AtomicLong i=new AtomicLong(0);
+  final CountDownLatch latch=new CountDownLatch(1);
+  Executors.newSingleThreadExecutor().execute(new Runnable(){
+    public void run(){
+      System.out.println("Starting loop");
+      while (i.incrementAndGet() < max) {
+        try {
+          loop.loop(i.get());
+        }
+ catch (        Exception e) {
+          latch.countDown();
+          e.printStackTrace();
+          return;
+        }
+      }
+      System.out.println("Finished loop");
+      latch.countDown();
+    }
+  }
+);
+  int last=0;
+  while (latch.await(1,TimeUnit.SECONDS) == false) {
+    last=printMsgsPerSec(i.intValue(),last);
+  }
+  last=printMsgsPerSec(i.intValue(),last);
+  Assert.assertTrue(i.get() == max);
+}

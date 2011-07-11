@@ -1,6 +1,6 @@
 {
   size().body()._return(invoke("sizeOfConstructor").plus(invoke("sizeOfBody")));
-  sizeOfConstructor().body()._return(ref("NUMERIC_ID_SIZE"));
+  sizeOfConstructor().body()._return(ref("CONSTRUCTOR").invoke("size"));
   JMethod sizeOfFields=cls().method(JMod.PRIVATE,cm.LONG,"sizeOfFields");
   sizeOfFields.body().decl(cm.LONG,"fieldSize",lit(0L));
   if (isComposite()) {

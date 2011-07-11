@@ -1,34 +1,13 @@
 {
-  final int max=10000000;
-  final AtomicLong i=new AtomicLong(0);
-  final CountDownLatch latch=new CountDownLatch(1);
-  Executors.newSingleThreadExecutor().execute(new Runnable(){
-    public void run(){
-      System.out.println("Starting loop");
-      while (i.incrementAndGet() < max) {
-        Transfer in=new Transfer();
-        in.setDeliveryTag(new Buffer(("" + i.get()).getBytes()));
-        in.setDeliveryID(i.get() + 1);
-        in.setHandle(0L);
-        in.setMessageFormat(0L);
-        try {
-          Transfer out=writeRead(in,false);
-        }
- catch (        Exception e) {
-          latch.countDown();
-          e.printStackTrace();
-          return;
-        }
-      }
-      System.out.println("Finished loop");
-      latch.countDown();
+  execute(7000000,new TestLoop(){
+    public void loop(    long iteration) throws Exception {
+      Transfer in=new Transfer();
+      in.setDeliveryTag(new Buffer(("" + iteration).getBytes()));
+      in.setDeliveryID(iteration + 1);
+      in.setHandle(0L);
+      in.setMessageFormat(0L);
+      Transfer out=writeRead(in,false);
     }
   }
 );
-  int last=0;
-  while (latch.await(1,TimeUnit.SECONDS) == false) {
-    last=printMsgsPerSec(i.intValue(),last);
-  }
-  last=printMsgsPerSec(i.intValue(),last);
-  Assert.assertTrue(i.get() == max);
 }

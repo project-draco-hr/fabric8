@@ -1,0 +1,19 @@
+{
+  execute(1000000,new TestLoop(){
+    public void loop(    long iteration) throws Exception {
+      ValueMessage message=MessageFactory.createValueMessage();
+      message.setProperties(new Properties());
+      message.getProperties().setCreationTime(new Date());
+      message.getProperties().setUserID(Buffer.ascii("user1"));
+      message.getProperties().setMessageID(new MessageIDString("" + iteration));
+      message.getData().setValue(new AMQPString("This is message " + iteration));
+      AnnotatedMessage annotatedMessage=MessageFactory.createAnnotatedMessage();
+      annotatedMessage.setMessage(message);
+      annotatedMessage.setHeader(new Header());
+      annotatedMessage.getHeader().setDurable(false);
+      annotatedMessage.getHeader().setDeliveryCount(0L);
+      AnnotatedMessage out=encodeDecode(annotatedMessage,false);
+    }
+  }
+);
+}
