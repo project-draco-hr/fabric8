@@ -1,27 +1,5 @@
 {
-  SequenceMessage msg=new SequenceMessageImpl();
-  ArrayList<AMQPString> payload1=new ArrayList<AMQPString>();
-  ArrayList<AMQPString> payload2=new ArrayList<AMQPString>();
-  for (int i=0; i < 10; i++) {
-    payload1.add(new AMQPString("payload item " + i));
-    payload2.add(new AMQPString("and payload item " + (i + 10)));
-  }
-  AmqpSequence seq1=new AmqpSequence();
-  seq1.setValue(payload1);
-  AmqpSequence seq2=new AmqpSequence();
-  seq2.setValue(payload2);
-  msg.getData().add(seq1);
-  msg.getData().add(seq2);
-  msg.setProperties(new Properties());
-  msg.getProperties().setAbsoluteExpiryTime(new Date());
-  msg.getProperties().setUserID(ascii("foo").buffer());
-  msg.getProperties().setTo(new AMQPString("nowhere"));
-  msg.getProperties().setCreationTime(new Date());
-  AnnotatedMessage in=createAnnotatedMessage();
-  in.setMessage(msg);
-  in.setHeader(new Header());
-  in.getHeader().setDurable(true);
-  in.getHeader().setDeliveryCount(0L);
+  AnnotatedMessage in=getMessage();
   AnnotatedMessage out=encodeDecode(in);
   assertEquals(in.toString(),out.toString());
 }

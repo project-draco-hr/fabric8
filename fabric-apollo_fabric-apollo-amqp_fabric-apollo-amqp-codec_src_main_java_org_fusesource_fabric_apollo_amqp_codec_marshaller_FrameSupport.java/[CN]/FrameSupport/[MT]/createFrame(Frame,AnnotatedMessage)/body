@@ -1,0 +1,17 @@
+{
+  if (performative == null) {
+    return new AmqpFrame();
+  }
+ else   if (payload == null) {
+    DataByteArrayOutputStream out=new DataByteArrayOutputStream((int)performative.size());
+    performative.write(out);
+    return new AmqpFrame(out.toBuffer());
+  }
+ else {
+    AnnotatedMessageImpl payloadInternal=(AnnotatedMessageImpl)payload;
+    DataByteArrayOutputStream out=new DataByteArrayOutputStream((int)(performative.size() + payloadInternal.size()));
+    performative.write(out);
+    payloadInternal.write(out);
+    return new AmqpFrame(out.toBuffer());
+  }
+}

@@ -1,10 +1,13 @@
 {
-  AnnotatedMessage rc=new AnnotatedMessageImpl();
-  BareMessage message=null;
-  Properties properties=null;
-  ApplicationProperties applicationProperties=null;
   try {
+    AnnotatedMessage rc=new AnnotatedMessageImpl();
     AmqpType type=TypeReader.read(in);
+    if (type == null) {
+      return rc;
+    }
+    BareMessage message=null;
+    Properties properties=null;
+    ApplicationProperties applicationProperties=null;
     while (type != null) {
       if (type instanceof Header) {
         if (rc.getHeader() != null) {
@@ -52,7 +55,7 @@
  else {
           throw new RuntimeException("Only one instance of an AMQP value section can be present in a message");
         }
-        ((ValueMessage)message).getData().setValue(type);
+        ((ValueMessage)message).setData((AmqpValue)type);
       }
  else       if (type instanceof Properties) {
         if (properties != null) {
@@ -77,13 +80,14 @@
       }
       type=TypeReader.read(in);
     }
+    if (message != null) {
+      message.setProperties(properties);
+      message.setApplicationProperties(applicationProperties);
+    }
+    rc.setMessage(message);
+    return rc;
   }
- catch (  EOFException ignore) {
+ catch (  Exception e) {
+    throw new RuntimeException("Error reading AnnotatedMessage : " + e.getMessage());
   }
-  if (message != null) {
-    message.setProperties(properties);
-    message.setApplicationProperties(applicationProperties);
-  }
-  rc.setMessage(message);
-  return rc;
 }

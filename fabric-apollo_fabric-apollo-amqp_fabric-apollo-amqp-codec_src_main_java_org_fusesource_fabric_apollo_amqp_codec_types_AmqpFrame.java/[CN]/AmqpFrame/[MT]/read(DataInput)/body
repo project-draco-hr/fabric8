@@ -3,9 +3,7 @@
   initExtHeader();
   extHeader.readFrom(in);
   if (getDataSize() > 0) {
-    body=(Frame)TypeReader.read(in);
-  }
-  if (getDataSize() == 0) {
-    body=null;
+    body=new Buffer((int)getDataSize());
+    body.readFrom(in);
   }
 }

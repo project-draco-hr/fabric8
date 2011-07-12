@@ -1,0 +1,16 @@
+{
+  ValueMessage message=MessageFactory.createValueMessage();
+  message.getData().setValue(new AMQPString("Hello world!"));
+  Transfer transfer=new Transfer();
+  transfer.setDeliveryTag(Buffer.ascii("" + 0).buffer());
+  transfer.setDeliveryID(0L);
+  transfer.setHandle(0L);
+  AnnotatedMessage annotatedMessage=MessageFactory.createAnnotatedMessage();
+  annotatedMessage.setMessage(message);
+  AmqpFrame frame=FrameSupport.createFrame(transfer,annotatedMessage);
+  DataInput in=frame.dataInput();
+  Transfer outTransfer=(Transfer)FrameSupport.getPerformative(in);
+  AnnotatedMessage out=FrameSupport.getPayload(in);
+  assertEquals(transfer.toString(),outTransfer.toString());
+  assertEquals(annotatedMessage.toString(),out.toString());
+}
