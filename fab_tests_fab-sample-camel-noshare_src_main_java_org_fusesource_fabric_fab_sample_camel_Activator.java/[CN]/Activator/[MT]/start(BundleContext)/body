@@ -1,0 +1,10 @@
+{
+  System.out.println("Starting my Sample CamelContext");
+  camelContext=new DefaultCamelContext();
+  camelContext.addRoutes(new RouteBuilder(){
+    public void configure() throws Exception {
+      from("timer://foo?fixedRate=trueperiod=5000").to("log:myFooTimer");
+    }
+  }
+);
+}

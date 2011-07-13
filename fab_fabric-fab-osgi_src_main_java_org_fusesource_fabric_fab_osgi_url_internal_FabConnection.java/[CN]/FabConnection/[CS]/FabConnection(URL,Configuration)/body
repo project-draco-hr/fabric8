@@ -1,0 +1,10 @@
+{
+  super(url);
+  NullArgumentException.validateNotNull(url,"URL");
+  NullArgumentException.validateNotNull(config,"Configuration");
+  String path=url.getPath();
+  if (path == null || path.trim().length() == 0) {
+    throw new MalformedURLException("Path cannot empty");
+  }
+  this.configuration=config;
+}

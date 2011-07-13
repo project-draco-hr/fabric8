@@ -1,0 +1,12 @@
+{
+  List<DependencyTree> children=tree.getChildren();
+  for (  DependencyTree child : children) {
+    if (sharedFilter != null && sharedFilter.matches(child)) {
+      sharedDependencies.addAll(child.getDescendants());
+    }
+ else {
+      nonSharedDependencies.add(child);
+      addDependencies(child);
+    }
+  }
+}

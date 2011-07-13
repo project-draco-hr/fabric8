@@ -4,5 +4,7 @@
   }
   fabJarURL=new URL(url.getPath());
   logger.debug("FAB jar URL is: [" + fabJarURL + "]");
-  return new Connection(url);
+  PropertiesPropertyResolver resolver=new PropertiesPropertyResolver(System.getProperties());
+  Configuration config=new Configuration(resolver);
+  return new FabConnection(url,config);
 }

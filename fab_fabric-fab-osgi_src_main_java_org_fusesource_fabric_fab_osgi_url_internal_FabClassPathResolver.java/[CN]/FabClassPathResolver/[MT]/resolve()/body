@@ -1,0 +1,19 @@
+{
+  MavenResolver resolver=new MavenResolver();
+  File fileJar=connection.getJarFile();
+  DependencyTreeResult result=resolver.collectDependenciesForJar(fileJar,offline);
+  addDependencies(result.getTree());
+  if (sharedDependencies.size() > 0) {
+    System.out.println("ERROR: shared dependencies are currently not supported!: " + sharedDependencies);
+  }
+  for (  DependencyTree dependencyTree : nonSharedDependencies) {
+    if (dependencyTree.isValidLibrary()) {
+      String url=dependencyTree.getUrl();
+      if (url != null) {
+        bundleClassPath.add(url);
+      }
+    }
+  }
+  System.out.println("FAB resolved: bundleClassPath: " + bundleClassPath);
+  System.out.println("FAB resolved requireBundles: " + requireBundles);
+}

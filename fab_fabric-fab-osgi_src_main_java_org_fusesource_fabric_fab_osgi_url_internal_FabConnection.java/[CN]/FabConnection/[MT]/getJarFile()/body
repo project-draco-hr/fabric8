@@ -1,0 +1,13 @@
+{
+  URL url=getURL();
+  String fileName=url.getFile();
+  File file=new File(fileName);
+  if (file.exists()) {
+    return file;
+  }
+ else {
+    file=File.createTempFile("fabric-tmp-fab-",".fab");
+    IOHelpers.writeTo(file,url.openStream());
+    return file;
+  }
+}
