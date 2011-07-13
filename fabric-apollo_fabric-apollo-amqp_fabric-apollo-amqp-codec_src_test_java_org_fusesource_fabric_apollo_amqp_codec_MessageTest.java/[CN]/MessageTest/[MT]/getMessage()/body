@@ -1,5 +1,4 @@
 {
-  SequenceMessage msg=new SequenceMessageImpl();
   ArrayList<AMQPString> payload1=new ArrayList<AMQPString>();
   ArrayList<AMQPString> payload2=new ArrayList<AMQPString>();
   for (int i=0; i < 10; i++) {
@@ -10,15 +9,11 @@
   seq1.setValue(payload1);
   AmqpSequence seq2=new AmqpSequence();
   seq2.setValue(payload2);
-  msg.getData().add(seq1);
-  msg.getData().add(seq2);
-  msg.setProperties(new Properties());
-  msg.getProperties().setAbsoluteExpiryTime(new Date());
-  msg.getProperties().setUserID(ascii("foo").buffer());
-  msg.getProperties().setTo(new AMQPString("nowhere"));
-  msg.getProperties().setCreationTime(new Date());
-  AnnotatedMessage in=createAnnotatedMessage();
-  in.setMessage(msg);
+  List<AmqpSequence> list=new ArrayList<AmqpSequence>();
+  list.add(seq1);
+  list.add(seq2);
+  SequenceMessage msg=MessageFactory.createSequenceMessage(list,new Properties(null,ascii("foo").buffer(),new AMQPString("nowhere"),null,null,null,null,null,null,new Date()));
+  AnnotatedMessage in=createAnnotatedMessage(msg);
   in.setDeliveryAnnotations(new DeliveryAnnotations());
   in.getDeliveryAnnotations().setValue(new HashMap<AMQPSymbol,AMQPString>());
   in.getDeliveryAnnotations().getValue().put(new AMQPSymbol(Footer.CONSTRUCTOR.getBuffer()),new AMQPString("Hi!"));

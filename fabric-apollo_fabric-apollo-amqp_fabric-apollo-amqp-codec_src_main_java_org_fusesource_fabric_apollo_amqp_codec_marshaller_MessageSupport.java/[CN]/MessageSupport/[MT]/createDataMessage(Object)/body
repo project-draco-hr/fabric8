@@ -1,0 +1,30 @@
+{
+  DataMessage rc=new DataMessageImpl();
+  for (  Object arg : args) {
+    if (arg instanceof Properties) {
+      rc.setProperties((Properties)arg);
+    }
+ else     if (arg instanceof ApplicationProperties) {
+      rc.setApplicationProperties((ApplicationProperties)arg);
+    }
+ else     if (arg instanceof Buffer) {
+      if (rc.getData() == null) {
+        rc.setData(new ArrayList<Data>());
+      }
+      rc.getData().add(new Data((Buffer)arg));
+    }
+ else     if (arg instanceof Data) {
+      if (rc.getData() == null) {
+        rc.setData(new ArrayList<Data>());
+      }
+      rc.getData().add((Data)arg);
+    }
+ else     if (arg instanceof List) {
+      rc.setData((List)arg);
+    }
+ else {
+      throw new RuntimeException("Unknown type for DataMessage");
+    }
+  }
+  return rc;
+}

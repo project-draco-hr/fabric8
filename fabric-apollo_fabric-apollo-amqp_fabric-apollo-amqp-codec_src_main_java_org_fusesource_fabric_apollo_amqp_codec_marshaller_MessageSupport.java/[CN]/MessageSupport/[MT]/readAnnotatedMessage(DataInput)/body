@@ -32,30 +32,33 @@
           throw new RuntimeException("More than one type of application data section present in message");
         }
         if (message == null) {
-          message=new DataMessageImpl();
+          message=createDataMessage((Data)type);
         }
-        ((DataMessage)message).getData().add((Data)type);
+ else {
+          ((DataMessage)message).getData().add((Data)type);
+        }
       }
  else       if (type instanceof AmqpSequence) {
         if (message != null && !(message instanceof SequenceMessageImpl)) {
           throw new RuntimeException("More than one type of application data section present in message");
         }
         if (message == null) {
-          message=new SequenceMessageImpl();
+          message=createSequenceMessage((AmqpSequence)type);
         }
-        ((SequenceMessage)message).getData().add((AmqpSequence)type);
+ else {
+          ((SequenceMessage)message).getData().add((AmqpSequence)type);
+        }
       }
  else       if (type instanceof AmqpValue) {
         if (message != null && !(message instanceof ValueMessageImpl)) {
           throw new RuntimeException("More than one type of application data section present in message");
         }
         if (message == null) {
-          message=new ValueMessageImpl();
+          message=createValueMessage((AmqpValue)type);
         }
  else {
           throw new RuntimeException("Only one instance of an AMQP value section can be present in a message");
         }
-        ((ValueMessage)message).setData((AmqpValue)type);
       }
  else       if (type instanceof Properties) {
         if (properties != null) {
