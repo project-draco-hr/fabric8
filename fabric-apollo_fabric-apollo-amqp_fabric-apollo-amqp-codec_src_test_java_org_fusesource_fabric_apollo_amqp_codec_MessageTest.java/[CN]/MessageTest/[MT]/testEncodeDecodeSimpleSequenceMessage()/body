@@ -1,0 +1,10 @@
+{
+  List<AmqpType> list=new ArrayList<AmqpType>();
+  list.add(new AMQPString("Hello"));
+  list.add(new AMQPString("World"));
+  list.add(new AMQPChar('!'));
+  BareMessage msg=createSequenceMessage(new AmqpSequence(list));
+  AnnotatedMessage in=createAnnotatedMessage(msg);
+  AnnotatedMessage out=encodeDecode(in);
+  assertEquals(in.toString(),out.toString());
+}

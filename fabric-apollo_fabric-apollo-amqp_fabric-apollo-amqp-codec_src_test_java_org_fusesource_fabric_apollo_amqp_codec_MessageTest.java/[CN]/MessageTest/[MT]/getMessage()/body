@@ -5,14 +5,7 @@
     payload1.add(new AMQPString("payload item " + i));
     payload2.add(new AMQPString("and payload item " + (i + 10)));
   }
-  AmqpSequence seq1=new AmqpSequence();
-  seq1.setValue(payload1);
-  AmqpSequence seq2=new AmqpSequence();
-  seq2.setValue(payload2);
-  List<AmqpSequence> list=new ArrayList<AmqpSequence>();
-  list.add(seq1);
-  list.add(seq2);
-  SequenceMessage msg=MessageFactory.createSequenceMessage(list,new Properties(null,ascii("foo").buffer(),new AMQPString("nowhere"),null,null,null,null,null,null,new Date()));
+  SequenceMessage msg=MessageFactory.createSequenceMessage(new AmqpSequence(payload1),new AmqpSequence(payload2),new Properties(null,ascii("foo").buffer(),new AMQPString("nowhere"),null,null,null,null,null,null,new Date()));
   AnnotatedMessage in=createAnnotatedMessage(msg);
   in.setDeliveryAnnotations(new DeliveryAnnotations());
   in.getDeliveryAnnotations().setValue(new HashMap<AMQPSymbol,AMQPString>());
