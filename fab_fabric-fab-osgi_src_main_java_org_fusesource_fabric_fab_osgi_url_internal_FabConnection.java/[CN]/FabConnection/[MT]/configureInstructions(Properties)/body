@@ -1,10 +1,10 @@
 {
   List<String> bundleClassPath=new ArrayList<String>();
   List<String> requireBundles=new ArrayList<String>();
-  bundleClassPath.addAll(Strings.splitAsList(instructions.getProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH),","));
-  requireBundles.addAll(Strings.splitAsList(instructions.getProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE),","));
-  FabClassPathResolver resolver=new FabClassPathResolver(this,instructions,bundleClassPath,requireBundles);
+  List<String> importPackages=new ArrayList<String>();
+  FabClassPathResolver resolver=new FabClassPathResolver(this,instructions,bundleClassPath,requireBundles,importPackages);
   resolver.resolve();
   instructions.setProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH,Strings.join(bundleClassPath,","));
   instructions.setProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE,Strings.join(requireBundles,","));
+  instructions.setProperty(ServiceConstants.INSTR_IMPORT_PACKAGE,Strings.join(importPackages,","));
 }

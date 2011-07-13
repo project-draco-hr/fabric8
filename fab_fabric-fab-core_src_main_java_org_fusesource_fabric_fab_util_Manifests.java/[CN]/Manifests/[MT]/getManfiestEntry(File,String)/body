@@ -1,0 +1,18 @@
+{
+  String answer=null;
+  try {
+    JarFile jar=new JarFile(file);
+    try {
+      Manifest manifest=jar.getManifest();
+      if (manifest != null) {
+        answer=manifest.getMainAttributes().getValue(attributeName);
+      }
+    }
+  finally {
+      jar.close();
+    }
+  }
+ catch (  IOException e) {
+  }
+  return answer;
+}

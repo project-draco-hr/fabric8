@@ -1,0 +1,10 @@
+{
+  String fileName=url.getFile();
+  File file=new File(fileName);
+  if (!file.exists()) {
+    file=File.createTempFile(tempFilePrefix,tempFilePostfix);
+    InputStream in=url.openStream();
+    IOHelpers.writeTo(file,in);
+  }
+  return file;
+}

@@ -1,0 +1,13 @@
+{
+  String bundleId=getManfiestEntry(Constants.INSTR_BUNDLE_SYMBOLIC_NAME);
+  if (bundleId != null) {
+    return bundleId;
+  }
+  String artifactId=getArtifactId();
+  if (artifactId.contains(".")) {
+    return artifactId;
+  }
+ else {
+    return getGroupId() + "." + artifactId;
+  }
+}

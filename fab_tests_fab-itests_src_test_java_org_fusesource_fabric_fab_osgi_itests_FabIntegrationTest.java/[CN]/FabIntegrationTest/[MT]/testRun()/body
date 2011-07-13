@@ -1,0 +1,27 @@
+{
+  Thread.sleep(10000);
+  assertStartBundle("org.fusesource.fabric.fab.fabric-fab-osgi");
+  CommandProcessor cp=getOsgiService(CommandProcessor.class);
+  CommandSession cs=cp.createSession(System.in,System.out,System.err);
+  try {
+    cs.execute("osgi:install");
+    fail("command should not exist");
+  }
+ catch (  IllegalArgumentException e) {
+    assertTrue(e.getMessage().indexOf("Command not found") >= 0);
+  }
+  Bundle b=getInstalledBundle("org.apache.karaf.shell.log");
+  b.start();
+  Thread.sleep(1000);
+  cs.execute("log:display");
+  b.stop();
+  Thread.sleep(1000);
+  try {
+    cs.execute("log:display");
+    fail("command should not exist");
+  }
+ catch (  IllegalArgumentException e) {
+    assertTrue(e.getMessage().indexOf("Command not found") >= 0);
+  }
+  cs.close();
+}

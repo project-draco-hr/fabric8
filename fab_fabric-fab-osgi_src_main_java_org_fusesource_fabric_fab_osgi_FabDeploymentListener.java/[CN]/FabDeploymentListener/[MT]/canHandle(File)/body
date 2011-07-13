@@ -1,12 +1,23 @@
 {
   try {
-    if (!artifact.getPath().endsWith(".jar")) {
+    String path=artifact.getPath();
+    if (!path.endsWith(".jar") && !path.endsWith(".fab")) {
       return false;
     }
     JarFile jar=new JarFile(artifact);
     try {
       Manifest manifest=jar.getManifest();
-      return manifest != null && manifest.getMainAttributes().getValue(ServiceConstants.INSTR_FAB_DEPENDENCY_SHARED) != null;
+      boolean answer=false;
+      if (manifest != null) {
+        Attributes attributes=manifest.getMainAttributes();
+        for (        String name : ServiceConstants.FAB_PROPERTY_NAMES) {
+          if (attributes.getValue(name) != null) {
+            answer=true;
+            break;
+          }
+        }
+      }
+      return answer;
     }
   finally {
       jar.close();

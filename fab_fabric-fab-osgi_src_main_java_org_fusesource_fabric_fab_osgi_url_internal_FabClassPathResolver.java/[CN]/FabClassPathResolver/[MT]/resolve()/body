@@ -2,18 +2,49 @@
   MavenResolver resolver=new MavenResolver();
   File fileJar=connection.getJarFile();
   DependencyTreeResult result=resolver.collectDependenciesForJar(fileJar,offline);
-  addDependencies(result.getTree());
-  if (sharedDependencies.size() > 0) {
-    System.out.println("ERROR: shared dependencies are currently not supported!: " + sharedDependencies);
+  this.rootTree=result.getTree();
+  String sharedFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_SHARED);
+  String importPackageFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_IMPORT_PACKAGES);
+  String excludeFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_EXCLUDE);
+  sharedFilter=DependencyTreeFilters.parseShareFilter(sharedFilterText);
+  importPackageFilter=DependencyTreeFilters.parseImportPackageFilter(importPackageFilterText);
+  excludePackageFilter=DependencyTreeFilters.parseExcludeFilter(excludeFilterText);
+  bundleClassPath.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH),","));
+  requireBundles.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE),","));
+  importPackages.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_IMPORT_PACKAGE),","));
+  String name=getManfiestProperty(ServiceConstants.INSTR_BUNDLE_SYMBOLIC_NAME);
+  if (name.length() <= 0) {
+    name=rootTree.getBundleId();
+    instructions.setProperty(ServiceConstants.INSTR_BUNDLE_SYMBOLIC_NAME,name);
+  }
+  addDependencies(rootTree);
+  for (  DependencyTree dependencyTree : sharedDependencies) {
+    if (importPackageFilter.matches(dependencyTree)) {
+      String text=dependencyTree.getManfiestEntry(ServiceConstants.INSTR_EXPORT_PACKAGE);
+      if (text != null && text.length() > 0) {
+        List<String> list=new ArrayList<String>();
+        list.addAll(Strings.splitAsList(text,","));
+        importPackages.addAll(list);
+      }
+    }
+ else {
+      String bundleId=dependencyTree.getBundleId();
+      requireBundles.add(bundleId);
+    }
   }
   for (  DependencyTree dependencyTree : nonSharedDependencies) {
     if (dependencyTree.isValidLibrary()) {
       String url=dependencyTree.getUrl();
       if (url != null) {
-        bundleClassPath.add(url);
+        File file=Files.urlToFile(url,"fabric-tmp-dependency-",".jar");
+        String path=file.getAbsolutePath();
+        if (file.exists() && path.length() > 0) {
+          bundleClassPath.add(path);
+        }
       }
     }
   }
-  System.out.println("FAB resolved: bundleClassPath: " + bundleClassPath);
-  System.out.println("FAB resolved requireBundles: " + requireBundles);
+  LOG.debug("resolved: bundleClassPath: " + Strings.join(bundleClassPath,"\t\n"));
+  LOG.debug("resolved: requireBundles: " + Strings.join(requireBundles,"\t\n"));
+  LOG.debug("resolved: importPackages: " + Strings.join(importPackages,"\t\n"));
 }

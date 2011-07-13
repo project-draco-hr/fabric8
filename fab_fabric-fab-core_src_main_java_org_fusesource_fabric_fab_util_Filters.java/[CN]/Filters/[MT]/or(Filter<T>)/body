@@ -1,0 +1,16 @@
+{
+  return new Filter<T>(){
+    public boolean matches(    T t){
+      for (      Filter filter : filters) {
+        if (filter != null && filter.matches(t)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    @Override public String toString(){
+      return "OrFilter" + Arrays.asList(filters);
+    }
+  }
+;
+}
