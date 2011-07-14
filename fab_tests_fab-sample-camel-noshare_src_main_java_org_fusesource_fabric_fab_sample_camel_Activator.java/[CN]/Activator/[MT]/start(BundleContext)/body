@@ -1,10 +1,12 @@
 {
-  System.out.println("Starting my Sample CamelContext");
-  camelContext=new DefaultCamelContext();
-  camelContext.addRoutes(new RouteBuilder(){
-    public void configure() throws Exception {
-      from("timer://foo?fixedRate=trueperiod=5000").to("log:myFooTimer");
-    }
+  ClassLoader oldClassLoader=Thread.currentThread().getContextClassLoader();
+  try {
+    ClassLoader classLoader=DefaultCamelContext.class.getClassLoader();
+    Thread.currentThread().setContextClassLoader(classLoader);
+    System.out.println("Setting the context class loader to: " + classLoader);
+    startCamel();
   }
-);
+  finally {
+    Thread.currentThread().setContextClassLoader(oldClassLoader);
+  }
 }

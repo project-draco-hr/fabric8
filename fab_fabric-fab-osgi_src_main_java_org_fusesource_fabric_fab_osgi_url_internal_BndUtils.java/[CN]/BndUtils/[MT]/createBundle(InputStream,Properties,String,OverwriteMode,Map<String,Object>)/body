@@ -1,0 +1,39 @@
+{
+  NullArgumentException.validateNotNull(jarInputStream,"Jar URL");
+  NullArgumentException.validateNotNull(instructions,"Instructions");
+  NullArgumentException.validateNotEmpty(jarInfo,"Jar info");
+  LOG.debug("Creating bundle for [" + jarInfo + "]");
+  LOG.debug("Overwrite mode: " + overwriteMode);
+  LOG.trace("Using instructions " + instructions);
+  final Jar jar=new Jar("dot",jarInputStream);
+  final Manifest manifest=jar.getManifest();
+  if (manifest == null || OverwriteMode.KEEP != overwriteMode || (manifest.getMainAttributes().getValue(Analyzer.EXPORT_PACKAGE) == null && manifest.getMainAttributes().getValue(Analyzer.IMPORT_PACKAGE) == null)) {
+    final Properties properties=new Properties();
+    properties.putAll(instructions);
+    properties.put("Generated-By-Fabric-From",jarInfo);
+    final Analyzer analyzer=new Analyzer();
+    analyzer.setJar(jar);
+    analyzer.setProperties(properties);
+    for (    Map.Entry<String,Object> entry : embeddedResources.entrySet()) {
+      String path=entry.getKey();
+      Object value=entry.getValue();
+      Resource resource=toResource(value);
+      if (resource != null) {
+        jar.putResource(path,resource);
+        try {
+          File file=toFile(value);
+          analyzer.addClasspath(file);
+        }
+ catch (        IOException e) {
+          LOG.warn("Failed to get File for " + value + ". "+ e,e);
+        }
+      }
+    }
+    if (manifest != null && OverwriteMode.MERGE == overwriteMode) {
+      analyzer.mergeManifest(manifest);
+    }
+    checkMandatoryProperties(analyzer,jar,jarInfo);
+    analyzer.calcManifest();
+  }
+  return createInputStream(jar);
+}

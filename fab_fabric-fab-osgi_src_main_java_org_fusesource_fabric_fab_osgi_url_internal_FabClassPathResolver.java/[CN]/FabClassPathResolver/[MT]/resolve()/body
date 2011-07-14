@@ -6,9 +6,10 @@
   String sharedFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_SHARED);
   String importPackageFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_IMPORT_PACKAGES);
   String excludeFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_EXCLUDE);
+  String optionalDependencyText=getManfiestProperty(ServiceConstants.INSTR_FAB_OPTIONAL_DEPENDENCY);
   sharedFilter=DependencyTreeFilters.parseShareFilter(sharedFilterText);
   importPackageFilter=DependencyTreeFilters.parseImportPackageFilter(importPackageFilterText);
-  excludePackageFilter=DependencyTreeFilters.parseExcludeFilter(excludeFilterText);
+  excludePackageFilter=DependencyTreeFilters.parseExcludeFilter(excludeFilterText,optionalDependencyText);
   bundleClassPath.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH),","));
   requireBundles.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE),","));
   importPackages.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_IMPORT_PACKAGE),","));
@@ -36,9 +37,18 @@
     if (dependencyTree.isValidLibrary()) {
       String url=dependencyTree.getUrl();
       if (url != null) {
-        File file=Files.urlToFile(url,"fabric-tmp-dependency-",".jar");
-        String path=file.getAbsolutePath();
-        if (file.exists() && path.length() > 0) {
+        String path=dependencyTree.getGroupId() + "." + dependencyTree.getArtifactId()+ ".jar";
+        if (!bundleClassPath.contains(path)) {
+          File file=new File(url);
+          if (file.exists()) {
+            embeddedResources.put(path,file);
+          }
+ else {
+            embeddedResources.put(path,new URL(url));
+          }
+          if (bundleClassPath.isEmpty()) {
+            bundleClassPath.add(".");
+          }
           bundleClassPath.add(path);
         }
       }

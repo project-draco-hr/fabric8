@@ -1,0 +1,6 @@
+{
+  DependencyTreeResult node=collectDependencies("test-osgi-provided.pom");
+  DependencyTree camelSpring=assertExcludeFilter(node,"org.apache.camel","camel-spring",true,"","");
+  DependencyTree osgi=assertExcludeFilter(node,"org.osgi","org.osgi.core",true,"","");
+  assertEquals("getBundleId","osgi.core",osgi.getBundleId());
+}

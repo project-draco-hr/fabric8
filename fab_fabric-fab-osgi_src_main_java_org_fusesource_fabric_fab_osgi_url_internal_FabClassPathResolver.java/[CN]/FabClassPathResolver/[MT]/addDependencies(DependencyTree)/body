@@ -9,7 +9,11 @@
       sharedDependencies.add(child);
       List<DependencyTree> list=child.getDescendants();
       for (      DependencyTree grandChild : list) {
-        if (excludePackageFilter != null && excludePackageFilter.matches(grandChild)) {
+        if (excludePackageFilter != null && excludePackageFilter.matches(tree)) {
+          LOG.debug("Excluded transitive dependency: " + child);
+          continue;
+        }
+ else {
           sharedDependencies.add(grandChild);
         }
       }
