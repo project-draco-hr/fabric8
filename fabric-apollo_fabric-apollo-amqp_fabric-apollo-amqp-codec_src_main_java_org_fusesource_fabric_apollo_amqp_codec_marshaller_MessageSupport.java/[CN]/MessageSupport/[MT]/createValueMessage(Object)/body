@@ -1,0 +1,21 @@
+{
+  ValueMessage rc=new ValueMessageImpl();
+  for (  Object arg : args) {
+    if (arg instanceof Properties) {
+      rc.setProperties((Properties)arg);
+    }
+ else     if (arg instanceof ApplicationProperties) {
+      rc.setApplicationProperties((ApplicationProperties)arg);
+    }
+ else     if (arg instanceof AmqpValue) {
+      rc.setData((AmqpValue)arg);
+    }
+ else     if (arg instanceof AmqpType) {
+      ((ValueMessageImpl)rc).setData((AmqpType)arg);
+    }
+ else {
+      throw new RuntimeException("Unknown type for ValueMessage");
+    }
+  }
+  return rc;
+}

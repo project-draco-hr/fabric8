@@ -1,11 +1,7 @@
 {
   execute(7000000,new TestLoop(){
-    public void loop(    long iteration) throws Exception {
-      Transfer in=new Transfer();
-      in.setDeliveryTag(new Buffer(("" + iteration).getBytes()));
-      in.setDeliveryID(iteration + 1);
-      in.setHandle(0L);
-      in.setMessageFormat(0L);
+    public void loop(    Long iteration) throws Exception {
+      Transfer in=new Transfer(0L,iteration + 1,Buffer.ascii(iteration.toString()),0L);
       Transfer out=writeRead(in,false);
     }
   }

@@ -1,0 +1,14 @@
+{
+  List<AmqpSequence> list=new ArrayList<AmqpSequence>();
+  for (int i=0; i < 10; i++) {
+    List<AMQPInt> inner=new ArrayList<AMQPInt>();
+    list.add(new AmqpSequence(inner));
+    for (int j=0; j < 10; j++) {
+      inner.add(new AMQPInt(i + j));
+    }
+  }
+  BareMessage msg=MessageFactory.createSequenceMessage(list);
+  AnnotatedMessage in=createAnnotatedMessage(msg);
+  AnnotatedMessage out=encodeDecode(in);
+  assertEquals(in.toString(),out.toString());
+}
