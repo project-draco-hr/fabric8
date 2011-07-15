@@ -1,0 +1,18 @@
+{
+  byte formatCode=TypeRegistry.instance().picker().chooseStringEncoding(value);
+  try {
+switch (formatCode) {
+case NULL_FORMAT_CODE:
+      return 1;
+case STRING_STR8_UTF8_CODE:
+    return 1 + STRING_STR8_UTF8_WIDTH + value.getBytes("UTF-8").length;
+case STRING_STR32_UTF8_CODE:
+  return 1 + STRING_STR32_UTF8_WIDTH + value.getBytes("UTF-8").length;
+default :
+throw new RuntimeException("Unknown format code 0x" + String.format("%x",formatCode));
+}
+}
+ catch (UnsupportedEncodingException e) {
+throw new RuntimeException("UTF-8 encoding not available : " + e.getMessage());
+}
+}

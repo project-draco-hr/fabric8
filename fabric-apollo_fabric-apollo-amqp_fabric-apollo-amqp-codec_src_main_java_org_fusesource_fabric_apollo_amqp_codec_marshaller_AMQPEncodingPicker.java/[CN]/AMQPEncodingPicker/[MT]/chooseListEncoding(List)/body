@@ -1,0 +1,19 @@
+{
+  if (value == null) {
+    return NULL_FORMAT_CODE;
+  }
+  if (value.size() == 0) {
+    return LIST_LIST0_CODE;
+  }
+  if (value.size() > 255) {
+    return LIST_LIST32_CODE;
+  }
+  int size=0;
+  for (  Object obj : value) {
+    size+=((AMQPType)obj).size();
+    if (size > (255 - LIST_LIST8_WIDTH)) {
+      return LIST_LIST32_CODE;
+    }
+  }
+  return LIST_LIST8_CODE;
+}
