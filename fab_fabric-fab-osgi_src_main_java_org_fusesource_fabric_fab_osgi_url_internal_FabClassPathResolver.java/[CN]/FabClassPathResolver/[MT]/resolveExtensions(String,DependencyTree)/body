@@ -1,0 +1,36 @@
+{
+  String value=resolvePropertyName(extensionPropertyName);
+  if (Strings.notEmpty(value)) {
+    StringTokenizer iter=new StringTokenizer(value);
+    while (iter.hasMoreElements()) {
+      String text=iter.nextToken();
+      if (Strings.notEmpty(text)) {
+        String[] values=text.split(":");
+        String archetypeId;
+        String groupId=root.getGroupId();
+        String version=root.getVersion();
+        String extension="jar";
+        String classifier="";
+        if (values.length == 1) {
+          archetypeId=values[0];
+        }
+ else         if (values.length == 2) {
+          groupId=values[0];
+          archetypeId=values[1];
+        }
+ else         if (values.length > 2) {
+          groupId=values[0];
+          archetypeId=values[1];
+          version=values[2];
+        }
+ else {
+          continue;
+        }
+        DependencyTreeResult result=resolver.collectDependencies(groupId,archetypeId,version,extension,classifier);
+        if (result != null) {
+          addDependencies(result.getTree());
+        }
+      }
+    }
+  }
+}
