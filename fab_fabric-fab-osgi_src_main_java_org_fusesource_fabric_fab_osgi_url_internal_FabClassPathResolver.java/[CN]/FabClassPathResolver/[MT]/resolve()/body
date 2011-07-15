@@ -8,15 +8,17 @@
   DependencyTreeResult result=resolver.collectDependenciesForJar(fileJar,offline);
   this.rootTree=result.getTree();
   String sharedFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_PROVIDED_DEPENDENCY);
-  String importPackageFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_IMPORT_PACKAGES);
+  String requireBundleFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_REQUIRE_BUNDLE);
   String excludeFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_EXCLUDE_DEPENDENCY);
   String optionalDependencyText=getManfiestProperty(ServiceConstants.INSTR_FAB_OPTIONAL_DEPENDENCY);
   sharedFilter=DependencyTreeFilters.parseShareFilter(sharedFilterText);
-  importPackageFilter=DependencyTreeFilters.parseImportPackageFilter(importPackageFilterText);
+  requireBundleFilter=DependencyTreeFilters.parseImportPackageFilter(requireBundleFilterText);
   excludePackageFilter=DependencyTreeFilters.parseExcludeFilter(excludeFilterText,optionalDependencyText);
   bundleClassPath.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH),","));
   requireBundles.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE),","));
-  importPackages.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_IMPORT_PACKAGE),","));
+  if (processImportPackages) {
+    importPackages.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_IMPORT_PACKAGE),","));
+  }
   String name=getManfiestProperty(ServiceConstants.INSTR_BUNDLE_SYMBOLIC_NAME);
   if (name.length() <= 0) {
     name=rootTree.getBundleId();
@@ -24,17 +26,19 @@
   }
   addDependencies(rootTree);
   for (  DependencyTree dependencyTree : sharedDependencies) {
-    if (importPackageFilter.matches(dependencyTree)) {
-      String text=dependencyTree.getManfiestEntry(ServiceConstants.INSTR_EXPORT_PACKAGE);
-      if (text != null && text.length() > 0) {
-        List<String> list=new ArrayList<String>();
-        list.addAll(Strings.splitAsList(text,","));
-        importPackages.addAll(list);
-      }
-    }
- else {
+    if (requireBundleFilter.matches(dependencyTree)) {
       String bundleId=dependencyTree.getBundleId();
       requireBundles.add(bundleId);
+    }
+ else {
+      if (processImportPackages) {
+        String text=dependencyTree.getManfiestEntry(ServiceConstants.INSTR_EXPORT_PACKAGE);
+        if (text != null && text.length() > 0) {
+          List<String> list=new ArrayList<String>();
+          list.addAll(Strings.splitAsList(text,","));
+          importPackages.addAll(list);
+        }
+      }
     }
   }
   for (  DependencyTree dependencyTree : nonSharedDependencies) {
@@ -60,5 +64,12 @@
   }
   LOG.debug("resolved: bundleClassPath: " + Strings.join(bundleClassPath,"\t\n"));
   LOG.debug("resolved: requireBundles: " + Strings.join(requireBundles,"\t\n"));
-  LOG.debug("resolved: importPackages: " + Strings.join(importPackages,"\t\n"));
+  if (processImportPackages) {
+    LOG.debug("resolved: importPackages: " + Strings.join(importPackages,"\t\n"));
+  }
+  instructions.setProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH,Strings.join(bundleClassPath,","));
+  instructions.setProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE,Strings.join(requireBundles,","));
+  if (processImportPackages) {
+    instructions.setProperty(ServiceConstants.INSTR_IMPORT_PACKAGE,Strings.join(importPackages,","));
+  }
 }

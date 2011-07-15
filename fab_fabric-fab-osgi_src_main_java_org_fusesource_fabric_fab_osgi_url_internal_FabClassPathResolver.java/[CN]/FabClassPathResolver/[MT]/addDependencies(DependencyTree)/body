@@ -1,11 +1,11 @@
 {
   List<DependencyTree> children=tree.getChildren();
   for (  DependencyTree child : children) {
-    if (excludePackageFilter != null && excludePackageFilter.matches(child)) {
+    if (excludePackageFilter.matches(child)) {
       LOG.debug("Excluded dependency: " + child);
       continue;
     }
- else     if (sharedFilter != null && sharedFilter.matches(child)) {
+ else     if (sharedFilter.matches(child) || requireBundleFilter.matches(child)) {
       sharedDependencies.add(child);
       List<DependencyTree> list=child.getDescendants();
       for (      DependencyTree grandChild : list) {
