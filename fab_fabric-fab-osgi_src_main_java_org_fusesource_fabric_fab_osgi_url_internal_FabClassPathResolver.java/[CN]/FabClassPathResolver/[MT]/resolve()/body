@@ -7,9 +7,9 @@
   File fileJar=connection.getJarFile();
   DependencyTreeResult result=resolver.collectDependenciesForJar(fileJar,offline);
   this.rootTree=result.getTree();
-  String sharedFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_SHARED);
+  String sharedFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_PROVIDED_DEPENDENCY);
   String importPackageFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_IMPORT_PACKAGES);
-  String excludeFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_EXCLUDE);
+  String excludeFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_EXCLUDE_DEPENDENCY);
   String optionalDependencyText=getManfiestProperty(ServiceConstants.INSTR_FAB_OPTIONAL_DEPENDENCY);
   sharedFilter=DependencyTreeFilters.parseShareFilter(sharedFilterText);
   importPackageFilter=DependencyTreeFilters.parseImportPackageFilter(importPackageFilterText);
