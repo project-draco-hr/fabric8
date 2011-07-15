@@ -6,10 +6,7 @@
   session.setLocalRepositoryManager(repo.newLocalRepositoryManager(localRepository));
   session.setDependencySelector(new AndDependencySelector(new ScopeDependencySelector("test","provided"),new OptionalDependencySelector(),new ExclusionDependencySelector()));
   session.setOffline(offline);
-  List<RemoteRepository> repos=new ArrayList<RemoteRepository>();
-  for (int i=0; i < repositories.length; i++) {
-    repos.add(new RemoteRepository("repos" + i,"default",repositories[i]));
-  }
+  List<RemoteRepository> repos=getRemoteRepositories();
   String groupId=model.getGroupId();
   String artifactId=model.getArtifactId();
   String pomVersion=model.getVersion();

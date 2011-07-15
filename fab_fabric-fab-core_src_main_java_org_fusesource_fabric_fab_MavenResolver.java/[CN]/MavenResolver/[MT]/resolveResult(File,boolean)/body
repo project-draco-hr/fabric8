@@ -3,12 +3,9 @@
   LocalRepository localRepository=new LocalRepository(getLocalRepo());
   RepositorySystem repo=getRepositorySystem();
   session.setLocalRepositoryManager(repo.newLocalRepositoryManager(localRepository));
-  session.setDependencySelector(new AndDependencySelector(new ScopeDependencySelector("test","provided"),new OptionalDependencySelector(),new ExclusionDependencySelector()));
+  session.setDependencySelector(new AndDependencySelector(new ScopeDependencySelector("test"),new OptionalDependencySelector(),new ExclusionDependencySelector()));
   session.setOffline(offline);
-  List<RemoteRepository> repos=new ArrayList<RemoteRepository>();
-  for (int i=0; i < repositories.length; i++) {
-    repos.add(new RemoteRepository("repos" + i,"default",repositories[i]));
-  }
+  List<RemoteRepository> repos=getRemoteRepositories();
   Map<String,String> props=Collections.singletonMap(ArtifactProperties.LOCAL_PATH,rootPom.toString());
   Artifact root=new DefaultArtifact("#groupId","#artifactId",null,"pom","#version",props,rootPom);
   ArtifactDescriptorResult artifactDescriptorResult=repo.readArtifactDescriptor(session,new ArtifactDescriptorRequest(root,repos,null));

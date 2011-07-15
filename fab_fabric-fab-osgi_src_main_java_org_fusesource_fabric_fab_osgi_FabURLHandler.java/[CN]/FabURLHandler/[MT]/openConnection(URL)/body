@@ -6,5 +6,10 @@
   logger.debug("FAB jar URL is: [" + fabJarURL + "]");
   PropertiesPropertyResolver resolver=new PropertiesPropertyResolver(System.getProperties());
   Configuration config=new Configuration(resolver);
+  if (mavenRepositories != null) {
+    String[] array=Configuration.toArray(mavenRepositories);
+    logger.debug("Using maven repos: " + Arrays.asList(array));
+    config.set(ServiceConstants.PROPERTY_MAVEN_REPOSITORIES,array);
+  }
   return new FabConnection(fabJarURL,config);
 }

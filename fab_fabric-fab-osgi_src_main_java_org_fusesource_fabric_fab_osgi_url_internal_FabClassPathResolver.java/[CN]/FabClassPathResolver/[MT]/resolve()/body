@@ -1,5 +1,9 @@
 {
   MavenResolver resolver=new MavenResolver();
+  String[] repositories=connection.getConfiguration().getMavenRepositories();
+  if (repositories != null) {
+    resolver.setRepositories(repositories);
+  }
   File fileJar=connection.getJarFile();
   DependencyTreeResult result=resolver.collectDependenciesForJar(fileJar,offline);
   this.rootTree=result.getTree();
