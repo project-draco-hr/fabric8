@@ -2,7 +2,7 @@
   ValueMessage message=MessageFactory.createValueMessage(new AMQPString("HelloWorld!"));
   Transfer transfer=new Transfer(0L,0L,Buffer.ascii("0").buffer());
   AnnotatedMessage annotatedMessage=MessageFactory.createAnnotatedMessage(message);
-  AmqpFrame frame=FrameSupport.createFrame(transfer,annotatedMessage);
+  AMQPFrame frame=FrameSupport.createFrame(transfer,annotatedMessage);
   DataInput in=frame.dataInput();
   Transfer outTransfer=(Transfer)FrameSupport.getPerformative(in);
   AnnotatedMessage out=FrameSupport.getPayload(in);
