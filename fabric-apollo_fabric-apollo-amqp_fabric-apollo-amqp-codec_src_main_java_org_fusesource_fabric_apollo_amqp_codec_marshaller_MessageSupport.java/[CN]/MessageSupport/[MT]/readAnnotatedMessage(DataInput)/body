@@ -1,7 +1,7 @@
 {
   try {
     AnnotatedMessage rc=new AnnotatedMessageImpl();
-    AmqpType type=TypeReader.read(in);
+    AMQPType type=TypeReader.read(in);
     if (type == null) {
       return rc;
     }
@@ -38,23 +38,23 @@
           ((DataMessage)message).getData().add((Data)type);
         }
       }
- else       if (type instanceof AmqpSequence) {
+ else       if (type instanceof AMQPSequence) {
         if (message != null && !(message instanceof SequenceMessageImpl)) {
           throw new RuntimeException("More than one type of application data section present in message");
         }
         if (message == null) {
-          message=createSequenceMessage((AmqpSequence)type);
+          message=createSequenceMessage((AMQPSequence)type);
         }
  else {
-          ((SequenceMessage)message).getData().add((AmqpSequence)type);
+          ((SequenceMessage)message).getData().add((AMQPSequence)type);
         }
       }
- else       if (type instanceof AmqpValue) {
+ else       if (type instanceof AMQPValue) {
         if (message != null && !(message instanceof ValueMessageImpl)) {
           throw new RuntimeException("More than one type of application data section present in message");
         }
         if (message == null) {
-          message=createValueMessage((AmqpValue)type);
+          message=createValueMessage((AMQPValue)type);
         }
  else {
           throw new RuntimeException("Only one instance of an AMQP value section can be present in a message");

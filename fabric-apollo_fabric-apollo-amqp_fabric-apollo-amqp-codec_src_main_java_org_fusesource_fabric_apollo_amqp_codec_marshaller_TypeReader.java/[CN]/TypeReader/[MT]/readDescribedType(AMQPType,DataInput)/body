@@ -1,0 +1,16 @@
+{
+  AMQPType rc=null;
+  if (descriptor instanceof AMQPULong) {
+    rc=(AMQPType)TypeRegistry.instance().getFormatCodeMap().get(((AMQPULong)descriptor).getValue()).newInstance();
+  }
+ else   if (descriptor instanceof AMQPSymbol) {
+    rc=(AMQPType)TypeRegistry.instance().getSymbolicCodeMap().get(((AMQPSymbol)descriptor).getValue()).newInstance();
+  }
+ else {
+    throw new IllegalArgumentException("Unknown AMQP descriptor type");
+  }
+  if (rc != null) {
+    rc.read((byte)0x0,in);
+  }
+  return rc;
+}
