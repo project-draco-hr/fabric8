@@ -1,13 +1,14 @@
 {
-  Bundle b=getInstalledBundle(symbolicName);
-  println("got bundle: " + b);
+  Bundle bundle=assertInstalledBundle(symbolicName);
+  LOG.info("installed bundle: " + bundle + " is about to start");
   try {
-    b.start();
+    bundle.start();
+    startedBundles.addLast(bundle);
   }
  catch (  BundleException e) {
     println("ERROR: " + e,e);
     throw e;
   }
   Thread.sleep(1000);
-  return b;
+  return bundle;
 }
