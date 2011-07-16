@@ -1,11 +1,7 @@
 {
   Map<String,String> props=Collections.singletonMap(ArtifactProperties.LOCAL_PATH,rootPom.toString());
-  final MavenRepositorySystemSession session=new MavenRepositorySystemSession();
-  LocalRepository localRepository=new LocalRepository(getLocalRepo());
-  RepositorySystem repo=getRepositorySystem();
-  session.setLocalRepositoryManager(repo.newLocalRepositoryManager(localRepository));
-  session.setDependencySelector(new AndDependencySelector(new ScopeDependencySelector("test","provided"),new OptionalDependencySelector(),new ExclusionDependencySelector()));
-  session.setOffline(offline);
+  RepositorySystem repositorySystem=getRepositorySystem();
+  final MavenRepositorySystemSession session=createRepositorSystemSession(offline,repositorySystem);
   List<RemoteRepository> repos=getRemoteRepositories();
   String groupId=model.getGroupId();
   String artifactId=model.getArtifactId();
@@ -15,7 +11,7 @@
     throw new IllegalArgumentException("Pomegranate pom.xml has missing groupId:artifactId:version " + groupId + ":"+ artifactId+ ":"+ pomVersion);
   }
   Artifact root=new DefaultArtifact(groupId,artifactId,null,packaging,pomVersion,props,rootPom);
-  ArtifactDescriptorResult artifactDescriptorResult=repo.readArtifactDescriptor(session,new ArtifactDescriptorRequest(root,repos,null));
+  ArtifactDescriptorResult artifactDescriptorResult=repositorySystem.readArtifactDescriptor(session,new ArtifactDescriptorRequest(root,repos,null));
   Dependency rootDependency=new Dependency(root,null);
   List<Dependency> dependencies=artifactDescriptorResult.getDependencies();
   DefaultDependencyNode tmpNode=new DefaultDependencyNode(rootDependency);
@@ -25,8 +21,8 @@
   DependencyNode pomNode=tmpNode;
   for (  Dependency dependency : dependencies) {
     CollectRequest request=new CollectRequest(dependency,repos);
-    DependencyNode node=repo.collectDependencies(session,request).getRoot();
-    repo.resolveDependencies(session,node,null);
+    DependencyNode node=repositorySystem.collectDependencies(session,request).getRoot();
+    repositorySystem.resolveDependencies(session,node,null);
     pomNode.getChildren().add(node);
   }
   DependencyGraphTransformationContext tranformContext=new DependencyGraphTransformationContext(){

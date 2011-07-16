@@ -2,7 +2,7 @@
   URL resource=getClass().getClassLoader().getResource(pomName);
   assertNotNull("Could not find: " + pomName + " on the classpath",resource);
   File rootPom=new File(resource.getPath());
-  DependencyTreeResult node=manager.collectDependencies(rootPom,false);
+  DependencyTreeResult node=mavenResolver.collectDependencies(rootPom,false);
   LOG.debug("File: " + pomName);
   LOG.debug(node.getTreeDescription());
   List<DependencyTree.DuplicateDependency> duplicateDependencies=node.getTree().checkForDuplicateDependencies();
