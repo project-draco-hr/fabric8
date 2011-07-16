@@ -1,0 +1,22 @@
+{
+  if (excludePackageFilter.matches(child)) {
+    LOG.debug("Excluded dependency: " + child);
+  }
+ else   if (sharedFilter.matches(child) || requireBundleFilter.matches(child)) {
+    sharedDependencies.add(child);
+    List<DependencyTree> list=child.getDescendants();
+    for (    DependencyTree grandChild : list) {
+      if (excludePackageFilter.matches(grandChild)) {
+        LOG.debug("Excluded transitive dependency: " + child);
+        continue;
+      }
+ else {
+        sharedDependencies.add(grandChild);
+      }
+    }
+  }
+ else {
+    nonSharedDependencies.add(child);
+    addDependencies(child);
+  }
+}
