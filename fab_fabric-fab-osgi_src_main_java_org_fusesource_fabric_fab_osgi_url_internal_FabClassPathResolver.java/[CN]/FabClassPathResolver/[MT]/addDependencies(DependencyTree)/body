@@ -6,17 +6,7 @@
       continue;
     }
  else     if (sharedFilter.matches(child) || requireBundleFilter.matches(child)) {
-      sharedDependencies.add(child);
-      List<DependencyTree> list=child.getDescendants();
-      for (      DependencyTree grandChild : list) {
-        if (excludePackageFilter.matches(grandChild)) {
-          LOG.debug("Excluded transitive dependency: " + grandChild);
-          continue;
-        }
- else {
-          sharedDependencies.add(grandChild);
-        }
-      }
+      addSharedDependency(child);
     }
  else {
       nonSharedDependencies.add(child);

@@ -1,0 +1,13 @@
+{
+  BundleContext bundleContext=connection.getBundleContext();
+  if (bundleContext == null) {
+    LOG.warn("No BundleContext available so cannot install provided dependencies");
+  }
+ else {
+    for (    DependencyTree dependency : sharedDependencies) {
+      String installUri=dependency.getJarURL().toExternalForm();
+      LOG.info("Installing: " + dependency + " from: "+ installUri);
+      bundleContext.installBundle(installUri);
+    }
+  }
+}
