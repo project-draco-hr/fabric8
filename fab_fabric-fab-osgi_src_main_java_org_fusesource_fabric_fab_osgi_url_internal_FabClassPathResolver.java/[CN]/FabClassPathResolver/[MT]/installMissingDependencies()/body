@@ -4,6 +4,7 @@
     LOG.warn("No BundleContext available so cannot install provided dependencies");
   }
  else {
+    List<Bundle> toStart=new ArrayList<Bundle>();
     for (    DependencyTree dependency : installDependencies) {
       String name=dependency.getBundleSymbolicName();
       if (Bundles.isInstalled(bundleContext,name)) {
@@ -13,12 +14,13 @@
         URL url=dependency.getJarURL();
         String installUri=url.toExternalForm();
         try {
+          Bundle bundle=null;
           if (!dependency.isBundle()) {
             FabConnection childConnection=connection.createChild(url);
             PomDetails pomDetails=childConnection.resolvePomDetails();
             if (pomDetails != null && pomDetails.isValid()) {
               LOG.info("Installing fabric bundle: " + name + " from: "+ installUri);
-              bundleContext.installBundle(installUri,childConnection.getInputStream());
+              bundle=bundleContext.installBundle(installUri,childConnection.getInputStream());
             }
  else {
               LOG.warn("Could not deduce the pom.xml for the jar " + installUri + " so cannot treat as FAB");
@@ -26,7 +28,10 @@
           }
  else {
             LOG.info("Installing bundle: " + name + " from: "+ installUri);
-            bundleContext.installBundle(installUri);
+            bundle=bundleContext.installBundle(installUri);
+          }
+          if (bundle != null && connection.isStartInstalledDependentBundles()) {
+            toStart.add(bundle);
           }
         }
  catch (        BundleException e) {
@@ -41,6 +46,14 @@ catch (        RuntimeException e) {
           LOG.error("Failed to deploy " + installUri + " due to error: "+ e,e);
           throw e;
         }
+      }
+    }
+    for (    Bundle bundle : toStart) {
+      try {
+        bundle.start();
+      }
+ catch (      BundleException e) {
+        LOG.warn("Failed to start " + bundle.getSymbolicName() + ". Reason: "+ e,e);
       }
     }
   }
