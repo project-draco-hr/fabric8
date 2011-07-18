@@ -8,4 +8,8 @@
     throw new MalformedURLException("Path cannot empty");
   }
   this.configuration=config;
+  String[] repositories=configuration.getMavenRepositories();
+  if (repositories != null) {
+    resolver.setRepositories(repositories);
+  }
 }

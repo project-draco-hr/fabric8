@@ -8,13 +8,21 @@
     try {
       Manifest manifest=jar.getManifest();
       boolean answer=false;
+      boolean bundle=false;
       if (manifest != null) {
         Attributes attributes=manifest.getMainAttributes();
+        bundle=isBundle(attributes);
         for (        String name : ServiceConstants.FAB_PROPERTY_NAMES) {
           if (attributes.getValue(name) != null) {
             answer=true;
             break;
           }
+        }
+      }
+      if (!answer && isDeployNonBundles()) {
+        answer=!bundle;
+        if (answer) {
+          logger.info("Interpreting the non-bundle jar as a FAB: " + artifact);
         }
       }
       return answer;

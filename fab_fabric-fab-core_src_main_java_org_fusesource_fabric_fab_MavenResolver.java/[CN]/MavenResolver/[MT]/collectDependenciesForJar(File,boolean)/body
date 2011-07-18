@@ -1,8 +1,7 @@
 {
   PomDetails pomDetails=findPomFile(jarFile);
-  if (pomDetails == null) {
+  if (pomDetails == null || !pomDetails.isValid()) {
     throw new IllegalArgumentException("No pom.xml file could be found inside the jar file: " + jarFile);
   }
-  Model model=pomDetails.getModel();
-  return collectDependenciesFromPom(pomDetails.getFile(),offline,model);
+  return collectDependencies(pomDetails,offline);
 }
