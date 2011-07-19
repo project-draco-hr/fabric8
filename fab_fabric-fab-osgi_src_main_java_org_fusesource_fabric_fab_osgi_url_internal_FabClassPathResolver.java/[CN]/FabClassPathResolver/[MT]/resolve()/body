@@ -22,10 +22,8 @@
     instructions.setProperty(ServiceConstants.INSTR_BUNDLE_SYMBOLIC_NAME,name);
   }
   addDependencies(rootTree);
-  String extensionPropertyName=getManfiestProperty(ServiceConstants.INSTR_FAB_EXTENSION_VARIABLE);
-  if (Strings.notEmpty(extensionPropertyName)) {
-    resolveExtensions(extensionPropertyName,rootTree);
-  }
+  registerModule(pomDetails);
+  resolveExtensions(rootTree);
   for (  DependencyTree dependencyTree : sharedDependencies) {
     if (requireBundleFilter.matches(dependencyTree)) {
       String bundleId=dependencyTree.getBundleSymbolicName();

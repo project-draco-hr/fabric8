@@ -1,14 +1,10 @@
 {
   String answer=null;
-  try {
-    if (true) {
-      answer=Manifests.getManfiestEntry(connection.getJarFile(),name);
-    }
- else {
-      answer=instructions.getProperty(name,"");
-    }
+  if (true) {
+    answer=getManifest().getMainAttributes().getValue(name);
   }
- catch (  IOException e) {
+ else {
+    answer=instructions.getProperty(name,"");
   }
   if (answer == null) {
     answer="";
