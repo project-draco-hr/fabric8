@@ -1,0 +1,13 @@
+{
+  try {
+    DataByteArrayInputStream in=new DataByteArrayInputStream(body);
+    performative=(Frame)TypeReader.read(in);
+    if (in.available() > 0) {
+      payload=new Buffer(in.available());
+      payload.readFrom((DataInput)in);
+    }
+  }
+ catch (  Exception e) {
+    throw new RuntimeException("Error creating frame from buffer : " + e.getMessage());
+  }
+}

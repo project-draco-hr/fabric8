@@ -2,12 +2,17 @@
   ValueMessage message=MessageFactory.createValueMessage(new AMQPString("HelloWorld!"));
   Transfer transfer=new Transfer(0L,0L,Buffer.ascii("0").buffer());
   AnnotatedMessage annotatedMessage=MessageFactory.createAnnotatedMessage(message);
-  AMQPTransportFrame frame=new AMQPTransportFrame(0,transfer,MessageSupport.toBuffer(annotatedMessage));
-  AMQPTransportFrame outFrame=TestSupport.encodeDecode(frame);
+  AMQPTransportFrame inFrame=new AMQPTransportFrame(0,transfer,MessageSupport.toBuffer(annotatedMessage));
+  DataByteArrayOutputStream out=new DataByteArrayOutputStream((int)inFrame.getSize());
+  Buffer buf=out.toBuffer();
+  Buffer header=new Buffer(8);
+  DataByteArrayInputStream in=new DataByteArrayInputStream(buf);
+  in.read(header.data);
+  Buffer body=new Buffer(in.available());
+  in.read(body.data);
+  AMQPTransportFrame outFrame=new AMQPTransportFrame(header,body);
   Transfer outTransfer=outFrame.getPerformative();
-  System.out.printf("Transfer : %s\n",outTransfer);
   AnnotatedMessage msg=MessageSupport.decodeAnnotatedMessage(outFrame.getPayload());
-  System.out.printf("Msg : %s\n",msg);
   assertEquals(transfer.toString(),outTransfer.toString());
   assertEquals(annotatedMessage.toString(),msg.toString());
 }
