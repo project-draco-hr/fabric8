@@ -1,0 +1,12 @@
+{
+  String[] parts=value.split(":");
+  if (parts.length < 3) {
+    throw new IllegalArgumentException("Invalid depdency id: " + value);
+  }
+  String groupId=parts[0];
+  String artifactId=parts[1];
+  String version=parts[2];
+  String classifier=parts.length > 3 ? nullIfEmpty(parts[3]) : null;
+  String extension=parts.length > 4 ? nullIfEmpty(parts[4]) : null;
+  return new VersionedDependencyId(groupId,artifactId,version,classifier,extension);
+}

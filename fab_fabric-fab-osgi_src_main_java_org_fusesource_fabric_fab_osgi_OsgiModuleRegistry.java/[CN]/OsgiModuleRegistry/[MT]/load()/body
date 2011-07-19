@@ -1,0 +1,21 @@
+{
+  directory.mkdirs();
+  for (  File f : directory.listFiles()) {
+    if (f.getName().startsWith("module-")) {
+      try {
+        FileInputStream is=new FileInputStream(f);
+        try {
+          Properties properties=new Properties();
+          properties.load(is);
+          add(ModuleDescriptor.fromProperties(properties),f);
+        }
+  finally {
+          is.close();
+        }
+      }
+ catch (      IOException e) {
+        System.err.println("Invalid module file: " + f + ", error loading: "+ e);
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  VersionedDependencyId id=descriptor.getId();
+  VersionedModule rc=remove(id);
+  VersionedModule versionedModule=new VersionedModule(descriptor,file);
+  DependencyId dependencyId=id.toDependencyId();
+  Module module=modules.get(dependencyId);
+  if (module == null) {
+    module=new Module(dependencyId);
+    modules.put(dependencyId,module);
+  }
+  module.versions.put(id.getVersion(),versionedModule);
+  for (  VersionedDependencyId key : descriptor.getExtendsModules()) {
+    TreeMap<String,VersionedModule> map=extensions.get(key);
+    if (map == null) {
+      map=new TreeMap<String,VersionedModule>();
+      extensions.put(key,map);
+    }
+    map.put(versionedModule.getName(),versionedModule);
+  }
+  return rc;
+}

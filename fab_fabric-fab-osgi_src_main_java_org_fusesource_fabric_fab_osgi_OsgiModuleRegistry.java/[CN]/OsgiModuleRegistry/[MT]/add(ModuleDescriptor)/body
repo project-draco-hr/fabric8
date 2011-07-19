@@ -1,0 +1,19 @@
+{
+  try {
+    File file=File.createTempFile("module-","",directory);
+    Properties props=descriptor.toProperties();
+    FileOutputStream os=new FileOutputStream(file);
+    try {
+      props.store(os,"");
+    }
+  finally {
+      os.close();
+    }
+    return super.add(descriptor,file);
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+    ;
+    return null;
+  }
+}

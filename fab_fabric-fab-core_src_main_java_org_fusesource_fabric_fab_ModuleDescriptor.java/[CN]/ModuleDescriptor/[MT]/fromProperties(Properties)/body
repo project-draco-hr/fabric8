@@ -1,0 +1,12 @@
+{
+  ModuleDescriptor rc=new ModuleDescriptor();
+  rc.id=decodeDependencyId(value.getProperty(INSTR_FAB__ID));
+  rc.name=value.getProperty(INSTR_FAB__NAME);
+  rc.extensionModule=Boolean.valueOf(value.getProperty(INSTR_FAB__EXTENSION));
+  rc.description=value.getProperty(INSTR_FAB__DESCRIPTION);
+  rc.longDescription=value.getProperty(INSTR_FAB_LONG_DESCRIPTION);
+  rc.defaultExtensions=split(value.getProperty(INSTR_FAB_DEFAULT_EXTENSIONS),"\\s+");
+  rc.extendsModules=decodeDependencyIds(split(value.getProperty(INSTR_FAB_EXTENDS),"\\s+"));
+  rc.endorsedExtensions=decodeDependencyIds(split(value.getProperty(INSTR_FAB_ENDORSED_EXTENSIONS),"\\s+"));
+  return rc;
+}

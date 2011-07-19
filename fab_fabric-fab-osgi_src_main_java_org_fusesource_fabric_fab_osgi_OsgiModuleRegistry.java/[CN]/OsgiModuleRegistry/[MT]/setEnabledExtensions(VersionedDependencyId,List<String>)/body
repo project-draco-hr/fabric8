@@ -1,0 +1,11 @@
+{
+  try {
+    Configuration configuration=configurationAdmin.getConfiguration(pid);
+    Dictionary props=configuration.getProperties();
+    props.put(id.toString(),ModuleDescriptor.mkString(values," "));
+    configuration.update(props);
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+  }
+}
