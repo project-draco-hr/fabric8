@@ -1,3 +1,11 @@
 {
-  startCamel();
+  ClassLoader oldContextClassLoader=Thread.currentThread().getContextClassLoader();
+  ClassLoader classLoader=getClass().getClassLoader();
+  Thread.currentThread().setContextClassLoader(classLoader);
+  try {
+    startCamel();
+  }
+  finally {
+    Thread.currentThread().setContextClassLoader(oldContextClassLoader);
+  }
 }
