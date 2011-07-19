@@ -15,9 +15,7 @@
   excludePackageFilter=DependencyTreeFilters.parseExcludeFilter(excludeFilterText,optionalDependencyText);
   bundleClassPath.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH),","));
   requireBundles.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE),","));
-  if (processImportPackages) {
-    importPackages.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_IMPORT_PACKAGE),","));
-  }
+  importPackages.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_IMPORT_PACKAGE),","));
   String name=getManfiestProperty(ServiceConstants.INSTR_BUNDLE_SYMBOLIC_NAME);
   if (name.length() <= 0) {
     name=rootTree.getBundleSymbolicName();
@@ -35,12 +33,7 @@
     }
  else {
       if (processImportPackages) {
-        String text=dependencyTree.getManfiestEntry(ServiceConstants.INSTR_EXPORT_PACKAGE);
-        if (text != null && text.length() > 0) {
-          List<String> list=new ArrayList<String>();
-          list.addAll(Strings.splitAsList(text,","));
-          importPackages.addAll(list);
-        }
+        importAllExportedPackages(dependencyTree);
       }
     }
   }
@@ -64,14 +57,9 @@
   }
   LOG.debug("resolved: bundleClassPath: " + Strings.join(bundleClassPath,"\t\n"));
   LOG.debug("resolved: requireBundles: " + Strings.join(requireBundles,"\t\n"));
-  if (processImportPackages) {
-    LOG.debug("resolved: importPackages: " + Strings.join(importPackages,"\t\n"));
-  }
+  LOG.debug("resolved: importPackages: " + Strings.join(importPackages,"\t\n"));
   instructions.setProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH,Strings.join(bundleClassPath,","));
   instructions.setProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE,Strings.join(requireBundles,","));
-  if (processImportPackages) {
-    instructions.setProperty(ServiceConstants.INSTR_IMPORT_PACKAGE,Strings.join(importPackages,","));
-  }
   if (connection.getConfiguration().isInstallMissingDependencies()) {
     installMissingDependencies();
   }

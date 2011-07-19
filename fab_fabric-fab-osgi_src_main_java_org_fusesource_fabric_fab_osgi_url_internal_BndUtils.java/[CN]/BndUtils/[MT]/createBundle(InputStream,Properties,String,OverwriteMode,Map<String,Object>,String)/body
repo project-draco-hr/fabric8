@@ -34,6 +34,17 @@
     }
     checkMandatoryProperties(analyzer,jar,jarInfo);
     analyzer.calcManifest();
+    if (extraImportPackages != null && extraImportPackages.length() > 0) {
+      Attributes main=jar.getManifest().getMainAttributes();
+      String importPackages=main.getValue(Analyzer.IMPORT_PACKAGE);
+      if (importPackages == null || importPackages.length() == 0) {
+        importPackages=extraImportPackages;
+      }
+ else {
+        importPackages+="," + extraImportPackages;
+      }
+      main.putValue(Analyzer.IMPORT_PACKAGE,importPackages);
+    }
   }
   return createInputStream(jar);
 }

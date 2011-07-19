@@ -8,7 +8,8 @@
     if (fabUri == null || fabUri.trim().length() == 0) {
       throw new IOException("Instructions file must contain a property named " + ServiceConstants.INSTR_FAB_URL);
     }
-    return BndUtils.createBundle(URLUtils.prepareInputStream(new URL(fabUri),configuration.getCertificateCheck()),instructions,fabUri,OverwriteMode.MERGE,embeddedResources);
+    String extraImportPackages=classPathResolver.getExtraImportPackages();
+    return BndUtils.createBundle(URLUtils.prepareInputStream(new URL(fabUri),configuration.getCertificateCheck()),instructions,fabUri,OverwriteMode.MERGE,embeddedResources,extraImportPackages);
   }
  catch (  RepositoryException e) {
     throw new IOException(e.getMessage(),e);

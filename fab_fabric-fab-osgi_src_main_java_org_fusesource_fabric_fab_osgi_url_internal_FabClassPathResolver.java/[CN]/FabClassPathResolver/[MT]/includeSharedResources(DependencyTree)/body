@@ -20,8 +20,9 @@
                 out=new JarOutputStream(new FileOutputStream(sharedResourceFile));
               }
               out.putNextEntry(new ZipEntry(jarEntry.getName()));
-              InputStream inputStream=jarFile.getInputStream(jarEntry);
-              IOHelpers.writeTo(out,inputStream,false);
+              if (!jarEntry.isDirectory()) {
+                IOHelpers.writeTo(out,jarFile.getInputStream(jarEntry),false);
+              }
               out.closeEntry();
             }
           }
@@ -34,6 +35,7 @@
           embeddedResources.put(path,sharedResourceFile);
           addBundleClassPath(path);
           LOG.info("Adding shared resources jar: " + path);
+          importAllExportedPackages(tree);
         }
       }
     }
