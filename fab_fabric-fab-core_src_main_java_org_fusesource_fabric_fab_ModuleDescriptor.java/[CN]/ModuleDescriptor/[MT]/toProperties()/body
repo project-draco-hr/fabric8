@@ -1,12 +1,12 @@
 {
   Properties rc=new Properties();
-  rc.setProperty(INSTR_FAB__ID,encodeDependencyId(id));
-  rc.setProperty(INSTR_FAB__NAME,name);
-  rc.setProperty(INSTR_FAB__EXTENSION,"" + extensionModule);
-  rc.setProperty(INSTR_FAB__DESCRIPTION,description);
-  rc.setProperty(INSTR_FAB_LONG_DESCRIPTION,longDescription);
-  rc.setProperty(INSTR_FAB_DEFAULT_EXTENSIONS,mkString(defaultExtensions," "));
-  rc.setProperty(INSTR_FAB_EXTENDS,mkString(extendsModules," "));
-  rc.setProperty(INSTR_FAB_ENDORSED_EXTENSIONS,mkString(endorsedExtensions," "));
+  rc.setProperty(FAB_MODULE_ID,id.toString());
+  rc.setProperty(FAB_MODULE_NAME,emptyIfNull(name));
+  rc.setProperty(FAB_MODULE_EXTENSION,"" + extensionModule);
+  rc.setProperty(FAB_MODULE_DESCRIPTION,emptyIfNull(description));
+  rc.setProperty(FAB_MODULE_LONG_DESCRIPTION,emptyIfNull(longDescription));
+  rc.setProperty(FAB_MODULE_DEFAULT_EXTENSIONS,join(defaultExtensions," "));
+  rc.setProperty(FAB_MODULE_EXTENDS,join(extendsModules," "));
+  rc.setProperty(FAB_MODULE_ENDORSED_EXTENSIONS,join(endorsedExtensions," "));
   return rc;
 }
