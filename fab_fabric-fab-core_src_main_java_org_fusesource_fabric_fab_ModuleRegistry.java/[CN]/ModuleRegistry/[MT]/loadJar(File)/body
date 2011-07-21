@@ -1,0 +1,15 @@
+{
+  JarInputStream jar=new JarInputStream(new FileInputStream(file));
+  try {
+    ZipEntry zipEntry;
+    while ((zipEntry=jar.getNextEntry()) != null) {
+      if (zipEntry.getName().endsWith(".fmd") && !zipEntry.isDirectory()) {
+        load(null,jar);
+      }
+      jar.closeEntry();
+    }
+  }
+  finally {
+    jar.close();
+  }
+}

@@ -1,23 +1,21 @@
 {
   for (  File f : directory.listFiles()) {
     if (f.isDirectory()) {
-      load(f);
+      loadDirectory(f,err);
     }
  else {
       if (f.getName().endsWith(".fmd")) {
         try {
           FileInputStream is=new FileInputStream(f);
           try {
-            Properties properties=new Properties();
-            properties.load(is);
-            add(ModuleDescriptor.fromProperties(properties),f);
+            load(f,is);
           }
   finally {
             is.close();
           }
         }
  catch (        IOException e) {
-          System.err.println("Error loading fab module descriptor '" + f + "': "+ e);
+          err.println("Error loading fab module descriptor '" + f + "': "+ e);
         }
       }
     }

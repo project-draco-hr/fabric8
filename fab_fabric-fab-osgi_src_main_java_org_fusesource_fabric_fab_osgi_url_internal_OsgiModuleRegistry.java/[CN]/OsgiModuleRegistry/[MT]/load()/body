@@ -1,4 +1,17 @@
 {
-  directory.mkdirs();
-  load(directory);
+  try {
+    Dictionary config=getConfig();
+    while (config.elements().hasMoreElements()) {
+      String key=(String)config.elements().nextElement();
+      if (key.startsWith("repo.")) {
+        String name=key.substring("repo.".length());
+        String value=(String)config.get(key);
+        repos.put(name,new URL(value));
+      }
+    }
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+  }
+  update(System.err);
 }

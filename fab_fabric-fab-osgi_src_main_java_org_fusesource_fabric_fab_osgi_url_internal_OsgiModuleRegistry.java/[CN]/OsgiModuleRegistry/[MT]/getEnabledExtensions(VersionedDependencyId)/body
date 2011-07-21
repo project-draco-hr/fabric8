@@ -1,14 +1,7 @@
 {
   try {
-    Configuration configuration=configurationAdmin.getConfiguration(pid);
-    Dictionary props=configuration.getProperties();
-    if (props == null) {
-      return null;
-    }
-    String value=(String)props.get(id.toString());
-    if (value == null) {
-      return null;
-    }
+    String value=getConfigProperty("extensions." + id);
+    if (value == null)     return null;
     return splitAndTrimAsList(value," ");
   }
  catch (  IOException e) {

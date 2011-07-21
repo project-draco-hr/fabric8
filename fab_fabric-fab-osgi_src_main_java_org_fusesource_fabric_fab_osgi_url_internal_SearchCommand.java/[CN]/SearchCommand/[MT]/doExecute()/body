@@ -4,7 +4,7 @@
   println("%-20s\t%-10s\t%-40s","Name","Version","Description");
   for (  ModuleRegistry.Module module : modules) {
     ModuleRegistry.VersionedModule latest=module.latest();
-    if (module.isInstalled() && (name == null || module.getName().indexOf(name) >= 0)) {
+    if (name == null || module.getName().indexOf(name) >= 0) {
       println("%-20s\t%-10s\t%-40s",module.getName(),latest.getId().getVersion(),latest.getDescription());
     }
   }
