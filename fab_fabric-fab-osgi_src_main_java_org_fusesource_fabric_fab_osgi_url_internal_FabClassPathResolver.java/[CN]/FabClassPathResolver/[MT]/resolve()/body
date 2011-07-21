@@ -22,7 +22,9 @@
     instructions.setProperty(ServiceConstants.INSTR_BUNDLE_SYMBOLIC_NAME,name);
   }
   addDependencies(rootTree);
-  resolveExtensions(pomDetails.getModel(),rootTree);
+  Model model=pomDetails.getModel();
+  moduleId=new VersionedDependencyId(model);
+  resolveExtensions(model,rootTree);
   for (  DependencyTree dependencyTree : sharedDependencies) {
     if (requireBundleFilter.matches(dependencyTree)) {
       String bundleId=dependencyTree.getBundleSymbolicName();
@@ -57,6 +59,7 @@
   LOG.debug("resolved: importPackages: " + Strings.join(importPackages,"\t\n"));
   instructions.setProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH,Strings.join(bundleClassPath,","));
   instructions.setProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE,Strings.join(requireBundles,","));
+  instructions.setProperty(ServiceConstants.INSTR_FAB_MODULE_ID,moduleId.toString());
   if (connection.getConfiguration().isInstallMissingDependencies()) {
     installMissingDependencies();
   }
