@@ -1,27 +1,29 @@
 {
   ModuleRegistry.VersionedModule module=moduleRegistry.getVersionedModule(moduleId);
-  Map<String,ModuleRegistry.VersionedModule> availableExtensions=module.getAvailableExtensions();
-  String extensionsString="";
-  for (  String enabledExtension : module.getEnabledExtensions()) {
-    ModuleRegistry.VersionedModule extensionModule=availableExtensions.get(enabledExtension);
-    if (extensionModule != null) {
-      VersionedDependencyId id=extensionModule.getId();
-      DependencyTreeResult result=resolver.collectDependencies(id.getGroupId(),id.getArtifactId(),id.getVersion(),id.getExtension(),id.getClassifier());
-      if (result != null) {
-        DependencyTree tree=result.getTree();
-        LOG.debug("Adding extensions: " + tree);
-        if (extensionsString.length() != 0) {
-          extensionsString+=" ";
+  if (module != null) {
+    Map<String,ModuleRegistry.VersionedModule> availableExtensions=module.getAvailableExtensions();
+    String extensionsString="";
+    for (    String enabledExtension : module.getEnabledExtensions()) {
+      ModuleRegistry.VersionedModule extensionModule=availableExtensions.get(enabledExtension);
+      if (extensionModule != null) {
+        VersionedDependencyId id=extensionModule.getId();
+        DependencyTreeResult result=resolver.collectDependencies(id.getGroupId(),id.getArtifactId(),id.getVersion(),id.getExtension(),id.getClassifier());
+        if (result != null) {
+          DependencyTree tree=result.getTree();
+          LOG.debug("Adding extensions: " + tree);
+          if (extensionsString.length() != 0) {
+            extensionsString+=" ";
+          }
+          extensionsString+=id;
+          addExtensionDependencies(tree);
         }
-        extensionsString+=id;
-        addExtensionDependencies(tree);
-      }
  else {
-        LOG.debug("Could not resolve extension: " + id);
+          LOG.debug("Could not resolve extension: " + id);
+        }
       }
     }
-  }
-  if (extensionsString.length() != 0) {
-    instructions.put(ServiceConstants.INSTR_FAB_MODULE_ENABLED_EXTENSIONS,extensionsString);
+    if (extensionsString.length() != 0) {
+      instructions.put(ServiceConstants.INSTR_FAB_MODULE_ENABLED_EXTENSIONS,extensionsString);
+    }
   }
 }
