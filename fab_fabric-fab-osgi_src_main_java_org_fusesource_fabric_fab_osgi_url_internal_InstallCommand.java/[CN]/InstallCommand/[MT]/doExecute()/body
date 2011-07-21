@@ -1,0 +1,24 @@
+{
+  OsgiModuleRegistry registry=Activator.registry;
+  List<ModuleRegistry.Module> modules=registry.getApplicationModules();
+  Map<VersionedDependencyId,Bundle> installed=registry.getInstalled();
+  for (  ModuleRegistry.Module module : modules) {
+    if (name.equals(module.getName())) {
+      HashSet<VersionedDependencyId> s=new HashSet<VersionedDependencyId>(module.getVersionIds());
+      s.retainAll(installed.keySet());
+      boolean isInstalled=!s.isEmpty();
+      if (isInstalled && !force) {
+        throw new Exception("The module is already installed");
+      }
+      VersionedDependencyId id=module.latest().getId();
+      String v=version != null ? version : id.getVersion();
+      String url="fab:mvn:" + id.getGroupId() + "/"+ id.getArtifactId()+ "/"+ v+ "/"+ id.getExtension()+ (id.getClassifier() == null ? "" : "/" + id.getClassifier());
+      println("Installing: " + url);
+      Bundle bundle=install(url);
+      if (bundle != null) {
+        println("Installed bundle: %d",bundle.getBundleId());
+      }
+    }
+  }
+  return null;
+}
