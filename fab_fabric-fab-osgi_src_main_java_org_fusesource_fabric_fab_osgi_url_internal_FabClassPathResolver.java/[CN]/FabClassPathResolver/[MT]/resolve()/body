@@ -23,6 +23,10 @@
   }
   addDependencies(rootTree);
   Model model=pomDetails.getModel();
+  ModuleRegistry.VersionedModule module=moduleRegistry.getVersionedModule(moduleId);
+  if (module == null || module.getFile() != null) {
+    registerModule(model);
+  }
   moduleId=new VersionedDependencyId(model);
   resolveExtensions(model,rootTree);
   for (  DependencyTree dependencyTree : sharedDependencies) {
