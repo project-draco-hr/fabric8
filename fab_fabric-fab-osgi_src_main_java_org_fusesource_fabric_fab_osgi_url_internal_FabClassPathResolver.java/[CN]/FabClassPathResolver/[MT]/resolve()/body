@@ -32,7 +32,8 @@
   for (  DependencyTree dependencyTree : sharedDependencies) {
     if (requireBundleFilter.matches(dependencyTree)) {
       String bundleId=dependencyTree.getBundleSymbolicName();
-      requireBundles.add(bundleId);
+      Version version=new Version(VersionCleaner.clean(dependencyTree.getVersion()));
+      requireBundles.add(bundleId + ";bundle-version=" + version+ "");
     }
  else {
       if (processImportPackages) {
