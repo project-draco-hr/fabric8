@@ -22,8 +22,7 @@
     instructions.setProperty(ServiceConstants.INSTR_BUNDLE_SYMBOLIC_NAME,name);
   }
   addDependencies(rootTree);
-  registerModule(pomDetails);
-  resolveExtensions(rootTree);
+  resolveExtensions(pomDetails.getModel(),rootTree);
   for (  DependencyTree dependencyTree : sharedDependencies) {
     if (requireBundleFilter.matches(dependencyTree)) {
       String bundleId=dependencyTree.getBundleSymbolicName();

@@ -1,4 +1,5 @@
 {
+  VersionedDependencyId id=new VersionedDependencyId(model);
   try {
     Properties moduleProperties=new Properties();
     for (    String key : FAB_MODULE_PROPERTIES) {
@@ -7,9 +8,8 @@
         moduleProperties.setProperty(key,value);
       }
     }
-    Model model=pomDetails.getModel();
     if (!moduleProperties.containsKey(FAB_MODULE_ID)) {
-      moduleProperties.setProperty(FAB_MODULE_ID,new VersionedDependencyId(model).toString());
+      moduleProperties.setProperty(FAB_MODULE_ID,id.toString());
     }
     if (!moduleProperties.containsKey(FAB_MODULE_NAME)) {
       moduleProperties.setProperty(FAB_MODULE_NAME,model.getArtifactId());
@@ -18,14 +18,13 @@
       moduleProperties.setProperty(FAB_MODULE_NAME,model.getDescription());
     }
     descriptor=ModuleDescriptor.fromProperties(moduleProperties);
-    module=moduleRegistry.add(descriptor);
     for (    VersionedDependencyId ext : descriptor.getEndorsedExtensions()) {
       if (moduleRegistry.getVersionedModule(ext) == null) {
       }
     }
   }
  catch (  Exception e) {
-    System.err.println("Failed to register the fabric module for: " + pomDetails);
+    System.err.println("Failed to register the fabric module for: " + id);
     e.printStackTrace();
     ;
   }

@@ -1,17 +1,13 @@
 {
-  try {
-    Dictionary config=getConfig();
-    while (config.elements().hasMoreElements()) {
-      String key=(String)config.elements().nextElement();
-      if (key.startsWith("repo.")) {
-        String name=key.substring("repo.".length());
-        String value=(String)config.get(key);
-        repos.put(name,new URL(value));
-      }
+  loadRepoConfiguration();
+  boolean download=false;
+  for (  Map.Entry<String,URL> entry : repos.entrySet()) {
+    String name=entry.getKey();
+    URL url=entry.getValue();
+    File file=new File(directory,"repo-" + name + ".zip");
+    if (!"file".equals(url.getProtocol()) && !file.exists()) {
+      download=true;
     }
   }
- catch (  IOException e) {
-    e.printStackTrace();
-  }
-  update(System.err);
+  update(System.err,download);
 }
