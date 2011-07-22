@@ -12,7 +12,7 @@
   Buffer body=new Buffer(in.available());
   in.read(body.data);
   AMQPTransportFrame outFrame=new AMQPTransportFrame(header,body);
-  Transfer outTransfer=outFrame.getPerformative();
+  Transfer outTransfer=(Transfer)outFrame.getPerformative();
   AnnotatedMessage msg=MessageSupport.decodeAnnotatedMessage(outFrame.getPayload());
   assertEquals(transfer.toString(),outTransfer.toString());
   assertEquals(annotatedMessage.toString(),msg.toString());
