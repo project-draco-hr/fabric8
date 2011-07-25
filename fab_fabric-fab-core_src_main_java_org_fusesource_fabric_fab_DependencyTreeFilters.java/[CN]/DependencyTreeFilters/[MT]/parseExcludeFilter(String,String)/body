@@ -1,9 +1,0 @@
-{
-  Filter<DependencyTree> filter=parse(dependencyFilterText);
-  Filter<DependencyTree> filteredOptionals=createExcludeOptionalFilter(includeOptionalDependencyFilterText);
-  Filter<DependencyTree> filterScopes=Filters.or(testScopeFilter,filteredOptionals);
-  if (isEmpty(filter)) {
-    return filterScopes;
-  }
-  return Filters.or(filterScopes,filter);
-}

@@ -1,4 +1,5 @@
 {
+  addPackages(tree);
   sharedDependencies.add(tree);
   if (connection.isIncludeSharedResources()) {
     includeSharedResources(tree);
@@ -7,6 +8,10 @@
   for (  DependencyTree child : list) {
     if (excludePackageFilter.matches(child)) {
       LOG.debug("Excluded transitive dependency: " + child);
+      continue;
+    }
+ else     if (excludeOptionalFilter.matches(child)) {
+      LOG.debug("Excluded optional transitive dependency: " + child);
       continue;
     }
  else {

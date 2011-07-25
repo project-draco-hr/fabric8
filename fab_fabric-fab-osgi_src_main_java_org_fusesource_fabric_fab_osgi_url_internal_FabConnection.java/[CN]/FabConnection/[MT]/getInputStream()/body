@@ -9,7 +9,15 @@
       throw new IOException("Instructions file must contain a property named " + ServiceConstants.INSTR_FAB_URL);
     }
     String extraImportPackages=classPathResolver.getExtraImportPackages();
-    return BndUtils.createBundle(URLUtils.prepareInputStream(new URL(fabUri),configuration.getCertificateCheck()),instructions,fabUri,OverwriteMode.MERGE,embeddedResources,extraImportPackages);
+    HashSet<String> actualImports=new HashSet<String>();
+    InputStream rc=BndUtils.createBundle(URLUtils.prepareInputStream(new URL(fabUri),configuration.getCertificateCheck()),instructions,fabUri,OverwriteMode.MERGE,embeddedResources,extraImportPackages,actualImports);
+    if (getConfiguration().isInstallMissingDependencies()) {
+      installMissingDependencies(actualImports);
+    }
+ else {
+      LOG.info("Not installing dependencies as not enabled");
+    }
+    return rc;
   }
  catch (  RepositoryException e) {
     throw new IOException(e.getMessage(),e);

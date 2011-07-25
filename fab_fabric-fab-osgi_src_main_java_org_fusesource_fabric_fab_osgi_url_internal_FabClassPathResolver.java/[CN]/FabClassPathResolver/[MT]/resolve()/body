@@ -12,7 +12,8 @@
   String optionalDependencyText=getManfiestProperty(ServiceConstants.INSTR_FAB_OPTIONAL_DEPENDENCY);
   sharedFilter=DependencyTreeFilters.parseShareFilter(sharedFilterText);
   requireBundleFilter=DependencyTreeFilters.parseRequireBundleFilter(requireBundleFilterText);
-  excludePackageFilter=DependencyTreeFilters.parseExcludeFilter(excludeFilterText,optionalDependencyText);
+  excludePackageFilter=DependencyTreeFilters.parseExcludeFilter(excludeFilterText);
+  excludeOptionalFilter=DependencyTreeFilters.parseExcludeOptionalFilter(optionalDependencyText);
   bundleClassPath.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH),","));
   requireBundles.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE),","));
   importPackages.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_IMPORT_PACKAGE),","));
@@ -65,10 +66,5 @@
   instructions.setProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH,Strings.join(bundleClassPath,","));
   instructions.setProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE,Strings.join(requireBundles,","));
   instructions.setProperty(ServiceConstants.INSTR_FAB_MODULE_ID,moduleId.toString());
-  if (connection.getConfiguration().isInstallMissingDependencies()) {
-    installMissingDependencies();
-  }
- else {
-    LOG.info("Not installing dependencies as not enabled");
-  }
+  instructions.setProperty(ServiceConstants.INSTR_IMPORT_PACKAGE,Strings.join(importPackages,","));
 }

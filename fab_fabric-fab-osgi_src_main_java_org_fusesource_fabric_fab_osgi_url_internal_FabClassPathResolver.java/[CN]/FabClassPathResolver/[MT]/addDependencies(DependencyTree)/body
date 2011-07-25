@@ -1,8 +1,13 @@
 {
+  addPackages(tree);
   List<DependencyTree> children=tree.getChildren();
   for (  DependencyTree child : children) {
     if (excludePackageFilter.matches(child)) {
       LOG.debug("Excluded dependency: " + child);
+      continue;
+    }
+ else     if (excludeOptionalFilter.matches(child)) {
+      addOptionalDependency(child);
       continue;
     }
  else     if (sharedFilter.matches(child) || requireBundleFilter.matches(child)) {
