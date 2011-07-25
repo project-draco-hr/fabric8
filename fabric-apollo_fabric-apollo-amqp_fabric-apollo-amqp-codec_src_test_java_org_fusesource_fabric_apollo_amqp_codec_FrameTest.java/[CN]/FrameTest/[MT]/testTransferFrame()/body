@@ -4,7 +4,7 @@
   AnnotatedMessage annotatedMessage=MessageFactory.createAnnotatedMessage(message);
   AMQPTransportFrame frame=new AMQPTransportFrame(0,transfer,MessageSupport.toBuffer(annotatedMessage));
   AMQPTransportFrame outFrame=TestSupport.encodeDecode(frame);
-  Transfer outTransfer=outFrame.getPerformative();
+  Transfer outTransfer=(Transfer)outFrame.getPerformative();
   System.out.printf("Transfer : %s\n",outTransfer);
   AnnotatedMessage msg=MessageSupport.decodeAnnotatedMessage(outFrame.getPayload());
   System.out.printf("Msg : %s\n",msg);
