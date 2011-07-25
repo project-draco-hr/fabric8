@@ -22,7 +22,7 @@
   for (  Dependency dependency : dependencies) {
     CollectRequest request=new CollectRequest(dependency,repos);
     DependencyNode node=repositorySystem.collectDependencies(session,request).getRoot();
-    repositorySystem.resolveDependencies(session,node,null);
+    repositorySystem.resolveDependencies(session,node,new ScopeDependencyFilter("test"));
     pomNode.getChildren().add(node);
   }
   DependencyGraphTransformationContext tranformContext=new DependencyGraphTransformationContext(){
