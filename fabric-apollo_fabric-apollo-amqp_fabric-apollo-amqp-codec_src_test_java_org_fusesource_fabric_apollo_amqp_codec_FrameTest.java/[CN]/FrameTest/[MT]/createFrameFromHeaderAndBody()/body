@@ -4,6 +4,7 @@
   AnnotatedMessage annotatedMessage=MessageFactory.createAnnotatedMessage(message);
   AMQPTransportFrame inFrame=new AMQPTransportFrame(0,transfer,MessageSupport.toBuffer(annotatedMessage));
   DataByteArrayOutputStream out=new DataByteArrayOutputStream((int)inFrame.getSize());
+  inFrame.write(out);
   Buffer buf=out.toBuffer();
   Buffer header=new Buffer(8);
   DataByteArrayInputStream in=new DataByteArrayInputStream(buf);
@@ -11,7 +12,7 @@
   Buffer body=new Buffer(in.available());
   in.read(body.data);
   AMQPTransportFrame outFrame=new AMQPTransportFrame(header,body);
-  Transfer outTransfer=outFrame.getPerformative();
+  Transfer outTransfer=(Transfer)outFrame.getPerformative();
   AnnotatedMessage msg=MessageSupport.decodeAnnotatedMessage(outFrame.getPayload());
   assertEquals(transfer.toString(),outTransfer.toString());
   assertEquals(annotatedMessage.toString(),msg.toString());

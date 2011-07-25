@@ -7,8 +7,9 @@
     List<Bundle> toStart=new ArrayList<Bundle>();
     for (    DependencyTree dependency : installDependencies) {
       String name=dependency.getBundleSymbolicName();
-      if (Bundles.isInstalled(bundleContext,name)) {
-        LOG.info("Bundle already installed: " + name);
+      String version=dependency.getVersion();
+      if (Bundles.isInstalled(bundleContext,name,version)) {
+        LOG.info("Bundle already installed: " + name + " ("+ version+ ")");
       }
  else {
         URL url=dependency.getJarURL();

@@ -1,0 +1,10 @@
+{
+  Version v=new Version(VersionCleaner.clean(version));
+  Bundle[] bundles=bundleContext.getBundles();
+  for (  Bundle bundle : bundles) {
+    if (bundle.getSymbolicName().equals(name) && bundle.getVersion().equals(v)) {
+      return true;
+    }
+  }
+  return false;
+}

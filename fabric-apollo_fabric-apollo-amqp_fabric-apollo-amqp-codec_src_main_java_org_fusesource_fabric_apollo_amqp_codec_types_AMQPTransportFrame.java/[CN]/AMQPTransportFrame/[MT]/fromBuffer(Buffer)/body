@@ -1,10 +1,19 @@
 {
   try {
     DataByteArrayInputStream in=new DataByteArrayInputStream(body);
-    performative=(Frame)TypeReader.read(in);
     if (in.available() > 0) {
-      payload=new Buffer(in.available());
+      setPerformative((Frame)TypeReader.read(in));
+    }
+ else {
+      setPerformative(NoPerformative.INSTANCE);
+    }
+    if (in.available() > 0) {
+      Buffer payload=new Buffer(in.available());
       payload.readFrom((DataInput)in);
+      setPayload(payload);
+    }
+ else {
+      setPayload(EMPTY);
     }
   }
  catch (  Exception e) {
