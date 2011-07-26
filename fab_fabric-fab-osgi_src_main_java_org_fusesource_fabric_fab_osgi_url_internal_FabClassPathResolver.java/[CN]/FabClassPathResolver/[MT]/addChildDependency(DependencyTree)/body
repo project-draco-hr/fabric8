@@ -1,0 +1,22 @@
+{
+  String dependencyId=child.getDependencyId().toString();
+  if (dependencyId.contains("jetty-all-server")) {
+    LOG.debug("test");
+  }
+  if (excludePackageFilter.matches(child)) {
+    LOG.debug("Excluded dependency: " + dependencyId);
+    return;
+  }
+ else   if (excludeOptionalFilter.matches(child)) {
+    addOptionalDependency(child);
+    return;
+  }
+ else   if (sharedFilter.matches(child) || requireBundleFilter.matches(child)) {
+    addSharedDependency(child);
+  }
+ else {
+    LOG.debug("Added non-shared dependency: " + dependencyId);
+    nonSharedDependencies.add(child);
+    addDependencies(child);
+  }
+}

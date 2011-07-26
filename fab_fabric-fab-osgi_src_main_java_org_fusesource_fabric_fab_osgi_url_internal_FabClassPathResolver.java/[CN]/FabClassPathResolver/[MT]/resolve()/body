@@ -6,14 +6,14 @@
   }
   DependencyTreeResult result=resolver.collectDependencies(pomDetails,offline);
   this.rootTree=result.getTree();
-  String sharedFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_PROVIDED_DEPENDENCY);
-  String requireBundleFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_REQUIRE_BUNDLE);
-  String excludeFilterText=getManfiestProperty(ServiceConstants.INSTR_FAB_EXCLUDE_DEPENDENCY);
-  String optionalDependencyText=getManfiestProperty(ServiceConstants.INSTR_FAB_OPTIONAL_DEPENDENCY);
-  sharedFilter=DependencyTreeFilters.parseShareFilter(sharedFilterText);
-  requireBundleFilter=DependencyTreeFilters.parseRequireBundleFilter(requireBundleFilterText);
-  excludePackageFilter=DependencyTreeFilters.parseExcludeFilter(excludeFilterText);
-  excludeOptionalFilter=DependencyTreeFilters.parseExcludeOptionalFilter(optionalDependencyText);
+  sharedFilterText=emptyIfNull(getManfiestProperty(ServiceConstants.INSTR_FAB_PROVIDED_DEPENDENCY));
+  requireBundleFilterText=emptyIfNull(getManfiestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_REQUIRE_BUNDLE));
+  excludeFilterText=emptyIfNull(getManfiestProperty(ServiceConstants.INSTR_FAB_EXCLUDE_DEPENDENCY));
+  optionalDependencyText=emptyIfNull(getManfiestProperty(ServiceConstants.INSTR_FAB_OPTIONAL_DEPENDENCY));
+  sharedFilter=DependencyTreeFilters.parseShareFilter(sharedFilterText.trim());
+  requireBundleFilter=DependencyTreeFilters.parseRequireBundleFilter(requireBundleFilterText.trim());
+  excludePackageFilter=DependencyTreeFilters.parseExcludeFilter(excludeFilterText.trim());
+  excludeOptionalFilter=DependencyTreeFilters.parseExcludeOptionalFilter(optionalDependencyText.trim());
   bundleClassPath.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH),","));
   requireBundles.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE),","));
   importPackages.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_IMPORT_PACKAGE),","));
