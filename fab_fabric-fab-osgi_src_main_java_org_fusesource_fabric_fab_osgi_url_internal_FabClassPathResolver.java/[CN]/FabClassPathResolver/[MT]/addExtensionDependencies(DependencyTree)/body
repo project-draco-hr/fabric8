@@ -2,6 +2,9 @@
   if (excludePackageFilter.matches(child)) {
     LOG.debug("Excluded dependency: " + child);
   }
+ else   if (excludeOptionalFilter.matches(child)) {
+    LOG.debug("Excluded optional dependency: " + child);
+  }
  else   if (sharedFilter.matches(child) || requireBundleFilter.matches(child)) {
     addSharedDependency(child);
   }

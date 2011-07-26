@@ -34,15 +34,17 @@
     }
     checkMandatoryProperties(analyzer,jar,jarInfo);
     analyzer.calcManifest();
-    if (extraImportPackages != null && extraImportPackages.length() > 0) {
-      Attributes main=jar.getManifest().getMainAttributes();
-      String importPackages=main.getValue(Analyzer.IMPORT_PACKAGE);
-      if (importPackages == null || importPackages.length() == 0) {
-        importPackages=extraImportPackages;
+    Attributes main=jar.getManifest().getMainAttributes();
+    String importPackages=emptyIfNull(main.getValue(Analyzer.IMPORT_PACKAGE));
+    if (notEmpty(extraImportPackages)) {
+      if (importPackages.length() != 0) {
+        importPackages+=",";
       }
- else {
-        importPackages+="," + extraImportPackages;
-      }
+      importPackages+=extraImportPackages;
+    }
+    if (notEmpty(importPackages)) {
+      Map<String,Map<String,String>> values=new Analyzer().parseHeader(importPackages);
+      actualImports.addAll(values.keySet());
       main.putValue(Analyzer.IMPORT_PACKAGE,importPackages);
     }
   }
