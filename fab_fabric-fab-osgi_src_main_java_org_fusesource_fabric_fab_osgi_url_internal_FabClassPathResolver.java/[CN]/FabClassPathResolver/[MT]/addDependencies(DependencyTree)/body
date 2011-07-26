@@ -3,7 +3,7 @@
   List<DependencyTree> children=tree.getChildren();
   for (  DependencyTree child : children) {
     if (excludePackageFilter.matches(child)) {
-      LOG.debug("Excluded dependency: " + child);
+      LOG.debug("Excluded dependency: " + child.getDependencyId());
       continue;
     }
  else     if (excludeOptionalFilter.matches(child)) {
@@ -14,6 +14,7 @@
       addSharedDependency(child);
     }
  else {
+      LOG.debug("Added non-shared dependency: " + tree.getDependencyId());
       nonSharedDependencies.add(child);
       addDependencies(child);
     }

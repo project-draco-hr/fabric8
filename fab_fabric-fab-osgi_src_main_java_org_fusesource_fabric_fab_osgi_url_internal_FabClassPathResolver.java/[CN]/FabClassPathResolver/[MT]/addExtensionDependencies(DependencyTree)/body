@@ -1,9 +1,10 @@
 {
+  LOG.debug("Added extension dependency: " + child.getDependencyId());
   if (excludePackageFilter.matches(child)) {
-    LOG.debug("Excluded dependency: " + child);
+    LOG.debug("Excluded dependency: " + child.getDependencyId());
   }
  else   if (excludeOptionalFilter.matches(child)) {
-    LOG.debug("Excluded optional dependency: " + child);
+    LOG.debug("Excluded optional dependency: " + child.getDependencyId());
   }
  else   if (sharedFilter.matches(child) || requireBundleFilter.matches(child)) {
     addSharedDependency(child);

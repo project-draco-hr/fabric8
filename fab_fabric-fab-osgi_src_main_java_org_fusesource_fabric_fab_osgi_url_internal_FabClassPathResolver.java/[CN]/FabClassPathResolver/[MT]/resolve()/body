@@ -22,6 +22,7 @@
     name=rootTree.getBundleSymbolicName();
     instructions.setProperty(ServiceConstants.INSTR_BUNDLE_SYMBOLIC_NAME,name);
   }
+  LOG.debug("Resolving Dependencies for: " + rootTree.getDependencyId());
   addDependencies(rootTree);
   Model model=pomDetails.getModel();
   moduleId=new VersionedDependencyId(model);
@@ -59,6 +60,22 @@
         }
       }
     }
+  }
+  nonSharedDependencies=filterOutDuplicates(nonSharedDependencies);
+  sharedDependencies=filterOutDuplicates(sharedDependencies);
+  installDependencies=filterOutDuplicates(installDependencies);
+  optionalDependencies=filterOutDuplicates(optionalDependencies);
+  LOG.debug("nonSharedDependencies:");
+  for (  DependencyTree d : nonSharedDependencies) {
+    LOG.debug("  " + d.getDependencyId());
+  }
+  LOG.debug("sharedDependencies:");
+  for (  DependencyTree d : sharedDependencies) {
+    LOG.debug("  " + d.getDependencyId());
+  }
+  LOG.debug("installDependencies:");
+  for (  DependencyTree d : installDependencies) {
+    LOG.debug("  " + d.getDependencyId());
   }
   LOG.debug("resolved: bundleClassPath: " + Strings.join(bundleClassPath,"\t\n"));
   LOG.debug("resolved: requireBundles: " + Strings.join(requireBundles,"\t\n"));
