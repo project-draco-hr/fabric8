@@ -4,6 +4,15 @@
     LOG.warn("No BundleContext available so cannot install provided dependencies");
   }
  else {
+    for (    DependencyTree dependency : classPathResolver.getInstallDependencies()) {
+      if (dependency.isBundle()) {
+        String importPackages=dependency.getManfiestEntry(Analyzer.IMPORT_PACKAGE);
+        if (notEmpty(importPackages)) {
+          Map<String,Map<String,String>> values=new Analyzer().parseHeader(importPackages);
+          actualImports.addAll(values.keySet());
+        }
+      }
+    }
     List<Bundle> toStart=new ArrayList<Bundle>();
     for (    DependencyTree dependency : classPathResolver.getInstallDependencies()) {
       String name=dependency.getBundleSymbolicName();
