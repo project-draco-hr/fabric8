@@ -1,0 +1,25 @@
+{
+  DataByteArrayInputStream in=new DataByteArrayInputStream(buffer);
+  ArrayList<SectionBoundary> rc=new ArrayList<SectionBoundary>();
+  while (in.available() != -1) {
+    long index=in.getPos();
+    byte formatCode=readFormatCode(in);
+    if (checkEOS(formatCode)) {
+      break;
+    }
+    if (formatCode != TypeRegistry.DESCRIBED_FORMAT_CODE) {
+      throw new IllegalArgumentException("Invalid format code in message : " + formatCode);
+    }
+    AMQPType descriptor=readDescriptor(in);
+    Class typeClass=getDescribedTypeClass(descriptor);
+    if (typeClass == Data.class) {
+    }
+ else     if (typeClass == AMQPValue.class) {
+    }
+ else     if (typeClass == AMQPSequence.class) {
+    }
+ else {
+    }
+  }
+  return rc;
+}
