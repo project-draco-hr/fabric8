@@ -1,7 +1,10 @@
 {
   try {
     String path=artifact.getPath();
-    if (!path.endsWith(".jar") && !path.endsWith(".fab")) {
+    if (path.endsWith(".fab")) {
+      return true;
+    }
+    if (!path.endsWith(".jar")) {
       return false;
     }
     JarFile jar=new JarFile(artifact);
