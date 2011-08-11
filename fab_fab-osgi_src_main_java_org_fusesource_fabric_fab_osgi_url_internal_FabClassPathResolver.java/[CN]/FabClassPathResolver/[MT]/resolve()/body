@@ -1,10 +1,9 @@
 {
-  PomDetails pomDetails=connection.resolvePomDetails();
-  if (!pomDetails.isValid()) {
-    LOG.warn("Cannot resolve pom.xml for " + connection.getJarFile());
+  moduleId=connection.getVersionedDependencyId();
+  if (moduleId == null) {
     return;
   }
-  DependencyTreeResult result=resolver.collectDependencies(pomDetails,offline);
+  DependencyTreeResult result=connection.collectDependencies(offline);
   this.rootTree=result.getTree();
   sharedFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManfiestProperty(ServiceConstants.INSTR_FAB_PROVIDED_DEPENDENCY)),"\\s+"));
   requireBundleFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManfiestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_REQUIRE_BUNDLE)),"\\s+"));
@@ -24,13 +23,11 @@
   }
   LOG.debug("Resolving Dependencies for: " + rootTree.getDependencyId());
   addDependencies(rootTree);
-  Model model=pomDetails.getModel();
-  moduleId=new VersionedDependencyId(model);
   ModuleRegistry.VersionedModule module=moduleRegistry.getVersionedModule(moduleId);
   if (module == null || module.getFile() != null) {
-    registerModule(model);
+    registerModule();
   }
-  resolveExtensions(model,rootTree);
+  resolveExtensions(rootTree);
   for (  DependencyTree dependencyTree : sharedDependencies) {
     if (requireBundleFilter.matches(dependencyTree)) {
       String bundleId=dependencyTree.getBundleSymbolicName();
