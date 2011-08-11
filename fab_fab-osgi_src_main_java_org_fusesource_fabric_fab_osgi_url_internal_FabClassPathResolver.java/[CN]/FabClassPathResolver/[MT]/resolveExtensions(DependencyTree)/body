@@ -7,7 +7,7 @@
       ModuleRegistry.VersionedModule extensionModule=availableExtensions.get(enabledExtension);
       if (extensionModule != null) {
         VersionedDependencyId id=extensionModule.getId();
-        DependencyTreeResult result=resolver.collectDependencies(id.getGroupId(),id.getArtifactId(),id.getVersion(),id.getExtension(),id.getClassifier());
+        DependencyTreeResult result=resolver.collectDependencies(id,offline);
         if (result != null) {
           DependencyTree tree=result.getTree();
           sharedFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(tree.getManfiestEntry(ServiceConstants.INSTR_FAB_PROVIDED_DEPENDENCY)),"\\s+"));

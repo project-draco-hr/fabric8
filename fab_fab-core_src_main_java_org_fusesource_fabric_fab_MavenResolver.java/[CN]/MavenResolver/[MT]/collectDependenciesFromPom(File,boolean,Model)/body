@@ -1,8 +1,5 @@
 {
   Map<String,String> props=Collections.singletonMap(ArtifactProperties.LOCAL_PATH,rootPom.toString());
-  RepositorySystem repositorySystem=getRepositorySystem();
-  final MavenRepositorySystemSession session=createRepositorSystemSession(offline,repositorySystem);
-  List<RemoteRepository> repos=getRemoteRepositories();
   String groupId=model.getGroupId();
   String artifactId=model.getArtifactId();
   String pomVersion=model.getVersion();
@@ -11,39 +8,5 @@
     throw new IllegalArgumentException("Pomegranate pom.xml has missing groupId:artifactId:version " + groupId + ":"+ artifactId+ ":"+ pomVersion);
   }
   Artifact root=new DefaultArtifact(groupId,artifactId,null,packaging,pomVersion,props,rootPom);
-  ArtifactDescriptorResult artifactDescriptorResult=repositorySystem.readArtifactDescriptor(session,new ArtifactDescriptorRequest(root,repos,null));
-  Dependency rootDependency=new Dependency(root,null);
-  List<Dependency> dependencies=artifactDescriptorResult.getDependencies();
-  DefaultDependencyNode tmpNode=new DefaultDependencyNode(rootDependency);
-  GenericVersionScheme versionScheme=new GenericVersionScheme();
-  tmpNode.setVersion(versionScheme.parseVersion(pomVersion));
-  tmpNode.setVersionConstraint(versionScheme.parseVersionConstraint(pomVersion));
-  DependencyNode pomNode=tmpNode;
-  for (  Dependency dependency : dependencies) {
-    CollectRequest request=new CollectRequest(dependency,repos);
-    DependencyNode node=repositorySystem.collectDependencies(session,request).getRoot();
-    repositorySystem.resolveDependencies(session,node,new ScopeDependencyFilter("test"));
-    pomNode.getChildren().add(node);
-  }
-  DependencyGraphTransformationContext tranformContext=new DependencyGraphTransformationContext(){
-    Map map=new HashMap();
-    public RepositorySystemSession getSession(){
-      return session;
-    }
-    public Object get(    Object key){
-      return map.get(key);
-    }
-    public Object put(    Object key,    Object value){
-      return map.put(key,value);
-    }
-  }
-;
-  DependencyGraphTransformer transformer=new ReplaceConflictingVersionResolver();
-  pomNode=transformer.transformGraph(pomNode,tranformContext);
-  DependencyTreeResult result=new DependencyTreeResult(pomNode);
-  List<DependencyTree.DuplicateDependency> duplicates=result.getTree().checkForDuplicateDependencies();
-  for (  DependencyTree.DuplicateDependency duplicate : duplicates) {
-    LOGGER.warn("Duplicate dependency: " + duplicate);
-  }
-  return result;
+  return collectDependencies(root,pomVersion,offline);
 }
