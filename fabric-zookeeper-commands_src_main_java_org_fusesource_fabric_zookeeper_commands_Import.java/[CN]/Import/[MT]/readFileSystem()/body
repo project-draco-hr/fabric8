@@ -1,0 +1,9 @@
+{
+  Map<String,String> settings=new TreeMap<String,String>();
+  File s=new File(source);
+  getCandidates(s,s,settings);
+  for (  String key : settings.keySet()) {
+    String data=settings.get(key);
+    getZooKeeper().createOrSetWithParents(key,data,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+  }
+}

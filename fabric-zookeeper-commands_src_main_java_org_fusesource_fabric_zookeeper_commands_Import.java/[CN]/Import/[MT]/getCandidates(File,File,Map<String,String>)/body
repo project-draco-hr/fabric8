@@ -1,0 +1,28 @@
+{
+  if (current.isDirectory()) {
+    for (    File child : current.listFiles(new FileFilter(){
+      @Override public boolean accept(      File file){
+        if (file.isDirectory() || file.getName().endsWith(".cfg")) {
+          return true;
+        }
+        return false;
+      }
+    }
+)) {
+      getCandidates(parent,child,settings);
+    }
+    String p=buildZKPath(parent,current);
+    settings.put(p,null);
+  }
+ else {
+    BufferedInputStream in=new BufferedInputStream(new FileInputStream(current));
+    byte[] contents=new byte[in.available()];
+    in.read(contents);
+    in.close();
+    String p=buildZKPath(parent,current);
+    if (p.endsWith(".cfg")) {
+      p=p.substring(0,p.length() - ".cfg".length());
+    }
+    settings.put(p,new String(contents));
+  }
+}
