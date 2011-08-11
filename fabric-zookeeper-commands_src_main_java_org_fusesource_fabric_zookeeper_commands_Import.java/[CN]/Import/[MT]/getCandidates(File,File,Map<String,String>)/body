@@ -11,7 +11,7 @@
 )) {
       getCandidates(parent,child,settings);
     }
-    String p=buildZKPath(parent,current);
+    String p=buildZKPath(parent,current).replaceFirst("/","");
     settings.put(p,null);
   }
  else {
@@ -19,7 +19,7 @@
     byte[] contents=new byte[in.available()];
     in.read(contents);
     in.close();
-    String p=buildZKPath(parent,current);
+    String p=buildZKPath(parent,current).replaceFirst("/","");
     if (p.endsWith(".cfg")) {
       p=p.substring(0,p.length() - ".cfg".length());
     }
