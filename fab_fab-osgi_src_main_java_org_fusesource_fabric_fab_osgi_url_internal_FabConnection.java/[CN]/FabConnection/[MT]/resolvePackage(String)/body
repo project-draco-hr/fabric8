@@ -12,14 +12,15 @@
             if (map != null) {
               String version=map.get("version");
               if (version != null) {
-                return version;
+                return toVersionRange(version);
               }
             }
           }
         }
         String version=dependency.getVersion();
         if (version != null) {
-          return toOSGiVersionRange(version);
+          String osgiVersion=VersionCleaner.clean(version);
+          return toVersionRange(osgiVersion);
         }
       }
     }
