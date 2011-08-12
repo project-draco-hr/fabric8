@@ -1,0 +1,61 @@
+{
+  if (!path.endsWith("/")) {
+    path=path + "/";
+  }
+  if (!path.startsWith("/")) {
+    path="/" + path;
+  }
+  List<Pattern> patterns=RegexSupport.getPatterns(regex);
+  List<String> paths=getZooKeeper().getAllChildren(path);
+  SortedSet<File> directories=new TreeSet<File>();
+  Map<File,String> settings=new HashMap<File,String>();
+  for (  String p : paths) {
+    p=path + p;
+    if (!RegexSupport.matches(patterns,p)) {
+      continue;
+    }
+    byte[] data=getZooKeeper().getData(p);
+    if (data != null) {
+      settings.put(new File(target + File.separator + p+ ".cfg"),new String(data));
+    }
+ else {
+      directories.add(new File(target + File.separator + p));
+    }
+  }
+  if (delete) {
+    delete(new File(target));
+  }
+  for (  File d : directories) {
+    if (d.exists() && !d.isDirectory()) {
+      throw new IllegalArgumentException("Directory " + d + " exists but is not a directory");
+    }
+    if (!d.exists()) {
+      if (!d.mkdirs()) {
+        throw new RuntimeException("Failed to create directory " + d);
+      }
+    }
+  }
+  for (  File f : settings.keySet()) {
+    if (f.exists() && !f.isFile()) {
+      throw new IllegalArgumentException("File " + f + " exists but is not a file");
+    }
+    if (!f.getParentFile().exists()) {
+      if (!f.getParentFile().mkdirs()) {
+        throw new RuntimeException("Failed to create directory " + f.getParentFile());
+      }
+    }
+    if (!f.exists()) {
+      try {
+        if (!f.createNewFile()) {
+          throw new RuntimeException("Failed to create file " + f);
+        }
+      }
+ catch (      IOException io) {
+        throw new RuntimeException("Failed to create file " + f + " : "+ io);
+      }
+    }
+    FileWriter writer=new FileWriter(f,false);
+    writer.write(settings.get(f));
+    writer.close();
+  }
+}

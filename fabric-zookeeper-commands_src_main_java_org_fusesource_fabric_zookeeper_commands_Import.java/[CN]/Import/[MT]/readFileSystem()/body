@@ -1,0 +1,25 @@
+{
+  Map<String,String> settings=new TreeMap<String,String>();
+  File s=new File(source);
+  getCandidates(s,s,settings);
+  List<Pattern> patterns=RegexSupport.getPatterns(regex);
+  if (!target.endsWith("/")) {
+    target=target + "/";
+  }
+  if (!target.startsWith("/")) {
+    target="/" + target;
+  }
+  List<String> paths=new ArrayList<String>();
+  for (  String key : settings.keySet()) {
+    if (!RegexSupport.matches(patterns,key)) {
+      continue;
+    }
+    String data=settings.get(key);
+    key=target + key;
+    paths.add(key);
+    getZooKeeper().createOrSetWithParents(key,data,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+  }
+  if (delete) {
+    deletePathsNotIn(paths);
+  }
+}

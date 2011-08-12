@@ -1,0 +1,9 @@
+{
+  List<String> zkPaths=getZooKeeper().getAllChildren(target);
+  for (  String path : zkPaths) {
+    path="/" + path;
+    if (!paths.contains(path)) {
+      getZooKeeper().deleteWithChildren(path);
+    }
+  }
+}
