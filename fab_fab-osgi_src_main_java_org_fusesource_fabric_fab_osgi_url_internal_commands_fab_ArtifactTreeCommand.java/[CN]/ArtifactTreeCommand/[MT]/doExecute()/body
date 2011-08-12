@@ -1,0 +1,12 @@
+{
+  FabURLHandler handler=findURLHandler();
+  if (handler != null) {
+    FabConnection urlConnection=handler.openConnection(new URL("fab:" + url));
+    FabClassPathResolver resolver=urlConnection.resolve();
+    TreeHelper.write(session.getConsole(),resolver);
+  }
+ else {
+    session.getConsole().println("ERROR: could not resolve FabURLHandler service in OSGi");
+  }
+  return null;
+}
