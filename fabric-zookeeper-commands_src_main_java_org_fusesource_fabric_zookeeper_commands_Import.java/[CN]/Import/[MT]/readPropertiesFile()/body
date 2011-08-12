@@ -1,5 +1,6 @@
 {
-  List<Pattern> patterns=getPatterns(regex);
+  List<Pattern> includes=getPatterns(regex);
+  List<Pattern> excludes=getPatterns(nregex);
   InputStream in=new BufferedInputStream(new URL(source).openStream());
   List<String> paths=new ArrayList<String>();
   Properties props=new Properties();
@@ -13,19 +14,15 @@
     if (!name.startsWith("/")) {
       name="/" + name;
     }
-    if (!matches(patterns,name)) {
+    name=target + name;
+    if (!matches(includes,name) || matches(excludes,name)) {
       continue;
     }
-    name=target + name;
-    paths.add(name);
     if (!dryRun) {
       getZooKeeper().createOrSetWithParents(name,value,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
     }
  else {
       System.out.printf("Creating path \"%s\" with value \"%s\"\n",name,value);
     }
-  }
-  if (delete) {
-    deletePathsNotIn(paths);
   }
 }
