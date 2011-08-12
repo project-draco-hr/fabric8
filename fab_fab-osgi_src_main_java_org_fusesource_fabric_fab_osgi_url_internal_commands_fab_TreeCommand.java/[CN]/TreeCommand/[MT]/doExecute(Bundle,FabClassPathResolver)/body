@@ -1,12 +1,7 @@
 {
-  List<DependencyTree> nonSharedDependencies=resolver.getNonSharedDependencies();
-  System.out.println("local classpath");
-  for (  DependencyTree dependency : nonSharedDependencies) {
-    System.out.println("    " + dependency.getDependencyId());
-  }
-  List<DependencyTree> sharedDependencies=resolver.getSharedDependencies();
-  System.out.println("shared classpath");
-  for (  DependencyTree dependency : sharedDependencies) {
-    System.out.println("    " + dependency.getDependencyId());
-  }
+  sharedDependencies=new HashSet<DependencyTree>(resolver.getSharedDependencies());
+  allDependencies=new HashSet<DependencyTree>(resolver.getNonSharedDependencies());
+  allDependencies.addAll(sharedDependencies);
+  DependencyTree rootTree=resolver.getRootTree();
+  write(System.out,rootTree);
 }
