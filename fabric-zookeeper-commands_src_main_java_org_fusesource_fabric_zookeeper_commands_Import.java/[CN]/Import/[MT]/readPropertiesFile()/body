@@ -1,5 +1,5 @@
 {
-  List<Pattern> patterns=RegexSupport.getPatterns(regex);
+  List<Pattern> patterns=getPatterns(regex);
   InputStream in=new BufferedInputStream(new URL(source).openStream());
   List<String> paths=new ArrayList<String>();
   Properties props=new Properties();
@@ -13,7 +13,7 @@
     if (!name.startsWith("/")) {
       name="/" + name;
     }
-    if (!RegexSupport.matches(patterns,name)) {
+    if (!matches(patterns,name)) {
       continue;
     }
     name=target + name;

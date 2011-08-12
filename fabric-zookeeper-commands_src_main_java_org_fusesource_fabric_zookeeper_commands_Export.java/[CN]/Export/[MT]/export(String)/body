@@ -5,13 +5,14 @@
   if (!path.startsWith("/")) {
     path="/" + path;
   }
-  List<Pattern> patterns=RegexSupport.getPatterns(regex);
+  List<Pattern> include=getPatterns(regex);
+  List<Pattern> exclude=getPatterns(nregex);
   List<String> paths=getZooKeeper().getAllChildren(path);
   SortedSet<File> directories=new TreeSet<File>();
   Map<File,String> settings=new HashMap<File,String>();
   for (  String p : paths) {
     p=path + p;
-    if (!RegexSupport.matches(patterns,p)) {
+    if (!matches(include,p) || matches(exclude,p)) {
       continue;
     }
     byte[] data=getZooKeeper().getData(p);
