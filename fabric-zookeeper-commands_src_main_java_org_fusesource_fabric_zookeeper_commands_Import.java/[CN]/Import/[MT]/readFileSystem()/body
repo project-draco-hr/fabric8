@@ -17,7 +17,12 @@
     String data=settings.get(key);
     key=target + key;
     paths.add(key);
-    getZooKeeper().createOrSetWithParents(key,data,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    if (!dryRun) {
+      getZooKeeper().createOrSetWithParents(key,data,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    }
+ else {
+      System.out.printf("Creating path \"%s\" with value \"%s\"\n",key,data);
+    }
   }
   if (delete) {
     deletePathsNotIn(paths);
