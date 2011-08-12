@@ -1,7 +1,15 @@
 {
   FabURLHandler handler=findURLHandler();
   if (handler != null) {
-    FabConnection urlConnection=handler.openConnection(new URL("fab:" + url));
+    File file=new File(url);
+    String u=url;
+    if (file.exists()) {
+      u=file.toURI().toURL().toString();
+    }
+    if (!url.startsWith("fab:")) {
+      u="fab:" + u;
+    }
+    FabConnection urlConnection=handler.openConnection(new URL(u));
     FabClassPathResolver resolver=urlConnection.resolve();
     TreeHelper.write(session.getConsole(),resolver);
   }
