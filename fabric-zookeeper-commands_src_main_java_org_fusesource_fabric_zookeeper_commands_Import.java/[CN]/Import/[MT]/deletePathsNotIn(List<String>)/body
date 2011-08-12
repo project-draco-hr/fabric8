@@ -3,7 +3,12 @@
   for (  String path : zkPaths) {
     path="/" + path;
     if (!paths.contains(path)) {
-      getZooKeeper().deleteWithChildren(path);
+      if (!dryRun) {
+        getZooKeeper().deleteWithChildren(path);
+      }
+ else {
+        System.out.printf("Deleting path %s and everything under it\n",path);
+      }
     }
   }
 }

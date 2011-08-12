@@ -18,7 +18,12 @@
     }
     name=target + name;
     paths.add(name);
-    getZooKeeper().createOrSetWithParents(name,value,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    if (!dryRun) {
+      getZooKeeper().createOrSetWithParents(name,value,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    }
+ else {
+      System.out.printf("Creating path \"%s\" with value \"%s\"\n",name,value);
+    }
   }
   if (delete) {
     deletePathsNotIn(paths);

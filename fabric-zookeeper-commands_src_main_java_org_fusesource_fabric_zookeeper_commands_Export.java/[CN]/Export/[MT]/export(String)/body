@@ -23,15 +23,25 @@
     }
   }
   if (delete) {
-    delete(new File(target));
+    if (!dryRun) {
+      delete(new File(target));
+    }
+ else {
+      System.out.printf("Deleting %s and everything under it\n",new File(target));
+    }
   }
   for (  File d : directories) {
     if (d.exists() && !d.isDirectory()) {
       throw new IllegalArgumentException("Directory " + d + " exists but is not a directory");
     }
     if (!d.exists()) {
-      if (!d.mkdirs()) {
-        throw new RuntimeException("Failed to create directory " + d);
+      if (!dryRun) {
+        if (!d.mkdirs()) {
+          throw new RuntimeException("Failed to create directory " + d);
+        }
+      }
+ else {
+        System.out.printf("Creating directory path : %s\n",d);
       }
     }
   }
@@ -40,22 +50,37 @@
       throw new IllegalArgumentException("File " + f + " exists but is not a file");
     }
     if (!f.getParentFile().exists()) {
-      if (!f.getParentFile().mkdirs()) {
-        throw new RuntimeException("Failed to create directory " + f.getParentFile());
+      if (!dryRun) {
+        if (!f.getParentFile().mkdirs()) {
+          throw new RuntimeException("Failed to create directory " + f.getParentFile());
+        }
+      }
+ else {
+        System.out.printf("Creating directory path : %s\n",f);
       }
     }
     if (!f.exists()) {
       try {
-        if (!f.createNewFile()) {
-          throw new RuntimeException("Failed to create file " + f);
+        if (!dryRun) {
+          if (!f.createNewFile()) {
+            throw new RuntimeException("Failed to create file " + f);
+          }
+        }
+ else {
+          System.out.printf("Creating file : %s\n",f);
         }
       }
  catch (      IOException io) {
         throw new RuntimeException("Failed to create file " + f + " : "+ io);
       }
     }
-    FileWriter writer=new FileWriter(f,false);
-    writer.write(settings.get(f));
-    writer.close();
+    if (!dryRun) {
+      FileWriter writer=new FileWriter(f,false);
+      writer.write(settings.get(f));
+      writer.close();
+    }
+ else {
+      System.out.printf("Writing value \"%s\" to file : %s\n",settings.get(f),f);
+    }
   }
 }
