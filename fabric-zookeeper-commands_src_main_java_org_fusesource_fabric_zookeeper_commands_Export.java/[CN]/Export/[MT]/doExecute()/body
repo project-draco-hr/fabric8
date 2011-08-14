@@ -1,4 +1,10 @@
 {
+  if (ignore.exists() && ignore.isFile()) {
+    nregex=merge(ignore,nregex);
+  }
+  if (include.exists() && include.isFile()) {
+    regex=merge(include,regex);
+  }
   export(topLevel);
   System.out.printf("Export to %s completed successfully\n",target);
   return null;

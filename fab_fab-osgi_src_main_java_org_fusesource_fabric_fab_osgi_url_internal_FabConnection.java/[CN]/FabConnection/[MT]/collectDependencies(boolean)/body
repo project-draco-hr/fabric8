@@ -1,5 +1,19 @@
 {
   PomDetails details=resolvePomDetails();
   Objects.notNull(details,"pomDetails");
-  return getResolver().collectDependencies(details,offline);
+  try {
+    return getResolver().collectDependencies(details,offline);
+  }
+ catch (  IOException e) {
+    logFailure(e);
+    throw e;
+  }
+catch (  XmlPullParserException e) {
+    logFailure(e);
+    throw e;
+  }
+catch (  RepositoryException e) {
+    logFailure(e);
+    throw e;
+  }
 }

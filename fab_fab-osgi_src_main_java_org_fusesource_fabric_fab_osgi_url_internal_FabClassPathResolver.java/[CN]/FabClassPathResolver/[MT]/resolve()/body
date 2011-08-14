@@ -21,6 +21,11 @@
     name=rootTree.getBundleSymbolicName();
     instructions.setProperty(ServiceConstants.INSTR_BUNDLE_SYMBOLIC_NAME,name);
   }
+  String bundleVersion=getManfiestProperty(Analyzer.BUNDLE_VERSION);
+  if (bundleVersion.length() <= 0) {
+    bundleVersion=VersionCleaner.clean(rootTree.getVersion());
+    instructions.setProperty(Analyzer.BUNDLE_VERSION,bundleVersion);
+  }
   LOG.debug("Resolving Dependencies for: " + rootTree.getDependencyId());
   addDependencies(rootTree);
   ModuleRegistry.VersionedModule module=moduleRegistry.getVersionedModule(moduleId);

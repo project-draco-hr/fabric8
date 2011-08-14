@@ -12,9 +12,17 @@
   DependencyNode pomNode=tmpNode;
   for (  Dependency dependency : dependencies) {
     CollectRequest request=new CollectRequest(dependency,repos);
-    DependencyNode node=repositorySystem.collectDependencies(session,request).getRoot();
-    repositorySystem.resolveDependencies(session,node,new ScopeDependencyFilter("test"));
-    pomNode.getChildren().add(node);
+    try {
+      DependencyNode node=repositorySystem.collectDependencies(session,request).getRoot();
+      repositorySystem.resolveDependencies(session,node,new ScopeDependencyFilter("test"));
+      pomNode.getChildren().add(node);
+    }
+ catch (    DependencyCollectionException e) {
+      throw new FailedToResolveDependency(dependency,e);
+    }
+catch (    ArtifactResolutionException e) {
+      throw new FailedToResolveDependency(dependency,e);
+    }
   }
   DependencyGraphTransformationContext tranformContext=new DependencyGraphTransformationContext(){
     Map map=new HashMap();
