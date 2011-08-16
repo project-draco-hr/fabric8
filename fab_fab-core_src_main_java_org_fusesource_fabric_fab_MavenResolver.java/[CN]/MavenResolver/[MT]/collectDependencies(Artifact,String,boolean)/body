@@ -3,6 +3,7 @@
   final MavenRepositorySystemSession session=createRepositorSystemSession(offline,repositorySystem);
   List<RemoteRepository> repos=getRemoteRepositories();
   ArtifactDescriptorResult artifactDescriptorResult=repositorySystem.readArtifactDescriptor(session,new ArtifactDescriptorRequest(root,repos,null));
+  repos.addAll(artifactDescriptorResult.getRepositories());
   Dependency rootDependency=new Dependency(root,null);
   List<Dependency> dependencies=artifactDescriptorResult.getDependencies();
   DefaultDependencyNode tmpNode=new DefaultDependencyNode(rootDependency);
@@ -12,16 +13,17 @@
   DependencyNode pomNode=tmpNode;
   for (  Dependency dependency : dependencies) {
     CollectRequest request=new CollectRequest(dependency,repos);
+    request.setRequestContext("runtime");
     try {
       DependencyNode node=repositorySystem.collectDependencies(session,request).getRoot();
       repositorySystem.resolveDependencies(session,node,new ScopeDependencyFilter("test"));
       pomNode.getChildren().add(node);
     }
  catch (    DependencyCollectionException e) {
-      throw new FailedToResolveDependency(dependency,e);
+      handleDependencyResolveFailure(pomNode,dependency,e);
     }
 catch (    ArtifactResolutionException e) {
-      throw new FailedToResolveDependency(dependency,e);
+      handleDependencyResolveFailure(pomNode,dependency,e);
     }
   }
   DependencyGraphTransformationContext tranformContext=new DependencyGraphTransformationContext(){

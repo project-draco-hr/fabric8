@@ -16,8 +16,9 @@
       return;
     }
     group.candidates.put(node,pos);
-    if (!node.getVersionConstraint().getRanges().isEmpty()) {
-      group.constraints.add(node.getVersionConstraint());
+    VersionConstraint versionConstraint=node.getVersionConstraint();
+    if (versionConstraint != null && versionConstraint.getRanges() != null && !versionConstraint.getRanges().isEmpty()) {
+      group.constraints.add(versionConstraint);
     }
     if (group.version == null || isNearer(pos,node.getVersion(),group.position,group.version)) {
       group.version=node.getVersion();

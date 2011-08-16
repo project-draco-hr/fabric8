@@ -1,0 +1,14 @@
+{
+  FabClassPathResolver resolver=createResolver(fab);
+  if (resolver != null) {
+    Manifest manifest=resolver.getManifest();
+    if (manifest != null) {
+      Attributes attributes=manifest.getMainAttributes();
+      println(generateFormattedOutput(attributes));
+    }
+ else {
+      println("ERROR: could not resolve FabURLHandler service in OSGi");
+    }
+  }
+  return null;
+}

@@ -1,0 +1,38 @@
+{
+  FabClassPathResolver resolver=null;
+  if (arg.matches("\\d+")) {
+    Long id=null;
+    try {
+      id=Long.parseLong(arg);
+    }
+ catch (    NumberFormatException e) {
+      System.err.println("Failed to parse bundle ID: " + arg + ". Reason: "+ e);
+    }
+    Bundle bundle=bundleContext.getBundle(id);
+    if (bundle != null) {
+      resolver=createFabResolver(bundle);
+    }
+ else {
+      System.err.println("Bundle ID " + id + " is invalid");
+    }
+  }
+ else {
+    FabURLHandler handler=findURLHandler();
+    if (handler != null) {
+      File file=new File(arg);
+      String u=arg;
+      if (file.exists()) {
+        u=file.toURI().toURL().toString();
+      }
+      if (!arg.startsWith("fab:")) {
+        u="fab:" + u;
+      }
+      FabConnection urlConnection=handler.openConnection(new URL(u));
+      resolver=urlConnection.resolve();
+    }
+ else {
+      println("ERROR: could not resolve FabURLHandler service in OSGi");
+    }
+  }
+  return resolver;
+}
