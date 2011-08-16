@@ -1,0 +1,28 @@
+{
+  List<Pattern> includes=getPatterns(regex);
+  List<Pattern> excludes=getPatterns(nregex);
+  InputStream in=new BufferedInputStream(new URL(source).openStream());
+  List<String> paths=new ArrayList<String>();
+  Properties props=new Properties();
+  props.load(in);
+  for (Enumeration names=props.propertyNames(); names.hasMoreElements(); ) {
+    String name=(String)names.nextElement();
+    String value=props.getProperty(name);
+    if (value != null && value.isEmpty()) {
+      value=null;
+    }
+    if (!name.startsWith("/")) {
+      name="/" + name;
+    }
+    name=target + name;
+    if (!matches(includes,name) || matches(excludes,name)) {
+      continue;
+    }
+    if (!dryRun) {
+      getZooKeeper().createOrSetWithParents(name,value,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    }
+ else {
+      System.out.printf("Creating path \"%s\" with value \"%s\"\n",name,value);
+    }
+  }
+}

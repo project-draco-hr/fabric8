@@ -1,0 +1,10 @@
+{
+  ServiceReference[] references=bundleContext.getServiceReferences("org.osgi.service.url.URLStreamHandlerService",null);
+  for (  ServiceReference reference : references) {
+    Object service=bundleContext.getService(reference);
+    if (service instanceof FabURLHandler) {
+      return (FabURLHandler)service;
+    }
+  }
+  return null;
+}

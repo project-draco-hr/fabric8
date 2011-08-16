@@ -1,19 +1,22 @@
 {
-  InputStream in=new BufferedInputStream(new URL(url).openStream());
-  try {
-    Properties props=new Properties();
-    props.load(in);
-    for (Enumeration names=props.propertyNames(); names.hasMoreElements(); ) {
-      String name=(String)names.nextElement();
-      String value=props.getProperty(name);
-      if (value != null && value.isEmpty()) {
-        value=null;
-      }
-      getZooKeeper().createOrSetWithParents(name,value,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    }
+  if (ignore.exists() && ignore.isFile()) {
+    nregex=merge(ignore,nregex);
   }
-  finally {
-    in.close();
+  if (include.exists() && include.isFile()) {
+    regex=merge(include,regex);
   }
+  if (properties == true) {
+    filesystem=false;
+  }
+  if (filesystem == true) {
+    properties=false;
+  }
+  if (properties) {
+    readPropertiesFile();
+  }
+  if (filesystem) {
+    readFileSystem();
+  }
+  System.out.println("Successfully imported settings from " + source);
   return null;
 }

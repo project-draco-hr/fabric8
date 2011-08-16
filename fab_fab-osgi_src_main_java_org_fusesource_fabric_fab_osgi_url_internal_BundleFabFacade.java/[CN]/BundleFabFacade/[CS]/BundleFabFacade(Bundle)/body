@@ -1,0 +1,13 @@
+{
+  this.bundle=bundle;
+  PropertiesPropertyResolver propertyResolver=new PropertiesPropertyResolver(System.getProperties());
+  this.configuration=new Configuration(propertyResolver);
+  Object fabId=bundle.getHeaders().get(ServiceConstants.INSTR_FAB_MODULE_ID);
+  if (fabId instanceof String) {
+    String fabIdString=(String)fabId;
+    dependencyId=VersionedDependencyId.fromString(fabIdString);
+  }
+  if (dependencyId == null) {
+    throw new IllegalArgumentException("Bundle is not a FAB as there is no manifest header: " + ServiceConstants.INSTR_FAB_MODULE_ID);
+  }
+}

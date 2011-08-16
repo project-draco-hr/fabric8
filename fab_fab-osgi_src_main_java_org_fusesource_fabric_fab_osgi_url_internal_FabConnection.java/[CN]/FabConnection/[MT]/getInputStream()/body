@@ -10,7 +10,7 @@
     }
     String extraImportPackages=classPathResolver.getExtraImportPackages();
     HashSet<String> actualImports=new HashSet<String>();
-    InputStream rc=BndUtils.createBundle(URLUtils.prepareInputStream(new URL(fabUri),configuration.getCertificateCheck()),instructions,fabUri,OverwriteMode.MERGE,embeddedResources,extraImportPackages,actualImports);
+    InputStream rc=BndUtils.createBundle(URLUtils.prepareInputStream(new URL(fabUri),configuration.getCertificateCheck()),instructions,fabUri,OverwriteMode.MERGE,embeddedResources,extraImportPackages,actualImports,this);
     if (getConfiguration().isInstallMissingDependencies()) {
       installMissingDependencies(actualImports);
     }

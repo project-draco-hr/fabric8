@@ -1,36 +1,38 @@
 {
-  PomDetails pomDetails=connection.resolvePomDetails();
-  if (!pomDetails.isValid()) {
-    LOG.warn("Cannot resolve pom.xml for " + connection.getJarFile());
+  moduleId=connection.getVersionedDependencyId();
+  if (moduleId == null) {
     return;
   }
-  DependencyTreeResult result=resolver.collectDependencies(pomDetails,offline);
+  DependencyTreeResult result=connection.collectDependencies(offline);
   this.rootTree=result.getTree();
-  sharedFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManfiestProperty(ServiceConstants.INSTR_FAB_PROVIDED_DEPENDENCY)),"\\s+"));
-  requireBundleFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManfiestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_REQUIRE_BUNDLE)),"\\s+"));
-  excludeFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManfiestProperty(ServiceConstants.INSTR_FAB_EXCLUDE_DEPENDENCY)),"\\s+"));
-  optionalDependencyPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManfiestProperty(ServiceConstants.INSTR_FAB_OPTIONAL_DEPENDENCY)),"\\s+"));
+  sharedFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_FAB_PROVIDED_DEPENDENCY)),"\\s+"));
+  requireBundleFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_REQUIRE_BUNDLE)),"\\s+"));
+  excludeFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_FAB_EXCLUDE_DEPENDENCY)),"\\s+"));
+  optionalDependencyPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_FAB_OPTIONAL_DEPENDENCY)),"\\s+"));
   sharedFilter=DependencyTreeFilters.parseShareFilter(join(sharedFilterPatterns," "));
   requireBundleFilter=DependencyTreeFilters.parseRequireBundleFilter(join(requireBundleFilterPatterns," "));
   excludePackageFilter=DependencyTreeFilters.parseExcludeFilter(join(excludeFilterPatterns," "));
   excludeOptionalFilter=DependencyTreeFilters.parseExcludeOptionalFilter(join(optionalDependencyPatterns," "));
-  bundleClassPath.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH),","));
-  requireBundles.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE),","));
-  importPackages.addAll(Strings.splitAsList(getManfiestProperty(ServiceConstants.INSTR_IMPORT_PACKAGE),","));
-  String name=getManfiestProperty(ServiceConstants.INSTR_BUNDLE_SYMBOLIC_NAME);
+  bundleClassPath.addAll(Strings.splitAsList(getManifestProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH),","));
+  requireBundles.addAll(Strings.splitAsList(getManifestProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE),","));
+  importPackages.addAll(Strings.splitAsList(getManifestProperty(ServiceConstants.INSTR_IMPORT_PACKAGE),","));
+  String name=getManifestProperty(ServiceConstants.INSTR_BUNDLE_SYMBOLIC_NAME);
   if (name.length() <= 0) {
     name=rootTree.getBundleSymbolicName();
     instructions.setProperty(ServiceConstants.INSTR_BUNDLE_SYMBOLIC_NAME,name);
   }
+  String bundleVersion=getManifestProperty(Analyzer.BUNDLE_VERSION);
+  if (bundleVersion.length() <= 0) {
+    bundleVersion=VersionCleaner.clean(rootTree.getVersion());
+    instructions.setProperty(Analyzer.BUNDLE_VERSION,bundleVersion);
+  }
   LOG.debug("Resolving Dependencies for: " + rootTree.getDependencyId());
   addDependencies(rootTree);
-  Model model=pomDetails.getModel();
-  moduleId=new VersionedDependencyId(model);
   ModuleRegistry.VersionedModule module=moduleRegistry.getVersionedModule(moduleId);
   if (module == null || module.getFile() != null) {
-    registerModule(model);
+    registerModule();
   }
-  resolveExtensions(model,rootTree);
+  resolveExtensions(rootTree);
   for (  DependencyTree dependencyTree : sharedDependencies) {
     if (requireBundleFilter.matches(dependencyTree)) {
       String bundleId=dependencyTree.getBundleSymbolicName();
