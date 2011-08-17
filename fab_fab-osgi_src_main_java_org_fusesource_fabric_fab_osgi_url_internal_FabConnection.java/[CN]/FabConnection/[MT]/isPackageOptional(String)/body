@@ -1,7 +1,7 @@
 {
   DependencyTree dependency=resolvePackageDependency(packageName);
   if (dependency != null) {
-    return dependency.isOptional() && classPathResolver.getExcludeOptionalFilter().matches(dependency);
+    return dependency.isThisOrDescendantOptional() && classPathResolver.getExcludeOptionalFilter().matches(dependency);
   }
   return true;
 }
