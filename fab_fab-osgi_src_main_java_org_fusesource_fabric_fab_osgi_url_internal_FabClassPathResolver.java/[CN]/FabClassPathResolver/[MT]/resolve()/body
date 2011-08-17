@@ -3,8 +3,7 @@
   if (moduleId == null) {
     return;
   }
-  DependencyTreeResult result=connection.collectDependencies(offline);
-  this.rootTree=result.getTree();
+  this.rootTree=connection.collectDependencyTree(offline);
   sharedFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_FAB_PROVIDED_DEPENDENCY)),"\\s+"));
   requireBundleFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_REQUIRE_BUNDLE)),"\\s+"));
   excludeFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_FAB_EXCLUDE_DEPENDENCY)),"\\s+"));
@@ -25,6 +24,12 @@
   if (bundleVersion.length() <= 0) {
     bundleVersion=VersionCleaner.clean(rootTree.getVersion());
     instructions.setProperty(Analyzer.BUNDLE_VERSION,bundleVersion);
+  }
+  for (  String propertyName : ServiceConstants.FAB_PROPERTY_NAMES) {
+    String value=getManifestProperty(propertyName);
+    if (value != null) {
+      instructions.setProperty(propertyName,value);
+    }
   }
   LOG.debug("Resolving Dependencies for: " + rootTree.getDependencyId());
   addDependencies(rootTree);
