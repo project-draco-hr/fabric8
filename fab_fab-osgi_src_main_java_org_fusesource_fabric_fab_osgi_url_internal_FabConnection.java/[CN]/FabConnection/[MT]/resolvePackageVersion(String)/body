@@ -1,0 +1,24 @@
+{
+  DependencyTree dependency=resolvePackageDependency(packageName);
+  if (dependency != null) {
+    if (dependency.isBundle()) {
+      String exportPackages=dependency.getManfiestEntry("Export-Package");
+      if (notEmpty(exportPackages)) {
+        Map<String,Map<String,String>> values=new Analyzer().parseHeader(exportPackages);
+        Map<String,String> map=values.get(packageName);
+        if (map != null) {
+          String version=map.get("version");
+          if (version != null) {
+            return toVersionRange(version);
+          }
+        }
+      }
+    }
+    String version=dependency.getVersion();
+    if (version != null) {
+      String osgiVersion=VersionCleaner.clean(version);
+      return toVersionRange(osgiVersion);
+    }
+  }
+  return null;
+}
