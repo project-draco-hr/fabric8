@@ -37,19 +37,6 @@
     Attributes main=jar.getManifest().getMainAttributes();
     String importPackages=emptyIfNull(main.getValue(Analyzer.IMPORT_PACKAGE));
     Map<String,Map<String,String>> values=new Analyzer().parseHeader(importPackages);
-    if (notEmpty(extraImportPackages)) {
-      Map<String,Map<String,String>> extra=new Analyzer().parseHeader(extraImportPackages);
-      for (      Map.Entry<String,Map<String,String>> entry : extra.entrySet()) {
-        Map<String,String> original=values.get(entry.getKey());
-        if (original == null) {
-          original=entry.getValue();
-        }
- else {
-          original.putAll(entry.getValue());
-        }
-        values.put(entry.getKey(),original);
-      }
-    }
     if (versionResolver != null) {
       for (      Map.Entry<String,Map<String,String>> entry : values.entrySet()) {
         String packageName=entry.getKey();
@@ -61,6 +48,16 @@
           }
         }
       }
+    }
+    for (    Map.Entry<String,Map<String,String>> entry : extraImportPackages.entrySet()) {
+      Map<String,String> original=values.get(entry.getKey());
+      if (original == null) {
+        original=entry.getValue();
+      }
+ else {
+        original.putAll(entry.getValue());
+      }
+      values.put(entry.getKey(),original);
     }
     String excludedPackagesText=main.getValue(ServiceConstants.INSTR_FAB_EXCLUDE_IMPORTS_PACKAGE);
     if (notEmpty(excludedPackagesText)) {

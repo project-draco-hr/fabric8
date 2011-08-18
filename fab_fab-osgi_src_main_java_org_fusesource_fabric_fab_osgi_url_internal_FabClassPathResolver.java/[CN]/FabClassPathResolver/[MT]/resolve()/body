@@ -8,13 +8,15 @@
   requireBundleFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_REQUIRE_BUNDLE)),"\\s+"));
   excludeFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_FAB_EXCLUDE_DEPENDENCY)),"\\s+"));
   optionalDependencyPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_FAB_OPTIONAL_DEPENDENCY)),"\\s+"));
+  importExportFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_FAB_IMPORT_DEPENDENCY_EXPORTS)),"\\s+"));
   sharedFilter=DependencyTreeFilters.parseShareFilter(join(sharedFilterPatterns," "));
   requireBundleFilter=DependencyTreeFilters.parseRequireBundleFilter(join(requireBundleFilterPatterns," "));
   excludePackageFilter=DependencyTreeFilters.parseExcludeFilter(join(excludeFilterPatterns," "));
-  excludeOptionalFilter=DependencyTreeFilters.parseExcludeOptionalFilter(join(optionalDependencyPatterns," "));
+  optionalDependencyFilter=DependencyTreeFilters.parseExcludeOptionalFilter(join(optionalDependencyPatterns," "));
+  importExportFilter=DependencyTreeFilters.parse(join(importExportFilterPatterns," "));
   bundleClassPath.addAll(Strings.splitAsList(getManifestProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH),","));
   requireBundles.addAll(Strings.splitAsList(getManifestProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE),","));
-  importPackages.addAll(Strings.splitAsList(getManifestProperty(ServiceConstants.INSTR_IMPORT_PACKAGE),","));
+  importPackages.putAll(new Analyzer().parseHeader(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_IMPORT_PACKAGE))));
   String name=getManifestProperty(ServiceConstants.INSTR_BUNDLE_SYMBOLIC_NAME);
   if (name.length() <= 0) {
     name=rootTree.getBundleSymbolicName();
@@ -86,7 +88,7 @@
   }
   LOG.debug("resolved: bundleClassPath: " + Strings.join(bundleClassPath,"\t\n"));
   LOG.debug("resolved: requireBundles: " + Strings.join(requireBundles,"\t\n"));
-  LOG.debug("resolved: importPackages: " + Strings.join(importPackages,"\t\n"));
+  LOG.debug("resolved: importPackages: " + Strings.join(importPackages.keySet(),"\t\n"));
   instructions.setProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH,Strings.join(bundleClassPath,","));
   instructions.setProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE,Strings.join(requireBundles,","));
   instructions.setProperty(ServiceConstants.INSTR_FAB_MODULE_ID,moduleId.toString());
