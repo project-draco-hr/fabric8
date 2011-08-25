@@ -1,4 +1,5 @@
 {
+  boolean answer=false;
   if (tree.isValidLibrary()) {
     File file=tree.getJarFile();
     if (file.exists()) {
@@ -35,9 +36,10 @@
           embeddedResources.put(path,sharedResourceFile);
           addBundleClassPath(path);
           LOG.info("Adding shared resources jar: " + path);
-          importAllExportedPackages(tree);
+          answer=true;
         }
       }
     }
   }
+  return answer;
 }
