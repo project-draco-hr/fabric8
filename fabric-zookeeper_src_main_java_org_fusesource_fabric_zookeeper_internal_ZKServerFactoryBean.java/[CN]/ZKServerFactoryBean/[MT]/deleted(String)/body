@@ -2,12 +2,20 @@
   Object obj=servers.remove(pid);
   ServiceRegistration reg=services.remove(pid);
   if (reg != null) {
-    reg.unregister();
+    try {
+      reg.unregister();
+    }
+ catch (    Throwable t) {
+    }
   }
-  if (obj instanceof QuorumPeer) {
-    ((QuorumPeer)obj).shutdown();
+  try {
+    if (obj instanceof QuorumPeer) {
+      ((QuorumPeer)obj).shutdown();
+    }
+ else     if (obj instanceof NIOServerCnxn.Factory) {
+      ((NIOServerCnxn.Factory)obj).shutdown();
+    }
   }
- else   if (obj instanceof NIOServerCnxn.Factory) {
-    ((NIOServerCnxn.Factory)obj).shutdown();
+ catch (  Throwable t) {
   }
 }
