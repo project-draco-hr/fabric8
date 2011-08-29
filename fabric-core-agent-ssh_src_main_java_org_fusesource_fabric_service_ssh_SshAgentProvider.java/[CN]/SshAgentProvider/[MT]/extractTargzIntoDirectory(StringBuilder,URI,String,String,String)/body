@@ -1,6 +1,6 @@
 {
   String file=artifactId + "-" + version+ ".tar.gz";
   String path=groupId.replaceAll("\\.","/") + "/" + artifactId+ "/"+ version+ "/"+ file;
-  sb.append("run curl --show-error --get --retry 20 --output ").append(file).append(" ").append(proxy.resolve(path)).append("\n");
+  sb.append("run curl --show-error --silent --get --retry 20 --output ").append(file).append(" ").append(proxy.resolve(path)).append("\n");
   sb.append("run tar -xpzf ").append(file).append("\n");
 }

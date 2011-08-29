@@ -1,5 +1,8 @@
 {
   if (port >= 0) {
+    if (localRepository.equals("")) {
+      localRepository=System.getProperty("user.home") + File.separator + ".m2"+ File.separator+ "repository";
+    }
     if (system == null) {
       system=newRepositorySystem();
     }
@@ -8,13 +11,12 @@
     }
     repositories=new ArrayList<RemoteRepository>();
     int i=0;
-    String reps[]=remoteRepositories.split(",");
-    for (    String rep : reps) {
+    for (    String rep : remoteRepositories.split(",")) {
       repositories.add(new RemoteRepository("repo-" + i++,"default",rep));
     }
-    String repos="";
+    String repos="local:" + localRepository + " ";
     for (    RemoteRepository repo : repositories) {
-      repos+=repo.getUrl() + " ";
+      repos+=repo + " ";
     }
     repos=repos.trim();
     serverSocket=new ServerSocket(port);
