@@ -8,10 +8,17 @@
     }
     repositories=new ArrayList<RemoteRepository>();
     int i=0;
-    for (    String rep : remoteRepositories.split(",")) {
+    String reps[]=remoteRepositories.split(",");
+    for (    String rep : reps) {
       repositories.add(new RemoteRepository("repo-" + i++,"default",rep));
     }
+    String repos="";
+    for (    RemoteRepository repo : repositories) {
+      repos+=repo.getUrl() + " ";
+    }
+    repos=repos.trim();
     serverSocket=new ServerSocket(port);
     new Acceptor(serverSocket).start();
+    LOGGER.log(Level.INFO,String.format("Maven proxy started at address : %s with configured repositories : %s",getAddress(),repos));
   }
 }
