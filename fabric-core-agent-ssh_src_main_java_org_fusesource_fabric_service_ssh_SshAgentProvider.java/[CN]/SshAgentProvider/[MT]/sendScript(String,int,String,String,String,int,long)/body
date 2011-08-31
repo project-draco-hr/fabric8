@@ -48,7 +48,11 @@
         break;
       }
     }
-    if (errorStatus == -1) {
+    if (debug) {
+      System.out.println("Output : " + output.toString());
+      System.out.println("Error : " + error.toString());
+    }
+    if (errorStatus != 0) {
       throw new Exception(String.format("%s@%s:%d: received exit status %d executing \n--- command ---\n%s\n--- output ---\n%s\n--- error ---\n%s\n------\n",username,host,port,executor.getExitStatus(),script,output.toString(),error.toString()));
     }
   }

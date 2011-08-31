@@ -1,5 +1,8 @@
 {
   if (port >= 0) {
+    if (localRepository.equals("")) {
+      localRepository="file://" + System.getProperty("user.home") + File.separator+ ".m2"+ File.separator+ "repository";
+    }
     if (system == null) {
       system=newRepositorySystem();
     }
@@ -7,11 +10,18 @@
       session=newSession(system,localRepository);
     }
     repositories=new ArrayList<RemoteRepository>();
+    repositories.add(new RemoteRepository("local","default",localRepository));
     int i=0;
     for (    String rep : remoteRepositories.split(",")) {
       repositories.add(new RemoteRepository("repo-" + i++,"default",rep));
     }
+    String repos="local:" + localRepository + " ";
+    for (    RemoteRepository repo : repositories) {
+      repos+=repo + " ";
+    }
+    repos=repos.trim();
     serverSocket=new ServerSocket(port);
     new Acceptor(serverSocket).start();
+    LOGGER.log(Level.INFO,String.format("Maven proxy started at address : %s with configured repositories : %s",getAddress(),repos));
   }
 }

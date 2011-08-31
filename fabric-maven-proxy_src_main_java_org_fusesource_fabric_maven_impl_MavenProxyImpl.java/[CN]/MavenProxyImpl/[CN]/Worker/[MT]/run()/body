@@ -6,6 +6,7 @@
     output=new BufferedOutputStream(socket.getOutputStream());
     String headLine=reader.readLine();
     if (headLine == null || !headLine.startsWith("GET ") || !headLine.endsWith(" HTTP/1.0") && !headLine.endsWith(" HTTP/1.1")) {
+      LOGGER.log(Level.WARNING,String.format("Received invalid method : %s",headLine));
       output.write("HTTP/1.0 405 Invalid method.\r\n\r\n".getBytes());
       return;
     }
@@ -14,6 +15,7 @@
       path=path.substring(1);
     }
     String mvn=convertToMavenUrl(path);
+    LOGGER.log(Level.INFO,String.format("Received request for file : %s",mvn));
     try {
       Artifact artifact=new DefaultArtifact(mvn,null);
       ArtifactRequest request=new ArtifactRequest(artifact,repositories,null);
@@ -21,9 +23,11 @@
       inputStream=new FileInputStream(result.getArtifact().getFile());
     }
  catch (    Exception e) {
+      LOGGER.log(Level.WARNING,String.format("Could not find file : %s due to %s",mvn,e));
       output.write("HTTP/1.0 404 File not found.\r\n\r\n".getBytes());
       return;
     }
+    LOGGER.log(Level.INFO,String.format("Writing response for file : %s",mvn));
     output.write(("HTTP/1.1 200 OK\r\n" + "Date: " + (new Date()).toString() + "\r\n"+ "Server: FON Proxy/"+ "1.0-SNAPSHOT"+ "\r\n"+ "Connection: close\r\n"+ "Content-Type: application/octet-stream\r\n"+ "Content-Length: "+ inputStream.available()+ "\r\n"+ "\r\n").getBytes());
     byte buffer[]=new byte[4096];
     int length;
