@@ -1,4 +1,5 @@
 {
+  debug("Shutting down ZK server %s",pid);
   Object obj=servers.remove(pid);
   ServiceRegistration reg=services.remove(pid);
   if (reg != null) {
@@ -6,6 +7,7 @@
       reg.unregister();
     }
  catch (    Throwable t) {
+      debug("Caught and am ignoring exception %s while unregistering %s",t,pid);
     }
   }
   try {
@@ -17,5 +19,6 @@
     }
   }
  catch (  Throwable t) {
+    debug("Caught and am ignoring exception %s while shutting down ZK server %s",t,obj);
   }
 }
