@@ -1,0 +1,21 @@
+{
+  List<DependencyNode> childrenNodes=node.getChildren();
+  List<DependencyTree> children=new ArrayList<DependencyTree>();
+  for (  DependencyNode childNode : childrenNodes) {
+    DependencyTree child=newInstance(childNode,resolver,excludeDependencyFilter);
+    if (!excludeDependencyFilter.matches(child)) {
+      children.add(child);
+    }
+  }
+  Artifact artifact=node.getDependency().getArtifact();
+  DependencyTree dependencyTree=new DependencyTree(DependencyId.newInstance(artifact),node.getDependency(),children);
+  File file=artifact.getFile();
+  if (file == null) {
+    file=resolver.resolveFile(artifact);
+  }
+  if (file != null) {
+    String url=file.toURI().toURL().toExternalForm();
+    dependencyTree.setUrl(url);
+  }
+  return dependencyTree;
+}
