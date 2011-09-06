@@ -2,7 +2,7 @@
   Version v=new Version(VersionCleaner.clean(version));
   Bundle[] bundles=bundleContext.getBundles();
   for (  Bundle bundle : bundles) {
-    if (bundle.getSymbolicName().equals(name) && bundle.getVersion().equals(v)) {
+    if (Objects.equal(bundle.getSymbolicName(),name) && Objects.equal(bundle.getVersion(),v)) {
       return bundle;
     }
   }
