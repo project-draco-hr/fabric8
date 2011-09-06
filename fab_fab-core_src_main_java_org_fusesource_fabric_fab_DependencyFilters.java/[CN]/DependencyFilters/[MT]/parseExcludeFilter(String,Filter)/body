@@ -1,7 +1,7 @@
 {
-  Filter<DependencyTree> filter=parse(dependencyFilterText);
+  Filter<Dependency> filter=parse(dependencyFilterText);
   if (isEmpty(filter)) {
-    return testScopeFilter;
+    return excludeOptionalDependenciesFilter;
   }
-  return Filters.or(testScopeFilter,excludeOptionalDependenciesFilter,filter);
+  return Filters.or(excludeOptionalDependenciesFilter,filter);
 }

@@ -1,9 +1,9 @@
 {
-  final Filter<DependencyTree> filter=parse(includeOptionalDependencyFilterText);
+  final Filter<Dependency> filter=parse(includeOptionalDependencyFilterText);
   final boolean excludeAll=isEmpty(filter);
-  return new Filter<DependencyTree>(){
-    @Override public boolean matches(    DependencyTree tree){
-      if (tree.isThisOrDescendantOptional()) {
+  return new Filter<Dependency>(){
+    @Override public boolean matches(    Dependency tree){
+      if (tree.isOptional()) {
         if (excludeAll) {
           return true;
         }
