@@ -12,7 +12,7 @@
   if (importExports) {
     importAllExportedPackages(tree);
   }
-  List<DependencyTree> list=tree.getDescendants();
+  List<DependencyTree> list=tree.getChildren();
   for (  DependencyTree child : list) {
     if (excludeDependencyFilter.matches(child)) {
       LOG.debug("Excluded transitive dependency: " + child.getDependencyId());
@@ -23,7 +23,7 @@
       continue;
     }
  else {
-      sharedDependencies.add(child);
+      addSharedDependency(child);
     }
     if (importExportFilter.matches(child)) {
       importAllExportedPackages(child);

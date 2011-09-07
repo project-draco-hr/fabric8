@@ -16,7 +16,9 @@
   bundleClassPath.addAll(Strings.splitAsList(getManifestProperty(ServiceConstants.INSTR_BUNDLE_CLASSPATH),","));
   requireBundles.addAll(Strings.splitAsList(getManifestProperty(ServiceConstants.INSTR_REQUIRE_BUNDLE),","));
   importPackages.putAll(new Analyzer().parseHeader(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_IMPORT_PACKAGE))));
-  this.rootTree=connection.collectDependencyTree(offline,excludeDependencyFilter);
+  Filter<Dependency> optionalFilter=DependencyFilters.parseExcludeOptionalFilter(join(optionalDependencyPatterns," "));
+  Filter<Dependency> excludeFilter=DependencyFilters.parseExcludeFilter(join(excludeDependencyFilterPatterns," "),optionalFilter);
+  this.rootTree=connection.collectDependencyTree(offline,excludeFilter);
   String name=getManifestProperty(ServiceConstants.INSTR_BUNDLE_SYMBOLIC_NAME);
   if (name.length() <= 0) {
     name=rootTree.getBundleSymbolicName();
@@ -39,7 +41,7 @@
   if (module == null || module.getFile() != null) {
     registerModule();
   }
-  resolveExtensions(rootTree,excludeDependencyFilter);
+  resolveExtensions(rootTree,excludeFilter);
   for (  DependencyTree dependencyTree : sharedDependencies) {
     if (requireBundleFilter.matches(dependencyTree)) {
       String bundleId=dependencyTree.getBundleSymbolicName();
