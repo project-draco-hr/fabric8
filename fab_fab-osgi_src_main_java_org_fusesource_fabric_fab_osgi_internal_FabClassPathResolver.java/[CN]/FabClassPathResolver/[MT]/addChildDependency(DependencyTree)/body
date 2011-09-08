@@ -1,14 +1,12 @@
 {
   String dependencyId=child.getDependencyId().toString();
-  if (excludeDependencyFilter.matches(child)) {
+  if (isExcludedDependency(child)) {
     LOG.debug("Excluded dependency: " + dependencyId);
-    return;
   }
- else   if (optionalDependencyFilter.matches(child)) {
+ else   if (isIncludedOptionaDependency(child)) {
     addOptionalDependency(child);
-    return;
   }
- else   if (sharedFilter.matches(child) || requireBundleFilter.matches(child)) {
+ else   if (isSharedOrRequired(child)) {
     addSharedDependency(child);
   }
  else {

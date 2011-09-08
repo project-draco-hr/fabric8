@@ -1,6 +1,5 @@
 {
   LOG.debug("Added shared dependency: " + tree.getDependencyId());
-  addPackages(tree);
   sharedDependencies.add(tree);
   boolean importExports=false;
   if (connection.isIncludeSharedResources()) {
@@ -14,11 +13,11 @@
   }
   List<DependencyTree> list=tree.getChildren();
   for (  DependencyTree child : list) {
-    if (excludeDependencyFilter.matches(child)) {
+    if (isExcludedDependency(child)) {
       LOG.debug("Excluded transitive dependency: " + child.getDependencyId());
       continue;
     }
- else     if (optionalDependencyFilter.matches(child)) {
+ else     if (isIncludedOptionaDependency(child)) {
       LOG.debug("Excluded optional transitive dependency: " + child.getDependencyId());
       continue;
     }

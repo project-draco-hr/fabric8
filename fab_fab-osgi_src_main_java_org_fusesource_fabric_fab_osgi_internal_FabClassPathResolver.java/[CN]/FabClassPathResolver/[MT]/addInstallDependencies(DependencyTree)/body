@@ -2,10 +2,10 @@
   if (node.isBundle()) {
     List<DependencyTree> list=node.getChildren();
     for (    DependencyTree child : list) {
-      if (excludeDependencyFilter.matches(child)) {
+      if (isExcludedDependency(child)) {
         continue;
       }
- else       if (child.isThisOrDescendantOptional() && optionalDependencyFilter.matches(child)) {
+ else       if (child.isThisOrDescendantOptional() && isIncludedOptionaDependency(child)) {
         continue;
       }
  else {

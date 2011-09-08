@@ -1,9 +1,21 @@
 {
   try {
     for (    String p : tree.getPackages()) {
-      if (!dependenciesByPackage.containsKey(p)) {
-        dependenciesByPackage.put(p,tree);
+      DependencyTree current=dependenciesByPackage.get(p);
+      if (current != null) {
+        String version1=Versions.getOSGiPackageVersion(current,p);
+        String version2=Versions.getOSGiPackageVersion(tree,p);
+        if (Versions.isVersionOlder(version1,version2)) {
+          current.addHiddenPackage(p);
+          if (current.isAllPackagesHidden()) {
+            LOG.debug("Dependency now hidden: " + current + " due to "+ tree);
+          }
+        }
+ else {
+          continue;
+        }
       }
+      dependenciesByPackage.put(p,tree);
     }
   }
  catch (  IOException e) {
