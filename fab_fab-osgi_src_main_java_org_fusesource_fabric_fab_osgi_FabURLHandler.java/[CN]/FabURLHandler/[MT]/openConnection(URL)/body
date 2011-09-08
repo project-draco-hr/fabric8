@@ -4,8 +4,7 @@
   }
   fabJarURL=new URL(url.getPath());
   logger.debug("FAB jar URL is: [" + fabJarURL + "]");
-  PropertiesPropertyResolver resolver=new PropertiesPropertyResolver(System.getProperties());
-  Configuration config=new Configuration(resolver);
+  Configuration config=Configuration.newInstance();
   if (mavenRepositories != null) {
     String[] array=Configuration.toArray(mavenRepositories);
     logger.debug("Using maven repos: " + Arrays.asList(array));
