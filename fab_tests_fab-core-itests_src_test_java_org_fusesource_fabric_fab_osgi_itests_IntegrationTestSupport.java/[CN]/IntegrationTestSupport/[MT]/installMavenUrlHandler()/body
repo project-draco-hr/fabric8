@@ -1,0 +1,11 @@
+{
+  String separator="|";
+  String value=System.getProperty(JAVA_PROTOCOL_HANDLER_PKGS,"");
+  String newPackage="org.ops4j.pax.url" + separator + "org.fusesource.fabric.fab.osgi.url";
+  if (value.length() > 0) {
+    newPackage+=separator;
+  }
+  value=newPackage + value;
+  System.setProperty(JAVA_PROTOCOL_HANDLER_PKGS,value);
+  LOG.info("System property " + JAVA_PROTOCOL_HANDLER_PKGS + " =  "+ value);
+}
