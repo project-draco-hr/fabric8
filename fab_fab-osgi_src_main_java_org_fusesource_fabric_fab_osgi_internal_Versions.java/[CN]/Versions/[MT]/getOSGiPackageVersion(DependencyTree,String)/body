@@ -1,0 +1,20 @@
+{
+  if (dependency.isBundle()) {
+    String exportPackages=dependency.getManfiestEntry("Export-Package");
+    if (notEmpty(exportPackages)) {
+      Map<String,Map<String,String>> values=new Analyzer().parseHeader(exportPackages);
+      Map<String,String> map=values.get(packageName);
+      if (map != null) {
+        String version=map.get("version");
+        if (version != null) {
+          return version;
+        }
+      }
+    }
+  }
+  String version=dependency.getVersion();
+  if (version != null) {
+    return VersionCleaner.clean(version);
+  }
+  return null;
+}

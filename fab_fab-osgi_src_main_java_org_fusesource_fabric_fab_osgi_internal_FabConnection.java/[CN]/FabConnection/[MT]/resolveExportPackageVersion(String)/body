@@ -1,0 +1,9 @@
+{
+  List<DependencyTree> dependencies=new ArrayList<DependencyTree>(classPathResolver.getSharedDependencies());
+  dependencies.add(classPathResolver.getRootTree());
+  DependencyTree dependency=resolvePackageDependency(packageName,dependencies);
+  if (dependency != null) {
+    return Versions.getOSGiPackageVersion(dependency,packageName);
+  }
+  return null;
+}
