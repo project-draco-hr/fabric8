@@ -1,0 +1,7 @@
+{
+  String path=groupId.replaceAll("\\.","/") + "/" + artifactId+ "/"+ version;
+  String file=path + "/" + artifactId+ "-"+ version+ "."+ type;
+  sb.append("run mkdir -p " + "system/").append(path).append("\n");
+  sb.append("run curl --show-error --silent --get --retry 20 --output system/").append(file).append(" ").append(proxy.resolve(file)).append("\n");
+  return file;
+}
