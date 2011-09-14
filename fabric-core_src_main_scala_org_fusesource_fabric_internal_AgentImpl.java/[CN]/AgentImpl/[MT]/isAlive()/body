@@ -2,7 +2,10 @@
   try {
     return service.getZooKeeper().exists(ZkPath.AGENT_ALIVE.getPath(id)) != null;
   }
- catch (  Exception e) {
+ catch (  KeeperException.NoNodeException e) {
+    return false;
+  }
+catch (  Exception e) {
     throw new FabricException(e);
   }
 }

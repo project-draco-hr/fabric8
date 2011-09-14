@@ -2,7 +2,10 @@
   try {
     return service.getZooKeeper().getStringData(path.getPath(id));
   }
- catch (  Exception e) {
+ catch (  KeeperException.NoNodeException e) {
+    return null;
+  }
+catch (  Exception e) {
     throw new FabricException(e);
   }
 }

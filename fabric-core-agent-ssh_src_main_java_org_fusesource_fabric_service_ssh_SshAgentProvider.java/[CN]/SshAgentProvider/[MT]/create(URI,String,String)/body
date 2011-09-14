@@ -2,6 +2,9 @@
   try {
     String script=buildStartupScript(mavenProxy.getAddress(),name,agentUri.getPath(),zooKeeperUrl);
     String host=agentUri.getHost();
+    if (agentUri.getQuery() != null) {
+      debug=agentUri.getQuery().contains("debug");
+    }
     if (host == null) {
       throw new IllegalArgumentException("host name must be specified in uri '" + agentUri + "'");
     }

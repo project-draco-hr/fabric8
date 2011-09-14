@@ -17,11 +17,21 @@
   if (importUrl) {
     nodeData=loadUrl(new URL(data));
   }
-  if (recursive) {
-    getZooKeeper().createWithParents(path,nodeData,acls,mode);
-  }
+  try {
+    if (recursive) {
+      getZooKeeper().createWithParents(path,nodeData,acls,mode);
+    }
  else {
-    getZooKeeper().create(path,nodeData,acls,mode);
+      getZooKeeper().create(path,nodeData,acls,mode);
+    }
+  }
+ catch (  KeeperException.NodeExistsException e) {
+    if (overwrite) {
+      getZooKeeper().setData(path,nodeData);
+    }
+ else {
+      throw e;
+    }
   }
   return null;
 }

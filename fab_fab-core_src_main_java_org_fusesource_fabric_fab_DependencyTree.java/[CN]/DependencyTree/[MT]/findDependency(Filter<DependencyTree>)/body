@@ -1,0 +1,12 @@
+{
+  if (filter.matches(this)) {
+    return this;
+  }
+  for (  DependencyTree child : children) {
+    DependencyTree dependency=child.findDependency(filter);
+    if (dependency != null) {
+      return dependency;
+    }
+  }
+  return null;
+}
