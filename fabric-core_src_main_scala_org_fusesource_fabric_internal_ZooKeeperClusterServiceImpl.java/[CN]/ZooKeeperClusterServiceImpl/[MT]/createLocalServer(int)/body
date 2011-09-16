@@ -41,6 +41,8 @@
     ZooKeeperUtils.createDefault(client,defaultProfile + "/org.fusesource.fabric.agent/framework","mvn:org.apache.felix/org.apache.felix.framework/3.0.9-fuse-00-10");
     ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_AGENT.getPath(karafName),version);
     ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_VERSIONS_AGENT.getPath(version,karafName),"default zk-server-0000-1");
+    ZooKeeperUtils.createDefault(client,"/fabric/configs/versions/" + version + "/general/users","admin=admin\nsystem=manager");
+    ZooKeeperUtils.createDefault(client,"/fabric/configs/versions/" + version + "/general/groups","admins=admin,system");
     Bundle bundle=bundleContext.installBundle("mvn:org.fusesource.fabric/fabric-configadmin/1.1-SNAPSHOT");
     if (bundle.getState() == Bundle.ACTIVE) {
       bundle.stop();
