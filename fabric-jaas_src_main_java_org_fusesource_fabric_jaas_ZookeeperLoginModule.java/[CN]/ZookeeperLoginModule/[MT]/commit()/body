@@ -1,0 +1,22 @@
+{
+  boolean result=loginSucceeded;
+  if (result) {
+    principals.add(new UserPrincipal(user));
+    for (Enumeration<?> enumeration=groups.keys(); enumeration.hasMoreElements(); ) {
+      String name=(String)enumeration.nextElement();
+      String[] userList=((String)groups.getProperty(name) + "").split(",");
+      for (int i=0; i < userList.length; i++) {
+        if (user.equals(userList[i])) {
+          principals.add(new GroupPrincipal(name));
+          break;
+        }
+      }
+    }
+    subject.getPrincipals().addAll(principals);
+  }
+  clear();
+  if (debug) {
+    LOG.debug("commit, result: " + result);
+  }
+  return result;
+}

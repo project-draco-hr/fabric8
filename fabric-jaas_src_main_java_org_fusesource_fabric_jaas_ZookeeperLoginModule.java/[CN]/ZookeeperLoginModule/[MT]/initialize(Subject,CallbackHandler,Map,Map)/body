@@ -1,0 +1,18 @@
+{
+  this.subject=subject;
+  this.callbackHandler=callbackHandler;
+  loginSucceeded=false;
+  ZKClientFactoryBean factory=new ZKClientFactoryBean();
+  users=new Properties();
+  groups=new Properties();
+  try {
+    IZKClient zookeeper=factory.getObject();
+    Thread.sleep(1000);
+    users=ZooKeeperUtils.getProperties(zookeeper,"fabric/configs/versions/base/general/users");
+    groups=ZooKeeperUtils.getProperties(zookeeper,"fabric/configs/versions/base/general/groups");
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+  LOG.debug("Using  " + users + " "+ groups);
+}
