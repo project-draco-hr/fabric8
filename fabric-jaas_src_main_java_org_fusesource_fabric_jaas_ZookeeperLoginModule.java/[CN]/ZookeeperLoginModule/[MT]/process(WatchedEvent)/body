@@ -1,0 +1,13 @@
+{
+  if (debug) {
+    LOG.debug("Zookeeper auth data changed. Refreshing!");
+  }
+  if (watchedEvent.getType() == Event.EventType.NodeDataChanged || watchedEvent.getType() == Event.EventType.NodeDeleted) {
+    try {
+      fetchData();
+    }
+ catch (    Exception e) {
+      LOG.warn("failed refreshing authentication data",e);
+    }
+  }
+}
