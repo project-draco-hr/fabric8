@@ -1,0 +1,10 @@
+{
+  try {
+    users=ZooKeeperUtils.getProperties(zookeeper,"fabric/authentication/users");
+    groups=ZooKeeperUtils.getProperties(zookeeper,"fabric/authentication/groups");
+    connected.countDown();
+  }
+ catch (  Exception e) {
+    LOG.warn("Failed initializing authentication plugin",e);
+  }
+}
