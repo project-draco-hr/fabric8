@@ -1,0 +1,28 @@
+{
+  try {
+    String script=buildStartupScript(mavenProxy.getAddress(),name,agentUri.getPath(),zooKeeperUrl,debugAgent);
+    String host=agentUri.getHost();
+    if (agentUri.getQuery() != null) {
+      debug=agentUri.getQuery().contains("debug");
+    }
+    if (host == null) {
+      throw new IllegalArgumentException("host name must be specified in uri '" + agentUri + "'");
+    }
+    int port=agentUri.getPort();
+    if (port == -1) {
+      port=22;
+    }
+    String ui=agentUri.getUserInfo();
+    String[] uip=ui != null ? ui.split(":") : null;
+    if (uip == null || uip.length != 2) {
+      throw new IllegalArgumentException("user and password must be supplied in the uri '" + agentUri + "'");
+    }
+    sendScript(host,port,uip[0],uip[1],script,6,1);
+  }
+ catch (  FabricException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

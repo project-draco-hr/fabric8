@@ -1,0 +1,14 @@
+{
+  EventCacheManager eventCacheManager=cacheMap.get(type);
+  if (eventCacheManager == null) {
+    FactoryFinder ff=context.getFactoryFinder("META-INF/services/org/fusesource/fabric/eca/eventcache/");
+    if (ff != null) {
+      eventCacheManager=(EventCacheManager)ff.newInstance(type);
+      cacheMap.put(type,eventCacheManager);
+      if (context.getStatus().isStarted()) {
+        eventCacheManager.start();
+      }
+    }
+  }
+  return eventCacheManager;
+}

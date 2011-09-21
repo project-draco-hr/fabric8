@@ -1,0 +1,10 @@
+{
+  int consumers=getAndRemoveParameter(parameters,"concurrentConsumers",Integer.class,1);
+  boolean limitConcurrentConsumers=getAndRemoveParameter(parameters,"limitConcurrentConsumers",Boolean.class,true);
+  if (limitConcurrentConsumers && consumers > maxConcurrentConsumers) {
+    throw new IllegalArgumentException("The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than " + maxConcurrentConsumers + " was "+ consumers);
+  }
+  StatisticsEndpoint answer=new StatisticsEndpoint(uri,this,createQueue(uri,parameters),consumers);
+  answer.configureProperties(parameters);
+  return answer;
+}

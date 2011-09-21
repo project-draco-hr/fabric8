@@ -1,0 +1,41 @@
+{
+  if (exchange != null) {
+    String fromId=exchange.getFromRouteId();
+    if (fromId == null) {
+      fromId=exchange.getFromEndpoint().getEndpointUri();
+    }
+    if (fromId != null) {
+      EventCache<Exchange> eventCache=eventCacheManager.lookupCache(Exchange.class,fromId);
+      if (eventCache == null) {
+        fromId=exchange.getFromEndpoint().getEndpointKey();
+        eventCache=eventCacheManager.lookupCache(Exchange.class,fromId);
+      }
+      if (eventCache != null) {
+        if (eventCache.add(exchange)) {
+          List<ExpressionHolder> expressionHolders=fromToExpressionMap.get(fromId);
+          for (          ExpressionHolder expressionHolder : expressionHolders) {
+            if (expressionHolder.expression.isMatch()) {
+              if (expressionHolder.listener != null) {
+                expressionHolder.listener.expressionFired(expressionHolder.expression,exchange);
+              }
+            }
+          }
+        }
+ else {
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("Ignoring - already fired for exchange: " + exchange);
+          }
+        }
+      }
+ else {
+        LOG.warn("Can't find cache for a route or endpoint named: " + fromId + " for exchange: "+ exchange);
+      }
+    }
+ else {
+      LOG.warn("can't process an exchange with no route or endpoint information: ",exchange);
+    }
+  }
+ else {
+    LOG.warn("process() passed null exchange!");
+  }
+}

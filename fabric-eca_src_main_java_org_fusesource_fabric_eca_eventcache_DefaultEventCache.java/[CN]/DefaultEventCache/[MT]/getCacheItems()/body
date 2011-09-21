@@ -1,0 +1,16 @@
+{
+  pruneCache(getEventClock().currentTimeMillis());
+  List<CacheItem<T>> result=new ArrayList<CacheItem<T>>(size);
+  try {
+    lock.readLock().lock();
+    CacheItemImpl node=root;
+    while (node != null) {
+      result.add(node);
+      node=node.getNext();
+    }
+  }
+  finally {
+    lock.readLock().unlock();
+  }
+  return result;
+}

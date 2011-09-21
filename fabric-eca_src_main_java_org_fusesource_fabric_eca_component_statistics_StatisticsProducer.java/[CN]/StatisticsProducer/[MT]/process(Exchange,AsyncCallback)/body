@@ -1,0 +1,20 @@
+{
+  Object result=null;
+  if (!StatisticsProcessor.isAlreadyProcessedForStatistics(exchange)) {
+    try {
+      result=getStatisticsEndpoint().getStatsProcessor().processExchange(exchange);
+    }
+ catch (    Exception e) {
+      exchange.setException(e);
+    }
+    if (result != null) {
+      if (exchange.getPattern().isOutCapable()) {
+        exchange.getOut().setBody(result);
+      }
+ else {
+        exchange.getIn().setBody(result);
+      }
+    }
+  }
+  return super.process(exchange,callback);
+}

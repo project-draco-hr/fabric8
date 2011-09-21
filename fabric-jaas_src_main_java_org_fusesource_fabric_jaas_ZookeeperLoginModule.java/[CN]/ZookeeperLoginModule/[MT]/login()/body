@@ -23,7 +23,18 @@ catch (  UnsupportedCallbackException uce) {
   if (password == null) {
     throw new FailedLoginException("User does exist");
   }
-  if (!password.equals(new String(tmpPassword))) {
+  boolean passwordOK=false;
+  if (password.startsWith(UserService.ENCRYPTED_PREFIX)) {
+    if (encryptor.checkPassword(new String(tmpPassword),password.substring(UserService.ENCRYPTED_PREFIX.length()))) {
+      passwordOK=true;
+    }
+  }
+ else {
+    if (password.equals(new String(tmpPassword))) {
+      passwordOK=true;
+    }
+  }
+  if (!passwordOK) {
     throw new FailedLoginException("Password does not match");
   }
   loginSucceeded=true;

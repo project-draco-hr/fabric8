@@ -1,0 +1,14 @@
+{
+  try {
+    Properties props=ZooKeeperUtils.getProperties(service.getZooKeeper(),UserService.USERS_NODE,null);
+    ArrayList<User> users=new ArrayList<User>();
+    for (    Object key : props.keySet()) {
+      User user=new User((String)key,props.getProperty((String)key));
+      users.add(user);
+    }
+    return users.toArray(new User[0]);
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}
