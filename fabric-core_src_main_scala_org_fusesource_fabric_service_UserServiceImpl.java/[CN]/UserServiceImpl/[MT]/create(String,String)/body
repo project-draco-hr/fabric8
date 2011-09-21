@@ -1,3 +1,17 @@
 {
-  return null;
+  try {
+    Properties props=ZooKeeperUtils.getProperties(service.getZooKeeper(),UserService.USERS_NODE,null);
+    if (props.containsKey(username)) {
+      throw new FabricException("User " + username + " already exists");
+    }
+    if (!password.startsWith(UserService.ENCRYPTED_PREFIX)) {
+      password=UserService.ENCRYPTED_PREFIX + encryptor.encryptPassword(password);
+    }
+    props.put(username,password);
+    ZooKeeperUtils.setProperties(service.getZooKeeper(),UserService.USERS_NODE,props);
+    return null;
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
 }
