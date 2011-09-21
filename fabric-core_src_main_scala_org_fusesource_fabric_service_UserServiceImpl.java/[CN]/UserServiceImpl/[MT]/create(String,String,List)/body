@@ -4,10 +4,7 @@
     if (props.containsKey(username)) {
       throw new FabricException("User " + username + " already exists");
     }
-    if (!password.startsWith(UserService.ENCRYPTED_PREFIX)) {
-      password=UserService.ENCRYPTED_PREFIX + encryptor.encryptPassword(password);
-    }
-    props.put(username,password);
+    props.put(username,encryptPassword(password));
     ZooKeeperUtils.setProperties(service.getZooKeeper(),UserService.USERS_NODE,props);
     return null;
   }
