@@ -1,0 +1,13 @@
+{
+  try {
+    Properties props=ZooKeeperUtils.getProperties(service.getZooKeeper(),UserService.USERS_NODE,null);
+    Object pass=props.remove(username);
+    if (pass == null) {
+      throw new FabricException("User " + username + "doesn't exists");
+    }
+    ZooKeeperUtils.setProperties(service.getZooKeeper(),UserService.USERS_NODE,props);
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}
