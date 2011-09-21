@@ -1,0 +1,11 @@
+{
+  Object result=null;
+  try {
+    result=getStatisticsCalculator().calculateStatistics(exchange);
+    StatisticsProcessor.markProcessedForStatistics(exchange);
+  }
+ catch (  Exception e) {
+    exchange.setException(e);
+  }
+  return result;
+}

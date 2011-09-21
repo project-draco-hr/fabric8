@@ -1,0 +1,12 @@
+{
+  super(statisticsEndpoint,processor);
+  this.statisticsEndpoint=statisticsEndpoint;
+  this.polling=statisticsEndpoint.isPolling();
+  if (polling) {
+    this.executor=statisticsEndpoint.getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(this,statisticsEndpoint.getEndpointUri(),1);
+    ObjectHelper.notNull(executor,"executor");
+  }
+ else {
+    this.executor=null;
+  }
+}
