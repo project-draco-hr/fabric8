@@ -1,0 +1,24 @@
+{
+  String[] infos=null;
+  StringBuffer userInfoBuffer=new StringBuffer();
+  String userInfos=(String)users.get(username);
+  if (userInfos != null && userInfos.length() > 0) {
+    infos=userInfos.split(",");
+    String password=infos[0];
+    userInfoBuffer.append(password);
+    for (int i=1; i < infos.length; i++) {
+      if (infos[i] != null && !infos[i].equals(role)) {
+        userInfoBuffer.append(",");
+        userInfoBuffer.append(infos[i]);
+      }
+    }
+    String newUserInfo=userInfoBuffer.toString();
+    users.put(username,newUserInfo);
+  }
+  try {
+    users.save();
+  }
+ catch (  Exception ex) {
+    LOGGER.error("Cannot update users file,",ex);
+  }
+}

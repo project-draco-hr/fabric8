@@ -1,0 +1,13 @@
+{
+  String userInfos=(String)users.get(username);
+  if (userInfos != null) {
+    String newUserInfos=userInfos + "," + role;
+    users.put(username,newUserInfos);
+  }
+  try {
+    users.save();
+  }
+ catch (  Exception ex) {
+    LOGGER.error("Cannot update users file,",ex);
+  }
+}

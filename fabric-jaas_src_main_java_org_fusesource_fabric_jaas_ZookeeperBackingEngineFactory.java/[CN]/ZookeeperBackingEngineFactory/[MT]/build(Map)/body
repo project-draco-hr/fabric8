@@ -1,0 +1,21 @@
+{
+  ZookeeperBackingEngine engine=null;
+  this.bundleContext=(BundleContext)options.get(BundleContext.class.getName());
+  ServiceReference ref=bundleContext.getServiceReference(FabricService.class.getName());
+  service=(FabricServiceImpl)bundleContext.getService(ref);
+  String path=(String)options.get("path");
+  if (path == null) {
+    path=ZookeeperBackingEngine.USERS_NODE;
+  }
+  try {
+    ZookeeperProperties users=new ZookeeperProperties(service.getZooKeeper(),path);
+    EncryptionSupport encryptionSupport=new EncryptionSupport(options);
+    engine=new ZookeeperBackingEngine(users,encryptionSupport);
+  }
+ catch (  Exception e) {
+    LOGGER.warn("Cannot initialize engine",e);
+  }
+ finally {
+    return engine;
+  }
+}
