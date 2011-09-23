@@ -1,12 +1,9 @@
 {
-  this.subject=subject;
-  this.callbackHandler=callbackHandler;
-  loginSucceeded=false;
+  super.initialize(subject,callbackHandler,options);
   debug="true".equalsIgnoreCase((String)options.get("debug"));
   if (zookeeper == null) {
     ZKClientFactoryBean factory=new ZKClientFactoryBean();
     users=new Properties();
-    groups=new Properties();
     try {
       zookeeper=factory.getObject();
       zookeeper.registerListener(this);

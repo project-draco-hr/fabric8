@@ -1,0 +1,9 @@
+{
+  this.path=path;
+  this.zooKeeper=zooKeeper;
+  ZKData<String> zkData=zooKeeper.getZKStringData(path);
+  String value=zkData.getData();
+  if (value != null) {
+    load(new StringReader(value));
+  }
+}
