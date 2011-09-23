@@ -21,7 +21,7 @@ catch (  UnsupportedCallbackException uce) {
   }
   String userInfos=users.getProperty(user);
   if (userInfos == null) {
-    throw new FailedLoginException("User does exist");
+    throw new FailedLoginException("User doesn't exist");
   }
   String[] infos=userInfos.split(",");
   String password=infos[0];
@@ -33,7 +33,6 @@ catch (  UnsupportedCallbackException uce) {
   for (int i=1; i < infos.length; i++) {
     principals.add(new RolePrincipal(infos[i]));
   }
-  users.clear();
   if (debug) {
     LOG.debug("Successfully logged in {}",user);
   }
