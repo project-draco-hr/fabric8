@@ -19,27 +19,23 @@ catch (  UnsupportedCallbackException uce) {
   if (user == null) {
     throw new FailedLoginException("user name is null");
   }
-  String password=users.getProperty(user);
-  if (password == null) {
+  String userInfos=users.getProperty(user);
+  if (userInfos == null) {
     throw new FailedLoginException("User does exist");
   }
-  boolean passwordOK=false;
-  if (password.startsWith(UserService.ENCRYPTED_PREFIX)) {
-    if (encryptor.checkPassword(new String(tmpPassword),password.substring(UserService.ENCRYPTED_PREFIX.length()))) {
-      passwordOK=true;
-    }
-  }
- else {
-    if (password.equals(new String(tmpPassword))) {
-      passwordOK=true;
-    }
-  }
-  if (!passwordOK) {
+  String[] infos=userInfos.split(",");
+  String password=infos[0];
+  if (!checkPassword(new String(tmpPassword),password)) {
     throw new FailedLoginException("Password does not match");
   }
-  loginSucceeded=true;
-  if (debug) {
-    LOG.debug("login " + user);
+  principals=new HashSet<Principal>();
+  principals.add(new org.apache.karaf.jaas.modules.UserPrincipal(user));
+  for (int i=1; i < infos.length; i++) {
+    principals.add(new RolePrincipal(infos[i]));
   }
-  return loginSucceeded;
+  users.clear();
+  if (debug) {
+    LOG.debug("Successfully logged in {}",user);
+  }
+  return true;
 }
