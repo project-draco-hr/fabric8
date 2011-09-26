@@ -1,5 +1,11 @@
 {
   super.initialize(subject,callbackHandler,options);
+  if (bundleContext != null) {
+    encryptionSupport=new EncryptionSupport(options);
+  }
+ else {
+    encryptionSupport=new BasicEncryptionSupport(options);
+  }
   debug="true".equalsIgnoreCase((String)options.get("debug"));
   if (zookeeper == null) {
     ZKClientFactoryBean factory=new ZKClientFactoryBean();
