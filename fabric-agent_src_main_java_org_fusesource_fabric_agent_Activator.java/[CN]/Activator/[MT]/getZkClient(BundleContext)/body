@@ -1,0 +1,10 @@
+{
+  zkClient=new ServiceTracker(context,IZKClient.class.getName(),null);
+  zkClient.open();
+  return new Callable<IZKClient>(){
+    @Override public IZKClient call() throws Exception {
+      return (IZKClient)zkClient.getService();
+    }
+  }
+;
+}
