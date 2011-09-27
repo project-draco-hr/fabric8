@@ -1,0 +1,12 @@
+{
+  try {
+    if (!connected) {
+      fetchData();
+      connected=true;
+      connectedLatch.countDown();
+    }
+  }
+ catch (  Exception e) {
+    LOG.warn("Failed initializing authentication plugin",e);
+  }
+}
