@@ -1,0 +1,18 @@
+{
+  ConfigurationAdmin cs=getOsgiService(ConfigurationAdmin.class,20000);
+  org.osgi.service.cm.Configuration conf=cs.getConfiguration(pid,null);
+  Dictionary<Object,Object> props=conf.getProperties();
+  if (props == null) {
+    props=new Properties();
+  }
+  Properties properties=new Properties();
+  InputStream propertiesStream=IntegrationTestSupport.class.getClassLoader().getResourceAsStream(pid + ".cfg");
+  if (propertiesStream != null) {
+    properties.load(propertiesStream);
+    Set<Object> keys=properties.keySet();
+    for (    Object key : keys) {
+      props.put(key,properties.get(key));
+    }
+    conf.update(props);
+  }
+}
