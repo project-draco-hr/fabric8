@@ -2,9 +2,9 @@
   Object result=null;
   if (!StatisticsProcessor.isAlreadyProcessedForStatistics(exchange)) {
     try {
-      result=getStatisticsEndpoint().getStatsProcessor().processExchange(exchange);
+      result=getEndpoint().getStatsProcessor().processExchange(exchange);
     }
- catch (    Exception e) {
+ catch (    Throwable e) {
       exchange.setException(e);
     }
     if (result != null) {

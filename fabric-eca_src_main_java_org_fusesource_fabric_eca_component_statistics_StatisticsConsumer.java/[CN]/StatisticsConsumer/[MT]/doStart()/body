@@ -1,8 +1,8 @@
 {
   super.doStart();
   if (polling) {
-    long scheduleTime=ParsingUtil.getTimeAsMilliseconds(statisticsEndpoint.getBatchUpdateTime());
-    LOG.debug("Scheduled StatisticsConsumer to batch every {}",statisticsEndpoint.getBatchUpdateTime());
+    long scheduleTime=ParsingUtil.getTimeAsMilliseconds(getEndpoint().getBatchUpdateTime());
+    LOG.debug("Scheduled StatisticsConsumer to batch every {}",getEndpoint().getBatchUpdateTime());
     final Runnable runnable=new Runnable(){
       public void run(){
         Exchange exchange=lastGeneratedExchange;
@@ -11,7 +11,7 @@
             StatisticsConsumer.this.doSuperSendToConsumers(exchange);
           }
  catch (          Throwable e) {
-            LOG.error(statisticsEndpoint.getEndpointUri() + " Failed to send batch statistics",e);
+            LOG.warn("Failed to send batch statistics to " + getEndpoint().getEndpointUri() + ". This exception will be ignored.",e);
           }
         }
       }
