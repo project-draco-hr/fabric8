@@ -1,0 +1,14 @@
+{
+  try {
+    String v=ZooKeeperUtils.get(client,file);
+    if (v != null) {
+      return toProperties(v);
+    }
+ else {
+      return defaultValue;
+    }
+  }
+ catch (  KeeperException.NoNodeException e) {
+    return defaultValue;
+  }
+}

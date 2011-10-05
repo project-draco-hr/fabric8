@@ -4,33 +4,18 @@
     Map<String,Map<String,String>> oldCfgs=getConfigurations();
     String path=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id);
     for (    String pid : configurations.keySet()) {
-      Map<String,String> oldCfg=oldCfgs.remove(pid);
-      Map<String,String> newCfg=configurations.get(pid);
-      if (newCfg.containsKey(DELETED)) {
-        if (!oldCfg.containsKey(DELETED)) {
-          ZooKeeperUtils.set(zooKeeper,path + "/" + pid,DELETED);
-        }
-        for (        String key : zooKeeper.getChildren(path + "/" + pid)) {
-          zooKeeper.deleteWithChildren(path + "/" + pid+ "/"+ key);
-        }
+      oldCfgs.remove(pid);
+      byte[] data=toBytes(toProperties(configurations.get(pid)));
+      String p=path + "/" + pid+ ".properties";
+      if (zooKeeper.exists(p) == null) {
+        zooKeeper.createBytesNodeWithParents(p,data,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
       }
  else {
-        ZooKeeperUtils.set(zooKeeper,path + "/" + pid,"");
-        for (        Map.Entry<String,String> entry : newCfg.entrySet()) {
-          String oldValue=oldCfg != null ? oldCfg.remove(entry.getKey()) : null;
-          if (oldValue == null || !oldValue.equals(entry.getValue())) {
-            ZooKeeperUtils.set(zooKeeper,path + "/" + pid+ "/"+ entry.getKey(),entry.getValue());
-          }
-        }
-        if (oldCfg != null) {
-          for (          String key : oldCfg.keySet()) {
-            zooKeeper.deleteWithChildren(path + "/" + pid+ "/"+ key);
-          }
-        }
+        zooKeeper.setByteData(p,data);
       }
     }
     for (    String key : oldCfgs.keySet()) {
-      zooKeeper.deleteWithChildren(path + "/" + key);
+      zooKeeper.deleteWithChildren(path + "/" + key+ ".properties");
     }
   }
  catch (  Exception e) {

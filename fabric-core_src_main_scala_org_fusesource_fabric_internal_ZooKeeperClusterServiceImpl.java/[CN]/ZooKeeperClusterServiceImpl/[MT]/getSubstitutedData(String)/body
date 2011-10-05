@@ -5,14 +5,11 @@
   InterpolationHelper.performSubstitution(props,new InterpolationHelper.SubstitutionCallback(){
     @Override public String getValue(    String key){
       if (key.startsWith("zk:")) {
-        key=key.substring("zk:".length());
-        if (key.charAt(0) != '/') {
-          key=ZkPath.AGENT.getPath(key);
-        }
         try {
-          return zooKeeper.getStringData(key);
+          new String(ZkPath.loadURL(zooKeeper,key),"UTF-8");
         }
  catch (        Exception e) {
+          e.printStackTrace();
         }
       }
       return null;

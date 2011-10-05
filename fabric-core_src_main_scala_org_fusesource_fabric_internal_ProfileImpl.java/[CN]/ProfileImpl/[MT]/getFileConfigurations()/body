@@ -1,0 +1,14 @@
+{
+  try {
+    Map<String,byte[]> configurations=new HashMap<String,byte[]>();
+    String path=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id);
+    List<String> pids=service.getZooKeeper().getChildren(path);
+    for (    String pid : pids) {
+      configurations.put(pid,getFileConfiguration(pid));
+    }
+    return configurations;
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

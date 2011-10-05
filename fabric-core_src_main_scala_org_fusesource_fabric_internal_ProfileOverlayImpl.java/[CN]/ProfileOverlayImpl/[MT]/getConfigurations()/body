@@ -1,8 +1,15 @@
 {
   try {
-    Map<String,Map<String,String>> configs=new HashMap<String,Map<String,String>>();
-    doGetConfigurations(configs,ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id));
-    return configs;
+    Map<String,SupplementControl> aggregate=new HashMap<String,SupplementControl>();
+    supplement(this,aggregate);
+    Map<String,Map<String,String>> rc=new HashMap<String,Map<String,String>>();
+    for (    Map.Entry<String,SupplementControl> entry : aggregate.entrySet()) {
+      SupplementControl ctrl=entry.getValue();
+      if (ctrl.props != null) {
+        rc.put(stripSuffix(entry.getKey(),".properties"),toMap(ctrl.props));
+      }
+    }
+    return rc;
   }
  catch (  Exception e) {
     throw new FabricException(e);
