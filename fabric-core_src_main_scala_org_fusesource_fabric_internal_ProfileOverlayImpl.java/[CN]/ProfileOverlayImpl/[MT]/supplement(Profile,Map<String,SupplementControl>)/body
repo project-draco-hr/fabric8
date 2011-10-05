@@ -1,0 +1,35 @@
+{
+  for (  Profile p : getParents()) {
+    supplement(p,aggregate);
+  }
+  Map<String,byte[]> configs=profile.getFileConfigurations();
+  for (  Map.Entry<String,byte[]> entry : configs.entrySet()) {
+    String fileName=entry.getKey();
+    if (fileName.endsWith(".properties")) {
+      SupplementControl ctrl=aggregate.get(fileName);
+      if (ctrl != null) {
+        Properties childMap=toProperties(entry.getValue());
+        if (childMap.remove(DELETED) != null) {
+          ctrl.props.clear();
+        }
+        for (        Map.Entry<Object,Object> p : childMap.entrySet()) {
+          if (DELETED.equals(p.getValue())) {
+            ctrl.props.remove(p.getKey());
+          }
+ else {
+            ctrl.props.put(p.getKey(),p.getValue());
+          }
+        }
+      }
+ else {
+        ctrl.props=toProperties(entry.getValue());
+        aggregate.put(fileName,ctrl);
+      }
+    }
+ else {
+      SupplementControl ctrl=new SupplementControl();
+      ctrl.data=entry.getValue();
+      aggregate.put(fileName,ctrl);
+    }
+  }
+}

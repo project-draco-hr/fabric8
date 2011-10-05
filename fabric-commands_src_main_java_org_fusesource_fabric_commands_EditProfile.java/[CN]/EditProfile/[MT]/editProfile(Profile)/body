@@ -30,9 +30,15 @@
     }
  else     if (delete) {
       if (repositories || features || bundles) {
-        arg=arg.replace('/','_');
+        for (        Map.Entry<String,String> entry : pidConfig.entrySet()) {
+          if (arg.equals(entry.getValue())) {
+            pidConfig.remove(entry.getKey());
+          }
+        }
       }
-      pidConfig.remove(prefix + arg);
+ else {
+        pidConfig.remove(prefix + arg);
+      }
     }
   }
   config.put(pid,pidConfig);

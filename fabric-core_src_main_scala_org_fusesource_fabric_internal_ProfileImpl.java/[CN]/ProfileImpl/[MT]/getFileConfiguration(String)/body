@@ -1,0 +1,8 @@
+{
+  IZKClient zooKeeper=service.getZooKeeper();
+  String path=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id) + "/" + pid;
+  if (zooKeeper.exists(path) == null) {
+    return null;
+  }
+  return zooKeeper.getData(path);
+}

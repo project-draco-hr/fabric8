@@ -6,14 +6,9 @@
     getPids(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,parent),pids);
   }
   for (  String pid : getChildren(tree,node)) {
-    TrackedNode<String> n=tree.getTree().get(node + "/" + pid);
-    if (n != null) {
-      if (DELETED.equals(n.getData())) {
-        pids.remove(pid);
-      }
- else {
-        pids.add(pid);
-      }
+    if (pid.endsWith(".properties")) {
+      pid=stripSuffix(pid,".properties");
+      pids.add(pid);
     }
   }
 }

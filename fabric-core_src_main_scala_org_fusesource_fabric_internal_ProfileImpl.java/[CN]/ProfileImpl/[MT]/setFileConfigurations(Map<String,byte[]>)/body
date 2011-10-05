@@ -1,0 +1,24 @@
+{
+  try {
+    IZKClient zooKeeper=service.getZooKeeper();
+    Map<String,byte[]> oldCfgs=getFileConfigurations();
+    String path=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id);
+    for (    String pid : configurations.keySet()) {
+      oldCfgs.remove(pid);
+      byte[] newCfg=configurations.get(pid);
+      path=path + "/" + pid;
+      if (zooKeeper.exists(path) == null) {
+        zooKeeper.createBytesNode(path,newCfg,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      }
+ else {
+        zooKeeper.setByteData(path,newCfg);
+      }
+    }
+    for (    String pid : oldCfgs.keySet()) {
+      zooKeeper.deleteWithChildren(path + "/" + pid);
+    }
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

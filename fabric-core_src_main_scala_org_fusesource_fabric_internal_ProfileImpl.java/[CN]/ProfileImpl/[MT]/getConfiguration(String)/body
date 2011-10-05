@@ -1,20 +1,9 @@
 {
   IZKClient zooKeeper=service.getZooKeeper();
-  String path=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id) + "/" + pid;
+  String path=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id) + "/" + pid+ ".properties";
   if (zooKeeper.exists(path) == null) {
     return null;
   }
-  Map<String,String> map=new HashMap<String,String>();
-  String data=zooKeeper.getStringData(path);
-  if (DELETED.equals(data)) {
-    map.put(DELETED,"");
-  }
- else {
-    List<String> keys=zooKeeper.getChildren(path);
-    for (    String key : keys) {
-      data=zooKeeper.getStringData(path + "/" + key);
-      map.put(key,data != null ? data : "");
-    }
-  }
-  return map;
+  byte[] data=zooKeeper.getData(path);
+  return toMap(toProperties(data));
 }
