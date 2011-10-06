@@ -6,12 +6,12 @@
     for (    String pid : configurations.keySet()) {
       oldCfgs.remove(pid);
       byte[] newCfg=configurations.get(pid);
-      path=path + "/" + pid;
-      if (zooKeeper.exists(path) == null) {
-        zooKeeper.createBytesNode(path,newCfg,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      String configPath=path + "/" + pid;
+      if (zooKeeper.exists(configPath) == null) {
+        zooKeeper.createBytesNode(configPath,newCfg,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
       }
  else {
-        zooKeeper.setByteData(path,newCfg);
+        zooKeeper.setByteData(configPath,newCfg);
       }
     }
     for (    String pid : oldCfgs.keySet()) {
