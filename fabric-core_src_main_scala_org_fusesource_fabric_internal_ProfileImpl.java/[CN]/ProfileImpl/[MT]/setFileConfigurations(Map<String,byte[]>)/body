@@ -7,7 +7,7 @@
       oldCfgs.remove(pid);
       byte[] newCfg=configurations.get(pid);
       String configPath=path + "/" + pid;
-      if (zooKeeper.getChildren(configPath) != null) {
+      if (zooKeeper.exists(configPath) != null && zooKeeper.getChildren(configPath) != null) {
         List<String> kids=zooKeeper.getChildren(configPath);
         ArrayList<String> saved=new ArrayList<String>();
         for (        String line : new String(newCfg).split("\n")) {
@@ -19,10 +19,10 @@
             continue;
           }
           String newPath=configPath + "/" + name_value[0].trim();
-          if (zooKeeper.exists(newPath) == null) {
-            zooKeeper.create(configPath + "/" + name_value[0].trim(),name_value[1].trim(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+          try {
+            zooKeeper.createWithParents(newPath,name_value[1].trim(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
           }
- else {
+ catch (          KeeperException.NodeExistsException nee) {
             zooKeeper.setData(newPath,name_value[1].trim());
           }
           saved.add(name_value[0].trim());
@@ -34,10 +34,10 @@
         }
       }
  else {
-        if (zooKeeper.exists(configPath) == null) {
-          zooKeeper.createBytesNode(configPath,newCfg,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+        try {
+          zooKeeper.createBytesNodeWithParents(configPath,newCfg,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
         }
- else {
+ catch (        KeeperException.NodeExistsException nee) {
           zooKeeper.setByteData(configPath,newCfg);
         }
       }
