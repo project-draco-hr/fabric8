@@ -2,7 +2,8 @@
   PrintStream output=session.getConsole();
   output.println("Profile id: " + profile.getId());
   output.println("Version   : " + profile.getVersion());
-  output.println("Parents   : " + toString(profile.getParents()) + "\n");
+  output.println("Parents   : " + toString(profile.getParents()));
+  output.printf("Associated Agents : %s\n\n",toString(profile.getAssociatedAgents()));
   Map<String,Map<String,String>> configuration=overlay ? profile.getOverlay().getConfigurations() : profile.getConfigurations();
   if (configuration.containsKey(AGENT_PID)) {
     output.println("\nAgent settings");
