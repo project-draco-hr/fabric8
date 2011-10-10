@@ -89,8 +89,8 @@
       try {
         src.start();
         dst.start();
-        src.waitForStart();
-        dst.waitForStart();
+        src.waitForStart(new Timespan(5,Timespan.TimeUnit.SECOND));
+        dst.waitForStart(new Timespan(5,Timespan.TimeUnit.SECOND));
         ZooKeeperUtils.copy(src,dst,"/fabric/configs");
         ZooKeeperUtils.set(dst,"/fabric/configs/versions/" + version + "/general/zookeeper-cluster",newClusterId);
         ZooKeeperUtils.set(dst,"/fabric/configs/versions/" + version + "/general/zookeeper-cluster/"+ newClusterId,agentList);

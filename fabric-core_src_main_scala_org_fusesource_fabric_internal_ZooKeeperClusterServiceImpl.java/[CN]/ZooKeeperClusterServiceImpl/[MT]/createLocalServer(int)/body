@@ -20,7 +20,7 @@
     config.update(properties);
     client=new ZKClient(connectionUrl,Timespan.ONE_MINUTE,null);
     client.start();
-    client.waitForStart();
+    client.waitForStart(new Timespan(5,Timespan.TimeUnit.SECOND));
     String defaultProfile=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"default");
     setConfigProperty(client,defaultProfile + "/org.fusesource.fabric.zookeeper.properties","zookeeper.url","${zk:" + karafName + "/ip}:"+ Integer.toString(port));
     String profileNode=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"zk-server-0000") + "/org.fusesource.fabric.zookeeper.server-0000.properties";
