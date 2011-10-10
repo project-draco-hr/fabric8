@@ -3,15 +3,24 @@
   output.println("Profile id: " + profile.getId());
   output.println("Version   : " + profile.getVersion());
   output.println("Parents   : " + toString(profile.getParents()));
-  output.printf("Associated Agents : %s\n\n",toString(profile.getAssociatedAgents()));
+  output.printf("Associated Agents : %s\n",toString(profile.getAssociatedAgents()));
   Map<String,Map<String,String>> configuration=overlay ? profile.getOverlay().getConfigurations() : profile.getConfigurations();
   if (configuration.containsKey(AGENT_PID)) {
     output.println("\nAgent settings");
-    Map<String,String> agentCfg=configuration.get(AGENT_PID);
-    displayAgentConfig(agentCfg);
+    output.println("----------------------------");
+    if (profile.getRepositories().size() > 0) {
+      printConfigList("Repositories : ",output,profile.getRepositories());
+    }
+    if (profile.getFeatures().size() > 0) {
+      printConfigList("Features : ",output,profile.getFeatures());
+    }
+    if (profile.getBundles().size() > 0) {
+      printConfigList("Bundles : ",output,profile.getBundles());
+    }
     configuration.remove(AGENT_PID);
   }
   output.println("\nConfiguration details");
+  output.println("----------------------------");
   for (  Map.Entry<String,Map<String,String>> cfg : configuration.entrySet()) {
     output.println("PID: " + cfg.getKey());
     for (    Map.Entry<String,String> values : cfg.getValue().entrySet()) {
