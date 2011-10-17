@@ -2,7 +2,7 @@
   DependencyTree dependency=resolvePackageDependency(packageName);
   if (dependency != null) {
     if (dependency.isBundle()) {
-      String exportPackages=dependency.getManfiestEntry("Export-Package");
+      String exportPackages=dependency.getManifestEntry("Export-Package");
       if (notEmpty(exportPackages)) {
         Map<String,Map<String,String>> values=new Analyzer().parseHeader(exportPackages);
         Map<String,String> map=values.get(packageName);
