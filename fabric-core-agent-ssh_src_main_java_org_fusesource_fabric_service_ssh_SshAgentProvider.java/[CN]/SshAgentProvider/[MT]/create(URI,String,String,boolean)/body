@@ -1,6 +1,6 @@
 {
   try {
-    String script=buildStartupScript(mavenProxy.getAddress(),name,agentUri.getPath(),zooKeeperUrl,debugAgent);
+    String path=agentUri.getPath();
     String host=agentUri.getHost();
     if (agentUri.getQuery() != null) {
       debug=agentUri.getQuery().contains("debug");
@@ -17,7 +17,11 @@
     if (uip == null || uip.length != 2) {
       throw new IllegalArgumentException("user and password must be supplied in the uri '" + agentUri + "'");
     }
-    sendScript(host,port,uip[0],uip[1],script,6,1);
+    String username=uip[0];
+    String password=uip[1];
+    int sshRetries=6;
+    int retryDelay=1;
+    doCreateAgent(name,zooKeeperUrl,debugAgent,path,host,port,username,password,sshRetries,retryDelay);
   }
  catch (  FabricException e) {
     throw e;

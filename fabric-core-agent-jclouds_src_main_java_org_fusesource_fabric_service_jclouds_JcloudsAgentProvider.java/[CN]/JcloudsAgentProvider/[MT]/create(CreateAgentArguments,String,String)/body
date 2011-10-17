@@ -1,0 +1,17 @@
+{
+  if (createArgs instanceof CreateJCloudsAgentArguments) {
+    CreateJCloudsAgentArguments args=(CreateJCloudsAgentArguments)createArgs;
+    boolean debugAgent=args.isDebugAgent();
+    String imageId=args.getImageId();
+    String hardwareId=args.getHardwareId();
+    String locationId=args.getLocationId();
+    String group=args.getGroup();
+    String user=args.getUser();
+    String instanceType=args.getInstanceType();
+    Credentials credentials=null;
+    String providerName=args.getProviderName();
+    doCreateAgent(name,zooKeeperUrl,debugAgent,imageId,hardwareId,locationId,group,user,instanceType,credentials,providerName);
+    return true;
+  }
+  return false;
+}
