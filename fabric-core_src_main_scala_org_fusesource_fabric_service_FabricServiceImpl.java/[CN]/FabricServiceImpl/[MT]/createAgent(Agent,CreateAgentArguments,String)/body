@@ -1,6 +1,7 @@
 {
   createAgentConfig(parent.getId(),name);
-  if (getAgentTemplate(parent).execute(new AgentTemplate.FabricServiceCallback<Boolean>(){
+  AgentTemplate agentTemplate=getAgentTemplate(parent);
+  if (agentTemplate.execute(new AgentTemplate.FabricServiceCallback<Boolean>(){
     public Boolean doWithFabricService(    FabricServiceImplMBean fabricService) throws Exception {
       return fabricService.createRemoteAgent(args,name);
     }

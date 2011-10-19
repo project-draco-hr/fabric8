@@ -1,13 +1,9 @@
 {
-  System.out.println("========== registerMbeanServer: " + mbeanServer);
   try {
     ObjectName name=getMbeanName();
-    System.out.println("Registering mbean: " + name);
     ObjectInstance objectInstance=mbeanServer.registerMBean(this,name);
-    System.out.println("Registered FabricService: " + objectInstance);
   }
  catch (  Exception e) {
-    System.out.println("An error occured during mbean server registration: " + e);
     logger.warn("An error occured during mbean server registration: " + e,e);
   }
 }

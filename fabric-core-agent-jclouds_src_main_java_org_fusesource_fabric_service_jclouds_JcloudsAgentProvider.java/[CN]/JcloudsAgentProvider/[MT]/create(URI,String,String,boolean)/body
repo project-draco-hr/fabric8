@@ -4,7 +4,7 @@
   String locationId=null;
   String group=null;
   String user=null;
-  String instanceType=SMALLEST;
+  JCloudsInstanceType instanceType=JCloudsInstanceType.Smallest;
   Credentials credentials=null;
   try {
     String providerName=agentUri.getHost();
@@ -17,7 +17,7 @@
         hardwareId=parameters.get(HARDWARE_ID);
         user=parameters.get(USER);
         if (parameters.get(INSTANCE_TYPE) != null) {
-          instanceType=parameters.get(INSTANCE_TYPE);
+          instanceType=JCloudsInstanceType.get(parameters.get(INSTANCE_TYPE),instanceType);
         }
       }
     }
