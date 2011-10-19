@@ -1,12 +1,8 @@
 {
   try {
     final String zooKeeperUrl=getZooKeeperUrl();
-    createAgentConfig("",name);
     Agent agent=doCreateAgentFromArguments(args,name,zooKeeperUrl);
-    if (agent == null) {
-      throw new IllegalArgumentException("Unknown CreateAgentArguments " + args + " when creating agent "+ name);
-    }
-    return agent;
+    return agent != null;
   }
  catch (  FabricException e) {
     throw e;
