@@ -7,10 +7,10 @@
   de2.setEndpointUriIfNotSpecified("direct://foo2");
   context.addRoutes(new RouteBuilder(){
     @Override public void configure() throws Exception {
-      Endpoint cep=getContext().getEndpoint("eca://test?pattern=route1 And route2");
-      from(de).to(cep);
-      from(de2).to(cep);
-      from(cep.getEndpointUri()).to("mock:result");
+      Endpoint eca=getContext().getEndpoint("eca://test?pattern=direct://foo2 After direct://foo");
+      from(de).to(eca);
+      from(de2).to(eca);
+      from(eca.getEndpointUri()).to("mock:result");
     }
   }
 );
