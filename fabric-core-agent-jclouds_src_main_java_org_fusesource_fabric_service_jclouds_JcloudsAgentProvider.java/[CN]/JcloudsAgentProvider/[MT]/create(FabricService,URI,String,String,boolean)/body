@@ -1,0 +1,32 @@
+{
+  String imageId=null;
+  String hardwareId=null;
+  String locationId=null;
+  String group=null;
+  String user=null;
+  JCloudsInstanceType instanceType=JCloudsInstanceType.Smallest;
+  Credentials credentials=null;
+  try {
+    String providerName=agentUri.getHost();
+    if (agentUri.getQuery() != null) {
+      Map<String,String> parameters=parseQuery(agentUri.getQuery());
+      if (parameters != null) {
+        imageId=parameters.get(IMAGE_ID);
+        group=parameters.get(GROUP);
+        locationId=parameters.get(LOCATION_ID);
+        hardwareId=parameters.get(HARDWARE_ID);
+        user=parameters.get(USER);
+        if (parameters.get(INSTANCE_TYPE) != null) {
+          instanceType=JCloudsInstanceType.get(parameters.get(INSTANCE_TYPE),instanceType);
+        }
+      }
+    }
+    doCreateAgent(fabricService,name,zooKeeperUrl,debugAgent,imageId,hardwareId,locationId,group,user,instanceType,credentials,providerName);
+  }
+ catch (  FabricException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

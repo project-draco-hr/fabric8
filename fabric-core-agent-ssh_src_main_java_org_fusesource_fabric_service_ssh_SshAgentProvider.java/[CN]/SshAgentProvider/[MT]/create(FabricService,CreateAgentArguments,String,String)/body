@@ -1,0 +1,18 @@
+{
+  if (createArgs instanceof CreateSshAgentArguments) {
+    CreateSshAgentArguments args=(CreateSshAgentArguments)createArgs;
+    boolean debugAgent=args.isDebugAgent();
+    String path=args.getPath();
+    String host=args.getHost();
+    int port=args.getPort();
+    String username=args.getUsername();
+    String password=args.getPassword();
+    int sshRetries=args.getSshRetries();
+    int retryDelay=args.getRetryDelay();
+    doCreateAgent(fabricService,name,zooKeeperUrl,debugAgent,path,host,port,username,password,sshRetries,retryDelay);
+    return true;
+  }
+ else {
+    return false;
+  }
+}

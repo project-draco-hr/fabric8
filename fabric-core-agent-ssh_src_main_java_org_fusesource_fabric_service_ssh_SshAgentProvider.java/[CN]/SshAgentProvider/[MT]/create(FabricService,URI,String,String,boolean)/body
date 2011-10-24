@@ -1,0 +1,32 @@
+{
+  try {
+    String path=agentUri.getPath();
+    String host=agentUri.getHost();
+    if (agentUri.getQuery() != null) {
+      debug=agentUri.getQuery().contains("debug");
+    }
+    if (host == null) {
+      throw new IllegalArgumentException("host name must be specified in uri '" + agentUri + "'");
+    }
+    int port=agentUri.getPort();
+    if (port == -1) {
+      port=22;
+    }
+    String ui=agentUri.getUserInfo();
+    String[] uip=ui != null ? ui.split(":") : null;
+    if (uip == null || uip.length != 2) {
+      throw new IllegalArgumentException("user and password must be supplied in the uri '" + agentUri + "'");
+    }
+    String username=uip[0];
+    String password=uip[1];
+    int sshRetries=6;
+    int retryDelay=1;
+    doCreateAgent(fabricService,name,zooKeeperUrl,debugAgent,path,host,port,username,password,sshRetries,retryDelay);
+  }
+ catch (  FabricException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}
