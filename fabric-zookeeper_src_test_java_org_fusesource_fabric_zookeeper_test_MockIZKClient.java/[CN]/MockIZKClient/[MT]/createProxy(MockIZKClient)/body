@@ -1,0 +1,21 @@
+{
+  final MockIZKClient tmp=target;
+  return (IZKClient)Proxy.newProxyInstance(target.getClass().getClassLoader(),target.getClass().getInterfaces(),new InvocationHandler(){
+    MockIZKClient obj=tmp;
+    @Override public Object invoke(    Object o,    Method method,    Object[] objects) throws Throwable {
+      String callee=String.format("%s.%s",obj.getClass().getSimpleName(),method);
+      LOG.trace(String.format("%s(%s)",callee,objects));
+      Object rc=null;
+      try {
+        rc=method.invoke(obj,objects);
+        LOG.trace(String.format("%s returning %s",callee,rc));
+        return rc;
+      }
+ catch (      Throwable t) {
+        LOG.trace(String.format("%s throwing %s",callee,t));
+        throw t;
+      }
+    }
+  }
+);
+}
