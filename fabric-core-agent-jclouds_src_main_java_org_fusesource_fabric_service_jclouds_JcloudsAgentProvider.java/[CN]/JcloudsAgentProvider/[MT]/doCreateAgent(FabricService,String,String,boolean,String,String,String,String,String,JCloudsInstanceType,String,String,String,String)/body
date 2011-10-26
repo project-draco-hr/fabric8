@@ -1,7 +1,17 @@
 {
   ComputeService computeService=computeServiceMap.get(providerName);
   if (computeService == null) {
-    throw new FabricException("Not compute Service found for provider:" + providerName);
+    Iterable<? extends Module> modules=ImmutableSet.of();
+    Properties props=new Properties();
+    props.put("provider",providerName);
+    props.put("identity",identity);
+    props.put("credential",credential);
+    if (!Strings.isNullOrEmpty(owner)) {
+      props.put("jclouds.ec2.ami-owners",owner);
+    }
+    RestContextFactory restFactory=new RestContextFactory();
+    ComputeServiceContext context=new ComputeServiceContextFactory(restFactory).createContext(providerName,identity,credential,modules,props);
+    computeService=context.getComputeService();
   }
   TemplateBuilder builder=computeService.templateBuilder();
   builder.any();
@@ -25,6 +35,7 @@ if (hardwareId != null) {
 builder.hardwareId(hardwareId);
 }
 Set<? extends NodeMetadata> metadatas=null;
+Credentials credentials=null;
 if (user != null && credentials == null) {
 credentials=new Credentials(user,null);
 }
