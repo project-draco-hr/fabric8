@@ -7,7 +7,7 @@
       oldCfgs.remove(pid);
       byte[] newCfg=configurations.get(pid);
       String configPath=path + "/" + pid;
-      if (zooKeeper.exists(configPath) != null && zooKeeper.getChildren(configPath) != null) {
+      if (zooKeeper.exists(configPath) != null && zooKeeper.getChildren(configPath).size() > 0) {
         List<String> kids=zooKeeper.getChildren(configPath);
         ArrayList<String> saved=new ArrayList<String>();
         for (        String line : new String(newCfg).split("\n")) {
