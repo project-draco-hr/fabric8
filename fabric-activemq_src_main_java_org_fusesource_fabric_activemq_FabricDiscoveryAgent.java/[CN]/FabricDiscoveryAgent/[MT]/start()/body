@@ -9,13 +9,19 @@
     }
     group=ZooKeeperGroupFactory.create(zkClient,"/fabric/activemq-clusters/" + groupName,acl);
     group.add(new ChangeListener(){
-      public void changed(      byte[][] members){
-        update(members);
+      @Override public void connected(){
+        changed();
+      }
+      @Override public void disconnected(){
+        update(new ArrayList<byte[]>());
+      }
+      public void changed(){
+        update(group.members().values());
       }
     }
 );
     if (serviceName != null) {
-      group.join(serviceName,serviceName.getBytes("UTF-8"));
+      eid=group.join(serviceName.getBytes("UTF-8"));
     }
   }
 }
