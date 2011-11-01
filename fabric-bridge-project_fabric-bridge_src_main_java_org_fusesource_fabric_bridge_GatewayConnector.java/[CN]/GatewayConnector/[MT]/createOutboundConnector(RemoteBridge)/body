@@ -1,0 +1,22 @@
+{
+  SourceConnector outboundConnector=new SourceConnector();
+  outboundConnector.setAutoStartup(isAutoStartup());
+  outboundConnector.setPhase(getPhase());
+  outboundConnector.setLocalBrokerConfig(localBrokerConfig);
+  outboundConnector.setRemoteBrokerConfig(remoteBridge.getRemoteBrokerConfig());
+  if (remoteBridge.getOutboundDestinations() == null) {
+    outboundConnector.setOutboundDestinations(outboundDestinations);
+  }
+ else {
+    outboundConnector.setOutboundDestinations(remoteBridge.getOutboundDestinations());
+  }
+  try {
+    outboundConnector.afterPropertiesSet();
+  }
+ catch (  Exception e) {
+    String msg="Error creating outbound connector for " + remoteBridge + " : "+ e.getMessage();
+    LOG.error(msg,e);
+    throw new IllegalArgumentException(msg,e);
+  }
+  return outboundConnector;
+}

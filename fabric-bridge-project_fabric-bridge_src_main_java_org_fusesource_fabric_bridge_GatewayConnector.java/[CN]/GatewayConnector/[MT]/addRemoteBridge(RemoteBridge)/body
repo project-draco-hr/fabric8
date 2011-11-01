@@ -1,0 +1,37 @@
+{
+synchronized (lifecycleMonitor) {
+    if (remoteBridges.contains(remoteBridge)) {
+      String msg="Remote bridge " + remoteBridge + " already exists in Gateway";
+      LOG.error(msg);
+      throw new UncategorizedJmsException(msg);
+    }
+    remoteBridges.add(remoteBridge);
+    if (isInitialized()) {
+      if ((remoteBridge.getOutboundDestinations() != null) || (this.outboundDestinations == null)) {
+        SourceConnector outboundConnector;
+        try {
+          outboundConnector=createOutboundConnector(remoteBridge);
+        }
+ catch (        Exception e) {
+          String msg="Error creating outbound connector for " + remoteBridge + " : "+ e.getMessage();
+          LOG.error(msg,e);
+          throw new UncategorizedJmsException(msg,e);
+        }
+        outboundConnectors.put(remoteBridge,outboundConnector);
+        if (isRunning()) {
+          try {
+            outboundConnector.start();
+          }
+ catch (          Exception e) {
+            String msg="Error starting outbound connector for " + remoteBridge + " : "+ e.getMessage();
+            LOG.error(msg,e);
+            throw new UncategorizedJmsException(msg,e);
+          }
+        }
+      }
+ else {
+        LOG.warn("No outbound destinations in Bridge or Gateway, " + "connection is unidirectional so no connector will be created for " + remoteBridge);
+      }
+    }
+  }
+}
