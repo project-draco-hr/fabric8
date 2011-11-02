@@ -1,0 +1,18 @@
+{
+  try {
+    FabricDiscoveryAgent rc=new FabricDiscoveryAgent();
+    if (uri.getSchemeSpecificPart() != null && uri.getSchemeSpecificPart().length() > 0) {
+      String ssp=stripPrefix(uri.getSchemeSpecificPart(),"//");
+      Map<String,String> query=parseQuery(ssp);
+      String groupName=ssp.split("\\?")[0];
+      if (query.get("id") != null) {
+        rc.setId(query.get("id"));
+      }
+      rc.setGroupName(groupName);
+    }
+    return rc;
+  }
+ catch (  Throwable e) {
+    throw IOExceptionSupport.create("Could not create discovery agent: " + uri,e);
+  }
+}
