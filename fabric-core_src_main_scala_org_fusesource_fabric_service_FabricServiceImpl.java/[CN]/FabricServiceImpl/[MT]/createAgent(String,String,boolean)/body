@@ -1,19 +1,3 @@
 {
-  try {
-    final String zooKeeperUrl=getZooKeeperUrl();
-    URI uri=URI.create(url);
-    AgentProvider provider=getProvider(uri.getScheme());
-    if (provider == null) {
-      throw new FabricException("Unable to find an agent provider supporting uri '" + url + "'");
-    }
-    createAgentConfig("",name);
-    provider.create(this,uri,name,zooKeeperUrl,debugAgent);
-    return new AgentImpl(null,name,FabricServiceImpl.this);
-  }
- catch (  FabricException e) {
-    throw e;
-  }
-catch (  Exception e) {
-    throw new FabricException(e);
-  }
+  return createAgents(url,name,debugAgent,1)[0];
 }
