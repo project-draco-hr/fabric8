@@ -1,8 +1,12 @@
 {
   if (startCounter.decrementAndGet() == 0) {
     running.set(false);
-    group.close();
-    zkClient.close();
+    try {
+      group.close();
+      zkClient.close();
+    }
+ catch (    Throwable ignore) {
+    }
     zkClient=null;
   }
 }
