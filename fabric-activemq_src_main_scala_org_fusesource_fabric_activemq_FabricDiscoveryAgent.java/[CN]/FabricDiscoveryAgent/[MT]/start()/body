@@ -1,0 +1,29 @@
+{
+  if (startCounter.addAndGet(1) == 1) {
+    running.set(true);
+    if (zkClient == null) {
+      ZKClient client=new ZKClient(System.getProperty("zookeeper.url","localhost:2181"),Timespan.parse("10s"),null);
+      client.start();
+      client.waitForStart();
+      zkClient=client;
+    }
+    group=ZooKeeperGroupFactory.create(zkClient,"/fabric/activemq-clusters/" + groupName,acl);
+    singleton=new ClusteredSingleton<ActiveMQNode>(ActiveMQNode.class,id);
+    singleton.add(new ChangeListener(){
+      @Override public void changed(){
+        update(singleton.masters());
+      }
+      @Override public void connected(){
+        changed();
+      }
+      public void disconnected(){
+        changed();
+      }
+    }
+);
+    singleton.start(group);
+    if (id != null) {
+      singleton.join(state());
+    }
+  }
+}

@@ -10,7 +10,9 @@
     names=Collections.singletonList("default");
   }
   Profile[] profiles=getProfiles(version,names);
-  Agent child=fabricService.createAgent(url,name,debugAgent);
-  child.setProfiles(profiles);
+  Agent[] children=fabricService.createAgents(url,name,debugAgent,number);
+  for (  Agent child : children) {
+    child.setProfiles(profiles);
+  }
   return null;
 }
