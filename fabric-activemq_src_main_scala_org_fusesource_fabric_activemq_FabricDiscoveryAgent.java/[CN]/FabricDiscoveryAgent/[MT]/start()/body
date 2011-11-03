@@ -2,10 +2,14 @@
   if (startCounter.addAndGet(1) == 1) {
     running.set(true);
     if (zkClient == null) {
+      managedZkClient=true;
       ZKClient client=new ZKClient(System.getProperty("zookeeper.url","localhost:2181"),Timespan.parse("10s"),null);
       client.start();
       client.waitForStart();
       zkClient=client;
+    }
+ else {
+      managedZkClient=false;
     }
     group=ZooKeeperGroupFactory.create(zkClient,"/fabric/activemq-clusters/" + groupName,acl);
     singleton.setId(id);

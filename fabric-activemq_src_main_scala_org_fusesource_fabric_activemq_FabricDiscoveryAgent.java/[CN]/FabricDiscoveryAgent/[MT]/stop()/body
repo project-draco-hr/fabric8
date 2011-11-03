@@ -3,10 +3,16 @@
     running.set(false);
     try {
       group.close();
-      zkClient.close();
     }
  catch (    Throwable ignore) {
     }
-    zkClient=null;
+    if (managedZkClient) {
+      try {
+        zkClient.close();
+      }
+ catch (      Throwable ignore) {
+      }
+      zkClient=null;
+    }
   }
 }
