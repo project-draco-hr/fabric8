@@ -1,0 +1,7 @@
+{
+  HttpClient httpClient=new HttpClient();
+  String path=getArtifactPath(groupId,artifactId,version,type);
+  GetMethod getMethod=new GetMethod("http://localhost:" + PORT + "/"+ path);
+  httpClient.executeMethod(getMethod);
+  return getMethod.getStatusCode();
+}
