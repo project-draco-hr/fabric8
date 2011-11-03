@@ -7,6 +7,14 @@
     builder.addPropertyValue(REMOTE_BROKER_REF,remoteBrokerRef);
     builder.addPropertyReference(REMOTE_BROKER_PROPERTY,remoteBrokerRef);
   }
+  String inboundDestinationsRef=element.getAttribute(INBOUND_DESTINATIONS_REF);
+  if (StringUtils.hasText(inboundDestinationsRef)) {
+    if (element.getElementsByTagNameNS(BridgeNamespaceHandler.BRIDGE_NS,INBOUND_DESTINATIONS_ELEMENT).getLength() > 0) {
+      throw new BeanCreationException(builder.getRawBeanDefinition().getResourceDescription(),element.getAttribute(ID_ATTRIBUTE),"Only one of " + INBOUND_DESTINATIONS_REF + " or "+ INBOUND_DESTINATIONS_ELEMENT+ " is allowed");
+    }
+    builder.addPropertyValue(INBOUND_DESTINATIONS_REF,inboundDestinationsRef);
+    builder.addPropertyReference(INBOUND_DESTINATIONS_PROPERTY,inboundDestinationsRef);
+  }
   String outboundDestinationsRef=element.getAttribute(OUTBOUND_DESTINATIONS_REF);
   if (StringUtils.hasText(outboundDestinationsRef)) {
     if (element.getElementsByTagNameNS(BridgeNamespaceHandler.BRIDGE_NS,OUTBOUND_DESTINATIONS_ELEMENT).getLength() > 0) {
@@ -26,6 +34,9 @@
       }
  else       if (localName.equals(OUTBOUND_DESTINATIONS_ELEMENT)) {
         builder.addPropertyValue(OUTBOUND_DESTINATIONS_PROPERTY,bridgeDestinationsConfigParser.parse(childElement,parserContext));
+      }
+ else       if (localName.equals(INBOUND_DESTINATIONS_ELEMENT)) {
+        builder.addPropertyValue(INBOUND_DESTINATIONS_PROPERTY,bridgeDestinationsConfigParser.parse(childElement,parserContext));
       }
     }
   }
