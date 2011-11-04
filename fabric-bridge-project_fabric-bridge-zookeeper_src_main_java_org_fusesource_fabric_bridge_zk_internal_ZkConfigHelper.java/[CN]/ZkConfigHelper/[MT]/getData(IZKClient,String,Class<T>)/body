@@ -1,0 +1,19 @@
+{
+  try {
+    if (client.exists(path) == null) {
+      return null;
+    }
+    byte[] data=client.getData(path);
+    return getJaxElementFromData(data,returnType);
+  }
+ catch (  InterruptedException e) {
+    String msg="Error getting " + returnType.getName() + " from "+ path+ " : "+ e.getMessage();
+    LOG.error(msg,e);
+    throw new IllegalArgumentException(msg,e);
+  }
+catch (  KeeperException e) {
+    String msg="Error getting " + returnType.getName() + " from "+ path+ " : "+ e.getMessage();
+    LOG.error(msg,e);
+    throw new IllegalArgumentException(msg,e);
+  }
+}

@@ -1,0 +1,13 @@
+{
+  bridgeLookupExecutor.shutdownNow();
+  this.connected=false;
+  try {
+    IZKClient zooKeeper=((FabricServiceImpl)fabricService).getZooKeeper();
+    zooKeeper.removeListener(this);
+  }
+ catch (  Exception e) {
+    LOG.error("Error removing Gateway Connector as ZooKeeper listener: " + e.getMessage(),e);
+  }
+  super.doStop();
+  LOG.info("Stopped");
+}

@@ -1,0 +1,12 @@
+{
+  if (listenerContainer.isActive()) {
+    try {
+      listenerContainer.destroy();
+    }
+ catch (    JmsException ex) {
+      LOG.error("Error destroying message listener container: " + ex.getMessage(),ex);
+      throw ex;
+    }
+    LOG.info("Destroyed");
+  }
+}

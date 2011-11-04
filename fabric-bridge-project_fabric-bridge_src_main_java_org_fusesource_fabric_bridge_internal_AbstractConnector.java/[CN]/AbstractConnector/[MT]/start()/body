@@ -1,0 +1,13 @@
+{
+synchronized (lifecycleMonitor) {
+    if (running) {
+      return;
+    }
+    if (!initialized) {
+      doInitialize();
+      initialized=true;
+    }
+    doStart();
+    running=true;
+  }
+}

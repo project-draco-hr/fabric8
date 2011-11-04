@@ -1,0 +1,12 @@
+{
+  try {
+    String path=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,name);
+    if (zooKeeper.exists(path) == null) {
+      return null;
+    }
+    return new ProfileImpl(name,version,this);
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

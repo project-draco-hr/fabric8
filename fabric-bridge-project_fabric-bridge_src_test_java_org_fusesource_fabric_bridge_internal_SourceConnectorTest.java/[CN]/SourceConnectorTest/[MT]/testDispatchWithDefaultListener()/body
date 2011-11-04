@@ -1,0 +1,9 @@
+{
+  DispatchPolicy dispatchPolicy=new DispatchPolicy();
+  dispatchPolicy.setBatchSize(0);
+  dispatchPolicy.setBatchTimeout(0);
+  for (  BridgedDestination destination : connector.getDestinationsConfig().getDestinations()) {
+    destination.setDispatchPolicy(dispatchPolicy);
+  }
+  testDispatch();
+}

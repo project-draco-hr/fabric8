@@ -1,0 +1,16 @@
+{
+  final String bridgeConfigPath=getBridgeConfigPath(agent);
+  try {
+    client.deleteWithChildren(bridgeConfigPath);
+  }
+ catch (  InterruptedException e) {
+    String msg="Error removing bridge config at " + bridgeConfigPath + " : "+ e.getMessage();
+    LOG.error(msg,e);
+    throw new IllegalArgumentException(msg,e);
+  }
+catch (  KeeperException e) {
+    String msg="Error removing bridge config at " + bridgeConfigPath + " : "+ e.getMessage();
+    LOG.error(msg,e);
+    throw new IllegalArgumentException(msg,e);
+  }
+}

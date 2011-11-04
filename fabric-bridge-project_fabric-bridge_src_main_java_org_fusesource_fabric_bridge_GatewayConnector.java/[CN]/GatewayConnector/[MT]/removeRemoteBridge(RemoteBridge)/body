@@ -1,0 +1,18 @@
+{
+synchronized (lifecycleMonitor) {
+    if (!remoteBridges.remove(remoteBridge)) {
+      throw new UncategorizedJmsException("Not found remote bridge " + remoteBridge);
+    }
+    if (isInitialized()) {
+      SourceConnector outboundConnector=outboundConnectors.remove(remoteBridge);
+      try {
+        outboundConnector.destroy();
+      }
+ catch (      Exception e) {
+        String msg="Error removing outbound connector for " + remoteBridge + " : "+ e.getMessage();
+        LOG.error(msg,e);
+        throw new UncategorizedJmsException(msg,e);
+      }
+    }
+  }
+}
