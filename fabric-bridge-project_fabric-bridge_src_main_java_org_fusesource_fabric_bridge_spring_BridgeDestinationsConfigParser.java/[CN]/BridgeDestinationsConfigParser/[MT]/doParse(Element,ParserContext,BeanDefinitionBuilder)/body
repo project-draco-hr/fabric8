@@ -1,0 +1,17 @@
+{
+  super.doParse(element,parserContext,builder);
+  NodeList elements=element.getElementsByTagNameNS(BridgeNamespaceHandler.BRIDGE_NS,DISPATCH_POLICY_ELEMENT);
+  if (elements != null && elements.getLength() == 1) {
+    Element dispatchPolicyElement=(Element)elements.item(0);
+    builder.addPropertyValue(DISPATCH_POLICY_PROPERTY,dispatchPolicyParser.parse(dispatchPolicyElement,parserContext));
+  }
+  elements=element.getElementsByTagNameNS(BridgeNamespaceHandler.BRIDGE_NS,DESTINATION_ELEMENT);
+  ManagedList<BeanDefinition> destinations=new ManagedList<BeanDefinition>();
+  for (int i=0; i < elements.getLength(); i++) {
+    Element destinationElement=(Element)elements.item(i);
+    destinations.add(destinationParser.parse(destinationElement,parserContext));
+  }
+  if (!destinations.isEmpty()) {
+    builder.addPropertyValue(DESTINATIONS_PROPERTY,destinations);
+  }
+}
