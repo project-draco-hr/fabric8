@@ -3,18 +3,18 @@
     Map<String,Agent> agents=new HashMap<String,Agent>();
     List<String> configs=zooKeeper.getChildren(ZkPath.CONFIGS_AGENTS.getPath());
     for (    String name : configs) {
-      String root=zooKeeper.getStringData(ZkPath.AGENT_ROOT.getPath(name)).trim();
-      if (root.isEmpty()) {
+      String parentId=getParentOf(name);
+      if (parentId.isEmpty()) {
         if (!agents.containsKey(name)) {
           Agent agent=new AgentImpl(null,name,this);
           agents.put(name,agent);
         }
       }
  else {
-        Agent parent=agents.get(root);
+        Agent parent=agents.get(parentId);
         if (parent == null) {
-          parent=new AgentImpl(null,root,this);
-          agents.put(root,parent);
+          parent=new AgentImpl(null,parentId,this);
+          agents.put(parentId,parent);
         }
         Agent agent=new AgentImpl(parent,name,this);
         agents.put(name,agent);

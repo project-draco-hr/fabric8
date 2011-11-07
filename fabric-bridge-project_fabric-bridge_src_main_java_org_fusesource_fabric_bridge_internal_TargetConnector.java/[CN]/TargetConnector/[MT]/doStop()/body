@@ -1,0 +1,12 @@
+{
+  if (listenerContainer.isRunning()) {
+    try {
+      listenerContainer.stop();
+    }
+ catch (    JmsException ex) {
+      LOG.error("Error stopping message listener container: " + ex.getMessage(),ex);
+      throw ex;
+    }
+    LOG.info("Stopped");
+  }
+}

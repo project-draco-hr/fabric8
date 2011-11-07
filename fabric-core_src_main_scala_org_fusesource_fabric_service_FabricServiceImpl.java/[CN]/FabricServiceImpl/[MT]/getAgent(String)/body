@@ -1,10 +1,11 @@
 {
   try {
-    if (zooKeeper.exists(ZkPath.AGENT_ROOT.getPath(name)) == null) {
-      throw new FabricException("Agent '" + name + "' does not exist!");
+    Agent parent=null;
+    String parentId=getParentOf(name);
+    if (!parentId.isEmpty()) {
+      parent=getAgent(parentId);
     }
-    String root=zooKeeper.getStringData(ZkPath.AGENT_ROOT.getPath(name)).trim();
-    return new AgentImpl(root.isEmpty() ? null : getAgent(root),name,this);
+    return new AgentImpl(parent,name,this);
   }
  catch (  FabricException e) {
     throw e;

@@ -1,0 +1,62 @@
+{
+  if (!connected) {
+    LOG.warn("Gateway is not connected to Fabric Zookeeper service, will retry after " + this.updateInterval + " seconds");
+    return;
+  }
+  Agent[] agents;
+  try {
+    agents=gatewayProfile.getAssociatedAgents();
+  }
+ catch (  FabricException e) {
+    String msg="Error getting Agents from Fabric: " + e.getMessage();
+    LOG.error(msg,e);
+    throw new IllegalStateException(msg,e);
+  }
+  if (agents.length == 0) {
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("No BridgeConnector agents found");
+    }
+  }
+  for (  Agent agent : agents) {
+    final String agentId=agent.getId();
+    try {
+      RemoteBridge remoteBridge=ZkConfigHelper.getBridgeConfig(((FabricServiceImpl)fabricService).getZooKeeper(),agent,applicationContext);
+      RemoteBridge oldRemoteBridge=agentBridgeMap.get(agentId);
+      if (remoteBridge != null) {
+        if (oldRemoteBridge != null) {
+          if (!oldRemoteBridge.equals(remoteBridge)) {
+            LOG.info("Refreshing outbound connector for " + agentId);
+            agentBridgeMap.remove(agentId);
+            removeRemoteBridge(oldRemoteBridge);
+            addRemoteBridge(remoteBridge);
+            agentBridgeMap.put(agentId,remoteBridge);
+          }
+        }
+ else {
+          try {
+            LOG.info("Found Bridge Configuration for " + agentId);
+            addRemoteBridge(remoteBridge);
+            agentBridgeMap.put(agentId,remoteBridge);
+            LOG.info("Added outbound connector for " + agentId);
+          }
+ catch (          Exception ex) {
+            LOG.error("Error adding outbound conncetor for [" + agentId + "] : "+ ex.getMessage(),ex);
+          }
+        }
+      }
+ else {
+        if (oldRemoteBridge != null) {
+          LOG.info("Removing outbound connector for " + agentId);
+          agentBridgeMap.remove(agentId);
+          removeRemoteBridge(oldRemoteBridge);
+        }
+ else {
+          LOG.warn("Agent " + agentId + " uses Profile ["+ gatewayProfile.getId()+ "] but has not yet registered its Bridge Configuration");
+        }
+      }
+    }
+ catch (    Exception ex) {
+      LOG.error("Error getting Bridge Configuration for agent [" + agentId + "]: "+ ex.getMessage(),ex);
+    }
+  }
+}
