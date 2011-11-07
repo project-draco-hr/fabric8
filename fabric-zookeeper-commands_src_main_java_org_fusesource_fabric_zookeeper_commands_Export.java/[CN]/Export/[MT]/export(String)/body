@@ -12,7 +12,7 @@
   Map<File,String> settings=new HashMap<File,String>();
   for (  String p : paths) {
     p=path + p;
-    if (!matches(include,p) || matches(exclude,p)) {
+    if (!matches(include,p,true) || matches(exclude,p,false)) {
       continue;
     }
     byte[] data=getZooKeeper().getData(p);

@@ -1,0 +1,11 @@
+{
+  try {
+    super.doDestroy();
+  }
+ catch (  Exception e) {
+    LOG.warn("Error destroying Bridge: " + e.getMessage(),e);
+  }
+  if (agent != null) {
+    ZkConfigHelper.removeBridge(((FabricServiceImpl)fabricService).getZooKeeper(),agent);
+  }
+}
