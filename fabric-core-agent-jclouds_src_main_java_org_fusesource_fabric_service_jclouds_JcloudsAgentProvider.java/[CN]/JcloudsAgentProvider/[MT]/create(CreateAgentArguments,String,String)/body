@@ -1,6 +1,7 @@
 {
   if (createArgs instanceof CreateJCloudsAgentArguments) {
     CreateJCloudsAgentArguments args=(CreateJCloudsAgentArguments)createArgs;
+    boolean isClusterServer=args.isClusterServer();
     boolean debugAgent=args.isDebugAgent();
     int number=args.getNumber();
     String imageId=args.getImageId();
@@ -14,7 +15,7 @@
     String credential=args.getCredential();
     String owner=args.getOwner();
     URI proxyURI=args.getProxyUri();
-    doCreateAgent(proxyURI,name,number,zooKeeperUrl,debugAgent,imageId,hardwareId,locationId,group,user,instanceType,providerName,identity,credential,owner);
+    doCreateAgent(proxyURI,name,number,zooKeeperUrl,isClusterServer,debugAgent,imageId,hardwareId,locationId,group,user,instanceType,providerName,identity,credential,owner);
     return true;
   }
   return false;
