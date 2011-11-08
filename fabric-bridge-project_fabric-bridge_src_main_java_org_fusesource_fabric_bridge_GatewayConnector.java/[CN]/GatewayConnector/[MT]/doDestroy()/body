@@ -1,15 +1,27 @@
 {
-  if (inboundConnector != null) {
+  if (defaultInboundConnector != null) {
     try {
-      inboundConnector.destroy();
+      defaultInboundConnector.destroy();
     }
  catch (    Exception e) {
       String msg="Error destroying inbound connector : " + e.getMessage();
       LOG.error(msg,e);
       throw new IllegalStateException(msg,e);
     }
-    inboundConnector=null;
+    defaultInboundConnector=null;
   }
+  for (  Entry<RemoteBridge,TargetConnector> entry : inboundConnectors.entrySet()) {
+    RemoteBridge remoteBridge=entry.getKey();
+    try {
+      entry.getValue().destroy();
+    }
+ catch (    Exception e) {
+      String msg="Error destroying inbound connector for " + remoteBridge + " : "+ e.getMessage();
+      LOG.error(msg,e);
+      throw new IllegalStateException(msg,e);
+    }
+  }
+  inboundConnectors.clear();
   for (  Entry<RemoteBridge,SourceConnector> entry : outboundConnectors.entrySet()) {
     RemoteBridge remoteBridge=entry.getKey();
     try {

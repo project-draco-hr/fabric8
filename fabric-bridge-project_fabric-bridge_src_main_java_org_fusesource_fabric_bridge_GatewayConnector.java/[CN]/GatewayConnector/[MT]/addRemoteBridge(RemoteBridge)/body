@@ -7,7 +7,32 @@ synchronized (lifecycleMonitor) {
     }
     remoteBridges.add(remoteBridge);
     if (isInitialized()) {
-      if ((remoteBridge.getOutboundDestinations() != null) || (this.outboundDestinations == null)) {
+      if ((remoteBridge.getInboundDestinations() != null) && !remoteBridge.getInboundDestinations().equals(inboundDestinations)) {
+        TargetConnector inboundConnector;
+        try {
+          inboundConnector=createInboundConnector(remoteBridge);
+        }
+ catch (        Exception e) {
+          String msg="Error creating inbound connector for " + remoteBridge + " : "+ e.getMessage();
+          LOG.error(msg,e);
+          throw new UncategorizedJmsException(msg,e);
+        }
+        inboundConnectors.put(remoteBridge,inboundConnector);
+        if (isRunning()) {
+          try {
+            inboundConnector.start();
+          }
+ catch (          Exception e) {
+            String msg="Error starting inbound connector for " + remoteBridge + " : "+ e.getMessage();
+            LOG.error(msg,e);
+            throw new UncategorizedJmsException(msg,e);
+          }
+        }
+      }
+ else {
+        LOG.warn("No inbound destinations in Bridge, " + "no inbound connector will be created for " + remoteBridge);
+      }
+      if ((remoteBridge.getOutboundDestinations() != null) || (this.outboundDestinations != null)) {
         SourceConnector outboundConnector;
         try {
           outboundConnector=createOutboundConnector(remoteBridge);

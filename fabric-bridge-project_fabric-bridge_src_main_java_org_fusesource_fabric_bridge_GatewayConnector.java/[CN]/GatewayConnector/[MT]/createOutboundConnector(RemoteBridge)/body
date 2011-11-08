@@ -1,10 +1,12 @@
 {
   SourceConnector outboundConnector=new SourceConnector();
+  outboundConnector.setId(getId() + "." + remoteBridge.getId()+ ".outboundConnector");
   outboundConnector.setAutoStartup(isAutoStartup());
   outboundConnector.setPhase(getPhase());
   outboundConnector.setLocalBrokerConfig(localBrokerConfig);
   outboundConnector.setRemoteBrokerConfig(remoteBridge.getRemoteBrokerConfig());
   if (remoteBridge.getOutboundDestinations() == null) {
+    LOG.warn("Remote bridge " + remoteBridge + " does not specify outbound destinations"+ (outboundDestinations == null ? ", it is unidirectional!" : ", will load balance messages from default outbound destinations!"));
     outboundConnector.setOutboundDestinations(outboundDestinations);
   }
  else {
