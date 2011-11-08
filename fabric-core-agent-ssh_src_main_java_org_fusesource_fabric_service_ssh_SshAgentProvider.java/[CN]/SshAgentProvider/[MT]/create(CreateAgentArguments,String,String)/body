@@ -1,6 +1,7 @@
 {
   if (createArgs instanceof CreateSshAgentArguments) {
     CreateSshAgentArguments args=(CreateSshAgentArguments)createArgs;
+    boolean isClusterServer=args.isClusterServer();
     boolean debugAgent=args.isDebugAgent();
     int number=args.getNumber();
     String path=args.getPath();
@@ -11,7 +12,7 @@
     int sshRetries=args.getSshRetries();
     int retryDelay=args.getRetryDelay();
     URI proxyUri=args.getProxyUri();
-    doCreateAgent(proxyUri,name,number,zooKeeperUrl,debugAgent,path,host,port,username,password,sshRetries,retryDelay);
+    doCreateAgent(proxyUri,name,number,zooKeeperUrl,isClusterServer,debugAgent,path,host,port,username,password,sshRetries,retryDelay);
     return true;
   }
  else {

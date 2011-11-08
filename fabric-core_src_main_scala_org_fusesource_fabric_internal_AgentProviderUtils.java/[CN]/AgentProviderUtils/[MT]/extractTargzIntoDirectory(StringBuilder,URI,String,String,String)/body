@@ -1,6 +1,15 @@
 {
   String file=artifactId + "-" + version+ ".tar.gz";
-  String path=groupId.replaceAll("\\.","/") + "/" + artifactId+ "/"+ version+ "/"+ file;
-  sb.append("run curl --show-error --get --retry 20 --output ").append(file).append(" ").append(proxy.resolve(path)).append("\n");
+  String directory=groupId.replaceAll("\\.","/") + "/" + artifactId+ "/"+ version+ "/";
+  String artifactParentUri=proxy.resolve(directory).toString();
+  String artifactUri=proxy.resolve(directory + file).toString();
+  if (version.contains("SNAPSHOT")) {
+    sb.append("run export DISTRO_URL=`curl --silent ").append(artifactParentUri).append("| grep href | grep \"tar.gz\\\"\" | sed 's/^.*<a href=\"//' | sed 's/\".*$//'  | tail -1`").append("\n");
+  }
+ else {
+    sb.append("run export DISTRO_URL=`").append(artifactUri).append("`").append("\n");
+  }
+  sb.append("if [[  \"$DISTRO_URL\" == \"\" ]] ;  then export DISTRO_URL=").append(artifactUri).append("; fi\n");
+  sb.append("run curl --show-error --silent --get --retry 20 --output ").append(file).append(" ").append("$DISTRO_URL").append("\n");
   sb.append("run tar -xpzf ").append(file).append("\n");
 }
