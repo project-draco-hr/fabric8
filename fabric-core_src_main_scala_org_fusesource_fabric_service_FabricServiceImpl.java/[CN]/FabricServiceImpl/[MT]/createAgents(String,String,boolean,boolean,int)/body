@@ -13,7 +13,11 @@
         if (number > 1) {
           agentName+=i + 1;
         }
-        createAgentConfig("",agentName);
+        String parent="";
+        if (provider instanceof ChildAgentProvider) {
+          parent=uri.getSchemeSpecificPart();
+        }
+        createAgentConfig(parent,agentName);
         agents[i]=new AgentImpl(null,agentName,FabricServiceImpl.this);
       }
       provider.create(getMavenRepoURI(),uri,name,zooKeeperUrl,isClusterServer,debugAgent,number);
