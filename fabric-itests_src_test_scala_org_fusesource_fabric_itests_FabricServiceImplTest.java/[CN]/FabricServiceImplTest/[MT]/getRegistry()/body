@@ -14,11 +14,28 @@
     registry=loader.iterator().next().newPojoServiceRegistry(config);
     registry.addServiceListener(new ServiceListener(){
       @Override public void serviceChanged(      ServiceEvent event){
-        log.info("Service changed : " + event.toString());
-      }
-    }
+        ServiceReference ref=event.getServiceReference();
+        Object service=registry.getService(ref);
+switch (event.getType()) {
+case ServiceEvent.MODIFIED:
+          log.info("Service modified : " + service);
+        break;
+case ServiceEvent.MODIFIED_ENDMATCH:
+      log.info("Service modified endmatch : " + service);
+    break;
+case ServiceEvent.REGISTERED:
+  log.info("Service registering : " + service);
+break;
+case ServiceEvent.UNREGISTERING:
+log.info("Service unregistering : " + service);
+break;
+default :
+log.info("Unknown event : " + event.getType() + " service : "+ service);
+}
+}
+}
 );
-    Thread.sleep(5000);
-  }
-  return registry;
+Thread.sleep(10000);
+}
+return registry;
 }

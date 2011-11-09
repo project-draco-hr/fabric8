@@ -3,31 +3,27 @@
   PojoServiceRegistry registry=getRegistry();
   BundleContext bc=registry.getBundleContext();
   for (  Bundle b : bc.getBundles()) {
-    log.info(String.format("Found bundle : %s in state %s",b.getSymbolicName(),b.getState()));
+    log.info(String.format("Found bundle : %s with version %s in state %s",b.getSymbolicName(),b.getVersion(),b.getState()));
   }
   for (  ServiceReference ref : bc.getAllServiceReferences(null,null)) {
     log.info(String.format("Found Service reference : %s",ref.toString()));
   }
-  ConfigurationAdmin ca=getConfigAdmin(registry);
-  assertNotNull(ca);
-  Configuration cfgServer=ca.createFactoryConfiguration("org.fusesource.fabric.zookeeper.server");
-  Properties props=new Properties();
-  props.put("tickTime","2000");
-  props.put("initLimit","10");
-  props.put("syncLimit","5");
-  props.put("dataDir","target/zookeeper");
-  props.put("clientPort","2181");
-  cfgServer.setBundleLocation(null);
-  cfgServer.update(props);
-  Configuration cfgClient=ca.getConfiguration("org.fusesource.fabric.zookeeper");
-  props=new Properties();
-  props.put("zookeeper.url","localhost:2181");
-  cfgClient.setBundleLocation(null);
-  cfgClient.update(props);
-  ManagedServiceFactory msf=getService(ManagedServiceFactory.class,"(service.pid=org.fusesource.fabric.zookeeper.server)",registry);
-  assertNotNull(msf);
-  IZKClient client=getService(IZKClient.class,registry);
-  assertNotNull(client);
-  Thread.sleep(1000);
-  assertNotNull(client.exists(ZkPath.AGENT_ALIVE.getPath(System.getProperty("karaf.name"))));
+  log.info("Getting zk cluster service");
+  ZooKeeperClusterService clusterService=getService(ZooKeeperClusterService.class,registry);
+  assertNotNull(clusterService);
+  log.info("done");
+  List<String> agents=new ArrayList<String>();
+  agents.add("root");
+  log.info("Creating zk cluster config");
+  clusterService.createCluster(agents);
+  Thread.sleep(10000);
+  log.info("Getting fabric service");
+  FabricService service=getService(FabricService.class,registry);
+  assertNotNull(service);
+  log.info("Done");
+  Thread.sleep(10000);
+  log.info("Profiles :");
+  for (  Profile profile : service.getDefaultVersion().getProfiles()) {
+    log.info("Profile : " + profile.getId());
+  }
 }
