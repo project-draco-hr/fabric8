@@ -1,0 +1,11 @@
+{
+  serviceFactory.init();
+  Hashtable properties=getDefaultConfig();
+  properties.put("localBroker.connectionFactoryRef","localCF");
+  properties.put("remoteBroker.connectionFactoryRef","remoteCF");
+  properties.put("exportedBroker.connectionFactoryRef","localCF");
+  properties.put("localBroker.destinationResolverRef","localResolver");
+  properties.put("remoteBroker.destinationResolverRef","remoteResolver");
+  properties.put("exportedBroker.destinationResolverRef","localResolver");
+  serviceFactory.updated(TEST_PID,properties);
+}

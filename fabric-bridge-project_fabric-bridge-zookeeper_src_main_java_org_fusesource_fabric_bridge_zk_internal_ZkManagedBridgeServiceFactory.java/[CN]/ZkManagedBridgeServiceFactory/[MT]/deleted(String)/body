@@ -1,0 +1,19 @@
+{
+  ZkBridgeConnector bridgeConnector=bridgeConnectorMap.remove(pid);
+  if (bridgeConnector != null) {
+    try {
+      bridgeConnector.destroy();
+    }
+ catch (    Exception e) {
+      LOG.error("Error destroying bridge " + pid + " : "+ e.getMessage(),e);
+    }
+    if (serviceReferenceMap.containsKey(pid)) {
+      for (      ServiceReference reference : serviceReferenceMap.remove(pid)) {
+        bundleContext.ungetService(reference);
+      }
+    }
+  }
+ else {
+    LOG.error("Bridge " + pid + " not found");
+  }
+}

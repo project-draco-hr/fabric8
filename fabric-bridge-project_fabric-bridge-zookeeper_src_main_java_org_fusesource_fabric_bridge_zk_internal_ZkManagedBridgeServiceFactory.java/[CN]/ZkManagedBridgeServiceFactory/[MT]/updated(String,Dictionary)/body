@@ -1,0 +1,14 @@
+{
+  if (bridgeConnectorMap.containsKey(pid)) {
+    deleted(pid);
+  }
+  Dictionary<String,String> properties=new Hashtable<String,String>();
+  for (Enumeration keys=incoming.keys(); keys.hasMoreElements(); ) {
+    String key=(String)keys.nextElement();
+    Object value=incoming.get(key);
+    if (value != null) {
+      properties.put(key,value.toString());
+    }
+  }
+  bridgeConnectorMap.put(pid,createBridgeConnector(pid,properties));
+}
