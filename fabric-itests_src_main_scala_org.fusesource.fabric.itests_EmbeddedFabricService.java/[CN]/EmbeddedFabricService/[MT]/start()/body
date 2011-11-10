@@ -33,8 +33,15 @@ log.info("Unknown event : " + event.getType() + " service : "+ service);
 }
 }
 );
-Thread.sleep(10000);
+getConfigAdmin();
+getService(javax.management.MBeanServer.class,registry);
+getZooKeeperClusterService();
+createZooKeeperCluster();
+IZKClient client=getZooKeeperClient();
+if (!client.isConnected()) {
+throw new RuntimeException("Not connected to ZK...");
+}
+getFabricService();
 dumpBundles();
 dumpServiceReferences();
-createZooKeeperCluster();
 }
