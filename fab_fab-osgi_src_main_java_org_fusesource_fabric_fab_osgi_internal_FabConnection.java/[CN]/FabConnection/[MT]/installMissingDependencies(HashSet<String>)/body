@@ -28,7 +28,17 @@
         HashSet<String> p=new HashSet<String>(dependency.getPackages());
         p.retainAll(actualImports);
         Set<String> missing=Bundles.filterInstalled(bundleContext,p,this);
+        boolean hasNoPendingPackagesOrServices=false;
         if (missing.isEmpty()) {
+          String services=dependency.getManfiestEntry("Export-Service");
+          if (Strings.notEmpty(services)) {
+            LOG.info("Bundle non-optional packages already installed for: " + name + " version: "+ version+ " but it exposes services so will install: "+ services);
+          }
+ else {
+            hasNoPendingPackagesOrServices=true;
+          }
+        }
+        if (hasNoPendingPackagesOrServices) {
           LOG.info("Bundle non-optional packages already installed for: " + name + " version: "+ version+ " packages: "+ p);
         }
  else {
