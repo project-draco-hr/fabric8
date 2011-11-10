@@ -18,15 +18,15 @@
     throw new IllegalArgumentException("Gateway connector profile " + gatewayProfileName + " does not exist");
   }
   RemoteBridge gatewayBridge;
-  int attempts=0;
+  int attempts=gatewayConnectRetries;
   do {
     gatewayBridge=ZkConfigHelper.getGatewayConfig(gatewayProfile,applicationContext);
     if (gatewayBridge == null) {
-      LOG.warn("Gateway configuration not found in profile " + gatewayProfileName + ", waiting for "+ gatewayStartupDelay+ " seconds");
+      LOG.warn("Gateway configuration not found in profile " + gatewayProfileName + ", waiting for "+ gatewayStartupDelay+ " seconds, retries remaining "+ attempts);
       Thread.sleep(gatewayStartupDelay * 1000L);
     }
   }
- while (++attempts < gatewayConnectRetries);
+ while (--attempts > 0);
   if (gatewayBridge == null) {
     String msg="Gateway configuration not found in profile " + gatewayProfileName;
     LOG.error(msg);
@@ -34,7 +34,7 @@
   }
   super.setRemoteBrokerConfig(gatewayBridge.getRemoteBrokerConfig());
   if (this.getInboundDestinations() != null) {
-    if (gatewayBridge.getOutboundDestinations() != null) {
+    if (gatewayBridge.getOutboundDestinations() == null) {
       LOG.info("Using inbound destinations from Bridge, " + "Gateway has no default destinations");
     }
  else {
