@@ -1,6 +1,6 @@
 {
   ZkBridgeConnector bridgeConnector=new ZkBridgeConnector();
-  bridgeConnector.setFabricService(this.fabricService);
+  bridgeConnector.setFabricService(getFabricService());
   bridgeConnector.setId(pid);
   if (StringUtils.hasText(properties.get("versionName"))) {
     bridgeConnector.setVersionName(properties.get("versionName"));
@@ -23,8 +23,7 @@
   bridgeConnector.setLocalBrokerConfig(createBrokerConfig(pid,"localBroker",properties));
   bridgeConnector.setRemoteBrokerConfig(createBrokerConfig(pid,"remoteBroker",properties));
   bridgeConnector.setExportedBrokerConfig(createBrokerConfig(pid,"exportedBroker",properties));
-  ApplicationContext applicationContext=(ApplicationContext)Proxy.newProxyInstance(ApplicationContext.class.getClassLoader(),new Class[]{ApplicationContext.class},new SpringOsgiBeanBridge(pid,this));
-  bridgeConnector.setApplicationContext(applicationContext);
+  bridgeConnector.setApplicationContext(createApplicationContext(pid));
   try {
     bridgeConnector.afterPropertiesSet();
     bridgeConnector.start();
