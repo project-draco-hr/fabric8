@@ -1,0 +1,23 @@
+{
+  ServiceTracker tracker=null;
+  ServiceReference ref=registry.getServiceReference(type.getName());
+  if (ref == null) {
+    tracker=new ServiceTracker(registry.getBundleContext(),type.getName(),null);
+  }
+ else {
+    tracker=new ServiceTracker(registry.getBundleContext(),ref,null);
+  }
+  tracker.open(true);
+  Object rc=null;
+  try {
+    rc=tracker.waitForService(60000);
+  }
+ catch (  InterruptedException e) {
+    throw new RuntimeException("Failed to wait for service",e);
+  }
+  if (rc == null) {
+    throw new RuntimeException("Failed to get service");
+  }
+  tracker.close();
+  return type.cast(rc);
+}

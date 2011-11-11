@@ -1,0 +1,9 @@
+{
+  super.doInitialize();
+  agent=fabricService.getAgent(System.getProperty("karaf.name"));
+  RemoteBridge remoteBridge=new RemoteBridge();
+  remoteBridge.setRemoteBrokerConfig(this.exportedBrokerConfig != null ? this.exportedBrokerConfig : super.getLocalBrokerConfig());
+  remoteBridge.setInboundDestinations(super.getOutboundDestinations());
+  remoteBridge.setOutboundDestinations(super.getInboundDestinations());
+  ZkConfigHelper.registerBridge(((FabricServiceImpl)fabricService).getZooKeeper(),agent,remoteBridge);
+}

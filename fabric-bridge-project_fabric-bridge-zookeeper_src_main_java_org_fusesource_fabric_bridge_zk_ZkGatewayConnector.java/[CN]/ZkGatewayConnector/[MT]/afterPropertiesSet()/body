@@ -1,0 +1,34 @@
+{
+  super.afterPropertiesSet();
+  if (exportedBrokerConfig == null) {
+    LOG.warn("The property exportedBrokerConfig is not set, exporting property localBrokerConfig");
+  }
+ else   if ((exportedBrokerConfig.getBrokerUrl() == null && exportedBrokerConfig.getConnectionFactory() == null) || (exportedBrokerConfig.getBrokerUrl() != null && exportedBrokerConfig.getConnectionFactory() != null)) {
+    throw new IllegalArgumentException("Either a exported broker url or connection factory must be provided");
+  }
+  if (profileName == null) {
+    throw new IllegalArgumentException("Property profile must be set");
+  }
+  if (fabricService == null) {
+    throw new IllegalArgumentException("Property fabricService must be set");
+  }
+  IZKClient zooKeeper=((FabricServiceImpl)fabricService).getZooKeeper();
+  zooKeeper.registerListener(this);
+  this.connected=true;
+  RemoteBridge remoteBridge=new RemoteBridge();
+  remoteBridge.setRemoteBrokerConfig(exportedBrokerConfig != null ? exportedBrokerConfig : super.getLocalBrokerConfig());
+  remoteBridge.setInboundDestinations(super.getInboundDestinations());
+  remoteBridge.setOutboundDestinations(super.getOutboundDestinations());
+  if (versionName == null) {
+    versionName=fabricService.getDefaultVersion().getName();
+  }
+  LOG.info("Looking for profile " + profileName + " under version "+ versionName);
+  Version version=fabricService.getVersion(versionName);
+  gatewayProfile=version.getProfile(profileName);
+  if (gatewayProfile == null) {
+    LOG.info("Creating profile " + profileName + " under version "+ versionName);
+    gatewayProfile=version.createProfile(profileName);
+  }
+  LOG.info("Registering gateway under profile " + gatewayProfile);
+  ZkConfigHelper.registerGateway(gatewayProfile,remoteBridge);
+}

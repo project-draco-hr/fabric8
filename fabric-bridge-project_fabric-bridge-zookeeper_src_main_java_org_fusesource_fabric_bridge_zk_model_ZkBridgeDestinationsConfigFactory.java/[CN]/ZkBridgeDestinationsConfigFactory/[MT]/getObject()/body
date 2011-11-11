@@ -1,0 +1,24 @@
+{
+  Agent agent=fabricService.getAgent(System.getProperty("karaf.name"));
+  String bridgeDestinationsConfigName=BRIDGE_DESTINATIONS_PID + "." + getId()+ PID_EXTENSION;
+  for (  Profile profile : agent.getProfiles()) {
+    if (profile.getParents().length > 0) {
+      profile=profile.getOverlay();
+    }
+    byte[] bytes=profile.getFileConfigurations().get(bridgeDestinationsConfigName);
+    if (bytes != null) {
+      Object object=jaxbContext.createUnmarshaller().unmarshal(new ByteArrayInputStream(bytes));
+      if (object instanceof BridgeDestinationsConfig) {
+        return (BridgeDestinationsConfig)object;
+      }
+ else {
+        String msg="Object at " + bridgeDestinationsConfigName + " is not of type "+ BridgeDestinationsConfig.class.getName()+ ", but instead of type "+ object.getClass().getName();
+        LOG.error(msg);
+        throw new IllegalArgumentException(msg);
+      }
+    }
+  }
+  String msg="No configuration " + bridgeDestinationsConfigName + " found in agent profiles";
+  LOG.error(msg);
+  throw new BeanCreationException(msg);
+}

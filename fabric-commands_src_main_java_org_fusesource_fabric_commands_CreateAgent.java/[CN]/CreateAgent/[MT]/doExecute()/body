@@ -9,8 +9,14 @@
   if (names == null || names.isEmpty()) {
     names=Collections.singletonList("default");
   }
-  Profile[] profiles=getProfiles(version,names);
-  Agent child=fabricService.createAgent(url,name,debugAgent);
-  child.setProfiles(profiles);
+  Agent[] children=fabricService.createAgents(url,name,isClusterServer,debugAgent,number);
+  try {
+    Profile[] profiles=getProfiles(version,names);
+    for (    Agent child : children) {
+      child.setProfiles(profiles);
+    }
+  }
+ catch (  Exception ex) {
+  }
   return null;
 }

@@ -1,0 +1,15 @@
+{
+  for (  RemoteBridge remoteBridge : remoteBridges) {
+    if (remoteBridge.getInboundDestinations() != null && !remoteBridge.getInboundDestinations().equals(inboundDestinations)) {
+      TargetConnector inboundConnector=createInboundConnector(remoteBridge);
+      inboundConnectors.put(remoteBridge,inboundConnector);
+    }
+ else {
+      LOG.warn("Remote bridge " + remoteBridge + " does not specify inbound destinations"+ (inboundDestinations == null ? ", it is unidirectional" : ", using default inbound connector"));
+    }
+    if ((remoteBridge.getOutboundDestinations() != null) || (this.outboundDestinations != null)) {
+      SourceConnector outboundConnector=createOutboundConnector(remoteBridge);
+      outboundConnectors.put(remoteBridge,outboundConnector);
+    }
+  }
+}

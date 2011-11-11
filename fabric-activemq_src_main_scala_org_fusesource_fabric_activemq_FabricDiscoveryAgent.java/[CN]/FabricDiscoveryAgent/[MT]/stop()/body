@@ -1,0 +1,18 @@
+{
+  if (startCounter.decrementAndGet() == 0) {
+    running.set(false);
+    try {
+      group.close();
+    }
+ catch (    Throwable ignore) {
+    }
+    if (managedZkClient) {
+      try {
+        zkClient.close();
+      }
+ catch (      Throwable ignore) {
+      }
+      zkClient=null;
+    }
+  }
+}

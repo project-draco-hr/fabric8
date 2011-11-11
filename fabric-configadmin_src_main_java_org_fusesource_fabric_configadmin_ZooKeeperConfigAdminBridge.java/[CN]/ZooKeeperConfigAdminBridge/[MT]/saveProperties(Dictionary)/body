@@ -1,0 +1,9 @@
+{
+  String fileInstall=(String)props.get(FILEINSTALL);
+  if (fileInstall != null) {
+    URL configUrl=new URL(fileInstall);
+    props.remove(FILEINSTALL);
+    Properties fileProperties=createProperties(props);
+    fileProperties.store(new FileOutputStream(configUrl.getFile()),"Saved by " + name + " at  "+ new Date());
+  }
+}
