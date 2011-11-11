@@ -25,6 +25,7 @@
           throw new ConfigurationException(connectionFactoryRef,msg);
         }
         if (serviceReferences != null) {
+          config.setConnectionFactoryRef(connectionFactoryRef);
           config.setConnectionFactory((ConnectionFactory)bundleContext.getService(serviceReferences[0]));
           addServiceReference(pid,serviceReferences[0]);
         }
@@ -47,6 +48,7 @@
           throw new ConfigurationException(destinationResolverRef,msg);
         }
         if (serviceReferences != null) {
+          config.setDestinationResolverRef(destinationResolverRef);
           config.setDestinationResolver((DestinationResolver)bundleContext.getService(serviceReferences[0]));
           addServiceReference(pid,serviceReferences[0]);
         }
