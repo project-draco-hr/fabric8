@@ -1,0 +1,18 @@
+{
+  if (!getBeansMethod.equals(method)) {
+    String msg="Unsupported method " + method.getName();
+    LOG.error(msg);
+    throw new UnsupportedOperationException(msg);
+  }
+  final BundleContext bundleContext=serviceFactory.getBundleContext();
+  String beanName=String.valueOf(args[0]);
+  Class beanClass=(Class)args[1];
+  String filter="(" + Constants.SERVICE_PID + "="+ beanName+ ")";
+  ServiceReference[] references=bundleContext.getServiceReferences(beanClass.getName(),filter);
+  if (references != null) {
+    Object service=bundleContext.getService(references[0]);
+    serviceFactory.addServiceReference(pid,references[0]);
+    return service;
+  }
+  throw new NoSuchBeanDefinitionException(beanName," no such OSGi service");
+}

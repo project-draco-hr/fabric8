@@ -1,0 +1,14 @@
+{
+  ZkGatewayConnector gatewayConnector=gatewayConnectorMap.remove(pid);
+  if (gatewayConnector != null) {
+    try {
+      gatewayConnector.destroy();
+    }
+ catch (    Exception e) {
+      LOG.error("Error destroying gateway " + pid + " : "+ e.getMessage(),e);
+    }
+  }
+ else {
+    LOG.error("Gateway " + pid + " not found");
+  }
+}

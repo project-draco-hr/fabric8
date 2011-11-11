@@ -1,0 +1,14 @@
+{
+  ZkBridgeConnector bridgeConnector=bridgeConnectorMap.remove(pid);
+  if (bridgeConnector != null) {
+    try {
+      bridgeConnector.destroy();
+    }
+ catch (    Exception e) {
+      LOG.error("Error destroying bridge " + pid + " : "+ e.getMessage(),e);
+    }
+  }
+ else {
+    LOG.error("Bridge " + pid + " not found");
+  }
+}

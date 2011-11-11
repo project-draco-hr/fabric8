@@ -1,0 +1,8 @@
+{
+  doDeleted(pid);
+  if (serviceReferenceMap.containsKey(pid)) {
+    for (    ServiceReference reference : serviceReferenceMap.remove(pid)) {
+      bundleContext.ungetService(reference);
+    }
+  }
+}

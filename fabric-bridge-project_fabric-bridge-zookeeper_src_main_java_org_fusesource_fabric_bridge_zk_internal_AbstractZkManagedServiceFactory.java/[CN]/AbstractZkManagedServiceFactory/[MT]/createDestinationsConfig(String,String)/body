@@ -1,0 +1,13 @@
+{
+  ZkBridgeDestinationsConfigFactory factory=new ZkBridgeDestinationsConfigFactory();
+  factory.setFabricService(fabricService);
+  factory.setId(destinationsRef);
+  try {
+    return factory.getObject();
+  }
+ catch (  Exception e) {
+    String msg="Error getting destinations for " + pid + "."+ destinationsRef+ " : "+ e.getMessage();
+    LOG.error(msg,e);
+    throw new ConfigurationException(destinationsRef,msg,e);
+  }
+}
