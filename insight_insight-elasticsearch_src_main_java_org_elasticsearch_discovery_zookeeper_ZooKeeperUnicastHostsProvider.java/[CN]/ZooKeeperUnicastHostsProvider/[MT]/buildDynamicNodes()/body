@@ -1,0 +1,20 @@
+{
+  try {
+    List<DiscoveryNode> dn=new ArrayList<DiscoveryNode>();
+    IZKClient zooKeeper=(IZKClient)tracker.getService();
+    if (zooKeeper != null && zooKeeper.isConnected()) {
+      String path=componentSettings.get("node");
+      List<String> nodes=zooKeeper.getChildren(path);
+      for (      String node : nodes) {
+        String data=zooKeeper.getStringData(path + "/" + node);
+        String[] datas=data.split(":");
+        InetSocketTransportAddress addr=new InetSocketTransportAddress(datas[0],Integer.parseInt(datas[1]));
+        dn.add(new DiscoveryNode(node,addr));
+      }
+    }
+    return dn;
+  }
+ catch (  Exception e) {
+    return Collections.emptyList();
+  }
+}

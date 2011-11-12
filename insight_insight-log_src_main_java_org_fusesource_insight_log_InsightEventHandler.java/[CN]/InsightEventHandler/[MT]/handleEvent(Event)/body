@@ -1,0 +1,28 @@
+{
+  try {
+    StringBuilder writer=new StringBuilder();
+    writer.append("{ host : ");
+    quote(name,writer);
+    writer.append(", topic: ");
+    quote(event.getTopic(),writer);
+    writer.append(", properties: { ");
+    boolean first=true;
+    for (    String name : event.getPropertyNames()) {
+      if (first) {
+        first=false;
+      }
+ else {
+        writer.append(", ");
+      }
+      quote(name,writer);
+      writer.append(": ");
+      quote(event.getProperty(name).toString(),writer);
+    }
+    writer.append(" } }");
+    IndexRequest request=new IndexRequest().index(index).type(type).source(writer.toString()).create(true);
+    sender.put(request);
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+}
