@@ -6,10 +6,12 @@
     Configuration config=confAdmin.getConfiguration("org.apache.karaf.shell");
     Dictionary props=config.getProperties();
     props.put("sshRealm","zookeeper");
+    config.setBundleLocation(null);
     config.update(props);
     config=confAdmin.getConfiguration("org.apache.karaf.management");
     props=config.getProperties();
     props.put("jmxRealm","zookeeper");
+    config.setBundleLocation(null);
     config.update(props);
   }
 }
