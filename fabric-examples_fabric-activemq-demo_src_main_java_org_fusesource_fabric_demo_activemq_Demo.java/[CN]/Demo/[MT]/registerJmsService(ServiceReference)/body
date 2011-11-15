@@ -1,8 +1,6 @@
 {
   System.out.println("Starting ActiveMQ Demo");
-  ServiceTracker tracker=new ServiceTracker(bundleContext,JMSService.class.getName(),null);
-  tracker.open();
-  service=(JMSService)tracker.getService();
+  service=(JMSService)bundleContext.getService(reference);
   service.start();
   ProducerThread producer=new ProducerThread(service,"queue://TEST");
   producer.setSleep(500);
