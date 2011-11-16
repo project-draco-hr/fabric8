@@ -1,0 +1,51 @@
+{
+  if (zkClient == null) {
+    managedZkClient=true;
+    ZKClient client=new ZKClient(System.getProperty("zookeeper.url","localhost:2181"),Timespan.parse("10s"),null);
+    client.start();
+    client.waitForStart();
+    zkClient=client;
+  }
+ else {
+    managedZkClient=false;
+  }
+  group=ZooKeeperGroupFactory.create(zkClient,"/fabric/camel-clusters/" + groupName,acl);
+  singleton.setId(id);
+  singleton.start(group);
+  singleton.join(state());
+  info("Camel context %s is waiting to become the master",id);
+  singleton.add(new ChangeListener(){
+    @Override public void changed(){
+      if (singleton.isMaster()) {
+        if (started.compareAndSet(false,true)) {
+          info("Camel context %s is now the master, starting the context.",id);
+          try {
+            camelContext.start();
+            singleton.update(state());
+          }
+ catch (          Exception e) {
+            e.printStackTrace();
+          }
+        }
+      }
+ else {
+        if (started.compareAndSet(true,false)) {
+          info("Camel context %s is now a slave, stopping the context.",id);
+          try {
+            camelContext.stop();
+          }
+ catch (          Exception e) {
+            e.printStackTrace();
+          }
+        }
+      }
+    }
+    public void connected(){
+      this.changed();
+    }
+    public void disconnected(){
+      this.changed();
+    }
+  }
+);
+}
