@@ -7,12 +7,14 @@
     throw new IllegalArgumentException("Either a exported broker url or connection factory must be provided");
   }
   if (profileName == null) {
-    throw new IllegalArgumentException("Property profile must be set");
+    throw new IllegalArgumentException("Property profileName must be set");
+  }
+  if (zooKeeper == null) {
+    throw new IllegalArgumentException("Property zooKeeper must be set");
   }
   if (fabricService == null) {
     throw new IllegalArgumentException("Property fabricService must be set");
   }
-  IZKClient zooKeeper=((FabricServiceImpl)fabricService).getZooKeeper();
   zooKeeper.registerListener(this);
   this.connected=true;
   RemoteBridge remoteBridge=new RemoteBridge();
