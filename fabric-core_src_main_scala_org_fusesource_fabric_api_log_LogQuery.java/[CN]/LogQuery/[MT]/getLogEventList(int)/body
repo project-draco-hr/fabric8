@@ -1,0 +1,17 @@
+{
+  List<PaxLoggingEvent> answer=new ArrayList<PaxLoggingEvent>();
+  if (appender != null) {
+    LruList events=appender.getEvents();
+    Iterable<PaxLoggingEvent> iterable;
+    if (count > 0) {
+      iterable=events.getElements(count);
+    }
+ else {
+      iterable=events.getElements();
+    }
+    for (    PaxLoggingEvent event : iterable) {
+      answer.add(event);
+    }
+  }
+  return answer;
+}
