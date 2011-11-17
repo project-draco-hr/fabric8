@@ -1,5 +1,13 @@
 {
-  List<PaxLoggingEvent> answer=getLogEventList(count);
-  ObjectMapper mapper=new ObjectMapper();
-  return mapper.writeValueAsString(answer);
+  try {
+    List<LogEvent> answer=getLogEventList(count);
+    ObjectMapper mapper=new ObjectMapper();
+    StringWriter writer=new StringWriter();
+    mapper.writeValue(writer,answer);
+    return writer.toString();
+  }
+ catch (  IOException e) {
+    logger.warn("Failed to marshal the events: " + e,e);
+    throw new IOException(e.getMessage());
+  }
 }

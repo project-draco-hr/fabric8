@@ -1,17 +1,18 @@
 {
   if (bundleContext == null) {
-    return;
+    throw new IllegalArgumentException("No bundleContext injected!");
   }
-  ServiceReference[] refs=bundleContext.getServiceReferences("org.ops4j.pax.logging.spi.PaxAppender",null);
-  if (refs == null) {
-    System.out.println("No pax log appenders!!!");
+  try {
+    Bundles.startBundle(bundleContext,"org.apache.karaf.shell.log");
   }
- else {
-    for (    ServiceReference ref : refs) {
-      Object service=bundleContext.getService(ref);
-      if (service instanceof VmLogAppender) {
-        this.appender=(VmLogAppender)service;
-      }
-    }
+ catch (  Exception e) {
+    logger.warn("Failed to start karaf shell log bundle: " + e,e);
+  }
+  tryFindAppender("org.ops4j.pax.logging.spi.PaxAppender");
+  if (this.appender == null) {
+    tryFindAppender(VmLogAppender.class.getName());
+  }
+  if (this.appender == null) {
+    throw new IllegalArgumentException("No VmLogAppender found!");
   }
 }

@@ -1,5 +1,5 @@
 {
-  List<PaxLoggingEvent> answer=new ArrayList<PaxLoggingEvent>();
+  List<LogEvent> answer=new ArrayList<LogEvent>();
   if (appender != null) {
     LruList events=appender.getEvents();
     Iterable<PaxLoggingEvent> iterable;
@@ -10,7 +10,7 @@
       iterable=events.getElements();
     }
     for (    PaxLoggingEvent event : iterable) {
-      answer.add(event);
+      answer.add(Logs.newInstance(event));
     }
   }
   return answer;
