@@ -1,17 +1,8 @@
 {
   if (bundleContext == null) {
-    return;
+    throw new IllegalArgumentException("No bundleContext injected!");
   }
-  ServiceReference[] refs=bundleContext.getServiceReferences("org.ops4j.pax.logging.spi.PaxAppender",null);
-  if (refs == null) {
-    System.out.println("No pax log appenders!!!");
-  }
- else {
-    for (    ServiceReference ref : refs) {
-      Object service=bundleContext.getService(ref);
-      if (service instanceof VmLogAppender) {
-        this.appender=(VmLogAppender)service;
-      }
-    }
-  }
+  ServiceTrackerCustomizer customizer=null;
+  serviceTracker=new ServiceTracker(bundleContext,"org.ops4j.pax.logging.spi.PaxAppender",customizer);
+  serviceTracker.open();
 }

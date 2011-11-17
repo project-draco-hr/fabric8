@@ -1,0 +1,15 @@
+{
+  Bundle[] bundles=context.getBundles();
+  for (  Bundle bundle : bundles) {
+    String name=bundle.getSymbolicName();
+    if (name.contains(containsName)) {
+      logger.debug("About to start bundle: " + name);
+      try {
+        bundle.stop();
+      }
+ catch (      Exception e) {
+        logger.error("Failed to start: " + e.getMessage(),e);
+      }
+    }
+  }
+}
