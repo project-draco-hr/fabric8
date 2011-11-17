@@ -1,12 +1,4 @@
 {
-  try {
-    List<LogEvent> answer=getLogEventList(count);
-    StringWriter writer=new StringWriter();
-    mapper.writeValue(writer,answer);
-    return writer.toString();
-  }
- catch (  IOException e) {
-    logger.warn("Failed to marshal the events: " + e,e);
-    throw new IOException(e.getMessage());
-  }
+  List<LogEvent> events=getLogEventList(count,null);
+  return toJSON(events);
 }

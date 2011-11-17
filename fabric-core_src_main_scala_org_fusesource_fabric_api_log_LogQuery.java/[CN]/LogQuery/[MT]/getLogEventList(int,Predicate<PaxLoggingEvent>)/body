@@ -11,7 +11,9 @@
       iterable=events.getElements();
     }
     for (    PaxLoggingEvent event : iterable) {
-      answer.add(Logs.newInstance(event));
+      if (predicate == null || predicate.matches(event)) {
+        answer.add(Logs.newInstance(event));
+      }
     }
   }
  else {
