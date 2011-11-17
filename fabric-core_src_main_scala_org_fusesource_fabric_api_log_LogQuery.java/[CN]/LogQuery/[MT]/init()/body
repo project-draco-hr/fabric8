@@ -2,17 +2,7 @@
   if (bundleContext == null) {
     throw new IllegalArgumentException("No bundleContext injected!");
   }
-  try {
-    Bundles.startBundle(bundleContext,"org.apache.karaf.shell.log");
-  }
- catch (  Exception e) {
-    logger.warn("Failed to start karaf shell log bundle: " + e,e);
-  }
-  tryFindAppender("org.ops4j.pax.logging.spi.PaxAppender");
-  if (this.appender == null) {
-    tryFindAppender(VmLogAppender.class.getName());
-  }
-  if (this.appender == null) {
-    throw new IllegalArgumentException("No VmLogAppender found!");
-  }
+  ServiceTrackerCustomizer customizer=null;
+  serviceTracker=new ServiceTracker(bundleContext,"org.ops4j.pax.logging.spi.PaxAppender",customizer);
+  serviceTracker.open();
 }

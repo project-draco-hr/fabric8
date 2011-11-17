@@ -1,7 +1,8 @@
 {
   List<LogEvent> answer=new ArrayList<LogEvent>();
-  if (appender != null) {
-    LruList events=appender.getEvents();
+  VmLogAppender a=getAppender();
+  if (a != null) {
+    LruList events=a.getEvents();
     Iterable<PaxLoggingEvent> iterable;
     if (count > 0) {
       iterable=events.getElements(count);
@@ -12,6 +13,9 @@
     for (    PaxLoggingEvent event : iterable) {
       answer.add(Logs.newInstance(event));
     }
+  }
+ else {
+    logger.warn("No VmLogAppender available!");
   }
   return answer;
 }
