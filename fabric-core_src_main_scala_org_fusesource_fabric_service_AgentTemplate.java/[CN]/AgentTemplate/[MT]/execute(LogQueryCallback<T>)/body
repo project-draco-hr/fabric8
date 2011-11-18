@@ -1,9 +1,3 @@
 {
-  return jmxTemplate.execute(new JmxTemplateSupport.JmxConnectorCallback<T>(){
-    public T doWithJmxConnector(    JMXConnector connector) throws Exception {
-      String[] bean=new String[]{"type","LogQuery"};
-      return callback.doWithLogQuery(jmxTemplate.getMBean(connector,LogQueryMBean.class,"org.fusesource.fabric",bean));
-    }
-  }
-);
+  return jmxTemplate.execute(callback);
 }
