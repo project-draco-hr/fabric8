@@ -1,5 +1,11 @@
 {
   LogResults answer=new LogResults();
+  try {
+    answer.setHost(InetAddress.getLocalHost().getHostName());
+  }
+ catch (  UnknownHostException e) {
+    logger.warn("Failed to get host name: " + e,e);
+  }
   VmLogAppender a=getAppender();
   if (a != null) {
     LruList events=a.getEvents();
