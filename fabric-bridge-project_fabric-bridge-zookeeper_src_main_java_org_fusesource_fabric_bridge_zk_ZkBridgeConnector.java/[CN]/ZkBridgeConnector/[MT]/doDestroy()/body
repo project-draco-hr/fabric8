@@ -6,6 +6,11 @@
     LOG.warn("Error destroying Bridge: " + e.getMessage(),e);
   }
   if (agent != null) {
-    ZkConfigHelper.removeBridge(((FabricServiceImpl)fabricService).getZooKeeper(),agent);
+    if (this.connected) {
+      ZkConfigHelper.removeBridge(zooKeeper,agent);
+    }
+ else {
+      LOG.error("Bridge disconnected from Fabric Zookeeper service, " + "unable to remove Bridge runtime configuration");
+    }
   }
 }

@@ -1,5 +1,6 @@
 {
   if (gatewayConnectorMap.containsKey(pid)) {
+    LOG.info("Refreshing Gateway " + pid);
     deleted(pid);
   }
   Dictionary<String,String> properties=new Hashtable<String,String>();
@@ -11,4 +12,5 @@
     }
   }
   gatewayConnectorMap.put(pid,createGatewayConnector(pid,properties));
+  LOG.info("Started Gateway " + pid);
 }

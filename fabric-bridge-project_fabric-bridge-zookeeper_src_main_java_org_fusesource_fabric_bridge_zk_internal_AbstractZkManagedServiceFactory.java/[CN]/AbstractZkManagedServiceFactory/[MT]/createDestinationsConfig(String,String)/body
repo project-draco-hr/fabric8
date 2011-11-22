@@ -3,7 +3,11 @@
   factory.setFabricService(fabricService);
   factory.setId(destinationsRef);
   try {
-    return factory.getObject();
+    BridgeDestinationsConfig destinationsConfig=factory.getObject();
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Found [" + pid + "."+ destinationsRef+ "]: "+ destinationsConfig);
+    }
+    return destinationsConfig;
   }
  catch (  Exception e) {
     String msg="Error getting destinations for " + pid + "."+ destinationsRef+ " : "+ e.getMessage();

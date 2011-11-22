@@ -20,7 +20,7 @@
   for (  Agent agent : agents) {
     final String agentId=agent.getId();
     try {
-      RemoteBridge remoteBridge=ZkConfigHelper.getBridgeConfig(((FabricServiceImpl)fabricService).getZooKeeper(),agent,applicationContext);
+      RemoteBridge remoteBridge=ZkConfigHelper.getBridgeConfig(zooKeeper,agent,applicationContext);
       RemoteBridge oldRemoteBridge=agentBridgeMap.get(agentId);
       if (remoteBridge != null) {
         if (oldRemoteBridge != null) {

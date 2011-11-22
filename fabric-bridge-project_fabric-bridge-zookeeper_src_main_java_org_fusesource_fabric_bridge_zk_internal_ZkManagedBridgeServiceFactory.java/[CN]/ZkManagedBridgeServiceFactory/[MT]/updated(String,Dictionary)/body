@@ -1,5 +1,6 @@
 {
   if (bridgeConnectorMap.containsKey(pid)) {
+    LOG.info("Refreshing Bridge " + pid);
     deleted(pid);
   }
   Dictionary<String,String> properties=new Hashtable<String,String>();
@@ -11,4 +12,5 @@
     }
   }
   bridgeConnectorMap.put(pid,createBridgeConnector(pid,properties));
+  LOG.info("Started Bridge " + pid);
 }

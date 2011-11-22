@@ -1,0 +1,12 @@
+{
+  System.out.println("Starting ActiveMQ Demo");
+  service=(JMSService)bundleContext.getService(reference);
+  service.start();
+  ProducerThread producer=new ProducerThread(service,"queue://TEST");
+  producer.setSleep(500);
+  producer.start();
+  System.out.println("Producer Started");
+  ConsumerThread consumer=new ConsumerThread(service,"queue://TEST");
+  consumer.start();
+  System.out.println("Consumer Started");
+}
