@@ -1,14 +1,17 @@
 {
   if (clean) {
-    if ((agents != null && agents.isEmpty()) || add || remove) {
-      throw new IllegalArgumentException("Invalid syntax.  zk-cluster --clean should be used without any other arguments");
+    if (add || remove) {
+      throw new IllegalArgumentException("Invalid syntax.  zk-cluster --clean should be used without add or remove options");
     }
     service.clean();
+    if (agents != null && !agents.isEmpty()) {
+      service.createCluster(agents);
+    }
   }
  else   if (agents == null || agents.isEmpty()) {
     List<String> cluster=service.getClusterAgents();
     if (cluster == null || cluster.isEmpty()) {
-      throw new IllegalStateException("No ZooKeeper server set up.  Use \"fabric:zk-cluster " + System.getProperty("karaf.name") + "\" to set up one.");
+      throw new IllegalStateException("No ZooKeeper server set up.  Use \"fabric:cluster " + System.getProperty("karaf.name") + "\" to set up one.");
     }
  else {
       System.out.println("ZooKeeper cluster url:");
