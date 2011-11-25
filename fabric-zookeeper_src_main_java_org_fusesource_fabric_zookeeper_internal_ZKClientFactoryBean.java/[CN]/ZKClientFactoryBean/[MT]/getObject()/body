@@ -1,6 +1,10 @@
 {
   LOG.debug("Connecting to ZooKeeper at " + connectString);
   zkClient=new ZKClient(connectString,getTimeout(),watcher);
+  if (connectString.length() == 0) {
+    LOG.info("No ZooKeeper URL provided. No connection attempted.");
+    return zkClient;
+  }
   zkClient.registerListener(new LifecycleListener(){
     final String address=connectString;
     @Override public void onConnected(){
