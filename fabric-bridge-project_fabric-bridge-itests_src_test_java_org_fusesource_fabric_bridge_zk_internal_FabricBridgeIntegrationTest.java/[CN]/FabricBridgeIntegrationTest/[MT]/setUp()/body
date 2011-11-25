@@ -7,7 +7,7 @@
   CommandSession session=commandProcessor.createSession(System.in,new PrintStream(bos),System.err);
   try {
     assertNotNull("FabricService not found",getOsgiService(FabricService.class));
-    session.execute("fabric:cluster --clean root");
+    session.execute("fabric:ensemble-create --clean root");
     Thread.sleep(DEFAULT_TIMEOUT);
     IZKClient zooKeeper=getOsgiService(IZKClient.class,DEFAULT_TIMEOUT);
     bundle=getInstalledBundle(FABRIC_BRIDGE_ZOOKEEPER_BUNDLE);

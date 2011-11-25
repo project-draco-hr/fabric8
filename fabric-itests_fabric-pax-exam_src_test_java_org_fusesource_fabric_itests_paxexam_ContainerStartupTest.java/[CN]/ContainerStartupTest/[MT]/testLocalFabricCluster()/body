@@ -1,7 +1,7 @@
 {
   FabricService fabricService=getOsgiService(FabricService.class);
   assertNotNull(fabricService);
-  executeCommand("fabric:cluster --clean root");
+  executeCommand("fabric:ensemble-create --clean root");
   IZKClient zooKeeper=getOsgiService(IZKClient.class);
   Thread.sleep(DEFAULT_WAIT);
   Agent[] agents=fabricService.getAgents();

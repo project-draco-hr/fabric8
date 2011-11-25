@@ -5,18 +5,7 @@
   if (url == null && parent != null) {
     url="child://" + parent;
   }
-  List<String> names=this.profiles;
-  if (names == null || names.isEmpty()) {
-    names=Collections.singletonList("default");
-  }
   Agent[] children=fabricService.createAgents(url,name,isClusterServer,debugAgent,number);
-  try {
-    Profile[] profiles=getProfiles(version,names);
-    for (    Agent child : children) {
-      child.setProfiles(profiles);
-    }
-  }
- catch (  Exception ex) {
-  }
+  setProfiles(children);
   return null;
 }
