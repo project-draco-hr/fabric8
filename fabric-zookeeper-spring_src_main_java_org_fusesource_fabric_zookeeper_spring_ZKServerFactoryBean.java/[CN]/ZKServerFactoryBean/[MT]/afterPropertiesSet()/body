@@ -4,6 +4,7 @@
   zooKeeperServer.setTickTime(getTickTime());
   zooKeeperServer.setMinSessionTimeout(getMinSessionTimeout());
   zooKeeperServer.setMaxSessionTimeout(getMaxSessionTimeout());
-  connectionFactory=new NIOServerCnxn.Factory(getClientPortAddress(),getMaxClientConnections());
+  connectionFactory=new NIOServerCnxnFactory();
+  connectionFactory.configure(getClientPortAddress(),getMaxClientConnections());
   connectionFactory.startup(zooKeeperServer);
 }
