@@ -26,7 +26,8 @@
     QuorumPeerConfig config=new QuorumPeerConfig();
     config.parseProperties(props);
     if (!config.getServers().isEmpty()) {
-      NIOServerCnxn.Factory cnxnFactory=new NIOServerCnxn.Factory(config.getClientPortAddress(),config.getMaxClientCnxns());
+      NIOServerCnxnFactory cnxnFactory=new NIOServerCnxnFactory();
+      cnxnFactory.configure(config.getClientPortAddress(),config.getMaxClientCnxns());
       QuorumPeer quorumPeer=new QuorumPeer();
       quorumPeer.setClientPortAddress(config.getClientPortAddress());
       quorumPeer.setTxnFactory(new FileTxnSnapLog(new File(config.getDataLogDir()),new File(config.getDataDir())));
@@ -64,7 +65,8 @@
       zkServer.setTickTime(cfg.getTickTime());
       zkServer.setMinSessionTimeout(cfg.getMinSessionTimeout());
       zkServer.setMaxSessionTimeout(cfg.getMaxSessionTimeout());
-      NIOServerCnxn.Factory cnxnFactory=new NIOServerCnxn.Factory(cfg.getClientPortAddress(),cfg.getMaxClientCnxns());
+      NIOServerCnxnFactory cnxnFactory=new NIOServerCnxnFactory();
+      cnxnFactory.configure(cfg.getClientPortAddress(),cfg.getMaxClientCnxns());
       try {
         debug("Starting ZooKeeper server on address %s",config.getClientPortAddress());
         cnxnFactory.startup(zkServer);

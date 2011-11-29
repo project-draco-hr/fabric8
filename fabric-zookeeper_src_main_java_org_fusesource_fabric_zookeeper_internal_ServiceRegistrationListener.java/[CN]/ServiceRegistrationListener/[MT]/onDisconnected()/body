@@ -1,8 +1,24 @@
 {
   if (clientRegistration != null) {
-    clientRegistration.unregister();
+    try {
+      clientRegistration.unregister();
+    }
+ catch (    Exception e) {
+      logger.warn("An error occured during service unregistration",e);
+    }
+ finally {
+      clientRegistration=null;
+    }
   }
   if (handlerRegistration != null) {
-    handlerRegistration.unregister();
+    try {
+      handlerRegistration.unregister();
+    }
+ catch (    Exception e) {
+      logger.warn("An error occured during service unregistration",e);
+    }
+ finally {
+      handlerRegistration=null;
+    }
   }
 }

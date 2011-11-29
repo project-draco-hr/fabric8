@@ -1,9 +1,15 @@
 {
   try {
-    Configuration[] configs=configurationAdmin.listConfigurations("(|(service.factoryPid=org.fusesource.fabric.zookeeper.server)(service.pid=org.fusesource.fabric.zookeeper))");
-    if (configs != null) {
-      for (      Configuration config : configs) {
-        config.delete();
+    for (; ; ) {
+      Configuration[] configs=configurationAdmin.listConfigurations("(|(service.factoryPid=org.fusesource.fabric.zookeeper.server)(service.pid=org.fusesource.fabric.zookeeper))");
+      if (configs != null && configs.length > 0) {
+        for (        Configuration config : configs) {
+          config.delete();
+        }
+        Thread.sleep(100);
+      }
+ else {
+        break;
       }
     }
     File zkDir=new File("data/zookeeper");
