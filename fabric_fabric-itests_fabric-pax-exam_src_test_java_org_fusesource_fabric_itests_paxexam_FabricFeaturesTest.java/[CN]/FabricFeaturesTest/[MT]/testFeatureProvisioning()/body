@@ -1,0 +1,14 @@
+{
+  IZKClient zooKeeper=getOsgiService(IZKClient.class);
+  FabricService fabricService=getOsgiService(FabricService.class);
+  assertNotNull(fabricService);
+  createChildAgent("child1");
+  Thread.sleep(DEFAULT_WAIT);
+  executeCommand("fabric:profile-edit -p default --features eventadmin");
+  System.err.println(executeCommand("fabric:profile-display default"));
+  Thread.sleep(DEFAULT_WAIT);
+  FeaturesService featuresService=getOsgiService(FeaturesService.class);
+  System.err.println(executeCommand("fabric:agent-connect -u admin -p admin child1 osgi:list -t 0"));
+  String evenAdminBundleCount=executeCommand("fabric:agent-connect -u admin -p admin child1 osgi:list -t 0| grep -c -i eventadmin");
+  int count=Integer.parseInt(evenAdminBundleCount.trim());
+}
