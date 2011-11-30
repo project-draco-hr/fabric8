@@ -1,0 +1,26 @@
+{
+  bundleContext=((BundleReference)getClass().getClassLoader()).getBundle().getBundleContext();
+  ServiceReference serviceReference=null;
+  try {
+    bundleContext.addServiceListener(this,String.format("(objectClass=%s)",IZKClient.class.getName()));
+  }
+ catch (  InvalidSyntaxException e) {
+    LOG.warn("Failed to register listener for Zookeeper client.",e);
+  }
+  try {
+    serviceReference=bundleContext.getServiceReference(IZKClient.class.getName());
+    if (serviceReference != null) {
+      this.zookeeper=(IZKClient)bundleContext.getService(serviceReference);
+      this.zookeeper.registerListener(this);
+      fetchData();
+    }
+  }
+ catch (  Exception e) {
+    LOG.warn("Failed fetching authentication data.",e);
+  }
+ finally {
+    if (serviceReference != null) {
+      bundleContext.ungetService(serviceReference);
+    }
+  }
+}

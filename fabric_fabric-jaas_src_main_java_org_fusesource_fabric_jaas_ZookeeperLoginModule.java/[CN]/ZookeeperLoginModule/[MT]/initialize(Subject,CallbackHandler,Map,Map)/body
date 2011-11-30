@@ -7,16 +7,4 @@
     encryptionSupport=new BasicEncryptionSupport(options);
   }
   debug="true".equalsIgnoreCase((String)options.get("debug"));
-  if (zookeeper == null) {
-    ZKClientFactoryBean factory=new ZKClientFactoryBean();
-    users=new Properties();
-    try {
-      zookeeper=factory.getObject();
-      zookeeper.registerListener(this);
-      connected.await(1,TimeUnit.SECONDS);
-    }
- catch (    Exception e) {
-      LOG.warn("Failed initializing authentication plugin",e);
-    }
-  }
 }
