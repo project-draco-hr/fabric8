@@ -1,0 +1,12 @@
+{
+  if (event.getType() == ServiceEvent.REGISTERED) {
+    this.zookeeper=(IZKClient)bundleContext.getService(event.getServiceReference());
+    this.zookeeper.registerListener(this);
+    try {
+      fetchData();
+    }
+ catch (    Exception e) {
+      LOG.warn("Failed refreshing authentication data.");
+    }
+  }
+}
