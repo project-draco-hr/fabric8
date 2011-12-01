@@ -1,0 +1,14 @@
+{
+  JobTracker jobTracker=jobTrackers.remove(pid);
+  ServiceRegistration reg=services.remove(pid);
+  if (reg != null) {
+    reg.unregister();
+  }
+  if (jobTracker != null) {
+    try {
+      jobTracker.stopTracker();
+    }
+ catch (    IOException e) {
+    }
+  }
+}
