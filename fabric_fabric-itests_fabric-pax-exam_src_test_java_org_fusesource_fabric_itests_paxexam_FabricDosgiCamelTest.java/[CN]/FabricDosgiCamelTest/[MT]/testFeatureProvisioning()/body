@@ -1,0 +1,15 @@
+{
+  FabricService fabricService=getOsgiService(FabricService.class);
+  assertNotNull(fabricService);
+  System.err.println(executeCommand("echo $APPLICATION"));
+  System.err.println(executeCommand("fabric:ensemble-create root"));
+  Thread.sleep(DEFAULT_WAIT);
+  IZKClient zooKeeper=getOsgiService(IZKClient.class);
+  System.err.println(executeCommand("shell:source mvn:org.fusesource.fabric/fuse-fabric/1.1-SNAPSHOT/karaf/dosgi"));
+  Thread.sleep(2 * DEFAULT_WAIT);
+  String response=executeCommand("fabric:agent-connect -u admin -p admin dosgi-camel log:display | grep \"Message from distributed service to\"");
+  assertNotNull(response);
+  System.err.println(response);
+  String[] lines=response.split("\n");
+  assertTrue("At least one camel bundle is expected",lines.length >= 1);
+}
