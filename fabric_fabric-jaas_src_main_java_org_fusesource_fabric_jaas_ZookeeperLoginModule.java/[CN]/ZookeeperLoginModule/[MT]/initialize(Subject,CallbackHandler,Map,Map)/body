@@ -1,10 +1,35 @@
 {
-  super.initialize(subject,callbackHandler,options);
-  if (bundleContext != null) {
+  debug="true".equalsIgnoreCase((String)options.get("debug"));
+  IZKClient zookeeper=ZOOKEEPER_CONTEXT.get();
+  if (zookeeper == null) {
+    BundleContext bundleContext=((BundleReference)getClass().getClassLoader()).getBundle().getBundleContext();
     encryptionSupport=new EncryptionSupport(options);
+    ServiceReference serviceReference=bundleContext.getServiceReference(IZKClient.class.getName());
+    if (serviceReference != null) {
+      try {
+        zookeeper=(IZKClient)bundleContext.getService(serviceReference);
+        users=ZooKeeperUtils.getProperties(zookeeper,ZookeeperBackingEngine.USERS_NODE);
+      }
+ catch (      Exception e) {
+        LOG.warn("Failed fetching authentication data.",e);
+      }
+ finally {
+        if (serviceReference != null) {
+          bundleContext.ungetService(serviceReference);
+        }
+      }
+    }
   }
  else {
+    try {
+      users=ZooKeeperUtils.getProperties(zookeeper,ZookeeperBackingEngine.USERS_NODE);
+    }
+ catch (    Exception e) {
+      LOG.warn("Failed fetching authentication data.",e);
+    }
+  }
+  if (encryptionSupport == null) {
     encryptionSupport=new BasicEncryptionSupport(options);
   }
-  debug="true".equalsIgnoreCase((String)options.get("debug"));
+  super.initialize(subject,callbackHandler,options);
 }
