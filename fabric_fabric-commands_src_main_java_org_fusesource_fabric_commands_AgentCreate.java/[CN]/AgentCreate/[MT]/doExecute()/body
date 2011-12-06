@@ -1,0 +1,11 @@
+{
+  if (url == null && parent == null) {
+    throw new Exception("Either an url or a parent must be specified");
+  }
+  if (url == null && parent != null) {
+    url="child://" + parent;
+  }
+  Agent[] children=fabricService.createAgents(url,name,isClusterServer,debugAgent,number);
+  setProfiles(children);
+  return null;
+}

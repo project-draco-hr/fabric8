@@ -1,0 +1,26 @@
+{
+  debug("Shutting down ZK server %s",pid);
+  Object obj=servers.remove(pid);
+  ServiceRegistration reg=services.remove(pid);
+  try {
+    if (obj instanceof QuorumPeer) {
+      ((QuorumPeer)obj).shutdown();
+      ((QuorumPeer)obj).join();
+    }
+ else     if (obj instanceof NIOServerCnxnFactory) {
+      ((NIOServerCnxnFactory)obj).shutdown();
+      ((NIOServerCnxnFactory)obj).join();
+    }
+  }
+ catch (  Throwable t) {
+    debug("Caught and am ignoring exception %s while shutting down ZK server %s",t,obj);
+  }
+  if (reg != null) {
+    try {
+      reg.unregister();
+    }
+ catch (    Throwable t) {
+      debug("Caught and am ignoring exception %s while unregistering %s",t,pid);
+    }
+  }
+}

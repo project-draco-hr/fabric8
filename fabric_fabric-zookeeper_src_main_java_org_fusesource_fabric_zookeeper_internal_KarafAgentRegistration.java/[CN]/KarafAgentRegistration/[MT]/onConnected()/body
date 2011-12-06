@@ -1,0 +1,47 @@
+{
+  try {
+    connected=true;
+    String name=System.getProperty("karaf.name");
+    String nodeAlive=AGENT_ALIVE.getPath(name);
+    Stat stat=zooKeeper.exists(nodeAlive);
+    if (stat != null) {
+      if (stat.getEphemeralOwner() != zooKeeper.getSessionId()) {
+        zooKeeper.delete(nodeAlive);
+        zooKeeper.createWithParents(nodeAlive,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
+      }
+    }
+ else {
+      zooKeeper.createWithParents(nodeAlive,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
+    }
+    String domainsNode=AGENT_DOMAINS.getPath(name);
+    stat=zooKeeper.exists(domainsNode);
+    if (stat != null) {
+      zooKeeper.deleteWithChildren(domainsNode);
+    }
+    String jmxUrl=getJmxUrl();
+    if (jmxUrl != null) {
+      zooKeeper.createOrSetWithParents(AGENT_JMX.getPath(name),getJmxUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    }
+    String sshUrl=getSshUrl();
+    if (sshUrl != null) {
+      zooKeeper.createOrSetWithParents(AGENT_SSH.getPath(name),getSshUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    }
+    zooKeeper.createOrSetWithParents(AGENT_IP.getPath(name),getLocalHostAddress(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    String version=System.getProperty("fabric.version","base");
+    String profiles=System.getProperty("fabric.profiles");
+    if (profiles != null) {
+      String versionNode=CONFIG_AGENT.getPath(name);
+      String profileNode=CONFIG_VERSIONS_AGENT.getPath(version,name);
+      if (zooKeeper.exists(versionNode) == null) {
+        zooKeeper.createOrSetWithParents(versionNode,version,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      }
+      if (zooKeeper.exists(profileNode) == null) {
+        zooKeeper.createOrSetWithParents(profileNode,profiles,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      }
+    }
+    registerDomains();
+  }
+ catch (  Exception e) {
+    logger.warn("Error updating Fabric Agent informations",e);
+  }
+}
