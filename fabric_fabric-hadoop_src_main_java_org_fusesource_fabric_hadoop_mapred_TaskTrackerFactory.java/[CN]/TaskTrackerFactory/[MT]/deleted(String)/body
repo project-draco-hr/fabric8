@@ -1,0 +1,14 @@
+{
+  TaskTracker taskTracker=taskTrackers.remove(pid);
+  ServiceRegistration reg=services.remove(pid);
+  if (reg != null) {
+    reg.unregister();
+  }
+  if (taskTracker != null) {
+    try {
+      taskTracker.shutdown();
+    }
+ catch (    IOException e) {
+    }
+  }
+}

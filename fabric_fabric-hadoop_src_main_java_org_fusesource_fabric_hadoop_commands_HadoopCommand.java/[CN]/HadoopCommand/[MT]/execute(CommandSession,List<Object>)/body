@@ -1,0 +1,11 @@
+{
+  ClassLoader oldTccl=Thread.currentThread().getContextClassLoader();
+  try {
+    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+    doExecute(objects);
+  }
+  finally {
+    Thread.currentThread().setContextClassLoader(oldTccl);
+  }
+  return null;
+}

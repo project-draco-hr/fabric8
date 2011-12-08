@@ -1,0 +1,22 @@
+{
+  ClassLoader oldTccl=Thread.currentThread().getContextClassLoader();
+  try {
+    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+    deleted(pid);
+    Configuration conf=new Configuration();
+    for (Enumeration e=properties.keys(); e.hasMoreElements(); ) {
+      Object key=e.nextElement();
+      Object val=properties.get(key);
+      conf.set(key.toString(),val.toString());
+    }
+    DataNode dataNode=DataNode.createDataNode(null,conf);
+    dataNodes.put(pid,dataNode);
+    services.put(pid,bundleContext.registerService(DataNode.class.getName(),dataNode,properties));
+  }
+ catch (  Exception e) {
+    throw (ConfigurationException)new ConfigurationException(null,"Unable to parse HDFS configuration: " + e.getMessage()).initCause(e);
+  }
+ finally {
+    Thread.currentThread().setContextClassLoader(oldTccl);
+  }
+}
