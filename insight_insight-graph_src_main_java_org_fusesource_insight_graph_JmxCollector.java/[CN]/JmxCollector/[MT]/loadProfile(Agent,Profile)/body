@@ -2,7 +2,7 @@
   Map<String,byte[]> fileConfigurations=profile.getFileConfigurations();
   byte[] bytes=fileConfigurations.get(GRAPH_JSON);
   if (bytes != null && bytes.length > 0) {
-    JmxProcess process=JmxUtils.getJmxProcess(GRAPH_JSON,new ByteArrayInputStream(bytes));
+    JmxProcess process=getJmxProcess(GRAPH_JSON,new ByteArrayInputStream(bytes));
     if (process != null) {
       JmxUtils.mergeServerLists(this.masterServersList,process.getServers());
     }

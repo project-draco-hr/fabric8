@@ -1,5 +1,9 @@
 {
   for (  Server server : this.masterServersList) {
+    if (server.isLocal()) {
+      server.setLocalMBeanServer(mbeanServer);
+      server.setAlias(fabricService.getCurrentAgentName());
+    }
     for (    Query query : server.getQueries()) {
       query.setServer(server);
       for (      OutputWriter writer : query.getOutputWriters()) {
