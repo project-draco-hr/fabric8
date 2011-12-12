@@ -1,0 +1,32 @@
+{
+  if (configAdmin != null) {
+    try {
+      Configuration configuration=configAdmin.getConfiguration(PID);
+      Dictionary dictionary=configuration.getProperties();
+      if (dictionary == null) {
+        LOG.warn("No properties for configuration: " + PID);
+      }
+ else {
+        Enumeration e=dictionary.keys();
+        if (e == null) {
+          LOG.warn("No properties for configuration: " + PID);
+        }
+ else {
+          properties=new Properties();
+          while (e.hasMoreElements()) {
+            Object key=e.nextElement();
+            if (key != null) {
+              properties.put(key.toString(),dictionary.get(key));
+            }
+          }
+        }
+      }
+    }
+ catch (    IOException e) {
+      LOG.warn("Failed to get configuration for PID: " + PID);
+    }
+  }
+  LOG.info("Creating Quartz Schedular using properties: " + properties);
+  factory.initialize(properties);
+  return factory.getScheduler();
+}
