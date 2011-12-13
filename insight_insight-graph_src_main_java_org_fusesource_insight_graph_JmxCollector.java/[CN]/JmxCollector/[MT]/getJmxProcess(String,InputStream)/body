@@ -1,14 +1,5 @@
 {
-  ObjectMapper mapper=new ObjectMapper();
-  ClassLoader oldClassLoader=Thread.currentThread().getContextClassLoader();
-  ClassLoader classLoader=GraphiteWriter.class.getClassLoader();
-  Thread.currentThread().setContextClassLoader(classLoader);
-  try {
-    JmxProcess jmx=mapper.readValue(in,JmxProcess.class);
-    jmx.setName(name);
-    return jmx;
-  }
-  finally {
-    Thread.currentThread().setContextClassLoader(oldClassLoader);
-  }
+  JmxProcess jmx=Json.readJsonValue(name,in,JmxProcess.class);
+  jmx.setName(name);
+  return jmx;
 }

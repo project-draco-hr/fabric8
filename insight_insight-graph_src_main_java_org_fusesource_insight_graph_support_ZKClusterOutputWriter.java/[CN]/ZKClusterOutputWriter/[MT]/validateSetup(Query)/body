@@ -1,0 +1,14 @@
+{
+  Map<String,TrackedNode<OutputWriter>> tree=tracker.getTree();
+  for (  Map.Entry<String,TrackedNode<OutputWriter>> entry : tree.entrySet()) {
+    String name=entry.getKey();
+    TrackedNode<OutputWriter> value=entry.getValue();
+    OutputWriter data=value.getData();
+    if (data != null) {
+      if (objectPool != null) {
+        data.setObjectPoolMap(objectPool);
+      }
+      data.validateSetup(query);
+    }
+  }
+}
