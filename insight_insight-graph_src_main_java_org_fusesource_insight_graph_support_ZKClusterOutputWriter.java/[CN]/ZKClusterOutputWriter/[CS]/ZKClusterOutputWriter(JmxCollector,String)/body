@@ -11,9 +11,11 @@
       byte[] data=zkClient.getData(path,watcher,stat);
       try {
         OutputWriter outputWriter=Json.readJsonValue(path,new ByteArrayInputStream(data),OutputWriter.class);
+        configureWriter(outputWriter);
+        outputWriter.start();
         return new ZKData<OutputWriter>(outputWriter,stat);
       }
- catch (      IOException e) {
+ catch (      Exception e) {
         throw new RuntimeException(e);
       }
     }

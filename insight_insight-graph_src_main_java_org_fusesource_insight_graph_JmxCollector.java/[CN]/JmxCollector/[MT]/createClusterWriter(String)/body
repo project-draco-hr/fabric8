@@ -3,6 +3,8 @@
   if (outputWriter == null) {
     String zkPath=getClusterRoot() + "/" + clusterName;
     outputWriter=new ZKClusterOutputWriter(this,zkPath);
+    outputWriters.put(clusterName,outputWriter);
+    outputWriter.start();
   }
   return outputWriter;
 }
