@@ -3,7 +3,9 @@
     try {
       return zooKeeper.getStringData(ZkPath.AGENT_PARENT.getPath(name)).trim();
     }
- catch (    Throwable e) {
+ catch (    KeeperException.NoNodeException e) {
+    }
+catch (    Throwable e) {
       logger.warn("Failed to find parent " + name + ". Reason: "+ e);
     }
   }

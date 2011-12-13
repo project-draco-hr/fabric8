@@ -1,0 +1,28 @@
+{
+  this.collector=collector;
+  ZKDataReader<OutputWriter> reader=new ZKDataReader<OutputWriter>(){
+    @Override public ZKData<OutputWriter> readData(    IZKClient zkClient,    String path,    Watcher watcher) throws InterruptedException, KeeperException {
+      Stat stat=new Stat();
+      if (!path.endsWith(".json")) {
+        LOG.info("Ignoring ZK Path: " + path + " as it doesn't end in .json");
+        return new ZKData<OutputWriter>(null,stat);
+      }
+      LOG.info("Reading ZK path: " + path + " and converting to an OutputWriter");
+      byte[] data=zkClient.getData(path,watcher,stat);
+      try {
+        OutputWriter outputWriter=Json.readJsonValue(path,new ByteArrayInputStream(data),OutputWriter.class);
+        configureWriter(outputWriter);
+        outputWriter.start();
+        return new ZKData<OutputWriter>(outputWriter,stat);
+      }
+ catch (      Exception e) {
+        throw new RuntimeException(e);
+      }
+    }
+    @Override public boolean isEqual(    OutputWriter o1,    OutputWriter o2){
+      return o1 == o2 || (o1 != null && o1.equals(o2));
+    }
+  }
+;
+  this.tracker=new ZooKeeperTreeTracker<OutputWriter>(collector.getZkClient(),reader,zkPath);
+}

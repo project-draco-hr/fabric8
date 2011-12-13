@@ -1,0 +1,30 @@
+{
+  List<Query> queries=server.getQueries();
+  for (  Query query : queries) {
+    List<OutputWriter> writers=query.getOutputWriters();
+    if (writers == null) {
+      writers=new ArrayList<OutputWriter>();
+      query.setOutputWriters(writers);
+    }
+    if (writers.isEmpty()) {
+      Map<String,String> agentProperties=profile.getAgentConfiguration();
+      Set<String> clusterNames=new HashSet<String>();
+      for (      Map.Entry<String,String> entry : agentProperties.entrySet()) {
+        String key=entry.getKey();
+        String clusterName=entry.getValue();
+        if (key.startsWith(GRAPH_CLUSTER_PREFIX)) {
+          clusterNames.add(clusterName);
+        }
+      }
+      if (clusterNames.isEmpty()) {
+        clusterNames.add(DEFAULT_GRAPH_CLUSTER_NAME);
+      }
+      for (      String clusterName : clusterNames) {
+        OutputWriter writer=createClusterWriter(clusterName);
+        if (writer != null) {
+          writers.add(writer);
+        }
+      }
+    }
+  }
+}

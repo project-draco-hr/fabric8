@@ -4,7 +4,11 @@
   if (bytes != null && bytes.length > 0) {
     JmxProcess process=getJmxProcess(GRAPH_JSON,new ByteArrayInputStream(bytes));
     if (process != null) {
-      JmxUtils.mergeServerLists(this.masterServersList,process.getServers());
+      List<Server> servers=process.getServers();
+      for (      Server server : servers) {
+        configureProfileServer(server,agent,profile);
+      }
+      JmxUtils.mergeServerLists(this.masterServersList,servers);
     }
   }
 }
