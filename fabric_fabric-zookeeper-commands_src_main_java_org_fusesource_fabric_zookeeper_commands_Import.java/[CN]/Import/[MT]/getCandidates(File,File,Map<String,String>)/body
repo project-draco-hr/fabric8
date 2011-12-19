@@ -1,14 +1,6 @@
 {
   if (current.isDirectory()) {
-    for (    File child : current.listFiles(new FileFilter(){
-      @Override public boolean accept(      File file){
-        if (file.isDirectory() || file.getName().endsWith(".cfg")) {
-          return true;
-        }
-        return false;
-      }
-    }
-)) {
+    for (    File child : current.listFiles()) {
       getCandidates(parent,child,settings);
     }
     String p=buildZKPath(parent,current).replaceFirst("/","");

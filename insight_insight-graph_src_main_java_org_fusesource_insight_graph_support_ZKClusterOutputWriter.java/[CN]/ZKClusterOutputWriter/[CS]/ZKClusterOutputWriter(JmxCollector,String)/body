@@ -3,16 +3,25 @@
   ZKDataReader<OutputWriter> reader=new ZKDataReader<OutputWriter>(){
     @Override public ZKData<OutputWriter> readData(    IZKClient zkClient,    String path,    Watcher watcher) throws InterruptedException, KeeperException {
       Stat stat=new Stat();
-      if (!path.endsWith(".json")) {
+      Unmarshaller<OutputWriter> unmarshaller=null;
+      if (path.endsWith(".json")) {
+        unmarshaller=new JsonUnmarshaller<OutputWriter>(OutputWriter.class);
+      }
+ else       if (path.endsWith(".properties")) {
+        unmarshaller=new PropertiesObjectWriterUnmarshaller();
+      }
+ else {
         LOG.debug("Ignoring ZK Path: " + path + " as it doesn't end in .json");
         return new ZKData<OutputWriter>(null,stat);
       }
       LOG.info("Reading ZK path: " + path + " and converting to an OutputWriter");
       byte[] data=zkClient.getData(path,watcher,stat);
       try {
-        OutputWriter outputWriter=Json.readJsonValue(path,new ByteArrayInputStream(data),OutputWriter.class);
-        configureWriter(outputWriter);
-        outputWriter.start();
+        OutputWriter outputWriter=unmarshaller.unmarshal(path,data);
+        if (outputWriter != null) {
+          configureWriter(outputWriter);
+          outputWriter.start();
+        }
         return new ZKData<OutputWriter>(outputWriter,stat);
       }
  catch (      Exception e) {

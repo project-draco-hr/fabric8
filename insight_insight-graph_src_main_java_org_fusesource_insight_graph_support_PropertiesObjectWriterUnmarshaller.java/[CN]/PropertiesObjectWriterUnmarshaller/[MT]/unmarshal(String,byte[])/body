@@ -1,0 +1,14 @@
+{
+  Properties properties=new Properties();
+  properties.load(new ByteArrayInputStream(data));
+  OutputWriter answer=new GraphiteWriter();
+  Map<String,Object> map=new HashMap<String,Object>();
+  for (  Map.Entry<Object,Object> entry : properties.entrySet()) {
+    Object key=entry.getKey();
+    if (key != null) {
+      map.put(key.toString(),entry.getValue());
+    }
+  }
+  answer.setSettings(map);
+  return answer;
+}
