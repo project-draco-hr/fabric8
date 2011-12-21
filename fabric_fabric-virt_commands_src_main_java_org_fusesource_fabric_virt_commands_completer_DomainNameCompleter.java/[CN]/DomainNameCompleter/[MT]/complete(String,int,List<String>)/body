@@ -1,0 +1,19 @@
+{
+  if (connections != null && !connections.isEmpty()) {
+    for (    Connect connect : connections) {
+      Set<Domain> domains=LibvrtHelper.getDomains(connect,true,true);
+      if (domains != null && !domains.isEmpty()) {
+        for (        Domain domain : domains) {
+          if (isApplicable(domain)) {
+            try {
+              delegate.getStrings().add(domain.getName());
+            }
+ catch (            LibvirtException e) {
+            }
+          }
+        }
+      }
+    }
+  }
+  return delegate.complete(buffer,cursor,candidates);
+}
