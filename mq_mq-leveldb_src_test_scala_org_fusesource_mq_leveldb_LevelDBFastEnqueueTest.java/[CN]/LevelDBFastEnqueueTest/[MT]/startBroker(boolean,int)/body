@@ -1,0 +1,11 @@
+{
+  broker=new BrokerService();
+  broker.setDeleteAllMessagesOnStartup(deleteAllMessages);
+  store=new LevelDBStore();
+  store.setDirectory(new File("target/activemq-data/leveldb"));
+  broker.setPersistenceAdapter(store);
+  broker.addConnector("tcp://0.0.0.0:0");
+  broker.start();
+  String options="?jms.watchTopicAdvisories=false&jms.useAsyncSend=true&jms.alwaysSessionAsync=false&jms.dispatchAsync=false&socketBufferSize=131072&ioBufferSize=16384&wireFormat.tightEncodingEnabled=false&wireFormat.cacheSize=8192";
+  connectionFactory=new ActiveMQConnectionFactory(broker.getTransportConnectors().get(0).getConnectUri() + options);
+}
