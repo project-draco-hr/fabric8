@@ -1,0 +1,18 @@
+{
+  if (jmdns != null) {
+    for (Iterator<ServiceInfo> iter=serviceInfos.iterator(); iter.hasNext(); ) {
+      ServiceInfo si=iter.next();
+      jmdns.unregisterService(si);
+    }
+    final JmDNS closeTarget=jmdns;
+    Thread thread=new Thread(){
+      public void run(){
+        closeTarget.close();
+      }
+    }
+;
+    thread.setDaemon(true);
+    thread.start();
+    jmdns=null;
+  }
+}

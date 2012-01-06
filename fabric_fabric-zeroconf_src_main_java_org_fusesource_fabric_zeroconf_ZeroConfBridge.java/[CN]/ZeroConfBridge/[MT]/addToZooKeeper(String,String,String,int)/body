@@ -1,0 +1,23 @@
+{
+  String key="/fabric/registry/clusters/stats";
+  Properties properties=new Properties();
+  properties.setProperty("name",name);
+  properties.setProperty("zeroConfType",type);
+  properties.setProperty("host",server);
+  properties.setProperty("port","" + port);
+  IZKClient zk=getZkClient();
+  if (zk == null) {
+    LOG.warn("No ZooKeeper client set so cannot write entry " + key + " with properties: "+ properties);
+  }
+ else {
+    try {
+      StringWriter buffer=new StringWriter();
+      properties.store(buffer,"Generated from ZeroConf");
+      String data=buffer.toString();
+      zk.createOrSetWithParents(key,data,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
+    }
+ catch (    Exception e) {
+      LOG.warn("Failed to write entry " + key + "to ZooKeeper: "+ e,e);
+    }
+  }
+}
