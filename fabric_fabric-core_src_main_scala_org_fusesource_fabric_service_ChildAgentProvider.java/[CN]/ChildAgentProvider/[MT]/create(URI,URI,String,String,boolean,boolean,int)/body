@@ -1,5 +1,6 @@
 {
-  final Agent parent=service.getAgent(agentUri.getHost());
+  String parentName=FabricServiceImpl.getParentFromURI(agentUri);
+  final Agent parent=service.getAgent(parentName);
   AgentTemplate agentTemplate=service.getAgentTemplate(parent);
   String ui=agentUri.getUserInfo();
   String[] uip=ui != null ? ui.split(":") : null;
