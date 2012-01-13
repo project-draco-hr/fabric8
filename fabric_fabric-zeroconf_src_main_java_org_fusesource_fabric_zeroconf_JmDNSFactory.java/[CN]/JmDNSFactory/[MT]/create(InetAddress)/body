@@ -1,0 +1,17 @@
+{
+  UsageTracker tracker=registry.get(address);
+  if (tracker == null) {
+    tracker=new UsageTracker();
+    tracker.jmDNS=new JmDNS(address){
+      public void close(){
+        if (onClose(address)) {
+          super.close();
+        }
+      }
+    }
+;
+    registry.put(address,tracker);
+  }
+  tracker.count.incrementAndGet();
+  return tracker.jmDNS;
+}
