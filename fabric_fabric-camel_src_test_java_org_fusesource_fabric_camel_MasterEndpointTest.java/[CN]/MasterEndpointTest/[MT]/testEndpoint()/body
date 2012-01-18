@@ -1,0 +1,9 @@
+{
+  System.out.println("===== starting test of Master endpoint!");
+  String expectedBody="<matched/>";
+  resultEndpoint.expectedBodiesReceived(expectedBody);
+  Thread.sleep(5000);
+  template.sendBodyAndHeader(expectedBody,"foo","bar");
+  MockEndpoint.assertIsSatisfied(camelContext);
+  System.out.println("===== completed test of Master endpoint!");
+}
