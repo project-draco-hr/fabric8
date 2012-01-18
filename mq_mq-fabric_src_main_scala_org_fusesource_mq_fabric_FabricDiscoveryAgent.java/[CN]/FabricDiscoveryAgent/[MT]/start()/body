@@ -12,10 +12,9 @@
       managedZkClient=false;
     }
     group=ZooKeeperGroupFactory.create(zkClient,"/fabric/activemq-clusters/" + groupName,acl);
-    singleton.setId(id);
     singleton.start(group);
     if (id != null) {
-      singleton.join(state());
+      singleton.join(createState());
     }
   }
 }
