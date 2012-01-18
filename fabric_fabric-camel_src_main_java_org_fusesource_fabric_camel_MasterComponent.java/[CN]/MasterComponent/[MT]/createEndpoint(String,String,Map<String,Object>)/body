@@ -1,0 +1,11 @@
+{
+  int idx=remaining.indexOf(':');
+  if (idx <= 0) {
+    throw new IllegalArgumentException("Missing : in URI so can't split the group name from the actual URI for '" + remaining + "'");
+  }
+  String name=remaining.substring(0,idx);
+  String fabricPath=getFabricPath(name);
+  String childUri=remaining.substring(idx + 1);
+  Group group=ZooKeeperGroupFactory.create(getZkClient(),fabricPath,accessControlList);
+  return new MasterEndpoint(uri,this,group,childUri);
+}
