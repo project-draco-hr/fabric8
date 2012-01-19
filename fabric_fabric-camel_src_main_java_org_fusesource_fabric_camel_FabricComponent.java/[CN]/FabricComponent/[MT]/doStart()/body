@@ -1,24 +1,5 @@
 {
   super.doStart();
-  if (zkClient == null) {
-    zkClient=(IZKClient)getCamelContext().getRegistry().lookup("zkClient");
-    if (zkClient != null) {
-      LOG.debug("IZKClient found in camel registry. " + zkClient);
-    }
-  }
-  if (zkClient == null) {
-    String connectString=System.getProperty("zookeeper.url","localhost:2181");
-    ZKClient client=new ZKClient(connectString,Timespan.parse("10s"),null);
-    LOG.debug("IZKClient not find in camel registry, creating new with connection " + connectString);
-    zkClient=client;
-  }
-  if (zkClient instanceof ZKClient) {
-    if (!zkClient.isConnected()) {
-      LOG.debug("Staring IZKClient " + zkClient);
-      ((ZKClient)zkClient).start();
-    }
-  }
-  checkZkConnected();
   if (producerCache == null) {
     producerCache=new ProducerCache(this,getCamelContext(),cacheSize);
   }
