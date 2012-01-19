@@ -1,8 +1,10 @@
 {
+  masterEndpoint.reset();
+  standbyEndpoint.reset();
   String expectedBody=createNextExpectedBody();
   masterEndpoint.expectedBodiesReceived(expectedBody);
   standbyEndpoint.expectedMessageCount(0);
   template.sendBody("vm:start",expectedBody);
-  System.out.println("Expecting master: " + masterEndpoint + " and standby: "+ standbyEndpoint);
+  LOG.info("Expecting master: " + masterEndpoint + " and standby: "+ standbyEndpoint);
   MockEndpoint.assertIsSatisfied(masterEndpoint,standbyEndpoint);
 }
