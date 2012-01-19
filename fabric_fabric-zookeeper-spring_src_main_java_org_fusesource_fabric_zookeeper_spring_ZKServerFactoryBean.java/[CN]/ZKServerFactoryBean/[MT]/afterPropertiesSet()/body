@@ -1,4 +1,8 @@
 {
+  if (purge) {
+    deleteFilesInDir(getDataLogDir());
+    deleteFilesInDir(getDataDir());
+  }
   FileTxnSnapLog ftxn=new FileTxnSnapLog(getDataLogDir(),getDataDir());
   zooKeeperServer.setTxnLogFactory(ftxn);
   zooKeeperServer.setTickTime(getTickTime());

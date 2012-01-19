@@ -10,9 +10,8 @@
     managedZkClient=false;
   }
   group=ZooKeeperGroupFactory.create(zkClient,"/fabric/camel-clusters/" + groupName,acl);
-  singleton.setId(id);
   singleton.start(group);
-  singleton.join(state());
+  singleton.join(createState());
   info("Camel context %s is waiting to become the master",id);
   singleton.add(new ChangeListener(){
     @Override public void changed(){
@@ -21,7 +20,7 @@
           info("Camel context %s is now the master, starting the context.",id);
           try {
             camelContext.start();
-            singleton.update(state());
+            singleton.update(createState());
           }
  catch (          Exception e) {
             e.printStackTrace();
