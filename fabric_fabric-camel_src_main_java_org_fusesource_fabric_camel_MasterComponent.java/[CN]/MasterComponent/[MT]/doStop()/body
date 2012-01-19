@@ -1,7 +1,6 @@
 {
   super.doStop();
-  if (zkClient != null) {
+  if (zkClient != null && isShouldCloseZkClient()) {
     zkClient.close();
   }
-  ServiceHelper.stopService(producerCache);
 }
