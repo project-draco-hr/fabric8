@@ -21,7 +21,14 @@
       if (!p.contains(".")) {
         name+=".cfg";
       }
-      settings.put(new File(target + File.separator + name),new String(data));
+      String value=new String(data);
+      if (trimHeader && value.startsWith("#")) {
+        int idx=value.indexOf("\n");
+        if (idx > 0) {
+          value=value.substring(idx + 1);
+        }
+      }
+      settings.put(new File(target + File.separator + name),value);
     }
  else {
       directories.add(new File(target + File.separator + p));
