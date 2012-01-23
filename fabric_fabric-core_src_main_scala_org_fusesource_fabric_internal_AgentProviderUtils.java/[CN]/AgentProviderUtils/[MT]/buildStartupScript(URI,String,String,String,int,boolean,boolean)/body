@@ -1,6 +1,8 @@
 {
   StringBuilder sb=new StringBuilder();
   sb.append("function run { echo \"Running: $*\" ; $* ; rc=$? ; if [ \"${rc}\" -ne 0 ]; then echo \"Command failed\" ; exit ${rc} ; fi ; }\n");
+  sb.append("run mkdir ~/agents/ ").append("\n");
+  sb.append("run cd ~/agents/ ").append("\n");
   sb.append("run mkdir -p ").append(name).append("\n");
   sb.append("run cd ").append(name).append("\n");
   extractTargzIntoDirectory(sb,proxy,"org.fusesource.fabric","karaf-distro","1.1-SNAPSHOT");
