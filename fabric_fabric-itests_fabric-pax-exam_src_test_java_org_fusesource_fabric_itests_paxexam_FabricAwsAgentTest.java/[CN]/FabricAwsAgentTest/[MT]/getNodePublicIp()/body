@@ -1,0 +1,15 @@
+{
+  ComputeService computeService=getOsgiService(ComputeService.class,3 * DEFAULT_TIMEOUT);
+  Set s;
+  for (  ComputeMetadata computeMetadata : computeService.listNodesDetailsMatching(new Predicate<ComputeMetadata>(){
+    @Override public boolean apply(    @Nullable ComputeMetadata metadata){
+      NodeMetadata nodeMetadata=(NodeMetadata)metadata;
+      return nodeMetadata.getGroup().equals(group) && nodeMetadata.getState().equals(NodeState.RUNNING);
+    }
+  }
+)) {
+    NodeMetadata nodeMetadata=(NodeMetadata)computeMetadata;
+    return nodeMetadata.getPublicAddresses().toArray(new String[0])[0];
+  }
+  return null;
+}
