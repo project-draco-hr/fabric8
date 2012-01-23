@@ -19,7 +19,12 @@
       continue;
     }
     if (!dryRun) {
-      getZooKeeper().createOrSetWithParents(key,data,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      if (data != null) {
+        if (verbose) {
+          System.out.println("importing: " + key);
+        }
+        getZooKeeper().createOrSetWithParents(key,data,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      }
     }
  else {
       System.out.printf("Creating path \"%s\" with value \"%s\"\n",key,data);
