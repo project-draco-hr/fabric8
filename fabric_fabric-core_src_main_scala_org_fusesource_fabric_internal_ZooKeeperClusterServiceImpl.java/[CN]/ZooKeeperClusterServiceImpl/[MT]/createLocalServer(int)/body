@@ -1,7 +1,9 @@
 {
   ZKClient client=null;
+  String karafName=System.getProperty("karaf.name");
+  String result=null;
+  String exception=null;
   try {
-    String karafName=System.getProperty("karaf.name");
     Configuration config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
     Properties properties=new Properties();
     String connectionUrl=getLocalHostAddress() + ":" + Integer.toString(port);
@@ -71,11 +73,23 @@
       bundle.stop();
     }
     bundle.start();
+    result=ZkDefs.SUCCESS;
+    exception=null;
   }
  catch (  Exception e) {
+    StringWriter sw=new StringWriter();
+    e.printStackTrace(new PrintWriter(sw));
+    result=ZkDefs.ERROR;
+    exception=sw.toString();
     throw new FabricException("Unable to create zookeeper server configuration",e);
   }
  finally {
+    try {
+      ZooKeeperUtils.set(client,ZkPath.AGENT_PROVISION_RESULT.getPath(karafName),result);
+      ZooKeeperUtils.set(client,ZkPath.AGENT_PROVISION_EXCEPTION.getPath(karafName),exception);
+    }
+ catch (    Exception ignore) {
+    }
     if (client != null) {
       client.destroy();
     }
