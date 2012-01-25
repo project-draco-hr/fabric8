@@ -1,0 +1,12 @@
+{
+  String provisioned=getProvisionResult();
+  String provisionException=getProvisionException();
+  String result="not provisioned";
+  if (provisioned != null) {
+    result=provisioned;
+    if (result.equals(ZkDefs.ERROR) && provisionException != null) {
+      result+=" - " + provisionException.split(System.getProperty("line.separator"))[0];
+    }
+  }
+  return result;
+}
