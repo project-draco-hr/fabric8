@@ -1,0 +1,21 @@
+{
+  boolean available=false;
+  ServiceReference serviceReference=null;
+  try {
+    serviceReference=bundleContext.getServiceReference(ZOOKEEPER_CLIENT);
+    if (serviceReference != null) {
+      IZKClient client=(IZKClient)bundleContext.getService(serviceReference);
+      if (client != null && client.isConnected()) {
+        available=true;
+      }
+    }
+  }
+ catch (  Exception ex) {
+  }
+ finally {
+    if (serviceReference != null) {
+      bundleContext.ungetService(serviceReference);
+    }
+  }
+  return available;
+}
