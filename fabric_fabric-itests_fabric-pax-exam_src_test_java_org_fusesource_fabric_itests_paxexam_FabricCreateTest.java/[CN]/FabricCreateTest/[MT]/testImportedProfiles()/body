@@ -1,0 +1,12 @@
+{
+  FabricService fabricService=getOsgiService(FabricService.class);
+  assertNotNull(fabricService);
+  System.err.println(executeCommand("fabric:create"));
+  IZKClient zooKeeper=getOsgiService(IZKClient.class);
+  Profile karafProfile=fabricService.getProfile("base","karaf");
+  assertNotNull(karafProfile);
+  Profile camelProfile=fabricService.getProfile("base","camel");
+  assertNotNull(camelProfile);
+  Profile activeMq=fabricService.getProfile("base","activemq");
+  assertNotNull(activeMq);
+}
