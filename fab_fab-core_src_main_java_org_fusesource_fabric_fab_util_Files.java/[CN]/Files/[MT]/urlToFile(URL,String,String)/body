@@ -7,8 +7,9 @@
   }
   try {
     if (downloads.contains(url)) {
-      throw new IOException("Download cycle detected: " + downloads);
+      throw new DownloadCycle("Download cycle detected: " + downloads);
     }
+    downloads.add(url);
     try {
       String fileName=url.getFile();
       File file=new File(fileName);
