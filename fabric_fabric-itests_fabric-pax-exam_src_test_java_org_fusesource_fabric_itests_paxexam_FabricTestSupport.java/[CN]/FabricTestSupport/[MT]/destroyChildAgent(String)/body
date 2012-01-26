@@ -1,8 +1,13 @@
 {
-  IZKClient zooKeeper=getOsgiService(IZKClient.class);
-  FabricService fabricService=getOsgiService(FabricService.class);
-  assertNotNull(fabricService);
-  Thread.sleep(DEFAULT_WAIT);
-  Agent agent=fabricService.getAgent(name);
-  agent.destroy();
+  try {
+    IZKClient zooKeeper=getOsgiService(IZKClient.class);
+    FabricService fabricService=getOsgiService(FabricService.class);
+    assertNotNull(fabricService);
+    Thread.sleep(DEFAULT_WAIT);
+    Agent agent=fabricService.getAgent(name);
+    agent.destroy();
+  }
+ catch (  Exception ex) {
+    System.err.println(ex.getMessage());
+  }
 }
