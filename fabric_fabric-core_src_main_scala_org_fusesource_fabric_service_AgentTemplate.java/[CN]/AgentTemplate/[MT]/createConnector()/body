@@ -1,5 +1,8 @@
 {
   String rootUrl=agent.getJmxUrl();
+  if (rootUrl == null) {
+    return null;
+  }
   JMXConnector connector;
   try {
     connector=JMXConnectorFactory.connect(new JMXServiceURL(rootUrl),getEnvironmentCredentials());
