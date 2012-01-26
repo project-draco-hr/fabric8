@@ -1,16 +1,14 @@
 {
-  HashSet<DownloadKey> original=ACTIVE_DOWNLOADS.get();
-  HashSet<DownloadKey> downloads=original;
+  LinkedHashSet<URL> original=ACTIVE_DOWNLOADS.get();
+  LinkedHashSet<URL> downloads=original;
   if (downloads == null) {
-    downloads=new HashSet<DownloadKey>();
+    downloads=new LinkedHashSet<URL>();
     ACTIVE_DOWNLOADS.set(downloads);
   }
   try {
-    DownloadKey key=new DownloadKey(url,tempFilePrefix,tempFilePostfix);
-    if (downloads.contains(key)) {
-      throw new IOException("The URL is being recursively downloaded: " + url);
+    if (downloads.contains(url)) {
+      throw new IOException("Download cycle detected: " + downloads);
     }
-    downloads.add(key);
     try {
       String fileName=url.getFile();
       File file=new File(fileName);
@@ -22,7 +20,7 @@
       return file;
     }
   finally {
-      downloads.remove(key);
+      downloads.remove(url);
     }
   }
   finally {
