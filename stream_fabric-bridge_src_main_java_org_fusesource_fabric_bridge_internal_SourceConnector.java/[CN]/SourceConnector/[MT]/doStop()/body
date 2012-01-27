@@ -17,5 +17,13 @@
       }
     }
   }
+  if (localConnectionFactory != null && (localConnectionFactory instanceof PooledConnectionFactory)) {
+    LOG.debug("Stopping local connection factory");
+    ((PooledConnectionFactory)localConnectionFactory).stop();
+  }
+  if (remoteConnectionFactory != null && (remoteConnectionFactory instanceof PooledConnectionFactory)) {
+    LOG.debug("Stopping remote connection factory");
+    ((PooledConnectionFactory)remoteConnectionFactory).stop();
+  }
   LOG.info("Stopped");
 }
