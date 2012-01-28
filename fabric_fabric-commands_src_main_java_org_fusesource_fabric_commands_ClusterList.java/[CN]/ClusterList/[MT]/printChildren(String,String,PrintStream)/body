@@ -1,0 +1,34 @@
+{
+  List<String> children=getZooKeeper().getChildren(dir,false);
+  boolean master=true;
+  for (  String child : children) {
+    String childDir=dir + "/" + child;
+    byte[] data=getZooKeeper().getData(childDir);
+    if (data != null && data.length > 0) {
+      String text=new String(data).trim();
+      if (!text.isEmpty()) {
+        String clusterName=dir;
+        if (clusterName.startsWith(rootDir)) {
+          clusterName=clusterName.substring(rootDir.length());
+        }
+        if (clusterName.startsWith("/")) {
+          clusterName=clusterName.substring(1);
+        }
+        ObjectMapper mapper=new ObjectMapper();
+        Map<String,Object> map=mapper.readValue(data,HashMap.class);
+        Object id=value(map,"id","agent");
+        Object services=value(map,"services");
+        if (services != null) {
+          String serviceText=services.toString();
+          if (serviceText.startsWith("[") && serviceText.endsWith("]")) {
+            serviceText=serviceText.substring(1,serviceText.length() - 1);
+          }
+          services=serviceText;
+        }
+        out.println(String.format("%-30s %-30s %-10s %s",clusterName,id,master,services));
+        master=false;
+      }
+    }
+    printChildren(rootDir,childDir,out);
+  }
+}
