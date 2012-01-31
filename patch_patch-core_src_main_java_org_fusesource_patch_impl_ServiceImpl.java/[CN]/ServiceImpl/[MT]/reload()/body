@@ -1,0 +1,13 @@
+{
+  for (  File file : patchDir.listFiles()) {
+    if (file.exists() && file.getName().endsWith(".patch")) {
+      try {
+        Patch patch=load(file);
+        patches.put(patch.getId(),patch);
+      }
+ catch (      IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+}
