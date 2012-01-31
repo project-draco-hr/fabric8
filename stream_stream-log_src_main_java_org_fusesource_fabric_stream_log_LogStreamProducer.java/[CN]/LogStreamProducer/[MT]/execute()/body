@@ -1,0 +1,26 @@
+{
+  CamelContext context=new DefaultCamelContext();
+  context.disableJMX();
+  context.addComponent("activemq",ActiveMQComponent.activeMQComponent(broker));
+  final InputBatcher batcher=new InputBatcher();
+  batcher.setBatchSize(batchSize);
+  batcher.setBatchTimeout(batchTimeout);
+  context.addComponent("batcher",batcher);
+  context.addRoutes(new RouteBuilder(){
+    public void configure() throws Exception {
+      Endpoint source=batcher.createEndpoint("stdin");
+      RouteDefinition route=from(source);
+      if (compress) {
+        route=route.process(new SnappyCompressor());
+      }
+      route.to("activemq:" + destination);
+    }
+  }
+);
+  context.start();
+synchronized (this) {
+    while (true) {
+      this.wait();
+    }
+  }
+}
