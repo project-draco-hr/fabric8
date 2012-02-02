@@ -14,6 +14,8 @@
     p.setIs(in);
     p.configure(context);
     context.start();
+    System.out.println(format("Started HTTP log event simulator #" + id + " generating %,.2f events/sec",randomEntriesPerSec));
+    startedLatch.countDown();
     long nextMealTime=System.currentTimeMillis() + nextFeedDelay();
     while (!done) {
       long now=System.currentTimeMillis();
