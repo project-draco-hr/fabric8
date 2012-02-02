@@ -3,60 +3,60 @@
     LOG.warn("Gateway is not connected to Fabric Zookeeper service, will retry after " + this.updateInterval + " seconds");
     return;
   }
-  Agent[] agents;
+  Container[] containers;
   try {
-    agents=gatewayProfile.getAssociatedAgents();
+    containers=gatewayProfile.getAssociatedContainers();
   }
  catch (  FabricException e) {
-    String msg="Error getting Agents from Fabric: " + e.getMessage();
+    String msg="Error getting Containers from Fabric: " + e.getMessage();
     LOG.error(msg,e);
     throw new IllegalStateException(msg,e);
   }
-  if (agents.length == 0) {
+  if (containers.length == 0) {
     if (LOG.isDebugEnabled()) {
-      LOG.debug("No BridgeConnector agents found");
+      LOG.debug("No BridgeConnector containers found");
     }
   }
-  for (  Agent agent : agents) {
-    final String agentId=agent.getId();
+  for (  Container container : containers) {
+    final String containerId=container.getId();
     try {
-      RemoteBridge remoteBridge=ZkConfigHelper.getBridgeConfig(zooKeeper,agent,applicationContext);
-      RemoteBridge oldRemoteBridge=agentBridgeMap.get(agentId);
+      RemoteBridge remoteBridge=ZkConfigHelper.getBridgeConfig(zooKeeper,container,applicationContext);
+      RemoteBridge oldRemoteBridge=containerBridgeMap.get(containerId);
       if (remoteBridge != null) {
         if (oldRemoteBridge != null) {
           if (!oldRemoteBridge.equals(remoteBridge)) {
-            LOG.info("Refreshing outbound connector for " + agentId);
-            agentBridgeMap.remove(agentId);
+            LOG.info("Refreshing outbound connector for " + containerId);
+            containerBridgeMap.remove(containerId);
             removeRemoteBridge(oldRemoteBridge);
             addRemoteBridge(remoteBridge);
-            agentBridgeMap.put(agentId,remoteBridge);
+            containerBridgeMap.put(containerId,remoteBridge);
           }
         }
  else {
           try {
-            LOG.info("Found Bridge Configuration for " + agentId);
+            LOG.info("Found Bridge Configuration for " + containerId);
             addRemoteBridge(remoteBridge);
-            agentBridgeMap.put(agentId,remoteBridge);
-            LOG.info("Added outbound connector for " + agentId);
+            containerBridgeMap.put(containerId,remoteBridge);
+            LOG.info("Added outbound connector for " + containerId);
           }
  catch (          Exception ex) {
-            LOG.error("Error adding outbound conncetor for [" + agentId + "] : "+ ex.getMessage(),ex);
+            LOG.error("Error adding outbound conncetor for [" + containerId + "] : "+ ex.getMessage(),ex);
           }
         }
       }
  else {
         if (oldRemoteBridge != null) {
-          LOG.info("Removing outbound connector for " + agentId);
-          agentBridgeMap.remove(agentId);
+          LOG.info("Removing outbound connector for " + containerId);
+          containerBridgeMap.remove(containerId);
           removeRemoteBridge(oldRemoteBridge);
         }
  else {
-          LOG.warn("Agent " + agentId + " uses Profile ["+ gatewayProfile.getId()+ "] but has not yet registered its Bridge Configuration");
+          LOG.warn("Container " + containerId + " uses Profile ["+ gatewayProfile.getId()+ "] but has not yet registered its Bridge Configuration");
         }
       }
     }
  catch (    Exception ex) {
-      LOG.error("Error getting Bridge Configuration for agent [" + agentId + "]: "+ ex.getMessage(),ex);
+      LOG.error("Error getting Bridge Configuration for container [" + containerId + "]: "+ ex.getMessage(),ex);
     }
   }
 }

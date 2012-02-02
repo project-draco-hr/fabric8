@@ -1,0 +1,17 @@
+{
+  try {
+    final String zooKeeperUrl=getZooKeeperUrl();
+    createContainerConfig("",name);
+    Container container=doCreateContainerFromArguments(args,name,zooKeeperUrl);
+    if (container == null) {
+      throw new IllegalArgumentException("Unknown CreateContainerArguments " + args + " when creating container "+ name);
+    }
+    return container;
+  }
+ catch (  FabricException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

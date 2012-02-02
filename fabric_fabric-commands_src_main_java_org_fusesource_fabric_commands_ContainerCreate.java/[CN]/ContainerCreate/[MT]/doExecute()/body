@@ -1,0 +1,11 @@
+{
+  if (url == null && parent == null) {
+    throw new Exception("Either an url or a parent must be specified");
+  }
+  if (url == null && parent != null) {
+    url="child://" + parent;
+  }
+  Container[] children=fabricService.createContainers(url,name,isEnsembleServer,debugContainer,number);
+  setProfiles(children);
+  return null;
+}

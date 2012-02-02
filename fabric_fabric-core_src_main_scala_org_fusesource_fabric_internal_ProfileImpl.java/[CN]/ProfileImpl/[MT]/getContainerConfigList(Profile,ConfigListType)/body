@@ -1,0 +1,15 @@
+{
+  try {
+    Properties containerProps=getContainerProperties(p);
+    ArrayList<String> rc=new ArrayList<String>();
+    for (    Map.Entry<Object,Object> e : containerProps.entrySet()) {
+      if (((String)e.getKey()).startsWith(type + ".")) {
+        rc.add((String)e.getValue());
+      }
+    }
+    return rc;
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

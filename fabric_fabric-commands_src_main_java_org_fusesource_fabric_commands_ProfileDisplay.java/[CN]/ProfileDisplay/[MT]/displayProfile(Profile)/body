@@ -3,10 +3,10 @@
   output.println("Profile id: " + profile.getId());
   output.println("Version   : " + profile.getVersion());
   output.println("Parents   : " + toString(profile.getParents()));
-  output.printf("Associated Agents : %s\n",toString(profile.getAssociatedAgents()));
+  output.printf("Associated Containers : %s\n",toString(profile.getAssociatedContainers()));
   Map<String,Map<String,String>> configuration=overlay ? profile.getOverlay().getConfigurations() : profile.getConfigurations();
   if (configuration.containsKey(AGENT_PID)) {
-    output.println("\nAgent settings");
+    output.println("\nContainer settings");
     output.println("----------------------------");
     if (profile.getRepositories().size() > 0) {
       printConfigList("Repositories : ",output,profile.getRepositories());

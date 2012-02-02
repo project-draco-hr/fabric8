@@ -1,0 +1,18 @@
+{
+  try {
+    String version=service.getZooKeeper().getStringData(ZkPath.CONFIG_CONTAINER.getPath(id));
+    String node=ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,id);
+    String str=service.getZooKeeper().getStringData(node);
+    if (str == null) {
+      return new Profile[0];
+    }
+    List<Profile> profiles=new ArrayList<Profile>();
+    for (    String p : str.split(" ")) {
+      profiles.add(new ProfileImpl(p,version,service));
+    }
+    return profiles.toArray(new Profile[profiles.size()]);
+  }
+ catch (  Exception e) {
+    throw new RuntimeException(e);
+  }
+}
