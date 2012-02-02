@@ -25,17 +25,23 @@
  else       if ("--compress".equals(arg)) {
         simulator.compress=Boolean.parseBoolean(shift(argl));
       }
- else       if ("--entries-per-hour".equals(arg)) {
-        simulator.entriesPerHour=Long.parseLong(shift(argl));
+ else       if ("--entries-per-sec".equals(arg)) {
+        simulator.entriesPerSec=Double.parseDouble(shift(argl));
       }
- else       if ("--entries-per-hour-sd".equals(arg)) {
-        simulator.entriesPerHourSD=Long.parseLong(shift(argl));
+ else       if ("--entries-per-sec-sd".equals(arg)) {
+        simulator.entriesPerSecSD=Double.parseDouble(shift(argl));
       }
  else       if ("--session-size".equals(arg)) {
         simulator.sessionSize=Long.parseLong(shift(argl));
       }
  else       if ("--session-size-sd".equals(arg)) {
         simulator.sessionSizeSD=Long.parseLong(shift(argl));
+      }
+ else       if ("--sample-time".equals(arg)) {
+        simulator.sampleTime=Integer.parseInt(shift(argl));
+      }
+ else       if ("--warmup-time".equals(arg)) {
+        simulator.warmupTime=Integer.parseInt(shift(argl));
       }
  else {
         System.err.println("Invalid usage: unknown option: " + arg);
@@ -46,6 +52,14 @@
       System.err.println("Invalid usage: argument not a number");
       displayHelpAndExit(1);
     }
+  }
+  if (simulator.brokers.isEmpty()) {
+    System.err.println("At least one --broker option is required.");
+    displayHelpAndExit(1);
+  }
+  if (simulator.destinations.isEmpty()) {
+    System.err.println("At least one --destination option is required.");
+    displayHelpAndExit(1);
   }
   try {
     simulator.execute();
