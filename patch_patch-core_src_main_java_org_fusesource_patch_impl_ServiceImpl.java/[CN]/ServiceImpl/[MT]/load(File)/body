@@ -1,0 +1,23 @@
+{
+  Properties props=new Properties();
+  FileInputStream is=new FileInputStream(file);
+  try {
+    props.load(is);
+    String id=props.getProperty(ID);
+    String desc=props.getProperty(DESCRIPTION);
+    List<String> bundles=new ArrayList<String>();
+    int count=Integer.parseInt(props.getProperty(BUNDLES + "." + COUNT,"0"));
+    for (int i=0; i < count; i++) {
+      bundles.add(props.getProperty(BUNDLES + "." + Integer.toString(i)));
+    }
+    PatchImpl patch=new PatchImpl(this,id,desc,bundles);
+    File fr=new File(file.getParent(),file.getName() + ".result");
+    if (fr.isFile()) {
+      patch.setResult(loadResult(patch,fr));
+    }
+    return patch;
+  }
+  finally {
+    close(is);
+  }
+}

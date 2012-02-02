@@ -1,0 +1,9 @@
+{
+  StringsCompleter delegate=new StringsCompleter();
+  for (  Patch patch : service.getPatches()) {
+    if (isInstalled() && patch.isInstalled() || isUninstalled() && !patch.isInstalled()) {
+      delegate.getStrings().add(patch.getId());
+    }
+  }
+  return delegate.complete(buffer,cursor,candidates);
+}
