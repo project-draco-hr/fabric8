@@ -1,9 +1,9 @@
 {
   try {
     String configVersion=getDefaultVersion().getName();
-    ZooKeeperUtils.createDefault(zooKeeper,ZkPath.CONFIG_AGENT.getPath(name),configVersion);
-    ZooKeeperUtils.createDefault(zooKeeper,ZkPath.CONFIG_VERSIONS_AGENT.getPath(configVersion,name),profile);
-    zooKeeper.createOrSetWithParents(AGENT_PARENT.getPath(name),parent,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    ZooKeeperUtils.createDefault(zooKeeper,ZkPath.CONFIG_CONTAINER.getPath(name),configVersion);
+    ZooKeeperUtils.createDefault(zooKeeper,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(configVersion,name),profile);
+    zooKeeper.createOrSetWithParents(CONTAINER_PARENT.getPath(name),parent,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
   }
  catch (  FabricException e) {
     throw e;

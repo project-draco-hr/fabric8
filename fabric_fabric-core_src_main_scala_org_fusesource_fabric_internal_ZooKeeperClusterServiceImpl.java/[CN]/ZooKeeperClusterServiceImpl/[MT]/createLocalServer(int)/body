@@ -50,8 +50,8 @@
     p.put("feature.fabric-jaas","fabric-jaas");
     p.put("framework","mvn:org.apache.felix/org.apache.felix.framework/3.0.9-fuse-00-10");
     ZooKeeperUtils.set(client,defaultProfile + "/org.fusesource.fabric.agent.properties",toString(p));
-    ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_AGENT.getPath(karafName),version);
-    ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_VERSIONS_AGENT.getPath(version,karafName),"default zk-server-0000-1");
+    ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_CONTAINER.getPath(karafName),version);
+    ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,karafName),"default zk-server-0000-1");
     ZooKeeperUtils.createDefault(client,defaultProfile + "/org.fusesource.fabric.jaas/encryption.enabled","${zk:/fabric/authentication/encryption.enabled}");
     ZooKeeperUtils.createDefault(client,"fabric/authentication/encryption.enabled","true");
     ZooKeeperUtils.createDefault(client,"fabric/authentication/domain","zookeeper");
@@ -85,8 +85,8 @@
   }
  finally {
     try {
-      ZooKeeperUtils.set(client,ZkPath.AGENT_PROVISION_RESULT.getPath(karafName),result);
-      ZooKeeperUtils.set(client,ZkPath.AGENT_PROVISION_EXCEPTION.getPath(karafName),exception);
+      ZooKeeperUtils.set(client,ZkPath.CONTAINER_PROVISION_RESULT.getPath(karafName),result);
+      ZooKeeperUtils.set(client,ZkPath.CONTAINER_PROVISION_EXCEPTION.getPath(karafName),exception);
     }
  catch (    Exception ignore) {
     }

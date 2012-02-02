@@ -20,12 +20,12 @@
       String features="fabric-agent";
       String featuresUrls="mvn:org.fusesource.fabric/fuse-fabric/" + FabricConstants.VERSION + "/xml/features";
       for (int i=1; i <= number; i++) {
-        String agentName=name;
+        String containerName=name;
         if (number > 1) {
-          agentName+=i;
+          containerName+=i;
         }
-        adminService.createInstance(agentName,0,0,0,null,javaOpts,features,featuresUrls);
-        adminService.startInstance(agentName,null);
+        adminService.createInstance(containerName,0,0,0,null,javaOpts,features,featuresUrls);
+        adminService.startInstance(containerName,null);
       }
       return null;
     }
