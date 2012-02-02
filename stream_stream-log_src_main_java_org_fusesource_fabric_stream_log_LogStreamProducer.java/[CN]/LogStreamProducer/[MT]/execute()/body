@@ -1,0 +1,10 @@
+{
+  CamelContext context=new DefaultCamelContext();
+  configure(context);
+  context.start();
+synchronized (this) {
+    while (true) {
+      this.wait();
+    }
+  }
+}

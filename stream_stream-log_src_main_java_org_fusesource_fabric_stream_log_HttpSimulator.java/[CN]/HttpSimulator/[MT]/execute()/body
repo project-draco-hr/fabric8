@@ -1,0 +1,13 @@
+{
+  ArrayList<ProducerContext> contexts=new ArrayList<ProducerContext>(producers);
+  for (int i=0; i < producers; i++) {
+    ProducerContext ctx=new ProducerContext(i);
+    contexts.add(ctx);
+    ctx.start();
+  }
+synchronized (this) {
+    while (true) {
+      this.wait();
+    }
+  }
+}

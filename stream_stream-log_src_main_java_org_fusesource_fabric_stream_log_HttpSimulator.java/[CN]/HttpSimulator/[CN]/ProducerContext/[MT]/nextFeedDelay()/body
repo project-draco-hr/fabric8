@@ -1,0 +1,21 @@
+{
+  if (zeroDelays > 0) {
+    zeroDelays-=1;
+    if (zeroDelays == 0) {
+      return 1;
+    }
+ else {
+      return 0;
+    }
+  }
+  double randomEntriesPerHour=entriesPerHourSD == 0 ? entriesPerHour : Math.floor((random.nextGaussian() * entriesPerHourSD) + entriesPerHour);
+  double randomEntriesPerMs=randomEntriesPerHour / HOURS.toMillis(1);
+  double msPerRandomEntry=1 / randomEntriesPerMs;
+  if (randomEntriesPerMs > 1) {
+    zeroDelays=(long)randomEntriesPerMs;
+    return nextFeedDelay();
+  }
+ else {
+    return (long)msPerRandomEntry;
+  }
+}
