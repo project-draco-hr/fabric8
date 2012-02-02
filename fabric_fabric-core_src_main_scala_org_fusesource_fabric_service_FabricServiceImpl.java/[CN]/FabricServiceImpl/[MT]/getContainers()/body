@@ -1,0 +1,28 @@
+{
+  try {
+    Map<String,Container> containers=new HashMap<String,Container>();
+    List<String> configs=zooKeeper.getChildren(ZkPath.CONFIGS_AGENTS.getPath());
+    for (    String name : configs) {
+      String parentId=getParentOf(name);
+      if (parentId.isEmpty()) {
+        if (!containers.containsKey(name)) {
+          Container container=new ContainerImpl(null,name,this);
+          containers.put(name,container);
+        }
+      }
+ else {
+        Container parent=containers.get(parentId);
+        if (parent == null) {
+          parent=new ContainerImpl(null,parentId,this);
+          containers.put(parentId,parent);
+        }
+        Container container=new ContainerImpl(parent,name,this);
+        containers.put(name,container);
+      }
+    }
+    return containers.values().toArray(new Container[containers.size()]);
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

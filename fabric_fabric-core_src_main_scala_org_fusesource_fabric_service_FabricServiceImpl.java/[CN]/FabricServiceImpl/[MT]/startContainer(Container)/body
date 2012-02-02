@@ -1,0 +1,12 @@
+{
+  if (container.isRoot()) {
+    throw new IllegalArgumentException("Can not stop root containers");
+  }
+  getContainerTemplate(container.getParent()).execute(new ContainerTemplate.AdminServiceCallback<Object>(){
+    public Object doWithAdminService(    AdminServiceMBean adminService) throws Exception {
+      adminService.startInstance(container.getId(),null);
+      return null;
+    }
+  }
+);
+}

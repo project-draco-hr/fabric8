@@ -4,8 +4,8 @@
   executeCommand("fabric:ensemble-create --clean root");
   IZKClient zooKeeper=getOsgiService(IZKClient.class);
   Thread.sleep(DEFAULT_WAIT);
-  Agent[] agents=fabricService.getAgents();
-  assertNotNull(agents);
-  assertEquals("Expected to find 1 container",1,agents.length);
-  assertEquals("Expected to find the root container","root",agents[0].getId());
+  Container[] containers=fabricService.getContainers();
+  assertNotNull(containers);
+  assertEquals("Expected to find 1 container",1,containers.length);
+  assertEquals("Expected to find the root container","root",containers[0].getId());
 }

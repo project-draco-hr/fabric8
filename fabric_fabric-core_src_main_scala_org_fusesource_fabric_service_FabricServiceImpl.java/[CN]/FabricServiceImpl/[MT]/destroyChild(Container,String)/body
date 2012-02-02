@@ -1,0 +1,11 @@
+{
+  getContainerTemplate(parent).execute(new ContainerTemplate.AdminServiceCallback<Object>(){
+    public Object doWithAdminService(    AdminServiceMBean adminService) throws Exception {
+      adminService.stopInstance(name);
+      adminService.destroyInstance(name);
+      zooKeeper.deleteWithChildren(ZkPath.CONFIG_AGENT.getPath(name));
+      return null;
+    }
+  }
+);
+}

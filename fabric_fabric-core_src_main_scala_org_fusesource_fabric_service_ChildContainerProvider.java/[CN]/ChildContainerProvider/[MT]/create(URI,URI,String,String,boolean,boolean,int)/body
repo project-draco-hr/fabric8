@@ -1,0 +1,34 @@
+{
+  String parentName=FabricServiceImpl.getParentFromURI(containerUri);
+  final Container parent=service.getContainer(parentName);
+  ContainerTemplate containerTemplate=service.getContainerTemplate(parent);
+  String ui=containerUri.getUserInfo();
+  String[] uip=ui != null ? ui.split(":") : null;
+  if (uip != null) {
+    containerTemplate.setLogin(uip[0]);
+    containerTemplate.setPassword(uip[1]);
+  }
+  containerTemplate.execute(new ContainerTemplate.AdminServiceCallback<Object>(){
+    public Object doWithAdminService(    AdminServiceMBean adminService) throws Exception {
+      String javaOpts=zooKeeperUrl != null ? "-Dzookeeper.url=\"" + zooKeeperUrl + "\" -Xmx512M -server" : "";
+      if (debugContainer) {
+        javaOpts+=DEBUG_CONTAINER;
+      }
+      if (isEnsembleServer) {
+        javaOpts+=ENSEMBLE_SERVER_CONTAINER;
+      }
+      String features="fabric-agent";
+      String featuresUrls="mvn:org.fusesource.fabric/fuse-fabric/" + FabricConstants.VERSION + "/xml/features";
+      for (int i=1; i <= number; i++) {
+        String agentName=name;
+        if (number > 1) {
+          agentName+=i;
+        }
+        adminService.createInstance(agentName,0,0,0,null,javaOpts,features,featuresUrls);
+        adminService.startInstance(agentName,null);
+      }
+      return null;
+    }
+  }
+);
+}
