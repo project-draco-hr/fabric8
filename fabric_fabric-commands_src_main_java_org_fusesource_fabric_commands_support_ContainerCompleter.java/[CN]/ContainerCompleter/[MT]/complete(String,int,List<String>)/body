@@ -1,7 +1,9 @@
 {
   StringsCompleter delegate=new StringsCompleter();
   for (  Container container : fabricService.getContainers()) {
-    delegate.getStrings().add(container.getId());
+    if (apply(container)) {
+      delegate.getStrings().add(container.getId());
+    }
   }
   return delegate.complete(buffer,cursor,candidates);
 }
