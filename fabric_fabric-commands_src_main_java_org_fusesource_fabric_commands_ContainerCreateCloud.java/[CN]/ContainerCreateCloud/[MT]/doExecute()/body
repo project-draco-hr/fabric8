@@ -1,4 +1,5 @@
 {
+  doValidateProfiles();
   CreateJCloudsContainerArguments args=new CreateJCloudsContainerArguments();
   args.setEnsembleServer(isEnsembleServer);
   args.setCredential(credential);
@@ -13,6 +14,7 @@
   args.setOwner(owner);
   args.setProviderName(providerName);
   args.setUser(user);
-  fabricService.createContainer(args,name,number);
+  Container[] containers=fabricService.createContainer(args,name,number);
+  setProfiles(containers);
   return null;
 }
