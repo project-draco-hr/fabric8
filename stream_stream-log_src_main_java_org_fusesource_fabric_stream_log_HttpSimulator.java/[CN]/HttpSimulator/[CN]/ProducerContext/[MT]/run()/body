@@ -17,16 +17,14 @@
     System.out.println(format("Started HTTP log event simulator #" + id + " generating %,.2f events/sec",randomEntriesPerSec));
     startedLatch.countDown();
     long nextMealTime=System.currentTimeMillis() + nextFeedDelay();
-    while (!done) {
+    while (!done.get()) {
       long now=System.currentTimeMillis();
       if (now >= nextMealTime) {
         feedTheCamel(now);
         nextMealTime=now + nextFeedDelay();
       }
       long remaining=nextMealTime - now;
-      if (remaining > 0) {
-        Thread.sleep(Math.min(remaining,1000));
-      }
+      sleep(remaining);
     }
   }
  catch (  Exception e) {

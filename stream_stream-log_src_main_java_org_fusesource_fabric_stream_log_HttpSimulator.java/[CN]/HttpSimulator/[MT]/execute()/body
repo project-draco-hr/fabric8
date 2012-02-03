@@ -9,13 +9,13 @@
   }
   started.await();
   System.out.println(format("Warming up for %,d seconds before sampling",warmupTime));
-  Thread.sleep(warmupTime * 1000);
+  sleep(warmupTime * 1000);
   for (int i=0; i < producers; i++) {
     contexts.get(i).counter.set(0);
   }
-  while (true) {
+  while (!done.get()) {
     System.out.println(format("Sampling for %,d seconds...",sampleTime));
-    Thread.sleep(sampleTime * 1000);
+    sleep(sampleTime * 1000);
     DescriptiveStatistics samples=new DescriptiveStatistics();
     samples.setWindowSize(producers);
     for (int i=0; i < producers; i++) {
