@@ -1,4 +1,5 @@
 {
+  doValidateProfiles();
   CreateJCloudsContainerArguments args=new CreateJCloudsContainerArguments();
   args.setEnsembleServer(isEnsembleServer);
   args.setCredential(credential);
@@ -19,6 +20,7 @@
  else {
     args.setProxyUri(fabricService.getMavenRepoURI());
   }
-  fabricService.createContainer(args,name,number);
+  Container[] containers=fabricService.createContainer(args,name,number);
+  setProfiles(containers);
   return null;
 }

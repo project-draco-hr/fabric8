@@ -1,0 +1,10 @@
+{
+  Version ver=version != null ? fabricService.getVersion(version) : fabricService.getDefaultVersion();
+  Profile[] profiles=ver.getProfiles();
+  List<String> names=getProfileNames();
+  for (  String profile : names) {
+    if (!hasProfile(profiles,profile)) {
+      throw new IllegalArgumentException("Profile " + profile + " with version "+ ver.getName()+ " does not exist");
+    }
+  }
+}

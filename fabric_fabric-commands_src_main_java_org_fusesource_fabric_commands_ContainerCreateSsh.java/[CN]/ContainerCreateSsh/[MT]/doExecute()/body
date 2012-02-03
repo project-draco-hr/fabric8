@@ -1,4 +1,5 @@
 {
+  doValidateProfiles();
   CreateSshContainerArguments args=new CreateSshContainerArguments();
   args.setEnsembleServer(isEnsembleServer);
   args.setDebugContainer(debugContainer);
@@ -19,6 +20,7 @@
   if (sshRetries != null) {
     args.setSshRetries(sshRetries);
   }
-  fabricService.createContainer(args,name,number);
+  Container[] containers=fabricService.createContainer(args,name,number);
+  setProfiles(containers);
   return null;
 }
