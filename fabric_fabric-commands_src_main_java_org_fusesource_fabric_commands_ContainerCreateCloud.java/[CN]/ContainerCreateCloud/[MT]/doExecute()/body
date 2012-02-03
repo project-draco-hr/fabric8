@@ -1,5 +1,8 @@
 {
   doValidateProfiles();
+  if (number < 1 || number > 999) {
+    throw new IllegalArgumentException("The number of containers must be between 1 and 999.");
+  }
   CreateJCloudsContainerArguments args=new CreateJCloudsContainerArguments();
   args.setEnsembleServer(isEnsembleServer);
   args.setCredential(credential);
@@ -14,6 +17,12 @@
   args.setOwner(owner);
   args.setProviderName(providerName);
   args.setUser(user);
+  if (proxyUri != null) {
+    args.setProxyUri(proxyUri);
+  }
+ else {
+    args.setProxyUri(fabricService.getMavenRepoURI());
+  }
   Container[] containers=fabricService.createContainer(args,name,number);
   setProfiles(containers);
   return null;
