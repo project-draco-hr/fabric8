@@ -27,7 +27,7 @@
       zooKeeper.createOrSetWithParents(CONTAINER_SSH.getPath(name),getSshUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
     }
     zooKeeper.createOrSetWithParents(CONTAINER_IP.getPath(name),getLocalHostAddress(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    String version=System.getProperty("fabric.version","base");
+    String version=System.getProperty("fabric.version",ZkDefs.DEFAULT_VERSION);
     String profiles=System.getProperty("fabric.profiles");
     if (profiles != null) {
       String versionNode=CONFIG_CONTAINER.getPath(name);

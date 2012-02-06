@@ -1,9 +1,9 @@
 {
-  Container a=fabricService.getContainer(container);
-  if (a == null) {
+  Container found=getContainer(container);
+  if (found == null) {
     throw new IllegalArgumentException("Container " + container + " does not exist.");
   }
-  List<String> domains=a.getJmxDomains();
+  List<String> domains=found.getJmxDomains();
   for (  String domain : domains) {
     System.out.println(domain);
   }
