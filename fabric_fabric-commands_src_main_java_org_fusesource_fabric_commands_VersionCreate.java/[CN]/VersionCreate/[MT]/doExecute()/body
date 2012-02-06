@@ -1,0 +1,33 @@
+{
+  Version[] versions=fabricService.getVersions();
+  Version latestVersion=null;
+  int vlength=versions.length;
+  if (versions != null && vlength > 0) {
+    latestVersion=versions[vlength - 1];
+  }
+  if (name == null) {
+    if (latestVersion == null) {
+      throw new IllegalArgumentException("Cannot default the new version name as there are no versions available");
+    }
+    name=latestVersion.getSequence().next().getName();
+  }
+  Version parent=null;
+  if (parentVersion == null) {
+    parent=latestVersion;
+  }
+ else {
+    parent=fabricService.getVersion(parentVersion);
+    if (parent == null) {
+      throw new IllegalArgumentException("Cannot find parent version: " + parentVersion);
+    }
+  }
+  if (parent != null) {
+    fabricService.createVersion(parent,name);
+    System.out.println("Created version: " + name + " as copy of: "+ parent.getName());
+  }
+ else {
+    fabricService.createVersion(name);
+    System.out.println("Created version: " + name);
+  }
+  return null;
+}
