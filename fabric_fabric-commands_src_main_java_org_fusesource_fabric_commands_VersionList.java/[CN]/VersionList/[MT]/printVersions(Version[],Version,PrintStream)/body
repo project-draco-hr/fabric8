@@ -1,0 +1,12 @@
+{
+  out.println(String.format("%-30s %-9s","[version]","[default]"));
+  List<Version> list=new ArrayList<Version>(versions.length);
+  for (  Version version : versions) {
+    list.add(version);
+  }
+  Collections.sort(list,new VersionComparator());
+  for (  Version version : list) {
+    boolean isDefault=defaultVersion.getName().equals(version.getName());
+    out.println(String.format("%-30s %-9s",version.getName(),(isDefault ? "true" : "false")));
+  }
+}
