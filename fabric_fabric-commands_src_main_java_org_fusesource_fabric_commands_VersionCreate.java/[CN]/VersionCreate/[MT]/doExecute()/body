@@ -1,8 +1,8 @@
 {
-  Version[] versions=fabricService.getVersions();
   Version latestVersion=null;
+  Version[] versions=fabricService.getVersions();
   int vlength=versions.length;
-  if (versions != null && vlength > 0) {
+  if (vlength > 0) {
     latestVersion=versions[vlength - 1];
   }
   if (name == null) {
@@ -11,7 +11,7 @@
     }
     name=latestVersion.getSequence().next().getName();
   }
-  Version parent=null;
+  Version parent;
   if (parentVersion == null) {
     parent=latestVersion;
   }
