@@ -1,4 +1,8 @@
 {
+  Container existing=getContainer(name);
+  if (existing != null) {
+    throw new IllegalArgumentException("A container with name " + name + " already exists.");
+  }
   Version ver=version != null ? fabricService.getVersion(version) : fabricService.getDefaultVersion();
   Profile[] profiles=ver.getProfiles();
   List<String> names=getProfileNames();
