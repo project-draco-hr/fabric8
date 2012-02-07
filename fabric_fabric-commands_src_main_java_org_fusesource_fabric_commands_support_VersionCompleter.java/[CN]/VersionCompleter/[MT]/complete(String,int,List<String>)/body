@@ -1,0 +1,8 @@
+{
+  StringsCompleter delegate=new StringsCompleter();
+  Version[] versions=fabricService.getVersions();
+  for (  Version version : versions) {
+    delegate.getStrings().add(version.getName());
+  }
+  return delegate.complete(buffer,cursor,candidates);
+}
