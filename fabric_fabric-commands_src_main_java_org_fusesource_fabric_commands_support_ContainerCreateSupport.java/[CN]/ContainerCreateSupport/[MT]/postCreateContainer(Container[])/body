@@ -3,7 +3,7 @@
   List<String> names=getProfileNames();
   try {
     Profile[] profiles=getProfiles(version,names);
-    for (    Container child : children) {
+    for (    Container child : containers) {
       log.trace("Setting version " + ver.getName() + " on container "+ child.getId());
       child.setVersion(ver);
       log.trace("Setting profiles " + Arrays.asList(profiles) + " on container "+ child.getId());
@@ -14,6 +14,6 @@
     log.warn("Error during postCreateContainer. This exception will be ignored.",ex);
   }
   if (log.isDebugEnabled()) {
-    log.debug("postCreateContainer completed for " + Arrays.asList(children) + " containers.");
+    log.debug("postCreateContainer completed for " + Arrays.asList(containers) + " containers.");
   }
 }
