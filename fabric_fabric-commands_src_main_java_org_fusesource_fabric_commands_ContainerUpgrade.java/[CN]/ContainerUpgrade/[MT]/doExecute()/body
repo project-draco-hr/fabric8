@@ -1,0 +1,22 @@
+{
+  Version version=fabricService.getVersion(this.version);
+  if (containerIds == null || containerIds.isEmpty()) {
+    containerIds=Arrays.asList(fabricService.getCurrentContainer().getId());
+  }
+  for (  String containerName : containerIds) {
+    Container container=fabricService.getContainer(containerName);
+    Version current=container.getVersion();
+    int num=version.compareTo(current);
+    if (num < 0) {
+      throw new IllegalArgumentException("Container " + container.getId() + " has already higher version "+ current+ " than the requested version "+ version+ " to be updated.");
+    }
+ else     if (num > 0) {
+      container.setVersion(version);
+      System.out.println("Upgraded container " + container.getId() + " from version "+ current+ " to "+ version);
+    }
+ else {
+      System.out.println("Container " + container.getId() + " is already version "+ current);
+    }
+  }
+  return null;
+}
