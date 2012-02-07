@@ -1,0 +1,17 @@
+{
+  out.println(String.format(FORMAT,HEADERS));
+  for (  Container container : containers) {
+    if (container.isRoot()) {
+      if (matchVersion(container,version)) {
+        out.println(String.format(FORMAT,container.getId(),container.getVersion().getName(),container.isAlive(),toString(container.getProfiles()),container.getProvisionStatus()));
+      }
+      for (      Container child : containers) {
+        if (child.getParent() == container) {
+          if (matchVersion(child,version)) {
+            out.println(String.format(FORMAT,"  " + child.getId(),child.getVersion().getName(),child.isAlive(),toString(child.getProfiles()),child.getProvisionStatus()));
+          }
+        }
+      }
+    }
+  }
+}
