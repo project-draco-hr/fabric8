@@ -1,10 +1,14 @@
 {
   Container[] containers=fabricService.getContainers();
+  Version ver=null;
+  if (version != null) {
+    ver=fabricService.getVersion(version);
+  }
   if (verbose) {
-    printContainersVerbose(containers,System.out);
+    printContainersVerbose(containers,ver,System.out);
   }
  else {
-    printContainers(containers,System.out);
+    printContainers(containers,ver,System.out);
   }
   return null;
 }
