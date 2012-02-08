@@ -6,6 +6,8 @@
     }
   }
  catch (  IOException e) {
-    LOGGER.log(Level.SEVERE,"Exception caught in maven proxy",e);
+    if (!serverSocket.isClosed()) {
+      LOGGER.log(Level.SEVERE,"Exception caught in maven proxy",e);
+    }
   }
 }
