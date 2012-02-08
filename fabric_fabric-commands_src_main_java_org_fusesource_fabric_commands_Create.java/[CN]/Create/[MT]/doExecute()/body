@@ -1,0 +1,29 @@
+{
+  if (containers == null || containers.isEmpty()) {
+    containers=Arrays.asList(System.getProperty("karaf.name"));
+  }
+  if (clean) {
+    service.clean();
+  }
+  if (containers != null && !containers.isEmpty()) {
+    service.createCluster(containers);
+    if (!noImport) {
+      if (ensembleStartupTime > 0L) {
+        try {
+          Thread.sleep(ensembleStartupTime);
+        }
+ catch (        InterruptedException e) {
+        }
+      }
+      Import tool=new Import();
+      tool.setSource(importDir);
+      tool.setBundleContext(getBundleContext());
+      tool.setZooKeeper(service.getZooKeeper());
+      if (verbose) {
+        tool.setVerbose(verbose);
+      }
+      return tool.execute(session);
+    }
+  }
+  return null;
+}

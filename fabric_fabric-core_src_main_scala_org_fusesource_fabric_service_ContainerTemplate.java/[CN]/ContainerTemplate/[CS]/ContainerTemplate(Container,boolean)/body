@@ -1,0 +1,14 @@
+{
+  this.container=container;
+  if (cacheJmx) {
+    this.jmxTemplate=new ContainerCachingJmxTemplate(this);
+  }
+ else {
+    this.jmxTemplate=new NonCachingJmxTemplate(){
+      @Override protected JMXConnector createConnector(){
+        return ContainerTemplate.this.createConnector();
+      }
+    }
+;
+  }
+}

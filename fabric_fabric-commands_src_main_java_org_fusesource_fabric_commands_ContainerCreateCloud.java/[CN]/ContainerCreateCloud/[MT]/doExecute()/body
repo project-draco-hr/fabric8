@@ -1,0 +1,26 @@
+{
+  preCreateContainer(name);
+  CreateJCloudsContainerArguments args=new CreateJCloudsContainerArguments();
+  args.setEnsembleServer(isEnsembleServer);
+  args.setCredential(credential);
+  args.setDebugContainer(debugContainer);
+  args.setGroup(group);
+  args.setHardwareId(hardwareId);
+  args.setIdentity(identity);
+  args.setImageId(imageId);
+  args.setInstanceType(instanceType);
+  args.setLocationId(locationId);
+  args.setNumber(number);
+  args.setOwner(owner);
+  args.setProviderName(providerName);
+  args.setUser(user);
+  if (proxyUri != null) {
+    args.setProxyUri(proxyUri);
+  }
+ else {
+    args.setProxyUri(fabricService.getMavenRepoURI());
+  }
+  Container[] containers=fabricService.createContainer(args,name,number);
+  postCreateContainer(containers);
+  return null;
+}

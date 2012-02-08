@@ -4,6 +4,7 @@
     int zooKeeperPort=getFreePort();
     int serverPort=getFreePort();
     zkServerFactoryBean=new ZKServerFactoryBean();
+    zkServerFactoryBean.setPurge(true);
     zkServerFactoryBean.setClientPortAddress(new InetSocketAddress("localhost",zooKeeperPort));
     zkServerFactoryBean.afterPropertiesSet();
     ZKClient zooKeeper=new ZKClient("localhost:" + zooKeeperPort,Timespan.ONE_MINUTE,null);

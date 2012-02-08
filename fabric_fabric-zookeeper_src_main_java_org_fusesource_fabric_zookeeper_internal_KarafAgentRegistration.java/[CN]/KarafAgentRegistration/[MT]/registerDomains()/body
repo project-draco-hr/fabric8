@@ -1,9 +1,0 @@
-{
-  if (connected && mbeanServer != null) {
-    String name=System.getProperty("karaf.name");
-    domains.addAll(Arrays.asList(mbeanServer.getDomains()));
-    for (    String domain : mbeanServer.getDomains()) {
-      zooKeeper.createOrSetWithParents(AGENT_DOMAIN.getPath(name,domain),null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    }
-  }
-}

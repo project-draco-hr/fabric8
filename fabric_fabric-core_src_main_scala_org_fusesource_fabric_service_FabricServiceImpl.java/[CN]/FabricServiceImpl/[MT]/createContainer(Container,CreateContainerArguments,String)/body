@@ -1,0 +1,15 @@
+{
+  createContainerConfig(parent.getId(),name);
+  ContainerTemplate containerTemplate=getContainerTemplate(parent);
+  if (containerTemplate.execute(new ContainerTemplate.FabricServiceCallback<Boolean>(){
+    public Boolean doWithFabricService(    FabricServiceImplMBean fabricService) throws Exception {
+      return fabricService.createRemoteContainer(args,name);
+    }
+  }
+)) {
+    return new ContainerImpl(null,name,FabricServiceImpl.this);
+  }
+ else {
+    return null;
+  }
+}
