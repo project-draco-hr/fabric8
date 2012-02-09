@@ -2,6 +2,7 @@
   if (props == null) {
     return;
   }
+  updateStatus("analyzing",null);
   final MavenConfigurationImpl config=new MavenConfigurationImpl(new DictionaryPropertyResolver(props,new PropertiesPropertyResolver(System.getProperties())),"org.ops4j.pax.url.mvn");
   config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
   manager=new DownloadManager(config);
@@ -39,6 +40,7 @@
     }
   }
   if (restart) {
+    updateStatus("restarting",null);
     configProps.save();
     systemProps.save();
     System.setProperty("karaf.restart","true");
