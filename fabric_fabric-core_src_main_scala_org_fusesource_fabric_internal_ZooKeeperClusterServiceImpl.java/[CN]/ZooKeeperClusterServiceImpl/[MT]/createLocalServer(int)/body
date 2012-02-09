@@ -1,16 +1,14 @@
 {
   ZKClient client=null;
+  Configuration config=null;
+  String connectionUrl=null;
+  Properties properties=new Properties();
   String karafName=System.getProperty("karaf.name");
   String result=null;
   String exception=null;
   try {
-    Configuration config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
-    Properties properties=new Properties();
-    String connectionUrl=getLocalHostAddress() + ":" + Integer.toString(port);
+    connectionUrl=getLocalHostAddress() + ":" + Integer.toString(port);
     String mavenProxyUrl="http://" + getLocalHostAddress() + ":"+ 8040;
-    properties.put("zookeeper.url",connectionUrl);
-    config.setBundleLocation(null);
-    config.update(properties);
     config=configurationAdmin.createFactoryConfiguration("org.fusesource.fabric.zookeeper.server");
     properties=new Properties();
     properties.put("tickTime","2000");
@@ -24,6 +22,10 @@
     client=new ZKClient(connectionUrl,Timespan.ONE_MINUTE,null);
     client.start();
     client.waitForStart(new Timespan(5,Timespan.TimeUnit.SECOND));
+    String autoImportFrom=System.getProperty(PROFILES_AUTOIMPORT_PATH);
+    if (autoImportFrom != null) {
+      ZookeeperImportUtils.importFromFileSystem(client,autoImportFrom,"/",null,null,false,false,false);
+    }
     String defaultProfile=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"default");
     setConfigProperty(client,defaultProfile + "/org.fusesource.fabric.zookeeper.properties","zookeeper.url","${zk:" + karafName + "/ip}:"+ Integer.toString(port));
     String profileNode=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"zk-server-0000") + "/org.fusesource.fabric.zookeeper.server-0000.properties";
@@ -87,11 +89,16 @@
     try {
       ZooKeeperUtils.set(client,ZkPath.CONTAINER_PROVISION_RESULT.getPath(karafName),result);
       ZooKeeperUtils.set(client,ZkPath.CONTAINER_PROVISION_EXCEPTION.getPath(karafName),exception);
+      config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
+      if (client != null) {
+        client.destroy();
+      }
+      properties.put("zookeeper.url",connectionUrl);
+      config.setBundleLocation(null);
+      config.update(properties);
     }
  catch (    Exception ignore) {
-    }
-    if (client != null) {
-      client.destroy();
+      ignore.printStackTrace(System.err);
     }
   }
 }

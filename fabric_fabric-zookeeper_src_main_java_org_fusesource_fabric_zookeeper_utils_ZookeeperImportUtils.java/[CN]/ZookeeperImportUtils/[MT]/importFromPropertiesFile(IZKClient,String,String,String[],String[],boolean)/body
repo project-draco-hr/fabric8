@@ -1,6 +1,6 @@
 {
-  List<Pattern> includes=getPatterns(regex);
-  List<Pattern> excludes=getPatterns(nregex);
+  List<Pattern> includes=getPatterns(includeRegex);
+  List<Pattern> excludes=getPatterns(excludeRegex);
   InputStream in=new BufferedInputStream(new URL(source).openStream());
   List<String> paths=new ArrayList<String>();
   Properties props=new Properties();
@@ -19,7 +19,7 @@
       continue;
     }
     if (!dryRun) {
-      getZooKeeper().createOrSetWithParents(name,value,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      zooKeeper.createOrSetWithParents(name,value,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
     }
  else {
       System.out.printf("Creating path \"%s\" with value \"%s\"\n",name,value);

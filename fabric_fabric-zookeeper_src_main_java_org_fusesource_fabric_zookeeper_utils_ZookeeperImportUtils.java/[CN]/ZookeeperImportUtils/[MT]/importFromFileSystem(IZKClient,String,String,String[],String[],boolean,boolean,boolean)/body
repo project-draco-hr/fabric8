@@ -1,9 +1,9 @@
 {
   Map<String,String> settings=new TreeMap<String,String>();
   File s=new File(source);
-  getCandidates(s,s,settings);
-  List<Pattern> include=getPatterns(regex);
-  List<Pattern> exclude=getPatterns(nregex);
+  getCandidates(zooKeeper,s,s,settings,target);
+  List<Pattern> include=getPatterns(includeRegex);
+  List<Pattern> exclude=getPatterns(excludeRegex);
   if (!target.endsWith("/")) {
     target=target + "/";
   }
@@ -23,7 +23,7 @@
         if (verbose) {
           System.out.println("importing: " + key);
         }
-        getZooKeeper().createOrSetWithParents(key,data,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+        zooKeeper.createOrSetWithParents(key,data,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
       }
     }
  else {
@@ -31,6 +31,6 @@
     }
   }
   if (delete) {
-    deletePathsNotIn(paths);
+    deletePathsNotIn(zooKeeper,paths,target,dryRun);
   }
 }
