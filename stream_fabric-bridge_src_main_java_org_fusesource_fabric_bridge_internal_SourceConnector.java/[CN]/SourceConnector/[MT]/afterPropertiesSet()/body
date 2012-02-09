@@ -2,6 +2,9 @@
   if (outboundDestinations == null || localBrokerConfig == null) {
     throw new IllegalArgumentException("Both outboundDestinations and localBrokerConfig properties must be set");
   }
+  if (remoteBrokerConfig == null && !outboundDestinations.isUseStagingQueue()) {
+    throw new IllegalArgumentException("Property remoteBrokerConfig is missing but property useStagingQueue is false");
+  }
   if (remoteBrokerConfig == null && outboundDestinations.isDefaultStagingLocation()) {
     throw new IllegalArgumentException("Property remoteBrokerConfig is missing but property defaultStagingLocation is true");
   }
