@@ -1,6 +1,6 @@
 {
+  logger.trace("onConnected");
   try {
-    connected=true;
     String name=System.getProperty("karaf.name");
     String nodeAlive=CONTAINER_ALIVE.getPath(name);
     Stat stat=zooKeeper.exists(nodeAlive);
@@ -42,6 +42,6 @@
     registerDomains();
   }
  catch (  Exception e) {
-    logger.warn("Error updating Fabric Container informations",e);
+    logger.warn("Error updating Fabric Container information. This exception will be ignored.",e);
   }
 }
