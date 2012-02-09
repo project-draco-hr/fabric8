@@ -1,0 +1,11 @@
+{
+  try {
+    List<String> list=service.getZooKeeper().getChildren(ZkPath.CONTAINER_DOMAINS.getPath(getId()));
+    Collections.sort(list);
+    return Collections.unmodifiableList(list);
+  }
+ catch (  Exception e) {
+    logger.warn("Error while retrieving jmx domains. This exception will be ignored.",e);
+    return Collections.emptyList();
+  }
+}

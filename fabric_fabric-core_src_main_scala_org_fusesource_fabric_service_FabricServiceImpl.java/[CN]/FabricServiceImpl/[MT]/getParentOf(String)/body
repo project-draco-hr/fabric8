@@ -1,12 +1,12 @@
 {
   if (zooKeeper != null) {
     try {
-      return zooKeeper.getStringData(ZkPath.AGENT_PARENT.getPath(name)).trim();
+      return zooKeeper.getStringData(ZkPath.CONTAINER_PARENT.getPath(name)).trim();
     }
  catch (    KeeperException.NoNodeException e) {
     }
 catch (    Throwable e) {
-      logger.warn("Failed to find parent " + name + ". Reason: "+ e);
+      logger.warn("Failed to find parent " + name + ". This exception will be ignored.",e);
     }
   }
   return "";

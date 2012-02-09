@@ -1,0 +1,8 @@
+{
+  final String bridgeConfigPath=getBridgeConfigPath(container);
+  RemoteBridge remoteBridge=getData(client,bridgeConfigPath,RemoteBridge.class);
+  if (remoteBridge != null) {
+    resolveBeanReferences(remoteBridge.getRemoteBrokerConfig(),context);
+  }
+  return remoteBridge;
+}

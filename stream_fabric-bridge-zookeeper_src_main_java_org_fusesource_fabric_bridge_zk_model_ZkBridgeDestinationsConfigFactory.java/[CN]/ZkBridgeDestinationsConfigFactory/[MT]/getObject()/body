@@ -1,7 +1,7 @@
 {
-  Agent agent=fabricService.getAgent(System.getProperty("karaf.name"));
+  Container container=fabricService.getContainer(System.getProperty("karaf.name"));
   String bridgeDestinationsConfigName=BRIDGE_DESTINATIONS_PID + "." + getId()+ PID_EXTENSION;
-  for (  Profile profile : agent.getProfiles()) {
+  for (  Profile profile : container.getProfiles()) {
     if (profile.getParents().length > 0) {
       profile=profile.getOverlay();
     }
@@ -18,7 +18,7 @@
       }
     }
   }
-  String msg="No configuration " + bridgeDestinationsConfigName + " found in agent profiles";
+  String msg="No configuration " + bridgeDestinationsConfigName + " found in container profiles";
   LOG.error(msg);
   throw new BeanCreationException(msg);
 }

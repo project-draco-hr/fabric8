@@ -1,0 +1,32 @@
+{
+  try {
+    String path=containerUri.getPath();
+    String host=containerUri.getHost();
+    if (containerUri.getQuery() != null) {
+      debug=containerUri.getQuery().contains("debug");
+    }
+    if (host == null) {
+      throw new IllegalArgumentException("host name must be specified in uri '" + containerUri + "'");
+    }
+    int port=containerUri.getPort();
+    if (port == -1) {
+      port=22;
+    }
+    String ui=containerUri.getUserInfo();
+    String[] uip=ui != null ? ui.split(":") : null;
+    if (uip == null || uip.length != 2) {
+      throw new IllegalArgumentException("user and password must be supplied in the uri '" + containerUri + "'");
+    }
+    String username=uip[0];
+    String password=uip[1];
+    int sshRetries=6;
+    int retryDelay=1;
+    doCreateContainer(proxyUri,name,number,zooKeeperUrl,isEnsembleServer,debugContainer,path,host,port,username,password,sshRetries,retryDelay);
+  }
+ catch (  FabricException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

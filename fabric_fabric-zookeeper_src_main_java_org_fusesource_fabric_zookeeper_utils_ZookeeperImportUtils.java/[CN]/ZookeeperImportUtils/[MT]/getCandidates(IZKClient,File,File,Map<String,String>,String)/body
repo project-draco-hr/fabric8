@@ -1,0 +1,33 @@
+{
+  List<Pattern> profile=getPatterns(new String[]{RegexSupport.PROFILE_REGEX});
+  List<Pattern> containerProperties=getPatterns(new String[]{RegexSupport.PROFILE_CONTAINER_PROPERTIES_REGEX});
+  if (current.isDirectory()) {
+    for (    File child : current.listFiles()) {
+      getCandidates(zookeeper,parent,child,settings,target);
+    }
+    String p=buildZKPath(parent,current).replaceFirst("/","");
+    if (!matches(profile,"/" + p,false)) {
+      settings.put(p,null);
+    }
+  }
+ else {
+    BufferedInputStream in=new BufferedInputStream(new FileInputStream(current));
+    byte[] contents=new byte[in.available()];
+    in.read(contents);
+    in.close();
+    String p=buildZKPath(parent,current).replaceFirst("/","");
+    if (p.endsWith(".cfg")) {
+      p=p.substring(0,p.length() - ".cfg".length());
+    }
+    if (matches(containerProperties,"/" + p,false)) {
+      settings.put(p,new String(contents).replaceAll(RegexSupport.PARENTS_REGEX,""));
+      Properties props=new Properties();
+      props.load(new StringReader(new String(contents)));
+      String parents=(String)props.get("parents");
+      settings.put(p.substring(0,p.lastIndexOf("/")),parents);
+    }
+ else     if (!matches(profile,"/" + p,false)) {
+      settings.put(p,new String(contents));
+    }
+  }
+}

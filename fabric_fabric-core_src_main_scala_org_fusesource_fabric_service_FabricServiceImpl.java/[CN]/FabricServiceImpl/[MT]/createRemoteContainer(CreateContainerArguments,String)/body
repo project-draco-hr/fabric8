@@ -1,0 +1,13 @@
+{
+  try {
+    final String zooKeeperUrl=getZooKeeperUrl();
+    Container container=doCreateContainerFromArguments(args,name,zooKeeperUrl);
+    return container != null;
+  }
+ catch (  FabricException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

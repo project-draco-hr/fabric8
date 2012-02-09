@@ -1,0 +1,27 @@
+{
+  String cmdStr="";
+  if (command != null) {
+    StringBuilder sb=new StringBuilder();
+    for (    String cmd : command) {
+      if (sb.length() > 0) {
+        sb.append(' ');
+      }
+      sb.append(cmd);
+    }
+    cmdStr="'" + sb.toString().replaceAll("'","\\'") + "'";
+  }
+  Container found=getContainer(container);
+  if (found == null) {
+    throw new IllegalArgumentException("Container " + container + " does not exist.");
+  }
+  String sshUrl=found.getSshUrl();
+  if (sshUrl == null) {
+    throw new IllegalArgumentException("Container " + container + " has no SSH URL.");
+  }
+  String[] ssh=sshUrl.split(":");
+  if (ssh.length < 2) {
+    throw new IllegalArgumentException("Container " + container + " has an invalid SSH URL '"+ sshUrl+ "'");
+  }
+  session.execute("ssh -l " + username + " -P "+ password+ " -p "+ ssh[1]+ " "+ ssh[0]+ " "+ cmdStr);
+  return null;
+}

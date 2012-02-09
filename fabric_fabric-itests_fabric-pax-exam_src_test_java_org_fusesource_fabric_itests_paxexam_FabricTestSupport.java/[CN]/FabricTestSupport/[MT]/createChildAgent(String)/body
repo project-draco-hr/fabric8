@@ -3,11 +3,11 @@
   FabricService fabricService=getOsgiService(FabricService.class);
   assertNotNull(fabricService);
   Thread.sleep(DEFAULT_WAIT);
-  Agent[] agents=fabricService.getAgents();
-  assertNotNull(agents);
-  assertEquals("Expected to find 1 agent",1,agents.length);
-  Agent parent=agents[0];
-  assertEquals("Expected to find the root agent","root",parent.getId());
-  Agent child=fabricService.createAgent(parent,"child1");
+  Container[] containers=fabricService.getContainers();
+  assertNotNull(containers);
+  assertEquals("Expected to find 1 container",1,containers.length);
+  Container parent=containers[0];
+  assertEquals("Expected to find the root container","root",parent.getId());
+  Container child=fabricService.createContainer(parent,"child1");
   return child;
 }

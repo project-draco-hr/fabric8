@@ -1,0 +1,36 @@
+{
+  Map<String,String> settings=new TreeMap<String,String>();
+  File s=new File(source);
+  getCandidates(zooKeeper,s,s,settings,target);
+  List<Pattern> include=getPatterns(includeRegex);
+  List<Pattern> exclude=getPatterns(excludeRegex);
+  if (!target.endsWith("/")) {
+    target=target + "/";
+  }
+  if (!target.startsWith("/")) {
+    target="/" + target;
+  }
+  List<String> paths=new ArrayList<String>();
+  for (  String key : settings.keySet()) {
+    String data=settings.get(key);
+    key=target + key;
+    paths.add(key);
+    if (!matches(include,key,true) || matches(exclude,key,false)) {
+      continue;
+    }
+    if (!dryRun) {
+      if (data != null) {
+        if (verbose) {
+          System.out.println("importing: " + key);
+        }
+        zooKeeper.createOrSetWithParents(key,data,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      }
+    }
+ else {
+      System.out.printf("Creating path \"%s\" with value \"%s\"\n",key,data);
+    }
+  }
+  if (delete) {
+    deletePathsNotIn(zooKeeper,paths,target,dryRun);
+  }
+}

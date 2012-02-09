@@ -1,0 +1,14 @@
+{
+  List<String> zkPaths=zookeeper.getAllChildren(target);
+  for (  String path : zkPaths) {
+    path="/" + path;
+    if (!paths.contains(path)) {
+      if (!dryRun) {
+        zookeeper.deleteWithChildren(path);
+      }
+ else {
+        System.out.printf("Deleting path %s and everything under it\n",path);
+      }
+    }
+  }
+}

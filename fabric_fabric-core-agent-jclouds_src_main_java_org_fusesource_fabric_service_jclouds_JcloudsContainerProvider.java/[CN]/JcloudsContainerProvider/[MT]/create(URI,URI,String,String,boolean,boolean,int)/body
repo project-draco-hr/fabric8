@@ -1,0 +1,34 @@
+{
+  String imageId=null;
+  String hardwareId=null;
+  String locationId=null;
+  String group=null;
+  String user=null;
+  JCloudsInstanceType instanceType=JCloudsInstanceType.Smallest;
+  String identity=null;
+  String credential=null;
+  String owner=null;
+  try {
+    String providerName=containerUri.getHost();
+    if (containerUri.getQuery() != null) {
+      Map<String,String> parameters=parseQuery(containerUri.getQuery());
+      if (parameters != null) {
+        imageId=parameters.get(IMAGE_ID);
+        group=parameters.get(GROUP);
+        locationId=parameters.get(LOCATION_ID);
+        hardwareId=parameters.get(HARDWARE_ID);
+        user=parameters.get(USER);
+        if (parameters.get(INSTANCE_TYPE) != null) {
+          instanceType=JCloudsInstanceType.get(parameters.get(INSTANCE_TYPE),instanceType);
+        }
+      }
+    }
+    doCreateContainer(proxyUri,name,number,zooKeeperUrl,isEnsembleServer,debugContainer,imageId,hardwareId,locationId,group,user,instanceType,providerName,identity,credential,owner,DEFAULT_SSH_PORT);
+  }
+ catch (  FabricException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}
