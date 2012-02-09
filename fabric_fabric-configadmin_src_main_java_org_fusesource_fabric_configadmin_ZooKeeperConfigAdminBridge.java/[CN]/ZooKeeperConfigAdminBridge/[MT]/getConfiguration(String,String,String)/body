@@ -1,5 +1,5 @@
 {
-  Configuration oldConfiguration=findExistingConfiguration(zooKeeperPid);
+  Configuration[] oldConfiguration=findExistingConfiguration(zooKeeperPid);
   if (oldConfiguration != null) {
     return oldConfiguration;
   }
@@ -11,6 +11,6 @@
  else {
       newConfiguration=getConfigAdmin().getConfiguration(pid,null);
     }
-    return newConfiguration;
+    return new Configuration[]{newConfiguration};
   }
 }
