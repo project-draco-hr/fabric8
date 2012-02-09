@@ -1,29 +1,42 @@
 {
-  if (buffer == null) {
-    candidates.add("/");
-    return 1;
-  }
- else   if (!buffer.startsWith("/")) {
+  ServiceReference sr=bundleContext.getServiceReference(IZKClient.class.getName());
+  if (sr == null) {
     return 0;
   }
-  buffer=buffer.substring(0,cursor);
-  String path=buffer;
-  int idx=path.lastIndexOf("/") + 1;
-  String prefix=path.substring(idx);
+  IZKClient zk=(IZKClient)bundleContext.getService(sr);
+  if (zk == null) {
+    return 0;
+  }
   try {
-    String dir=idx == 1 ? "/" : path.substring(0,idx - 1);
-    List<String> children=zk.getChildren(dir,false);
-    for (    String child : children) {
-      if (child.startsWith(prefix)) {
-        candidates.add(child);
+    if (buffer == null) {
+      candidates.add("/");
+      return 1;
+    }
+ else     if (!buffer.startsWith("/")) {
+      return 0;
+    }
+    buffer=buffer.substring(0,cursor);
+    String path=buffer;
+    int idx=path.lastIndexOf("/") + 1;
+    String prefix=path.substring(idx);
+    try {
+      String dir=idx == 1 ? "/" : path.substring(0,idx - 1);
+      List<String> children=zk.getChildren(dir,false);
+      for (      String child : children) {
+        if (child.startsWith(prefix)) {
+          candidates.add(child);
+        }
       }
     }
+ catch (    InterruptedException e) {
+      return 0;
+    }
+catch (    KeeperException e) {
+      return 0;
+    }
+    return candidates.size() == 0 ? buffer.length() : buffer.lastIndexOf("/") + 1;
   }
- catch (  InterruptedException e) {
-    return 0;
+  finally {
+    bundleContext.ungetService(sr);
   }
-catch (  KeeperException e) {
-    return 0;
-  }
-  return candidates.size() == 0 ? buffer.length() : buffer.lastIndexOf("/") + 1;
 }

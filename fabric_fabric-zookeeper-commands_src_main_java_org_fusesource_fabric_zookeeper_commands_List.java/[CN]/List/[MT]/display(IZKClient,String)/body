@@ -1,0 +1,23 @@
+{
+  if (!path.endsWith("/")) {
+    path=path + "/";
+  }
+  if (!path.startsWith("/")) {
+    path="/" + path;
+  }
+  java.util.List<String> paths=getPaths(zk);
+  for (  String p : paths) {
+    if (display) {
+      byte[] data=zk.getData(path + p);
+      if (data != null) {
+        System.out.printf("%s = %s\n",p,new String(data));
+      }
+ else {
+        System.out.println(p);
+      }
+    }
+ else {
+      System.out.println(p);
+    }
+  }
+}
