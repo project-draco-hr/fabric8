@@ -8,6 +8,28 @@
   deliveryHandler.setReuseSession(reuseSession);
   deliveryHandler.setReuseMessage(reuseMessage);
   deliveryHandler.setTargetConnectionFactory(remoteConnectionFactory);
-  deliveryHandler.setStagingDestination(stagingQueue);
+  if (stagingQueue != null) {
+    deliveryHandler.setStagingDestination(stagingQueue);
+  }
+ else {
+    Connection remoteConnection=null;
+    try {
+      remoteConnection=remoteConnectionFactory.createConnection();
+      Session remoteSession=remoteConnection.createSession(false,Session.AUTO_ACKNOWLEDGE);
+      deliveryHandler.setStagingDestination(remoteBrokerConfig.getDestinationResolver().resolveDestinationName(remoteSession,destinationName,pubSubDomain));
+    }
+ catch (    JMSException e) {
+      String msg="Error resolving remote destination " + destinationName + " : "+ e.getMessage();
+      LOG.error(msg,e);
+      throw new IllegalStateException(msg,e);
+    }
+ finally {
+      try {
+        remoteConnection.close();
+      }
+ catch (      JMSException e) {
+      }
+    }
+  }
   return deliveryHandler;
 }
