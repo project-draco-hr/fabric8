@@ -1,0 +1,14 @@
+{
+  if (containers == null || containers.length <= 1) {
+    return containers;
+  }
+  List<Container> list=new ArrayList<Container>(containers.length);
+  list.addAll(Arrays.asList(containers));
+  Collections.sort(list,new Comparator<Container>(){
+    @Override public int compare(    Container c1,    Container c2){
+      return c1.getId().compareTo(c2.getId());
+    }
+  }
+);
+  return list.toArray(new Container[0]);
+}

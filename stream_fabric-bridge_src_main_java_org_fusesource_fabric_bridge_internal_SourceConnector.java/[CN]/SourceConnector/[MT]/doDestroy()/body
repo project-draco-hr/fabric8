@@ -18,10 +18,10 @@
     }
   }
   listenerMap.clear();
-  if (localBrokerConfig.getConnectionFactory() == null) {
+  if (localBrokerConfig.getConnectionFactory() == null && localConnectionFactory != null) {
     ((PooledConnectionFactory)localConnectionFactory).stop();
   }
-  if (remoteBrokerConfig != null && remoteBrokerConfig.getConnectionFactory() == null) {
+  if (remoteBrokerConfig != null && remoteBrokerConfig.getConnectionFactory() == null && remoteConnectionFactory != null) {
     ((PooledConnectionFactory)remoteConnectionFactory).stop();
   }
   LOG.info("Destroyed");

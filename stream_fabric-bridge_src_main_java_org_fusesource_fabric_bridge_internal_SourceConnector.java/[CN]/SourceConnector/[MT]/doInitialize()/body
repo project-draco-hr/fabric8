@@ -13,11 +13,13 @@
     reuseSession=true;
   }
   reuseMessage=false;
+  Connection localConnection=null;
+  Connection remoteConnection=null;
   try {
-    Connection localConnection=localConnectionFactory.createConnection();
+    localConnection=localConnectionFactory.createConnection();
     Session localSession=localConnection.createSession(false,Session.AUTO_ACKNOWLEDGE);
     Message localMessage=localSession.createMessage();
-    Connection remoteConnection=remoteConnectionFactory.createConnection();
+    remoteConnection=remoteConnectionFactory.createConnection();
     Session remoteSession=remoteConnection.createSession(false,Session.AUTO_ACKNOWLEDGE);
     Message remoteMessage=remoteSession.createMessage();
     if (localMessage.getClass().isInstance(remoteMessage)) {
@@ -29,6 +31,22 @@
     String msg="Error checking whether local and remote broker providers are the same: " + e.getMessage();
     LOG.error(msg,e);
     throw new IllegalStateException(msg,e);
+  }
+ finally {
+    if (localConnection != null) {
+      try {
+        localConnection.close();
+      }
+ catch (      JMSException e) {
+      }
+    }
+    if (remoteConnection != null) {
+      try {
+        remoteConnection.close();
+      }
+ catch (      JMSException e) {
+      }
+    }
   }
   for (  BridgedDestination destination : outboundDestinations.getDestinations()) {
     try {

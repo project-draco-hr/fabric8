@@ -8,12 +8,10 @@
       throw ex;
     }
   }
-  if (localConnectionFactory != null && (localConnectionFactory instanceof PooledConnectionFactory)) {
-    LOG.debug("Stopping local connection factory");
+  if (localBrokerConfig.getConnectionFactory() == null && localConnectionFactory != null) {
     ((PooledConnectionFactory)localConnectionFactory).stop();
   }
-  if (remoteConnectionFactory != null && (remoteConnectionFactory instanceof PooledConnectionFactory)) {
-    LOG.debug("Stopping remote connection factory");
+  if (remoteBrokerConfig != null && remoteBrokerConfig.getConnectionFactory() == null && remoteConnectionFactory != null) {
     ((PooledConnectionFactory)remoteConnectionFactory).stop();
   }
   LOG.info("Destroyed");
