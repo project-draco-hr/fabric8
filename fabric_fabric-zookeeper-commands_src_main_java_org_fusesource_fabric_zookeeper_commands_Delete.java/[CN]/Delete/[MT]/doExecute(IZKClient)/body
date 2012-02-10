@@ -1,0 +1,11 @@
+{
+  if (recursive) {
+    if (version >= 0) {
+      throw new UnsupportedOperationException("Unable to delete a version recursively");
+    }
+    zk.deleteWithChildren(path);
+  }
+ else {
+    zk.delete(path,version);
+  }
+}
