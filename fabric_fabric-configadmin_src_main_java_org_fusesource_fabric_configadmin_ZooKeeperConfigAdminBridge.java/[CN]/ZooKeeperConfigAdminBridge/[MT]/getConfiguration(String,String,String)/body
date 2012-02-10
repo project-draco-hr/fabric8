@@ -1,7 +1,8 @@
 {
-  Configuration[] oldConfiguration=findExistingConfiguration(zooKeeperPid);
-  if (oldConfiguration != null) {
-    return oldConfiguration;
+  String filter="(" + FABRIC_ZOOKEEPER_PID + "="+ zooKeeperPid+ ")";
+  Configuration[] oldConfiguration=getConfigAdmin().listConfigurations(filter);
+  if (oldConfiguration != null && oldConfiguration.length > 0) {
+    return oldConfiguration[0];
   }
  else {
     Configuration newConfiguration;
@@ -11,6 +12,6 @@
  else {
       newConfiguration=getConfigAdmin().getConfiguration(pid,null);
     }
-    return new Configuration[]{newConfiguration};
+    return newConfiguration;
   }
 }

@@ -7,42 +7,34 @@
       for (      String pid : pids) {
         Dictionary c=load(pid);
         String p[]=parsePid(pid);
-        Configuration[] configurations=getConfiguration(pid,p[0],p[1]);
-        for (        Configuration config : configurations) {
-          configs.remove(config);
-          Dictionary props=config.getProperties();
-          boolean changed=false;
-          if (props != null) {
-            for (Enumeration e=c.keys(); e.hasMoreElements(); ) {
-              Object key=e.nextElement();
-              Object val=c.get(key);
-              Object oldVal=props.get(key);
-              if (oldVal == null || !oldVal.equals(val)) {
-                props.put(key,val);
-                LOGGER.info(config.getPid() + " - property '" + key+ "' changed: "+ oldVal+ " -> "+ val);
-                changed=true;
-              }
-            }
-            props.remove(FABRIC_ZOOKEEPER_PID);
-            props.remove(org.osgi.framework.Constants.SERVICE_PID);
-            props.remove(ConfigurationAdmin.SERVICE_FACTORYPID);
-            if (changed) {
-              LOGGER.info(config.getPid() + " - updating configuration");
-              config.update(props);
-              saveProperties(props);
-            }
- else {
-              LOGGER.fine(config.getPid() + " - ignoring configuration (no changes)");
-            }
+        Configuration config=getConfiguration(pid,p[0],p[1]);
+        configs.remove(config);
+        Dictionary props=config.getProperties();
+        Hashtable old=props != null ? new Hashtable() : null;
+        if (old != null) {
+          for (Enumeration e=props.keys(); e.hasMoreElements(); ) {
+            Object key=e.nextElement();
+            Object val=props.get(key);
+            old.put(key,val);
           }
- else {
-            LOGGER.info(config.getPid() + " - initializing configuration");
-            config.update(c);
+          old.remove(FABRIC_ZOOKEEPER_PID);
+          old.remove(org.osgi.framework.Constants.SERVICE_PID);
+          old.remove(ConfigurationAdmin.SERVICE_FACTORYPID);
+        }
+        if (!c.equals(old)) {
+          LOGGER.info("Updating configuration " + config.getPid());
+          c.put(FABRIC_ZOOKEEPER_PID,pid);
+          if (config.getBundleLocation() != null) {
+            config.setBundleLocation(null);
           }
+          config.update(c);
+        }
+ else {
+          LOGGER.info("Ignoring configuration " + config.getPid() + " (no changes)");
         }
       }
       for (      Configuration config : configs) {
-        LOGGER.info(config.getPid() + " - deleting configuration");
+        LOGGER.info("Deleting configuration " + config.getPid());
         config.delete();
       }
     }
