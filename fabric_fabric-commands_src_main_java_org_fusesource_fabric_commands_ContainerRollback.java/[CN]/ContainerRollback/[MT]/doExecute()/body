@@ -3,32 +3,32 @@
   if (containerIds == null || containerIds.isEmpty()) {
     containerIds=Arrays.asList(fabricService.getCurrentContainer().getId());
   }
-  List<Container> toUpgrade=new ArrayList<Container>();
+  List<Container> toRollback=new ArrayList<Container>();
   List<Container> same=new ArrayList<Container>();
   for (  String containerName : containerIds) {
     Container container=fabricService.getContainer(containerName);
-    int num=canUpgrade(version,container);
+    int num=canRollback(version,container);
     if (num < 0) {
-      throw new IllegalArgumentException("Container " + container.getId() + " has already higher version "+ container.getVersion()+ " than the requested version "+ version+ " to update.");
+      throw new IllegalArgumentException("Container " + container.getId() + " has already lower version "+ container.getVersion()+ " than the requested version "+ version+ " to rollback.");
     }
  else     if (num == 0) {
       same.add(container);
     }
  else {
-      toUpgrade.add(container);
+      toRollback.add(container);
     }
   }
   for (  Container container : same) {
     System.out.println("Container " + container.getId() + " is already version "+ version);
   }
-  for (  Container container : toUpgrade) {
+  for (  Container container : toRollback) {
     Version oldVersion=container.getVersion();
     Profile[] oldProfiles=container.getProfiles();
     Profile[] newProfiles=getProfilesForUpgradeOrRollback(oldProfiles,version);
     container.setVersion(version);
     container.setProfiles(newProfiles);
-    log.debug("Upgraded container {} from {} to {}",new Object[]{container,oldVersion,version});
-    System.out.println("Upgraded container " + container.getId() + " from version "+ oldVersion+ " to "+ version);
+    log.debug("Rolled back container {} from {} to {}",new Object[]{container,oldVersion,version});
+    System.out.println("Rolled back container " + container.getId() + " from version "+ oldVersion+ " to "+ version);
   }
   return null;
 }
