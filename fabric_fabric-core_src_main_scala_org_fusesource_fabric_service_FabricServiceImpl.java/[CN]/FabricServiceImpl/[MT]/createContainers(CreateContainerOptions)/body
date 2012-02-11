@@ -1,0 +1,32 @@
+{
+  Container[] containers=new Container[options.getNumber()];
+  try {
+    ContainerProvider provider=getProvider(options.getProviderType());
+    if (provider == null) {
+      throw new FabricException("Unable to find an container provider type '" + options.getProviderType() + "'");
+    }
+    Set<? extends CreateContainerMetadata> createMetadata=new LinkedHashSet<CreateContainerMetadata>();
+    String parent=options.getParent() != null ? options.getParent() : "";
+    Container parentContainer=null;
+    if (provider instanceof ChildContainerProvider && !getCurrentContainer().getId().equals(parent)) {
+      createMetadata=createChildContainer((CreateContainerChildOptions)options);
+    }
+ else {
+      createMetadata=provider.create(options);
+    }
+    containers=new Container[createMetadata.size()];
+    int container=0;
+    for (    CreateContainerMetadata metadata : createMetadata) {
+      createContainerConfig(parent,metadata.getContainerName());
+      containers[container]=new ContainerImpl(parentContainer,metadata.getContainerName(),FabricServiceImpl.this);
+      containers[container++].setCreateContainerMetadata(metadata);
+    }
+  }
+ catch (  FabricException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new FabricException(e);
+  }
+  return containers;
+}

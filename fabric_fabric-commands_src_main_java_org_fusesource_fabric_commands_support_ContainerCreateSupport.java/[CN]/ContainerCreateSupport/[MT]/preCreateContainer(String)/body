@@ -11,4 +11,7 @@
       throw new IllegalArgumentException("Profile " + profile + " with version "+ ver.getName()+ " does not exist.");
     }
   }
+  if (!isEnsembleServer && fabricService.getZookeeperUrl() == null) {
+    throw new IllegalArgumentException("Either start a zookeeper ensemble or use --ensemble-server.");
+  }
 }
