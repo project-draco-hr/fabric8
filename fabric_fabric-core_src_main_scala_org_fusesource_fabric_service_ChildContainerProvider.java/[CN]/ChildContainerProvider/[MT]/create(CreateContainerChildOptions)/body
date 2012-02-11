@@ -1,5 +1,5 @@
 {
-  Set<CreateContainerChildMetadata> result=new LinkedHashSet<CreateContainerChildMetadata>();
+  final Set<CreateContainerChildMetadata> result=new LinkedHashSet<CreateContainerChildMetadata>();
   String parentName=options.getParent();
   final Container parent=service.getContainer(parentName);
   ContainerTemplate containerTemplate=service.getContainerTemplate(parent);
@@ -29,6 +29,7 @@
         adminService.startInstance(containerName,null);
         CreateContainerChildMetadata metadata=new CreateContainerChildMetadata();
         metadata.setContainerName(containerName);
+        result.add(metadata);
       }
       return null;
     }
