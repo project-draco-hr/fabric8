@@ -1,26 +1,7 @@
 {
   preCreateContainer(name);
-  CreateSshContainerArguments args=new CreateSshContainerArguments();
-  args.setEnsembleServer(isEnsembleServer);
-  args.setDebugContainer(debugContainer);
-  args.setNumber(number);
-  args.setHost(host);
-  args.setPath(path);
-  args.setPassword(password);
-  if (proxyUri != null) {
-    args.setProxyUri(proxyUri);
-  }
- else {
-    args.setProxyUri(fabricService.getMavenRepoURI());
-  }
-  args.setUsername(user);
-  if (port != null) {
-    args.setPort(port);
-  }
-  if (sshRetries != null) {
-    args.setSshRetries(sshRetries);
-  }
-  Container[] containers=fabricService.createContainer(args,name,number);
+  CreateContainerOptions args=CreateContainerOptionsBuilder.ssh().name(name).ensembleServer(isEnsembleServer).debugContainer(debugContainer).number(number).host(host).username(user).password(password).path(path).port(port).sshRetries(sshRetries).password(password).proxyUri(proxyUri != null ? proxyUri : fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl());
+  Container[] containers=fabricService.createContainers(args);
   postCreateContainer(containers);
   return null;
 }

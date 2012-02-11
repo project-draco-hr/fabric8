@@ -1,26 +1,8 @@
 {
   preCreateContainer(name);
-  CreateJCloudsContainerArguments args=new CreateJCloudsContainerArguments();
-  args.setEnsembleServer(isEnsembleServer);
-  args.setCredential(credential);
-  args.setDebugContainer(debugContainer);
-  args.setGroup(group);
-  args.setHardwareId(hardwareId);
-  args.setIdentity(identity);
-  args.setImageId(imageId);
-  args.setInstanceType(instanceType);
-  args.setLocationId(locationId);
-  args.setNumber(number);
-  args.setOwner(owner);
-  args.setProviderName(providerName);
-  args.setUser(user);
-  if (proxyUri != null) {
-    args.setProxyUri(proxyUri);
-  }
- else {
-    args.setProxyUri(fabricService.getMavenRepoURI());
-  }
-  Container[] containers=fabricService.createContainer(args,name,number);
+  CreateContainerOptions args=CreateContainerOptionsBuilder.jclouds().name(name).ensembleServer(isEnsembleServer).credential(credential).debugContainer(debugContainer).group(group).hardwareId(hardwareId).identity(identity).imageId(imageId).instanceType(instanceType).locationId(locationId).number(number).owner(owner).providerName(providerName).user(user).proxyUri(proxyUri != null ? proxyUri : fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl());
+  ;
+  Container[] containers=fabricService.createContainers(args);
   postCreateContainer(containers);
   return null;
 }

@@ -1,7 +1,8 @@
 {
   preCreateContainer(name);
   String url="child://" + parent;
-  Container[] containers=fabricService.createContainers(url,name,isEnsembleServer,debugContainer,number);
+  CreateContainerOptions options=CreateContainerOptionsBuilder.child().name(name).parent(parent).providerUri(url).ensembleServer(isEnsembleServer).debugContainer(debugContainer).number(number).zookeeperUrl(fabricService.getZookeeperUrl());
+  Container[] containers=fabricService.createContainers(options);
   postCreateContainer(containers);
   return null;
 }

@@ -1,0 +1,8 @@
+{
+  try {
+    return password != null && !password.isEmpty() ? password : getProviderURI().getUserInfo().split(":")[1];
+  }
+ catch (  Exception ex) {
+    throw new IllegalStateException("Password should be part of the url or explicitly specified");
+  }
+}

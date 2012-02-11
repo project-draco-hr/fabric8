@@ -8,6 +8,7 @@
   assertEquals("Expected to find 1 container",1,containers.length);
   Container parent=containers[0];
   assertEquals("Expected to find the root container","root",parent.getId());
-  Container child=fabricService.createContainer(parent,"child1");
+  CreateContainerOptions args=CreateContainerOptionsBuilder.basic().name("chlid1").parent(parent.getId());
+  Container child=fabricService.createContainers(args)[0];
   return child;
 }

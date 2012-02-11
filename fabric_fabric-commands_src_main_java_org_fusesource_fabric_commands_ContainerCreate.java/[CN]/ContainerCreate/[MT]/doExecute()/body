@@ -1,9 +1,18 @@
 {
   preCreateContainer(name);
+  String type=null;
   if (url == null && parent != null) {
     url="child://" + parent;
   }
-  Container[] containers=fabricService.createContainers(url,name,isEnsembleServer,debugContainer,number);
+ else   if (parent == null && url != null) {
+    URI uri=new URI(url);
+    type=uri.getScheme();
+    if ("child".equals(type)) {
+      parent=uri.getHost();
+    }
+  }
+  CreateContainerOptions args=CreateContainerOptionsBuilder.type(type).name(name).parent(parent).number(number).debugContainer(debugContainer).ensembleServer(isEnsembleServer).providerUri(url).proxyUri(proxyUri != null ? proxyUri : fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl());
+  Container[] containers=fabricService.createContainers(args);
   postCreateContainer(containers);
   return null;
 }

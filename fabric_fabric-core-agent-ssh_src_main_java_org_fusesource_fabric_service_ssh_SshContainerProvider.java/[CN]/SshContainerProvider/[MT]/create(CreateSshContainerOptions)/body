@@ -1,0 +1,43 @@
+{
+  Set<CreateSshContainerMetadata> result=new LinkedHashSet<CreateSshContainerMetadata>();
+  try {
+    String path=options.getPath();
+    String host=options.getHost();
+    if (options.getProviderURI() != null && options.getProviderURI().getQuery() != null) {
+      verbose=options.getProviderURI().getQuery().contains("verbose");
+    }
+    if (host == null) {
+      throw new IllegalArgumentException("host name must be specified in uri '" + options.getProviderURI() + "'");
+    }
+    int port=options.getPort();
+    if (port == -1) {
+      port=22;
+    }
+    String username=options.getUsername();
+    String password=options.getPassword();
+    int sshRetries=options.getSshRetries();
+    int retryDelay=1;
+    for (int i=0; i < options.getNumber(); i++) {
+      String containerName=options.getName();
+      if (options.getNumber() != 1) {
+        containerName+=i + 1;
+      }
+      CreateSshContainerMetadata metadata=new CreateSshContainerMetadata();
+      metadata.setContainerName(containerName);
+      String script=buildStartupScript(options.name(containerName));
+      try {
+        runScriptOnHost(host,port,username,password,script,sshRetries,retryDelay);
+        result.add(metadata);
+      }
+ catch (      Exception ex) {
+      }
+    }
+  }
+ catch (  FabricException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new FabricException(e);
+  }
+  return result;
+}
