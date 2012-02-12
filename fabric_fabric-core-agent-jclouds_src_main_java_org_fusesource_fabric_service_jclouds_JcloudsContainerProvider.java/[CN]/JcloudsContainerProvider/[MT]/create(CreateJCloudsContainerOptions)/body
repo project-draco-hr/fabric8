@@ -1,5 +1,5 @@
 {
-  Set<CreateJCloudsContainerMetadata> result=new LinkedHashSet<CreateJCloudsContainerMetadata>();
+  final Set<CreateJCloudsContainerMetadata> result=new LinkedHashSet<CreateJCloudsContainerMetadata>();
   ComputeService computeService=computeServiceMap.get(options.getProviderName());
   if (computeService == null) {
     Iterable<? extends Module> modules=ImmutableSet.of();
@@ -37,6 +37,7 @@ builder.hardwareId(options.getHardwareId());
 }
 Set<? extends NodeMetadata> metadatas=null;
 metadatas=computeService.createNodesInGroup(options.getGroup(),options.getNumber(),builder.build());
+Thread.sleep(5000);
 int suffix=1;
 StringBuilder buffer=new StringBuilder();
 boolean first=true;
@@ -51,15 +52,6 @@ credentials=nodeMetadata.getCredentials();
 }
 String id=nodeMetadata.getId();
 Set<String> publicAddresses=nodeMetadata.getPublicAddresses();
-for (String pa : publicAddresses) {
-if (first) {
-first=false;
-}
- else {
-buffer.append(",");
-}
-buffer.append(pa + ":" + options.getServicePort());
-}
 String containerName=options.getName();
 if (options.getNumber() > 1) {
 containerName+=suffix++;

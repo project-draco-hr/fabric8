@@ -1,8 +1,14 @@
 {
   preCreateContainer(name);
   CreateContainerOptions args=CreateContainerOptionsBuilder.jclouds().name(name).ensembleServer(isEnsembleServer).credential(credential).debugContainer(debugContainer).group(group).hardwareId(hardwareId).identity(identity).imageId(imageId).instanceType(instanceType).locationId(locationId).number(number).owner(owner).providerName(providerName).user(user).proxyUri(proxyUri != null ? proxyUri : fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl());
-  ;
   Container[] containers=fabricService.createContainers(args);
+  System.out.println(String.format(DISPLAY_FORMAT,OUTPUT_HEADERS));
+  if (containers != null && containers.length > 0) {
+    for (    Container container : containers) {
+      CreateJCloudsContainerMetadata metadata=(CreateJCloudsContainerMetadata)container.getCreateContainerMetadata();
+      System.out.println(String.format(DISPLAY_FORMAT,metadata.getNodeId(),metadata.getContainerName(),metadata.getPublicAddresses()));
+    }
+  }
   postCreateContainer(containers);
   return null;
 }
