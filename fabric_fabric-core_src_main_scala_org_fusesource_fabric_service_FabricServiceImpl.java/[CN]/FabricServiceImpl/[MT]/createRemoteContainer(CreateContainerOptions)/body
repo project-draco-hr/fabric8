@@ -1,0 +1,16 @@
+{
+  Set<CreateContainerMetadata> result=new LinkedHashSet<CreateContainerMetadata>();
+  try {
+    Container[] containers=createContainers(args);
+    for (    Container container : containers) {
+      result.add(container.getCreateContainerMetadata());
+    }
+  }
+ catch (  FabricException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new FabricException(e);
+  }
+  return result;
+}

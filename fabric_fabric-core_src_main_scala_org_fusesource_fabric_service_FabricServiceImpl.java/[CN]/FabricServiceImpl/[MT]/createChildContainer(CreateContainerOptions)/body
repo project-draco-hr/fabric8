@@ -1,0 +1,18 @@
+{
+  Set<CreateContainerMetadata> result=new LinkedHashSet<CreateContainerMetadata>();
+  String parent=getParentFromURI(options.getProviderURI());
+  Container parentContainer=getContainer(parent);
+  if (!Objects.equal(getCurrentContainerId(),parent)) {
+    ContainerTemplate containerTemplate=getContainerTemplate(parentContainer);
+    result=containerTemplate.execute(new ContainerTemplate.FabricServiceCallback<Set<CreateContainerMetadata>>(){
+      public Set<CreateContainerMetadata> doWithFabricService(      FabricServiceImplMBean fabricService) throws Exception {
+        return (Set<CreateContainerMetadata>)fabricService.createRemoteContainer(options);
+      }
+    }
+);
+  }
+ else {
+    result=getProvider("child").create(options);
+  }
+  return result;
+}

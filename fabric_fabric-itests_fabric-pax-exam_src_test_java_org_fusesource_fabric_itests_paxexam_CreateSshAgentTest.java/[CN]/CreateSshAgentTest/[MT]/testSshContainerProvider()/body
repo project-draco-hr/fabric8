@@ -3,7 +3,7 @@
   assertNotNull(fabricService);
   System.err.println(executeCommand("fabric:create"));
   IZKClient zooKeeper=getOsgiService(IZKClient.class);
-  fabricService.createContainer("ssh://" + username + ":"+ password+ "@"+ host+ ":"+ port,"ssh1");
+  CreateContainerOptions options=CreateContainerOptionsBuilder.ssh().name("ssh1").proxyUri("ssh://" + username + ":"+ password+ "@"+ host+ ":"+ port);
   Thread.sleep(5 * DEFAULT_TIMEOUT);
   System.err.println(executeCommand("fabric:container-list"));
   Container container=fabricService.getContainer("ssh1");
