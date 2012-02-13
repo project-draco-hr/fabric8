@@ -14,12 +14,8 @@
     Set<? extends CreateContainerMetadata> createMetadata=new LinkedHashSet<CreateContainerMetadata>();
     String parent=options.getParent() != null ? options.getParent() : "";
     Container parentContainer=null;
-    String currentID="";
-    Container currentContainer=getCurrentContainer();
-    if (currentContainer != null) {
-      currentID=currentContainer.getId();
-    }
-    if (provider instanceof ChildContainerProvider && !parent.equals(currentID)) {
+    String currentID=getCurrentContainerId();
+    if (provider instanceof ChildContainerProvider && !Objects.equal(getCurrentContainerId(),parent)) {
       createMetadata=createChildContainer(options);
     }
  else {
