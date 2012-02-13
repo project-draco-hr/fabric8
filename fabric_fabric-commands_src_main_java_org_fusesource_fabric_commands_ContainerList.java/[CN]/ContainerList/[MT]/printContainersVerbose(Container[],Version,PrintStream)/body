@@ -1,17 +1,9 @@
 {
   out.println(String.format(VERBOSE_FORMAT,VERBOSE_HEADERS));
   for (  Container container : containers) {
-    if (container.isRoot()) {
-      if (matchVersion(container,version)) {
-        out.println(String.format(VERBOSE_FORMAT,container.getId(),container.getVersion().getName(),container.isAlive(),toString(container.getProfiles()),container.getSshUrl(),container.getJmxUrl(),status(container)));
-      }
-      for (      Container child : containers) {
-        if (child.getParent() == container) {
-          if (matchVersion(child,version)) {
-            out.println(String.format(VERBOSE_FORMAT,"  " + child.getId(),child.getVersion().getName(),child.isAlive(),toString(child.getProfiles()),child.getSshUrl(),child.getJmxUrl(),status(child)));
-          }
-        }
-      }
+    if (matchVersion(container,version)) {
+      String indent=container.isRoot() ? "" : "  ";
+      out.println(String.format(VERBOSE_FORMAT,indent + container.getId(),container.getVersion().getName(),container.isAlive(),toString(container.getProfiles()),container.getSshUrl(),container.getJmxUrl(),status(container)));
     }
   }
 }
