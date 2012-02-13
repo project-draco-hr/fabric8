@@ -25,10 +25,15 @@
         if (options.getNumber() > 1) {
           containerName+=i;
         }
-        adminService.createInstance(containerName,0,0,0,null,javaOpts,features,featuresUrls);
-        adminService.startInstance(containerName,null);
         CreateContainerChildMetadata metadata=new CreateContainerChildMetadata();
         metadata.setContainerName(containerName);
+        try {
+          adminService.createInstance(containerName,0,0,0,null,javaOpts,features,featuresUrls);
+          adminService.startInstance(containerName,null);
+        }
+ catch (        Throwable t) {
+          metadata.setFailure(t);
+        }
         result.add(metadata);
       }
       return null;

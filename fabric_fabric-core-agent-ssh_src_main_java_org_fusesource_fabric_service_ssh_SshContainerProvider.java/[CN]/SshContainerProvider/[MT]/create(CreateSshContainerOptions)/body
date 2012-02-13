@@ -25,12 +25,14 @@
       CreateSshContainerMetadata metadata=new CreateSshContainerMetadata();
       metadata.setContainerName(containerName);
       String script=buildStartupScript(options.name(containerName));
+      logger.debug("Running script on host {}:\n{}",host,script);
       try {
         runScriptOnHost(host,port,username,password,script,sshRetries,retryDelay);
-        result.add(metadata);
       }
- catch (      Exception ex) {
+ catch (      Throwable ex) {
+        metadata.setFailure(ex);
       }
+      result.add(metadata);
     }
   }
  catch (  FabricException e) {
