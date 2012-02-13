@@ -12,7 +12,8 @@
     }
   }
   CreateContainerOptions args=CreateContainerOptionsBuilder.type(type).name(name).parent(parent).number(number).debugContainer(debugContainer).ensembleServer(isEnsembleServer).providerUri(url).proxyUri(proxyUri != null ? proxyUri : fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl());
-  Container[] containers=fabricService.createContainers(args);
-  postCreateContainer(containers);
+  CreateContainerMetadata[] metadatas=fabricService.createContainers(args);
+  displayContainers(metadatas);
+  postCreateContainers(metadatas);
   return null;
 }
