@@ -1,0 +1,17 @@
+{
+  ZkClientFacade zooKeeper=getOsgiService(ZkClientFacade.class);
+  assertNotNull(zooKeeper.getZookeeper(DEFAULT_TIMEOUT));
+  FabricService fabricService=getOsgiService(FabricService.class);
+  assertNotNull(fabricService);
+  Thread.sleep(DEFAULT_WAIT);
+  Container parentContainer=fabricService.getContainer(parent);
+  assertNotNull(parentContainer);
+  CreateContainerOptions args=CreateContainerOptionsBuilder.child().name(name).parent(parent);
+  CreateContainerMetadata[] metadata=fabricService.createContainers(args);
+  if (metadata.length > 0) {
+    Container container=metadata[0].getContainer();
+    waitForProvisionSuccess(container,PROVISION_TIMEOUT);
+    return container;
+  }
+  throw new Exception("Could container not created");
+}

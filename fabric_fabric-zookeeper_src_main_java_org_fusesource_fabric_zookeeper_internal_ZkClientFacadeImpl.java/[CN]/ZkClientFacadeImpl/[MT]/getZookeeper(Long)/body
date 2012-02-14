@@ -1,0 +1,21 @@
+{
+  for (int t=0; t <= timeout; t+=retryInterval) {
+    try {
+      if (zooKeeper != null && zooKeeper.isConnected()) {
+        return zooKeeper;
+      }
+    }
+ catch (    ServiceUnavailableException ex) {
+      LOGGER.warn("Zookeeper client service is not available yet. Retrying");
+    }
+    try {
+synchronized (lock) {
+        lock.wait(retryInterval);
+      }
+    }
+ catch (    InterruptedException e) {
+      LOGGER.debug("Interrupted while waiting for the Zookeeper client service is not available yet.");
+    }
+  }
+  throw new RuntimeException("Zookeeper client is not available yet.");
+}

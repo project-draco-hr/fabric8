@@ -1,0 +1,11 @@
+{
+  if (!isZooKeeperConfigured()) {
+    throw new Exception("Zookeeper client has not been configured yet. You need to either create an ensmelbe or join one.");
+  }
+  if (!isZooKeeperConnected()) {
+    IZKClient client=getZookeeper(connectTimeout);
+    if (client == null) {
+      throw new Exception("Failed to connect to Zookeeper withing the specified timeout:" + connectTimeout);
+    }
+  }
+}

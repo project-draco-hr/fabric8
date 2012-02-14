@@ -1,18 +1,3 @@
 {
-  IZKClient zkClient=getZooKeeper();
-  long start=System.currentTimeMillis();
-  do {
-    if (zkClient.isConnected()) {
-      return;
-    }
-    try {
-      Thread.sleep(getConnectionRetryTime());
-    }
- catch (    InterruptedException e) {
-    }
-  }
- while (System.currentTimeMillis() < start + getMaximumConnectionTimeout());
-  if (!zkClient.isConnected()) {
-    throw new Exception("Could not connect to ZooKeeper " + zkClient + " at "+ zkClient.getConnectString());
-  }
+  zooKeeper.checkConnected(getMaximumConnectionTimeout());
 }

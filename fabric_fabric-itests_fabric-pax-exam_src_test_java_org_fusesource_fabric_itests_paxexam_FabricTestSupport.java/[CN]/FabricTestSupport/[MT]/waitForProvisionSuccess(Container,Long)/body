@@ -1,0 +1,11 @@
+{
+  for (long t=0; (!(container.isAlive() && container.isProvisioningComplete()) && t < timeout); t+=1000L) {
+    if (container.getProvisionException() != null) {
+      throw new Exception(container.getProvisionException());
+    }
+    Thread.sleep(1000L);
+  }
+  if (!container.isAlive() || container.isProvisioningComplete()) {
+    throw new Exception("Could not providion " + container.getId() + " after "+ timeout+ " seconds.");
+  }
+}
