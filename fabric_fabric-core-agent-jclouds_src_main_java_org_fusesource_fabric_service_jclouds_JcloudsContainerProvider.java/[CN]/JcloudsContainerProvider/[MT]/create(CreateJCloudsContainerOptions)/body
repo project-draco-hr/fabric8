@@ -56,6 +56,12 @@ String containerName=options.getName();
 if (options.getNumber() > 1) {
 containerName+=suffix++;
 }
+CreateJCloudsContainerMetadata jCloudsContainerMetadata=new CreateJCloudsContainerMetadata();
+jCloudsContainerMetadata.setNodeId(nodeMetadata.getId());
+jCloudsContainerMetadata.setContainerName(containerName);
+jCloudsContainerMetadata.setPublicAddresses(nodeMetadata.getPublicAddresses());
+jCloudsContainerMetadata.setHostname(nodeMetadata.getHostname());
+try {
 String script=buildStartupScript(options.name(containerName));
 if (credentials != null) {
 computeService.runScriptOnNode(id,script,RunScriptOptions.Builder.overrideCredentialsWith(credentials).runAsRoot(false));
@@ -63,11 +69,10 @@ computeService.runScriptOnNode(id,script,RunScriptOptions.Builder.overrideCreden
  else {
 computeService.runScriptOnNode(id,script);
 }
-CreateJCloudsContainerMetadata jCloudsContainerMetadata=new CreateJCloudsContainerMetadata();
-jCloudsContainerMetadata.setNodeId(nodeMetadata.getId());
-jCloudsContainerMetadata.setContainerName(containerName);
-jCloudsContainerMetadata.setPublicAddresses(nodeMetadata.getPublicAddresses());
-jCloudsContainerMetadata.setHostname(nodeMetadata.getHostname());
+}
+ catch (Throwable t) {
+jCloudsContainerMetadata.setFailure(t);
+}
 result.add(jCloudsContainerMetadata);
 }
 }

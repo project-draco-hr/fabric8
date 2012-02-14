@@ -1,5 +1,4 @@
 {
-  Container[] containers=new Container[options.getNumber()];
   if (options.getZookeeperUrl() == null && !options.isDebugContainer()) {
     options.setZookeeperUrl(getZookeeperUrl());
   }
@@ -9,27 +8,23 @@
   try {
     ContainerProvider provider=getProvider(options.getProviderType());
     if (provider == null) {
-      throw new FabricException("Unable to find an container provider type '" + options.getProviderType() + "'");
+      throw new FabricException("Unable to find a container provider supporting '" + options.getProviderType() + "'");
     }
-    Set<? extends CreateContainerMetadata> createMetadata=new LinkedHashSet<CreateContainerMetadata>();
-    String parent=options.getParent() != null ? options.getParent() : "";
-    Container parentContainer=null;
-    String currentID=getCurrentContainerId();
-    if (provider instanceof ChildContainerProvider && !Objects.equal(getCurrentContainerId(),parent)) {
-      createMetadata=createChildContainer(options);
-    }
- else {
-      createMetadata=provider.create(options);
-    }
-    containers=new Container[createMetadata.size()];
-    int container=0;
-    for (    CreateContainerMetadata metadata : createMetadata) {
-      if (!options.isEnsembleServer()) {
-        createContainerConfig(parent,metadata.getContainerName());
+    Container parent=options.getParent() != null ? getContainer(options.getParent()) : null;
+    Set<? extends CreateContainerMetadata> metadatas=provider.create(options);
+    for (    CreateContainerMetadata metadata : metadatas) {
+      if (metadata.isSuccess()) {
+        if (!options.isEnsembleServer()) {
+          createContainerConfig(parent != null ? parent.getId() : "",metadata.getContainerName());
+        }
+        ((CreateContainerBasicMetadata)metadata).setContainer(new ContainerImpl(parent,metadata.getContainerName(),FabricServiceImpl.this));
+        logger.info("The container " + metadata.getContainerName() + " has been successfully created");
       }
-      containers[container]=new ContainerImpl(parentContainer,metadata.getContainerName(),FabricServiceImpl.this);
-      containers[container++].setCreateContainerMetadata(metadata);
+ else {
+        logger.info("The creation of the container " + metadata.getContainerName() + " has failed",metadata.getFailure());
+      }
     }
+    return metadatas.toArray(new CreateContainerMetadata[metadatas.size()]);
   }
  catch (  FabricException e) {
     throw e;
@@ -37,5 +32,4 @@
 catch (  Exception e) {
     throw new FabricException(e);
   }
-  return containers;
 }
