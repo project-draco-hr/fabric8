@@ -1,0 +1,32 @@
+{
+  if (containers == null || containers.length <= 1) {
+    return containers;
+  }
+  List<Container> list=new ArrayList<Container>();
+  list.addAll(Arrays.asList(containers));
+  Collections.sort(list,new Comparator<Container>(){
+    @Override public int compare(    Container c1,    Container c2){
+      if (c1 == null) {
+        return 1;
+      }
+ else       if (c2 == null) {
+        return -1;
+      }
+      if (c1.isRoot() && !c2.isRoot()) {
+        return -1;
+      }
+ else       if (!c1.isRoot() && c2.isRoot()) {
+        return 1;
+      }
+      if (c1.isRoot() && c2.getParent() == c1) {
+        return -1;
+      }
+ else       if (c2.isRoot() && c1.getParent() == c2) {
+        return 1;
+      }
+      return c1.getId().compareTo(c2.getId());
+    }
+  }
+);
+  return list.toArray(new Container[0]);
+}
