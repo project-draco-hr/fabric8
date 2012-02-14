@@ -2,8 +2,8 @@
   FabricService fabricService=getOsgiService(FabricService.class);
   assertNotNull(fabricService);
   executeCommand("fabric:ensemble-create --clean root");
-  IZKClient zooKeeper=getOsgiService(IZKClient.class);
-  Thread.sleep(DEFAULT_WAIT);
+  ZkClientFacade zooKeeper=getOsgiService(ZkClientFacade.class);
+  zooKeeper.getZookeeper(DEFAULT_TIMEOUT);
   Container[] containers=fabricService.getContainers();
   assertNotNull(containers);
   assertEquals("Expected to find 1 container",1,containers.length);

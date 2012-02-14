@@ -1,9 +1,14 @@
 {
-  StringsCompleter delegate=new StringsCompleter();
-  for (  Container container : fabricService.getContainers()) {
-    if (apply(container)) {
-      delegate.getStrings().add(container.getId());
+  if (zooKeeper.isZooKeeperConnected()) {
+    StringsCompleter delegate=new StringsCompleter();
+    for (    Container container : fabricService.getContainers()) {
+      if (apply(container)) {
+        delegate.getStrings().add(container.getId());
+      }
     }
+    return delegate.complete(buffer,cursor,candidates);
   }
-  return delegate.complete(buffer,cursor,candidates);
+ else {
+    return 0;
+  }
 }

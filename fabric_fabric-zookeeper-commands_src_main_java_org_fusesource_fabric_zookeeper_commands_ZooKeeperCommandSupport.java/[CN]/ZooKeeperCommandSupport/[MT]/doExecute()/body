@@ -1,10 +1,5 @@
 {
-  ServiceReference sr=getBundleContext().getServiceReference(IZKClient.class.getName());
-  if (sr == null) {
-    throw new Exception("ZooKeeper client not available");
-  }
-  IZKClient zk=getService(IZKClient.class,sr);
-  checkZooKeeperConnected(zk);
-  doExecute(zk);
+  checkZooKeeperConnected();
+  doExecute(zooKeeper);
   return null;
 }

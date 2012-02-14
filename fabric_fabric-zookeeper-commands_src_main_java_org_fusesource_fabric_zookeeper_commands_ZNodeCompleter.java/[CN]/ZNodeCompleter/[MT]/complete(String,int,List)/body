@@ -1,25 +1,17 @@
 {
-  ServiceReference sr=bundleContext.getServiceReference(IZKClient.class.getName());
-  if (sr == null) {
-    return 0;
-  }
-  IZKClient zk=(IZKClient)bundleContext.getService(sr);
-  if (zk == null) {
-    return 0;
-  }
-  try {
-    if (buffer == null) {
-      candidates.add("/");
-      return 1;
-    }
- else     if (!buffer.startsWith("/")) {
-      return 0;
-    }
-    buffer=buffer.substring(0,cursor);
-    String path=buffer;
-    int idx=path.lastIndexOf("/") + 1;
-    String prefix=path.substring(idx);
+  if (zk.isZooKeeperConnected()) {
     try {
+      if (buffer == null) {
+        candidates.add("/");
+        return 1;
+      }
+ else       if (!buffer.startsWith("/")) {
+        return 0;
+      }
+      buffer=buffer.substring(0,cursor);
+      String path=buffer;
+      int idx=path.lastIndexOf("/") + 1;
+      String prefix=path.substring(idx);
       String dir=idx == 1 ? "/" : path.substring(0,idx - 1);
       List<String> children=zk.getChildren(dir,false);
       for (      String child : children) {
@@ -36,7 +28,5 @@ catch (    KeeperException e) {
     }
     return candidates.size() == 0 ? buffer.length() : buffer.lastIndexOf("/") + 1;
   }
-  finally {
-    bundleContext.ungetService(sr);
-  }
+ else   return 0;
 }
