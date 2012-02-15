@@ -1,20 +1,22 @@
 {
-  Version ver=version != null ? fabricService.getVersion(version) : fabricService.getDefaultVersion();
-  List<String> names=getProfileNames();
-  try {
-    Profile[] profiles=getProfiles(version,names);
-    for (    CreateContainerMetadata metadata : metadatas) {
-      if (metadata.isSuccess()) {
-        Container child=metadata.getContainer();
-        log.trace("Setting version " + ver.getName() + " on container "+ child.getId());
-        child.setVersion(ver);
-        log.trace("Setting profiles " + Arrays.asList(profiles) + " on container "+ child.getId());
-        child.setProfiles(profiles);
+  if (!isEnsembleServer) {
+    Version ver=version != null ? fabricService.getVersion(version) : fabricService.getDefaultVersion();
+    List<String> names=getProfileNames();
+    try {
+      Profile[] profiles=getProfiles(version,names);
+      for (      CreateContainerMetadata metadata : metadatas) {
+        if (metadata.isSuccess()) {
+          Container child=metadata.getContainer();
+          log.trace("Setting version " + ver.getName() + " on container "+ child.getId());
+          child.setVersion(ver);
+          log.trace("Setting profiles " + Arrays.asList(profiles) + " on container "+ child.getId());
+          child.setProfiles(profiles);
+        }
       }
     }
-  }
- catch (  Exception ex) {
-    log.warn("Error during postCreateContainers. This exception will be ignored.",ex);
+ catch (    Exception ex) {
+      log.warn("Error during postCreateContainers. This exception will be ignored.",ex);
+    }
   }
   if (log.isDebugEnabled()) {
     log.debug("postCreateContainers completed for " + Arrays.asList(metadatas) + " containers.");
