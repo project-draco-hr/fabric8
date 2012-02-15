@@ -1,0 +1,36 @@
+{
+  Map<LifecycleListener,Boolean> history=new IdentityHashMap<LifecycleListener,Boolean>();
+  log.info("Starting StateChangeDispatcher");
+  while (_running.get()) {
+    Boolean isConnectedEvent;
+    try {
+      isConnectedEvent=_events.take();
+    }
+ catch (    InterruptedException e) {
+      continue;
+    }
+    if (!_running.get() || isConnectedEvent == null) {
+      continue;
+    }
+    Map<LifecycleListener,Boolean> newHistory=new IdentityHashMap<LifecycleListener,Boolean>();
+    for (    LifecycleListener listener : _listeners) {
+      Boolean previousEvent=history.get(listener);
+      if (previousEvent == null || previousEvent != isConnectedEvent) {
+        try {
+          if (isConnectedEvent) {
+            listener.onConnected();
+          }
+ else {
+            listener.onDisconnected();
+          }
+        }
+ catch (        Throwable e) {
+          log.warn("Exception while executing listener (ignored)",e);
+        }
+      }
+      newHistory.put(listener,isConnectedEvent);
+    }
+    history=newHistory;
+  }
+  log.info("StateChangeDispatcher terminated.");
+}

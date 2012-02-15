@@ -1,6 +1,6 @@
 {
-  if (zk.isZooKeeperConnected()) {
-    try {
+  try {
+    if (zk.isConnected()) {
       if (buffer == null) {
         candidates.add("/");
         return 1;
@@ -19,14 +19,10 @@
           candidates.add(child);
         }
       }
+      return candidates.size() == 0 ? buffer.length() : buffer.lastIndexOf("/") + 1;
     }
- catch (    InterruptedException e) {
-      return 0;
-    }
-catch (    KeeperException e) {
-      return 0;
-    }
-    return candidates.size() == 0 ? buffer.length() : buffer.lastIndexOf("/") + 1;
   }
- else   return 0;
+ catch (  Exception e) {
+  }
+  return 0;
 }

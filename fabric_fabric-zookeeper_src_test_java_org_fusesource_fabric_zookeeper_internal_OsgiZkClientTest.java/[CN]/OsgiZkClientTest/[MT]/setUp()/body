@@ -1,0 +1,13 @@
+{
+  ServerSocket socket=new ServerSocket(0);
+  port=socket.getLocalPort();
+  socket.close();
+  bundleContext=createMock(BundleContext.class);
+  zkClientRegistration=createMock(ServiceRegistration.class);
+  managedServiceRegistration=createMock(ServiceRegistration.class);
+  serverStatsRegistration=createMock(ServiceRegistration.class);
+  serverFactory=new ZKServerFactoryBean();
+  serverFactory.setBundleContext(bundleContext);
+  client=new OsgiZkClient();
+  client.setBundleContext(bundleContext);
+}

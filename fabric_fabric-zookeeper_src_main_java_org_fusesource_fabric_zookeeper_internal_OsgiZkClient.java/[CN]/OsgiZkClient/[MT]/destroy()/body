@@ -1,0 +1,23 @@
+{
+  if (managedServiceRegistration != null) {
+    managedServiceRegistration.unregister();
+  }
+  if (zkClientRegistration != null) {
+    zkClientRegistration.unregister();
+  }
+  if (_stateChangeDispatcher != null) {
+    _stateChangeDispatcher.end();
+  }
+synchronized (_lock) {
+    if (_zk != null) {
+      try {
+        changeState(State.NONE);
+        _zk.close();
+        _zk=null;
+      }
+ catch (      Exception e) {
+        log.debug("ignored exception",e);
+      }
+    }
+  }
+}

@@ -2,8 +2,6 @@
   FabricService fabricService=getOsgiService(FabricService.class);
   assertNotNull(fabricService);
   System.err.println(executeCommand("fabric:create"));
-  ZkClientFacade zooKeeper=getOsgiService(ZkClientFacade.class);
-  zooKeeper.getZookeeper(DEFAULT_TIMEOUT);
   Profile karafProfile=fabricService.getProfile(ZkDefs.DEFAULT_VERSION,"karaf");
   assertNotNull(karafProfile);
   Profile camelProfile=fabricService.getProfile(ZkDefs.DEFAULT_VERSION,"camel");

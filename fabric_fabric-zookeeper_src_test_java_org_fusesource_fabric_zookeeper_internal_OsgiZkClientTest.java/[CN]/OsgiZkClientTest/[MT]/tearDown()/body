@@ -1,0 +1,10 @@
+{
+  reset(bundleContext,serverStatsRegistration,managedServiceRegistration,zkClientRegistration);
+  zkClientRegistration.unregister();
+  managedServiceRegistration.unregister();
+  replay(bundleContext,serverStatsRegistration,managedServiceRegistration,zkClientRegistration);
+  client.destroy();
+  serverFactory.destroy();
+  verify(bundleContext,serverStatsRegistration,managedServiceRegistration,zkClientRegistration);
+  reset(bundleContext,serverStatsRegistration,managedServiceRegistration,zkClientRegistration);
+}
