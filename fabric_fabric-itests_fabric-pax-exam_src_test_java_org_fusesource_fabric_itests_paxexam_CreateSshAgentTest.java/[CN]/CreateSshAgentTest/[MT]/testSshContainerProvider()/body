@@ -15,7 +15,7 @@
     assertTrue("Expected succesful creation of remote ssh container",metadata[0].isSuccess());
     assertNotNull("Expected succesful creation of remote ssh container",metadata[0].getContainer());
     waitForProvisionSuccess(metadata[0].getContainer(),3 * PROVISION_TIMEOUT);
-    System.err.println(executeCommand("fabric:container-list"));
+    System.out.println(executeCommand("fabric:container-list -v"));
     Container container=fabricService.getContainer("ssh1");
     assertTrue(container.isAlive());
     createAndAssetChildContainer("ssh2","ssh1");
