@@ -22,6 +22,7 @@
     sb.append("run export KARAF_DEBUG=true").append("\n");
   }
   appendToLineInFile(sb,"etc/org.apache.karaf.features.cfg","featuresBoot=","fabric-agent,");
+  appendToLineInFile(sb,"etc/org.ops4j.pax.url.mvn.cfg","repositories=",options.getProxyUri().toString() + ",");
   sb.append("run nohup bin/start").append("\n");
   return sb.toString();
 }
