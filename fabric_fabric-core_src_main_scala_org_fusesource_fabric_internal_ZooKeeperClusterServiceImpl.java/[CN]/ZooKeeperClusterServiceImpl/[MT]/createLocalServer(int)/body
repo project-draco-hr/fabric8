@@ -37,20 +37,20 @@
     }
     String defaultProfile=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"default");
     setConfigProperty(client,defaultProfile + "/org.fusesource.fabric.zookeeper.properties","zookeeper.url","${zk:" + karafName + "/ip}:"+ Integer.toString(port));
-    String profileNode=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"zk-server-0000") + "/org.fusesource.fabric.zookeeper.server-0000.properties";
+    String profileNode=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"fabric-ensemble-0000") + "/org.fusesource.fabric.zookeeper.server-0000.properties";
     Properties p=new Properties();
     p.put("tickTime","2000");
     p.put("initLimit","10");
     p.put("syncLimit","5");
     p.put("dataDir","data/zookeeper/0000");
     ZooKeeperUtils.set(client,profileNode,toString(p));
-    ZooKeeperUtils.set(client,ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"zk-server-0000-1"),"zk-server-0000");
-    profileNode=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"zk-server-0000-1") + "/org.fusesource.fabric.zookeeper.server-0000.properties";
+    ZooKeeperUtils.set(client,ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"fabric-ensemble-0000-1"),"fabric-ensemble-0000");
+    profileNode=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"fabric-ensemble-0000-1") + "/org.fusesource.fabric.zookeeper.server-0000.properties";
     p=new Properties();
     p.put("clientPort","2181");
     ZooKeeperUtils.set(client,profileNode,toString(p));
-    ZooKeeperUtils.set(client,"/fabric/configs/versions/" + version + "/general/zookeeper-cluster","0000");
-    ZooKeeperUtils.set(client,"/fabric/configs/versions/" + version + "/general/zookeeper-cluster/0000",karafName);
+    ZooKeeperUtils.set(client,"/fabric/configs/versions/" + version + "/general/fabric-ensemble","0000");
+    ZooKeeperUtils.set(client,"/fabric/configs/versions/" + version + "/general/fabric-ensemble/0000",karafName);
     p=getProperties(client,defaultProfile + "/org.fusesource.fabric.agent.properties",new Properties());
     p.put("org.ops4j.pax.url.mvn.defaultRepositories","file:${karaf.home}/${karaf.default.repository}@snapshots");
     p.put("org.ops4j.pax.url.mvn.repositories","http://repo1.maven.org/maven2,http://repo.fusesource.com/nexus/content/repositories/releases,http://scala-tools.org/repo-releases");
@@ -66,7 +66,7 @@
     p.put("feature.fabric-commands","fabric-commands");
     ZooKeeperUtils.set(client,fabricProfile + "/org.fusesource.fabric.agent.properties",toString(p));
     ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_CONTAINER.getPath(karafName),version);
-    ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,karafName),"fabric zk-server-0000-1");
+    ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,karafName),"fabric fabric-ensemble-0000-1");
     ZooKeeperUtils.createDefault(client,defaultProfile + "/org.fusesource.fabric.jaas/encryption.enabled","${zk:/fabric/authentication/encryption.enabled}");
     ZooKeeperUtils.createDefault(client,"/fabric/authentication/encryption.enabled","true");
     ZooKeeperUtils.createDefault(client,"/fabric/authentication/domain","karaf");
