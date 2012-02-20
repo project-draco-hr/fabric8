@@ -2,6 +2,12 @@
   LOGGER.trace("onEvents",nodeEvents);
   try {
     if (!tracking) {
+      String version=zooKeeper.getStringData(ZkPath.CONFIG_CONTAINER.getPath(name));
+      if (!this.version.equals(version)) {
+        this.version=version;
+        node=ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,name);
+        track(node);
+      }
       final Set<String> pids=getPids();
       List<Configuration> configs=asList(getConfigAdmin().listConfigurations("(" + FABRIC_ZOOKEEPER_PID + "=*)"));
       for (      String pid : pids) {

@@ -1,16 +1,21 @@
 {
   try {
-    version=zooKeeper.getStringData(ZkPath.CONFIG_CONTAINER.getPath(name));
-    if (version == null) {
-      throw new IllegalStateException("Configuration for node " + name + " not found at "+ ZkPath.CONFIG_CONTAINER.getPath(name));
-    }
-    node=ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,name);
-    if (zooKeeper.exists(node) == null) {
-      zooKeeper.createWithParents(node,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    }
     trees=new ConcurrentHashMap<String,ZooKeeperTreeTracker<String>>();
     tracking=true;
     try {
+      String versionNode=ZkPath.CONFIG_CONTAINER.getPath(name);
+      if (zooKeeper.exists(versionNode) == null) {
+        throw new IllegalStateException("Configuration for node " + name + " not found at "+ ZkPath.CONFIG_CONTAINER.getPath(name));
+      }
+      version=zooKeeper.getStringData(versionNode);
+      if (version == null) {
+        throw new IllegalStateException("Configuration for node " + name + " not found at "+ ZkPath.CONFIG_CONTAINER.getPath(name));
+      }
+      track(versionNode);
+      node=ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,name);
+      if (zooKeeper.exists(node) == null) {
+        zooKeeper.createWithParents(node,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      }
       track(node);
     }
   finally {
