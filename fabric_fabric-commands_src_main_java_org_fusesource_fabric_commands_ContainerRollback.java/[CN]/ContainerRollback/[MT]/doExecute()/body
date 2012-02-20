@@ -2,7 +2,20 @@
   checkFabricAvailable();
   Version version=fabricService.getVersion(this.version);
   if (containerIds == null || containerIds.isEmpty()) {
-    containerIds=Arrays.asList(fabricService.getCurrentContainer().getId());
+    if (all) {
+      containerIds=new ArrayList<String>();
+      for (      Container container : fabricService.getContainers()) {
+        containerIds.add(container.getId());
+      }
+    }
+ else {
+      containerIds=Arrays.asList(fabricService.getCurrentContainer().getId());
+    }
+  }
+ else {
+    if (all) {
+      throw new IllegalArgumentException("Can not use --all with a list of containers simultaneously");
+    }
   }
   List<Container> toRollback=new ArrayList<Container>();
   List<Container> same=new ArrayList<Container>();
