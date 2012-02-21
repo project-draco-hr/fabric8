@@ -1,0 +1,15 @@
+{
+  StringsCompleter delegate=new StringsCompleter();
+  delegate.getStrings().addAll(locations);
+  int complete=delegate.complete(buffer,cursor,candidates);
+  if (complete > 0) {
+    return complete;
+  }
+ else {
+    Set<Feature> features=getFeatures();
+    locations=getFeatureLocations(features);
+    delegate.getStrings().clear();
+    delegate.getStrings().addAll(locations);
+    return delegate.complete(buffer,cursor,candidates);
+  }
+}
