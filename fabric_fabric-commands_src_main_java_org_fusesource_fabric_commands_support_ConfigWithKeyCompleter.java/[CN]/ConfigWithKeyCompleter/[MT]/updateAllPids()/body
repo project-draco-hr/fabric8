@@ -1,0 +1,14 @@
+{
+  Configuration[] configurations=null;
+  try {
+    configurations=admin.listConfigurations(null);
+    if (configurations != null) {
+      for (      Configuration configuration : configurations) {
+        delegate.getStrings().addAll(getPidWithKeys(configuration.getPid()));
+      }
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.warn("Could not lookup pids from configuration admin.");
+  }
+}
