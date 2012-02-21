@@ -3,8 +3,8 @@
   if (delete) {
     set=false;
   }
-  Version version=fabricService.getVersion(this.version);
-  for (  Profile profile : version.getProfiles()) {
+  Version ver=version != null ? fabricService.getVersion(version) : fabricService.getDefaultVersion();
+  for (  Profile profile : ver.getProfiles()) {
     if (target.equals(profile.getId())) {
       editProfile(profile);
     }
