@@ -1,0 +1,14 @@
+{
+  MQService service=new MQServiceImpl(fabricService);
+  HashMap<String,String> config=new HashMap<String,String>();
+  config.put("data",bundleContext.getDataFile(brokerName).getAbsolutePath());
+  Profile profile=service.createMQProfile(version,brokerName,config);
+  if (profiles == null) {
+    profiles=new ArrayList<String>();
+  }
+  profiles.add(profile.getId());
+  if (parent == null && url == null) {
+    url="child://root";
+  }
+  return super.doExecute();
+}
