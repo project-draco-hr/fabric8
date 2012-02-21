@@ -16,8 +16,14 @@
       if (metadata.isSuccess()) {
         if (!options.isEnsembleServer()) {
           createContainerConfig(parent != null ? parent.getId() : "",metadata.getContainerName());
+          ByteArrayOutputStream baos=new ByteArrayOutputStream();
+          ObjectOutputStream oos=new ObjectOutputStream(baos);
+          oos.writeObject(metadata);
+          oos.close();
+          ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_METADATA.getPath(metadata.getContainerName()),baos.toByteArray());
         }
         ((CreateContainerBasicMetadata)metadata).setContainer(new ContainerImpl(parent,metadata.getContainerName(),FabricServiceImpl.this));
+        ((ContainerImpl)metadata.getContainer()).setMetadata(metadata);
         logger.info("The container " + metadata.getContainerName() + " has been successfully created");
       }
  else {

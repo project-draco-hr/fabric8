@@ -23,6 +23,7 @@
         containerName+=i + 1;
       }
       CreateSshContainerMetadata metadata=new CreateSshContainerMetadata();
+      metadata.setCreateOptions(options);
       metadata.setContainerName(containerName);
       String script=buildStartupScript(options.name(containerName));
       logger.debug("Running script on host {}:\n{}",host,script);
