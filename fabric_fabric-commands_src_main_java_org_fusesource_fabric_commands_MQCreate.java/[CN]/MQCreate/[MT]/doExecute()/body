@@ -1,17 +1,61 @@
 {
   MQService service=new MQServiceImpl(fabricService);
   HashMap<String,String> configuration=new HashMap<String,String>();
-  configuration.put("data",bundleContext.getDataFile(brokerName).getAbsolutePath());
+  configuration.put("data",bundleContext.getDataFile(name).getAbsolutePath());
   if (config != null) {
     configuration.put("config",service.getConfig(version,config));
   }
-  Profile profile=service.createMQProfile(version,brokerName,configuration);
-  if (profiles == null) {
-    profiles=new ArrayList<String>();
+  Profile profile=service.createMQProfile(version,name,configuration);
+  System.out.println("MQ profile " + profile.getId() + " ready");
+  if (assign != null) {
+    String[] assignContainers=assign.split(",");
+    for (    String containerName : assignContainers) {
+      try {
+        Container container=fabricService.getContainer(containerName);
+        if (container == null) {
+          System.out.println("Failed to assign profile to " + containerName + ": profile doesn't exists");
+        }
+ else {
+          HashSet<Profile> profiles=new HashSet<Profile>(Arrays.asList(container.getProfiles()));
+          profiles.add(profile);
+          container.setProfiles(profiles.toArray(new Profile[profiles.size()]));
+          System.out.println("Profile successfully assigned to " + containerName);
+        }
+      }
+ catch (      Exception e) {
+        System.out.println("Failed to assign profile to " + containerName + ": "+ e.getMessage());
+      }
+    }
   }
-  profiles.add(profile.getId());
-  if (parent == null && url == null) {
-    url="child://root";
+  if (create != null) {
+    String[] createContainers=create.split(",");
+    for (    String url : createContainers) {
+      String type=null;
+      String parent="root";
+      String name=url;
+      if (url.contains("://")) {
+        URI uri=new URI(url);
+        type=uri.getScheme();
+        parent=null;
+        name=uri.getHost();
+      }
+ else {
+        type="child";
+        url="child://root";
+      }
+      CreateContainerOptions args=CreateContainerOptionsBuilder.type(type).name(name).parent(parent).number(1).debugContainer(false).ensembleServer(false).providerUri(url).proxyUri(fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl());
+      CreateContainerMetadata[] metadatas=fabricService.createContainers(args);
+      for (      CreateContainerMetadata metadata : metadatas) {
+        if (metadata.isSuccess()) {
+          Container child=metadata.getContainer();
+          child.setProfiles(new Profile[]{profile});
+          System.out.println("Successfully created container " + metadata.getContainerName());
+        }
+ else {
+          System.out.println("Failed to create container " + metadata.getContainerName() + ": "+ metadata.getFailure().getMessage());
+        }
+      }
+    }
   }
-  return super.doExecute();
+  return null;
 }
