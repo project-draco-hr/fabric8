@@ -1,11 +1,11 @@
 {
-  for (long t=0; (!(container.isAlive() && container.isProvisioningComplete() && container.getProvisionStatus().equals("success")) && t < timeout); t+=2000L) {
+  for (long t=0; (!(container.isAlive() && container.getProvisionStatus().equals("success") && container.getSshUrl() != null) && t < timeout); t+=2000L) {
     if (container.getProvisionException() != null) {
       throw new Exception(container.getProvisionException());
     }
     Thread.sleep(2000L);
   }
-  if (!container.isAlive() || !container.isProvisioningComplete()) {
-    throw new Exception("Could not provision " + container.getId() + " after "+ timeout+ " seconds.");
+  if (!container.isAlive() || !container.getProvisionStatus().equals("success") || container.getSshUrl() == null) {
+    throw new Exception("Could not provision " + container.getId() + " after "+ timeout+ " seconds. Alive:"+ container.isAlive()+ " Status:"+ container.getProvisionStatus()+ " Ssh URL:"+ container.getSshUrl());
   }
 }
