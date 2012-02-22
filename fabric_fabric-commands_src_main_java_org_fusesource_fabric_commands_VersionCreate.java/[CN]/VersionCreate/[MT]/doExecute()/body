@@ -22,13 +22,17 @@
       throw new IllegalArgumentException("Cannot find parent version: " + parentVersion);
     }
   }
+  Version created;
   if (parent != null) {
-    fabricService.createVersion(parent,name);
+    created=fabricService.createVersion(parent,name);
     System.out.println("Created version: " + name + " as copy of: "+ parent.getName());
   }
  else {
-    fabricService.createVersion(name);
+    created=fabricService.createVersion(name);
     System.out.println("Created version: " + name);
+  }
+  if (defaultVersion != null && defaultVersion == true) {
+    fabricService.setDefaultVersion(created);
   }
   return null;
 }

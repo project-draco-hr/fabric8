@@ -1,0 +1,20 @@
+{
+  Set<String> pidWithKeys=new LinkedHashSet<String>();
+  try {
+    Configuration configuration=admin.getConfiguration(pid);
+    if (configuration != null) {
+      Dictionary dictionary=configuration.getProperties();
+      if (dictionary != null) {
+        Enumeration keyEnumeration=dictionary.keys();
+        while (keyEnumeration.hasMoreElements()) {
+          String key=(String)keyEnumeration.nextElement();
+          pidWithKeys.add(pid + "." + key);
+        }
+      }
+    }
+  }
+ catch (  IOException e) {
+    LOGGER.warn("Could not lookup pid {} from configuration admin.",pid);
+  }
+  return pidWithKeys;
+}

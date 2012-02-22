@@ -1,8 +1,7 @@
 {
   broker=new BrokerService();
   broker.setDeleteAllMessagesOnStartup(deleteAllMessages);
-  store=new LevelDBStore();
-  store.setDirectory(new File("target/activemq-data/leveldb"));
+  store=createStore();
   broker.setPersistenceAdapter(store);
   broker.addConnector("tcp://0.0.0.0:0");
   broker.start();
