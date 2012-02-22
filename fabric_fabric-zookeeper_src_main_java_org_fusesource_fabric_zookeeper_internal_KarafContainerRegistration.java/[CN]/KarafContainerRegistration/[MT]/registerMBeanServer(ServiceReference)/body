@@ -1,5 +1,6 @@
 {
   try {
+    semaphore.acquire();
     String name=System.getProperty("karaf.name");
     mbeanServer=(MBeanServer)bundleContext.getService(ref);
     if (mbeanServer != null) {
@@ -9,5 +10,8 @@
   }
  catch (  Exception e) {
     logger.warn("An error occurred during mbean server registration. This exception will be ignored.",e);
+  }
+ finally {
+    semaphore.release();
   }
 }
