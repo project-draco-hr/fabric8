@@ -7,7 +7,13 @@
   CreateContainerOptions args=CreateContainerOptionsBuilder.child().name(name).parent(parent);
   CreateContainerMetadata[] metadata=fabricService.createContainers(args);
   if (metadata.length > 0) {
+    if (metadata[0].getFailure() != null) {
+      throw new Exception("Error creating child container:" + name,metadata[0].getFailure());
+    }
     Container container=metadata[0].getContainer();
+    Version version=fabricService.getDefaultVersion();
+    Profile profile=fabricService.getProfile(version.getName(),profileName);
+    container.setProfiles(new Profile[]{profile});
     waitForProvisionSuccess(container,PROVISION_TIMEOUT);
     return container;
   }
