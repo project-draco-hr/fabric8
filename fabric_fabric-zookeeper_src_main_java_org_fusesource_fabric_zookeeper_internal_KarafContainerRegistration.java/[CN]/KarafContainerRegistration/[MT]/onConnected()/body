@@ -1,6 +1,7 @@
 {
   logger.trace("onConnected");
   try {
+    semaphore.acquire();
     String name=System.getProperty("karaf.name");
     String nodeAlive=CONTAINER_ALIVE.getPath(name);
     Stat stat=zooKeeper.exists(nodeAlive);
@@ -43,5 +44,8 @@
   }
  catch (  Exception e) {
     logger.warn("Error updating Fabric Container information. This exception will be ignored.",e);
+  }
+ finally {
+    semaphore.release();
   }
 }
