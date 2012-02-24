@@ -1,5 +1,5 @@
 {
-  Profile parentProfile=fabricService.getProfile(version,DEFAULT_MQ_PROFILE);
+  Profile parentProfile=fabricService.getProfile(version,MQ_PROFILE_BASE);
   Profile result=parentProfile;
   if (brokerName != null) {
     result=fabricService.getProfile(version,brokerName);
@@ -7,13 +7,13 @@
       result=fabricService.createProfile(version,brokerName);
       result.setParents(new Profile[]{parentProfile});
     }
-    Map config=parentProfile.getConfigurations().get(DEFAULT_MQ_PID);
+    Map config=parentProfile.getConfigurations().get(MQ_PID_TEMPLATE);
     config.put("broker-name",brokerName);
     if (configs != null) {
       config.putAll(configs);
     }
     Map<String,Map<String,String>> newConfigs=result.getConfigurations();
-    newConfigs.put(DEFAULT_MQ_PID,config);
+    newConfigs.put("org.fusesource.mq.fabric.server-" + brokerName,config);
     result.setConfigurations(newConfigs);
   }
   return result;
