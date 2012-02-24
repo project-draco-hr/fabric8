@@ -2,7 +2,9 @@
   try {
     while (!serverSocket.isClosed()) {
       Socket sock=serverSocket.accept();
-      new Worker(sock).start();
+      Worker worker=new Worker(sock);
+      worker.setName("MavenProxyWorker");
+      worker.start();
     }
   }
  catch (  IOException e) {

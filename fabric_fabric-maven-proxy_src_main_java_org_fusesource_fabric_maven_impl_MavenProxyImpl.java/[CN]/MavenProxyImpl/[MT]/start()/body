@@ -21,7 +21,9 @@
     }
     repos=repos.trim();
     serverSocket=new ServerSocket(port);
-    new Acceptor(serverSocket).start();
+    Acceptor acceptor=new Acceptor(serverSocket);
+    acceptor.setName("MavenProxyAcceptor");
+    acceptor.start();
     LOGGER.log(Level.INFO,String.format("Maven proxy started at address : %s with configured repositories : %s",getAddress(),repos));
   }
 }
