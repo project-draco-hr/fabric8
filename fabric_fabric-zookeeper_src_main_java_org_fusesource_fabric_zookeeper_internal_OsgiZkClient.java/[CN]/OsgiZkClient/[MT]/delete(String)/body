@@ -2,16 +2,12 @@
   boolean retry=false;
   while (true) {
     try {
-      waitForConnected();
       if (!retry || super.exists(path) != null) {
         super.delete(path);
       }
       return;
     }
  catch (    KeeperException.ConnectionLossException ex) {
-      retry=true;
-    }
-catch (    TimeoutException e) {
       retry=true;
     }
   }
