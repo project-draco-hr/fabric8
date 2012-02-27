@@ -1,14 +1,7 @@
 {
-  ServiceTracker tracker=null;
-  ServiceReference ref=registry.getServiceReference(type.getName());
-  if (ref == null) {
-    tracker=new ServiceTracker(registry.getBundleContext(),type.getName(),null);
-  }
- else {
-    tracker=new ServiceTracker(registry.getBundleContext(),ref,null);
-  }
+  ServiceTracker tracker=new ServiceTracker(registry.getBundleContext(),type.getName(),null);
   tracker.open(true);
-  Object rc=null;
+  Object rc;
   try {
     rc=tracker.waitForService(60000);
   }
