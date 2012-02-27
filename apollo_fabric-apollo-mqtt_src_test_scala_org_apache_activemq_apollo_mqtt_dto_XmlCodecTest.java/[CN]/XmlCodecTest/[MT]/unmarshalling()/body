@@ -1,9 +1,0 @@
-{
-  BrokerDTO dto=XmlCodec.decode(BrokerDTO.class,resource("simple.xml"));
-  assertNotNull(dto);
-  assertEquals(1,dto.connectors.size());
-  AcceptingConnectorDTO connector=(AcceptingConnectorDTO)dto.connectors.get(0);
-  assertEquals(1,connector.protocols.size());
-  ProtocolDTO mqtt=connector.protocols.get(0);
-  assertTrue(mqtt instanceof MqttDTO);
-}
