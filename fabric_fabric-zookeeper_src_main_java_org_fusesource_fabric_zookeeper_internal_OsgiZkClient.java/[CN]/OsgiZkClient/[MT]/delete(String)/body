@@ -1,22 +1,18 @@
 {
-  KeeperException recoverableException=null;
-  for (int r=0; r < maximumRetries; r++) {
-    recoverableException=null;
+  boolean retry=false;
+  while (true) {
     try {
-      waitForConnected(new Timespan(retryInterval));
-      if (r == 0 || super.exists(path) != null) {
+      waitForConnected();
+      if (!retry || super.exists(path) != null) {
         super.delete(path);
       }
       return;
     }
  catch (    KeeperException.ConnectionLossException ex) {
-      recoverableException=ex;
+      retry=true;
     }
 catch (    TimeoutException e) {
-      recoverableException=new KeeperException.OperationTimeoutException();
+      retry=true;
     }
-  }
-  if (recoverableException != null) {
-    throw recoverableException;
   }
 }
