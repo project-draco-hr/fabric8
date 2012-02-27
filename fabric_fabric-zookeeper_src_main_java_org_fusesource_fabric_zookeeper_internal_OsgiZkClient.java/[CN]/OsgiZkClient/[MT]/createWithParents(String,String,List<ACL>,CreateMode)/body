@@ -1,0 +1,20 @@
+{
+  KeeperException recoverableException=null;
+  for (int r=0; r < maximumRetries; r++) {
+    recoverableException=null;
+    try {
+      waitForConnected(new Timespan(retryInterval));
+      super.createWithParents(path,data,acl,createMode);
+      return;
+    }
+ catch (    KeeperException.ConnectionLossException ex) {
+      recoverableException=ex;
+    }
+catch (    TimeoutException e) {
+      recoverableException=new KeeperException.OperationTimeoutException();
+    }
+  }
+  if (recoverableException != null) {
+    throw recoverableException;
+  }
+}

@@ -1,0 +1,17 @@
+{
+  KeeperException recoverableException=null;
+  for (int r=0; r < maximumRetries; r++) {
+    recoverableException=null;
+    try {
+      waitForConnected(new Timespan(retryInterval));
+      return super.getZKStringData(path);
+    }
+ catch (    KeeperException.ConnectionLossException ex) {
+      recoverableException=ex;
+    }
+catch (    TimeoutException e) {
+      recoverableException=new KeeperException.OperationTimeoutException();
+    }
+  }
+  throw recoverableException;
+}
