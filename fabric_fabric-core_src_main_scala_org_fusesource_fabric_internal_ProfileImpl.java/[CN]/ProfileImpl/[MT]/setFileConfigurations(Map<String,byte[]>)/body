@@ -19,12 +19,7 @@
             continue;
           }
           String newPath=configPath + "/" + name_value[0].trim();
-          try {
-            zooKeeper.createWithParents(newPath,name_value[1].trim(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-          }
- catch (          KeeperException.NodeExistsException nee) {
-            zooKeeper.setData(newPath,name_value[1].trim());
-          }
+          ZooKeeperUtils.set(zooKeeper,newPath,name_value[1].trim());
           saved.add(name_value[0].trim());
         }
         for (        String kid : kids) {
@@ -34,12 +29,7 @@
         }
       }
  else {
-        try {
-          zooKeeper.createBytesNodeWithParents(configPath,newCfg,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-        }
- catch (        KeeperException.NodeExistsException nee) {
-          zooKeeper.setByteData(configPath,newCfg);
-        }
+        ZooKeeperUtils.set(zooKeeper,configPath,newCfg);
       }
     }
     for (    String pid : oldCfgs.keySet()) {
