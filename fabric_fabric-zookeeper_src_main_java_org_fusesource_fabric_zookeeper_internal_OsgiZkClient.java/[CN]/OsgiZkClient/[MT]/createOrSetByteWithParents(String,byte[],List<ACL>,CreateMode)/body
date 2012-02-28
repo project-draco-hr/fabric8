@@ -1,18 +1,12 @@
 {
-  while (true) {
-    try {
-      if (exists(path) != null) {
-        return setByteData(path,data);
-      }
-      try {
-        createBytesNodeWithParents(path,data,acl,createMode);
-        return null;
-      }
- catch (      KeeperException.NodeExistsException e) {
-        return setByteData(path,data);
-      }
-    }
- catch (    KeeperException.ConnectionLossException ex) {
-    }
+  if (exists(path) != null) {
+    return setByteData(path,data);
+  }
+  try {
+    createBytesNodeWithParents(path,data,acl,createMode);
+    return null;
+  }
+ catch (  KeeperException.NodeExistsException e) {
+    return setByteData(path,data);
   }
 }
