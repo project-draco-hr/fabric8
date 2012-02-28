@@ -31,6 +31,7 @@
       throw new IllegalStateException("Timeout waiting for ZooKeeper client to be registered");
     }
     tracker.close();
+    client.waitForConnected();
     String autoImportFrom=System.getProperty(PROFILES_AUTOIMPORT_PATH);
     if (autoImportFrom != null) {
       ZookeeperImportUtils.importFromFileSystem(client,autoImportFrom,"/",null,null,false,false,false);

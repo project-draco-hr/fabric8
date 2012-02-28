@@ -37,10 +37,7 @@
   }
   for (  Container container : toRollback) {
     Version oldVersion=container.getVersion();
-    Profile[] oldProfiles=container.getProfiles();
-    Profile[] newProfiles=getProfilesForUpgradeOrRollback(oldProfiles,version);
     container.setVersion(version);
-    container.setProfiles(newProfiles);
     log.debug("Rolled back container {} from {} to {}",new Object[]{container,oldVersion,version});
     System.out.println("Rolled back container " + container.getId() + " from version "+ oldVersion+ " to "+ version);
   }
