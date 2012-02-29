@@ -1,0 +1,19 @@
+{
+  System.out.println("Testing profile:" + profileName + " on container:"+ containerName+ " by adding feature:"+ featureName);
+  FabricService fabricService=getOsgiService(FabricService.class);
+  containerSetProfile(containerName,"default");
+  Container container=fabricService.getContainer(containerName);
+  Version version=container.getVersion();
+  Profile targetProfile=fabricService.getProfile(version.getName(),profileName);
+  List<String> features=targetProfile.getFeatures();
+  features.add(featureName);
+  targetProfile.setFeatures(features);
+  containerSetProfile(containerName,profileName);
+  String bundles=executeCommand("container-connect " + containerName + " osgi:list -s | grep "+ expectedSymbolicName);
+  Assert.assertNotNull(bundles);
+  Assert.assertTrue(bundles.contains(expectedSymbolicName));
+  System.out.println(bundles);
+  containerSetProfile(containerName,"default");
+  features.remove(featureName);
+  targetProfile.setFeatures(features);
+}
