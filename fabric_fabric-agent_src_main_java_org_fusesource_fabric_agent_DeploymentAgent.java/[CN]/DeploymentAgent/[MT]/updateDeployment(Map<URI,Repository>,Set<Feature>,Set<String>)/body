@@ -66,7 +66,9 @@
     LOGGER.info("    " + resource.getURI());
   }
   Set<Bundle> toRefresh=new HashSet<Bundle>();
+  LOGGER.info("Uninstalling bundles:");
   for (  Bundle bundle : toDelete) {
+    LOGGER.info("  " + bundle.getSymbolicName() + " / "+ bundle.getVersion());
     bundle.uninstall();
     toRefresh.add(bundle);
   }
