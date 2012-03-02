@@ -14,9 +14,12 @@
   containerTemplate.execute(new ContainerTemplate.AdminServiceCallback<Object>(){
     public Object doWithAdminService(    AdminServiceMBean adminService) throws Exception {
       StringBuilder jvmOptsBuilder=new StringBuilder();
-      jvmOptsBuilder.append("-server -Dcom.sun.management.jmxremote ").append(options.getJvmOpts()).append(" ").append(options.getZookeeperUrl() != null ? "-Dzookeeper.url=\"" + options.getZookeeperUrl() + "\"" : "");
+      jvmOptsBuilder.append("-server -Dcom.sun.management.jmxremote ").append(options.getZookeeperUrl() != null ? "-Dzookeeper.url=\"" + options.getZookeeperUrl() + "\"" : "");
       if (options.getJvmOpts() == null || !options.getJvmOpts().contains("-Xmx")) {
-        jvmOptsBuilder.append("-Xmx512m");
+        jvmOptsBuilder.append(" -Xmx512m");
+      }
+ else       if (options.getJvmOpts() != null) {
+        jvmOptsBuilder.append(" ").append(options.getJvmOpts());
       }
       if (options.isDebugContainer()) {
         jvmOptsBuilder.append(" ").append(DEBUG_CONTAINER);
