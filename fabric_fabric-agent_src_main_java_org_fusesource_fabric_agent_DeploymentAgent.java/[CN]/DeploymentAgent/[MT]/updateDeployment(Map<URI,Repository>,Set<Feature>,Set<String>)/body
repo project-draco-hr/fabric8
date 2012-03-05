@@ -66,14 +66,33 @@
     LOGGER.info("    " + resource.getURI());
   }
   Set<Bundle> toRefresh=new HashSet<Bundle>();
+  LOGGER.info("Stopping bundles:");
+  List<Bundle> toStop=new ArrayList<Bundle>();
+  toStop.addAll(toUpdate.keySet());
+  toStop.addAll(toDelete);
+  while (!toStop.isEmpty()) {
+    List<Bundle> bs=getBundlesToDestroy(toStop);
+    for (    Bundle bundle : bs) {
+      String hostHeader=(String)bundle.getHeaders().get(Constants.FRAGMENT_HOST);
+      if (hostHeader == null && (bundle.getState() == Bundle.ACTIVE || bundle.getState() == Bundle.STARTING)) {
+        LOGGER.info("  " + bundle.getSymbolicName() + " / "+ bundle.getVersion());
+        bundle.stop(Bundle.STOP_TRANSIENT);
+      }
+      toStop.remove(bundle);
+    }
+  }
+  LOGGER.info("Uninstalling bundles:");
   for (  Bundle bundle : toDelete) {
+    LOGGER.info("  " + bundle.getSymbolicName() + " / "+ bundle.getVersion());
     bundle.uninstall();
     toRefresh.add(bundle);
   }
+  LOGGER.info("Updating bundles:");
   for (  Map.Entry<Bundle,Resource> entry : toUpdate.entrySet()) {
     Bundle bundle=entry.getKey();
     Resource resource=entry.getValue();
     InputStream is;
+    LOGGER.info("  " + resource.getURI());
     File file=downloads.get(resource.getURI());
     if (file != null) {
       is=new FileInputStream(file);
@@ -82,12 +101,13 @@
       LOGGER.warn("Bundle " + resource.getURI() + " not found in the downloads, using direct input stream instead");
       is=new URL(resource.getURI()).openStream();
     }
-    bundle.stop(Bundle.STOP_TRANSIENT);
     bundle.update(is);
     toRefresh.add(bundle);
   }
+  LOGGER.info("Installing bundles:");
   for (  Resource resource : toInstall) {
     InputStream is;
+    LOGGER.info("  " + resource.getURI());
     File file=downloads.get(resource.getURI());
     if (file != null) {
       is=new FileInputStream(file);

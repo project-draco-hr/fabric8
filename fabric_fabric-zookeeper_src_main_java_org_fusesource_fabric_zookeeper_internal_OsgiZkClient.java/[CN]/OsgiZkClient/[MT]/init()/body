@@ -2,7 +2,7 @@
   _stateChangeDispatcher.setDaemon(true);
   _stateChangeDispatcher.start();
   Hashtable ht=new Hashtable();
-  zkClientRegistration=bundleContext.registerService(IZKClient.class.getName(),this,ht);
+  zkClientRegistration=bundleContext.registerService(new String[]{IZKClient.class.getName(),org.linkedin.zookeeper.client.IZKClient.class.getName()},this,ht);
   ht=new Hashtable();
   ht.put(Constants.SERVICE_PID,PID);
   managedServiceRegistration=bundleContext.registerService(ManagedService.class.getName(),this,ht);

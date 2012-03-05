@@ -28,6 +28,7 @@
   assertNotNull(server);
   IZKClient client=getOsgiService(IZKClient.class);
   assertNotNull(client);
-  Thread.sleep(100);
-  assertNotNull(client.exists(ZkPath.AGENT_ALIVE.getPath(System.getProperty("karaf.name"))));
+  client.waitForConnected();
+  Thread.sleep(500);
+  assertNotNull(client.exists(ZkPath.CONTAINER_ALIVE.getPath(System.getProperty("karaf.name"))));
 }

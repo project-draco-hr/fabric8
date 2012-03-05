@@ -4,4 +4,10 @@ synchronized (refreshLock) {
       refreshLock.notifyAll();
     }
   }
+  if (event.getType() == FrameworkEvent.ERROR) {
+    LOGGER.error("Framework error",event.getThrowable());
+synchronized (refreshLock) {
+      refreshLock.notifyAll();
+    }
+  }
 }
