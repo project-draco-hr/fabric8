@@ -1,0 +1,29 @@
+{
+  Main main=new Main();
+  LinkedList<String> arg1=new LinkedList<String>(Arrays.asList(args));
+  main.action=shift(arg1);
+  while (!arg1.isEmpty()) {
+    try {
+      String arg=arg1.removeFirst();
+      if ("--count".equals(arg)) {
+        main.count=Integer.parseInt(shift(arg1));
+      }
+ else       if ("--destination".equals(arg)) {
+        main.destination=shift(arg1);
+      }
+ else       if ("--brokerUrl".equals(arg)) {
+        main.brokerUrl=shift(arg1);
+      }
+ else {
+        System.err.println("Invalid usage: unknown option: " + arg);
+        displayHelpAndExit(1);
+      }
+    }
+ catch (    NumberFormatException e) {
+      System.err.println("Invalid usage: argument not a number");
+      displayHelpAndExit(1);
+    }
+  }
+  main.execute();
+  System.exit(0);
+}

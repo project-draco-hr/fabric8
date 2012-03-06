@@ -4,7 +4,7 @@
     if (brokerUrl == null) {
       brokerUrl="discover:(fabric:default)";
     }
-    FabricActiveMQService producerService=new FabricActiveMQService(brokerUrl);
+    ActiveMQService producerService=new ActiveMQService(brokerUrl);
     producerService.start();
     String destination=(String)properties.get("destination");
     ConsumerThread consumer=new ConsumerThread(producerService,destination);
