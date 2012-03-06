@@ -1,3 +1,9 @@
 {
-  return new Container[0];
+  List<Container> children=new ArrayList<Container>();
+  for (  Container container : service.getContainers()) {
+    if (container.getParent() != null && getId().equals(container.getParent().getId())) {
+      children.add(container);
+    }
+  }
+  return children.toArray(new Container[0]);
 }

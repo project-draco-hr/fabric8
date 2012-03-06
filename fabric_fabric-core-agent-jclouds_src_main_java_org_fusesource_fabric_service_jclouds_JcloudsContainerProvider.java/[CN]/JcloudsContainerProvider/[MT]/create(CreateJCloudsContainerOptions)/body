@@ -1,19 +1,6 @@
 {
   final Set<CreateJCloudsContainerMetadata> result=new LinkedHashSet<CreateJCloudsContainerMetadata>();
-  ComputeService computeService=computeServiceMap.get(options.getProviderName());
-  if (computeService == null) {
-    Iterable<? extends Module> modules=ImmutableSet.of();
-    Properties props=new Properties();
-    props.put("provider",options.getProviderName());
-    props.put("identity",options.getIdentity());
-    props.put("credential",options.getCredential());
-    if (!Strings.isNullOrEmpty(options.getOwner()) && options.getProviderName().equals("aws-ec2")) {
-      props.put("jclouds.ec2.ami-owners",options.getOwner());
-    }
-    RestContextFactory restFactory=new RestContextFactory();
-    ComputeServiceContext context=new ComputeServiceContextFactory(restFactory).createContext(options.getProviderName(),options.getIdentity(),options.getCredential(),modules,props);
-    computeService=context.getComputeService();
-  }
+  ComputeService computeService=getOrCreateComputeService(options);
   TemplateBuilder builder=computeService.templateBuilder();
   builder.any();
 switch (options.getInstanceType()) {
@@ -62,8 +49,10 @@ jCloudsContainerMetadata.setNodeId(nodeMetadata.getId());
 jCloudsContainerMetadata.setContainerName(containerName);
 jCloudsContainerMetadata.setPublicAddresses(nodeMetadata.getPublicAddresses());
 jCloudsContainerMetadata.setHostname(nodeMetadata.getHostname());
+jCloudsContainerMetadata.setIdentity(credentials.identity);
+jCloudsContainerMetadata.setCredential(credentials.credential);
 try {
-String script=buildStartupScript(options.name(containerName));
+String script=buildInstallAndStartScript(options.name(containerName));
 if (credentials != null) {
 computeService.runScriptOnNode(id,script,RunScriptOptions.Builder.overrideCredentialsWith(credentials).runAsRoot(false));
 }

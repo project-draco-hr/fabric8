@@ -6,7 +6,7 @@
   sb.append("run mkdir -p ").append(options.getName()).append("\n");
   sb.append("run cd ").append(options.getName()).append("\n");
   extractTargzIntoDirectory(sb,options.getProxyUri(),"org.fusesource.fabric","fuse-fabric",FabricConstants.FABRIC_VERSION);
-  sb.append("run cd ").append("fuse-fabric-" + FabricConstants.FABRIC_VERSION).append("\n");
+  sb.append("run cd `").append(FIRST_FABRIC_DIRECTORY).append("`\n");
   List<String> lines=new ArrayList<String>();
   appendFile(sb,"etc/startup.properties",lines);
   replaceLineInFile(sb,"etc/system.properties","karaf.name=root","karaf.name = " + options.getName());
