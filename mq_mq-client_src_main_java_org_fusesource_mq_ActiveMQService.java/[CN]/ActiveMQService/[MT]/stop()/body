@@ -1,7 +1,11 @@
 {
   if (started) {
     if (defaultConnection != null) {
-      defaultConnection.stop();
+      try {
+        defaultConnection.stop();
+      }
+ catch (      JMSException ignored) {
+      }
     }
   }
   started=false;
