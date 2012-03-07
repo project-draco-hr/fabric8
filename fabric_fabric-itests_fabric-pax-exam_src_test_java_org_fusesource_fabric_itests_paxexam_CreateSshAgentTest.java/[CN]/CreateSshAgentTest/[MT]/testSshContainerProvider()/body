@@ -17,5 +17,20 @@
     Container container=fabricService.getContainer("ssh1");
     assertTrue(container.isAlive());
     createAndAssetChildContainer("ssh2","ssh1","default");
+    container.stop();
+    assertFalse(container.isAlive());
+    System.out.println(executeCommand("fabric:container-list -v"));
+    container.start();
+    waitForProvisionSuccess(container,PROVISION_TIMEOUT);
+    System.out.println(executeCommand("fabric:container-list -v"));
+    assertTrue(container.isAlive());
+    boolean error=false;
+    try {
+      container.destroy();
+    }
+ catch (    IllegalStateException ex) {
+      error=true;
+    }
+    assertTrue("Should receive error when trying to destroy a container with alive children.",error);
   }
 }

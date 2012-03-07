@@ -1,6 +1,13 @@
 {
   checkFabricAvailable();
   Container found=getContainer(name);
+  if (recursive) {
+    for (    Container child : found.getChildren()) {
+      child.stop();
+      child.destroy();
+    }
+  }
+  found.stop();
   found.destroy();
   return null;
 }
