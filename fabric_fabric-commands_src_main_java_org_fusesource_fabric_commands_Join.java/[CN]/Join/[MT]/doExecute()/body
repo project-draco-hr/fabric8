@@ -4,9 +4,18 @@
   properties.put("zookeeper.url",zookeeperUrl);
   config.setBundleLocation(null);
   config.update(properties);
-  Thread.sleep(2000);
+  ServiceTracker tracker=new ServiceTracker(bundleContext,org.fusesource.fabric.zookeeper.IZKClient.class.getName(),null);
+  tracker.open();
+  zooKeeper=(org.fusesource.fabric.zookeeper.IZKClient)tracker.waitForService(5000);
+  if (zooKeeper == null) {
+    throw new IllegalStateException("Timeout waiting for ZooKeeper client to be registered");
+  }
+  tracker.close();
+  zooKeeper.waitForConnected();
   String karafName=System.getProperty("karaf.name");
   ZooKeeperUtils.createDefault(zooKeeper,ZkPath.CONFIG_CONTAINER.getPath(karafName),version);
   ZooKeeperUtils.createDefault(zooKeeper,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,karafName),"default");
+  Bundle bundleFabricJaas=findOrInstallBundle("org.fusesource.fabric.fabric-jaas","mvn:org.fusesource.fabric/fabric-jaas/" + FabricConstants.FABRIC_VERSION);
+  bundleFabricJaas.start();
   return null;
 }
