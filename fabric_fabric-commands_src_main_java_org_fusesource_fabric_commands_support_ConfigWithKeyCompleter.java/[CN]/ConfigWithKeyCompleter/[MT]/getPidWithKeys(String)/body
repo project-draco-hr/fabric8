@@ -1,9 +1,9 @@
 {
   Set<String> pidWithKeys=new LinkedHashSet<String>();
   try {
-    Configuration configuration=admin.getConfiguration(pid);
-    if (configuration != null) {
-      Dictionary dictionary=configuration.getProperties();
+    Configuration[] configuration=admin.listConfigurations("(service.pid=" + pid + ")");
+    if (configuration != null && configuration.length > 0) {
+      Dictionary dictionary=configuration[0].getProperties();
       if (dictionary != null) {
         Enumeration keyEnumeration=dictionary.keys();
         while (keyEnumeration.hasMoreElements()) {
@@ -14,6 +14,9 @@
     }
   }
  catch (  IOException e) {
+    LOGGER.warn("Could not lookup pid {} from configuration admin.",pid);
+  }
+catch (  InvalidSyntaxException e) {
     LOGGER.warn("Could not lookup pid {} from configuration admin.",pid);
   }
   return pidWithKeys;
