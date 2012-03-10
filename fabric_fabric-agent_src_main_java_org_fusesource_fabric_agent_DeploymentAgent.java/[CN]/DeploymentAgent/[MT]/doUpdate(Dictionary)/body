@@ -2,6 +2,18 @@
   if (props == null) {
     return;
   }
+  if (fabricService != null) {
+    URI mavenRepoURI=fabricService.getMavenRepoURI();
+    if (mavenRepoURI != null) {
+      String existingRepos=(String)props.get("org.ops4j.pax.url.mvn.repositories");
+      if (existingRepos == null) {
+        props.put("org.ops4j.pax.url.mvn.repositories",mavenRepoURI.toString() + "@snapshots");
+      }
+ else {
+        props.put("org.ops4j.pax.url.mvn.repositories",existingRepos + "," + mavenRepoURI.toString()+ "@snapshots");
+      }
+    }
+  }
   updateStatus("analyzing",null);
   final MavenConfigurationImpl config=new MavenConfigurationImpl(new DictionaryPropertyResolver(props,new PropertiesPropertyResolver(System.getProperties())),"org.ops4j.pax.url.mvn");
   config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
