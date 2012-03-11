@@ -2,6 +2,10 @@
   List<RemoteRepository> repos=new ArrayList<RemoteRepository>();
   for (int i=0; i < repositories.length; i++) {
     String text=repositories[i].trim();
+    Authentication authentication=getAuthentication(text);
+    if (authentication != null) {
+      text=text.replaceFirst(String.format("%s:%s@",authentication.getUsername(),authentication.getPassword()),"");
+    }
     boolean snapshot=false;
     while (true) {
       int idx=text.lastIndexOf('@');
@@ -23,6 +27,7 @@
     RemoteRepository repository=new RemoteRepository("repos" + i,"default",text);
     RepositoryPolicy policy=new RepositoryPolicy(true,RepositoryPolicy.UPDATE_POLICY_DAILY,RepositoryPolicy.CHECKSUM_POLICY_WARN);
     repository.setPolicy(snapshot,policy);
+    repository.setAuthentication(authentication);
     repos.add(repository);
   }
   return repos;
