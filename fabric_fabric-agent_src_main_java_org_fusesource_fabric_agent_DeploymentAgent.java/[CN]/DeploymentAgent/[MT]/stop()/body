@@ -1,6 +1,13 @@
 {
+  LOGGER.info("Stopping DeploymentAgent");
+  saveState();
   executor.shutdown();
   executor.awaitTermination(30,TimeUnit.SECONDS);
+  if (shutdownDownloadExecutor && downloadExecutor != null) {
+    downloadExecutor.shutdown();
+    downloadExecutor.awaitTermination(30,TimeUnit.SECONDS);
+    downloadExecutor=null;
+  }
   bundleContext.removeFrameworkListener(this);
   manager.shutdown();
 }
