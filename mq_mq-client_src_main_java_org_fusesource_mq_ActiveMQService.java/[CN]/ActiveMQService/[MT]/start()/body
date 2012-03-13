@@ -1,8 +1,24 @@
 {
-  if (!started) {
-    defaultConnection=connectionFactory.createConnection();
-    defaultConnection.start();
-    defaultSession=defaultConnection.createSession(transacted,ackMode);
+  int attempts=0;
+  JMSException lastException=null;
+  while (!started && attempts++ < maxAttempts) {
+    try {
+      defaultConnection=connectionFactory.createConnection();
+      defaultConnection.start();
+      defaultSession=defaultConnection.createSession(transacted,ackMode);
+      started=true;
+    }
+ catch (    JMSException e) {
+      lastException=e;
+      LOG.warn("Could not start a connection",e);
+      try {
+        Thread.sleep(1000);
+      }
+ catch (      InterruptedException ignore) {
+      }
+    }
   }
-  started=true;
+  if (!started) {
+    throw lastException;
+  }
 }
