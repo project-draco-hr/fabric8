@@ -1,0 +1,23 @@
+{
+  if (downloadExecutor == null) {
+    if (executorServiceFinder == null) {
+      try {
+        executorServiceFinder=new FelixExecutorServiceFinder();
+        downloadExecutor=executorServiceFinder.find(bundleContext.getBundle());
+      }
+ catch (      Throwable t) {
+        LOGGER.warn("Cannot find reference to MonitoringService. This exception will be ignored.",t);
+      }
+    }
+    if (downloadExecutor == null) {
+      LOGGER.info("Creating a new fixed thread pool for download manager.");
+      downloadExecutor=Executors.newFixedThreadPool(5);
+      shutdownDownloadExecutor=true;
+    }
+ else {
+      LOGGER.info("Using Felix thread pool for download manager.");
+      shutdownDownloadExecutor=false;
+    }
+  }
+  return downloadExecutor;
+}

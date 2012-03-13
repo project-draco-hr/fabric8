@@ -1,3 +1,25 @@
 {
-  throw new UnsupportedOperationException();
+  CreateContainerMetadata metadata=container.getMetadata();
+  if (!(metadata instanceof CreateJCloudsContainerMetadata)) {
+    throw new IllegalStateException("Container doesn't have valid create container metadata type");
+  }
+ else {
+    CreateJCloudsContainerMetadata jCloudsContainerMetadata=(CreateJCloudsContainerMetadata)metadata;
+    CreateJCloudsContainerOptions options=jCloudsContainerMetadata.getCreateOptions();
+    try {
+      Credentials credentials=new Credentials(jCloudsContainerMetadata.getIdentity(),jCloudsContainerMetadata.getCredential());
+      String nodeId=jCloudsContainerMetadata.getNodeId();
+      ComputeService computeService=getOrCreateComputeService(options);
+      String script=buildStopScript(options.name(container.getId()));
+      if (credentials != null) {
+        computeService.runScriptOnNode(nodeId,script,RunScriptOptions.Builder.overrideCredentialsWith(credentials).runAsRoot(false));
+      }
+ else {
+        computeService.runScriptOnNode(nodeId,script);
+      }
+    }
+ catch (    Throwable t) {
+      jCloudsContainerMetadata.setFailure(t);
+    }
+  }
 }

@@ -5,6 +5,7 @@
     String karafName=System.getProperty("karaf.name");
     Bundle bundleFabricConfigAdmin=installOrStopBundle("org.fusesource.fabric.fabric-configadmin","mvn:org.fusesource.fabric/fabric-configadmin/" + FabricConstants.FABRIC_VERSION);
     Bundle bundleFabricZooKeeper=installOrStopBundle("org.fusesource.fabric.fabric-zookeeper","mvn:org.fusesource.fabric/fabric-zookeeper/" + FabricConstants.FABRIC_VERSION);
+    Bundle bundleFabricJaas=installOrStopBundle("org.fusesource.fabric.fabric-jaas  ","mvn:org.fusesource.fabric/fabric-jaas/" + FabricConstants.FABRIC_VERSION);
     String connectionUrl=getLocalHostAddress() + ":" + Integer.toString(port);
     String mavenProxyUrl="http://" + getLocalHostAddress() + ":"+ 8040;
     Configuration config=configurationAdmin.createFactoryConfiguration("org.fusesource.fabric.zookeeper.server");
@@ -65,6 +66,7 @@
     ZooKeeperUtils.createDefault(client,"/fabric/authentication/users","admin={CRYPT}21232f297a57a5a743894a0e4a801fc3{CRYPT},admin\nsystem={CRYPT}1d0258c2440a8d19e716292b231e3190{CRYPT},admin");
     ZooKeeperUtils.createDefault(client,ZkPath.CONFIGS_MAVEN_REPO.getPath(),mavenProxyUrl);
     bundleFabricConfigAdmin.start();
+    bundleFabricJaas.start();
   }
  catch (  Exception e) {
     throw new FabricException("Unable to create zookeeper server configuration",e);

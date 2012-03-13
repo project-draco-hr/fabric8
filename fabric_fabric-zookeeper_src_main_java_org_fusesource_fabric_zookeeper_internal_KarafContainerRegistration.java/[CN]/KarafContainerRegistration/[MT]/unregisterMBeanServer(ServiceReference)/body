@@ -1,7 +1,7 @@
 {
   if (mbeanServer != null) {
     try {
-      semaphore.acquire();
+      lock.lock();
       mbeanServer.removeNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this);
       unregisterDomains();
     }
@@ -9,7 +9,7 @@
       logger.warn("An error occurred during mbean server unregistration. This exception will be ignored.",e);
     }
  finally {
-      semaphore.release();
+      lock.unlock();
     }
   }
   mbeanServer=null;

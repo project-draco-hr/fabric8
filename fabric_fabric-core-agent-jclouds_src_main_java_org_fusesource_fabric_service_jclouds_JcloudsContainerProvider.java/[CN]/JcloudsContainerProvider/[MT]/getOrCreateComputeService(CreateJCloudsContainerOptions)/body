@@ -1,0 +1,21 @@
+{
+  ComputeService computeService=null;
+  if (options != null) {
+    computeService=computeServiceMap.get(options.getProviderName());
+    if (computeService == null) {
+      Iterable<? extends Module> modules=ImmutableSet.of();
+      Properties props=new Properties();
+      props.put("provider",options.getProviderName());
+      props.put("identity",options.getIdentity());
+      props.put("credential",options.getCredential());
+      if (!Strings.isNullOrEmpty(options.getOwner()) && options.getProviderName().equals("aws-ec2")) {
+        props.put("jclouds.ec2.ami-owners",options.getOwner());
+      }
+      RestContextFactory restFactory=new RestContextFactory();
+      ComputeServiceContext context=new ComputeServiceContextFactory(restFactory).createContext(options.getProviderName(),options.getIdentity(),options.getCredential(),modules,props);
+      computeService=context.getComputeService();
+      computeServiceMap.put(options.getProviderName(),computeService);
+    }
+  }
+  return computeService;
+}

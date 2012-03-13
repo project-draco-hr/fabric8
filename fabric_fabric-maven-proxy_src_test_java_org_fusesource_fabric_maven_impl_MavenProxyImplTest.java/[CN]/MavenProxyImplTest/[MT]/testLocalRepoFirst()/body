@@ -10,7 +10,8 @@
   proxy.start();
   status=getArtifact(KARAF_GROUP_ID,KARAF_ARTIFACT_ID,KARAF_VERSION,KARAF_TYPE);
   assertEquals("Expected http status OK",HttpStatus.SC_OK,status);
-  file.delete();
-  status=getArtifact(KARAF_GROUP_ID,KARAF_ARTIFACT_ID,KARAF_VERSION,KARAF_TYPE);
-  assertEquals("Expected http status OK",HttpStatus.SC_NOT_FOUND,status);
+  if (file.delete()) {
+    status=getArtifact(KARAF_GROUP_ID,KARAF_ARTIFACT_ID,KARAF_VERSION,KARAF_TYPE);
+    assertEquals("Expected http status OK",HttpStatus.SC_NOT_FOUND,status);
+  }
 }
