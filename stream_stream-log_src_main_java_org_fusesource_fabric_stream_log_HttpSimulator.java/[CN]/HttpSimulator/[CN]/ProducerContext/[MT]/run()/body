@@ -1,9 +1,9 @@
 {
-  CamelContext context=new DefaultCamelContext();
+  LogStreamer streamer=null;
   try {
     PipedInputStream in=new PipedInputStream();
     out=new PrintStream(new PipedOutputStream(in));
-    LogStreamProducer p=new LogStreamProducer();
+    Producer p=new Producer();
     p.setBatchSize(batchSize);
     p.setBatchTimeout(batchTimeout);
     p.setCompress(compress);
@@ -12,8 +12,8 @@
     String destination=destinations.get(id % destinations.size());
     p.setDestination(destination);
     p.setIs(in);
-    p.configure(context);
-    context.start();
+    streamer=p.configure();
+    streamer.start();
     System.out.println(format("Started HTTP log event simulator #" + id + " generating %,.2f events/sec",randomEntriesPerSec));
     startedLatch.countDown();
     long nextMealTime=System.currentTimeMillis() + nextFeedDelay();
@@ -32,9 +32,9 @@
   }
  finally {
     try {
-      context.stop();
+      streamer.stop();
     }
- catch (    Exception e) {
+ catch (    Throwable e) {
     }
   }
 }
