@@ -13,7 +13,9 @@
     repositories.add(new RemoteRepository("local","default",localRepository));
     int i=0;
     for (    String rep : remoteRepositories.split(",")) {
-      repositories.add(new RemoteRepository("repo-" + i++,"default",rep));
+      RemoteRepository remoteRepository=new RemoteRepository("repo-" + i++,"default",rep);
+      remoteRepository.setPolicy(true,new RepositoryPolicy(true,updatePolicy,checksumPolicy));
+      repositories.add(remoteRepository);
     }
     String repos="local:" + localRepository + " ";
     for (    RemoteRepository repo : repositories) {
