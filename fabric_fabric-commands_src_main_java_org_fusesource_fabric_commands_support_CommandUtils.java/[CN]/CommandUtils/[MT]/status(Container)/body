@@ -1,6 +1,6 @@
 {
-  String status=container.getProvisionStatus();
-  if (status == null || container.isEnsembleServer()) {
+  String status=container.isManaged() ? container.getProvisionStatus() : "";
+  if (status == null) {
     return "";
   }
   status=status.trim();
