@@ -1,15 +1,23 @@
 {
   Session session=null;
   Exception connectException=null;
-  for (int i=0; i <= sshRetries; i++) {
+  for (int i=0; i <= options.getSshRetries(); i++) {
     if (i > 0) {
       long delayMs=(long)(200L * Math.pow(i,2));
       Thread.sleep(delayMs);
     }
     try {
-      session=new JSch().getSession(username,host,port);
+      JSch jsch=new JSch();
+      byte[] privateKey=readFile(options.getPrivateKeyFile());
+      if (privateKey != null && options.getPassword() == null) {
+        jsch.addIdentity(options.getUsername(),privateKey,null,null);
+        session=jsch.getSession(options.getUsername(),options.getHost(),options.getPort());
+      }
+ else {
+        session=jsch.getSession(options.getUsername(),options.getHost(),options.getPort());
+        session.setPassword(options.getPassword());
+      }
       session.setTimeout(60000);
-      session.setPassword(password);
       java.util.Properties config=new java.util.Properties();
       config.put("StrictHostKeyChecking","no");
       session.setConfig(config);
@@ -55,7 +63,7 @@
       System.out.println("Error : " + error.toString());
     }
     if (errorStatus != 0) {
-      throw new Exception(String.format("%s@%s:%d: received exit status %d executing \n--- command ---\n%s\n--- output ---\n%s\n--- error ---\n%s\n------\n",username,host,port,executor.getExitStatus(),script,output.toString(),error.toString()));
+      throw new Exception(String.format("%s@%s:%d: received exit status %d executing \n--- command ---\n%s\n--- output ---\n%s\n--- error ---\n%s\n------\n",options.getUsername(),options.getHost(),options.getPort(),executor.getExitStatus(),script,output.toString(),error.toString()));
     }
   }
   finally {
