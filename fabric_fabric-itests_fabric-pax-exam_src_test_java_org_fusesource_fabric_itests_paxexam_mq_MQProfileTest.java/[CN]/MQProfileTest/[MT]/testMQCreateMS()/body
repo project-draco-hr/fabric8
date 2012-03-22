@@ -1,0 +1,18 @@
+{
+  System.err.println(executeCommand("fabric:create"));
+  addStagingRepoToDefaultProfile();
+  executeCommand("mq-create --create-container broker1,broker2 ms-broker");
+  Container container1=getFabricService().getContainer("broker1");
+  containers.add(container1);
+  waitForProvisionSuccess(container1,PROVISION_TIMEOUT);
+  Container container2=getFabricService().getContainer("broker2");
+  containers.add(container2);
+  waitForProvisionSuccess(container2,PROVISION_TIMEOUT);
+  BrokerViewMBean broker1=(BrokerViewMBean)getMBean(container1,new ObjectName("org.apache.activemq:Type=Broker,BrokerName=ms-broker"),BrokerViewMBean.class);
+  assertEquals("ms-broker",broker1.getBrokerName());
+  destroyChildContainer("broker1");
+  containers.remove(container1);
+  Thread.sleep(10000);
+  BrokerViewMBean broker2=(BrokerViewMBean)getMBean(container2,new ObjectName("org.apache.activemq:Type=Broker,BrokerName=ms-broker"),BrokerViewMBean.class);
+  assertEquals("ms-broker",broker2.getBrokerName());
+}
