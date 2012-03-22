@@ -3,7 +3,7 @@
     child=path + "/" + child;
     if (dest.exists(child) == null) {
       byte[] data=source.getData(child);
-      dest.createBytesNodeWithParents(child,data,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      set(dest,child,data);
       copy(source,dest,child);
     }
   }

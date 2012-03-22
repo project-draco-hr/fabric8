@@ -10,8 +10,8 @@
   executeCommand("fabric:profile-create --parents dosgi dosgi-camel");
   executeCommand("fabric:profile-edit --repositories mvn:org.fusesource.fabric.fabric-examples.fabric-camel-dosgi/features/" + System.getProperty("fabric.version") + "/xml/features dosgi-camel");
   executeCommand("fabric:profile-edit --features fabric-example-camel-dosgi dosgi-camel");
-  createAndAssetChildContainer("dosgi-provider","root","dosgi-provider");
-  createAndAssetChildContainer("dosgi-camel","root","dosgi-camel");
+  createAndAssertChildContainer("dosgi-provider","root","dosgi-provider");
+  createAndAssertChildContainer("dosgi-camel","root","dosgi-camel");
   String response=executeCommand("fabric:container-connect dosgi-camel log:display | grep \"Message from distributed service to\"");
   System.err.println(executeCommand("fabric:container-connect dosgi-camel camel:route-info fabric-client"));
   assertNotNull(response);
