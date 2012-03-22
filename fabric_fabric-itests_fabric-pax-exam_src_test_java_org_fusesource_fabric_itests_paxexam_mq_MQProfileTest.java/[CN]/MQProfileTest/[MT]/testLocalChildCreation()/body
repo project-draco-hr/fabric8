@@ -1,19 +1,11 @@
 {
   System.err.println(executeCommand("fabric:create"));
   addStagingRepoToDefaultProfile();
-  createAndAssertChildContainer("mq1","root","mq");
-  createAndAssertChildContainer("example","root","example-mq");
+  containers.add(createAndAssertChildContainer("mq1","root","mq"));
+  containers.add(createAndAssertChildContainer("example","root","example-mq"));
   Thread.sleep(3000);
   Container container=getFabricService().getContainer("mq1");
-  System.out.println(container.getJmxUrl());
-  JMXServiceURL url=new JMXServiceURL(container.getJmxUrl());
-  Map env=new HashMap();
-  String[] creds={"admin","admin"};
-  env.put(JMXConnector.CREDENTIALS,creds);
-  JMXConnector jmxc=JMXConnectorFactory.connect(url,env);
-  MBeanServerConnection mbsc=jmxc.getMBeanServerConnection();
-  ObjectName mbeanName=new ObjectName("org.apache.activemq:Type=Broker,BrokerName=karaf.name");
-  BrokerViewMBean bean=JMX.newMBeanProxy(mbsc,mbeanName,BrokerViewMBean.class,true);
+  BrokerViewMBean bean=(BrokerViewMBean)getMBean(container,new ObjectName("org.apache.activemq:Type=Broker,BrokerName=karaf.name"),BrokerViewMBean.class);
   assertEquals("Producer not present",1,bean.getTotalProducerCount());
   assertEquals("Consumer not present",1,bean.getTotalConsumerCount());
 }
