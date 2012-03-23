@@ -12,7 +12,7 @@
       createLocalServer();
       return;
     }
-    String url=getSubstitutedData("/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties#zookeeper.url");
+    String url=ZooKeeperUtils.getSubstitutedData(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties#zookeeper.url");
     if (!url.equals(zooKeeperUrl)) {
       throw new IllegalStateException("The zookeeper configuration is not properly backed in the zookeeper tree.");
     }
@@ -28,11 +28,11 @@
       for (      Object n : p.keySet()) {
         String node=(String)n;
         if (node.startsWith("server.")) {
-          String data=getSubstitutedData("/fabric/configs/versions/" + version + "/profiles/fabric-ensemble-"+ oldClusterId+ "/org.fusesource.fabric.zookeeper.server-"+ oldClusterId+ ".properties#"+ node);
+          String data=ZooKeeperUtils.getSubstitutedData(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/fabric-ensemble-"+ oldClusterId+ "/org.fusesource.fabric.zookeeper.server-"+ oldClusterId+ ".properties#"+ node);
           addUsedPorts(usedPorts,data);
         }
       }
-      String datas=getSubstitutedData("/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties#zookeeper.url");
+      String datas=ZooKeeperUtils.getSubstitutedData(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties#zookeeper.url");
       for (      String data : datas.split(",")) {
         addUsedPorts(usedPorts,data);
       }
