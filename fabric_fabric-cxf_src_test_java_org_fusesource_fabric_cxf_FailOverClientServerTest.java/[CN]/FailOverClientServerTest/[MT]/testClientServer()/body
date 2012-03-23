@@ -1,7 +1,7 @@
 {
   assertNotNull(bus);
   ServerFactoryBean factory=new ServerFactoryBean();
-  factory.setServiceBean(new HelloImplFail());
+  factory.setServiceBean(new HelloImpl());
   factory.setAddress("http://localhost:9000/fail/server");
   factory.setBus(bus);
   factory.create();
@@ -21,6 +21,7 @@
   clientFactory.setOutInterceptors(outInterceptor);
   Hello hello=clientFactory.create(Hello.class);
   String response=hello.sayHello();
-  System.out.println("Get the response here " + response);
+  assertEquals("Get a wrong response","Hello",response);
+  response=hello.sayHello();
   assertEquals("Get a wrong response","Hello",response);
 }

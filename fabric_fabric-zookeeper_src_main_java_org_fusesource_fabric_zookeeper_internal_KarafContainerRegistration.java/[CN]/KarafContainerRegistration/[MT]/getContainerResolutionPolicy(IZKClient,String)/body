@@ -1,0 +1,7 @@
+{
+  String policy=ZkDefs.LOCAL_HOSTNAME;
+  if (zookeeper.exists(ZkPath.POLICIES.getPath(ZkDefs.RESOLVER)) != null) {
+    policy=zookeeper.getStringData(ZkPath.CONTAINER_RESOLVER.getPath(container));
+  }
+  return policy;
+}

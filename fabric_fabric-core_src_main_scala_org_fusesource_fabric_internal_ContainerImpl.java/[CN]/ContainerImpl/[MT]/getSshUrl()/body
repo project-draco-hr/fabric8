@@ -1,3 +1,8 @@
 {
-  return getZkData(ZkPath.CONTAINER_SSH);
+  try {
+    return ZooKeeperUtils.getSubstitutedData(service.getZooKeeper(),ZkPath.CONTAINER_SSH.getPath(id));
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
 }
