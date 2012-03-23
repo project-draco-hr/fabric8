@@ -1,5 +1,8 @@
 {
   JMXConnector connector=createConnector();
+  if (connector == null) {
+    throw new IllegalStateException("JMX connector can not be created");
+  }
   try {
     return callback.doWithJmxConnector(connector);
   }

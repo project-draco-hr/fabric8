@@ -5,9 +5,9 @@
     assertNotNull(fabricService);
     Thread.sleep(DEFAULT_WAIT);
     Container container=fabricService.getContainer(name);
-    container.destroy();
+    new ChildContainerProvider((FabricServiceImpl)fabricService).destroy(container);
   }
  catch (  Exception ex) {
-    System.err.println(ex.getMessage());
+    ex.printStackTrace();
   }
 }
