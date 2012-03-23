@@ -17,6 +17,8 @@
         zooKeeper.createWithParents(node,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
       }
       track(node);
+      resolutionPolicy=ZkPath.CONTAINER_RESOLVER.getPath(name);
+      track(resolutionPolicy);
     }
   finally {
       tracking=false;

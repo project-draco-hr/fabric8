@@ -2,7 +2,6 @@
   logger.trace("onConnected");
   try {
     lock.tryLock(10,TimeUnit.SECONDS);
-    String name=System.getProperty("karaf.name");
     String nodeAlive=CONTAINER_ALIVE.getPath(name);
     Stat stat=zooKeeper.exists(nodeAlive);
     if (stat != null) {
@@ -27,7 +26,12 @@
     if (sshUrl != null) {
       zooKeeper.createOrSetWithParents(CONTAINER_SSH.getPath(name),getSshUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
     }
-    zooKeeper.createOrSetWithParents(CONTAINER_IP.getPath(name),getLocalHostAddress(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    if (zooKeeper.exists(CONTAINER_RESOLVER.getPath(name)) == null) {
+      zooKeeper.createOrSetWithParents(CONTAINER_RESOLVER.getPath(name),getGlobalResolutionPolicy(zooKeeper),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    }
+    zooKeeper.createOrSetWithParents(CONTAINER_LOCAL_HOSTNAME.getPath(name),getLocalHostName(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    zooKeeper.createOrSetWithParents(CONTAINER_LOCAL_IP.getPath(name),getLocalIp(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    zooKeeper.createOrSetWithParents(CONTAINER_IP.getPath(name),getContainerPointer(zooKeeper,name),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
     String version=System.getProperty("fabric.version",ZkDefs.DEFAULT_VERSION);
     String profiles=System.getProperty("fabric.profiles");
     if (profiles != null) {
