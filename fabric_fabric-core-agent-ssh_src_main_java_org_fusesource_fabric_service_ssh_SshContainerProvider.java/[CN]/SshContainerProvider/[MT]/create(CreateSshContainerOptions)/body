@@ -13,10 +13,6 @@
     if (port == -1) {
       port=22;
     }
-    String username=options.getUsername();
-    String password=options.getPassword();
-    int sshRetries=options.getSshRetries();
-    int retryDelay=1;
     String originalName=new String(options.getName());
     for (int i=1; i <= options.getNumber(); i++) {
       String containerName;
@@ -32,7 +28,7 @@
       String script=buildInstallAndStartScript(options.name(containerName));
       logger.debug("Running script on host {}:\n{}",host,script);
       try {
-        runScriptOnHost(host,port,username,password,script,sshRetries,retryDelay);
+        runScriptOnHost(options,script);
       }
  catch (      Throwable ex) {
         metadata.setFailure(ex);

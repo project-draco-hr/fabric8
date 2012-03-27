@@ -1,0 +1,23 @@
+{
+  checkFabricAvailable();
+  if (containerIds == null || containerIds.isEmpty()) {
+    if (all) {
+      containerIds=new ArrayList<String>();
+      for (      Container container : fabricService.getContainers()) {
+        containerIds.add(container.getId());
+      }
+    }
+ else {
+      containerIds=Arrays.asList(fabricService.getCurrentContainer().getId());
+    }
+  }
+ else {
+    if (all) {
+      throw new IllegalArgumentException("Can not use --all with a list of containers simultaneously");
+    }
+  }
+  for (  String container : containerIds) {
+    getZooKeeper().setData(ZkPath.CONTAINER_RESOLVER.getPath(container),resolver);
+  }
+  return null;
+}

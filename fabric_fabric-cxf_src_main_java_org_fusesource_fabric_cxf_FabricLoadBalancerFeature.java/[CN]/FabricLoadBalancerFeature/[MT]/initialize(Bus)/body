@@ -1,10 +1,17 @@
 {
-  FabricServerListener lister=new FabricServerListener(group);
-  ServerLifeCycleManager mgr=bus.getExtension(ServerLifeCycleManager.class);
-  if (mgr != null) {
-    mgr.registerListener(lister);
-  }
+  try {
+    FabricServerListener lister=new FabricServerListener(getGroup());
+    ServerLifeCycleManager mgr=bus.getExtension(ServerLifeCycleManager.class);
+    if (mgr != null) {
+      mgr.registerListener(lister);
+    }
  else {
-    LOG.warn("Cannot find the ServerLifeCycleManager ");
+      LOG.error("Cannot find the ServerLifeCycleManager, we cannot publish the service through fabric.");
+    }
   }
+ catch (  Exception ex) {
+    LOG.error("Cannot initialize the bus with FabricLoadBalancerFeature due to " + ex);
+  }
+  BusLifeCycleManager manager=bus.getExtension(BusLifeCycleManager.class);
+  manager.registerLifeCycleListener(this);
 }

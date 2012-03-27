@@ -12,7 +12,7 @@
       createLocalServer();
       return;
     }
-    String url=getSubstitutedData("/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties#zookeeper.url");
+    String url=ZooKeeperUtils.getSubstitutedData(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties#zookeeper.url");
     if (!url.equals(zooKeeperUrl)) {
       throw new IllegalStateException("The zookeeper configuration is not properly backed in the zookeeper tree.");
     }
@@ -28,11 +28,11 @@
       for (      Object n : p.keySet()) {
         String node=(String)n;
         if (node.startsWith("server.")) {
-          String data=getSubstitutedData("/fabric/configs/versions/" + version + "/profiles/fabric-ensemble-"+ oldClusterId+ "/org.fusesource.fabric.zookeeper.server-"+ oldClusterId+ ".properties#"+ node);
+          String data=ZooKeeperUtils.getSubstitutedData(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/fabric-ensemble-"+ oldClusterId+ "/org.fusesource.fabric.zookeeper.server-"+ oldClusterId+ ".properties#"+ node);
           addUsedPorts(usedPorts,data);
         }
       }
-      String datas=getSubstitutedData("/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties#zookeeper.url");
+      String datas=ZooKeeperUtils.getSubstitutedData(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties#zookeeper.url");
       for (      String data : datas.split(",")) {
         addUsedPorts(usedPorts,data);
       }
@@ -55,7 +55,7 @@
     String realConnectionUrl="";
     String containerList="";
     for (    String container : containers) {
-      String ip=zooKeeper.getStringData(ZkPath.CONTAINER_IP.getPath(container));
+      String ip=ZooKeeperUtils.getSubstitutedData(zooKeeper,ZkPath.CONTAINER_IP.getPath(container));
       String profNode="/fabric/configs/versions/" + version + "/profiles/fabric-ensemble-"+ newClusterId+ "-"+ Integer.toString(index);
       String pidNode=profNode + "/org.fusesource.fabric.zookeeper.server-" + newClusterId+ ".properties";
       Properties pidNodeProperties=new Properties();
@@ -84,25 +84,28 @@
     }
     ZooKeeperUtils.set(zooKeeper,profileNode,toString(profileNodeProperties));
     if (oldClusterId != null) {
-      ZKClient src=new ZKClient(zooKeeperUrl,Timespan.ONE_MINUTE,null);
       ZKClient dst=new ZKClient(realConnectionUrl,Timespan.ONE_MINUTE,null);
       try {
-        src.start();
         dst.start();
-        src.waitForStart(new Timespan(5,Timespan.TimeUnit.SECOND));
-        dst.waitForStart(new Timespan(5,Timespan.TimeUnit.SECOND));
-        ZooKeeperUtils.copy(src,dst,"/fabric/authentication");
-        ZooKeeperUtils.copy(src,dst,"/fabric/configs");
+        dst.waitForStart(new Timespan(30,Timespan.TimeUnit.SECOND));
+        ZooKeeperUtils.copy(zooKeeper,dst,"/fabric/registry");
+        ZooKeeperUtils.copy(zooKeeper,dst,"/fabric/authentication");
+        ZooKeeperUtils.copy(zooKeeper,dst,"/fabric/configs");
+        for (        String container : containers) {
+          String alivePath="/fabric/registry/containers/alive/" + container;
+          if (dst.exists(alivePath) != null) {
+            dst.deleteWithChildren(alivePath);
+          }
+        }
         ZooKeeperUtils.set(dst,"/fabric/configs/versions/" + version + "/general/fabric-ensemble",newClusterId);
         ZooKeeperUtils.set(dst,"/fabric/configs/versions/" + version + "/general/fabric-ensemble/"+ newClusterId,containerList);
         for (        String container : dst.getChildren("/fabric/configs/versions/" + version + "/containers")) {
           ZooKeeperUtils.remove(dst,"/fabric/configs/versions/" + version + "/containers/"+ container,"fabric-ensemble-" + oldClusterId + "-.*");
         }
         setConfigProperty(dst,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.url",connectionUrl);
-        setConfigProperty(src,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.url",connectionUrl);
+        setConfigProperty(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.url",connectionUrl);
       }
   finally {
-        src.destroy();
         dst.destroy();
       }
     }

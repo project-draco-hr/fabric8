@@ -1,0 +1,9 @@
+{
+  BundleContext context=createNiceMock(BundleContext.class);
+  ServiceReference reference=createNiceMock(ServiceReference.class);
+  expect(context.getServiceReference("org.osgi.service.cm.ConfigurationAdmin")).andReturn(null);
+  replay(context);
+  Dictionary properties=getProperties(context,PID);
+  assertNotNull(properties);
+  assertTrue(properties.isEmpty());
+}

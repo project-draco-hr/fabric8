@@ -4,7 +4,7 @@
     String toChild=to + "/" + child;
     if (zk.exists(toChild) == null) {
       byte[] data=zk.getData(fromChild);
-      zk.createBytesNodeWithParents(toChild,data,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      set(zk,toChild,data);
       copy(zk,fromChild,toChild);
     }
   }

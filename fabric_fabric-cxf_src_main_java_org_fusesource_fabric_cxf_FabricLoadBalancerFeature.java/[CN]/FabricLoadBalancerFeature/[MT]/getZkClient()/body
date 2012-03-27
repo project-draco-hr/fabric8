@@ -1,3 +1,17 @@
 {
+  if (zkClient == null) {
+    String connectString=System.getProperty("zookeeper.url","localhost:2181");
+    ZKClient client=new ZKClient(connectString,Timespan.parse("10s"),null);
+    LOG.debug("IZKClient not be found in registry, creating new with connection " + connectString);
+    zkClient=client;
+    setShouldCloseZkClient(true);
+  }
+  if (zkClient instanceof ZKClient) {
+    if (!zkClient.isConnected()) {
+      LOG.debug("Staring IZKClient " + zkClient);
+      ((ZKClient)zkClient).start();
+    }
+  }
+  checkZkConnected();
   return zkClient;
 }
