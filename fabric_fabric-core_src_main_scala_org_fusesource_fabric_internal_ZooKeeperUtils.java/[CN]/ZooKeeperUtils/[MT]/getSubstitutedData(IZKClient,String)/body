@@ -1,20 +1,23 @@
 {
-  String data=new String(ZkPath.loadURL(zooKeeper,path),"UTF-8");
   Map<String,String> props=new HashMap<String,String>();
-  props.put("data",data);
-  InterpolationHelper.performSubstitution(props,new InterpolationHelper.SubstitutionCallback(){
-    @Override public String getValue(    String key){
-      if (key.startsWith("zk:")) {
-        try {
-          return new String(ZkPath.loadURL(zooKeeper,key),"UTF-8");
+  String normaledPath=path != null && path.contains("#") ? path.substring(0,path.lastIndexOf("#")) : path;
+  if (normaledPath != null && zooKeeper.exists(normaledPath) != null) {
+    String data=new String(ZkPath.loadURL(zooKeeper,path),"UTF-8");
+    props.put("data",data);
+    InterpolationHelper.performSubstitution(props,new InterpolationHelper.SubstitutionCallback(){
+      @Override public String getValue(      String key){
+        if (key.startsWith("zk:")) {
+          try {
+            return new String(ZkPath.loadURL(zooKeeper,key),"UTF-8");
+          }
+ catch (          Exception e) {
+            throw new RuntimeException(e);
+          }
         }
- catch (        Exception e) {
-          throw new RuntimeException(e);
-        }
+        return null;
       }
-      return null;
     }
-  }
 );
+  }
   return props.get("data");
 }
