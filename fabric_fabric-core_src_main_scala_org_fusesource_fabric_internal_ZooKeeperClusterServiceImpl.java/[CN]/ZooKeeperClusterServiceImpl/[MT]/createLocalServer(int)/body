@@ -6,8 +6,7 @@
     Bundle bundleFabricConfigAdmin=installOrStopBundle("org.fusesource.fabric.fabric-configadmin","mvn:org.fusesource.fabric/fabric-configadmin/" + FabricConstants.FABRIC_VERSION);
     Bundle bundleFabricZooKeeper=installOrStopBundle("org.fusesource.fabric.fabric-zookeeper","mvn:org.fusesource.fabric/fabric-zookeeper/" + FabricConstants.FABRIC_VERSION);
     Bundle bundleFabricJaas=installOrStopBundle("org.fusesource.fabric.fabric-jaas  ","mvn:org.fusesource.fabric/fabric-jaas/" + FabricConstants.FABRIC_VERSION);
-    String connectionUrl=getLocalHostAddress() + ":" + Integer.toString(port);
-    String mavenProxyUrl="http://" + getLocalHostAddress() + ":"+ 8040;
+    String connectionUrl=HostUtils.getLocalHostName() + ":" + Integer.toString(port);
     Configuration config=configurationAdmin.createFactoryConfiguration("org.fusesource.fabric.zookeeper.server");
     properties=new Properties();
     properties.put("tickTime","2000");
