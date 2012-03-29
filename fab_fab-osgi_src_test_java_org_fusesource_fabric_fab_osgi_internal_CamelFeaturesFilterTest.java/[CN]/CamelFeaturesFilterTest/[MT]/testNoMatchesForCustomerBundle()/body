@@ -1,0 +1,6 @@
+{
+  FeaturesService service=createNiceMock(FeaturesService.class);
+  replay(service);
+  FabConnection.CamelFeaturesFilter filter=new FabConnection.CamelFeaturesFilter(service);
+  assertFalse("camel-blueprint feature should not have replaced the customer dependency",filter.matches(DependencyTree.newBuilder("com.customer.group.id","camel-blueprint","2.9.0").build()));
+}

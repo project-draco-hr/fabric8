@@ -1,0 +1,10 @@
+{
+  FeaturesService service=createNiceMock(FeaturesService.class);
+  Feature feature=createNiceMock(Feature.class);
+  expect(feature.getName()).andReturn("camel-blueprint").anyTimes();
+  expect(service.getFeature("camel-blueprint")).andReturn(feature);
+  expect(service.isInstalled(feature)).andReturn(true);
+  replay(service,feature);
+  FabConnection.CamelFeaturesFilter filter=new FabConnection.CamelFeaturesFilter(service);
+  assertTrue("camel-blueprint feature should have replaced the dependency",filter.matches(DependencyTree.newBuilder("org.apache.camel","camel-blueprint","2.9.0").build()));
+}

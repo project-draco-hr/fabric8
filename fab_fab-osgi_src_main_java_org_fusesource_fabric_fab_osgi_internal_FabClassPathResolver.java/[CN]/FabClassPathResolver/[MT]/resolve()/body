@@ -19,6 +19,9 @@
   Filter<Dependency> optionalFilter=DependencyFilters.parseExcludeOptionalFilter(join(optionalDependencyPatterns," "));
   Filter<Dependency> excludeFilter=DependencyFilters.parseExcludeFilter(join(excludeDependencyFilterPatterns," "),optionalFilter);
   this.rootTree=connection.collectDependencyTree(offline,excludeFilter);
+  for (  Filter<DependencyTree> filter : pruningFilters) {
+    DependencyTreeFilters.prune(rootTree,filter);
+  }
   String name=getManifestProperty(ServiceConstants.INSTR_BUNDLE_SYMBOLIC_NAME);
   if (name.length() <= 0) {
     name=rootTree.getBundleSymbolicName();
