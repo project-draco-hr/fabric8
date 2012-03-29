@@ -10,6 +10,7 @@
     }
     HashSet<String> actualImports=new HashSet<String>();
     InputStream rc=BndUtils.createBundle(URLUtils.prepareInputStream(new URL(fabUri),configuration.getCertificateCheck()),instructions,fabUri,OverwriteMode.MERGE,embeddedResources,classPathResolver.getExtraImportPackages(),actualImports,this);
+    installMissingFeatures();
     if (getConfiguration().isInstallMissingDependencies()) {
       installMissingDependencies(actualImports);
     }

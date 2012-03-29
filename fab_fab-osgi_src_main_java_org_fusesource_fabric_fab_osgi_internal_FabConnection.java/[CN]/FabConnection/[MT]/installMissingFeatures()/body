@@ -1,0 +1,17 @@
+{
+  ServiceReference reference=bundleContext.getServiceReference(FeaturesService.class.getName());
+  try {
+    final FeaturesService service=(FeaturesService)bundleContext.getService(reference);
+    for (    String feature : classPathResolver.getInstallFeatures()) {
+      try {
+        installMissingFeature(service,feature);
+      }
+ catch (      Exception e) {
+        LOG.warn("Unable to install missing feature {} - FAB {} may not get installed properly",feature,url);
+      }
+    }
+  }
+  finally {
+    bundleContext.ungetService(reference);
+  }
+}

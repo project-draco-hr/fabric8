@@ -79,6 +79,10 @@
   sharedDependencies=filterOutDuplicates(sharedDependencies);
   installDependencies=filterOutDuplicates(installDependencies);
   optionalDependencies=filterOutDuplicates(optionalDependencies);
+  LOG.debug("Required features:");
+  for (  String feature : getInstallFeatures()) {
+    LOG.debug("- " + feature);
+  }
   LOG.debug("nonSharedDependencies:");
   for (  DependencyTree d : nonSharedDependencies) {
     LOG.debug("  " + d.getDependencyId());

@@ -4,10 +4,7 @@
     try {
       Feature feature=service.getFeature(dependencyTree.getArtifactId());
       if (feature != null) {
-        if (!service.isInstalled(feature)) {
-          LOG.info("Installing Camel feature {} for artifact {}/{}/{}",new Object[]{feature.getName(),dependencyTree.getGroupId(),dependencyTree.getArtifactId(),dependencyTree.getVersion()});
-          service.installFeature(feature.getName());
-        }
+        features.add(String.format("%s/%s",feature.getName(),feature.getVersion()));
         result=true;
       }
     }
