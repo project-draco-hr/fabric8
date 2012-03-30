@@ -1,9 +1,6 @@
 {
   FabClassPathResolver resolver=new FabClassPathResolver(new MockFabFacade(),null,null){
-    private Map<String,String> properties=new HashMap<String,String>();
-{
-      properties.put(ServiceConstants.INSTR_FAB_INSTALL_PROVIDED_BUNDLE_DEPENDENCIES,"true");
-    }
+    Map<String,String> properties=Services.createProperties(INSTR_FAB_INSTALL_PROVIDED_BUNDLE_DEPENDENCIES,"true");
     @Override public String getManifestProperty(    String name){
       return properties.get(name);
     }
