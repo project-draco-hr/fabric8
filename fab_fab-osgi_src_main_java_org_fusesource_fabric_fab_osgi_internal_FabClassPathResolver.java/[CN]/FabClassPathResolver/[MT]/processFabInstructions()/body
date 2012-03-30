@@ -5,4 +5,12 @@
   optionalDependencyPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_FAB_OPTIONAL_DEPENDENCY)),"\\s+"));
   importExportFilterPatterns.addAll(Strings.splitAndTrimAsList(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_FAB_IMPORT_DEPENDENCY_EXPORTS)),"\\s+"));
   installFeatures.addCollection(Strings.splitAndTrimAsList(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_FAB_REQUIRE_FEATURE)),"\\s+"));
+  for (  String url : Strings.splitAndTrimAsList(emptyIfNull(getManifestProperty(ServiceConstants.INSTR_FAB_REQUIRE_FEATURE_URL)),"\\s+")) {
+    try {
+      installFeatureURLs.add(new URI(url));
+    }
+ catch (    URISyntaxException e) {
+      LOG.warn("Invalid URI {} listed in {} will be ignored",new Object[]{url,ServiceConstants.INSTR_FAB_REQUIRE_FEATURE_URL});
+    }
+  }
 }
