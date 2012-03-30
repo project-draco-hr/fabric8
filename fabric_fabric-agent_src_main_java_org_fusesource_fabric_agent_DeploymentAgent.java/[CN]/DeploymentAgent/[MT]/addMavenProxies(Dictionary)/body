@@ -1,0 +1,34 @@
+{
+  try {
+    IZKClient zooKeeper=zkClient.call();
+    if (zooKeeper.exists(ZkPath.CONFIGS_MAVEN_PROXY.getPath()) != null) {
+      StringBuffer sb=new StringBuffer();
+      List<String> children=zooKeeper.getChildren(ZkPath.CONFIGS_MAVEN_PROXY.getPath());
+      for (      String child : children) {
+        String mavenRepo=ZooKeeperUtils.getSubstitutedData(zooKeeper,ZkPath.CONFIGS_MAVEN_PROXY.getPath() + "/" + child);
+        if (mavenRepo != null && mavenRepo.length() > 0) {
+          if (!mavenRepo.endsWith("/")) {
+            mavenRepo+="/";
+          }
+          if (sb.length() > 0) {
+            sb.append(",");
+          }
+          sb.append(mavenRepo);
+          sb.append("@snapshots");
+        }
+      }
+      String existingRepos=(String)props.get("org.ops4j.pax.url.mvn.repositories");
+      if (existingRepos != null) {
+        if (sb.length() > 0) {
+          sb.append(",");
+        }
+        sb.append(existingRepos);
+      }
+      props.put("org.ops4j.pax.url.mvn.repositories",sb.toString());
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.warn("Unable to retrieve maven proxy urls: " + e.getMessage());
+    LOGGER.debug("Unable to retrieve maven proxy urls: " + e.getMessage(),e);
+  }
+}
