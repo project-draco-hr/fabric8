@@ -10,7 +10,10 @@
  catch (    UnknownHostException e) {
     }
   }
-  if (addresses != null && !addresses.isEmpty()) {
+  if (addresses.contains(InetAddress.getLocalHost())) {
+    return InetAddress.getLocalHost();
+  }
+ else   if (addresses != null && !addresses.isEmpty()) {
     return addresses.toArray(new InetAddress[addresses.size()])[0];
   }
  else {
