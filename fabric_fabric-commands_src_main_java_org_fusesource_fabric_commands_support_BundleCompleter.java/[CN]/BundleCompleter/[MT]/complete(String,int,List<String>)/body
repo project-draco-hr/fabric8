@@ -6,8 +6,11 @@
     return complete;
   }
  else {
-    Set<Feature> features=getFeatures();
-    locations=getFeatureLocations(features);
+    try {
+      locations=BUNDLE_LOCATION_SET.call();
+    }
+ catch (    Exception e) {
+    }
     delegate.getStrings().clear();
     delegate.getStrings().addAll(locations);
     return delegate.complete(buffer,cursor,candidates);
