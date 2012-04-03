@@ -16,7 +16,7 @@
   List<Resource> toInstall=new ArrayList<Resource>();
   List<Bundle> toDelete=new ArrayList<Bundle>();
   Map<Bundle,Resource> toUpdate=new HashMap<Bundle,Resource>();
-  for (  Bundle bundle : bundleContext.getBundles()) {
+  for (  Bundle bundle : systemBundleContext.getBundles()) {
     if (bundle.getBundleId() != 0) {
       Resource resource=null;
       for (      Resource res : toDeploy) {
@@ -116,7 +116,7 @@
       LOGGER.warn("Bundle " + resource.getURI() + " not found in the downloads, using direct input stream instead");
       is=new URL(resource.getURI()).openStream();
     }
-    Bundle bundle=bundleContext.installBundle(resource.getURI(),is);
+    Bundle bundle=systemBundleContext.installBundle(resource.getURI(),is);
     toRefresh.add(bundle);
     resToBnd.put(resource,bundle);
   }

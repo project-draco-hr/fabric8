@@ -1,0 +1,16 @@
+{
+  FabricService fabricService=getOsgiService(FabricService.class);
+  System.err.println(executeCommand("fabric:create"));
+  addStagingRepoToDefaultProfile();
+  createAndAssertChildContainer("child1","root","default");
+  String curretRepoURL=String.format(FABRIC_FEATURE_REPO_URL,System.getProperty("fabric.version"));
+  String targetRepoURL=String.format(FABRIC_FEATURE_REPO_URL,TARGET_VERSION);
+  System.out.println(executeCommand("fabric:version-create --parent 1.0 1.1"));
+  System.out.println(executeCommand("fabric:profile-edit --delete --repositories " + curretRepoURL + " default 1.1"));
+  System.out.println(executeCommand("fabric:profile-edit --repositories " + targetRepoURL + " default 1.1"));
+  System.out.println(executeCommand("fabric:profile-display --version 1.1 default"));
+  System.out.println(executeCommand("fabric:container-upgrade --all 1.1"));
+  Thread.sleep(5000);
+  waitForProvisionSuccess(fabricService.getContainer("child1"),PROVISION_TIMEOUT);
+  System.out.println(executeCommand("fabric:container-list"));
+}
