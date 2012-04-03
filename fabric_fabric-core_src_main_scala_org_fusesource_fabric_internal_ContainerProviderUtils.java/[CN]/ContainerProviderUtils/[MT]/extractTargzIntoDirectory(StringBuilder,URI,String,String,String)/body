@@ -11,6 +11,11 @@
     sb.append("run export DISTRO_URL=`").append(artifactUri).append("`").append("\n");
   }
   sb.append("if [[  \"$DISTRO_URL\" == \"\" ]] ;  then export DISTRO_URL=").append(artifactUri).append("; fi\n");
-  sb.append("run curl --show-error --silent --get --retry 20 --output ").append(file).append(" ").append("$DISTRO_URL").append("\n");
+  sb.append("try curl --show-error --silent --get --retry 20 --output ").append(file).append(" ").append("$DISTRO_URL").append("\n");
+  for (  String fallbackRepo : FALLBACK_REPOS) {
+    URI fallbackRepoURI=new URI(fallbackRepo);
+    String fallbackDistro=fallbackRepoURI.resolve(directory + file).toString();
+    sb.append("if [ ! -f " + file + " ] then ").append("try curl --show-error --silent --get --retry 20 --output ").append(file).append(" ").append(fallbackDistro).append(" fi \n");
+  }
   sb.append("run tar -xpzf ").append(file).append("\n");
 }
