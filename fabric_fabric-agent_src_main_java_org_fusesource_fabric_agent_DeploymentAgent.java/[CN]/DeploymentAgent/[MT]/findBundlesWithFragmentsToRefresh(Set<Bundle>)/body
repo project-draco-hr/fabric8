@@ -6,7 +6,7 @@
         Clause[] clauses=Parser.parseHeader(hostHeader);
         if (clauses != null && clauses.length > 0) {
           Clause path=clauses[0];
-          for (          Bundle hostBundle : bundleContext.getBundles()) {
+          for (          Bundle hostBundle : systemBundleContext.getBundles()) {
             if (hostBundle.getSymbolicName().equals(path.getName())) {
               String ver=path.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
               if (ver != null) {
