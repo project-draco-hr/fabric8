@@ -6,7 +6,7 @@
     if (!downloadables.isEmpty()) {
       DownloadableArtifact artifact=downloadables.iterator().next();
       URL url=artifact.getArtifactURL();
-      File file=new File(URI.create(url.toString()));
+      File file=new File(url.getFile());
       if (file.exists()) {
         return file;
       }
@@ -23,13 +23,13 @@
     LOG.trace("Downloading [" + artifact + "]");
     try {
       configuration.enableProxy(artifact.getArtifactURL());
-      String repository=new File(URI.create(system.getURL().toString())).getPath();
+      String repository=system.getFile().getAbsolutePath();
       if (!repository.endsWith(Parser.FILE_SEPARATOR)) {
         repository=repository + Parser.FILE_SEPARATOR;
       }
       InputStream is=artifact.getInputStream();
       File file=new File(repository + parser.getArtifactPath());
-      File tmp=new File(file.toString() + ".tmp");
+      File tmp=new File(file.getAbsolutePath() + ".tmp");
       tmp.getParentFile().mkdirs();
       OutputStream os=new FileOutputStream(tmp);
       copy(is,os);
