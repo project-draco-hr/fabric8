@@ -1,7 +1,7 @@
 {
   StringBuilder sb=new StringBuilder();
-  sb.append("function run { echo \"Running: $*\" ; $* ; rc=$? ; if [ \"${rc}\" -ne 0 ]; then echo \"Command failed\" ; exit ${rc} ; fi ; }\n");
-  sb.append("function try { echo \"Trying: $*\" ; $* ; rc=$? ; if [ \"${rc}\" -ne 0 ]; then echo \"Attempt failed\" ; fi ; }\n");
+  sb.append(RUN_FUCNTION).append("\n");
+  sb.append(DOWNLOAD_FUCNTION).append("\n");
   sb.append("run mkdir -p ~/containers/ ").append("\n");
   sb.append("run cd ~/containers/ ").append("\n");
   sb.append("run mkdir -p ").append(options.getName()).append("\n");
@@ -14,6 +14,13 @@
   replaceLineInFile(sb,"etc/system.properties","karaf.name=root","karaf.name = " + options.getName());
   replaceLineInFile(sb,"etc/org.apache.karaf.shell.cfg","sshPort=8101","sshPort=" + DEFAULT_SSH_PORT);
   appendFile(sb,"etc/system.properties",Arrays.asList("\n"));
+  for (  Map.Entry<String,Properties> entry : options.getSystemProperties().entrySet()) {
+    Properties addresses=entry.getValue();
+    for (    Object type : addresses.keySet()) {
+      Object value=addresses.get(type);
+      appendFile(sb,"etc/system.properties",Arrays.asList(type + "=" + value));
+    }
+  }
   if (options.getPreferredAddress() != null) {
     appendFile(sb,"etc/system.properties",Arrays.asList(HostUtils.PREFERED_ADDRESS_PROPERTY_NAME + "=" + options.getPreferredAddress()));
   }
@@ -29,5 +36,6 @@
   appendToLineInFile(sb,"etc/org.apache.karaf.features.cfg","featuresBoot=","fabric-agent,");
   appendToLineInFile(sb,"etc/org.ops4j.pax.url.mvn.cfg","repositories=",options.getProxyUri().toString() + ",");
   sb.append("run nohup bin/start").append("\n");
+  sb.append("echo STARTED").append("\n");
   return sb.toString();
 }
