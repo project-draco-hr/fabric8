@@ -1,0 +1,13 @@
+{
+  try {
+    if (service.getZooKeeper().exists(ZkPath.CONTAINER_LOCAL_IP.getPath(id)) == null) {
+      return null;
+    }
+ else {
+      return service.getZooKeeper().getStringData(ZkPath.CONTAINER_LOCAL_IP.getPath(id));
+    }
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}
