@@ -3,7 +3,11 @@
   if (metadatas != null && metadatas.length > 0) {
     for (    CreateContainerMetadata ccm : metadatas) {
       CreateJCloudsContainerMetadata metadata=(CreateJCloudsContainerMetadata)ccm;
-      System.out.println(String.format(DISPLAY_FORMAT,metadata.getNodeId(),metadata.getContainerName(),metadata.getPublicAddresses()));
+      String status="success";
+      if (ccm.getFailure() != null) {
+        status="failed";
+      }
+      System.out.println(String.format(DISPLAY_FORMAT,metadata.getNodeId(),status,metadata.getContainerName(),metadata.getPublicAddresses()));
     }
   }
 }

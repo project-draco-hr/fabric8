@@ -11,11 +11,18 @@
       String nodeId=jCloudsContainerMetadata.getNodeId();
       ComputeService computeService=getOrCreateComputeService(options);
       String script=buildStopScript(options.name(container.getId()));
+      ExecResponse response=null;
       if (credentials != null) {
-        computeService.runScriptOnNode(nodeId,script,RunScriptOptions.Builder.overrideCredentialsWith(credentials).runAsRoot(false));
+        response=computeService.runScriptOnNode(nodeId,script,RunScriptOptions.Builder.overrideCredentialsWith(credentials).runAsRoot(false));
       }
  else {
-        computeService.runScriptOnNode(nodeId,script);
+        response=computeService.runScriptOnNode(nodeId,script);
+      }
+      if (response == null) {
+        jCloudsContainerMetadata.setFailure(new Exception("No response received for fabric install script."));
+      }
+ else       if (response.getOutput() != null && response.getOutput().contains("Command failed")) {
+        jCloudsContainerMetadata.setFailure(new Exception(response.getError()));
       }
     }
  catch (    Throwable t) {
