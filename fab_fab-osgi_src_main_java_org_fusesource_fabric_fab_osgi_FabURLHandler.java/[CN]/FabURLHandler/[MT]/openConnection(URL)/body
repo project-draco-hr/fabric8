@@ -4,11 +4,6 @@
   }
   fabJarURL=new URL(url.getPath());
   logger.debug("FAB jar URL is: [" + fabJarURL + "]");
-  Configuration config=Configuration.newInstance();
-  if (mavenRepositories != null) {
-    String[] array=Configuration.toArray(mavenRepositories);
-    logger.debug("Using maven repos: " + Arrays.asList(array));
-    config.set(ServiceConstants.PROPERTY_MAVEN_REPOSITORIES,array);
-  }
+  Configuration config=createConfiguration();
   return new FabConnection(fabJarURL,config,getBundleContext());
 }
