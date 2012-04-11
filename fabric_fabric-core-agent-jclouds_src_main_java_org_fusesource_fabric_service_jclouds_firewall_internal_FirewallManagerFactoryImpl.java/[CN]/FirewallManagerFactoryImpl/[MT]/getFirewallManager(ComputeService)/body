@@ -1,0 +1,14 @@
+{
+  FirewallManager firewallManager=null;
+  String provider=computeService.getContext().getProviderSpecificContext().getId();
+  firewallManager=managers.get(provider);
+  if (firewallManager == null) {
+    ProviderFirewallSupport firewallSupport=support.get(provider);
+    if (firewallSupport == null) {
+      throw new FirewallNotSupportedOnProviderException("Provider " + provider + " is currently not supported for firewall operations");
+    }
+    firewallManager=new FirewallManager(computeService,firewallSupport);
+    managers.put(provider,firewallManager);
+  }
+  return firewallManager;
+}

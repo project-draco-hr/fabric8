@@ -13,15 +13,21 @@ break;
 case Fastest:
 builder.fastest();
 }
+if (options.getOsFamily() != null && options.getOsFamily() != null) {
+builder.osFamily(OsFamily.fromValue(options.getOsFamily()));
+builder.osVersionMatches(options.getOsVersion());
+}
+ else if (options.getImageId() != null) {
+builder.imageId(options.getImageId());
+}
 if (options.getLocationId() != null) {
 builder.locationId(options.getLocationId());
-}
-if (options.getImageId() != null) {
-builder.imageId(options.getImageId());
 }
 if (options.getHardwareId() != null) {
 builder.hardwareId(options.getHardwareId());
 }
+TemplateOptions templateOptions=computeService.templateOptions();
+templateOptions.runScript(AdminAccess.standard());
 Set<? extends NodeMetadata> metadatas=null;
 metadatas=computeService.createNodesInGroup(options.getGroup(),options.getNumber(),builder.build());
 Thread.sleep(5000);
@@ -31,9 +37,24 @@ boolean first=true;
 if (metadatas != null) {
 String originalName=new String(options.getName());
 for (NodeMetadata nodeMetadata : metadatas) {
-Credentials credentials=null;
-if (options.getUser() != null) {
-credentials=new Credentials(options.getUser(),nodeMetadata.getCredentials().credential);
+try {
+String source=getOriginatingIp();
+Rule jmxRule=Rule.create().source(source).destination(nodeMetadata).ports(4444,1099);
+Rule sshRule=Rule.create().source(source).destination(nodeMetadata).port(8101);
+Rule httpRule=Rule.create().source(source).destination(nodeMetadata).port(8181);
+Rule zookeeperRule=Rule.create().source("0.0.0.0/0").destination(nodeMetadata).port(2181);
+FirewallManager firewallManager=firewallManagerFactory.getFirewallManager(computeService);
+firewallManager.addRules(jmxRule,sshRule,httpRule,zookeeperRule);
+}
+ catch (FirewallNotSupportedOnProviderException e) {
+LOGGER.warn("Firewall manager not supported. Firewall will have to be manually configured.");
+}
+catch (IOException e) {
+LOGGER.warn("Could not lookup originating ip. Firewall will have to be manually configured.",e);
+}
+LoginCredentials credentials=nodeMetadata.getCredentials();
+if (options.getUser() != null && credentials != null) {
+credentials=credentials.toBuilder().user(options.getUser()).build();
 }
  else {
 credentials=nodeMetadata.getCredentials();
@@ -53,8 +74,10 @@ jCloudsContainerMetadata.setNodeId(nodeMetadata.getId());
 jCloudsContainerMetadata.setContainerName(containerName);
 jCloudsContainerMetadata.setPublicAddresses(publicAddresses);
 jCloudsContainerMetadata.setHostname(nodeMetadata.getHostname());
+if (credentials != null) {
 jCloudsContainerMetadata.setIdentity(credentials.identity);
 jCloudsContainerMetadata.setCredential(credentials.credential);
+}
 Properties addresses=new Properties();
 if (publicAddresses != null && !publicAddresses.isEmpty()) {
 String publicAddress=publicAddresses.toArray(new String[publicAddresses.size()])[0];
@@ -65,10 +88,10 @@ try {
 String script=buildInstallAndStartScript(options.name(containerName));
 ExecResponse response=null;
 if (credentials != null) {
-response=computeService.runScriptOnNode(id,script,RunScriptOptions.Builder.overrideCredentialsWith(credentials).runAsRoot(false));
+response=computeService.runScriptOnNode(id,script,templateOptions.overrideLoginCredentials(credentials).runAsRoot(false));
 }
  else {
-response=computeService.runScriptOnNode(id,script);
+response=computeService.runScriptOnNode(id,script,templateOptions);
 }
 if (response == null) {
 jCloudsContainerMetadata.setFailure(new Exception("No response received for fabric install script."));

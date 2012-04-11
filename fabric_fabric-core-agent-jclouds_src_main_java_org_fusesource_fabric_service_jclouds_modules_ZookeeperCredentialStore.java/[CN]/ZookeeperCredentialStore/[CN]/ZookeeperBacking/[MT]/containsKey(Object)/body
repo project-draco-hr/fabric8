@@ -1,0 +1,13 @@
+{
+  boolean result=cache.asMap().containsKey(o);
+  if (!result) {
+    if (zookeeper.isConnected()) {
+      try {
+        result=(zookeeper.exists(ZkPath.CLOUD_NODE.getPath(normalizeKey(o))) != null);
+      }
+ catch (      Exception ex) {
+      }
+    }
+  }
+  return result;
+}

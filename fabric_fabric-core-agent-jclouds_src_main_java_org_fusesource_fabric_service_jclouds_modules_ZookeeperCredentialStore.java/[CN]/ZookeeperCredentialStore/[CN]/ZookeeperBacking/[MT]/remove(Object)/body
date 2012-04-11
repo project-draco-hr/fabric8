@@ -1,0 +1,16 @@
+{
+  Credentials credentials=cache.asMap().remove(o);
+  if (zookeeper.isConnected()) {
+    try {
+      if (credentials == null) {
+        credentials=get(o);
+      }
+      zookeeper.deleteWithChildren(ZkPath.CLOUD_NODE_IDENTITY.getPath(normalizeKey(o)));
+      zookeeper.deleteWithChildren(ZkPath.CLOUD_NODE_CREDENTIAL.getPath(normalizeKey(o)));
+    }
+ catch (    Exception e) {
+      LOGGER.warn("Failed to remove jclouds credentials to zookeeper.",e);
+    }
+  }
+  return credentials;
+}

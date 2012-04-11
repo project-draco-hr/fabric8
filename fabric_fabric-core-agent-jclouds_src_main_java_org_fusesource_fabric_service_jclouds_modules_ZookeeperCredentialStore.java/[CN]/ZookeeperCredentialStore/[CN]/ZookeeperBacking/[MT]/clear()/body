@@ -1,0 +1,14 @@
+{
+  cache.cleanUp();
+  if (zookeeper.isConnected()) {
+    try {
+      for (      String nodeId : keySet()) {
+        zookeeper.deleteWithChildren(ZkPath.CLOUD_NODE_IDENTITY.getPath(nodeId));
+        zookeeper.deleteWithChildren(ZkPath.CLOUD_NODE_CREDENTIAL.getPath(nodeId));
+      }
+    }
+ catch (    Exception e) {
+      LOGGER.warn("Failed to clear zookeeper jclouds credentials store.",e);
+    }
+  }
+}

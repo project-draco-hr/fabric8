@@ -1,0 +1,21 @@
+{
+  Container current=fabricService.getCurrentContainer();
+  if (!getZooKeeper().isConnected() || !current.isManaged()) {
+    Configuration configuration=configurationAdmin.createFactoryConfiguration("org.jclouds.compute",null);
+    Dictionary dictionary=configuration.getProperties();
+    if (dictionary == null) {
+      dictionary=new Properties();
+    }
+    dictionary.put("provider",provider);
+    dictionary.put("credential",credential);
+    dictionary.put("identity",identity);
+    dictionary.put("credential-store","zookeeper");
+    configuration.update(dictionary);
+  }
+ else {
+    ZooKeeperUtils.create(getZooKeeper(),ZkPath.CLOUD_PROVIDER.getPath(provider));
+    ZooKeeperUtils.set(getZooKeeper(),ZkPath.CLOUD_PROVIDER_IDENTIY.getPath(provider),identity);
+    ZooKeeperUtils.set(getZooKeeper(),ZkPath.CLOUD_PROVIDER_CREDENTIAL.getPath(provider),credential);
+  }
+  return null;
+}
