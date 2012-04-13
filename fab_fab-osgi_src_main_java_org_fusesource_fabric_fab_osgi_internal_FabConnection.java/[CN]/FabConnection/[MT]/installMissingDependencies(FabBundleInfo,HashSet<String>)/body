@@ -49,8 +49,7 @@
             Bundle bundle=null;
             if (!dependency.isBundle()) {
               FabConnection childConnection=createChild(url);
-              childConnection.setRootTree(dependency);
-              PomDetails pomDetails=childConnection.resolvePomDetails();
+              PomDetails pomDetails=childConnection.resolver.getInfo().getPomDetails();
               if (pomDetails != null && pomDetails.isValid()) {
                 LOG.info("Installing fabric bundle: " + name + " from: "+ installUri);
                 bundle=bundleContext.installBundle(installUri,childConnection.getInputStream());

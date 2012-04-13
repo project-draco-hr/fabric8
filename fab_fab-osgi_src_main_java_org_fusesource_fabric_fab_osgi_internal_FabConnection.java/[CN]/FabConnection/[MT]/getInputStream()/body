@@ -1,19 +1,12 @@
 {
   connect();
   try {
-    Map<String,Object> embeddedResources=new HashMap<String,Object>();
-    Properties instructions=createInstructions(embeddedResources);
-    PreConditionException.validateNotNull(instructions,"Instructions");
-    String fabUri=instructions.getProperty(ServiceConstants.INSTR_FAB_URL);
-    if (fabUri == null || fabUri.trim().length() == 0) {
-      throw new IOException("Instructions file must contain a property named " + ServiceConstants.INSTR_FAB_URL);
-    }
-    FabBundleInfo info=new FabBundleInfoImpl(classPathResolver,fabUri,instructions,configuration,embeddedResources);
+    FabBundleInfo info=resolver.getInfo();
     HashSet<String> actualImports=new HashSet<String>();
-    InputStream rc=info.getInputStream();
     actualImports.addAll(info.getImports());
+    InputStream rc=info.getInputStream();
     installMissingFeatures(info);
-    if (getConfiguration().isInstallMissingDependencies()) {
+    if (configuration.isInstallMissingDependencies()) {
       installMissingDependencies(info,actualImports);
     }
  else {
