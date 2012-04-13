@@ -8,11 +8,13 @@
     if (fabUri == null || fabUri.trim().length() == 0) {
       throw new IOException("Instructions file must contain a property named " + ServiceConstants.INSTR_FAB_URL);
     }
+    FabBundleInfo info=new FabBundleInfoImpl(classPathResolver,fabUri,instructions,configuration,embeddedResources);
     HashSet<String> actualImports=new HashSet<String>();
-    InputStream rc=BndUtils.createBundle(URLUtils.prepareInputStream(new URL(fabUri),configuration.getCertificateCheck()),instructions,fabUri,OverwriteMode.MERGE,embeddedResources,classPathResolver.getExtraImportPackages(),actualImports,this);
-    installMissingFeatures();
+    InputStream rc=info.getInputStream();
+    actualImports.addAll(info.getImports());
+    installMissingFeatures(info);
     if (getConfiguration().isInstallMissingDependencies()) {
-      installMissingDependencies(actualImports);
+      installMissingDependencies(info,actualImports);
     }
  else {
       LOG.info("Not installing dependencies as not enabled");
