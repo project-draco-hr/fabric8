@@ -1,3 +1,14 @@
 {
+  if (configuration == null) {
+    this.configuration=Configuration.newInstance(FabResolverFactoryImpl.this.configurationAdmin,bundleContext);
+    String[] repositories=configuration.getMavenRepositories();
+    if (repositories != null) {
+      resolver.setRepositories(repositories);
+    }
+    String localrepo=configuration.getLocalMavenRepository();
+    if (localrepo != null) {
+      resolver.setLocalRepo(localrepo);
+    }
+  }
   return configuration;
 }

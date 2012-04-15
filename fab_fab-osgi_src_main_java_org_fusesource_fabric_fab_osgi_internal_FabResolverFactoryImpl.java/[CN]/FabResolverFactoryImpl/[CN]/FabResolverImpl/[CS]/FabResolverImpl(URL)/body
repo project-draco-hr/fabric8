@@ -7,13 +7,4 @@
   if (path == null || path.trim().length() == 0) {
     throw new MalformedURLException("Path cannot empty");
   }
-  this.configuration=Configuration.newInstance(FabResolverFactoryImpl.this.configurationAdmin,bundleContext);
-  String[] repositories=configuration.getMavenRepositories();
-  if (repositories != null) {
-    resolver.setRepositories(repositories);
-  }
-  String localrepo=configuration.getLocalMavenRepository();
-  if (localrepo != null) {
-    resolver.setLocalRepo(localrepo);
-  }
 }
