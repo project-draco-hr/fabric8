@@ -1,9 +1,31 @@
 {
+  FabResolverFactoryImpl fabResolverFactory=new FabResolverFactoryImpl();
+  fabResolverFactory.setBundleContext(bundleContext);
+  fabResolverFactory.setFeaturesService(new FeaturesServiceImpl(){
+    @Override public Repository[] listRepositories(){
+      return repositories.values().toArray(new Repository[repositories.size()]);
+    }
+  }
+);
+  Map<String,FabBundleInfo> infos=new HashMap<String,FabBundleInfo>();
+  for (  String fab : fabs) {
+    FabResolver resolver=fabResolverFactory.getResolver(new URL(fab));
+    FabBundleInfo info=resolver.getInfo();
+    for (    String name : info.getFeatures()) {
+      Feature feature=search(name,repositories.values());
+      if (feature == null) {
+        throw new IllegalArgumentException("Unable to find feature " + name);
+      }
+      features.add(feature);
+    }
+    LOGGER.info("Fab: " + info.getUrl());
+    infos.put("fab:" + info.getUrl(),info);
+  }
   Set<Feature> allFeatures=addFeatures(features,repositories.values());
   updateStatus("downloading",null);
   Map<String,File> downloads=downloadBundles(allFeatures,bundles);
   updateStatus("resolving",null);
-  List<Resource> allResources=getObrResolver().resolve(allFeatures,bundles);
+  List<Resource> allResources=getObrResolver().resolve(allFeatures,bundles,infos.values());
   updateStatus("installing",null);
   Map<Resource,Bundle> resToBnd=new HashMap<Resource,Bundle>();
   StringBuilder sb=new StringBuilder();
@@ -91,31 +113,15 @@
   for (  Map.Entry<Bundle,Resource> entry : toUpdate.entrySet()) {
     Bundle bundle=entry.getKey();
     Resource resource=entry.getValue();
-    InputStream is;
     LOGGER.info("  " + resource.getURI());
-    File file=downloads.get(resource.getURI());
-    if (file != null) {
-      is=new FileInputStream(file);
-    }
- else {
-      LOGGER.warn("Bundle " + resource.getURI() + " not found in the downloads, using direct input stream instead");
-      is=new URL(resource.getURI()).openStream();
-    }
+    InputStream is=getBundleInputStream(resource,downloads,infos);
     bundle.update(is);
     toRefresh.add(bundle);
   }
   LOGGER.info("Installing bundles:");
   for (  Resource resource : toInstall) {
-    InputStream is;
     LOGGER.info("  " + resource.getURI());
-    File file=downloads.get(resource.getURI());
-    if (file != null) {
-      is=new FileInputStream(file);
-    }
- else {
-      LOGGER.warn("Bundle " + resource.getURI() + " not found in the downloads, using direct input stream instead");
-      is=new URL(resource.getURI()).openStream();
-    }
+    InputStream is=getBundleInputStream(resource,downloads,infos);
     Bundle bundle=systemBundleContext.installBundle(resource.getURI(),is);
     toRefresh.add(bundle);
     resToBnd.put(resource,bundle);
