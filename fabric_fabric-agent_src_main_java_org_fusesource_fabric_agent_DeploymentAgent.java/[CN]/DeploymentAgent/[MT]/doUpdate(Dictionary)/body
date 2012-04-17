@@ -87,5 +87,17 @@
       }
     }
   }
-  updateDeployment(repositories,features,bundles);
+  Set<String> fabs=new HashSet<String>();
+  for (  String key : properties.keySet()) {
+    if (key.startsWith("fab.")) {
+      String url=properties.get(key);
+      if (url == null || url.length() == 0) {
+        url=key.substring("fab.".length());
+      }
+      if (url != null && url.length() > 0) {
+        fabs.add(url);
+      }
+    }
+  }
+  updateDeployment(repositories,features,bundles,fabs);
 }
