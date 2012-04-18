@@ -3,6 +3,7 @@
     classPathResolver=new FabClassPathResolver(this,instructions,embeddedResources);
     if (featuresService != null) {
       classPathResolver.addPruningFilter(new CamelFeaturesFilter(FabResolverFactoryImpl.this.getFeaturesService()));
+      classPathResolver.addPruningFilter(new CXFFeaturesFilter(FabResolverFactoryImpl.this.getFeaturesService()));
     }
   }
   return classPathResolver;

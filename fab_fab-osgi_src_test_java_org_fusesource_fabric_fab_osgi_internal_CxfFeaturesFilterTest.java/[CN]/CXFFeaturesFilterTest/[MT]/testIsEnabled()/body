@@ -1,17 +1,17 @@
 {
   FeaturesService service=createNiceMock(FeaturesService.class);
   replay(service);
-  FabResolverFactoryImpl.CamelFeaturesFilter filter=new FabResolverFactoryImpl.CamelFeaturesFilter(service);
+  FabResolverFactoryImpl.CXFFeaturesFilter filter=new FabResolverFactoryImpl.CXFFeaturesFilter(service);
   FabClassPathResolver resolver=new FabClassPathResolver(new FabClassPathResolverTest.MockFabFacade(),new Properties(),null);
   assertTrue("No configuration specified - filter should be enabled",filter.isEnabled(resolver));
   resolver=new FabClassPathResolver(new FabClassPathResolverTest.MockFabFacade(),new Properties(),null){
-    Map<String,String> properties=Services.createProperties(INSTR_FAB_SKIP_MATCHING_FEATURE_DETECTION,"org.apache.cxf");
+    Map<String,String> properties=Services.createProperties(INSTR_FAB_SKIP_MATCHING_FEATURE_DETECTION,"org.apache.camel");
     @Override public String getManifestProperty(    String name){
       return properties.get(name);
     }
   }
 ;
-  assertTrue("Only CXF to be skipped - filter should be enabled",filter.isEnabled(resolver));
+  assertTrue("Only Camel to be skipped - filter should be enabled",filter.isEnabled(resolver));
   resolver=new FabClassPathResolver(new FabClassPathResolverTest.MockFabFacade(),new Properties(),null){
     Map<String,String> properties=Services.createProperties(INSTR_FAB_SKIP_MATCHING_FEATURE_DETECTION,"org.apache.camel org.apache.cxf");
     @Override public String getManifestProperty(    String name){
