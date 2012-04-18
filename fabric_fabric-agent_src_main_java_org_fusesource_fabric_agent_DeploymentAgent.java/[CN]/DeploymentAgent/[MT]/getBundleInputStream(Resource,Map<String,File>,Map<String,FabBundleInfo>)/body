@@ -1,0 +1,16 @@
+{
+  InputStream is;
+  File file;
+  FabBundleInfo info;
+  if ((file=downloads.get(resource.getURI())) != null) {
+    is=new FileInputStream(file);
+  }
+ else   if ((info=infos.get(resource.getURI())) != null) {
+    is=info.getInputStream();
+  }
+ else {
+    LOGGER.warn("Bundle " + resource.getURI() + " not found in the downloads, using direct input stream instead");
+    is=new URL(resource.getURI()).openStream();
+  }
+  return is;
+}

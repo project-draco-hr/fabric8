@@ -1,7 +1,7 @@
 {
   Container current=fabricService.getCurrentContainer();
   if (!getZooKeeper().isConnected() || !current.isManaged()) {
-    Configuration configuration=configurationAdmin.createFactoryConfiguration("org.jclouds.compute",null);
+    Configuration configuration=findOrCreateFactoryConfiguration("org.jclouds.compute",provider);
     Dictionary dictionary=configuration.getProperties();
     if (dictionary == null) {
       dictionary=new Properties();
@@ -10,12 +10,18 @@
     dictionary.put("credential",credential);
     dictionary.put("identity",identity);
     dictionary.put("credential-store","zookeeper");
+    if (!Strings.isNullOrEmpty(owner) && "aws-ec2".equals(provider)) {
+      dictionary.put("jclouds.ec2.ami-owners",owner);
+    }
     configuration.update(dictionary);
   }
- else {
+  if (getZooKeeper().isConnected()) {
     ZooKeeperUtils.create(getZooKeeper(),ZkPath.CLOUD_PROVIDER.getPath(provider));
     ZooKeeperUtils.set(getZooKeeper(),ZkPath.CLOUD_PROVIDER_IDENTIY.getPath(provider),identity);
     ZooKeeperUtils.set(getZooKeeper(),ZkPath.CLOUD_PROVIDER_CREDENTIAL.getPath(provider),credential);
+  }
+ else {
+    System.out.println("Fabric has not been initialized. Provider registration is local to the current container.");
   }
   return null;
 }

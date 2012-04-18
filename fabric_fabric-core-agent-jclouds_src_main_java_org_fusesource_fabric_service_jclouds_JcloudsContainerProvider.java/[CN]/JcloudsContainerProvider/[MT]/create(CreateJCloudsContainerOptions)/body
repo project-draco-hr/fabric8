@@ -13,17 +13,17 @@ break;
 case Fastest:
 builder.fastest();
 }
-if (options.getOsFamily() != null && options.getOsFamily() != null) {
+if (!Strings.isNullOrEmpty(options.getImageId())) {
+builder.imageId(options.getImageId());
+}
+ else if (!Strings.isNullOrEmpty(options.getOsFamily()) && !Strings.isNullOrEmpty(options.getOsFamily())) {
 builder.osFamily(OsFamily.fromValue(options.getOsFamily()));
 builder.osVersionMatches(options.getOsVersion());
 }
- else if (options.getImageId() != null) {
-builder.imageId(options.getImageId());
-}
-if (options.getLocationId() != null) {
+if (!Strings.isNullOrEmpty(options.getLocationId())) {
 builder.locationId(options.getLocationId());
 }
-if (options.getHardwareId() != null) {
+if (!Strings.isNullOrEmpty(options.getHardwareId())) {
 builder.hardwareId(options.getHardwareId());
 }
 TemplateOptions templateOptions=computeService.templateOptions();
@@ -53,7 +53,7 @@ catch (IOException e) {
 LOGGER.warn("Could not lookup originating ip. Firewall will have to be manually configured.",e);
 }
 LoginCredentials credentials=nodeMetadata.getCredentials();
-if (options.getUser() != null && credentials != null) {
+if (!Strings.isNullOrEmpty(options.getUser()) && credentials != null) {
 credentials=credentials.toBuilder().user(options.getUser()).build();
 }
  else {
