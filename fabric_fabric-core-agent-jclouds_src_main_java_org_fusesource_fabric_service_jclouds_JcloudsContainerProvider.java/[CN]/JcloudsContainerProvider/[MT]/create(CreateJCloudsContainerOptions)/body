@@ -81,11 +81,15 @@ containerName=originalName + (suffix++);
  else {
 containerName=originalName;
 }
+Set<String> copyOfPublicAddresses=new HashSet<String>();
+for (String publicAddress : publicAddresses) {
+copyOfPublicAddresses.add(publicAddress);
+}
 CreateJCloudsContainerMetadata jCloudsContainerMetadata=new CreateJCloudsContainerMetadata();
 jCloudsContainerMetadata.setCreateOptions(options);
 jCloudsContainerMetadata.setNodeId(nodeMetadata.getId());
 jCloudsContainerMetadata.setContainerName(containerName);
-jCloudsContainerMetadata.setPublicAddresses(publicAddresses);
+jCloudsContainerMetadata.setPublicAddresses(copyOfPublicAddresses);
 jCloudsContainerMetadata.setHostname(nodeMetadata.getHostname());
 if (credentials != null) {
 jCloudsContainerMetadata.setIdentity(credentials.identity);
