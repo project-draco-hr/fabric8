@@ -1,8 +1,10 @@
 {
   try {
     if (node != null) {
-      zookeeper.delete(node.get(type));
-      node=null;
+      if (zookeeper.isConnected()) {
+        zookeeper.delete(node.get(type));
+      }
+      node.remove(type);
     }
   }
  catch (  Exception e) {
