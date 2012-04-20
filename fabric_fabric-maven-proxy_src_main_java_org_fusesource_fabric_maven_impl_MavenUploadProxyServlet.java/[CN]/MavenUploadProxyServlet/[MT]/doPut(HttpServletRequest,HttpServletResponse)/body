@@ -1,0 +1,16 @@
+{
+  String path=req.getPathInfo();
+  if (path == null) {
+    resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    return;
+  }
+  if (path.startsWith("/")) {
+    path=path.substring(1);
+  }
+  if (upload(req.getInputStream(),path)) {
+    resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+  }
+ else {
+    resp.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+  }
+}
