@@ -1,10 +1,10 @@
 {
   try {
-    if (node != null) {
+    for (    String entry : registeredProxies.get(type)) {
       if (zookeeper.isConnected()) {
-        zookeeper.delete(node.get(type));
+        zookeeper.deleteWithChildren(entry);
       }
-      node.remove(type);
+      registeredProxies.remove(type);
     }
   }
  catch (  Exception e) {
