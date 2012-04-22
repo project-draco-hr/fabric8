@@ -1,10 +1,13 @@
 {
   try {
-    for (    String entry : registeredProxies.get(type)) {
-      if (zookeeper.isConnected()) {
-        zookeeper.deleteWithChildren(entry);
+    Set<String> proxyNodes=registeredProxies.get(type);
+    if (proxyNodes != null) {
+      for (      String entry : registeredProxies.get(type)) {
+        if (zookeeper.isConnected()) {
+          zookeeper.deleteWithChildren(entry);
+        }
+        registeredProxies.get(type).clear();
       }
-      registeredProxies.remove(type);
     }
   }
  catch (  Exception e) {
