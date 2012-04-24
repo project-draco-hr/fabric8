@@ -5,7 +5,7 @@
     int usage=0;
     if (references != null) {
       for (      ServiceReference reference : references) {
-        usage+=getServiceUsage(reference);
+        usage+=getServiceUsage(reference,bundles);
       }
     }
     LOGGER.debug("Usage for bundle {} is {}",bundle,usage);
@@ -27,7 +27,7 @@
     for (    Bundle bundle : bundles) {
       ServiceReference[] references=bundle.getRegisteredServices();
       for (      ServiceReference reference : references) {
-        if (getServiceUsage(reference) == 0) {
+        if (getServiceUsage(reference,bundles) == 0) {
           continue;
         }
         if (ref == null || reference.compareTo(ref) < 0) {

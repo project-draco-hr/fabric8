@@ -25,7 +25,7 @@
   updateStatus("downloading",null);
   Map<String,File> downloads=downloadBundles(allFeatures,bundles);
   updateStatus("resolving",null);
-  List<Resource> allResources=getObrResolver().resolve(allFeatures,bundles,infos.values());
+  List<Resource> allResources=getObrResolver().resolve(allFeatures,bundles,infos,downloads);
   updateStatus("installing",null);
   Map<Resource,Bundle> resToBnd=new HashMap<Resource,Bundle>();
   StringBuilder sb=new StringBuilder();
@@ -34,22 +34,40 @@
     sb.append("  ").append(bundle.getURI()).append("\n");
   }
   LOGGER.info(sb.toString());
+  Map<String,String> newCheckums=new HashMap<String,String>();
   List<Resource> toDeploy=new ArrayList<Resource>(allResources);
   List<Resource> toInstall=new ArrayList<Resource>();
   List<Bundle> toDelete=new ArrayList<Bundle>();
   Map<Bundle,Resource> toUpdate=new HashMap<Bundle,Resource>();
+  File file=bundleContext.getDataFile("checksums.properties");
+  Properties checksums=new Properties(file);
   for (  Bundle bundle : systemBundleContext.getBundles()) {
     if (bundle.getBundleId() != 0) {
       Resource resource=null;
+      boolean update=false;
       for (      Resource res : toDeploy) {
-        if (res.getSymbolicName().equals(bundle.getSymbolicName()) && res.getVersion().equals(bundle.getVersion())) {
-          resource=res;
-          break;
+        if (res.getSymbolicName().equals(bundle.getSymbolicName())) {
+          if (res.getVersion().equals(bundle.getVersion())) {
+            if (res.getVersion().getQualifier().endsWith("SNAPSHOT")) {
+              InputStream is=getBundleInputStream(res,downloads,infos);
+              long newCrc=ChecksumUtils.checksum(is);
+              long oldCrc=checksums.containsKey(res.getURI()) ? Long.parseLong(checksums.get(res.getURI())) : 0;
+              if (newCrc != oldCrc) {
+                update=true;
+                newCheckums.put(res.getURI(),Long.toString(newCrc));
+              }
+            }
+            resource=res;
+            break;
+          }
         }
       }
       if (resource != null) {
         toDeploy.remove(resource);
         resToBnd.put(resource,bundle);
+        if (update) {
+          toUpdate.put(bundle,resource);
+        }
       }
  else {
         toDelete.add(bundle);
@@ -73,6 +91,21 @@
  else {
       toInstall.add(resource);
     }
+  }
+  Resource agentResource=toUpdate.get(bundleContext.getBundle());
+  if (agentResource != null) {
+    LOGGER.info("Updating agent");
+    LOGGER.info("  " + agentResource.getURI());
+    InputStream is=getBundleInputStream(agentResource,downloads,infos);
+    Bundle bundle=bundleContext.getBundle();
+    checksums.save();
+    bundle.update(is);
+    if (newCheckums.containsKey(agentResource.getURI())) {
+      checksums.put(agentResource.getURI(),newCheckums.get(agentResource.getURI()));
+      checksums.save();
+    }
+    refreshPackages(new Bundle[]{bundle});
+    return;
   }
   LOGGER.info("Changes to perform:");
   LOGGER.info("  Bundles to uninstall:");
@@ -133,6 +166,7 @@
   for (  Bundle bundle : toRefresh) {
     LOGGER.info("  " + bundle.getSymbolicName() + " / "+ bundle.getVersion());
   }
+  checksums.save();
   if (!toRefresh.isEmpty()) {
     refreshPackages(toRefresh.toArray(new Bundle[toRefresh.size()]));
   }
@@ -153,6 +187,12 @@
   }
   if (!exceptions.isEmpty()) {
     throw new MultiException("Error updating agent",exceptions);
+  }
+  if (!newCheckums.isEmpty()) {
+    for (    String key : newCheckums.keySet()) {
+      checksums.put(key,newCheckums.get(key));
+    }
+    checksums.save();
   }
   LOGGER.info("Done.");
 }

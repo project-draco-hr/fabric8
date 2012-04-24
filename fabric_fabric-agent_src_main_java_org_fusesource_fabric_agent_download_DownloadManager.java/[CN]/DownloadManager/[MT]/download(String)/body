@@ -6,6 +6,12 @@
       mvnUrl=mvnUrl.substring(0,mvnUrl.lastIndexOf('$') - 1);
     }
   }
+  if (mvnUrl.startsWith("war:")) {
+    mvnUrl=mvnUrl.substring("war:".length());
+    if (mvnUrl.contains("?")) {
+      mvnUrl=mvnUrl.substring(0,mvnUrl.lastIndexOf('?') - 1);
+    }
+  }
   if (mvnUrl.startsWith("blueprint:") || mvnUrl.startsWith("spring:")) {
     mvnUrl=mvnUrl.substring(mvnUrl.indexOf(':') + 1);
   }

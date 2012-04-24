@@ -6,10 +6,9 @@
   for (  Feature feature : features) {
     for (    BundleInfo bundleInfo : feature.getBundles()) {
       try {
-        URL url=new URL(bundleInfo.getLocation());
-        Resource res=repositoryAdmin.getHelper().createResource(url);
+        Resource res=createResource(bundleInfo.getLocation(),downloads,fabs);
         if (res == null) {
-          throw new IllegalArgumentException("Unable to build OBR representation for bundle " + url);
+          throw new IllegalArgumentException("Unable to build OBR representation for bundle " + bundleInfo.getLocation());
         }
         ress.add(res);
         infos.put(res,bundleInfo);
@@ -21,16 +20,15 @@
       }
     }
     for (    final String bundle : bundles) {
-      URL url=new URL(bundle);
-      Resource res=repositoryAdmin.getHelper().createResource(url);
+      Resource res=createResource(bundle,downloads,fabs);
       if (res == null) {
-        throw new IllegalArgumentException("Unable to build OBR representation for bundle " + url);
+        throw new IllegalArgumentException("Unable to build OBR representation for bundle " + bundle);
       }
       ress.add(res);
       infos.put(res,new SimpleBundleInfo(bundle,false));
     }
   }
-  for (  FabBundleInfo fab : fabs) {
+  for (  FabBundleInfo fab : fabs.values()) {
     Resource res=repositoryAdmin.getHelper().createResource(fab.getManifest());
     if (res == null) {
       throw new IllegalArgumentException("Unable to build OBR representation for fab " + fab.getUrl());
@@ -41,7 +39,7 @@
     for (    DependencyTree dep : fab.getBundles()) {
       if (dep.isBundle()) {
         URL url=new URL(dep.getUrl());
-        Resource resDep=repositoryAdmin.getHelper().createResource(url);
+        Resource resDep=createResource(dep.getUrl(),downloads,fabs);
         if (resDep == null) {
           throw new IllegalArgumentException("Unable to build OBR representation for fab dependency " + url);
         }
