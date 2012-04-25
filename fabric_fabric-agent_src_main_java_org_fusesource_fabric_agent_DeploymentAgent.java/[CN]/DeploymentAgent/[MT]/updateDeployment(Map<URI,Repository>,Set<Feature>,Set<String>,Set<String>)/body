@@ -104,7 +104,6 @@
       checksums.put(agentResource.getURI(),newCheckums.get(agentResource.getURI()));
       checksums.save();
     }
-    refreshPackages(new Bundle[]{bundle});
     return;
   }
   LOGGER.info("Changes to perform:");
@@ -159,6 +158,12 @@
     toRefresh.add(bundle);
     resToBnd.put(resource,bundle);
   }
+  if (!newCheckums.isEmpty()) {
+    for (    String key : newCheckums.keySet()) {
+      checksums.put(key,newCheckums.get(key));
+    }
+    checksums.save();
+  }
   findBundlesWithOptionalPackagesToRefresh(toRefresh);
   findBundlesWithFragmentsToRefresh(toRefresh);
   updateStatus("finalizing",null);
@@ -166,7 +171,6 @@
   for (  Bundle bundle : toRefresh) {
     LOGGER.info("  " + bundle.getSymbolicName() + " / "+ bundle.getVersion());
   }
-  checksums.save();
   if (!toRefresh.isEmpty()) {
     refreshPackages(toRefresh.toArray(new Bundle[toRefresh.size()]));
   }
@@ -187,12 +191,6 @@
   }
   if (!exceptions.isEmpty()) {
     throw new MultiException("Error updating agent",exceptions);
-  }
-  if (!newCheckums.isEmpty()) {
-    for (    String key : newCheckums.keySet()) {
-      checksums.put(key,newCheckums.get(key));
-    }
-    checksums.save();
   }
   LOGGER.info("Done.");
 }
