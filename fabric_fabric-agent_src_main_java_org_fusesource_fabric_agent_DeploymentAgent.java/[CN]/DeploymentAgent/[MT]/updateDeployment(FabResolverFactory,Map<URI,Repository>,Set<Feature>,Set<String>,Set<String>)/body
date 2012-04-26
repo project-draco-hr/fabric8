@@ -1,12 +1,4 @@
 {
-  FabResolverFactoryImpl fabResolverFactory=new FabResolverFactoryImpl();
-  fabResolverFactory.setBundleContext(bundleContext);
-  fabResolverFactory.setFeaturesService(new FeaturesServiceImpl(){
-    @Override public Repository[] listRepositories(){
-      return repositories.values().toArray(new Repository[repositories.size()]);
-    }
-  }
-);
   Map<String,FabBundleInfo> infos=new HashMap<String,FabBundleInfo>();
   for (  String fab : fabs) {
     FabResolver resolver=fabResolverFactory.getResolver(new URL(fab));
