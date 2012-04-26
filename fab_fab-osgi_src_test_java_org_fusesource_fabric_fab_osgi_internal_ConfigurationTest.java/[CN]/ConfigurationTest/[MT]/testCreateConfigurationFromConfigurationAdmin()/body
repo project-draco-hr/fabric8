@@ -10,7 +10,7 @@
   expect(configurationAdmin.getConfiguration("org.fusesource.fabric.fab.osgi.url")).andReturn(fusesource);
   replay(configurationAdmin);
   BundleContext context=createNiceMock(BundleContext.class);
-  org.fusesource.fabric.fab.osgi.internal.Configuration configuration=newInstance(configurationAdmin,context);
+  ConfigurationImpl configuration=newInstance(configurationAdmin,context);
   assertNotNull("We should have a non-null configuration object",configuration);
   assertEquals("FuseSource configuration value should override OPS4J one","override-value1",configuration.getPropertyResolver().get("key1"));
   assertEquals("OPS4J configuration values should be available","value2",configuration.getPropertyResolver().get("key2"));

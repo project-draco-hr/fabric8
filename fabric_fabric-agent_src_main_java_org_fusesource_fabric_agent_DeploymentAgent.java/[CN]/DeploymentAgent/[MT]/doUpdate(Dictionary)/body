@@ -4,6 +4,7 @@
   }
   addMavenProxies(props);
   updateStatus("analyzing",null);
+  DictionaryPropertyResolver propertyResolver=new DictionaryPropertyResolver(props,new PropertiesPropertyResolver(System.getProperties()));
   final MavenConfigurationImpl config=new MavenConfigurationImpl(new DictionaryPropertyResolver(props,new PropertiesPropertyResolver(System.getProperties())),"org.ops4j.pax.url.mvn");
   config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
   manager=new DownloadManager(config,getDownloadExecutor());
@@ -48,7 +49,7 @@
     bundleContext.getBundle(0).stop();
     return;
   }
-  Map<URI,Repository> repositories=new HashMap<URI,Repository>();
+  final Map<URI,Repository> repositories=new HashMap<URI,Repository>();
   for (  String key : properties.keySet()) {
     if (key.startsWith("repository.")) {
       String url=properties.get(key);
@@ -99,5 +100,14 @@
       }
     }
   }
-  updateDeployment(repositories,features,bundles,fabs);
+  FabResolverFactoryImpl fabResolverFactory=new FabResolverFactoryImpl();
+  fabResolverFactory.setConfiguration(new FabricFabConfiguration(config,propertyResolver));
+  fabResolverFactory.setBundleContext(bundleContext);
+  fabResolverFactory.setFeaturesService(new FeaturesServiceImpl(){
+    @Override public Repository[] listRepositories(){
+      return repositories.values().toArray(new Repository[repositories.size()]);
+    }
+  }
+);
+  updateDeployment(fabResolverFactory,repositories,features,bundles,fabs);
 }
