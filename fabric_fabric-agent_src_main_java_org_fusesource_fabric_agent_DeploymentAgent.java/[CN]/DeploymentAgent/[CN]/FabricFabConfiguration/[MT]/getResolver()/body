@@ -1,0 +1,15 @@
+{
+  try {
+    MavenResolverImpl resolver=new MavenResolverImpl();
+    List<String> repos=new ArrayList<String>();
+    for (    MavenRepositoryURL url : config.getRepositories()) {
+      repos.add(url.getURL().toURI().toString());
+    }
+    resolver.setRepositories(repos.toArray(new String[repos.size()]));
+    resolver.setLocalRepo(config.getLocalRepository().getURL().toURI().toString());
+    return resolver;
+  }
+ catch (  Exception e) {
+    throw new IllegalStateException(e);
+  }
+}

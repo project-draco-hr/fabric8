@@ -1,0 +1,8 @@
+{
+  preCreateContainer(name);
+  CreateSshContainerOptions options=CreateContainerOptionsBuilder.ssh().name(name).resolver(resolver).ensembleServer(isEnsembleServer).number(number).host(host).username(user).password(password).privateKeyFile(privateKeyFile != null ? privateKeyFile : CreateSshContainerOptions.DEFAULT_PRIVATE_KEY_FILE).passPhrase(passPhrase).path(path).port(port).sshRetries(sshRetries).password(password).proxyUri(proxyUri != null ? proxyUri : fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl()).jvmOpts(jvmOpts);
+  CreateContainerMetadata[] metadatas=fabricService.createContainers(options);
+  displayContainers(metadatas);
+  postCreateContainers(metadatas);
+  return null;
+}

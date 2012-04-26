@@ -16,7 +16,9 @@
     configuration.update(dictionary);
   }
   if (getZooKeeper().isConnected()) {
-    ZooKeeperUtils.create(getZooKeeper(),ZkPath.CLOUD_PROVIDER.getPath(provider));
+    if (getZooKeeper().exists(ZkPath.CLOUD_PROVIDER.getPath(provider)) == null) {
+      ZooKeeperUtils.create(getZooKeeper(),ZkPath.CLOUD_PROVIDER.getPath(provider));
+    }
     ZooKeeperUtils.set(getZooKeeper(),ZkPath.CLOUD_PROVIDER_IDENTIY.getPath(provider),identity);
     ZooKeeperUtils.set(getZooKeeper(),ZkPath.CLOUD_PROVIDER_CREDENTIAL.getPath(provider),credential);
   }
