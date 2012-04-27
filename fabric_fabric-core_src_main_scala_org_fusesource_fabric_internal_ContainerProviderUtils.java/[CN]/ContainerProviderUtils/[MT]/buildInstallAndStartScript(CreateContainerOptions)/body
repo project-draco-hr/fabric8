@@ -7,6 +7,9 @@
   sb.append(UPDATE_PKGS).append("\n");
   sb.append(INSTALL_CURL).append("\n");
   sb.append(INSTALL_JDK).append("\n");
+  sb.append(VALIDATE_REQUIREMENTS).append("\n");
+  sb.append(EXIT_IF_NOT_EXISTS).append("\n");
+  sb.append(COPY_NODE_METADATA).append("\n");
   sb.append(KARAF_CHECK).append("\n");
   sb.append("run mkdir -p ~/containers/ ").append("\n");
   sb.append("run cd ~/containers/ ").append("\n");
@@ -17,6 +20,7 @@
     sb.append("install_openjdk").append("\n");
     sb.append("install_curl").append("\n");
   }
+  sb.append("validate_requirements").append("\n");
   extractTargzIntoDirectory(sb,options.getProxyUri(),"org.fusesource.fabric","fuse-fabric",FabricConstants.FABRIC_VERSION);
   sb.append("run cd `").append(FIRST_FABRIC_DIRECTORY).append("`\n");
   List<String> lines=new ArrayList<String>();
@@ -47,6 +51,15 @@
   }
   appendToLineInFile(sb,"etc/org.apache.karaf.features.cfg","featuresBoot=","fabric-agent,");
   appendToLineInFile(sb,"etc/org.ops4j.pax.url.mvn.cfg","repositories=",options.getProxyUri().toString() + ",");
+  if (options.isEnsembleServer()) {
+    CreateContainerMetadata metadata=options.getMetadataMap().get(options.getName());
+    if (metadata != null) {
+      byte[] metadataPayload=toBytes(metadata);
+      if (metadataPayload != null && metadataPayload.length > 0) {
+        sb.append("copy_node_metadata ").append(options.getName()).append(" ").append(new String(Base64Encoder.encode(metadataPayload))).append("\n");
+      }
+    }
+  }
   sb.append("run nohup bin/start").append("\n");
   sb.append("karaf_check `pwd`").append("\n");
   return sb.toString();

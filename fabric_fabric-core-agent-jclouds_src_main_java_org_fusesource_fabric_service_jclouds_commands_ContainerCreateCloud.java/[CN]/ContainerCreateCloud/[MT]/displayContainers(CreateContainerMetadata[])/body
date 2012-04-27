@@ -5,9 +5,11 @@
       CreateJCloudsContainerMetadata metadata=(CreateJCloudsContainerMetadata)ccm;
       String status="success";
       if (ccm.getFailure() != null) {
-        status="failed";
+        status=ccm.getFailure().getMessage();
       }
-      System.out.println(String.format(DISPLAY_FORMAT,metadata.getNodeId(),status,metadata.getContainerName(),metadata.getPublicAddresses()));
+      String nodeId=metadata.getNodeId() != null ? metadata.getNodeId() : "";
+      String containerName=metadata.getContainerName() != null ? metadata.getContainerName() : "";
+      System.out.println(String.format(DISPLAY_FORMAT,nodeId,containerName,metadata.getPublicAddresses(),status));
     }
   }
 }

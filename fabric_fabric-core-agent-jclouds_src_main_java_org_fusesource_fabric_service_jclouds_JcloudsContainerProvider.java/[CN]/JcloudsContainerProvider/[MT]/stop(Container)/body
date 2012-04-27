@@ -21,8 +21,8 @@
       if (response == null) {
         jCloudsContainerMetadata.setFailure(new Exception("No response received for fabric install script."));
       }
- else       if (response.getOutput() != null && response.getOutput().contains("Command failed")) {
-        jCloudsContainerMetadata.setFailure(new Exception(response.getError()));
+ else       if (response.getOutput() != null && response.getOutput().contains(ContainerProviderUtils.FAILURE_PREFIX)) {
+        jCloudsContainerMetadata.setFailure(new Exception(ContainerProviderUtils.parseScriptFailure(response.getOutput())));
       }
     }
  catch (    Throwable t) {
