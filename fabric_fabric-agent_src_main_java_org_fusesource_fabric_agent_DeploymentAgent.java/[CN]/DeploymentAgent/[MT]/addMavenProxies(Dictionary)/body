@@ -1,6 +1,6 @@
 {
   try {
-    IZKClient zooKeeper=zkClient.call();
+    IZKClient zooKeeper=(IZKClient)zkClient.waitForService(0);
     if (zooKeeper.exists(ZkPath.MAVEN_PROXY.getPath("download")) != null) {
       StringBuffer sb=new StringBuffer();
       List<String> children=zooKeeper.getChildren(ZkPath.MAVEN_PROXY.getPath("download"));
