@@ -1,7 +1,13 @@
 {
   ComputeService computeService=null;
   if (options != null) {
-    computeService=computeServiceMap.get(options.getProviderName());
+    Object object=options.getComputeService();
+    if (object instanceof ComputeService) {
+      computeService=(ComputeService)object;
+    }
+    if (computeService == null) {
+      computeService=computeServiceMap.get(options.getProviderName());
+    }
     if (computeService == null) {
       if (options.getIdentity() == null || options.getCredential() == null) {
         throw new RuntimeException("Compute service not found, please specify provider, identity & credential in order to create one");
