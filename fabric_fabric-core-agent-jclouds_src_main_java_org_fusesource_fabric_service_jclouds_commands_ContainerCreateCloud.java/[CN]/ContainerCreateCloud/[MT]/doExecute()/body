@@ -1,6 +1,6 @@
 {
   preCreateContainer(name);
-  CreateContainerOptions args=CreateContainerOptionsBuilder.jclouds().name(name).resolver(resolver).ensembleServer(isEnsembleServer).credential(credential).group(group).hardwareId(hardwareId).identity(identity).osFamily(osFamily).osVersion(osVersion).imageId(imageId).instanceType(instanceType).locationId(locationId).number(number).owner(owner).publicKeyFile(publicKeyFile).providerName(providerName).user(user).proxyUri(proxyUri != null ? proxyUri : fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl()).jvmOpts(jvmOpts);
+  CreateContainerOptions args=CreateContainerOptionsBuilder.jclouds().name(name).resolver(resolver).ensembleServer(isEnsembleServer).credential(credential).group(group).hardwareId(hardwareId).identity(identity).osFamily(osFamily).osVersion(osVersion).imageId(imageId).instanceType(instanceType).locationId(locationId).number(number).nodeOptions(CloudUtils.parseProviderOptions(options)).owner(owner).publicKeyFile(publicKeyFile).providerName(providerName).user(user).proxyUri(proxyUri != null ? proxyUri : fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl()).jvmOpts(jvmOpts).creationStateListener(new PrintStreamCreationStateListener(System.out));
   CreateContainerMetadata[] metadatas=fabricService.createContainers(args);
   displayContainers(metadatas);
   postCreateContainers(metadatas);

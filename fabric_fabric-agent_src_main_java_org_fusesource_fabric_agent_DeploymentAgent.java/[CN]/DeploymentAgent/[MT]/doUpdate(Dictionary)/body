@@ -1,6 +1,6 @@
 {
   if (props == null) {
-    return;
+    return false;
   }
   addMavenProxies(props);
   updateStatus("analyzing",null);
@@ -47,7 +47,7 @@
     systemProps.save();
     System.setProperty("karaf.restart","true");
     bundleContext.getBundle(0).stop();
-    return;
+    return false;
   }
   final Map<URI,Repository> repositories=new HashMap<URI,Repository>();
   for (  String key : properties.keySet()) {
@@ -110,4 +110,5 @@
   }
 );
   updateDeployment(fabResolverFactory,repositories,features,bundles,fabs);
+  return true;
 }

@@ -1,23 +1,27 @@
 {
   ComputeService computeService=null;
   if (options != null) {
-    computeService=computeServiceMap.get(options.getProviderName());
+    Object object=options.getComputeService();
+    if (object instanceof ComputeService) {
+      computeService=(ComputeService)object;
+    }
     if (computeService == null) {
-      if (options.getIdentity() == null || options.getCredential() == null) {
-        throw new RuntimeException("Compute service not found, please specify provider, identity & credential in order to create one");
+      computeService=computeServiceMap.get(options.getProviderName());
+    }
+    if (computeService == null) {
+      options.getCreationStateListener().onStateChange("Compute Service not found. Creating ...");
+      if (Strings.isNullOrEmpty(options.getProviderName()) || Strings.isNullOrEmpty(options.getIdentity()) || Strings.isNullOrEmpty(options.getCredential())) {
+        throw new IllegalArgumentException("Cannot create compute service. A registered cloud provider or the provider name, identity and credential options are required");
       }
-      Iterable<? extends Module> modules=ImmutableSet.of(new SshjSshClientModule(),new Log4JLoggingModule(),credentialStore);
-      Properties props=new Properties();
-      props.put("provider",options.getProviderName());
-      props.put("identity",options.getIdentity());
-      props.put("credential",options.getCredential());
-      if (!Strings.isNullOrEmpty(options.getOwner()) && options.getProviderName().equals("aws-ec2")) {
-        props.put("jclouds.ec2.ami-owners",options.getOwner());
+      Map<String,String> serviceOptions=options.getServiceOptions();
+      try {
+        CloudUtils.registerProvider(zooKeeper,configurationAdmin,options.getProviderName(),options.getIdentity(),options.getCredential(),serviceOptions);
+        computeService=waitForComputeService(options.getProviderName());
       }
-      RestContextFactory restFactory=new RestContextFactory();
-      ComputeServiceContext context=new ComputeServiceContextFactory(restFactory).createContext(options.getProviderName(),options.getIdentity(),options.getCredential(),modules,props);
-      computeService=context.getComputeService();
-      computeServiceMap.put(options.getProviderName(),computeService);
+ catch (      Exception e) {
+        LOGGER.warn("Did not manage to register compute cloud provider.");
+        return computeService;
+      }
     }
   }
   return computeService;

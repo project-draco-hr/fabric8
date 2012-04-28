@@ -2,8 +2,9 @@
   try {
     if (metadata == null) {
       if (service.getZooKeeper().exists(ZkPath.CONTAINER_METADATA.getPath(id)) != null) {
-        byte[] data=service.getZooKeeper().getData(ZkPath.CONTAINER_METADATA.getPath(id));
-        ObjectInputStream ois=new ObjectInputStream(new ByteArrayInputStream(data));
+        String encoded=service.getZooKeeper().getStringData(ZkPath.CONTAINER_METADATA.getPath(id));
+        byte[] decoded=Base64Encoder.decode(encoded).getBytes();
+        ObjectInputStream ois=new ObjectInputStream(new ByteArrayInputStream(decoded));
         metadata=(CreateContainerMetadata)ois.readObject();
       }
     }

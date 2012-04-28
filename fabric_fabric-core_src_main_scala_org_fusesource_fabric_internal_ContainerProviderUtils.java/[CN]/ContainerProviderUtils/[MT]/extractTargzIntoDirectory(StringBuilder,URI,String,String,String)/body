@@ -1,12 +1,11 @@
 {
   String file=artifactId + "-" + version+ ".tar.gz";
   String directory=groupId.replaceAll("\\.","/") + "/" + artifactId+ "/"+ version+ "/";
-  String artifactParentUri=proxy.resolve(directory).toString();
-  String artifactUri=proxy.resolve(directory + file).toString();
   String baseProxyURL=(!proxy.toString().endsWith("/")) ? proxy.toString() + "/" : proxy.toString();
   sb.append("maven-download ").append(baseProxyURL).append(" ").append(groupId).append(" ").append(artifactId).append(" ").append(version).append(" ").append("tar.gz").append("\n");
   for (  String fallbackRepo : FALLBACK_REPOS) {
     sb.append("if [ ! -f " + file + " ] ; then ").append("maven-download ").append(fallbackRepo).append(" ").append(groupId).append(" ").append(artifactId).append(" ").append(version).append(" ").append("tar.gz").append(" ; fi \n");
   }
+  sb.append("exit_if_not_exists ").append(file).append("\n");
   sb.append("run tar -xpzf ").append(file).append("\n");
 }

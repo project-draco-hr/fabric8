@@ -20,7 +20,7 @@
           ObjectOutputStream oos=new ObjectOutputStream(baos);
           oos.writeObject(metadata);
           oos.close();
-          ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_METADATA.getPath(metadata.getContainerName()),baos.toByteArray());
+          ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_METADATA.getPath(metadata.getContainerName()),Base64Encoder.encode(baos.toByteArray()));
           Map<String,String> configuration=metadata.getContainerConfguration();
           for (          Map.Entry<String,String> entry : configuration.entrySet()) {
             String key=entry.getKey();
@@ -29,7 +29,7 @@
           }
           ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_RESOLVER.getPath(metadata.getContainerName()),options.getResolver());
         }
-        ((CreateContainerBasicMetadata)metadata).setContainer(new ContainerImpl(parent,metadata.getContainerName(),FabricServiceImpl.this));
+        metadata.setContainer(new ContainerImpl(parent,metadata.getContainerName(),FabricServiceImpl.this));
         ((ContainerImpl)metadata.getContainer()).setMetadata(metadata);
         logger.info("The container " + metadata.getContainerName() + " has been successfully created");
       }
