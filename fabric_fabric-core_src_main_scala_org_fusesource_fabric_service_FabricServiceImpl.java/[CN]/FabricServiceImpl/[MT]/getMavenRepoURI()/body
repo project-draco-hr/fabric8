@@ -1,7 +1,7 @@
 {
   URI uri=URI.create(defaultRepo);
   try {
-    if (zooKeeper.exists(ZkPath.MAVEN_PROXY.getPath("download")) != null) {
+    if (zooKeeper != null && zooKeeper.exists(ZkPath.MAVEN_PROXY.getPath("download")) != null) {
       List<String> children=zooKeeper.getChildren(ZkPath.MAVEN_PROXY.getPath("download"));
       if (children != null && !children.isEmpty()) {
         Collections.sort(children);

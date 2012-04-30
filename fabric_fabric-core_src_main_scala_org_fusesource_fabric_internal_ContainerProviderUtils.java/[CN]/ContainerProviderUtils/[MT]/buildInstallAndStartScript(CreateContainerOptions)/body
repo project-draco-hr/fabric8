@@ -51,7 +51,9 @@
     sb.append("run export JAVA_OPTS=").append(options.getJvmOpts()).append("\n");
   }
   appendToLineInFile(sb,"etc/org.apache.karaf.features.cfg","featuresBoot=","fabric-agent,");
-  appendToLineInFile(sb,"etc/org.ops4j.pax.url.mvn.cfg","repositories=",options.getProxyUri().toString() + ",");
+  if (options.getProxyUri() != null) {
+    appendToLineInFile(sb,"etc/org.ops4j.pax.url.mvn.cfg","repositories=",options.getProxyUri().toString() + ",");
+  }
   if (options.isEnsembleServer()) {
     CreateContainerMetadata metadata=options.getMetadataMap().get(options.getName());
     if (metadata != null) {
