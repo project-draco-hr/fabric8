@@ -1,9 +1,9 @@
 {
   StringBuilder sb=new StringBuilder();
   sb.append("#!/bin/bash").append("\n");
-  sb.append(RUN_FUCNTION).append("\n");
-  sb.append(DOWNLOAD_FUCNTION).append("\n");
-  sb.append(MAVEN_DOWNLOAD_FUCNTION).append("\n");
+  sb.append(RUN_FUNCTION).append("\n");
+  sb.append(DOWNLOAD_FUNCTION).append("\n");
+  sb.append(MAVEN_DOWNLOAD_FUNCTION).append("\n");
   sb.append(UPDATE_PKGS).append("\n");
   sb.append(INSTALL_CURL).append("\n");
   sb.append(INSTALL_JDK).append("\n");
@@ -11,6 +11,7 @@
   sb.append(EXIT_IF_NOT_EXISTS).append("\n");
   sb.append(COPY_NODE_METADATA).append("\n");
   sb.append(KARAF_CHECK).append("\n");
+  sb.append(REPLACE_IN_FILE).append("\n");
   sb.append("run mkdir -p ~/containers/ ").append("\n");
   sb.append("run cd ~/containers/ ").append("\n");
   sb.append("run mkdir -p ").append(options.getName()).append("\n");
@@ -26,7 +27,7 @@
   List<String> lines=new ArrayList<String>();
   lines.add(ZkDefs.GLOBAL_RESOLVER_PROPERTY + "=" + options.getResolver());
   appendFile(sb,"etc/system.properties",lines);
-  replaceLineInFile(sb,"etc/system.properties","karaf.name=root","karaf.name = " + options.getName());
+  replaceLineInFile(sb,"etc/system.properties","karaf.name=root","karaf.name=" + options.getName());
   replaceLineInFile(sb,"etc/org.apache.karaf.shell.cfg","sshPort=8101","sshPort=" + DEFAULT_SSH_PORT);
   appendFile(sb,"etc/system.properties",Arrays.asList("\n"));
   for (  Map.Entry<String,Properties> entry : options.getSystemProperties().entrySet()) {
