@@ -112,9 +112,8 @@ String publicAddress="";
 Properties addresses=new Properties();
 if (publicAddresses != null && !publicAddresses.isEmpty()) {
 publicAddress=publicAddresses.toArray(new String[publicAddresses.size()])[0];
-addresses.put("publicip",publicAddress);
+addresses.put(ZkDefs.PUBLIC_IP,publicAddress);
 }
-applyJavaRmiHostName(options,publicAddress);
 options.getSystemProperties().put(ContainerProviderUtils.ADDRESSES_PROPERTY_KEY,addresses);
 options.getMetadataMap().put(containerName,jCloudsContainerMetadata);
 try {
@@ -155,11 +154,18 @@ response=computeService.runScriptOnNode(id,script,templateOptions.overrideLoginC
  else {
 response=computeService.runScriptOnNode(id,script,templateOptions);
 }
-if (response == null) {
-jCloudsContainerMetadata.setFailure(new Exception("No response received for fabric install script."));
-}
- else if (response.getOutput() != null && response.getOutput().contains(ContainerProviderUtils.FAILURE_PREFIX)) {
+if (response != null && response.getOutput() != null) {
+if (response.getOutput().contains(ContainerProviderUtils.FAILURE_PREFIX)) {
 jCloudsContainerMetadata.setFailure(new Exception(ContainerProviderUtils.parseScriptFailure(response.getOutput())));
+}
+String overridenResolverValue=ContainerProviderUtils.parseResolverOverride(response.getOutput());
+if (overridenResolverValue != null) {
+options.setResolver(overridenResolverValue);
+options.getCreationStateListener().onStateChange("Overriding resolver to " + overridenResolverValue + ".");
+}
+}
+ else {
+jCloudsContainerMetadata.setFailure(new Exception("No response received for fabric install script."));
 }
 }
  catch (Throwable t) {

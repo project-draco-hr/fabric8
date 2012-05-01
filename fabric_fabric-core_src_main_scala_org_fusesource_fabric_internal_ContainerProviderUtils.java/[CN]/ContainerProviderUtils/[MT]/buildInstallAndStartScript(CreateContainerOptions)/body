@@ -12,6 +12,7 @@
   sb.append(COPY_NODE_METADATA).append("\n");
   sb.append(KARAF_CHECK).append("\n");
   sb.append(REPLACE_IN_FILE).append("\n");
+  sb.append(CONFIGURE_HOSTNAMES).append("\n");
   sb.append("run mkdir -p ~/containers/ ").append("\n");
   sb.append("run cd ~/containers/ ").append("\n");
   sb.append("run mkdir -p ").append(options.getName()).append("\n");
@@ -47,9 +48,6 @@
  else   if (options.getZookeeperUrl() != null) {
     appendFile(sb,"etc/system.properties",Arrays.asList("zookeeper.url = " + options.getZookeeperUrl()));
   }
-  if (options.getJvmOpts() != null && !options.getJvmOpts().isEmpty()) {
-    sb.append("run export JAVA_OPTS=").append(options.getJvmOpts()).append("\n");
-  }
   appendToLineInFile(sb,"etc/org.apache.karaf.features.cfg","featuresBoot=","fabric-agent,");
   if (options.getProxyUri() != null) {
     appendToLineInFile(sb,"etc/org.ops4j.pax.url.mvn.cfg","repositories=",options.getProxyUri().toString() + ",");
@@ -62,6 +60,9 @@
         sb.append("copy_node_metadata ").append(options.getName()).append(" ").append(new String(Base64Encoder.encode(metadataPayload))).append("\n");
       }
     }
+  }
+  if (options instanceof CreateJCloudsContainerOptions) {
+    sb.append("configure_hostnames").append(" ").append(((CreateJCloudsContainerOptions)options).getProviderName()).append("\n");
   }
   sb.append("run nohup bin/start").append("\n");
   sb.append("karaf_check `pwd`").append("\n");
