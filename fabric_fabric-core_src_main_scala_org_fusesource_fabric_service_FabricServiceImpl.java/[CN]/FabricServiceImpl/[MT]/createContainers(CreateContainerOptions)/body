@@ -16,11 +16,7 @@
       if (metadata.isSuccess()) {
         if (!options.isEnsembleServer()) {
           createContainerConfig(parent != null ? parent.getId() : "",metadata.getContainerName());
-          ByteArrayOutputStream baos=new ByteArrayOutputStream();
-          ObjectOutputStream oos=new ObjectOutputStream(baos);
-          oos.writeObject(metadata);
-          oos.close();
-          ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_METADATA.getPath(metadata.getContainerName()),Base64Encoder.encode(baos.toByteArray()));
+          ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_METADATA.getPath(metadata.getContainerName()),Base64Encoder.encode(ObjectUtils.toBytes(metadata)));
           Map<String,String> configuration=metadata.getContainerConfguration();
           for (          Map.Entry<String,String> entry : configuration.entrySet()) {
             String key=entry.getKey();

@@ -55,7 +55,7 @@
   if (options.isEnsembleServer()) {
     CreateContainerMetadata metadata=options.getMetadataMap().get(options.getName());
     if (metadata != null) {
-      byte[] metadataPayload=toBytes(metadata);
+      byte[] metadataPayload=ObjectUtils.toBytes(metadata);
       if (metadataPayload != null && metadataPayload.length > 0) {
         sb.append("copy_node_metadata ").append(options.getName()).append(" ").append(new String(Base64Encoder.encode(metadataPayload))).append("\n");
       }
