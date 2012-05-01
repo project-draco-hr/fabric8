@@ -6,6 +6,7 @@
       activeMQService.start();
       ProducerThread producerThread=new ProducerThread(activeMQService,destination);
       producerThread.setMessageCount(count);
+      producerThread.setPersistent(persistent);
       producerThread.run();
       System.out.println("Produced: " + producerThread.getSentCount());
     }

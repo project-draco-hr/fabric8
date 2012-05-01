@@ -2,6 +2,7 @@
   MessageProducer producer=null;
   try {
     producer=service.createProducer(dest);
+    producer.setDeliveryMode(persistent ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT);
     for (sentCount=0; sentCount < messageCount; sentCount++) {
       producer.send(createMessage(sentCount));
       LOG.info("Sent 'test message: " + sentCount + "'");
