@@ -1,19 +1,9 @@
 {
   FabClassPathResolver resolver=null;
   if (arg.matches("\\d+")) {
-    Long id=null;
-    try {
-      id=Long.parseLong(arg);
-    }
- catch (    NumberFormatException e) {
-      System.err.println("Failed to parse bundle ID: " + arg + ". Reason: "+ e);
-    }
-    Bundle bundle=bundleContext.getBundle(id);
+    Bundle bundle=getBundle(arg);
     if (bundle != null) {
       resolver=createFabResolver(bundle);
-    }
- else {
-      System.err.println("Bundle ID " + id + " is invalid");
     }
   }
  else {
