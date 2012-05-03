@@ -3,9 +3,15 @@
   try {
     producer=service.createProducer(dest);
     producer.setDeliveryMode(persistent ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT);
+    initPayLoad();
     for (sentCount=0; sentCount < messageCount; sentCount++) {
-      producer.send(createMessage(sentCount));
-      LOG.info("Sent 'test message: " + sentCount + "'");
+      Message message=createMessage(sentCount);
+      producer.send(message);
+      LOG.info("Sent: " + (message instanceof TextMessage ? ((TextMessage)message).getText() : message.getJMSMessageID()));
+      if (transactionBatchSize > 0 && sentCount > 0 && sentCount % transactionBatchSize == 0) {
+        LOG.info("Committing transaction: " + transactions++);
+        service.getDefaultSession().commit();
+      }
       if (sleep > 0) {
         Thread.sleep(sleep);
       }
