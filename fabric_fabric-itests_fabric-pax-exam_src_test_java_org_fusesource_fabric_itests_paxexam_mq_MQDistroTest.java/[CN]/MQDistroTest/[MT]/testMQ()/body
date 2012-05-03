@@ -22,7 +22,7 @@
   post.addParameter("JMSDestination",destination);
   post.addParameter("JMSDestinationType","queue");
   assertEquals("post succeeded, " + post,302,client.executeMethod(post));
-  Connection connection=new ActiveMQConnectionFactory().createConnection();
+  ActiveMQConnection connection=(ActiveMQConnection)new ActiveMQConnectionFactory().createConnection();
   connection.start();
   try {
     Session session=connection.createSession(false,Session.AUTO_ACKNOWLEDGE);
@@ -32,5 +32,15 @@
   }
   finally {
     connection.close();
+  }
+  ConnectionFactory connectionFactory=getOsgiService(ConnectionFactory.class);
+  assertTrue(connectionFactory instanceof ActiveMQConnectionFactory);
+  ActiveMQConnection connectionFromOsgiFactory=(ActiveMQConnection)connectionFactory.createConnection();
+  connectionFromOsgiFactory.start();
+  try {
+    assertEquals("same broker",connection.getBrokerName(),connectionFromOsgiFactory.getBrokerName());
+  }
+  finally {
+    connectionFromOsgiFactory.close();
   }
 }
