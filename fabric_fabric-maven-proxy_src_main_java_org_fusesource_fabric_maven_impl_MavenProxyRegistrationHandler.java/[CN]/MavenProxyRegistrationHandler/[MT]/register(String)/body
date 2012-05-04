@@ -3,8 +3,8 @@
   String mavenProxyUrl="http://${zk:" + name + "/ip}:"+ getPortSafe()+ "/maven/"+ type+ "/";
   String parentPath=ZkPath.MAVEN_PROXY.getPath(type);
   String path=parentPath + "/p_";
-  if (zookeeper.isConnected()) {
-    try {
+  try {
+    if (zookeeper.isConnected()) {
       if (zookeeper.exists(parentPath) == null) {
         zookeeper.createWithParents(parentPath,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
       }
@@ -12,8 +12,8 @@
         registeredProxies.get(type).add(zookeeper.create(path,mavenProxyUrl.getBytes("UTF-8"),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL_SEQUENTIAL));
       }
     }
- catch (    Exception e) {
-      LOGGER.error("Failed to register maven proxy.",e);
-    }
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to register maven proxy.",e);
   }
 }

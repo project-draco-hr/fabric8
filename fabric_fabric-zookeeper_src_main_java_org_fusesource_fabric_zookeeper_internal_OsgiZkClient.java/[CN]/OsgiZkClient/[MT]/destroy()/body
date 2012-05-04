@@ -7,6 +7,12 @@
   }
   if (_stateChangeDispatcher != null) {
     _stateChangeDispatcher.end();
+    try {
+      _stateChangeDispatcher.join(1000);
+    }
+ catch (    Exception e) {
+      log.debug("ignored exception",e);
+    }
   }
 synchronized (_lock) {
     if (_zk != null) {

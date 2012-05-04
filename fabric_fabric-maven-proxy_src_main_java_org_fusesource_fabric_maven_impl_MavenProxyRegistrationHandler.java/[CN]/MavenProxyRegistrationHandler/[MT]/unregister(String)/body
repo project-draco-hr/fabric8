@@ -1,7 +1,7 @@
 {
-  try {
-    Set<String> proxyNodes=registeredProxies.get(type);
-    if (proxyNodes != null) {
+  Set<String> proxyNodes=registeredProxies.get(type);
+  if (proxyNodes != null) {
+    try {
       for (      String entry : registeredProxies.get(type)) {
         if (zookeeper.isConnected()) {
           if (zookeeper.exists(entry) != null) {
@@ -9,10 +9,10 @@
           }
         }
       }
-      registeredProxies.get(type).clear();
     }
-  }
- catch (  Exception e) {
-    LOGGER.error("Failed to remove maven proxy from registry.",e);
+ catch (    Exception e) {
+      LOGGER.error("Failed to remove maven proxy from registry.",e);
+    }
+    registeredProxies.get(type).clear();
   }
 }
