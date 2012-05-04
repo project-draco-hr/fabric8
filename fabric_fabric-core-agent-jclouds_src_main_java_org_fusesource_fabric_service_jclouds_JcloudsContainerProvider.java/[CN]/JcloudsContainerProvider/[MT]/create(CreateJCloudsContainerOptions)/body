@@ -49,6 +49,7 @@ builder.hardwareId(options.getHardwareId());
 AdminAccess.Builder adminAccess=AdminAccess.builder();
 TemplateOptions templateOptions=computeService.templateOptions();
 applyProviderSpecificOptions(templateOptions,options);
+if (options.isAdminAccess()) {
 if (!Strings.isNullOrEmpty(options.getPublicKeyFile())) {
 File publicKey=new File(options.getPublicKeyFile());
 if (publicKey.exists()) {
@@ -63,7 +64,8 @@ if (!Strings.isNullOrEmpty(options.getUser())) {
 adminAccess.adminUsername(options.getUser());
 }
 templateOptions.runScript(adminAccess.build());
-builder.options(templateOptions);
+}
+builder=builder.options(templateOptions);
 Set<? extends NodeMetadata> metadatas=null;
 overviewBuilder.append(" It may take a while ...");
 options.getCreationStateListener().onStateChange(overviewBuilder.toString());
@@ -148,11 +150,26 @@ try {
 String script=buildInstallAndStartScript(options.name(containerName));
 options.getCreationStateListener().onStateChange(String.format("Installing fabric agent on container %s. It may take a while...",containerName));
 ExecResponse response=null;
+boolean doRetry=true;
+for (int i=0; i < 5 && doRetry; i++) {
+try {
 if (credentials != null) {
-response=computeService.runScriptOnNode(id,script,templateOptions.overrideLoginCredentials(credentials).runAsRoot(false));
+  response=computeService.runScriptOnNode(id,script,templateOptions.overrideLoginCredentials(credentials).runAsRoot(false));
 }
  else {
-response=computeService.runScriptOnNode(id,script,templateOptions);
+  response=computeService.runScriptOnNode(id,script,templateOptions);
+}
+doRetry=false;
+}
+ catch (AuthorizationException ex) {
+doRetry=true;
+}
+catch (SshException ex) {
+doRetry=true;
+}
+}
+if (doRetry) {
+throw new Exception("Failed to connect to the container via ssh.");
 }
 if (response != null && response.getOutput() != null) {
 if (response.getOutput().contains(ContainerProviderUtils.FAILURE_PREFIX)) {
