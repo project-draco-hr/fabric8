@@ -123,14 +123,17 @@ FirewallManager firewallManager=firewallManagerFactory.getFirewallManager(comput
 if (firewallManager.isSupported()) {
 options.getCreationStateListener().onStateChange("Configuring firewall.");
 String source=getOriginatingIp();
+Rule httpRule=Rule.create().source("0.0.0.0/0").destination(nodeMetadata).port(8181);
+firewallManager.addRules(httpRule);
+if (source != null) {
 Rule jmxRule=Rule.create().source(source).destination(nodeMetadata).ports(44444,1099);
 Rule sshRule=Rule.create().source(source).destination(nodeMetadata).port(8101);
-Rule httpRule=Rule.create().source("0.0.0.0/0").destination(nodeMetadata).port(8181);
 Rule zookeeperRule=Rule.create().source(source).destination(nodeMetadata).port(2181);
-firewallManager.addRules(jmxRule,sshRule,httpRule,zookeeperRule);
+firewallManager.addRules(jmxRule,sshRule,zookeeperRule);
+}
 if (!Strings.isNullOrEmpty(publicAddress)) {
 Rule zookeeperFromTargetRule=Rule.create().source(publicAddress + "/32").destination(nodeMetadata).port(2181);
-firewallManager.addRule(zookeeperRule);
+firewallManager.addRule(zookeeperFromTargetRule);
 }
 }
  else {
