@@ -150,25 +150,18 @@ try {
 String script=buildInstallAndStartScript(options.name(containerName));
 options.getCreationStateListener().onStateChange(String.format("Installing fabric agent on container %s. It may take a while...",containerName));
 ExecResponse response=null;
-boolean doRetry=true;
-for (int i=0; i < 5 && doRetry; i++) {
 try {
 if (credentials != null) {
-  response=computeService.runScriptOnNode(id,script,templateOptions.overrideLoginCredentials(credentials).runAsRoot(false));
+response=computeService.runScriptOnNode(id,script,templateOptions.overrideLoginCredentials(credentials).runAsRoot(false));
 }
  else {
-  response=computeService.runScriptOnNode(id,script,templateOptions);
+response=computeService.runScriptOnNode(id,script,templateOptions);
 }
-doRetry=false;
 }
  catch (AuthorizationException ex) {
-doRetry=true;
+throw new Exception("Failed to connect to the container via ssh.");
 }
 catch (SshException ex) {
-doRetry=true;
-}
-}
-if (doRetry) {
 throw new Exception("Failed to connect to the container via ssh.");
 }
 if (response != null && response.getOutput() != null) {
