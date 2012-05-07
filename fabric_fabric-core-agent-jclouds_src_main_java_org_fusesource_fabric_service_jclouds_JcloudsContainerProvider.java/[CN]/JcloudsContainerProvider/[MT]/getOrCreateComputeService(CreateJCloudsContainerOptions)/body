@@ -16,7 +16,7 @@
       Map<String,String> serviceOptions=options.getServiceOptions();
       try {
         CloudUtils.registerProvider(zooKeeper,configurationAdmin,options.getProviderName(),options.getIdentity(),options.getCredential(),serviceOptions);
-        computeService=waitForComputeService(options.getProviderName());
+        computeService=CloudUtils.waitForComputeService(bundleContext,options.getProviderName());
       }
  catch (      Exception e) {
         LOGGER.warn("Did not manage to register compute cloud provider.");
