@@ -1,0 +1,7 @@
+{
+  StaticAddressResolver resolver=new StaticAddressResolver();
+  resolver.setPrefixAddress("http://localhost:8081/cxf/service");
+  FabricServerListener listener=new FabricServerListener(null,resolver);
+  String address=listener.getFullAddress("/test1");
+  assertEquals("Get a wrong address.","http://localhost:8081/cxf/service/test1",address);
+}
