@@ -1,7 +1,10 @@
 {
   if (zooKeeper.exists(path) != null) {
+    List<String> parts=new LinkedList<String>();
     String data=zooKeeper.getStringData(path);
-    List<String> parts=new ArrayList<String>(Arrays.asList(data.split(" ")));
+    if (data != null) {
+      parts=new ArrayList<String>(Arrays.asList(data.split(" ")));
+    }
     boolean changed=false;
     for (Iterator<String> it=parts.iterator(); it.hasNext(); ) {
       String v=it.next();
