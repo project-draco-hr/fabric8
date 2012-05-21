@@ -6,8 +6,8 @@
     }
     if (version == null || version.isEmpty()) {
       version=ZkDefs.DEFAULT_VERSION;
-      ZooKeeperUtils.createDefault(zooKeeper,ZkPath.CONFIG_DEFAULT_VERSION.getPath(),version);
-      ZooKeeperUtils.createDefault(zooKeeper,ZkPath.CONFIG_VERSION.getPath(version),null);
+      ZooKeeperUtils.set(zooKeeper,ZkPath.CONFIG_DEFAULT_VERSION.getPath(),version);
+      ZooKeeperUtils.set(zooKeeper,ZkPath.CONFIG_VERSION.getPath(version),(String)null);
     }
     return new VersionImpl(version,this);
   }

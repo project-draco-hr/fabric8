@@ -1,0 +1,15 @@
+{
+  boolean connected=getZooKeeper().isConnected();
+  Container current=null;
+  if (connected) {
+    getZooKeeper().deleteWithChildren(ZkPath.CLOUD_PROVIDER.getPath(provider));
+    current=fabricService.getCurrentContainer();
+  }
+  if (current == null || !current.isManaged()) {
+    Configuration[] computeConfigs=findConfigurationByFactoryPid("org.jclouds.compute");
+    for (    Configuration configuration : computeConfigs) {
+      configuration.delete();
+    }
+  }
+  return null;
+}

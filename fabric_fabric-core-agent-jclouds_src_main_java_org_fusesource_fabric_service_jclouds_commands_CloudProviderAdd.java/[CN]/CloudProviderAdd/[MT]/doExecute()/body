@@ -1,0 +1,24 @@
+{
+  Map<String,String> props=CloudUtils.parseProviderOptions(options);
+  if (options != null && options.length > 1) {
+    for (    String option : options) {
+      if (option.contains("=")) {
+        String key=option.substring(0,option.indexOf("="));
+        String value=option.substring(option.lastIndexOf("=") + 1);
+        props.put(key,value);
+      }
+    }
+  }
+  if (!Strings.isNullOrEmpty(owner)) {
+    props.put("owner",owner);
+  }
+  Container current=fabricService.getCurrentContainer();
+  if (!getZooKeeper().isConnected() || !current.isManaged()) {
+    CloudUtils.registerProvider(getZooKeeper(),configurationAdmin,provider,identity,credential,props);
+    if (!registerAsync) {
+      System.out.println("Waiting for " + provider + " service to initialize.");
+      CloudUtils.waitForComputeService(bundleContext,provider);
+    }
+  }
+  return null;
+}

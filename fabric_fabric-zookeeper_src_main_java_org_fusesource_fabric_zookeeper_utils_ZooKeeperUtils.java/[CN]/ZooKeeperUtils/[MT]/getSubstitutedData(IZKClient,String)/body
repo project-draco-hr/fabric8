@@ -1,0 +1,19 @@
+{
+  Map<String,String> props=new HashMap<String,String>();
+  props.put("data",data);
+  InterpolationHelper.performSubstitution(props,new InterpolationHelper.SubstitutionCallback(){
+    @Override public String getValue(    String key){
+      if (key.startsWith("zk:")) {
+        try {
+          return new String(ZkPath.loadURL(zooKeeper,key),"UTF-8");
+        }
+ catch (        Exception e) {
+          throw new RuntimeException(e);
+        }
+      }
+      return null;
+    }
+  }
+);
+  return props.get("data");
+}

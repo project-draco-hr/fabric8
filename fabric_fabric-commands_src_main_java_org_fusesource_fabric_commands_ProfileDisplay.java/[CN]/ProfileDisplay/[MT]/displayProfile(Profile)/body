@@ -1,11 +1,12 @@
 {
   PrintStream output=session.getConsole();
-  output.println("Profile id: " + profile.getId());
-  output.println("Version   : " + profile.getVersion());
-  output.println("Parents   : " + toString(profile.getParents()));
-  output.printf("Associated Containers : %s\n",toString(profile.getAssociatedContainers()));
-  Map<String,Map<String,String>> configuration=overlay ? profile.getOverlay().getConfigurations() : profile.getConfigurations();
-  Map<String,String> agentConfiguration=overlay ? profile.getOverlay().getContainerConfiguration() : profile.getContainerConfiguration();
+  output.println("Profile id: " + p.getId());
+  output.println("Version   : " + p.getVersion());
+  output.println("Parents   : " + toString(p.getParents()));
+  output.printf("Associated Containers : %s\n",toString(p.getAssociatedContainers()));
+  Profile profile=overlay ? p.getOverlay() : p;
+  Map<String,Map<String,String>> configuration=profile.getConfigurations();
+  Map<String,String> agentConfiguration=profile.getContainerConfiguration();
   List<String> agentProperties=new ArrayList<String>();
   List<String> systemProperties=new ArrayList<String>();
   List<String> configProperties=new ArrayList<String>();
@@ -21,7 +22,7 @@
  else     if (key.startsWith("config.")) {
       configProperties.add("  " + key.substring("config.".length()) + " = "+ value);
     }
- else     if (!key.startsWith("feature.") && !key.startsWith("repository") && !key.startsWith("bundle.")) {
+ else     if (!key.startsWith("feature.") && !key.startsWith("repository") && !key.startsWith("bundle.")&& !key.startsWith("fab.")) {
       agentProperties.add("  " + key + " = "+ value);
     }
   }
@@ -36,6 +37,9 @@
     }
     if (profile.getBundles().size() > 0) {
       printConfigList("Bundles : ",output,profile.getBundles());
+    }
+    if (profile.getFabs().size() > 0) {
+      printConfigList("Fabs : ",output,profile.getFabs());
     }
     if (agentProperties.size() > 0) {
       printConfigList("Agent Properties : ",output,agentProperties);

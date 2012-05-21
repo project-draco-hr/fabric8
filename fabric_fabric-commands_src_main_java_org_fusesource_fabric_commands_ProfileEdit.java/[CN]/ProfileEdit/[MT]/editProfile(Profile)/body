@@ -22,6 +22,12 @@
       updateConfig(pidConfig,BUNDLE_PREFIX + bundlesLocation.replace('/','_'),bundlesLocation,set,delete);
     }
   }
+  if (fabsList != null && !fabsList.isEmpty()) {
+    String[] fabs=fabsList.split(DELIMETER);
+    for (    String fabsLocation : fabs) {
+      updateConfig(pidConfig,FAB_PREFIX + fabsLocation.replace('/','_'),fabsLocation,set,delete);
+    }
+  }
   if (configAdminConfigList != null && !configAdminConfigList.isEmpty()) {
     Map<String,String> configMap=extractConfigs(configAdminConfigList);
     for (    Map.Entry<String,String> configEntries : configMap.entrySet()) {

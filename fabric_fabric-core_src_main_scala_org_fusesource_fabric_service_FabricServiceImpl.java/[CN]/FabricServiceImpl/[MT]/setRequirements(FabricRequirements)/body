@@ -1,0 +1,9 @@
+{
+  try {
+    String json=RequirementsJson.toJSON(requirements);
+    zooKeeper.createOrSetWithParents(requirementsJsonPath,json,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

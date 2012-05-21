@@ -4,8 +4,11 @@
   while (!started && attempts++ < maxAttempts) {
     try {
       defaultConnection=connectionFactory.createConnection();
+      if (clientId != null) {
+        defaultConnection.setClientID(clientId);
+      }
       defaultConnection.start();
-      defaultSession=defaultConnection.createSession(transacted,ackMode);
+      defaultSession=defaultConnection.createSession(transacted,transacted ? Session.SESSION_TRANSACTED : Session.AUTO_ACKNOWLEDGE);
       started=true;
     }
  catch (    JMSException e) {

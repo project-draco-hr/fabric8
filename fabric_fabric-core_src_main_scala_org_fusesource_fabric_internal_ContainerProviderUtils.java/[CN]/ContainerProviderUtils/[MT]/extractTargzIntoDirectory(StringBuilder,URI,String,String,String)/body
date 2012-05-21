@@ -1,16 +1,13 @@
 {
   String file=artifactId + "-" + version+ ".tar.gz";
   String directory=groupId.replaceAll("\\.","/") + "/" + artifactId+ "/"+ version+ "/";
-  String artifactParentUri=proxy.resolve(directory).toString();
-  String artifactUri=proxy.resolve(directory + file).toString();
-  String installationFolder=artifactId + "-" + version;
-  if (version.contains("SNAPSHOT")) {
-    sb.append("run export DISTRO_URL=`curl --silent ").append(artifactParentUri).append("| grep href | grep \"tar.gz\\\"\" | sed 's/^.*<a href=\"//' | sed 's/\".*$//'  | tail -1`").append("\n");
+  if (proxy != null) {
+    String baseProxyURL=(!proxy.toString().endsWith("/")) ? proxy.toString() + "/" : proxy.toString();
+    sb.append("maven-download ").append(baseProxyURL).append(" ").append(groupId).append(" ").append(artifactId).append(" ").append(version).append(" ").append("tar.gz").append("\n");
   }
- else {
-    sb.append("run export DISTRO_URL=`").append(artifactUri).append("`").append("\n");
+  for (  String fallbackRepo : FALLBACK_REPOS) {
+    sb.append("if [ ! -f " + file + " ] ; then ").append("maven-download ").append(fallbackRepo).append(" ").append(groupId).append(" ").append(artifactId).append(" ").append(version).append(" ").append("tar.gz").append(" ; fi \n");
   }
-  sb.append("if [[  \"$DISTRO_URL\" == \"\" ]] ;  then export DISTRO_URL=").append(artifactUri).append("; fi\n");
-  sb.append("run curl --show-error --silent --get --retry 20 --output ").append(file).append(" ").append("$DISTRO_URL").append("\n");
+  sb.append("exit-if-not-exists ").append(file).append("\n");
   sb.append("run tar -xpzf ").append(file).append("\n");
 }

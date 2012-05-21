@@ -16,8 +16,9 @@
       throw new IllegalArgumentException("Can not use --all with a list of containers simultaneously");
     }
   }
-  for (  String container : containerIds) {
-    getZooKeeper().setData(ZkPath.CONTAINER_RESOLVER.getPath(container),resolver);
+  for (  String containerId : containerIds) {
+    Container container=fabricService.getContainer(containerId);
+    container.setResolver(resolver);
   }
   return null;
 }

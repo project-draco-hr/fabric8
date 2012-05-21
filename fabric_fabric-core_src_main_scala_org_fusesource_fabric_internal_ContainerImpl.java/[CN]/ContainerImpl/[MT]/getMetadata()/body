@@ -1,9 +1,12 @@
 {
   try {
     if (metadata == null) {
-      byte[] data=service.getZooKeeper().getData(ZkPath.CONTAINER_METADATA.getPath(id));
-      ObjectInputStream ois=new ObjectInputStream(new ByteArrayInputStream(data));
-      metadata=(CreateContainerMetadata)ois.readObject();
+      if (service.getZooKeeper().exists(ZkPath.CONTAINER_METADATA.getPath(id)) != null) {
+        String encoded=service.getZooKeeper().getStringData(ZkPath.CONTAINER_METADATA.getPath(id));
+        byte[] decoded=Base64Encoder.decode(encoded).getBytes(Base64Encoder.base64CharSet);
+        ObjectInputStream ois=new ObjectInputStream(new ByteArrayInputStream(decoded));
+        metadata=(CreateContainerMetadata)ois.readObject();
+      }
     }
     return metadata;
   }

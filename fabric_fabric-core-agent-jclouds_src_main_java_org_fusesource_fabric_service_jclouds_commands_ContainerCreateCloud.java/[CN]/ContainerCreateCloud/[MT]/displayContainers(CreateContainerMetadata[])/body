@@ -1,0 +1,15 @@
+{
+  System.out.println(String.format(DISPLAY_FORMAT,OUTPUT_HEADERS));
+  if (metadatas != null && metadatas.length > 0) {
+    for (    CreateContainerMetadata ccm : metadatas) {
+      CreateJCloudsContainerMetadata metadata=(CreateJCloudsContainerMetadata)ccm;
+      String status="success";
+      if (ccm.getFailure() != null) {
+        status=ccm.getFailure().getMessage();
+      }
+      String nodeId=metadata.getNodeId() != null ? metadata.getNodeId() : "";
+      String containerName=metadata.getContainerName() != null ? metadata.getContainerName() : "";
+      System.out.println(String.format(DISPLAY_FORMAT,nodeId,containerName,metadata.getPublicAddresses(),status));
+    }
+  }
+}

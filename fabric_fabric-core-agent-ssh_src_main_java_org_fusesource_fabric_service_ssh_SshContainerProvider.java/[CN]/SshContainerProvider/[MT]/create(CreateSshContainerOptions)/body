@@ -3,6 +3,8 @@
   try {
     String path=options.getPath();
     String host=options.getHost();
+    String ip=InetAddress.getByName(host).getHostAddress();
+    options.setPreferredAddress(ip);
     if (options.getProviderURI() != null && options.getProviderURI().getQuery() != null) {
       verbose=options.getProviderURI().getQuery().contains("verbose");
     }

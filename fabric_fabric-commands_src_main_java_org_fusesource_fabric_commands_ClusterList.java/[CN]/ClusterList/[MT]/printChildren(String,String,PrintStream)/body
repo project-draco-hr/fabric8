@@ -29,7 +29,7 @@
           if (serviceText.startsWith("[") && serviceText.endsWith("]")) {
             serviceText=serviceText.substring(1,serviceText.length() - 1);
           }
-          services=serviceText;
+          services=ZooKeeperUtils.getSubstitutedData(getZooKeeper(),serviceText);
         }
         out.println(String.format("%-30s %-30s %-10s %s",clusterName,id,master,services));
         master=false;

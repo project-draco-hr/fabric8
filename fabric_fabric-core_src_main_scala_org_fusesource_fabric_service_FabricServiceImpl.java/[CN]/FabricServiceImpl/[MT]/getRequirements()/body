@@ -1,0 +1,16 @@
+{
+  try {
+    FabricRequirements answer=null;
+    if (zooKeeper.exists(requirementsJsonPath) != null) {
+      String json=zooKeeper.getStringData(requirementsJsonPath);
+      answer=RequirementsJson.fromJSON(json);
+    }
+    if (answer == null) {
+      answer=new FabricRequirements();
+    }
+    return answer;
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

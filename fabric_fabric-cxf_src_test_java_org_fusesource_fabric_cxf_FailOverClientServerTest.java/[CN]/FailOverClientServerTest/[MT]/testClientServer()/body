@@ -1,16 +1,16 @@
 {
   assertNotNull(bus);
-  ServerFactoryBean factory=new ServerFactoryBean();
+  JaxWsServerFactoryBean factory=new JaxWsServerFactoryBean();
   factory.setServiceBean(new HelloImpl());
   factory.setAddress("http://localhost:9000/fail/server");
   factory.setBus(bus);
   factory.create();
-  factory=new ServerFactoryBean();
+  factory=new JaxWsServerFactoryBean();
   factory.setServiceBean(new HelloImpl());
   factory.setAddress("http://localhost:9000/simple/server");
   factory.setBus(bus);
   factory.create();
-  ClientProxyFactoryBean clientFactory=new ClientProxyFactoryBean();
+  JaxWsProxyFactoryBean clientFactory=new JaxWsProxyFactoryBean();
   clientFactory.setServiceClass(Hello.class);
   clientFactory.setAddress("http://someotherplace");
   List<AbstractFeature> features=new ArrayList<AbstractFeature>();

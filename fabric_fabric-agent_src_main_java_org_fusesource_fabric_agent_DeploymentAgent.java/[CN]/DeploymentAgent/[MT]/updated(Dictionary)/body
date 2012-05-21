@@ -1,15 +1,21 @@
 {
+  if (executor.isShutdown() || props == null) {
+    return;
+  }
   executor.submit(new Runnable(){
     public void run(){
-      Exception result=null;
+      Throwable result=null;
+      boolean success=false;
       try {
-        doUpdate(props);
+        success=doUpdate(props);
       }
- catch (      Exception e) {
+ catch (      Throwable e) {
         result=e;
         LOGGER.error("Unable to update agent",e);
       }
-      updateStatus(result == null ? ZkDefs.SUCCESS : ZkDefs.ERROR,result);
+      if (success || result != null) {
+        updateStatus(success ? ZkDefs.SUCCESS : ZkDefs.ERROR,result,true);
+      }
     }
   }
 );

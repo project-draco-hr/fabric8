@@ -1,20 +1,10 @@
 {
   if (props == null) {
-    return;
+    return false;
   }
-  if (fabricService != null) {
-    URI mavenRepoURI=fabricService.getMavenRepoURI();
-    if (mavenRepoURI != null) {
-      String existingRepos=(String)props.get("org.ops4j.pax.url.mvn.repositories");
-      if (existingRepos == null) {
-        props.put("org.ops4j.pax.url.mvn.repositories",mavenRepoURI.toString() + "@snapshots");
-      }
- else {
-        props.put("org.ops4j.pax.url.mvn.repositories",existingRepos + "," + mavenRepoURI.toString()+ "@snapshots");
-      }
-    }
-  }
+  addMavenProxies(props);
   updateStatus("analyzing",null);
+  DictionaryPropertyResolver propertyResolver=new DictionaryPropertyResolver(props,new PropertiesPropertyResolver(System.getProperties()));
   final MavenConfigurationImpl config=new MavenConfigurationImpl(new DictionaryPropertyResolver(props,new PropertiesPropertyResolver(System.getProperties())),"org.ops4j.pax.url.mvn");
   config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
   manager=new DownloadManager(config,getDownloadExecutor());
@@ -57,9 +47,9 @@
     systemProps.save();
     System.setProperty("karaf.restart","true");
     bundleContext.getBundle(0).stop();
-    return;
+    return false;
   }
-  Map<URI,Repository> repositories=new HashMap<URI,Repository>();
+  final Map<URI,Repository> repositories=new HashMap<URI,Repository>();
   for (  String key : properties.keySet()) {
     if (key.startsWith("repository.")) {
       String url=properties.get(key);
@@ -98,5 +88,27 @@
       }
     }
   }
-  updateDeployment(repositories,features,bundles);
+  Set<String> fabs=new HashSet<String>();
+  for (  String key : properties.keySet()) {
+    if (key.startsWith("fab.")) {
+      String url=properties.get(key);
+      if (url == null || url.length() == 0) {
+        url=key.substring("fab.".length());
+      }
+      if (url != null && url.length() > 0) {
+        fabs.add(url);
+      }
+    }
+  }
+  FabResolverFactoryImpl fabResolverFactory=new FabResolverFactoryImpl();
+  fabResolverFactory.setConfiguration(new FabricFabConfiguration(config,propertyResolver));
+  fabResolverFactory.setBundleContext(bundleContext);
+  fabResolverFactory.setFeaturesService(new FeaturesServiceImpl(){
+    @Override public Repository[] listRepositories(){
+      return repositories.values().toArray(new Repository[repositories.size()]);
+    }
+  }
+);
+  updateDeployment(fabResolverFactory,repositories,features,bundles,fabs);
+  return true;
 }

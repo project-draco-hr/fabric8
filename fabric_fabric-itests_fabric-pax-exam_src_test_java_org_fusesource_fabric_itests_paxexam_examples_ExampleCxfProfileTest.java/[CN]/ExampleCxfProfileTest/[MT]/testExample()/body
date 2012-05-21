@@ -1,0 +1,12 @@
+{
+  System.err.println(executeCommand("fabric:create"));
+  createAndAssertChildContainer("cxf-server","root","example-cxf");
+  System.err.println(executeCommand("fabric:cluster-list"));
+  System.err.println(executeCommand("features:install fabric-cxf"));
+  String projectVersion=System.getProperty("fabricitest.version");
+  System.err.println(executeCommand("osgi:install -s mvn:org.fusesource.fabric.fabric-examples/fabric-cxf-demo-client/" + projectVersion));
+  Client client=new Client();
+  String result1=client.getProxy().sayHello();
+  String result2=client.getProxy().sayHello();
+  assertNotSame("We should get the two different result",result1,result2);
+}

@@ -1,20 +1,27 @@
 {
   ComputeService computeService=null;
   if (options != null) {
-    computeService=computeServiceMap.get(options.getProviderName());
+    Object object=options.getComputeService();
+    if (object instanceof ComputeService) {
+      computeService=(ComputeService)object;
+    }
     if (computeService == null) {
-      Iterable<? extends Module> modules=ImmutableSet.of();
-      Properties props=new Properties();
-      props.put("provider",options.getProviderName());
-      props.put("identity",options.getIdentity());
-      props.put("credential",options.getCredential());
-      if (!Strings.isNullOrEmpty(options.getOwner()) && options.getProviderName().equals("aws-ec2")) {
-        props.put("jclouds.ec2.ami-owners",options.getOwner());
+      computeService=computeServiceMap.get(options.getProviderName());
+    }
+    if (computeService == null) {
+      options.getCreationStateListener().onStateChange("Compute Service not found. Creating ...");
+      if (Strings.isNullOrEmpty(options.getProviderName()) || Strings.isNullOrEmpty(options.getIdentity()) || Strings.isNullOrEmpty(options.getCredential())) {
+        throw new IllegalArgumentException("Cannot create compute service. A registered cloud provider or the provider name, identity and credential options are required");
       }
-      RestContextFactory restFactory=new RestContextFactory();
-      ComputeServiceContext context=new ComputeServiceContextFactory(restFactory).createContext(options.getProviderName(),options.getIdentity(),options.getCredential(),modules,props);
-      computeService=context.getComputeService();
-      computeServiceMap.put(options.getProviderName(),computeService);
+      Map<String,String> serviceOptions=options.getServiceOptions();
+      try {
+        CloudUtils.registerProvider(zooKeeper,configurationAdmin,options.getProviderName(),options.getIdentity(),options.getCredential(),serviceOptions);
+        computeService=CloudUtils.waitForComputeService(bundleContext,options.getProviderName());
+      }
+ catch (      Exception e) {
+        LOGGER.warn("Did not manage to register compute cloud provider.");
+        return computeService;
+      }
     }
   }
   return computeService;
