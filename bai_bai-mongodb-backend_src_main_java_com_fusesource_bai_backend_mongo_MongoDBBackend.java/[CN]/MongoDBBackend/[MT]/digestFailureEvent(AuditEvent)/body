@@ -1,0 +1,13 @@
+{
+  DBObject filter=new BasicDBObject("_id",ev.breadCrumbId);
+  DBObject dboj=new BasicDBObject("endpointUri",ev.endpointURI);
+  dboj.put("exception",ev.exception.toString());
+  dboj.put("timestamp",ev.timestamp);
+  DBObject updateObj=new BasicDBObject("$push",new BasicDBObject("failures",dboj));
+  updateDatabase(ev,filter,updateObj);
+  filter.put("exchanges.endpointUri",ev.endpointURI);
+  dboj=new BasicDBObject("exchanges.$.status","failed");
+  dboj.put("exchanges.$.failTimestamp",ev.timestamp);
+  updateObj=new BasicDBObject("$set",dboj);
+  updateDatabase(ev,filter,updateObj);
+}

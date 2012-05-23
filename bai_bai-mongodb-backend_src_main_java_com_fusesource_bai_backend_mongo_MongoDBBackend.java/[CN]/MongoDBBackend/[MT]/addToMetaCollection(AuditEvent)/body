@@ -1,0 +1,6 @@
+{
+  DBObject filter=new BasicDBObject("_id",ev.breadCrumbId);
+  DBObject dbo=new BasicDBObject("$addToSet",new BasicDBObject("routes",ev.sourceContextId + "." + ev.sourceRouteId));
+  DBCollection collection=db.getCollection("exchangeXray");
+  collection.update(filter,dbo,true,false);
+}

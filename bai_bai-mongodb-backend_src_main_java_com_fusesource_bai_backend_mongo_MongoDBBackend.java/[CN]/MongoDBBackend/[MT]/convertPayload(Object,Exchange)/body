@@ -1,0 +1,32 @@
+{
+  String s=typeConverter.convertTo(String.class,payload);
+  if (s.startsWith("{")) {
+    Object answer=null;
+    try {
+      answer=JSON.parse(s);
+    }
+ catch (    JSONParseException ex) {
+      LOG.info("Attempt to convert " + payload + " to JSON failed");
+    }
+    if (answer != null) {
+      return answer;
+    }
+  }
+  if (s.startsWith("<")) {
+    ByteArrayOutputStream baos=new ByteArrayOutputStream();
+    try {
+      xmlJson.marshal(exchange,payload,baos);
+      if (baos != null && baos.size() > 0) {
+        String json=typeConverter.convertTo(String.class,baos);
+        return JSON.parse(json);
+      }
+    }
+ catch (    Exception e) {
+      System.out.println(e);
+    }
+  }
+  if (payload instanceof String) {
+    return payload;
+  }
+  return typeConverter.convertTo(DBObject.class,payload);
+}

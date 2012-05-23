@@ -1,0 +1,23 @@
+{
+  String endpointId=event.endpointURI;
+  String srcContextId=event.getExchange().getContext().getName();
+  String srcRouteId=event.getExchange().getFromRouteId();
+  LOG.info("Received AuditEvent: " + event + " | Extracted data: "+ endpointId+ ", "+ srcContextId+ ", "+ srcRouteId);
+  LOG.info("Breadcrumb ID for: " + event + " is: "+ event.breadCrumbId,String.class);
+  boolean handled=false;
+  if (event.event instanceof ExchangeSendingEvent || event.event instanceof ExchangeSentEvent || event.event instanceof ExchangeCreatedEvent|| event.event instanceof ExchangeCompletedEvent) {
+    digestExchangeEvent(event);
+    handled=true;
+  }
+ else   if (event.event instanceof ExchangeFailedEvent) {
+    digestFailureEvent(event);
+    handled=true;
+  }
+ else   if (event.event instanceof ExchangeRedeliveryEvent) {
+    digestRedeliveryEvent(event);
+    handled=true;
+  }
+  if (handled) {
+    addToMetaCollection(event);
+  }
+}

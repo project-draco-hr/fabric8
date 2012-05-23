@@ -1,0 +1,21 @@
+{
+  if (!(event instanceof AuditEvent)) {
+    return false;
+  }
+  AuditEvent ae=(AuditEvent)event;
+  List<String> compareWith=null;
+  if (ae.event instanceof ExchangeSendingEvent || ae.event instanceof ExchangeCreatedEvent) {
+    compareWith=inRegex;
+  }
+ else   if (ae.event instanceof ExchangeSentEvent || ae.event instanceof ExchangeCompletedEvent) {
+    compareWith=outRegex;
+  }
+ else   if (ae.event instanceof ExchangeRedeliveryEvent) {
+    compareWith=redeliveryRegex;
+  }
+ else   if (ae.event instanceof ExchangeFailedEvent) {
+    String exceptionClassName=ae.event.getExchange().getException().getClass().getCanonicalName();
+    return testRegexps(exceptionClassName,failureRegex);
+  }
+  return compareWith == null ? false : testRegexps(ae.endpointURI,compareWith);
+}

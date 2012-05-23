@@ -1,0 +1,6 @@
+{
+  AuditEvent ae=new AuditEvent(exchange,(AbstractExchangeEvent)super.createExchangeFailureHandledEvent(exchange,failureHandler,deadLetterChannel));
+  ae.endpointURI=exchange.getProperty(Exchange.FAILURE_ENDPOINT,String.class);
+  enrichWithCommonMetadata(ae,exchange);
+  return ae;
+}

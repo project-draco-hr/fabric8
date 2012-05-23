@@ -1,0 +1,8 @@
+{
+  ae.sourceContextId=e.getContext().getName();
+  ae.sourceRouteId=(e.getUnitOfWork() == null || e.getUnitOfWork().getRouteContext() == null) ? e.getFromRouteId() : e.getUnitOfWork().getRouteContext().getRoute().getId();
+  ae.breadCrumbId=e.getIn().getHeader(Exchange.BREADCRUMB_ID,String.class);
+  if (ae.breadCrumbId == null && e.hasOut()) {
+    ae.breadCrumbId=e.getOut().getHeader(Exchange.BREADCRUMB_ID,String.class);
+  }
+}
