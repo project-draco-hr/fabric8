@@ -1,0 +1,15 @@
+{
+  if (destroyed.compareAndSet(false,true)) {
+    executor.shutdown();
+    try {
+      executor.awaitTermination(Long.MAX_VALUE,TimeUnit.NANOSECONDS);
+    }
+ catch (    InterruptedException e) {
+      throw new RuntimeException("Shutdown interrupted");
+    }
+    while (!services.isEmpty()) {
+      String pid=services.keySet().iterator().next();
+      internalDelete(pid);
+    }
+  }
+}

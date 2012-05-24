@@ -1,0 +1,23 @@
+{
+  ImmutableSettings.Builder builder=ImmutableSettings.settingsBuilder();
+  builder.put(settings);
+  builder.classLoader(NodeFactory.class.getClassLoader());
+  if (properties != null) {
+    for (Enumeration e=properties.keys(); e.hasMoreElements(); ) {
+      String key=e.nextElement().toString();
+      Object oval=properties.get(key);
+      String val=oval != null ? oval.toString() : null;
+      builder.put(key,val);
+    }
+  }
+  Node node=new InternalNode(builder.build(),false);
+  try {
+    node.start();
+    node.client().admin().cluster().prepareHealth().setWaitForGreenStatus().execute().actionGet();
+  }
+ catch (  RuntimeException t) {
+    doDestroy(node);
+    throw t;
+  }
+  return node;
+}

@@ -1,0 +1,9 @@
+{
+  IZKClient zk=(IZKClient)context.getService(reference);
+  group=ZooKeeperGroupFactory.create(zk,"/fabric/registry/clusters/elasticsearch/" + clusterName.value(),acl);
+  joined=false;
+  singleton.start(group);
+  joined=true;
+  singleton.join(new ESNode(clusterName.value(),localNode));
+  return zk;
+}

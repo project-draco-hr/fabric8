@@ -1,0 +1,9 @@
+{
+  jgen.writeStartObject();
+  jgen.writeStringField("id",value.id());
+  jgen.writeFieldName("binary");
+  BytesStreamOutput bso=new BytesStreamOutput();
+  value.node.writeTo(bso);
+  jgen.writeBinary(bso.underlyingBytes(),0,bso.size());
+  jgen.writeEndObject();
+}

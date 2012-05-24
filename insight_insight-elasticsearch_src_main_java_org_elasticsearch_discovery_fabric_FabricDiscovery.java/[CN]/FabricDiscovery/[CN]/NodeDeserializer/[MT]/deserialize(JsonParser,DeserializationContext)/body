@@ -1,0 +1,10 @@
+{
+  jp.nextToken();
+  jp.nextValue();
+  String id=jp.getText();
+  jp.nextToken();
+  jp.nextValue();
+  BytesStreamInput bsi=new BytesStreamInput(jp.getBinaryValue(),false);
+  DiscoveryNode node=DiscoveryNode.readNode(bsi);
+  return new ESNode(id,node);
+}

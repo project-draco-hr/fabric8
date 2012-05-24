@@ -1,0 +1,38 @@
+{
+  if (singleton.isMaster()) {
+    clusterService.submitStateUpdateTask("fabric-discovery",new ProcessedClusterStateUpdateTask(){
+      @Override public ClusterState execute(      ClusterState currentState){
+        ClusterState.Builder stateBuilder=newClusterStateBuilder().state(currentState);
+        DiscoveryNodes.Builder nodesBuilder=newNodesBuilder().localNodeId(localNode.id()).masterNodeId(singleton.master().get().node.id()).put(singleton.master().get().node);
+        for (        ESNode node : JavaConversions$.MODULE$.asJavaCollection(singleton.slaves())) {
+          nodesBuilder.put(node.node);
+        }
+        latestDiscoNodes=nodesBuilder.build();
+        stateBuilder.nodes(latestDiscoNodes);
+        for (        DiscoveryNode node : latestDiscoNodes) {
+          if (!currentState.nodes().nodeExists(node.id())) {
+            transportService.connectToNode(node);
+          }
+        }
+        if (!localNode().id().equals(currentState.nodes().masterNodeId())) {
+          ClusterBlocks clusterBlocks=ClusterBlocks.builder().blocks(currentState.blocks()).removeGlobalBlock(NO_MASTER_BLOCK).build();
+          stateBuilder.blocks(clusterBlocks);
+        }
+        return stateBuilder.build();
+      }
+      @Override public void clusterStateProcessed(      ClusterState clusterState){
+        sendInitialStateEventIfNeeded();
+      }
+    }
+);
+  }
+ else   if (joined && singleton.master().isDefined()) {
+    DiscoveryNode masterNode=singleton.master().get().node;
+    try {
+      transportService.connectToNode(masterNode);
+    }
+ catch (    Exception e) {
+      logger.warn("failed to connect to master [{}], retrying...",e,masterNode);
+    }
+  }
+}
