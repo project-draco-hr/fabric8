@@ -31,15 +31,8 @@
     @Override public void send(    HashMap<String,String> headers,    byte[] data,    final Callback onComplete){
       try {
         BytesMessage msg=session.createBytesMessage();
-        producer.send(msg,new AsyncCallback(){
-          public void onSuccess(){
-            onComplete.onSuccess();
-          }
-          public void onException(          JMSException exception){
-            onComplete.onFailure(exception);
-          }
-        }
-);
+        producer.send(msg);
+        onComplete.onSuccess();
       }
  catch (      JMSException e) {
         onComplete.onFailure(e);
