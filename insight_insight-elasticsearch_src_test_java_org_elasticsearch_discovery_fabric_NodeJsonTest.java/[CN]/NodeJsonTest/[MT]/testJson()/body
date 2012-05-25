@@ -1,0 +1,15 @@
+{
+  Map<String,String> attr=new HashMap<String,String>();
+  attr.put("key","value");
+  DiscoveryNode n=new DiscoveryNode("thename","theid",new InetSocketTransportAddress("thehost",3234),attr);
+  FabricDiscovery.ESNode node=new FabricDiscovery.ESNode("thecluster",n);
+  byte[] data=ClusteredSupport$.MODULE$.encode(node,ClusteredSupport$.MODULE$.DEFAULT_MAPPER());
+  System.err.println(new String(data));
+  FabricDiscovery.ESNode newNode=ClusteredSupport$.MODULE$.decode(FabricDiscovery.ESNode.class,data,ClusteredSupport$.MODULE$.DEFAULT_MAPPER());
+  assertEquals(node.id(),newNode.id());
+  assertEquals(node.node().id(),newNode.node().id());
+  assertEquals(node.node().name(),newNode.node().name());
+  assertEquals(node.node().address(),newNode.node().address());
+  assertEquals(node.node().attributes(),newNode.node().attributes());
+  assertEquals(node.node().version().toString(),newNode.node().version().toString());
+}

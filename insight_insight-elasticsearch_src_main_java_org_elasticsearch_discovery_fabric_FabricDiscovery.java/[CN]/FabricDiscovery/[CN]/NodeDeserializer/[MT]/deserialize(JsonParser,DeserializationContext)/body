@@ -1,10 +1,11 @@
 {
-  jp.nextToken();
-  jp.nextValue();
-  String id=jp.getText();
-  jp.nextToken();
-  jp.nextValue();
-  BytesStreamInput bsi=new BytesStreamInput(jp.getBinaryValue(),false);
-  DiscoveryNode node=DiscoveryNode.readNode(bsi);
-  return new ESNode(id,node);
+  try {
+    Map map=jp.readValueAs(Map.class);
+    String id=map.get("id").toString();
+    DiscoveryNode node=(DiscoveryNode)Base64.decodeToObject(map.get("binary").toString(),Base64.NO_OPTIONS,DiscoveryNode.class.getClassLoader());
+    return new ESNode(id,node);
+  }
+ catch (  ClassNotFoundException e) {
+    throw new IllegalStateException(e);
+  }
 }
