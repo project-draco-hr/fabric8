@@ -1,0 +1,15 @@
+{
+  BasicDBObject object=new BasicDBObject();
+  object.append("breadCrumbId",ev.breadCrumbId);
+  object.append("eventtype",(ev.event).getClass().getName());
+  object.append("endpointURI",ev.endpointURI);
+  object.append("exchangeId",ev.getExchange().getExchangeId());
+  object.append("exception",ev.exception == null ? null : ev.exception.toString());
+  object.append("redelivered",ev.redelivered);
+  object.append("timestamp",ev.timestamp);
+  object.append("sourceContextId",ev.sourceContextId);
+  object.append("sourceRouteId",ev.sourceRouteId);
+  object.append("inBody",ev.event.getExchange().getIn().getBody(String.class));
+  object.append("outBody",ev.event.getExchange().hasOut() ? ev.event.getExchange().getOut().getBody(String.class) : null);
+  db.getCollection("baievents").insert(object);
+}

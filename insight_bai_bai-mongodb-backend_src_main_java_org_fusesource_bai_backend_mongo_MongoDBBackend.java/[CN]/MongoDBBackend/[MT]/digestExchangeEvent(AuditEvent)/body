@@ -1,33 +1,14 @@
 {
-  DBObject filter=new BasicDBObject("_id",ev.breadCrumbId);
-  DBObject toApply=new BasicDBObject();
-  if (ev.event instanceof ExchangeSendingEvent || ev.event instanceof ExchangeCreatedEvent) {
-    toApply.put("endpointUri",ev.endpointURI);
-    toApply.put("startTimestamp",ev.timestamp);
-    toApply.put("status","in_progress");
-    try {
-      toApply.put("in",convertPayload(ev.getExchange().getIn().getBody(),ev.getExchange()));
-    }
- catch (    Exception e) {
-    }
-    DBObject exchanges=new BasicDBObject("exchanges",toApply);
-    DBObject updateObj=new BasicDBObject("$push",exchanges);
-    updateDatabase(ev,filter,updateObj);
+  if (ev.event instanceof ExchangeCreatedEvent) {
+    digestExchangeCreatedEvent(ev);
   }
- else   if (ev.event instanceof ExchangeSentEvent || ev.event instanceof ExchangeCompletedEvent) {
-    filter.put("exchanges.endpointUri",ev.endpointURI);
-    filter.put("exchanges.endTimestamp",new BasicDBObject("$exists",false));
-    toApply.put("exchanges.$.endTimestamp",ev.timestamp);
-    toApply.put("exchanges.$.status","finished");
-    try {
-      Object outBody=ev.getExchange().hasOut() ? ev.getExchange().getOut().getBody() : null;
-      if (outBody != null) {
-        toApply.put("exchanges.$.out",convertPayload(outBody,ev.getExchange()));
-      }
-    }
- catch (    Exception e) {
-    }
-    DBObject updateObj=new BasicDBObject("$set",toApply);
-    updateDatabase(ev,filter,updateObj);
+  if (ev.event instanceof ExchangeCompletedEvent) {
+    digestExchangeCompletedEvent(ev);
+  }
+  if (ev.event instanceof ExchangeSendingEvent) {
+    digestExchangeSendingEvent(ev);
+  }
+  if (ev.event instanceof ExchangeSentEvent) {
+    digestExchangeSentEvent(ev);
   }
 }
