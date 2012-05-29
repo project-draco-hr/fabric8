@@ -1,0 +1,29 @@
+{
+  if (!lifecycle.moveToStopped()) {
+    return this;
+  }
+  ESLogger logger=Loggers.getLogger(Node.class,settings.get("name"));
+  logger.info("{{}}[{}]: stopping ...",Version.CURRENT,JvmInfo.jvmInfo().pid());
+  if (settings.getAsBoolean("http.enabled",true)) {
+    injector.getInstance(HttpServer.class).stop();
+  }
+  injector.getInstance(RiversManager.class).stop();
+  injector.getInstance(IndicesClusterStateService.class).stop();
+  injector.getInstance(IndexingMemoryController.class).stop();
+  injector.getInstance(IndicesTTLService.class).stop();
+  injector.getInstance(IndicesService.class).stop();
+  injector.getInstance(RoutingService.class).stop();
+  injector.getInstance(ClusterService.class).stop();
+  injector.getInstance(DiscoveryService.class).stop();
+  injector.getInstance(MonitorService.class).stop();
+  injector.getInstance(GatewayService.class).stop();
+  injector.getInstance(SearchService.class).stop();
+  injector.getInstance(RestController.class).stop();
+  injector.getInstance(TransportService.class).stop();
+  injector.getInstance(JmxService.class).close();
+  for (  Class<? extends LifecycleComponent> plugin : pluginsService.services()) {
+    injector.getInstance(plugin).stop();
+  }
+  logger.info("{{}}[{}]: stopped",Version.CURRENT,JvmInfo.jvmInfo().pid());
+  return this;
+}
