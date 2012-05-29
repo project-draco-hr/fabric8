@@ -13,7 +13,7 @@
     Daemon checkpointThread=new Daemon(secondaryNameNode);
     checkpointThread.start();
     secondaryNameNodes.put(pid,secondaryNameNode);
-    services.put(pid,bundleContext.registerService(NameNode.class.getName(),secondaryNameNode,properties));
+    services.put(pid,bundleContext.registerService(SecondaryNameNode.class.getName(),secondaryNameNode,properties));
   }
  catch (  Exception e) {
     throw (ConfigurationException)new ConfigurationException(null,"Unable to parse HDFS configuration: " + e.getMessage()).initCause(e);
