@@ -1,7 +1,23 @@
 {
   if (getBool(properties.get(prop),false)) {
     set.add(pid);
-    factory.updated(pid,properties);
+    try {
+      Subject.doAs(null,new PrivilegedExceptionAction<Object>(){
+        @Override public Object run() throws Exception {
+          factory.updated(pid,properties);
+          return null;
+        }
+      }
+);
+    }
+ catch (    PrivilegedActionException e) {
+      if (e.getCause() instanceof ConfigurationException) {
+        throw (ConfigurationException)e.getCause();
+      }
+ else {
+        throw new RuntimeException(e.getCause());
+      }
+    }
   }
  else   if (set.remove(pid)) {
     factory.deleted(pid);
