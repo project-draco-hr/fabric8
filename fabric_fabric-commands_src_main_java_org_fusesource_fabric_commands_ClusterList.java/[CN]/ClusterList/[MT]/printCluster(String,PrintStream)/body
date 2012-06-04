@@ -1,4 +1,55 @@
 {
-  out.println(String.format("%-30s %-30s %-10s %s","[cluster]","[id]","[master]","[services]"));
-  printChildren(dir,dir,out);
+  if (getZooKeeper().exists(dir) == null) {
+    return;
+  }
+  List<String> children=getZooKeeper().getAllChildren(dir);
+  HashMap<String,HashMap<String,ClusterNode>> clusters=new HashMap<String,HashMap<String,ClusterNode>>();
+  for (  String child : children) {
+    String childDir=dir + "/" + child;
+    byte[] data=getZooKeeper().getData(childDir);
+    if (data != null && data.length > 0) {
+      String text=new String(data).trim();
+      if (!text.isEmpty()) {
+        String clusterName=getClusterName(dir,childDir);
+        HashMap<String,ClusterNode> cluster=clusters.get(clusterName);
+        if (cluster == null) {
+          cluster=new HashMap<String,ClusterNode>();
+          clusters.put(clusterName,cluster);
+        }
+        ObjectMapper mapper=new ObjectMapper();
+        Map<String,Object> map=mapper.readValue(data,HashMap.class);
+        Object id=value(map,"id","container");
+        Object agent=value(map,"agent");
+        List services=(List)value(map,"services");
+        ClusterNode node=cluster.get(id);
+        if (node == null) {
+          node=new ClusterNode();
+          cluster.put(id.toString(),node);
+        }
+        if (services != null) {
+          if (!services.isEmpty()) {
+            for (            Object service : services) {
+              node.services.add(ZooKeeperUtils.getSubstitutedData(getZooKeeper(),service.toString()));
+            }
+            node.masters.add(agent);
+          }
+ else {
+            node.slaves.add(agent);
+          }
+        }
+ else {
+          node.slaves.add(agent);
+        }
+      }
+    }
+  }
+  out.println(String.format("%-30s %-30s %-30s %s","[cluster]","[masters]","[slaves]","[services]"));
+  for (  String clusterName : clusters.keySet()) {
+    HashMap<String,ClusterNode> nodes=clusters.get(clusterName);
+    out.println(String.format("%-30s %-30s %-30s %s",clusterName,"","","",""));
+    for (    String nodeName : nodes.keySet()) {
+      ClusterNode node=nodes.get(nodeName);
+      out.println(String.format("%-30s %-30s %-30s %s","   " + nodeName,printList(node.masters),printList(node.slaves),printList(node.services)));
+    }
+  }
 }
