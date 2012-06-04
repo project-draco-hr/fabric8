@@ -4,7 +4,9 @@
     producer=service.createProducer(dest);
     producer.setDeliveryMode(persistent ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT);
     initPayLoad();
+    running=true;
     for (sentCount=0; sentCount < messageCount; sentCount++) {
+      if (!running)       break;
       Message message=createMessage(sentCount);
       producer.send(message);
       LOG.info("Sent: " + (message instanceof TextMessage ? ((TextMessage)message).getText() : message.getJMSMessageID()));
