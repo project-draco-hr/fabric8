@@ -30,7 +30,7 @@
       }
     }
   }
-  for (  String p : Arrays.asList("hadoop-" + name,"hadoop-" + name + "-namenode","hadoop-" + name + "-secondary-namenode","hadoop-" + name + "-datanode","hadoop-" + name + "-job-tracker","hadoop-" + name + "-task-tracker")) {
+  for (  String p : Arrays.asList("hadoop-" + name,"hadoop-" + name + "-namenode","hadoop-" + name + "-secondary-namenode","hadoop-" + name + "-datanode","hadoop-" + name + "-job-tracker","hadoop-" + name + "-task-tracker","insight-hdfs-" + name)) {
     Profile profile=null;
     try {
       profile=service.getProfile(service.getDefaultVersion().getName(),p);
@@ -86,6 +86,12 @@
   configs.put("org.fusesource.fabric.hadoop",new HashMap<String,String>());
   configs.get("org.fusesource.fabric.hadoop").put("taskTracker","true");
   taskTrackerProfile.setConfigurations(configs);
+  Profile insightProfile=service.createProfile(service.getDefaultVersion().getName(),"insight-hdfs-" + name);
+  insightProfile.setParents(new Profile[]{service.getProfile(service.getDefaultVersion().getName(),"insight-hdfs")});
+  configs=new HashMap<String,Map<String,String>>();
+  configs.put("org.fusesource.insight.elasticsearch-default",new HashMap<String,String>());
+  configs.get("org.fusesource.insight.elasticsearch-default").put("gateway.hdfs.uri","hdfs://${zk:" + nameNode + "/ip}:9000");
+  insightProfile.setConfigurations(configs);
   Container nameNodeContainer=findContainer(containers,nameNode);
   if (nameNodeContainer == null && createChildren) {
     nameNodeContainer=createChild(nameNode);
