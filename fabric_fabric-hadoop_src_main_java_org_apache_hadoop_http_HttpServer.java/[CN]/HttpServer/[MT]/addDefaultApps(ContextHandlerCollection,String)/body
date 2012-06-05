@@ -1,0 +1,17 @@
+{
+  String logDir=System.getProperty("hadoop.log.dir");
+  if (logDir != null) {
+    Context logContext=new Context(parent,"/logs");
+    logContext.setResourceBase(logDir);
+    logContext.addServlet(AdminAuthorizedServlet.class,"/");
+    logContext.setDisplayName("logs");
+    setContextAttributes(logContext);
+    defaultContexts.put(logContext,true);
+  }
+  Context staticContext=new Context(parent,"/static");
+  staticContext.setResourceBase(appDir + "/static");
+  staticContext.addServlet(DefaultServlet.class,"/*");
+  staticContext.setDisplayName("static");
+  setContextAttributes(staticContext);
+  defaultContexts.put(staticContext,true);
+}
