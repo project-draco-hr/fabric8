@@ -64,7 +64,7 @@
     ZooKeeperUtils.createDefault(client,"/fabric/authentication/encryption.enabled","true");
     ZooKeeperUtils.createDefault(client,"/fabric/authentication/domain","karaf");
     ZooKeeperUtils.createDefault(client,"/fabric/authentication/users","admin={CRYPT}21232f297a57a5a743894a0e4a801fc3{CRYPT},admin\nsystem={CRYPT}1d0258c2440a8d19e716292b231e3190{CRYPT},admin");
-    if (autoStart) {
+    if (ensembleAutoStart) {
       System.setProperty(ENSEMBLE_AUTOSTART,Boolean.FALSE.toString());
       File file=new File(System.getProperty("karaf.base") + "/etc/system.properties");
       org.apache.felix.utils.properties.Properties props=new org.apache.felix.utils.properties.Properties(file);
@@ -74,6 +74,10 @@
     bundleFabricConfigAdmin.start();
     bundleFabricJaas.start();
     bundleFabricCommands.start();
+    if (!System.getProperties().containsKey(AGENT_AUTOSTART) || Boolean.parseBoolean(System.getProperty(AGENT_AUTOSTART))) {
+      Bundle bundleFabricAgent=installOrStopBundle(bundleContext,"org.fusesource.fabric.fabric-agent  ","mvn:org.fusesource.fabric/fabric-agent/" + FabricConstants.FABRIC_VERSION);
+      bundleFabricAgent.start();
+    }
   }
  catch (  Exception e) {
     throw new FabricException("Unable to create zookeeper server configuration",e);
