@@ -1,11 +1,11 @@
 {
   try {
     StringBuilder writer=new StringBuilder();
-    writer.append("{ host : ");
+    writer.append("{ \"host\": ");
     quote(name,writer);
-    writer.append(", topic: ");
+    writer.append(", \"topic\": ");
     quote(event.getTopic(),writer);
-    writer.append(", properties: { ");
+    writer.append(", \"properties\": { ");
     boolean first=true;
     for (    String name : event.getPropertyNames()) {
       if (first) {
@@ -16,7 +16,12 @@
       }
       quote(name,writer);
       writer.append(": ");
-      quote(event.getProperty(name).toString(),writer);
+      if (EventConstants.TIMESTAMP.equals(name)) {
+        quote(formatDate((Long)event.getProperty(name)),writer);
+      }
+ else {
+        quote(event.getProperty(name).toString(),writer);
+      }
     }
     writer.append(" } }");
     IndexRequest request=new IndexRequest().index(index).type(type).source(writer.toString()).create(true);
