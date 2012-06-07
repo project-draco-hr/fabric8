@@ -31,8 +31,10 @@
   List<Resource> toInstall=new ArrayList<Resource>();
   List<Bundle> toDelete=new ArrayList<Bundle>();
   Map<Bundle,Resource> toUpdate=new HashMap<Bundle,Resource>();
-  File file=bundleContext.getDataFile("checksums.properties");
-  Properties checksums=new Properties(file);
+  if (checksums == null) {
+    File file=bundleContext.getDataFile("checksums.properties");
+    checksums=new Properties(file);
+  }
   for (  Bundle bundle : systemBundleContext.getBundles()) {
     if (bundle.getBundleId() != 0) {
       Resource resource=null;
@@ -43,12 +45,12 @@
             if (res.getVersion().getQualifier().endsWith("SNAPSHOT")) {
               InputStream is=getBundleInputStream(res,downloads,infos);
               long newCrc=ChecksumUtils.checksum(is);
-              long oldCrc=checksums.containsKey(res.getURI()) ? Long.parseLong(checksums.get(res.getURI())) : 0;
-              if (oldCrc != 0 && newCrc != oldCrc) {
-                LOGGER.info("New snapshot available for " + res);
+              long oldCrc=checksums.containsKey(bundle.getLocation()) ? Long.parseLong(checksums.get(bundle.getLocation())) : 0;
+              if (newCrc != oldCrc) {
+                LOGGER.debug("New snapshot available for " + bundle.getLocation());
                 update=true;
+                newCheckums.put(bundle.getLocation(),Long.toString(newCrc));
               }
-              newCheckums.put(res.getURI(),Long.toString(newCrc));
             }
             resource=res;
             break;
@@ -93,8 +95,8 @@
     Bundle bundle=bundleContext.getBundle();
     checksums.save();
     bundle.update(is);
-    if (newCheckums.containsKey(agentResource.getURI())) {
-      checksums.put(agentResource.getURI(),newCheckums.get(agentResource.getURI()));
+    if (newCheckums.containsKey(bundle.getLocation())) {
+      checksums.put(bundle.getLocation(),newCheckums.get(bundle.getLocation()));
       checksums.save();
     }
     return;
@@ -150,6 +152,9 @@
     Bundle bundle=systemBundleContext.installBundle(resource.getURI(),is);
     toRefresh.add(bundle);
     resToBnd.put(resource,bundle);
+    if (bundle.getVersion().getQualifier().endsWith("SNAPSHOT") && !newCheckums.containsKey(bundle.getLocation())) {
+      newCheckums.put(bundle.getLocation(),Long.toString(ChecksumUtils.checksum(getBundleInputStream(resource,downloads,infos))));
+    }
   }
   if (!newCheckums.isEmpty()) {
     for (    String key : newCheckums.keySet()) {

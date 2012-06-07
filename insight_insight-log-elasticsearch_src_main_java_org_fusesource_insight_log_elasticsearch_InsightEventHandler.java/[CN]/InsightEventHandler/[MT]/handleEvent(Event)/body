@@ -1,11 +1,12 @@
 {
   try {
     StringBuilder writer=new StringBuilder();
-    writer.append("{ host : ");
+    writer.append("{ \"host\": ");
     quote(name,writer);
-    writer.append(", topic: ");
+    writer.append(", \"seq\" : " + SEQUENCE_COUNTER.incrementAndGet());
+    writer.append(", \"topic\": ");
     quote(event.getTopic(),writer);
-    writer.append(", properties: { ");
+    writer.append(", \"properties\": { ");
     boolean first=true;
     for (    String name : event.getPropertyNames()) {
       if (first) {
@@ -16,7 +17,30 @@
       }
       quote(name,writer);
       writer.append(": ");
-      quote(event.getProperty(name).toString(),writer);
+      Object value=event.getProperty(name);
+      if (value == null) {
+        writer.append("null");
+      }
+ else       if (EventConstants.TIMESTAMP.equals(name) && value instanceof Long) {
+        quote(formatDate((Long)value),writer);
+      }
+ else       if (value.getClass().isArray()) {
+        writer.append(" [ ");
+        boolean vfirst=true;
+        for (        Object v : ((Object[])value)) {
+          if (!vfirst) {
+            writer.append(", ");
+          }
+ else {
+            vfirst=false;
+          }
+          quote(v.toString(),writer);
+        }
+        writer.append(" ] ");
+      }
+ else {
+        quote(value.toString(),writer);
+      }
     }
     writer.append(" } }");
     IndexRequest request=new IndexRequest().index(index).type(type).source(writer.toString()).create(true);
