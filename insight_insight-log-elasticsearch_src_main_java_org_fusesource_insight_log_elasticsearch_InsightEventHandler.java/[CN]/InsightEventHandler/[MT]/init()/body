@@ -1,4 +1,12 @@
 {
   CreateIndexRequest request=new CreateIndexRequest(index);
+  HashMap<String,Object> not_analyzed=new HashMap<String,Object>();
+  not_analyzed.put("type","string");
+  not_analyzed.put("index","not_analyzed");
+  HashMap<String,Object> properties=new HashMap<String,Object>();
+  properties.put("seq",not_analyzed);
+  HashMap<String,Object> options=new HashMap<String,Object>();
+  options.put("properties",properties);
+  request.mapping(type,options);
   sender.createIndexIfNeeded(request);
 }
