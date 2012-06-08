@@ -7,6 +7,9 @@
       if (!version.equals(parent.getVersion())) {
         throw new IllegalArgumentException("Version mismatch setting profile " + parent + " with version "+ parent.getVersion()+ " expected version "+ version);
       }
+      if (parent.isAbstract()) {
+        throw new IllegalArgumentException("The profile " + parent + " is abstract and can not "+ "be associated to containers");
+      }
       if (!str.isEmpty()) {
         str+=" ";
       }
