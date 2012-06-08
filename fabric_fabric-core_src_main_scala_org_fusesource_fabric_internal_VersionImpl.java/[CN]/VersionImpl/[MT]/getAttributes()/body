@@ -1,0 +1,10 @@
+{
+  try {
+    String node=ZkPath.CONFIG_VERSION.getPath(name);
+    Properties props=ZooKeeperUtils.getProperties(service.getZooKeeper(),node);
+    return props;
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}
