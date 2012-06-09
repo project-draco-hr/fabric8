@@ -44,6 +44,7 @@
  else {
       newClusterId=new DecimalFormat("0000").format(Integer.parseInt(oldClusterId) + 1);
     }
+    ZooKeeperUtils.set(zooKeeper,ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"fabric-ensemble-" + newClusterId),"abstract=true\nhidden=true");
     String profileNode="/fabric/configs/versions/" + version + "/profiles/fabric-ensemble-"+ newClusterId+ "/org.fusesource.fabric.zookeeper.server-"+ newClusterId+ ".properties";
     Properties profileNodeProperties=new Properties();
     profileNodeProperties.put("tickTime","2000");
@@ -59,7 +60,7 @@
       String profNode="/fabric/configs/versions/" + version + "/profiles/fabric-ensemble-"+ newClusterId+ "-"+ Integer.toString(index);
       String pidNode=profNode + "/org.fusesource.fabric.zookeeper.server-" + newClusterId+ ".properties";
       Properties pidNodeProperties=new Properties();
-      ZooKeeperUtils.add(zooKeeper,profNode,"fabric-ensemble-" + newClusterId);
+      ZooKeeperUtils.set(zooKeeper,profNode,"parents=fabric-ensemble-" + newClusterId + "\nhidden=true");
       String port1=Integer.toString(findPort(usedPorts,ip,2181));
       if (containers.size() > 1) {
         String port2=Integer.toString(findPort(usedPorts,ip,2888));
