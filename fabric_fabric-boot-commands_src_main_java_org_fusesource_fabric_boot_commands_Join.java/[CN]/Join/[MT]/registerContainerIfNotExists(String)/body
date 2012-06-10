@@ -1,0 +1,19 @@
+{
+  boolean exists=false;
+  ZKClient zkClient=null;
+  try {
+    zkClient=new ZKClient(zookeeperUrl,Timespan.ONE_MINUTE,null);
+    zkClient.start();
+    zkClient.waitForStart();
+    exists=zkClient.exists(ZkPath.CONTAINER.getPath(name)) != null;
+    if (!exists) {
+      ZkPath.createContainerPaths(zkClient,containerName,version);
+    }
+  }
+  finally {
+    if (zkClient != null) {
+      zkClient.destroy();
+    }
+  }
+  return exists;
+}
