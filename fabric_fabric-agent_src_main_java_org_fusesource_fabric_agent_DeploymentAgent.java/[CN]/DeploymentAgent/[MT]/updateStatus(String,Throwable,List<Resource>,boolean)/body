@@ -18,6 +18,13 @@
         result.printStackTrace(new PrintWriter(sw));
         e=sw.toString();
       }
+      if (resources != null) {
+        StringWriter sw=new StringWriter();
+        for (        Resource res : resources) {
+          sw.write(res.getURI() + "\n");
+        }
+        zk.createOrSetWithParents(ZkPath.CONTAINER_PROVISION_LIST.getPath(name),sw.toString(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      }
       zk.createOrSetWithParents(ZkPath.CONTAINER_PROVISION_RESULT.getPath(name),status,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
       zk.createOrSetWithParents(ZkPath.CONTAINER_PROVISION_EXCEPTION.getPath(name),e,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
     }
