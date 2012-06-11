@@ -45,7 +45,7 @@
             if (res.getVersion().getQualifier().endsWith("SNAPSHOT")) {
               InputStream is=getBundleInputStream(res,downloads,infos);
               long newCrc=ChecksumUtils.checksum(is);
-              long oldCrc=checksums.containsKey(bundle.getLocation()) ? Long.parseLong(checksums.get(bundle.getLocation())) : 0;
+              long oldCrc=checksums.containsKey(bundle.getLocation()) ? Long.parseLong((String)checksums.get(bundle.getLocation())) : 0l;
               if (newCrc != oldCrc) {
                 LOGGER.debug("New snapshot available for " + bundle.getLocation());
                 update=true;
