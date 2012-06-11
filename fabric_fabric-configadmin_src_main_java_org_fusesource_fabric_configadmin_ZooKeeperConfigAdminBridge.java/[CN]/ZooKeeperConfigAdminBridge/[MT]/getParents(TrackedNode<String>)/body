@@ -1,0 +1,19 @@
+{
+  String[] parents;
+  if (root != null && root.getData() != null) {
+    Properties props=toProperties(root.getData());
+    if (props.size() == 1) {
+      String key=props.stringPropertyNames().iterator().next();
+      if (!key.equals(PARENTS)) {
+        String val=props.getProperty(key);
+        props.remove(key);
+        props.setProperty(PARENTS,val.isEmpty() ? key : key + " " + val);
+      }
+    }
+    parents=props.getProperty(PARENTS,"").split(" ");
+  }
+ else {
+    parents=new String[0];
+  }
+  return parents;
+}

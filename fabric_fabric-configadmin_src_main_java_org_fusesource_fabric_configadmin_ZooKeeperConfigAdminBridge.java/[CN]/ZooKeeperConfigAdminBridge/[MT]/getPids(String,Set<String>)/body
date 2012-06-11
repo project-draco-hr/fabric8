@@ -1,7 +1,7 @@
 {
   ZooKeeperTreeTracker<String> tree=track(node);
   TrackedNode<String> root=tree != null ? tree.getTree().get(node) : null;
-  String[] parents=root != null && root.getData() != null ? root.getData().split(" ") : new String[0];
+  String[] parents=getParents(root);
   for (  String parent : parents) {
     getPids(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,parent),pids);
   }
