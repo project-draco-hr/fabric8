@@ -1,4 +1,5 @@
 {
+  Set fragments=new HashSet();
   for (  Bundle b : toRefresh) {
     if (b.getState() != Bundle.UNINSTALLED) {
       String hostHeader=(String)b.getHeaders().get(Constants.FRAGMENT_HOST);
@@ -12,11 +13,11 @@
               if (ver != null) {
                 VersionRange v=VersionRange.parseVersionRange(ver);
                 if (v.contains(hostBundle.getVersion())) {
-                  toRefresh.add(hostBundle);
+                  fragments.add(hostBundle);
                 }
               }
  else {
-                toRefresh.add(hostBundle);
+                fragments.add(hostBundle);
               }
             }
           }
@@ -24,4 +25,5 @@
       }
     }
   }
+  toRefresh.addAll(fragments);
 }
