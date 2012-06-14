@@ -6,7 +6,7 @@
     zkClient.start();
     zkClient.waitForStart();
     exists=zkClient.exists(ZkPath.CONTAINER.getPath(name)) != null;
-    if (!exists) {
+    if (!exists || force) {
       ZkPath.createContainerPaths(zkClient,containerName,version);
     }
   }
@@ -15,5 +15,5 @@
       zkClient.destroy();
     }
   }
-  return exists;
+  return !exists || force;
 }
