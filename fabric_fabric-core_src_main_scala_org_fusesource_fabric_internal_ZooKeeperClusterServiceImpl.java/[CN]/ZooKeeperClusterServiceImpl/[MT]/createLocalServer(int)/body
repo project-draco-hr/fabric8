@@ -59,7 +59,12 @@
     p.put("feature.fabric-commands","fabric-commands");
     ZooKeeperUtils.set(client,fabricProfile + "/org.fusesource.fabric.agent.properties",toString(p));
     ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_CONTAINER.getPath(karafName),version);
-    ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,karafName),"fabric fabric-ensemble-0000-1");
+    if (System.getProperty(PROFILE) != null && !System.getProperty(PROFILE).isEmpty()) {
+      ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,karafName),"fabric fabric-ensemble-0000-1 " + System.getProperty(PROFILE));
+    }
+ else {
+      ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,karafName),"fabric fabric-ensemble-0000-1");
+    }
     ZooKeeperUtils.createDefault(client,defaultProfile + "/org.fusesource.fabric.jaas/encryption.enabled","${zk:/fabric/authentication/encryption.enabled}");
     ZooKeeperUtils.createDefault(client,"/fabric/authentication/encryption.enabled","true");
     ZooKeeperUtils.createDefault(client,"/fabric/authentication/domain","karaf");
