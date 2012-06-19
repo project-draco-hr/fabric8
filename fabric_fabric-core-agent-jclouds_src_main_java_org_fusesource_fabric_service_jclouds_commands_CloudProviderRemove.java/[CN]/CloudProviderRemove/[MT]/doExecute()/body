@@ -7,8 +7,10 @@
   }
   if (current == null || !current.isManaged()) {
     Configuration[] computeConfigs=findConfigurationByFactoryPid("org.jclouds.compute");
-    for (    Configuration configuration : computeConfigs) {
-      configuration.delete();
+    if (computeConfigs != null) {
+      for (      Configuration configuration : computeConfigs) {
+        configuration.delete();
+      }
     }
   }
   return null;
