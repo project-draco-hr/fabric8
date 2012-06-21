@@ -2,7 +2,7 @@
   if (isReady()) {
     FabricService fabricService=getOsgiService(FabricService.class);
     assertNotNull(fabricService);
-    System.err.println(executeCommand("fabric:create"));
+    System.err.println(executeCommand("fabric:create -n"));
     CreateContainerOptions options=CreateContainerOptionsBuilder.ssh().name("ssh1").host(host).port(Integer.parseInt(port)).username(username).password(password).providerUri("ssh://" + username + ":"+ password+ "@"+ host+ ":"+ port);
     CreateContainerMetadata[] metadata=fabricService.createContainers(options);
     assertNotNull(metadata);
