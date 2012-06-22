@@ -6,7 +6,7 @@
   if (!containerName.equals(oldName)) {
     if (force || permissionToRenameContainer()) {
       if (!registerContainer(containerName,profile,force)) {
-        System.err.print("A container with the name: " + containerName + " is already member of the cluster. You can use the --container-name option to specify a different name.");
+        System.err.print("A container with the name: " + containerName + " is already member of the cluster. You can specify a different name as an argument.");
         return null;
       }
       System.setProperty("karaf.name",containerName);
@@ -35,7 +35,7 @@
   }
  else {
     if (!registerContainer(containerName,profile,force)) {
-      System.err.println("A container with the name: " + containerName + " is already member of the cluster. You can use the --container-name option to specify a different name.");
+      System.err.println("A container with the name: " + containerName + " is already member of the cluster. You can specify a different name as an argument.");
       return null;
     }
     org.osgi.service.cm.Configuration config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
