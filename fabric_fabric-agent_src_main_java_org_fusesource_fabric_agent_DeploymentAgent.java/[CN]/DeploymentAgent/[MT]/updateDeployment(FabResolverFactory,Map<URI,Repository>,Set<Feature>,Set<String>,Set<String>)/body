@@ -11,9 +11,25 @@
       features.add(feature);
     }
     LOGGER.info("Fab: " + info.getUrl());
-    infos.put("fab:" + info.getUrl(),info);
+    infos.put(FAB_PROTOCOL + info.getUrl(),info);
   }
   Set<Feature> allFeatures=addFeatures(features,repositories.values());
+  Set<String> featureFabs=new LinkedHashSet<String>();
+  for (  Feature feature : allFeatures) {
+    for (    BundleInfo bundleInfo : feature.getBundles()) {
+      if (bundleInfo.getLocation().startsWith(FAB_PROTOCOL)) {
+        String normalizedLocation=bundleInfo.getLocation().substring(FAB_PROTOCOL.length());
+        if (!fabs.contains(normalizedLocation)) {
+          featureFabs.add(normalizedLocation);
+        }
+      }
+    }
+  }
+  if (!featureFabs.isEmpty()) {
+    fabs.addAll(featureFabs);
+    updateDeployment(fabResolverFactory,repositories,features,bundles,fabs);
+    return;
+  }
   updateStatus("downloading",null);
   Map<String,File> downloads=downloadBundles(allFeatures,bundles);
   updateStatus("resolving",null);
