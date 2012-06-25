@@ -76,18 +76,6 @@
       features.add(feature);
     }
   }
-  Set<String> bundles=new HashSet<String>();
-  for (  String key : properties.keySet()) {
-    if (key.startsWith("bundle.")) {
-      String url=properties.get(key);
-      if (url == null || url.length() == 0) {
-        url=key.substring("bundle.".length());
-      }
-      if (url != null && url.length() > 0) {
-        bundles.add(url);
-      }
-    }
-  }
   Set<String> fabs=new HashSet<String>();
   for (  String key : properties.keySet()) {
     if (key.startsWith("fab.")) {
@@ -97,6 +85,23 @@
       }
       if (url != null && url.length() > 0) {
         fabs.add(url);
+      }
+    }
+  }
+  Set<String> bundles=new HashSet<String>();
+  for (  String key : properties.keySet()) {
+    if (key.startsWith("bundle.")) {
+      String url=properties.get(key);
+      if (url == null || url.length() == 0) {
+        url=key.substring("bundle.".length());
+      }
+      if (url != null && url.length() > 0) {
+        if (url.startsWith(FAB_PROTOCOL)) {
+          fabs.add(url.substring(FAB_PROTOCOL.length()));
+        }
+ else {
+          bundles.add(url);
+        }
       }
     }
   }
