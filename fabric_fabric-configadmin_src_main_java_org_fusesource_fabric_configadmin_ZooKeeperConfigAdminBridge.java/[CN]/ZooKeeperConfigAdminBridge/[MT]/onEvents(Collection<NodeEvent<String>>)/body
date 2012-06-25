@@ -16,9 +16,10 @@
         track(node);
       }
       final Set<String> pids=getPids();
+      Map<String,Hashtable> pidProperties=load(pids);
       List<Configuration> configs=asList(getConfigAdmin().listConfigurations("(" + FABRIC_ZOOKEEPER_PID + "=*)"));
       for (      String pid : pids) {
-        Dictionary c=load(pid);
+        Hashtable c=pidProperties.get(pid);
         String p[]=parsePid(pid);
         Configuration config=getConfiguration(pid,p[0],p[1]);
         configs.remove(config);
