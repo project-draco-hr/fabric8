@@ -43,7 +43,7 @@
         if (importPid) {
           importPidFromLocalConfigAdmin(pid,cfg);
         }
-        updateConfig(cfg,key,value,set,delete);
+        updatedDelimitedList(pidConfig,key,value,delimiter,set,delete,append,remove);
         config.put(pid,cfg);
       }
     }
@@ -54,7 +54,7 @@
     for (    Map.Entry<String,String> configEntries : configMap.entrySet()) {
       String key=configEntries.getKey();
       String value=configEntries.getValue();
-      updateConfig(pidConfig,SYSTEM_PREFIX + key,value,set,delete);
+      updatedDelimitedList(pidConfig,SYSTEM_PREFIX + key,value,delimiter,set,delete,append,remove);
     }
   }
   if (configPropertyList != null && !configPropertyList.isEmpty()) {
@@ -63,7 +63,7 @@
     for (    Map.Entry<String,String> configEntries : configMap.entrySet()) {
       String key=configEntries.getKey();
       String value=configEntries.getValue();
-      updateConfig(pidConfig,CONFIG_PREFIX + key,value,set,delete);
+      updatedDelimitedList(pidConfig,CONFIG_PREFIX + key,value,delimiter,set,delete,append,remove);
     }
   }
   config.put(AGENT_PID,pidConfig);
