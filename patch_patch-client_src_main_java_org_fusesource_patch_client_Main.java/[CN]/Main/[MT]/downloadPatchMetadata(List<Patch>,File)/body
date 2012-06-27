@@ -1,0 +1,34 @@
+{
+  final CountDownLatch latch=new CountDownLatch(locations.size());
+  for (  final Patch patch : locations) {
+    final URL location=patch.location;
+    final File file=new File(directory,new File(location.getPath()).getName());
+    executor.submit(new Runnable(){
+      @Override public void run(){
+        try {
+          download(file,location);
+          patch.metadataFile=file;
+          Properties props=new Properties();
+          FileInputStream fis=new FileInputStream(file);
+          try {
+            props.load(fis);
+          }
+  finally {
+            fis.close();
+          }
+          patch.metadata=props;
+        }
+ catch (        FileNotFoundException e) {
+        }
+catch (        Exception e) {
+          System.err.println("Error downloading " + location + ": "+ e.getMessage());
+        }
+ finally {
+          latch.countDown();
+        }
+      }
+    }
+);
+  }
+  latch.await();
+}

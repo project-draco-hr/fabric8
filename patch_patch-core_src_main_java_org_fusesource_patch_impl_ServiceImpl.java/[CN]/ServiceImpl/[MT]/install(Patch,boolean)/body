@@ -1,6 +1,5 @@
 {
   try {
-    Set<Bundle> toRefresh=new HashSet<Bundle>();
     Set<Bundle> toDelete=new HashSet<Bundle>();
     Set<String> toInstall=new HashSet<String>();
     List<BundleUpdate> updates=new ArrayList<BundleUpdate>();
@@ -17,7 +16,7 @@
         VersionRange range=new VersionRange(false,lower,v,true);
         for (        Bundle bundle : allBundles) {
           Version oldV=bundle.getVersion();
-          if (sn.equals(bundle.getSymbolicName()) && range.contains(oldV)) {
+          if (bundle.getBundleId() != 0 && sn.equals(bundle.getSymbolicName()) && range.contains(oldV)) {
             String location=bundle.getLocation();
             updates.add(new BundleUpdateImpl(sn,v.toString(),oldV.toString(),location));
             toInstall.add(url);
@@ -28,8 +27,8 @@
     }
     Result result=new ResultImpl(patch,simulate,System.currentTimeMillis(),updates);
     if (!simulate) {
-      applyChanges(toRefresh,toDelete,toInstall);
-      patch.setResult(result);
+      applyChanges(toDelete,toInstall);
+      ((PatchImpl)patch).setResult(result);
       saveResult(result);
     }
     return result;
