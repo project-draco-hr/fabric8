@@ -59,13 +59,21 @@
         if (res.getSymbolicName().equals(bundle.getSymbolicName())) {
           if (res.getVersion().equals(bundle.getVersion())) {
             if (res.getVersion().getQualifier().endsWith("SNAPSHOT")) {
-              InputStream is=getBundleInputStream(res,downloads,infos);
-              long newCrc=ChecksumUtils.checksum(is);
-              long oldCrc=checksums.containsKey(bundle.getLocation()) ? Long.parseLong((String)checksums.get(bundle.getLocation())) : 0l;
-              if (newCrc != oldCrc) {
-                LOGGER.debug("New snapshot available for " + bundle.getLocation());
-                update=true;
-                newCheckums.put(bundle.getLocation(),Long.toString(newCrc));
+              InputStream is=null;
+              try {
+                is=getBundleInputStream(res,downloads,infos);
+                long newCrc=ChecksumUtils.checksum(is);
+                long oldCrc=checksums.containsKey(bundle.getLocation()) ? Long.parseLong((String)checksums.get(bundle.getLocation())) : 0l;
+                if (newCrc != oldCrc) {
+                  LOGGER.debug("New snapshot available for " + bundle.getLocation());
+                  update=true;
+                  newCheckums.put(bundle.getLocation(),Long.toString(newCrc));
+                }
+              }
+  finally {
+                if (is != null) {
+                  is.close();
+                }
               }
             }
             resource=res;
