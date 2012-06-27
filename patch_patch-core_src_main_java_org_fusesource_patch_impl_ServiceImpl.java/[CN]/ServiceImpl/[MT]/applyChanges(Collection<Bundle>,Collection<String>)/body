@@ -1,4 +1,18 @@
 {
+  List<Bundle> toStop=new ArrayList<Bundle>();
+  toStop.addAll(toDelete);
+  while (!toStop.isEmpty()) {
+    List<Bundle> bs=getBundlesToDestroy(toStop);
+    for (    Bundle bundle : bs) {
+      String hostHeader=(String)bundle.getHeaders().get(Constants.FRAGMENT_HOST);
+      if (hostHeader == null && (bundle.getState() == Bundle.ACTIVE || bundle.getState() == Bundle.STARTING)) {
+        bundle.stop();
+      }
+      toStop.remove(bundle);
+    }
+  }
+  Set<Bundle> toRefresh=new HashSet<Bundle>();
+  Set<Bundle> toStart=new HashSet<Bundle>();
   for (  Bundle bundle : toDelete) {
     bundle.uninstall();
     toRefresh.add(bundle);
@@ -6,6 +20,7 @@
   for (  String url : toInstall) {
     Bundle bundle=bundleContext.installBundle(url);
     toRefresh.add(bundle);
+    toStart.add(bundle);
   }
   findBundlesWithOptionalPackagesToRefresh(toRefresh);
   findBundlesWithFramentsToRefresh(toRefresh);
@@ -24,6 +39,12 @@
     }
  catch (    InterruptedException e) {
       throw new PatchException("Bundle refresh interrupted",e);
+    }
+  }
+  for (  Bundle bundle : toStart) {
+    String hostHeader=(String)bundle.getHeaders().get(Constants.FRAGMENT_HOST);
+    if (hostHeader == null) {
+      bundle.start();
     }
   }
 }

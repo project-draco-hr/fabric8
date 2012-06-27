@@ -26,7 +26,6 @@
     }
     throw new PatchException(sb.toString());
   }
-  Set<Bundle> toRefresh=new HashSet<Bundle>();
   Set<Bundle> toDelete=new HashSet<Bundle>();
   Set<String> toInstall=new HashSet<String>();
   for (  BundleUpdate update : result.getUpdates()) {
@@ -39,12 +38,12 @@
     }
   }
   try {
-    applyChanges(toRefresh,toDelete,toInstall);
+    applyChanges(toDelete,toInstall);
   }
  catch (  Exception e) {
     throw new PatchException("Unable to rollback patch " + patch.getId() + ": "+ e.getMessage(),e);
   }
-  patch.setResult(null);
+  ((PatchImpl)patch).setResult(null);
   File file=new File(patchDir,result.getPatch().getId() + ".patch.result");
   file.delete();
 }
