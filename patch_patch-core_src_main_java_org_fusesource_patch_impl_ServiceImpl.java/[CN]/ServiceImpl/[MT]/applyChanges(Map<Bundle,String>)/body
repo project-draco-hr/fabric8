@@ -1,6 +1,6 @@
 {
   List<Bundle> toStop=new ArrayList<Bundle>();
-  toStop.addAll(toDelete);
+  toStop.addAll(toUpdate.keySet());
   while (!toStop.isEmpty()) {
     List<Bundle> bs=getBundlesToDestroy(toStop);
     for (    Bundle bundle : bs) {
@@ -13,14 +13,17 @@
   }
   Set<Bundle> toRefresh=new HashSet<Bundle>();
   Set<Bundle> toStart=new HashSet<Bundle>();
-  for (  Bundle bundle : toDelete) {
-    bundle.uninstall();
-    toRefresh.add(bundle);
-  }
-  for (  String url : toInstall) {
-    Bundle bundle=bundleContext.installBundle(url);
-    toRefresh.add(bundle);
-    toStart.add(bundle);
+  for (  Map.Entry<Bundle,String> e : toUpdate.entrySet()) {
+    InputStream is=new URL(e.getValue()).openStream();
+    try {
+      Bundle bundle=e.getKey();
+      bundle.update(is);
+      toRefresh.add(bundle);
+      toStart.add(bundle);
+    }
+  finally {
+      is.close();
+    }
   }
   findBundlesWithOptionalPackagesToRefresh(toRefresh);
   findBundlesWithFramentsToRefresh(toRefresh);

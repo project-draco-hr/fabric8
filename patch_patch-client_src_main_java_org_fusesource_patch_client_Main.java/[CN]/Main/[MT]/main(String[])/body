@@ -1,6 +1,12 @@
 {
   System.setProperty(TerminalSupport.JLINE_SHUTDOWNHOOK,"true");
   AnsiConsole.systemInstall();
+  for (  String arg : args) {
+    int idx=arg.indexOf('=');
+    if (idx > 0) {
+      System.setProperty(arg.substring(0,idx),arg.substring(idx + 1));
+    }
+  }
   List<String> repos=new ArrayList<String>();
   String repoStr=System.getProperty(REPOSITORIES,DEFAULT_REPOSITORIES);
   for (  String repo : repoStr.split(",")) {
