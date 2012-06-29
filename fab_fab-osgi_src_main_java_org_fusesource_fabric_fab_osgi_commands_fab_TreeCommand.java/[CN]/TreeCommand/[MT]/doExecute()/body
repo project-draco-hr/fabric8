@@ -1,7 +1,11 @@
 {
-  FabClassPathResolver resolver=createResolver(fab);
-  if (resolver != null) {
-    TreeHelper.write(session.getConsole(),resolver);
+  FabResolverFactoryImpl.FabResolverImpl impl=getFabResolverImpl(fab);
+  if (impl != null) {
+    impl.getInfo();
+    FabClassPathResolver resolver=impl.getClassPathResolver();
+    if (resolver != null) {
+      TreeHelper.write(session.getConsole(),resolver);
+    }
   }
   return null;
 }
