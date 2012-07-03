@@ -12,20 +12,25 @@
   final Map<String,File> downloads=new ConcurrentHashMap<String,File>();
   final List<Throwable> errors=new CopyOnWriteArrayList<Throwable>();
   for (  final String location : locations) {
-    manager.download(location).addListener(new FutureListener<DownloadFuture>(){
-      public void operationComplete(      DownloadFuture future){
-        try {
-          downloads.put(location,future.getFile());
-        }
- catch (        Throwable e) {
-          errors.add(e);
-        }
+    if (!location.startsWith(FAB_PROTOCOL)) {
+      manager.download(location).addListener(new FutureListener<DownloadFuture>(){
+        public void operationComplete(        DownloadFuture future){
+          try {
+            downloads.put(location,future.getFile());
+          }
+ catch (          Throwable e) {
+            errors.add(e);
+          }
  finally {
-          latch.countDown();
+            latch.countDown();
+          }
         }
       }
-    }
 );
+    }
+ else {
+      latch.countDown();
+    }
   }
   latch.await();
   if (!errors.isEmpty()) {
