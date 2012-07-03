@@ -1,0 +1,21 @@
+{
+  try {
+    if (zooKeeper.isConnected()) {
+      String name=System.getProperty("karaf.name");
+      if (event.getPid().equals("org.apache.karaf.shell") && event.getType() == ConfigurationEvent.CM_UPDATED) {
+        String sshUrl=getSshUrl();
+        if (sshUrl != null) {
+          zooKeeper.createOrSetWithParents(CONTAINER_SSH.getPath(name),getSshUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+        }
+      }
+      if (event.getPid().equals("org.apache.karaf.management") && event.getType() == ConfigurationEvent.CM_UPDATED) {
+        String jmxUrl=getJmxUrl();
+        if (jmxUrl != null) {
+          zooKeeper.createOrSetWithParents(CONTAINER_JMX.getPath(name),getJmxUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+        }
+      }
+    }
+  }
+ catch (  Exception e) {
+  }
+}
