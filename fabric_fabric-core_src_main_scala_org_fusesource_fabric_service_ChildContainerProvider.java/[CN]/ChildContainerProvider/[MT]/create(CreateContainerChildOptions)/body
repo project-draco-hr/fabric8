@@ -27,6 +27,7 @@
       String features="fabric-agent";
       String featuresUrls="mvn:org.fusesource.fabric/fuse-fabric/" + FabricConstants.FABRIC_VERSION + "/xml/features";
       String originalName=new String(options.getName());
+      Set<Integer> usedPorts=getContainerUsedPorts(parent);
       for (int i=1; i <= options.getNumber(); i++) {
         String containerName;
         if (options.getNumber() > 1) {
@@ -38,8 +39,25 @@
         CreateContainerChildMetadata metadata=new CreateContainerChildMetadata();
         metadata.setCreateOptions(options);
         metadata.setContainerName(containerName);
+        int minimumPort=service.getCurrentContainer().getMinimumPort();
+        int maximumPort=service.getCurrentContainer().getMaximumPort();
+        int sshPort=mapPortToRange(8101 + i,minimumPort,maximumPort);
+        while (usedPorts.contains(sshPort)) {
+          sshPort++;
+        }
+        usedPorts.add(sshPort);
+        int rmiServerPort=mapPortToRange(44444 + i,minimumPort,maximumPort);
+        while (usedPorts.contains(rmiServerPort)) {
+          rmiServerPort++;
+        }
+        usedPorts.add(rmiServerPort);
+        int rmiRegistryPort=mapPortToRange(1099 + i,minimumPort,maximumPort);
+        while (usedPorts.contains(rmiRegistryPort)) {
+          rmiRegistryPort++;
+        }
+        usedPorts.add(rmiRegistryPort);
         try {
-          adminService.createInstance(containerName,0,0,0,null,jvmOptsBuilder.toString(),features,featuresUrls);
+          adminService.createInstance(containerName,sshPort,rmiServerPort,rmiRegistryPort,null,jvmOptsBuilder.toString(),features,featuresUrls);
           adminService.startInstance(containerName,null);
         }
  catch (        Throwable t) {

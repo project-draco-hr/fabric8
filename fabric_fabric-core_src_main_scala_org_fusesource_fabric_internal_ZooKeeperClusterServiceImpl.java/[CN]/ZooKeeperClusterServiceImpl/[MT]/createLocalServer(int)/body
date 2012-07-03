@@ -3,18 +3,21 @@
     IZKClient client;
     Properties properties;
     String karafName=System.getProperty("karaf.name");
+    String minimumPort=System.getProperty(ZkDefs.MINIMUM_PORT);
+    String maximumPort=System.getProperty(ZkDefs.MAXIMUM_PORT);
+    int mappedPort=mapPortToRange(port,minimumPort,maximumPort);
     Bundle bundleFabricConfigAdmin=installOrStopBundle(bundleContext,"org.fusesource.fabric.fabric-configadmin","mvn:org.fusesource.fabric/fabric-configadmin/" + FabricConstants.FABRIC_VERSION);
     Bundle bundleFabricZooKeeper=installOrStopBundle(bundleContext,"org.fusesource.fabric.fabric-zookeeper","mvn:org.fusesource.fabric/fabric-zookeeper/" + FabricConstants.FABRIC_VERSION);
     Bundle bundleFabricJaas=installOrStopBundle(bundleContext,"org.fusesource.fabric.fabric-jaas  ","mvn:org.fusesource.fabric/fabric-jaas/" + FabricConstants.FABRIC_VERSION);
     Bundle bundleFabricCommands=installOrStopBundle(bundleContext,"org.fusesource.fabric.fabric-commands  ","mvn:org.fusesource.fabric/fabric-commands/" + FabricConstants.FABRIC_VERSION);
-    String connectionUrl=HostUtils.getLocalHostName() + ":" + Integer.toString(port);
+    String connectionUrl=HostUtils.getLocalHostName() + ":" + Integer.toString(mappedPort);
     Configuration config=configurationAdmin.createFactoryConfiguration("org.fusesource.fabric.zookeeper.server");
     properties=new Properties();
     properties.put("tickTime","2000");
     properties.put("initLimit","10");
     properties.put("syncLimit","5");
     properties.put("dataDir","data/zookeeper/0000");
-    properties.put("clientPort",Integer.toString(port));
+    properties.put("clientPort",Integer.toString(mappedPort));
     properties.put("fabric.zookeeper.pid","org.fusesource.fabric.zookeeper.server-0000");
     config.setBundleLocation(null);
     config.update(properties);
@@ -38,7 +41,7 @@
       ZookeeperImportUtils.importFromFileSystem(client,autoImportFrom,"/",null,null,false,false,false);
     }
     String defaultProfile=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"default");
-    setConfigProperty(client,defaultProfile + "/org.fusesource.fabric.zookeeper.properties","zookeeper.url","${zk:" + karafName + "/ip}:"+ Integer.toString(port));
+    setConfigProperty(client,defaultProfile + "/org.fusesource.fabric.zookeeper.properties","zookeeper.url","${zk:" + karafName + "/ip}:"+ Integer.toString(mappedPort));
     ZooKeeperUtils.set(client,ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"fabric-ensemble-0000"),"abstract=true\nhidden=true");
     String profileNode=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"fabric-ensemble-0000") + "/org.fusesource.fabric.zookeeper.server-0000.properties";
     Properties p=new Properties();
@@ -50,7 +53,7 @@
     ZooKeeperUtils.set(client,ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"fabric-ensemble-0000-1"),"parents=fabric-ensemble-0000\nhidden=true");
     profileNode=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"fabric-ensemble-0000-1") + "/org.fusesource.fabric.zookeeper.server-0000.properties";
     p=new Properties();
-    p.put("clientPort","2181");
+    p.put("clientPort",String.valueOf(mappedPort));
     ZooKeeperUtils.set(client,profileNode,toString(p));
     ZooKeeperUtils.set(client,"/fabric/configs/versions/" + version + "/general/fabric-ensemble","0000");
     ZooKeeperUtils.set(client,"/fabric/configs/versions/" + version + "/general/fabric-ensemble/0000",karafName);

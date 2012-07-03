@@ -29,7 +29,11 @@
   lines.add(ZkDefs.GLOBAL_RESOLVER_PROPERTY + "=" + options.getResolver());
   appendFile(sb,"etc/system.properties",lines);
   replaceLineInFile(sb,"etc/system.properties","karaf.name=root","karaf.name=" + options.getName());
-  replaceLineInFile(sb,"etc/org.apache.karaf.shell.cfg","sshPort=8101","sshPort=" + DEFAULT_SSH_PORT);
+  replaceLineInFile(sb,"etc/org.apache.karaf.shell.cfg","sshPort=" + DEFAULT_SSH_PORT,"sshPort=" + PortUtils.mapPortToRange(DEFAULT_SSH_PORT,options.getMinimumPort(),options.getMaximumPort()));
+  replaceLineInFile(sb,"etc/org.apache.karaf.management.cfg","rmiRegistryPort = " + DEFAULT_RMI_REGISTRY_PORT,"rmiRegistryPort=" + PortUtils.mapPortToRange(DEFAULT_RMI_REGISTRY_PORT,options.getMinimumPort(),options.getMaximumPort()));
+  replaceLineInFile(sb,"etc/org.apache.karaf.management.cfg","rmiServerPort = " + DEFAULT_RMI_SERVER_PORT,"rmiServerPort=" + PortUtils.mapPortToRange(DEFAULT_RMI_SERVER_PORT,options.getMinimumPort(),options.getMaximumPort()));
+  appendFile(sb,"etc/system.properties",Arrays.asList(ZkDefs.MINIMUM_PORT + "=" + options.getMaximumPort()));
+  appendFile(sb,"etc/system.properties",Arrays.asList(ZkDefs.MAXIMUM_PORT + "=" + options.getMinimumPort()));
   appendFile(sb,"etc/system.properties",Arrays.asList("\n"));
   for (  Map.Entry<String,Properties> entry : options.getSystemProperties().entrySet()) {
     Properties sysprops=entry.getValue();

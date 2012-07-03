@@ -1,0 +1,17 @@
+{
+  int maximumPort=0;
+  try {
+    if (service.getZooKeeper().exists(ZkPath.CONTAINER_PORT_MAX.getPath(id)) != null) {
+      maximumPort=Integer.parseInt(service.getZooKeeper().getStringData(ZkPath.CONTAINER_PORT_MAX.getPath(id)));
+    }
+  }
+ catch (  InterruptedException e) {
+    throw new FabricException(e);
+  }
+catch (  KeeperException e) {
+    throw new FabricException(e);
+  }
+catch (  NumberFormatException e) {
+  }
+  return maximumPort;
+}
