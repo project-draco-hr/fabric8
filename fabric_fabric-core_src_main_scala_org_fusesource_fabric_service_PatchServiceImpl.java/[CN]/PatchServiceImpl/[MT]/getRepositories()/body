@@ -1,0 +1,23 @@
+{
+  try {
+    Configuration[] configuration=configAdmin.listConfigurations("(service.pid=" + "org.fusesource.fabric.agent" + ")");
+    if (configuration != null && configuration.length > 0) {
+      Dictionary dictionary=configuration[0].getProperties();
+      Object repos=dictionary.get("patch.repositories");
+      if (repos == null) {
+        repos=dictionary.get("org.ops4j.pax.url.mvn.repositories");
+      }
+      if (repos != null) {
+        List<String> repositories=new ArrayList<String>();
+        for (        String repo : repos.toString().split(",")) {
+          repositories.add(repo.trim());
+        }
+        return repositories;
+      }
+    }
+    return Arrays.asList("http://repo.fusesource.com/nexus/content/repositories/releases");
+  }
+ catch (  Exception e) {
+    throw new IllegalStateException("Unable to retrieve repositories",e);
+  }
+}

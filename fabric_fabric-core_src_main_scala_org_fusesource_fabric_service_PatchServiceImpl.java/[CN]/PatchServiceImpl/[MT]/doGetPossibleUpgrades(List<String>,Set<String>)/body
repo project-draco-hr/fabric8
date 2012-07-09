@@ -1,0 +1,32 @@
+{
+  Set<String> mavenArtifacts=new TreeSet<String>();
+  for (  String artifact : artifacts) {
+    String mvn=getMavenArtifact(artifact);
+    if (mvn != null) {
+      mavenArtifacts.add(mvn);
+    }
+  }
+  ExecutorService executor=Executors.newFixedThreadPool(20);
+  final Map<String,Set<String>> artifactsVersions=new HashMap<String,Set<String>>();
+  for (  final String mvn : mavenArtifacts) {
+    executor.submit(new Runnable(){
+      @Override public void run(){
+        Set<String> versions=doGetPossibleUpgrades(repositories,mvn);
+        if (versions != null && !versions.isEmpty()) {
+synchronized (artifactsVersions) {
+            artifactsVersions.put(mvn,versions);
+          }
+        }
+      }
+    }
+);
+  }
+  executor.shutdown();
+  try {
+    executor.awaitTermination(Long.MAX_VALUE,TimeUnit.NANOSECONDS);
+  }
+ catch (  InterruptedException e) {
+    throw new RuntimeException(e);
+  }
+  return artifactsVersions;
+}

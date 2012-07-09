@@ -1,0 +1,48 @@
+{
+  Set<String> allVersions=new TreeSet<String>(new Comparator<String>(){
+    @Override public int compare(    String o1,    String o2){
+      org.osgi.framework.Version v1=VersionTable.getVersion(o1);
+      org.osgi.framework.Version v2=VersionTable.getVersion(o2);
+      return v1.compareTo(v2);
+    }
+  }
+);
+  String[] mvnParts=mvn.split(":");
+  org.osgi.framework.Version artifactVersion=VersionTable.getVersion(mvnParts[2]);
+  VersionRange upgradeRange=new VersionRange(false,artifactVersion,VersionTable.getVersion(artifactVersion.getMajor() + 1,0,0),true);
+  for (  String repo : repositories) {
+    try {
+      URL base=new URL(repo + "/" + mvnParts[0].replace('.','/')+ "/"+ mvnParts[1]+ "/");
+      URL metadata=new URL(base,"maven-metadata.xml");
+      URLConnection con=metadata.openConnection();
+      if (metadata.getUserInfo() != null) {
+        con.setRequestProperty("Authorization","Basic " + Base64Encoder.encode(metadata.getUserInfo()));
+      }
+      InputStream is=con.getInputStream();
+      try {
+        Document doc=dbf.newDocumentBuilder().parse(is);
+        NodeList versions=doc.getDocumentElement().getElementsByTagName("version");
+        for (int i=0; i < versions.getLength(); i++) {
+          Node version=versions.item(i);
+          String v=version.getTextContent();
+          org.osgi.framework.Version ver=VersionTable.getVersion(v);
+          if (upgradeRange.contains(ver)) {
+            allVersions.add(v.trim());
+          }
+        }
+      }
+  finally {
+        is.close();
+      }
+    }
+ catch (    Exception e) {
+      if (LOGGER.isTraceEnabled()) {
+        LOGGER.trace("Unable to retrieve versions for artifact: " + mvn,e);
+      }
+ else       if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("Unable to retrieve versions for artifact: " + mvn + ": "+ e.getMessage());
+      }
+    }
+  }
+  return allVersions;
+}
