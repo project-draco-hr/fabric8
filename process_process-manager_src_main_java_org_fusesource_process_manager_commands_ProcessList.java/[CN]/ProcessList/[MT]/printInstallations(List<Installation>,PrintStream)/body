@@ -1,0 +1,14 @@
+{
+  out.println(String.format(FORMAT,HEADERS));
+  for (  Installation installation : installations) {
+    int id=installation.getId();
+    Integer pid=null;
+    try {
+      pid=installation.getController().getPid();
+    }
+ catch (    IOException e) {
+      System.err.println("Failed to find pid for id: " + id + ". "+ e);
+    }
+    out.println(String.format(FORMAT,"" + id,(pid != null) ? pid.toString() : "",installation.getUrl()));
+  }
+}
