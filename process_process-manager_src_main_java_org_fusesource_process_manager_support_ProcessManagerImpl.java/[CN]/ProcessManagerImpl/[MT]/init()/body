@@ -1,0 +1,24 @@
+{
+  lastId=0;
+  File[] files=storageLocation.listFiles();
+  if (files != null) {
+    for (    File file : files) {
+      if (file.isDirectory()) {
+        String name=file.getName();
+        if (name.matches("\\d+")) {
+          try {
+            Integer value=Integer.parseInt(name);
+            if (value != null) {
+              int v=value.intValue();
+              if (v > lastId) {
+                lastId=v;
+              }
+            }
+          }
+ catch (          NumberFormatException e) {
+          }
+        }
+      }
+    }
+  }
+}

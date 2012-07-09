@@ -1,0 +1,15 @@
+{
+  int id=createNextId();
+  File installDir=createInstallDir(id);
+  installDir.mkdirs();
+  System.out.println("Installing into: " + installDir);
+  File tarball=new File(installDir,"install.tar.gz");
+  Files.copy(new InputSupplier<InputStream>(){
+    @Override public InputStream getInput() throws IOException {
+      return new URL(url).openStream();
+    }
+  }
+,tarball);
+  FileUtils.extractTar(tarball,installDir,untarTimeout,executor);
+  return createInstallation(id,installDir);
+}

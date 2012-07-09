@@ -1,0 +1,18 @@
+{
+  checkRequirements();
+  Map<Integer,Installation> map=Maps.newHashMap();
+  List<Installation> installations=getProcessManager().listInstallations();
+  for (  Installation installation : installations) {
+    map.put(installation.getId(),installation);
+  }
+  for (  Integer id : ids) {
+    Installation installation=map.get(id);
+    if (installation == null) {
+      System.out.println("No such process number: " + id);
+    }
+ else {
+      doControlCommand(installation);
+    }
+  }
+  return null;
+}
