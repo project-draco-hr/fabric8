@@ -1,6 +1,17 @@
 {
   checkRequirements();
-  Installation install=getProcessManager().install(url,controllerJson);
+  URL controllerUrl=null;
+  if (controllerJson != null) {
+    controllerUrl=new URL(controllerJson);
+  }
+ else   if (controllerKind != null) {
+    String name=controllerKind + ".json";
+    controllerUrl=getBundleContext().getBundle().getResource(name);
+    if (controllerUrl == null) {
+      throw new IllegalStateException("Cannot find controller kind: " + name + " on the classpath");
+    }
+  }
+  Installation install=getProcessManager().install(url,controllerUrl);
   System.out.println("Installed process " + install.getId() + " to "+ install.getInstallDir());
   return null;
 }
