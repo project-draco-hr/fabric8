@@ -1,0 +1,35 @@
+{
+  ProcessBuilder processBuilder=new ProcessBuilder(command.getCommand());
+  processBuilder.directory(command.getDirectory());
+  processBuilder.redirectErrorStream(true);
+  processBuilder.environment().putAll(command.getEnvironment());
+  final Process process;
+  try {
+    process=processBuilder.start();
+  }
+ catch (  IOException e) {
+    throw new CommandFailedException(command,"failed to start",e);
+  }
+  OutputProcessor outputProcessor=null;
+  try {
+    outputProcessor=new OutputProcessor(process,executor);
+    outputProcessor.start();
+    int exitCode=process.waitFor();
+    String out=outputProcessor.getOutput();
+    if (!command.getSuccessfulExitCodes().contains(exitCode)) {
+      throw new CommandFailedException(command,exitCode,out);
+    }
+    command.logOutput(out);
+    return exitCode;
+  }
+  finally {
+    try {
+      process.destroy();
+    }
+  finally {
+      if (outputProcessor != null) {
+        outputProcessor.destroy();
+      }
+    }
+  }
+}

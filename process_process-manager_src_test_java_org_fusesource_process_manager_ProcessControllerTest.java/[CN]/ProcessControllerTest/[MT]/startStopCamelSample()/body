@@ -1,0 +1,12 @@
+{
+  if (!installDir.exists()) {
+    fail("Installation does not exist: " + installDir);
+  }
+  DefaultProcessController controller=new DefaultProcessController();
+  controller.setBaseDir(installDir);
+  int rc=controller.start();
+  assertEquals("Return code",0,rc);
+  Thread.sleep(2000);
+  rc=controller.stop();
+  assertEquals("Return code",0,rc);
+}
