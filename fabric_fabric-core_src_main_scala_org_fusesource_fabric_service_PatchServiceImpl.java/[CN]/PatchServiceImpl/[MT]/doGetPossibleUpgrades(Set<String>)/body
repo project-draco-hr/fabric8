@@ -1,4 +1,7 @@
 {
+  Dictionary config=getConfig();
+  final List<String> repositories=getRepositories(config);
+  final boolean includeNonFuseVersions=Boolean.parseBoolean((String)config.get(PATCH_INCLUDE_NON_FUSE_VERSION));
   Set<String> mavenArtifacts=new TreeSet<String>();
   for (  String artifact : artifacts) {
     String mvn=getMavenArtifact(artifact);
@@ -11,7 +14,7 @@
   for (  final String mvn : mavenArtifacts) {
     executor.submit(new Runnable(){
       @Override public void run(){
-        Set<String> versions=doGetPossibleUpgrades(repositories,mvn);
+        Set<String> versions=doGetPossibleUpgrades(repositories,mvn,includeNonFuseVersions);
         if (versions != null && !versions.isEmpty()) {
 synchronized (artifactsVersions) {
             artifactsVersions.put(mvn,versions);
