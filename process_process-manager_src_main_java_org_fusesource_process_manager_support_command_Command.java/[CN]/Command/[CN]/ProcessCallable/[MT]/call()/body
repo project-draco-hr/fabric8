@@ -15,11 +15,10 @@
     outputProcessor=new OutputProcessor(process,executor);
     outputProcessor.start();
     int exitCode=process.waitFor();
-    String out=outputProcessor.getOutput();
     if (!command.getSuccessfulExitCodes().contains(exitCode)) {
+      String out=outputProcessor.getOutput();
       throw new CommandFailedException(command,exitCode,out);
     }
-    command.logOutput(out);
     return exitCode;
   }
   finally {
