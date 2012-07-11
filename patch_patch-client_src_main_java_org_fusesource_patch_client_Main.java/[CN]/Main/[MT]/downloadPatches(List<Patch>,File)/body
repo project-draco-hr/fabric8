@@ -1,8 +1,11 @@
 {
   for (  final Patch patch : locations) {
+    if (patch.metadata == null) {
+      continue;
+    }
     final URL location=patch.location;
     final URL patchurl=new URL(location.toExternalForm().replaceAll("-patch.patch","-patch.zip"));
-    final File file=new File(directory,new File(patchurl.getPath()).getName());
+    final File file=new File(directory,patch.metadata.getProperty("id") + ".zip");
     if (!file.isFile()) {
       patch.patchFile=executor.submit(new Callable<File>(){
         @Override public File call() throws Exception {

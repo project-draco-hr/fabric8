@@ -9,9 +9,10 @@
     for (int i=0; i < count; i++) {
       String sn=props.getProperty(UPDATES + "." + Integer.toString(i)+ "."+ SYMBOLIC_NAME);
       String nv=props.getProperty(UPDATES + "." + Integer.toString(i)+ "."+ NEW_VERSION);
+      String nl=props.getProperty(UPDATES + "." + Integer.toString(i)+ "."+ NEW_LOCATION);
       String ov=props.getProperty(UPDATES + "." + Integer.toString(i)+ "."+ OLD_VERSION);
       String ol=props.getProperty(UPDATES + "." + Integer.toString(i)+ "."+ OLD_LOCATION);
-      updates.add(new BundleUpdateImpl(sn,nv,ov,ol));
+      updates.add(new BundleUpdateImpl(sn,nv,nl,ov,ol));
     }
     return new ResultImpl(patch,false,date,updates);
   }
