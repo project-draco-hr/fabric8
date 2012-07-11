@@ -13,5 +13,7 @@
 ,tarball);
   FileUtils.extractTar(tarball,installDir,untarTimeout,executor);
   JsonHelper.saveProcessConfig(config,installDir);
-  return createInstallation(url,id,installDir,config);
+  Installation installation=createInstallation(url,id,installDir,config);
+  installation.getController().install();
+  return installation;
 }
