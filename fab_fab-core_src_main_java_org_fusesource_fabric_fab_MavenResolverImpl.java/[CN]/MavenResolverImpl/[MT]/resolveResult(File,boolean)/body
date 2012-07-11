@@ -1,10 +1,6 @@
 {
-  MavenRepositorySystemSession session=new MavenRepositorySystemSession();
-  LocalRepository localRepository=new LocalRepository(getLocalRepo());
   RepositorySystem repo=getRepositorySystem();
-  session.setLocalRepositoryManager(repo.newLocalRepositoryManager(localRepository));
-  session.setDependencySelector(new AndDependencySelector(new ScopeDependencySelector("test"),new OptionalDependencySelector(),new ExclusionDependencySelector()));
-  session.setOffline(offline);
+  MavenRepositorySystemSession session=createSession(offline,repo);
   List<RemoteRepository> repos=getRemoteRepositories();
   Map<String,String> props=Collections.singletonMap(ArtifactProperties.LOCAL_PATH,rootPom.toString());
   Artifact root=new DefaultArtifact("#groupId","#artifactId",null,"pom","#version",props,rootPom);

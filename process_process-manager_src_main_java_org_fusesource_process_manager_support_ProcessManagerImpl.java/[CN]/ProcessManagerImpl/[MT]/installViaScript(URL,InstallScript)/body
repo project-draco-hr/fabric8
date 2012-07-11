@@ -1,0 +1,11 @@
+{
+  int id=createNextId();
+  File installDir=createInstallDir(id);
+  installDir.mkdirs();
+  ProcessConfig config=loadControllerJson(controllerJson);
+  JsonHelper.saveProcessConfig(config,installDir);
+  installScript.doInstall(config,id,installDir);
+  Installation installation=createInstallation(id,installDir,config);
+  installation.getController().install();
+  return installation;
+}

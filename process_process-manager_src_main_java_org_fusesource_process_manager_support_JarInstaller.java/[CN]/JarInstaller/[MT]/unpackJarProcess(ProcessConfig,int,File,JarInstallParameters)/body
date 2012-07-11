@@ -1,0 +1,16 @@
+{
+  Filter<Dependency> optionalFilter=DependencyFilters.parseExcludeOptionalFilter(join(Arrays.asList(parameters.getOptionalDependencyPatterns())," "));
+  Filter<Dependency> excludeFilter=DependencyFilters.parseExcludeFilter(join(Arrays.asList(parameters.getExcludeDependencyFilterPatterns())," "),optionalFilter);
+  DependencyTreeResult result=mavenResolver.collectDependencies(parameters.getGroupId(),parameters.getArtifactId(),parameters.getVersion(),parameters.getExtension(),parameters.getClassifier(),parameters.isOffline(),excludeFilter);
+  DependencyNode mainJarDependency=result.getRootNode();
+  File libDir=new File(installDir,"lib");
+  libDir.mkdirs();
+  File mainJar=getFile(mainJarDependency);
+  if (mainJar == null) {
+    System.out.println("Cannot find file for main jar " + mainJarDependency);
+  }
+ else {
+    Files.copy(mainJar,new File(libDir,"main.jar"));
+  }
+  copyDependencies(mainJarDependency,libDir);
+}

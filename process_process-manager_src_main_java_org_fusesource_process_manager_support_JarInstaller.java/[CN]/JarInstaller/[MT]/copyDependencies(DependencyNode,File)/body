@@ -1,0 +1,15 @@
+{
+  List<DependencyNode> children=dependency.getChildren();
+  if (children != null) {
+    for (    DependencyNode child : children) {
+      File file=getFile(child);
+      if (file == null) {
+        System.out.println("Cannot find file for dependent jar " + child);
+      }
+ else {
+        Files.copy(file,new File(libDir,file.getName()));
+      }
+      copyDependencies(child,libDir);
+    }
+  }
+}

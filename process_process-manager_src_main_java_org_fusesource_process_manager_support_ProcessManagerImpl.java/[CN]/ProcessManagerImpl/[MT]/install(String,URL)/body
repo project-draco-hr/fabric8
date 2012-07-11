@@ -1,19 +1,10 @@
 {
-  int id=createNextId();
-  File installDir=createInstallDir(id);
-  installDir.mkdirs();
-  ProcessConfig config=loadControllerJson(controllerJson);
-  config.setUrl(url);
-  File tarball=new File(installDir,"install.tar.gz");
-  Files.copy(new InputSupplier<InputStream>(){
-    @Override public InputStream getInput() throws IOException {
-      return new URL(url).openStream();
+  InstallScript installScript=new InstallScript(){
+    @Override public void doInstall(    ProcessConfig config,    int id,    File installDir) throws Exception {
+      config.setName(url);
+      untarTarball(url,installDir);
     }
   }
-,tarball);
-  FileUtils.extractTar(tarball,installDir,untarTimeout,executor);
-  JsonHelper.saveProcessConfig(config,installDir);
-  Installation installation=createInstallation(url,id,installDir,config);
-  installation.getController().install();
-  return installation;
+;
+  return installViaScript(controllerJson,installScript);
 }
