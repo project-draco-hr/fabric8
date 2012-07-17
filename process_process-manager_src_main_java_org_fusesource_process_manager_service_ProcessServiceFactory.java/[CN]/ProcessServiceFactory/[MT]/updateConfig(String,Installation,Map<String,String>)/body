@@ -5,10 +5,7 @@
     if (running) {
       controller.stop();
     }
-    for (Enumeration keys=incoming.keys(); keys.hasMoreElements(); ) {
-      String key=(String)keys.nextElement();
-      installation.getEnvironment().put(key,(String)incoming.get(key));
-    }
+    installation.getEnvironment().putAll(env);
     controller.configure();
     if (running) {
       controller.start();
