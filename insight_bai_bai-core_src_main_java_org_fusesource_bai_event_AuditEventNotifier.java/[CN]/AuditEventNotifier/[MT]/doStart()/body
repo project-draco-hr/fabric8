@@ -1,0 +1,15 @@
+{
+  inRegex=new CopyOnWriteArrayList<String>(inRegex);
+  outRegex=new CopyOnWriteArrayList<String>(outRegex);
+  failureRegex=new CopyOnWriteArrayList<String>(failureRegex);
+  redeliveryRegex=new CopyOnWriteArrayList<String>(redeliveryRegex);
+  ObjectHelper.notNull(camelContext,"camelContext",this);
+  if (endpoint == null && endpointUri == null) {
+    throw new IllegalArgumentException("Either endpoint or endpointUri must be configured");
+  }
+  if (endpoint == null) {
+    endpoint=camelContext.getEndpoint(endpointUri);
+  }
+  producer=endpoint.createProducer();
+  ServiceHelper.startService(producer);
+}

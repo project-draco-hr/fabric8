@@ -1,0 +1,16 @@
+{
+  jgen.writeStartObject();
+  jgen.writeStringField("id",value.id());
+  jgen.writeStringField("nodeName",value.node().name());
+  jgen.writeStringField("nodeId",value.node().id());
+  jgen.writeStringField("address",value.node().address().toString());
+  jgen.writeStringField("version",value.node().version().toString());
+  jgen.writeFieldName("attributes");
+  jgen.writeStartObject();
+  for (  Map.Entry<String,String> entry : value.node().attributes().entrySet()) {
+    jgen.writeStringField(entry.getKey(),entry.getValue());
+  }
+  jgen.writeEndObject();
+  jgen.writeStringField("binary",Base64.encodeObject(value.node()));
+  jgen.writeEndObject();
+}

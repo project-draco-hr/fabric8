@@ -1,0 +1,11 @@
+{
+  if (zooKeeper.exists(path) != null) {
+    zooKeeper.setByteData(path,value);
+  }
+  try {
+    zooKeeper.createBytesNodeWithParents(path,value,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+  }
+ catch (  KeeperException.NodeExistsException e) {
+    zooKeeper.setByteData(path,value);
+  }
+}

@@ -1,25 +1,3 @@
 {
-  webServer=new Server();
-  this.findPort=findPort;
-  listener=createBaseListener(conf);
-  listener.setHost(bindAddress);
-  listener.setPort(port);
-  webServer.addConnector(listener);
-  webServer.setThreadPool(new QueuedThreadPool());
-  final String appDir=getWebAppsPath();
-  ContextHandlerCollection contexts=new ContextHandlerCollection();
-  webServer.setHandler(contexts);
-  webAppContext=new WebAppContext();
-  webAppContext.setDescriptor(appDir + "/" + name+ "/WEB-INF/web.xml");
-  webAppContext.setContextPath("/");
-  webAppContext.setWar(appDir + "/" + name);
-  ((HandlerCollection)webServer.getHandler()).addHandler(webAppContext);
-  addDefaultApps(contexts,appDir);
-  final FilterInitializer[] initializers=getFilterInitializers(conf);
-  if (initializers != null) {
-    for (    FilterInitializer c : initializers) {
-      c.initFilter(this,conf);
-    }
-  }
-  addDefaultServlets();
+  this(name,bindAddress,port,findPort,conf,null,null);
 }

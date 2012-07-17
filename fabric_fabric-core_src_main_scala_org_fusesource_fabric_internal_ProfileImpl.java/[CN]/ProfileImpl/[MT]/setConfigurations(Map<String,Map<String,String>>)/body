@@ -1,4 +1,7 @@
 {
+  if (isLocked()) {
+    throw new UnsupportedOperationException("The profile " + id + " is locked and can not be modified");
+  }
   try {
     IZKClient zooKeeper=service.getZooKeeper();
     Map<String,Map<String,String>> oldCfgs=getConfigurations();
@@ -7,12 +10,7 @@
       oldCfgs.remove(pid);
       byte[] data=toBytes(toProperties(configurations.get(pid)));
       String p=path + "/" + pid+ ".properties";
-      if (zooKeeper.exists(p) == null) {
-        zooKeeper.createBytesNodeWithParents(p,data,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-      }
- else {
-        zooKeeper.setByteData(p,data);
-      }
+      ZooKeeperUtils.set(zooKeeper,p,data);
     }
     for (    String key : oldCfgs.keySet()) {
       zooKeeper.deleteWithChildren(path + "/" + key+ ".properties");

@@ -1,0 +1,41 @@
+{
+  initDestination();
+  System.out.println("Using destination: " + destination + ", on broker: "+ brokerUrl);
+  ActiveMQService activeMQService=new ActiveMQService(user,password,brokerUrl);
+  activeMQService.setTransacted(batchSize > 0);
+  try {
+    if ("producer".equals(action)) {
+      activeMQService.start();
+      ProducerThread producerThread=new ProducerThread(activeMQService,destination);
+      producerThread.setMessageCount(count);
+      producerThread.setMessageSize(size);
+      producerThread.setSleep(sleep);
+      producerThread.setPersistent(persistent);
+      producerThread.setTransactionBatchSize(batchSize);
+      producerThread.run();
+      System.out.println("Produced: " + producerThread.getSentCount());
+    }
+ else     if ("consumer".equals(action)) {
+      activeMQService.setClientId(clientId);
+      activeMQService.start();
+      ConsumerThread consumerThread=new ConsumerThread(activeMQService,destination);
+      consumerThread.setMessageCount(count);
+      consumerThread.setSleep(sleep);
+      consumerThread.setTransactionBatchSize(batchSize);
+      System.out.println("Waiting for: " + count + " messages");
+      consumerThread.run();
+      System.out.println("Consumed: " + consumerThread.getReceived() + " messages");
+    }
+ else {
+      displayHelpAndExit(1);
+    }
+  }
+ catch (  JMSException error) {
+    System.err.println("Execution failed with: " + error);
+    error.printStackTrace(System.err);
+    System.exit(2);
+  }
+ finally {
+    activeMQService.stop();
+  }
+}

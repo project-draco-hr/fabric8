@@ -1,6 +1,10 @@
 {
-  Boolean autoStart=Boolean.parseBoolean(System.getProperty(ENSEMBLE_AUTOSTART));
-  if (autoStart) {
-    createLocalServer();
+  if (ensembleAutoStart) {
+    new Thread(new Runnable(){
+      @Override public void run(){
+        createLocalServer();
+      }
+    }
+).start();
   }
 }

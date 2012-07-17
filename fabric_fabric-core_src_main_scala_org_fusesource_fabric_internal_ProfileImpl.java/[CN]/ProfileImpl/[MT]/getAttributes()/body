@@ -1,0 +1,18 @@
+{
+  try {
+    String node=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id);
+    Properties props=ZooKeeperUtils.getProperties(service.getZooKeeper(),node);
+    if (props.size() == 1) {
+      String key=props.stringPropertyNames().iterator().next();
+      if (!key.equals(PARENTS)) {
+        String val=props.getProperty(key);
+        props.remove(key);
+        props.setProperty(PARENTS,val.isEmpty() ? key : key + " " + val);
+      }
+    }
+    return props;
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

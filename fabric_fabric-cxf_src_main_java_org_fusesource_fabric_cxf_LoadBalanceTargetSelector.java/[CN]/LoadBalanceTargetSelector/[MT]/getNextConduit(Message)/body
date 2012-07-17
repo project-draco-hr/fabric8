@@ -3,6 +3,9 @@
   Exchange exchange=message.getExchange();
   EndpointInfo ei=endpoint.getEndpointInfo();
   String address=loadBalanceStrategy.getNextAlternateAddress();
+  if (overrideAddress(message)) {
+    message.put(Message.ENDPOINT_ADDRESS,address);
+  }
   try {
     ConduitInitiatorManager conduitInitiatorMgr=exchange.getBus().getExtension(ConduitInitiatorManager.class);
     if (conduitInitiatorMgr != null) {

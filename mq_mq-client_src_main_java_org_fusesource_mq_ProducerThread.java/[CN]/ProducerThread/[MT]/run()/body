@@ -1,0 +1,36 @@
+{
+  MessageProducer producer=null;
+  try {
+    producer=service.createProducer(dest);
+    producer.setDeliveryMode(persistent ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT);
+    initPayLoad();
+    running=true;
+    for (sentCount=0; sentCount < messageCount; sentCount++) {
+      if (!running)       break;
+      Message message=createMessage(sentCount);
+      producer.send(message);
+      LOG.info("Sent: " + (message instanceof TextMessage ? ((TextMessage)message).getText() : message.getJMSMessageID()));
+      if (transactionBatchSize > 0 && sentCount > 0 && sentCount % transactionBatchSize == 0) {
+        LOG.info("Committing transaction: " + transactions++);
+        service.getDefaultSession().commit();
+      }
+      if (sleep > 0) {
+        Thread.sleep(sleep);
+      }
+    }
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+ finally {
+    if (producer != null) {
+      try {
+        producer.close();
+      }
+ catch (      JMSException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+  LOG.info("Producer thread finished");
+}

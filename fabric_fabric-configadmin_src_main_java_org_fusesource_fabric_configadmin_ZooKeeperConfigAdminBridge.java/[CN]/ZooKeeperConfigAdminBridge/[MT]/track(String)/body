@@ -5,13 +5,9 @@
       tree=new ZooKeeperTreeTracker<String>(zooKeeper,new ZKStringDataReader(),path);
       trees.put(path,tree);
       tree.track(this);
-      String data=tree.getTree().get(path).getData();
-      if (data != null) {
-        data=data.trim();
-        String[] parents=data.split(" ");
-        for (        String parent : parents) {
-          track(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,parent));
-        }
+      String[] parents=getParents(tree.getTree().get(path));
+      for (      String parent : parents) {
+        track(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,parent));
       }
     }
  else {

@@ -1,0 +1,29 @@
+{
+  if (containers == null || containers.isEmpty()) {
+    containers=Arrays.asList(System.getProperty("karaf.name"));
+  }
+  if (clean) {
+    service.clean();
+  }
+  if (!noImport && importDir != null) {
+    System.setProperty(ZooKeeperClusterService.PROFILES_AUTOIMPORT_PATH,importDir);
+  }
+  if (resolver != null) {
+    System.setProperty(ZkDefs.GLOBAL_RESOLVER_PROPERTY,resolver);
+  }
+  if (profile != null) {
+    System.setProperty(ZooKeeperClusterService.PROFILE,profile);
+  }
+  if (nonManaged) {
+    System.setProperty(ZooKeeperClusterService.AGENT_AUTOSTART,"false");
+  }
+ else {
+    System.setProperty(ZooKeeperClusterService.AGENT_AUTOSTART,"true");
+  }
+  System.setProperty(ZkDefs.MINIMUM_PORT,String.valueOf(minimumPort));
+  System.setProperty(ZkDefs.MAXIMUM_PORT,String.valueOf(maximumPort));
+  if (containers != null && !containers.isEmpty()) {
+    service.createCluster(containers);
+  }
+  return null;
+}

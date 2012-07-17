@@ -1,11 +1,15 @@
 {
   if (mbeanServer != null) {
     try {
+      lock.lock();
       mbeanServer.removeNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this);
       unregisterDomains();
     }
  catch (    Exception e) {
       logger.warn("An error occurred during mbean server unregistration. This exception will be ignored.",e);
+    }
+ finally {
+      lock.unlock();
     }
   }
   mbeanServer=null;

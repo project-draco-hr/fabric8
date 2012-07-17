@@ -1,0 +1,16 @@
+{
+  sharedFilterPatterns.addAll(getListManifestProperty(ServiceConstants.INSTR_FAB_PROVIDED_DEPENDENCY,ServiceConstants.DEFAULT_FAB_PROIVDED_DEPENDENCY));
+  requireBundleFilterPatterns.addAll(getListManifestProperty(ServiceConstants.INSTR_FAB_DEPENDENCY_REQUIRE_BUNDLE));
+  excludeDependencyFilterPatterns.addAll(getListManifestProperty(ServiceConstants.INSTR_FAB_EXCLUDE_DEPENDENCY));
+  optionalDependencyPatterns.addAll(getListManifestProperty(ServiceConstants.INSTR_FAB_OPTIONAL_DEPENDENCY));
+  importExportFilterPatterns.addAll(getListManifestProperty(ServiceConstants.INSTR_FAB_IMPORT_DEPENDENCY_EXPORTS));
+  installFeatures.addCollection(getListManifestProperty(ServiceConstants.INSTR_FAB_REQUIRE_FEATURE));
+  for (  String url : getListManifestProperty(ServiceConstants.INSTR_FAB_REQUIRE_FEATURE_URL)) {
+    try {
+      installFeatureURLs.add(new URI(url));
+    }
+ catch (    URISyntaxException e) {
+      LOG.warn("Invalid URI {} listed in {} will be ignored",new Object[]{url,ServiceConstants.INSTR_FAB_REQUIRE_FEATURE_URL});
+    }
+  }
+}

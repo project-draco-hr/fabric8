@@ -1,0 +1,8 @@
+{
+  Command command=new Command(arguments).setDirectory(baseDir);
+  Map<String,String> environment=config.getEnvironment();
+  if (environment != null && environment.size() > 0) {
+    command=command.addEnvironment(environment);
+  }
+  return command.execute(getExecutor());
+}

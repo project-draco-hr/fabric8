@@ -1,0 +1,32 @@
+{
+  CreateContainerMetadata metadata=container.getMetadata();
+  if (!(metadata instanceof CreateJCloudsContainerMetadata)) {
+    throw new IllegalStateException("Container doesn't have valid create container metadata type");
+  }
+ else {
+    CreateJCloudsContainerMetadata jCloudsContainerMetadata=(CreateJCloudsContainerMetadata)metadata;
+    CreateJCloudsContainerOptions options=jCloudsContainerMetadata.getCreateOptions();
+    try {
+      Credentials credentials=new Credentials(jCloudsContainerMetadata.getIdentity(),jCloudsContainerMetadata.getCredential());
+      String nodeId=jCloudsContainerMetadata.getNodeId();
+      ComputeService computeService=getOrCreateComputeService(options);
+      String script=buildStartScript(options.name(container.getId()));
+      ExecResponse response=null;
+      if (credentials != null) {
+        response=computeService.runScriptOnNode(nodeId,script,RunScriptOptions.Builder.overrideCredentialsWith(credentials).runAsRoot(false));
+      }
+ else {
+        response=computeService.runScriptOnNode(nodeId,script);
+      }
+      if (response == null) {
+        jCloudsContainerMetadata.setFailure(new Exception("No response received for fabric install script."));
+      }
+ else       if (response.getOutput() != null && response.getOutput().contains(ContainerProviderUtils.FAILURE_PREFIX)) {
+        jCloudsContainerMetadata.setFailure(new Exception(ContainerProviderUtils.parseScriptFailure(response.getOutput())));
+      }
+    }
+ catch (    Throwable t) {
+      jCloudsContainerMetadata.setFailure(t);
+    }
+  }
+}

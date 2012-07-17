@@ -1,0 +1,45 @@
+{
+  boolean success=true;
+  FileOutputStream fos=null;
+  String filename=path.substring(path.lastIndexOf("/") + 1);
+  if (path.startsWith("/")) {
+    path=path.substring(1);
+  }
+  String mvn=convertToMavenUrl(path);
+  if (mvn != null) {
+    try {
+      File tmpFile=new File(tmpFolder,filename);
+      if (tmpFile.exists()) {
+        tmpFile.delete();
+      }
+      fos=new FileOutputStream(tmpFile);
+      int length=0;
+      byte buffer[]=new byte[4096];
+      while ((length=is.read(buffer)) != -1) {
+        fos.write(buffer,0,length);
+      }
+      fos.flush();
+      fos.close();
+      Artifact artifact=new DefaultArtifact(mvn,null);
+      artifact=artifact.setFile(tmpFile);
+      InstallRequest request=new InstallRequest();
+      request.addArtifact(artifact);
+      InstallResult result=system.install(session,request);
+      LOGGER.log(Level.INFO,"Artifact installed: " + mvn);
+    }
+ catch (    Exception e) {
+      success=false;
+      LOGGER.log(Level.WARNING,String.format("Could not find artifact : %s due to %s",mvn,e),e);
+    }
+ finally {
+      if (fos != null) {
+        try {
+          fos.close();
+        }
+ catch (        Exception ex) {
+        }
+      }
+    }
+  }
+  return success;
+}

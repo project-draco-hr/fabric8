@@ -1,0 +1,11 @@
+{
+  for (  String child : zk.getChildren(from)) {
+    String fromChild=from + "/" + child;
+    String toChild=to + "/" + child;
+    if (zk.exists(toChild) == null) {
+      byte[] data=zk.getData(fromChild);
+      set(zk,toChild,data);
+      copy(zk,fromChild,toChild);
+    }
+  }
+}

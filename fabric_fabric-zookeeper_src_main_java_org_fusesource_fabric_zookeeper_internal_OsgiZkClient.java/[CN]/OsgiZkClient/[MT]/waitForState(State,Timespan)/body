@@ -1,0 +1,10 @@
+{
+  long endTime=(timeout == null ? sessionTimeout : timeout).futureTimeMillis(_clock);
+  if (_state != state) {
+synchronized (_lock) {
+      while (_state != state) {
+        ConcurrentUtils.awaitUntil(_clock,_lock,endTime);
+      }
+    }
+  }
+}

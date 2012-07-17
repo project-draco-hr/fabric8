@@ -1,0 +1,8 @@
+{
+  String customCommand=config.getKillCommand();
+  if (customCommand != null && customCommand.trim().isEmpty()) {
+    LOG.info("No kill cCommand configured so lets just try stopping " + this);
+    return stop();
+  }
+  return runConfigCommandValueOrLaunchScriptWith(customCommand,"kill");
+}

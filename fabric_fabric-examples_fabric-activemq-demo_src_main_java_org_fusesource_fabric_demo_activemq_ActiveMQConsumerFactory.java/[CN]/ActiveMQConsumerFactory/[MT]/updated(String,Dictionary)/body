@@ -1,0 +1,18 @@
+{
+  try {
+    String brokerUrl=(String)properties.get("brokerUrl");
+    if (brokerUrl == null) {
+      brokerUrl="discover:(fabric:default)";
+    }
+    consumerService=new ActiveMQService(brokerUrl);
+    consumerService.setMaxAttempts(10);
+    consumerService.start();
+    String destination=(String)properties.get("destination");
+    consumer=new ConsumerThread(consumerService,destination);
+    consumer.start();
+    LOG.info("Consumer " + pid + " started");
+  }
+ catch (  JMSException e) {
+    throw new ConfigurationException(null,"Cannot start consumer",e);
+  }
+}

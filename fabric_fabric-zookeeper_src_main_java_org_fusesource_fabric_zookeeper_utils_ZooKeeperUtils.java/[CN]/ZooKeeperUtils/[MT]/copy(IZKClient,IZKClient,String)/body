@@ -1,0 +1,10 @@
+{
+  for (  String child : source.getChildren(path)) {
+    child=path + "/" + child;
+    if (dest.exists(child) == null) {
+      byte[] data=source.getData(child);
+      set(dest,child,data);
+      copy(source,dest,child);
+    }
+  }
+}

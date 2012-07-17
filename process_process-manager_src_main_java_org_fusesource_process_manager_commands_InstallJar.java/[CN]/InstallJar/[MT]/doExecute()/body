@@ -1,0 +1,23 @@
+{
+  checkRequirements();
+  URL controllerUrl=getControllerURL();
+  JarInstallParameters parameters=new JarInstallParameters();
+  parameters.setControllerJson(controllerUrl);
+  parameters.setGroupId(groupId);
+  parameters.setArtifactId(artifactId);
+  parameters.setVersion(version);
+  parameters.setClassifier(classifier);
+  if (!Strings.isNullOrEmpty(extension)) {
+    parameters.setExtension(extension);
+  }
+  parameters.setOffline(offline);
+  if (optionalDependencyPatterns != null) {
+    parameters.setOptionalDependencyPatterns(optionalDependencyPatterns);
+  }
+  if (excludeDependencyPatterns != null) {
+    parameters.setExcludeDependencyFilterPatterns(excludeDependencyPatterns);
+  }
+  Installation install=getProcessManager().installJar(parameters);
+  System.out.println("Installed process " + install.getId() + " to "+ install.getInstallDir());
+  return null;
+}

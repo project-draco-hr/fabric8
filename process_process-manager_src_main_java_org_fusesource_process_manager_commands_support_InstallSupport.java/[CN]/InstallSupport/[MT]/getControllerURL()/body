@@ -1,0 +1,14 @@
+{
+  URL controllerUrl=null;
+  if (controllerJson != null) {
+    controllerUrl=new URL(controllerJson);
+  }
+ else   if (controllerKind != null) {
+    String name=controllerKind + ".json";
+    controllerUrl=getBundleContext().getBundle().getResource(name);
+    if (controllerUrl == null) {
+      throw new IllegalStateException("Cannot find controller kind: " + name + " on the classpath");
+    }
+  }
+  return controllerUrl;
+}

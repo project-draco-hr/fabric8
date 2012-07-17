@@ -2,10 +2,14 @@
   try {
     while (!serverSocket.isClosed()) {
       Socket sock=serverSocket.accept();
-      new Worker(sock).start();
+      Worker worker=new Worker(sock);
+      worker.setName("MavenProxyWorker");
+      worker.start();
     }
   }
  catch (  IOException e) {
-    LOGGER.log(Level.SEVERE,"Exception caught in maven proxy",e);
+    if (!serverSocket.isClosed()) {
+      LOGGER.log(Level.SEVERE,"Exception caught in maven proxy",e);
+    }
   }
 }

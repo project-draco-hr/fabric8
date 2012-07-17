@@ -1,0 +1,51 @@
+{
+  String oldName=System.getProperty("karaf.name");
+  if (containerName == null) {
+    containerName=oldName;
+  }
+  if (!containerName.equals(oldName)) {
+    if (force || permissionToRenameContainer()) {
+      if (!registerContainer(containerName,profile,force)) {
+        System.err.print("A container with the name: " + containerName + " is already member of the cluster. You can specify a different name as an argument.");
+        return null;
+      }
+      System.setProperty("karaf.name",containerName);
+      System.setProperty("zookeeper.url",zookeeperUrl);
+      System.setProperty(ZkDefs.MINIMUM_PORT,String.valueOf(minimumPort));
+      System.setProperty(ZkDefs.MAXIMUM_PORT,String.valueOf(maximumPort));
+      File file=new File(System.getProperty("karaf.base") + "/etc/system.properties");
+      org.apache.felix.utils.properties.Properties props=new org.apache.felix.utils.properties.Properties(file);
+      props.put("karaf.name",containerName);
+      props.put("zookeeper.url",zookeeperUrl);
+      props.save();
+      if (!nonManaged) {
+        installBundles();
+      }
+      org.osgi.service.cm.Configuration config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
+      Properties properties=new Properties();
+      properties.put("zookeeper.url",zookeeperUrl);
+      config.setBundleLocation(null);
+      config.update(properties);
+      System.setProperty("karaf.restart","true");
+      System.setProperty("karaf.restart.clean","false");
+      bundleContext.getBundle(0).stop();
+      return null;
+    }
+ else {
+      return null;
+    }
+  }
+ else {
+    if (!registerContainer(containerName,profile,force)) {
+      System.err.println("A container with the name: " + containerName + " is already member of the cluster. You can specify a different name as an argument.");
+      return null;
+    }
+    org.osgi.service.cm.Configuration config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
+    Properties properties=new Properties();
+    properties.put("zookeeper.url",zookeeperUrl);
+    config.setBundleLocation(null);
+    config.update(properties);
+    installBundles();
+    return null;
+  }
+}

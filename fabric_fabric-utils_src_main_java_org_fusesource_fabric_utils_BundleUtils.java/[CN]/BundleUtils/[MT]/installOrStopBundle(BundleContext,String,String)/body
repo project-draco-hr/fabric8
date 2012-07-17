@@ -1,0 +1,16 @@
+{
+  Bundle bundle=null;
+  for (  Bundle b : bundleContext.getBundles()) {
+    if (b.getSymbolicName() != null && b.getSymbolicName().equals(bsn)) {
+      bundle=b;
+      break;
+    }
+  }
+  if (bundle == null) {
+    bundle=bundleContext.installBundle(url);
+  }
+  if (bundle.getState() == Bundle.ACTIVE) {
+    bundle.stop();
+  }
+  return bundle;
+}

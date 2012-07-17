@@ -1,0 +1,12 @@
+{
+  String region=AWSUtils.parseHandle(node.getId())[0];
+  EC2Client ec2Client=EC2Client.class.cast(service.getContext().getProviderSpecificContext().getApi());
+  String groupName="jclouds#" + node.getGroup() + "#"+ region;
+  for (  int port : ports) {
+    try {
+      ec2Client.getSecurityGroupServices().revokeSecurityGroupIngressInRegion(region,groupName,IpProtocol.TCP,port,port,source);
+    }
+ catch (    IllegalStateException e) {
+    }
+  }
+}

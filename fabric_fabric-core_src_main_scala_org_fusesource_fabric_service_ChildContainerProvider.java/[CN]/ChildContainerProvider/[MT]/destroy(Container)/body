@@ -1,0 +1,17 @@
+{
+  getContainerTemplate(container.getParent()).execute(new ContainerTemplate.AdminServiceCallback<Object>(){
+    public Object doWithAdminService(    AdminServiceMBean adminService) throws Exception {
+      try {
+        adminService.stopInstance(container.getId());
+      }
+ catch (      Exception e) {
+        if (container.isAlive()) {
+          throw e;
+        }
+      }
+      adminService.destroyInstance(container.getId());
+      return null;
+    }
+  }
+);
+}

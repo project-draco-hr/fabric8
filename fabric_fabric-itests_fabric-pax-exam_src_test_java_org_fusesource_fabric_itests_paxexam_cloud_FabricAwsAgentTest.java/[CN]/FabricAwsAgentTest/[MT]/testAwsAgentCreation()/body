@@ -1,7 +1,7 @@
 {
   if (!isReady()) {
     System.err.println("Amazon is not setup correctly. This test will not run.");
-    System.err.println("To prpoerly run this test, you need to setup with maven the following properties:");
+    System.err.println("To properly run this test, you need to setup with maven the following properties:");
     System.err.println("fabricitest.aws.identity \t The aws access id");
     System.err.println("fabricitest.aws.credential \t The aws access key");
     System.err.println("fabricitest.aws.image  \t The aws (java ready) image");
@@ -9,15 +9,18 @@
     return;
   }
   System.err.println(executeCommand("features:install jclouds-aws-ec2 fabric-jclouds jclouds-commands"));
-  executeCommands("config:edit org.jclouds.compute-ec2","config:propset provider aws-ec2 ","config:propset identity " + identity,"config:propset credential " + credential,"config:propset jclouds.regions eu-west-1,us-west-1,us-east-1","config:update");
+  String fabricVersion=System.getProperty("fabric.version");
+  if (fabricVersion != null && fabricVersion.contains("SNAPSHOT")) {
+    System.err.println("Switching to snapshot repository");
+    executeCommands("config:propset --pid org.fusesource.fabric.service defaultRepo http://repo.fusesource.com/nexus/content/groups/public-snapshots/");
+  }
+  executeCommand("fabric:cloud-provider-add aws-ec2 " + identity + " "+ credential);
   ComputeService computeService=getOsgiService(ComputeService.class,3 * DEFAULT_TIMEOUT);
-  setUpSecurityGroup(computeService,2181);
-  Thread.sleep(3 * DEFAULT_TIMEOUT);
-  System.err.println(executeCommand(String.format("fabric:container-create --ensemble-server --url jclouds://aws-ec2?imageId=%s&locationId=%s&group=%s&user=%s --profile default ensemble1",image,location,group,user),10 * 60000L,false));
+  System.err.println(executeCommand(String.format("fabric:container-create-cloud --provider aws-ec2 --group %s --ensemble-server ensemble1",group),10 * 60000L,false));
   String publicIp=getNodePublicIp(computeService);
   assertNotNull(publicIp);
   Thread.sleep(DEFAULT_TIMEOUT);
-  System.err.println(executeCommand("fabric:join " + publicIp + ":2181",10 * 60000L,false));
+  System.err.println(executeCommand("fabric:join -n " + publicIp + ":2181",10 * 60000L,false));
   String agentList=executeCommand("fabric:container-list");
   System.err.println(agentList);
   assertTrue(agentList.contains("root") && agentList.contains("ensemble1"));

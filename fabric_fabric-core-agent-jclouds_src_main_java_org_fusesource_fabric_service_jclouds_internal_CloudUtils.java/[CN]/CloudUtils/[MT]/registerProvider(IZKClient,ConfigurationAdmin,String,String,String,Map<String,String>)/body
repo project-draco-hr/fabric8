@@ -1,0 +1,44 @@
+{
+  Runnable registrationTask=new Runnable(){
+    @Override public void run(){
+      try {
+        Configuration configuration=findOrCreateFactoryConfiguration(configurationAdmin,"org.jclouds.compute",provider);
+        if (configuration != null) {
+          Dictionary dictionary=configuration.getProperties();
+          if (dictionary == null) {
+            dictionary=new Properties();
+          }
+          dictionary.put("fabric.zookeeper.pid","org.jclouds.compute-" + provider.replaceAll("-",""));
+          dictionary.put("provider",provider);
+          dictionary.put("credential",credential);
+          dictionary.put("identity",identity);
+          dictionary.put("credential-store","zookeeper");
+          dictionary.put("jclouds.ssh.max-retries","40");
+          if (provider != null && provider.equals("aws-ec2") && props != null && props.containsKey("owner") && props.get("owner") != null) {
+            dictionary.put("jclouds.ec2.ami-owners",props.get("owner"));
+          }
+          for (          Map.Entry<String,String> entry : props.entrySet()) {
+            String key=entry.getKey();
+            String value=entry.getValue();
+            dictionary.put(key,value);
+          }
+          configuration.update(dictionary);
+          if (zooKeeper.isConnected()) {
+            if (zooKeeper.exists(ZkPath.CLOUD_PROVIDER.getPath(provider)) == null) {
+              ZooKeeperUtils.create(zooKeeper,ZkPath.CLOUD_PROVIDER.getPath(provider));
+            }
+            ZooKeeperUtils.set(zooKeeper,ZkPath.CLOUD_PROVIDER_IDENTIY.getPath(provider),identity);
+            ZooKeeperUtils.set(zooKeeper,ZkPath.CLOUD_PROVIDER_CREDENTIAL.getPath(provider),credential);
+          }
+ else {
+            System.out.println("Fabric has not been initialized. Provider registration will be local to the current container.");
+          }
+        }
+      }
+ catch (      Exception ex) {
+      }
+    }
+  }
+;
+  new Thread(registrationTask).start();
+}

@@ -1,79 +1,106 @@
 {
   final Set<CreateJCloudsContainerMetadata> result=new LinkedHashSet<CreateJCloudsContainerMetadata>();
-  ComputeService computeService=computeServiceMap.get(options.getProviderName());
-  if (computeService == null) {
-    Iterable<? extends Module> modules=ImmutableSet.of();
-    Properties props=new Properties();
-    props.put("provider",options.getProviderName());
-    props.put("identity",options.getIdentity());
-    props.put("credential",options.getCredential());
-    if (!Strings.isNullOrEmpty(options.getOwner()) && options.getProviderName().equals("aws-ec2")) {
-      props.put("jclouds.ec2.ami-owners",options.getOwner());
+  try {
+    options.getCreationStateListener().onStateChange("Looking up for compute service.");
+    ComputeService computeService=getOrCreateComputeService(options);
+    if (computeService == null) {
+      throw new IllegalStateException("Compute service could not be found or created.");
     }
-    RestContextFactory restFactory=new RestContextFactory();
-    ComputeServiceContext context=new ComputeServiceContextFactory(restFactory).createContext(options.getProviderName(),options.getIdentity(),options.getCredential(),modules,props);
-    computeService=context.getComputeService();
-  }
-  TemplateBuilder builder=computeService.templateBuilder();
-  builder.any();
+    TemplateBuilder builder=computeService.templateBuilder();
+    builder.any();
 switch (options.getInstanceType()) {
 case Smallest:
-    builder.smallest();
-  break;
+      builder.smallest();
+    break;
 case Biggest:
-builder.biggest();
+  builder.biggest();
 break;
 case Fastest:
 builder.fastest();
+break;
+default :
+builder.fastest();
 }
-if (options.getLocationId() != null) {
-builder.locationId(options.getLocationId());
-}
-if (options.getImageId() != null) {
+StringBuilder overviewBuilder=new StringBuilder();
+overviewBuilder.append(String.format("Creating %s nodes in the cloud. Using",options.getNumber()));
+if (!Strings.isNullOrEmpty(options.getImageId())) {
+overviewBuilder.append(" image id: ").append(options.getImageId());
 builder.imageId(options.getImageId());
 }
-if (options.getHardwareId() != null) {
+ else if (!Strings.isNullOrEmpty(options.getOsFamily())) {
+overviewBuilder.append(" operating system: ").append(options.getOsFamily());
+builder.osFamily(OsFamily.fromValue(options.getOsFamily()));
+if (!Strings.isNullOrEmpty(options.getOsVersion())) {
+overviewBuilder.append(" and version: ");
+builder.osVersionMatches(options.getOsVersion());
+}
+}
+ else {
+throw new IllegalArgumentException("Required Image id or Operation System and version predicates.");
+}
+overviewBuilder.append(".");
+if (!Strings.isNullOrEmpty(options.getLocationId())) {
+overviewBuilder.append(" On location: ").append(options.getLocationId()).append(".");
+builder.locationId(options.getLocationId());
+}
+if (!Strings.isNullOrEmpty(options.getHardwareId())) {
 builder.hardwareId(options.getHardwareId());
 }
+AdminAccess.Builder adminAccess=AdminAccess.builder();
+TemplateOptions templateOptions=computeService.templateOptions();
+applyProviderSpecificOptions(templateOptions,options);
+if (options.isAdminAccess()) {
+if (!Strings.isNullOrEmpty(options.getPublicKeyFile())) {
+File publicKey=new File(options.getPublicKeyFile());
+if (publicKey.exists()) {
+adminAccess.adminPublicKey(publicKey);
+}
+ else {
+templateOptions.runScript(AdminAccess.standard());
+LOGGER.warn("Public key has been specified file: {} files cannot be found. Ignoring.",publicKey.getAbsolutePath());
+}
+}
+if (!Strings.isNullOrEmpty(options.getUser())) {
+adminAccess.adminUsername(options.getUser());
+}
+templateOptions.runScript(adminAccess.build());
+}
+builder=builder.options(templateOptions);
 Set<? extends NodeMetadata> metadatas=null;
+overviewBuilder.append(" It may take a while ...");
+options.getCreationStateListener().onStateChange(overviewBuilder.toString());
 metadatas=computeService.createNodesInGroup(options.getGroup(),options.getNumber(),builder.build());
+if (metadatas != null) {
+for (NodeMetadata metadata : metadatas) {
+options.getCreationStateListener().onStateChange(String.format("Node %s has been created.",metadata.getName()));
+}
+}
 Thread.sleep(5000);
 int suffix=1;
-StringBuilder buffer=new StringBuilder();
-boolean first=true;
 if (metadatas != null) {
+String originalName=new String(options.getName());
+CountDownLatch countDownLatch=new CountDownLatch(options.getNumber());
 for (NodeMetadata nodeMetadata : metadatas) {
-Credentials credentials=null;
-if (options.getUser() != null) {
-credentials=new Credentials(options.getUser(),nodeMetadata.getCredentials().credential);
-}
- else {
-credentials=nodeMetadata.getCredentials();
-}
-String id=nodeMetadata.getId();
-Set<String> publicAddresses=nodeMetadata.getPublicAddresses();
-String containerName=options.getName();
+String containerName;
 if (options.getNumber() > 1) {
-containerName+=suffix++;
-}
-CreateJCloudsContainerMetadata jCloudsContainerMetadata=new CreateJCloudsContainerMetadata();
-jCloudsContainerMetadata.setNodeId(nodeMetadata.getId());
-jCloudsContainerMetadata.setContainerName(containerName);
-jCloudsContainerMetadata.setPublicAddresses(nodeMetadata.getPublicAddresses());
-jCloudsContainerMetadata.setHostname(nodeMetadata.getHostname());
-try {
-String script=buildStartupScript(options.name(containerName));
-if (credentials != null) {
-computeService.runScriptOnNode(id,script,RunScriptOptions.Builder.overrideCredentialsWith(credentials).runAsRoot(false));
+containerName=originalName + (suffix++);
 }
  else {
-computeService.runScriptOnNode(id,script);
+containerName=originalName;
+}
+CloudContainerInstallationTask installationTask=new CloudContainerInstallationTask(containerName,nodeMetadata,options,computeService,firewallManagerFactory,templateOptions,result,countDownLatch);
+executorService.execute(installationTask);
+}
+countDownLatch.await(10,TimeUnit.MINUTES);
 }
 }
  catch (Throwable t) {
-jCloudsContainerMetadata.setFailure(t);
+if (options != null && options.getNumber() > 0) {
+for (int i=result.size(); i < options.getNumber(); i++) {
+CreateJCloudsContainerMetadata failureMetdata=new CreateJCloudsContainerMetadata();
+failureMetdata.setFailure(t);
+result.add(failureMetdata);
 }
-result.add(jCloudsContainerMetadata);
 }
 }
 return result;

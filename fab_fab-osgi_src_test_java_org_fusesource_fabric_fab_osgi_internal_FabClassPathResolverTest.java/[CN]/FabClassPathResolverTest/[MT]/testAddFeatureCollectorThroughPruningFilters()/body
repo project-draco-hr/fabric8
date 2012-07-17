@@ -1,0 +1,9 @@
+{
+  FabClassPathResolver resolver=new FabClassPathResolver(new MockFabFacade(),null,null);
+  MockFeatureCollectorFilter filter=new MockFeatureCollectorFilter();
+  resolver.addPruningFilter(filter);
+  assertEquals(filter.getCollection().size(),resolver.getInstallFeatures().size());
+  for (  String element : filter.getCollection()) {
+    resolver.getInstallFeatures().contains(element);
+  }
+}

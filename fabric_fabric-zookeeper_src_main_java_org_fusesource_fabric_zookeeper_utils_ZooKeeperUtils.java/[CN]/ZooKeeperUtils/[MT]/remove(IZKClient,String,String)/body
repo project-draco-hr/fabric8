@@ -1,0 +1,27 @@
+{
+  if (zooKeeper.exists(path) != null) {
+    List<String> parts=new LinkedList<String>();
+    String data=zooKeeper.getStringData(path);
+    if (data != null) {
+      parts=new ArrayList<String>(Arrays.asList(data.split(" ")));
+    }
+    boolean changed=false;
+    for (Iterator<String> it=parts.iterator(); it.hasNext(); ) {
+      String v=it.next();
+      if (v.matches(value)) {
+        it.remove();
+        changed=true;
+      }
+    }
+    if (changed) {
+      data="";
+      for (      String part : parts) {
+        if (data.length() > 0) {
+          data+=" ";
+        }
+        data+=part;
+      }
+      zooKeeper.setData(path,data);
+    }
+  }
+}

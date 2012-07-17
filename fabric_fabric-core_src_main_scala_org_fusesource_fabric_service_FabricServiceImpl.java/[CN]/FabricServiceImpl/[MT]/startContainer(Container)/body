@@ -1,12 +1,7 @@
 {
-  if (container.isRoot()) {
-    throw new IllegalArgumentException("Cannot start root containers");
+  logger.info("Starting container {}",container.getId());
+  ContainerProvider provider=getProvider(container);
+  if (!container.isAlive()) {
+    provider.start(container);
   }
-  getContainerTemplate(container.getParent()).execute(new ContainerTemplate.AdminServiceCallback<Object>(){
-    public Object doWithAdminService(    AdminServiceMBean adminService) throws Exception {
-      adminService.startInstance(container.getId(),null);
-      return null;
-    }
-  }
-);
 }

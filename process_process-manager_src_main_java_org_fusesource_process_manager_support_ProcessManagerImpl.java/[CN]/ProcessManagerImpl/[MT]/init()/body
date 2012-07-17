@@ -1,0 +1,27 @@
+{
+  lastId=0;
+  File[] files=storageLocation.listFiles();
+  if (files != null) {
+    for (    File file : files) {
+      if (file.isDirectory()) {
+        String name=file.getName();
+        if (name.matches("\\d+")) {
+          try {
+            Integer value=Integer.parseInt(name);
+            if (value != null) {
+              int id=value.intValue();
+              if (id > lastId) {
+                lastId=id;
+              }
+              String url="TODO";
+              ProcessConfig config=JsonHelper.loadProcessConfig(file);
+              createInstallation(id,findInstallDir(file),config);
+            }
+          }
+ catch (          NumberFormatException e) {
+          }
+        }
+      }
+    }
+  }
+}

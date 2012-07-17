@@ -1,0 +1,26 @@
+{
+  checkFabricAvailable();
+  if (containerIds == null || containerIds.isEmpty()) {
+    containerIds=new ArrayList<String>();
+    for (    Container container : fabricService.getContainers()) {
+      containerIds.add(container.getId());
+    }
+  }
+  System.out.println(String.format(FORMAT,HEADERS));
+  for (  String containerId : containerIds) {
+    Container container=fabricService.getContainer(containerId);
+    String localHostName=container.getLocalHostname();
+    String localIp=container.getLocalIp();
+    String publicHostName=container.getPublicHostname();
+    String publicIp=container.getPublicIp();
+    String manualIp=container.getManulIp();
+    localHostName=localHostName != null ? localHostName : "";
+    localIp=localIp != null ? localIp : "";
+    publicHostName=publicHostName != null ? publicHostName : "";
+    publicIp=publicIp != null ? publicIp : "";
+    manualIp=manualIp != null ? manualIp : "";
+    String resolver=container.getResolver();
+    System.out.println(String.format(FORMAT,containerId,resolver,localHostName,localIp,publicHostName,publicIp,manualIp));
+  }
+  return null;
+}

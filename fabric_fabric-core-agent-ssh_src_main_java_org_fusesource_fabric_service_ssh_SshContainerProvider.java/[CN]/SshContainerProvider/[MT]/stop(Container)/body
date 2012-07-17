@@ -1,0 +1,17 @@
+{
+  CreateContainerMetadata metadata=container.getMetadata();
+  if (!(metadata instanceof CreateSshContainerMetadata)) {
+    throw new IllegalStateException("Container doesn't have valid create container metadata type");
+  }
+ else {
+    CreateSshContainerMetadata sshContainerMetadata=(CreateSshContainerMetadata)metadata;
+    CreateSshContainerOptions options=sshContainerMetadata.getCreateOptions();
+    try {
+      String script=buildStopScript(options.name(container.getId()));
+      runScriptOnHost(options,script);
+    }
+ catch (    Throwable t) {
+      logger.error("Failed to stop container: " + container.getId(),t);
+    }
+  }
+}

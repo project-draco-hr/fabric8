@@ -1,4 +1,23 @@
 {
-  loadState();
+  LOGGER.info("Starting DeploymentAgent");
   bundleContext.addFrameworkListener(this);
+  systemBundleContext=bundleContext.getBundle(0).getBundleContext();
+  if (checksums == null) {
+    File file=bundleContext.getDataFile("checksums.properties");
+    checksums=new Properties(file);
+  }
+  for (  Bundle bundle : systemBundleContext.getBundles()) {
+    try {
+      if (bundle.getLocation().endsWith("SNAPSHOT")) {
+        org.fusesource.fabric.agent.mvn.Parser parser=new org.fusesource.fabric.agent.mvn.Parser(bundle.getLocation());
+        String path=System.getProperty("karaf.home") + File.separator + "system"+ File.separator+ parser.getArtifactPath().substring(4);
+        long checksum=ChecksumUtils.checksum(new FileInputStream(path));
+        checksums.put(bundle.getLocation(),Long.toString(checksum));
+      }
+    }
+ catch (    Exception e) {
+      LOGGER.debug("Error calculating checksum",e);
+    }
+  }
+  checksums.save();
 }

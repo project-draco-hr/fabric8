@@ -1,0 +1,25 @@
+{
+  String mvn=convertToMavenUrl(path);
+  if (mvn == null) {
+    LOGGER.log(Level.WARNING,String.format("Received non maven request : %s",path));
+    return null;
+  }
+ else {
+    LOGGER.log(Level.INFO,String.format("Received request for file : %s",mvn));
+  }
+  Artifact artifact=new DefaultArtifact(mvn,null);
+  String id=artifact.getGroupId() + ":" + artifact.getArtifactId();
+  artifactLocks.putIfAbsent(id,new Object());
+  final Object lock=artifactLocks.get(id);
+synchronized (lock) {
+    try {
+      ArtifactRequest request=new ArtifactRequest(artifact,repositories,null);
+      ArtifactResult result=system.resolveArtifact(session,request);
+      return result.getArtifact().getFile();
+    }
+ catch (    Exception e) {
+      LOGGER.log(Level.WARNING,String.format("Could not find file : %s due to %s",mvn,e));
+      return null;
+    }
+  }
+}

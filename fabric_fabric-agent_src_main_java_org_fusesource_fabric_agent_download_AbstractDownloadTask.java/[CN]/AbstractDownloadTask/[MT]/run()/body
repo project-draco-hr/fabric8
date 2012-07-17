@@ -1,19 +1,24 @@
 {
+  boolean done=false;
   try {
-    try {
-      File file=download();
-      setFile(file);
-      return;
-    }
- catch (    IOException e) {
-      if (++scheduleNbRun < 5) {
-        LOGGER.debug("Error downloading " + url + ": "+ e.getMessage()+ ". Retrying in approx "+ scheduleDelay * 2 + " ms.");
-        long delay=(long)(scheduleDelay * 3 / 2 + Math.random() * scheduleDelay / 2);
-        executor.schedule(this,delay,TimeUnit.MILLISECONDS);
-        scheduleDelay*=2;
+    while (!done) {
+      try {
+        File file=download();
+        setFile(file);
+        done=true;
+        return;
       }
+ catch (      IOException e) {
+        if (++scheduleNbRun < 5) {
+          long delay=(long)(scheduleDelay * 3 / 2 + Math.random() * scheduleDelay / 2);
+          LOGGER.debug("Error downloading " + url + ": "+ e.getMessage()+ ". Retrying in approx "+ delay+ " ms.");
+          Thread.sleep(delay);
+          scheduleDelay*=2;
+        }
  else {
-        setException(initIOException("Error downloading " + url,e));
+          setException(initIOException("Error downloading " + url,e));
+          done=true;
+        }
       }
     }
   }

@@ -1,0 +1,11 @@
+{
+  Set<Integer> usedPorts=new LinkedHashSet<Integer>();
+  usedPorts.add(getSshPort(container));
+  usedPorts.addAll(getRmiPorts(container));
+  if (container.getChildren() != null) {
+    for (    Container child : container.getChildren()) {
+      usedPorts.addAll(getContainerUsedPorts(child));
+    }
+  }
+  return usedPorts;
+}

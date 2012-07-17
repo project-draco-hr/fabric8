@@ -2,7 +2,13 @@
   ClassLoader oldTccl=Thread.currentThread().getContextClassLoader();
   try {
     Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-    doExecute(objects);
+    Subject.doAs(null,new PrivilegedExceptionAction<Object>(){
+      @Override public Object run() throws Exception {
+        doExecute(objects);
+        return null;
+      }
+    }
+);
   }
   finally {
     Thread.currentThread().setContextClassLoader(oldTccl);

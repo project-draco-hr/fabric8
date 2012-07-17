@@ -1,0 +1,14 @@
+{
+  super(settings);
+  this.clusterName=clusterName;
+  this.threadPool=threadPool;
+  this.clusterService=clusterService;
+  this.transportService=transportService;
+  this.nodeSettingsService=nodeSettingsService;
+  this.discoveryNodeService=discoveryNodeService;
+  this.publishClusterState=new PublishClusterStateAction(settings,transportService,this,this);
+  this.context=FrameworkUtil.getBundle(getClass()).getBundleContext();
+  this.tracker=new ServiceTracker(context,IZKClient.class.getName(),this);
+  this.singleton=new ClusteredSingleton<ESNode>(ESNode.class);
+  this.singleton.add(this);
+}

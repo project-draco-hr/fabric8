@@ -5,14 +5,14 @@
     url="child://" + parent;
     type="child";
   }
- else   if (parent == null && url != null) {
+ else   if (url != null) {
     URI uri=new URI(url);
     type=uri.getScheme();
     if ("child".equals(type)) {
       parent=uri.getHost();
     }
   }
-  CreateContainerOptions args=CreateContainerOptionsBuilder.type(type).name(name).parent(parent).number(number).debugContainer(debugContainer).ensembleServer(isEnsembleServer).providerUri(url).proxyUri(proxyUri != null ? proxyUri : fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl());
+  CreateContainerOptions args=CreateContainerOptionsBuilder.type(type).name(name).parent(parent).resolver(resolver).number(number).ensembleServer(isEnsembleServer).providerUri(url).proxyUri(proxyUri != null ? proxyUri : fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl()).jvmOpts(jvmOpts);
   CreateContainerMetadata[] metadatas=fabricService.createContainers(args);
   displayContainers(metadatas);
   postCreateContainers(metadatas);

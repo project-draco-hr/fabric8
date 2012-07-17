@@ -5,6 +5,7 @@
     String domain=notification.getMBeanName().getDomain();
     String path=CONTAINER_DOMAIN.getPath((String)o,domain);
     try {
+      lock.lock();
       if (MBeanServerNotification.REGISTRATION_NOTIFICATION.equals(notification.getType())) {
         if (domains.add(domain) && zooKeeper.exists(path) == null) {
           zooKeeper.createOrSetWithParents(path,"",ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
@@ -20,6 +21,9 @@
     }
  catch (    Exception e) {
       logger.warn("Exception while jmx domain synchronization from event: " + notif + ". This exception will be ignored.",e);
+    }
+ finally {
+      lock.unlock();
     }
   }
 }

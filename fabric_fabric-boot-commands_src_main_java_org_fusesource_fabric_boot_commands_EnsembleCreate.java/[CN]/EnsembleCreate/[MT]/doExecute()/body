@@ -1,0 +1,13 @@
+{
+  if (clean) {
+    service.clean();
+  }
+  if (nonManaged) {
+    System.setProperty(ZooKeeperClusterService.AGENT_AUTOSTART,"false");
+  }
+ else {
+    System.setProperty(ZooKeeperClusterService.AGENT_AUTOSTART,"true");
+  }
+  service.createCluster(containers);
+  return null;
+}

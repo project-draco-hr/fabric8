@@ -1,0 +1,24 @@
+{
+  if (event.getState() != null) {
+    log.debug("event: {}",event.getState());
+synchronized (_lock) {
+switch (event.getState()) {
+case SyncConnected:
+        changeState(State.CONNECTED);
+      break;
+case Disconnected:
+    if (_state != State.NONE) {
+      changeState(State.RECONNECTING);
+    }
+  break;
+case Expired:
+_zk=null;
+log.warn("Expiration detected: trying to restart...");
+tryStart();
+break;
+default :
+log.warn("unprocessed event state: {}",event.getState());
+}
+}
+}
+}

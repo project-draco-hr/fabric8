@@ -1,5 +1,5 @@
 {
-  if (options.getZookeeperUrl() == null && !options.isDebugContainer()) {
+  if (options.getZookeeperUrl() == null && !options.isEnsembleServer()) {
     options.setZookeeperUrl(getZookeeperUrl());
   }
   if (options.getProxyUri() == null) {
@@ -16,8 +16,17 @@
       if (metadata.isSuccess()) {
         if (!options.isEnsembleServer()) {
           createContainerConfig(parent != null ? parent.getId() : "",metadata.getContainerName());
+          ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_METADATA.getPath(metadata.getContainerName()),Base64Encoder.encode(ObjectUtils.toBytes(metadata)));
+          Map<String,String> configuration=metadata.getContainerConfguration();
+          for (          Map.Entry<String,String> entry : configuration.entrySet()) {
+            String key=entry.getKey();
+            String value=entry.getValue();
+            ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_ENTRY.getPath(metadata.getContainerName(),key),value);
+          }
+          ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_RESOLVER.getPath(metadata.getContainerName()),options.getResolver());
         }
-        ((CreateContainerBasicMetadata)metadata).setContainer(new ContainerImpl(parent,metadata.getContainerName(),FabricServiceImpl.this));
+        metadata.setContainer(new ContainerImpl(parent,metadata.getContainerName(),FabricServiceImpl.this));
+        ((ContainerImpl)metadata.getContainer()).setMetadata(metadata);
         logger.info("The container " + metadata.getContainerName() + " has been successfully created");
       }
  else {

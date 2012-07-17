@@ -3,6 +3,8 @@
   try {
     String path=options.getPath();
     String host=options.getHost();
+    String ip=InetAddress.getByName(host).getHostAddress();
+    options.setPreferredAddress(ip);
     if (options.getProviderURI() != null && options.getProviderURI().getQuery() != null) {
       verbose=options.getProviderURI().getQuery().contains("verbose");
     }
@@ -13,21 +15,22 @@
     if (port == -1) {
       port=22;
     }
-    String username=options.getUsername();
-    String password=options.getPassword();
-    int sshRetries=options.getSshRetries();
-    int retryDelay=1;
-    for (int i=0; i < options.getNumber(); i++) {
-      String containerName=options.getName();
-      if (options.getNumber() != 1) {
-        containerName+=i + 1;
+    String originalName=new String(options.getName());
+    for (int i=1; i <= options.getNumber(); i++) {
+      String containerName;
+      if (options.getNumber() > 1) {
+        containerName=originalName + i;
+      }
+ else {
+        containerName=originalName;
       }
       CreateSshContainerMetadata metadata=new CreateSshContainerMetadata();
+      metadata.setCreateOptions(options);
       metadata.setContainerName(containerName);
-      String script=buildStartupScript(options.name(containerName));
+      String script=buildInstallAndStartScript(options.name(containerName));
       logger.debug("Running script on host {}:\n{}",host,script);
       try {
-        runScriptOnHost(host,port,username,password,script,sshRetries,retryDelay);
+        runScriptOnHost(options,script);
       }
  catch (      Throwable ex) {
         metadata.setFailure(ex);

@@ -1,0 +1,25 @@
+{
+  try {
+    Configuration[] configurations=configurationAdmin.listConfigurations(filter);
+    if (configurations != null) {
+      for (      Configuration configuration : configurations) {
+        Dictionary properties=configuration.getProperties();
+        if (properties != null) {
+          String provider=String.valueOf(properties.get("provider"));
+          String identity=String.valueOf(properties.get("identity"));
+          String credential=String.valueOf(properties.get("credential"));
+          if (provider != null && identity != null && credential != null && getZooKeeper().isConnected()) {
+            if (getZooKeeper().exists(ZkPath.CLOUD_PROVIDER.getPath(provider)) == null) {
+              ZooKeeperUtils.create(getZooKeeper(),ZkPath.CLOUD_PROVIDER.getPath(provider));
+              ZooKeeperUtils.set(getZooKeeper(),ZkPath.CLOUD_PROVIDER_IDENTIY.getPath(provider),identity);
+              ZooKeeperUtils.set(getZooKeeper(),ZkPath.CLOUD_PROVIDER_CREDENTIAL.getPath(provider),credential);
+            }
+          }
+        }
+      }
+    }
+  }
+ catch (  Exception e) {
+    LOGGGER.error("Failed to retrieve compute service information from configuration admin.",e);
+  }
+}

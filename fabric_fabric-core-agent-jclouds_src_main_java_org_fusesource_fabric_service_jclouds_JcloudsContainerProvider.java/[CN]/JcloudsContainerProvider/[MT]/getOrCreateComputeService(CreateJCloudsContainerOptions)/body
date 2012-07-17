@@ -1,0 +1,28 @@
+{
+  ComputeService computeService=null;
+  if (options != null) {
+    Object object=options.getComputeService();
+    if (object instanceof ComputeService) {
+      computeService=(ComputeService)object;
+    }
+    if (computeService == null) {
+      computeService=computeServiceMap.get(options.getProviderName());
+    }
+    if (computeService == null) {
+      options.getCreationStateListener().onStateChange("Compute Service not found. Creating ...");
+      if (Strings.isNullOrEmpty(options.getProviderName()) || Strings.isNullOrEmpty(options.getIdentity()) || Strings.isNullOrEmpty(options.getCredential())) {
+        throw new IllegalArgumentException("Cannot create compute service. A registered cloud provider or the provider name, identity and credential options are required");
+      }
+      Map<String,String> serviceOptions=options.getServiceOptions();
+      try {
+        CloudUtils.registerProvider(zooKeeper,configurationAdmin,options.getProviderName(),options.getIdentity(),options.getCredential(),serviceOptions);
+        computeService=CloudUtils.waitForComputeService(bundleContext,options.getProviderName());
+      }
+ catch (      Exception e) {
+        LOGGER.warn("Did not manage to register compute cloud provider.");
+        return computeService;
+      }
+    }
+  }
+  return computeService;
+}

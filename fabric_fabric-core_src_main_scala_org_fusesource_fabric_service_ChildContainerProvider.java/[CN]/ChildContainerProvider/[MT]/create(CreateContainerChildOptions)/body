@@ -13,24 +13,53 @@
   }
   containerTemplate.execute(new ContainerTemplate.AdminServiceCallback<Object>(){
     public Object doWithAdminService(    AdminServiceMBean adminService) throws Exception {
-      String javaOpts=options.getZookeeperUrl() != null ? "-Dzookeeper.url=\"" + options.getZookeeperUrl() + "\" -Xmx512M -server" : "";
-      if (options.isDebugContainer()) {
-        javaOpts+=DEBUG_CONTAINER;
+      StringBuilder jvmOptsBuilder=new StringBuilder();
+      jvmOptsBuilder.append("-server -Dcom.sun.management.jmxremote ").append(options.getZookeeperUrl() != null ? "-Dzookeeper.url=\"" + options.getZookeeperUrl() + "\"" : "");
+      if (options.getJvmOpts() == null || !options.getJvmOpts().contains("-Xmx")) {
+        jvmOptsBuilder.append(" -Xmx512m");
+      }
+ else       if (options.getJvmOpts() != null) {
+        jvmOptsBuilder.append(" ").append(options.getJvmOpts());
       }
       if (options.isEnsembleServer()) {
-        javaOpts+=ENSEMBLE_SERVER_CONTAINER;
+        jvmOptsBuilder.append(" ").append(ENSEMBLE_SERVER_CONTAINER);
       }
       String features="fabric-agent";
       String featuresUrls="mvn:org.fusesource.fabric/fuse-fabric/" + FabricConstants.FABRIC_VERSION + "/xml/features";
+      String originalName=new String(options.getName());
+      Set<Integer> usedPorts=getContainerUsedPorts(parent);
       for (int i=1; i <= options.getNumber(); i++) {
-        String containerName=options.getName();
+        String containerName;
         if (options.getNumber() > 1) {
-          containerName+=i;
+          containerName=originalName + i;
+        }
+ else {
+          containerName=originalName;
         }
         CreateContainerChildMetadata metadata=new CreateContainerChildMetadata();
+        metadata.setCreateOptions(options);
         metadata.setContainerName(containerName);
+        int minimumPort=parent.getMinimumPort();
+        int maximumPort=parent.getMaximumPort();
+        ZooKeeperUtils.set(service.getZooKeeper(),ZkPath.CONTAINER_PORT_MIN.getPath(containerName),String.valueOf(minimumPort));
+        ZooKeeperUtils.set(service.getZooKeeper(),ZkPath.CONTAINER_PORT_MAX.getPath(containerName),String.valueOf(maximumPort));
+        int sshPort=mapPortToRange(8101 + i,minimumPort,maximumPort);
+        while (usedPorts.contains(sshPort)) {
+          sshPort++;
+        }
+        usedPorts.add(sshPort);
+        int rmiServerPort=mapPortToRange(44444 + i,minimumPort,maximumPort);
+        while (usedPorts.contains(rmiServerPort)) {
+          rmiServerPort++;
+        }
+        usedPorts.add(rmiServerPort);
+        int rmiRegistryPort=mapPortToRange(1099 + i,minimumPort,maximumPort);
+        while (usedPorts.contains(rmiRegistryPort)) {
+          rmiRegistryPort++;
+        }
+        usedPorts.add(rmiRegistryPort);
         try {
-          adminService.createInstance(containerName,0,0,0,null,javaOpts,features,featuresUrls);
+          adminService.createInstance(containerName,sshPort,rmiServerPort,rmiRegistryPort,null,jvmOptsBuilder.toString(),features,featuresUrls);
           adminService.startInstance(containerName,null);
         }
  catch (        Throwable t) {

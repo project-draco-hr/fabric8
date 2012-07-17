@@ -1,18 +1,21 @@
 {
   assertNotNull(bus);
-  ServerFactoryBean factory=new ServerFactoryBean();
+  JaxWsServerFactoryBean factory=new JaxWsServerFactoryBean();
   factory.setServiceBean(new HelloImpl());
   factory.setAddress("http://localhost:9000/simple/server");
   factory.setBus(bus);
   factory.create();
-  ClientProxyFactoryBean clientFactory=new ClientProxyFactoryBean();
+  JaxWsProxyFactoryBean clientFactory=new JaxWsProxyFactoryBean();
   clientFactory.setServiceClass(Hello.class);
   clientFactory.setAddress("http://someotherplace");
-  clientFactory.setBus(bus);
   List<AbstractFeature> features=new ArrayList<AbstractFeature>();
   features.add(feature);
   clientFactory.setFeatures(features);
   Hello hello=clientFactory.create(Hello.class);
   String response=hello.sayHello();
+  assertEquals("Get a wrong response","Hello",response);
+  response=hello.sayHello();
+  assertEquals("Get a wrong response","Hello",response);
+  response=helloProxy.sayHello();
   assertEquals("Get a wrong response","Hello",response);
 }

@@ -1,0 +1,27 @@
+{
+  if (!Strings.isNullOrEmpty(targetContainerName) && getZooKeeper().isConnected()) {
+    CreateJCloudsContainerMetadata metadata=getContainerCloudMetadata(targetContainerName);
+    if (metadata != null) {
+      CreateJCloudsContainerOptions options=metadata.getCreateOptions();
+      providerName=options.getProviderName();
+    }
+  }
+  if (!Strings.isNullOrEmpty(providerName)) {
+    for (    ComputeService computeService : computeServices) {
+      if (computeService.getContext().getProviderSpecificContext().getId().equals(providerName)) {
+        return computeService;
+      }
+    }
+  }
+  if (computeServices == null || computeServices.size() == 0) {
+    System.out.println("No compute services are available.");
+    return null;
+  }
+ else   if (computeServices != null && computeServices.size() == 0) {
+    return computeServices.get(0);
+  }
+ else {
+    System.out.println("Multiple cloud provider service available. Please select one using the --provider option.");
+    return null;
+  }
+}

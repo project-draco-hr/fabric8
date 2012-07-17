@@ -1,0 +1,12 @@
+{
+  if (!Strings.isNullOrEmpty(targetContainerName) && getZooKeeper().isConnected() && fabricService != null) {
+    Container targetContainer=fabricService.getContainer(targetContainerName);
+    if (targetContainer != null && targetContainer.getMetadata() != null) {
+      CreateContainerMetadata metadata=targetContainer.getMetadata();
+      if (CreateJCloudsContainerMetadata.class.isAssignableFrom(metadata.getClass())) {
+        return (CreateJCloudsContainerMetadata)metadata;
+      }
+    }
+  }
+  return null;
+}

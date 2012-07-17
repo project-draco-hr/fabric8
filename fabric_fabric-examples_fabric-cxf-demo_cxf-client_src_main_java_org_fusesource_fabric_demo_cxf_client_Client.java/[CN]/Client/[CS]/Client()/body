@@ -1,0 +1,11 @@
+{
+  FabricLoadBalancerFeature feature=new FabricLoadBalancerFeature();
+  feature.setFabricPath("cxf/demo");
+  ClientProxyFactoryBean clientFactory=new JaxWsProxyFactoryBean();
+  clientFactory.setServiceClass(ClientProxyFactoryBean.class);
+  clientFactory.setAddress("http://someotherplace");
+  List<AbstractFeature> features=new ArrayList<AbstractFeature>();
+  features.add(feature);
+  clientFactory.setFeatures(features);
+  hello=clientFactory.create(Hello.class);
+}

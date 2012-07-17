@@ -1,0 +1,24 @@
+{
+  checkFabricAvailable();
+  if (containerIds == null || containerIds.isEmpty()) {
+    if (all) {
+      containerIds=new ArrayList<String>();
+      for (      Container container : fabricService.getContainers()) {
+        containerIds.add(container.getId());
+      }
+    }
+ else {
+      containerIds=Arrays.asList(fabricService.getCurrentContainer().getId());
+    }
+  }
+ else {
+    if (all) {
+      throw new IllegalArgumentException("Can not use --all with a list of containers simultaneously");
+    }
+  }
+  for (  String containerId : containerIds) {
+    Container container=fabricService.getContainer(containerId);
+    container.setResolver(resolver);
+  }
+  return null;
+}

@@ -1,0 +1,17 @@
+{
+  processManager.init();
+  String version="99-master-SNAPSHOT";
+  Installation install=processManager.install("mvn:org.fusesource.process.samples/process-sample-camel-spring/" + version + "/tar.gz",null);
+  int id=install.getId();
+  assertTrue("ID should be > 0 but was " + id,id > 0);
+  File installDir=install.getInstallDir();
+  if (!installDir.exists()) {
+    fail("Installation does not exist: " + installDir);
+  }
+  ProcessController controller=install.getController();
+  int rc=controller.start();
+  assertEquals("Return code",0,rc);
+  Thread.sleep(2000);
+  rc=controller.stop();
+  assertEquals("Return code",0,rc);
+}

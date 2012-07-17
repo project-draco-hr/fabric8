@@ -1,0 +1,10 @@
+{
+  InstallScript installScript=new InstallScript(){
+    @Override public void doInstall(    ProcessConfig config,    int id,    File installDir) throws Exception {
+      config.setName(url);
+      untarTarball(url,installDir);
+    }
+  }
+;
+  return installViaScript(controllerJson,installScript);
+}

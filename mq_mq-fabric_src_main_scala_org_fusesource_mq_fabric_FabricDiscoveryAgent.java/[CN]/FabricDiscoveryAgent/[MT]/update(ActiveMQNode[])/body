@@ -4,7 +4,13 @@
     HashSet<String> activeServices=new HashSet<String>();
     for (    ActiveMQNode m : members) {
       for (      String service : m.services) {
-        activeServices.add(service);
+        String resolved=service;
+        try {
+          resolved=ZooKeeperUtils.getSubstitutedData(zkClient,service);
+        }
+ catch (        Exception e) {
+        }
+        activeServices.add(resolved);
       }
     }
     if (members != null) {

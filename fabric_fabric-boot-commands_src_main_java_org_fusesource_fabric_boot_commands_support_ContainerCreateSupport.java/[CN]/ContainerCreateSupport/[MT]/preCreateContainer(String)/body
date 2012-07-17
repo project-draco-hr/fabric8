@@ -1,0 +1,33 @@
+{
+  if (!isEnsembleServer) {
+    ServiceReference sr=getBundleContext().getServiceReference(ZooKeeperClusterService.class.getName());
+    ZooKeeperClusterService zkcs=sr != null ? getService(ZooKeeperClusterService.class,sr) : null;
+    if (zkcs == null) {
+      throw new IllegalStateException("Unable to find ZooKeeperClusterService service");
+    }
+    if (zkcs.getClusterContainers().isEmpty()) {
+      if (!isEnsembleServer) {
+        throw new IllegalStateException("The use of the --ensemble-server option is mandatory when creating an initial container");
+      }
+      return;
+    }
+    if (doesContainerExist(name)) {
+      throw new IllegalArgumentException("A container with name " + name + " already exists.");
+    }
+    Version ver=version != null ? fabricService.getVersion(version) : fabricService.getDefaultVersion();
+    Profile[] profiles=ver.getProfiles();
+    List<String> names=getProfileNames();
+    for (    String profile : names) {
+      Profile prof=getProfile(profiles,profile,ver);
+      if (prof == null) {
+        throw new IllegalArgumentException("Profile " + profile + " with version "+ ver.getName()+ " does not exist.");
+      }
+      if (prof.isAbstract()) {
+        throw new IllegalArgumentException("Profile " + profile + " with version "+ ver.getName()+ " is abstract and can not be associated to containers.");
+      }
+    }
+  }
+  if (!isEnsembleServer && fabricService.getZookeeperUrl() == null) {
+    throw new IllegalArgumentException("Either start a zookeeper ensemble or use --ensemble-server.");
+  }
+}

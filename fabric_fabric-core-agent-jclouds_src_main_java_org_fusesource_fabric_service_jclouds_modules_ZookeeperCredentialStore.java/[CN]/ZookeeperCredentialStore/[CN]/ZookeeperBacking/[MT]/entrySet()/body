@@ -1,0 +1,12 @@
+{
+  Set<Map.Entry<String,Credentials>> entrySet=new HashSet<Entry<String,Credentials>>();
+  if (zooKeeper.isConnected()) {
+    for (    String key : keySet()) {
+      entrySet.add(new CredentialsEntry(zookeeper,key));
+    }
+  }
+ else {
+    entrySet.addAll(cache.asMap().entrySet());
+  }
+  return entrySet;
+}

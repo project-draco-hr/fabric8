@@ -1,0 +1,18 @@
+{
+  StringsCompleter delegate=new StringsCompleter();
+  delegate.getStrings().addAll(locations);
+  int complete=delegate.complete(buffer,cursor,candidates);
+  if (complete > 0) {
+    return complete;
+  }
+ else {
+    try {
+      locations=BUNDLE_LOCATION_SET.call();
+    }
+ catch (    Exception e) {
+    }
+    delegate.getStrings().clear();
+    delegate.getStrings().addAll(locations);
+    return delegate.complete(buffer,cursor,candidates);
+  }
+}

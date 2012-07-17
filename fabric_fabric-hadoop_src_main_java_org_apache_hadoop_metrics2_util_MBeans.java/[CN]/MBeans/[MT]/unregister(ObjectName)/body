@@ -1,0 +1,13 @@
+{
+  final MBeanServer mbs=ManagementFactory.getPlatformMBeanServer();
+  if (mbeanName == null)   return;
+  try {
+    mbs.unregisterMBean(mbeanName);
+  }
+ catch (  InstanceNotFoundException e) {
+    LOG.warn(mbeanName,e);
+  }
+catch (  Exception e) {
+    LOG.warn("Error unregistering " + mbeanName,e);
+  }
+}

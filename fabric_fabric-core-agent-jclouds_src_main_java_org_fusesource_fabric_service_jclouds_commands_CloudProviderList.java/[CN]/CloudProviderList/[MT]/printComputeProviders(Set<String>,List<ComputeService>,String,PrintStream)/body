@@ -1,0 +1,29 @@
+{
+  out.println(String.format(PROVIDERFORMAT,"[id]","[type]","[service registration]"));
+  for (  String provider : providers) {
+    boolean registered=false;
+    String registrationType="none";
+    for (    ComputeService computeService : computeServices) {
+      if (computeService.getContext().getProviderSpecificContext().getId().equals(provider)) {
+        registered=true;
+        break;
+      }
+    }
+    if (registered && getZooKeeper() != null && getZooKeeper().isConnected()) {
+      try {
+        if (getZooKeeper().exists(ZkPath.CLOUD_PROVIDER.getPath(provider)) == null) {
+          registrationType="local";
+        }
+ else {
+          registrationType="fabric";
+        }
+      }
+ catch (      Exception e) {
+      }
+    }
+ else     if (registered) {
+      registrationType="local";
+    }
+    out.println(String.format(PROVIDERFORMAT,provider,"compute",registrationType));
+  }
+}

@@ -1,3 +1,8 @@
 {
-  return getZkData(ZkPath.CONTAINER_JMX);
+  try {
+    return ZooKeeperUtils.getSubstitutedPath(service.getZooKeeper(),ZkPath.CONTAINER_JMX.getPath(id));
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
 }
