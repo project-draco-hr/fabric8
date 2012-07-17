@@ -1,0 +1,14 @@
+{
+  try {
+    Installation installation=processManager.install(parameters.url,new URL(parameters.configUrl));
+    installation.getEnvironment().putAll(env);
+    installation.getController().configure();
+    installation.getController().start();
+    return installation;
+  }
+ catch (  Exception e) {
+    String msg="Error installing process " + pid + " : "+ e.getMessage();
+    LOG.error(msg);
+    throw new ConfigurationException("Start",msg,e);
+  }
+}

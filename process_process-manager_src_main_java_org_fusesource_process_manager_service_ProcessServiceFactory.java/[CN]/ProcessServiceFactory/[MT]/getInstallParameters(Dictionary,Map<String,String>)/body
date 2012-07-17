@@ -1,0 +1,20 @@
+{
+  InstallParameters parameters=new InstallParameters();
+  for (Enumeration keys=incoming.keys(); keys.hasMoreElements(); ) {
+    String key=(String)keys.nextElement();
+    String value=(String)incoming.get(key);
+    if ("url".equals(key)) {
+      parameters.url=value;
+    }
+ else     if ("configUrl".equals(key)) {
+      parameters.configUrl=value;
+    }
+ else {
+      properties.put(key,(String)incoming.get(key));
+    }
+  }
+  if (null == parameters.url) {
+    throw new ConfigurationException("url","url property is REQUIRED");
+  }
+  return parameters;
+}

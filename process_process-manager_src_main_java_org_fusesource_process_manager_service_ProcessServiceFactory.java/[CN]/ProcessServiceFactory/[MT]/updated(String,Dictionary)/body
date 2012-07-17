@@ -1,0 +1,13 @@
+{
+  Installation installation=installationMap.get(pid);
+  if (null == installation) {
+    LOG.info("Refreshing Process " + pid);
+    updateConfig(pid,installation,incoming);
+  }
+ else {
+    Map<String,String> env=new HashMap<String,String>();
+    InstallParameters parameters=getInstallParameters(incoming,env);
+    installationMap.put(pid,installProcess(pid,parameters,env));
+    LOG.info("Started Process " + pid);
+  }
+}

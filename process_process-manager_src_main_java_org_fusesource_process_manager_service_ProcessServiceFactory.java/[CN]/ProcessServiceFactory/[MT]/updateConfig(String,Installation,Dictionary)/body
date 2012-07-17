@@ -1,0 +1,22 @@
+{
+  try {
+    final ProcessController controller=installation.getController();
+    final boolean running=(controller.status() == 0);
+    if (running) {
+      controller.stop();
+    }
+    for (Enumeration keys=incoming.keys(); keys.hasMoreElements(); ) {
+      String key=(String)keys.nextElement();
+      installation.getEnvironment().put(key,(String)incoming.get(key));
+    }
+    controller.configure();
+    if (running) {
+      controller.start();
+    }
+  }
+ catch (  Exception e) {
+    String msg="Error updating process " + pid + ": "+ e.getMessage();
+    LOG.error(msg,e);
+    throw new ConfigurationException("Update",msg,e);
+  }
+}
