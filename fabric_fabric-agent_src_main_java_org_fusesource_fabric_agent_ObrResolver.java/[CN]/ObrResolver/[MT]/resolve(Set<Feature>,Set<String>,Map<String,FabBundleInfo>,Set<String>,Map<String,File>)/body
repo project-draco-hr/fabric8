@@ -50,6 +50,29 @@
       }
     }
   }
+  for (  String override : overrides) {
+    Resource over=createResource(override,downloads,fabs);
+    if (over == null) {
+      throw new IllegalArgumentException("Unable to build OBR representation for bundle " + override);
+    }
+    boolean add=false;
+    boolean dependency=true;
+    for (    Resource res : new ArrayList<Resource>(ress)) {
+      if (res.getSymbolicName().equals(over.getSymbolicName())) {
+        Version v1=res.getVersion();
+        Version v2=new Version(v1.getMajor(),v1.getMinor() + 1,0);
+        if (compareFuseVersions(v1,over.getVersion()) < 0 && compareFuseVersions(over.getVersion(),v2) < 0) {
+          ress.remove(res);
+          dependency&=infos.remove(res).isDependency();
+          add=true;
+        }
+      }
+    }
+    if (add) {
+      ress.add(over);
+      infos.put(over,new SimpleBundleInfo(override,dependency));
+    }
+  }
   Repository repository=repositoryAdmin.getHelper().repository(ress.toArray(new Resource[ress.size()]));
   List<Repository> repos=new ArrayList<Repository>();
   repos.add(repositoryAdmin.getSystemRepository());

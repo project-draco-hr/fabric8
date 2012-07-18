@@ -27,13 +27,13 @@
   }
   if (!featureFabs.isEmpty()) {
     fabs.addAll(featureFabs);
-    updateDeployment(fabResolverFactory,repositories,features,bundles,fabs);
+    updateDeployment(fabResolverFactory,repositories,features,bundles,fabs,overrides);
     return;
   }
   updateStatus("downloading",null);
-  Map<String,File> downloads=downloadBundles(allFeatures,bundles);
+  Map<String,File> downloads=downloadBundles(allFeatures,bundles,overrides);
   updateStatus("resolving",null);
-  List<Resource> allResources=getObrResolver().resolve(allFeatures,bundles,infos,downloads);
+  List<Resource> allResources=getObrResolver().resolve(allFeatures,bundles,infos,overrides,downloads);
   updateStatus("installing",null,allResources,true);
   Map<Resource,Bundle> resToBnd=new HashMap<Resource,Bundle>();
   StringBuilder sb=new StringBuilder();
