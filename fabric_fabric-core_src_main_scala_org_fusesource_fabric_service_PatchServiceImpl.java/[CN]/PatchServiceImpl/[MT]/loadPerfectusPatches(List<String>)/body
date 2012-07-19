@@ -7,47 +7,12 @@
       @Override public void run(){
         try {
           File metadata=download(location,"patch","patch");
-          Properties props=new Properties();
-          FileInputStream fis=new FileInputStream(metadata);
-          try {
-            props.load(fis);
-          }
-  finally {
-            close(fis);
-          }
+          Properties props=loadProperties(metadata);
           File issues=download(location,"xml","issues");
-          List<Issue> issueList=new ArrayList<Issue>();
-          fis=new FileInputStream(issues);
-          try {
-            Element root=dbf.newDocumentBuilder().parse(fis).getDocumentElement();
-            for (Node child=root.getFirstChild(); child != null; child=child.getNextSibling()) {
-              if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals(ISSUE)) {
-                Element el=(Element)child;
-                String desc=el.getAttribute(ISSUE_DESCRIPTION);
-                List<String> keys=new ArrayList<String>();
-                List<String> arts=new ArrayList<String>();
-                for (Node child2=el.getFirstChild(); child2 != null; child2=child2.getNextSibling()) {
-                  if (child2.getNodeType() == Node.ELEMENT_NODE) {
-                    if (child2.getNodeName().equals(ISSUE_KEY)) {
-                      keys.add(child2.getTextContent());
-                    }
- else                     if (child2.getNodeName().equals(ISSUE_MODULE)) {
-                      arts.add(child2.getTextContent());
-                    }
-                  }
-                }
-                issueList.add(new IssueImpl(desc,keys,arts));
-              }
-            }
-          }
-  finally {
-            close(fis);
-          }
-          String id=props.getProperty(PATCH_ID);
+          List<Issue> issueList=loadIssues(issues);
+          PatchDescriptor descriptor=new PatchDescriptor(props);
           Set<String> bundles=new TreeSet<String>();
-          int count=Integer.parseInt(props.getProperty(PATCH_BUNDLES + "." + PATCH_COUNT,"0"));
-          for (int i=0; i < count; i++) {
-            String url=props.getProperty(PATCH_BUNDLES + "." + Integer.toString(i));
+          for (          String url : descriptor.getBundles()) {
             String mvn=getMavenArtifact(url);
             String[] p=mvn.split(":");
             bundles.add(p[0] + ":" + p[1]);
@@ -57,7 +22,7 @@
           if (artifacts != null) {
             bundles.addAll(artifacts);
           }
-          Patch patch=new PatchImpl(id,location,bundles,issueList);
+          Patch patch=new PatchImpl(descriptor.getId(),location,bundles,issueList);
 synchronized (patches) {
             patches.add(patch);
           }

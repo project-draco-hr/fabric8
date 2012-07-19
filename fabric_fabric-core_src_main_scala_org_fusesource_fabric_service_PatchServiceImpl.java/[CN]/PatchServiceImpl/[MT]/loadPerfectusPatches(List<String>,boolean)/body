@@ -1,16 +1,9 @@
 {
   File cache=new File(patchDir,CACHE_FILE);
   List<String> locations=null;
-  Properties props=new Properties();
   if (!reload && cache.isFile()) {
     try {
-      FileInputStream fis=new FileInputStream(cache);
-      try {
-        props.load(fis);
-      }
-  finally {
-        close(fis);
-      }
+      Properties props=loadProperties(cache);
       String lastDateStr=props.getProperty(CACHE_LAST_DATE);
       if (lastDateStr != null) {
         long date=Long.parseLong(lastDateStr);
@@ -35,7 +28,7 @@
   Set<Patch> patches=loadPerfectusPatches(locations);
   if (reload) {
     try {
-      props.clear();
+      Properties props=new Properties();
       props.setProperty(CACHE_LAST_DATE,Long.toString(System.currentTimeMillis()));
       props.setProperty(CACHE_LOCATION + "." + CACHE_COUNT,Integer.toString(locations.size()));
       for (int i=0; i < locations.size(); i++) {

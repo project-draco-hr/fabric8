@@ -3,7 +3,7 @@
     File temp=new File(file.toString() + ".tmp");
     URLConnection con=location.openConnection();
     if (location.getUserInfo() != null) {
-      con.setRequestProperty("Authorization","Basic " + Base64Encoder.encode(location.getUserInfo().getBytes()));
+      con.setRequestProperty("Authorization","Basic " + Base64Encoder.encode(location.getUserInfo()));
     }
     if (temp.isFile()) {
       con.setRequestProperty("Range","Bytes=" + (temp.length()) + "-");

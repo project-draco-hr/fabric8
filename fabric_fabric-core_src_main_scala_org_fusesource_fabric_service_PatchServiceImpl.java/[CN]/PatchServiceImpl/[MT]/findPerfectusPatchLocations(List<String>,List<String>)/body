@@ -11,7 +11,7 @@
             URL metadata=new URL(base,"maven-metadata.xml");
             URLConnection con=metadata.openConnection();
             if (metadata.getUserInfo() != null) {
-              con.setRequestProperty("Authorization","Basic " + Base64Encoder.encode(metadata.getUserInfo().getBytes()));
+              con.setRequestProperty("Authorization","Basic " + Base64Encoder.encode(metadata.getUserInfo()));
             }
             InputStream is=con.getInputStream();
             try {

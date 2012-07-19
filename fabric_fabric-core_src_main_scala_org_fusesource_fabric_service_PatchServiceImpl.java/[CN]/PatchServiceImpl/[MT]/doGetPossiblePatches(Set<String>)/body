@@ -10,12 +10,11 @@
     String[] parts=mvn.split(":");
     String ga=parts[0] + ":" + parts[1];
     org.osgi.framework.Version artifactVersion=VersionTable.getVersion(parts[2]);
-    org.osgi.framework.Version nextMajorVersion=VersionTable.getVersion(artifactVersion.getMajor() + 1,0,0);
     boolean found=false;
     for (    Patch patch : perfectusPatches) {
       if (patch.getArtifacts().contains(ga)) {
         org.osgi.framework.Version ver=VersionTable.getVersion(patch.getVersion());
-        if (compareFuseVersions(artifactVersion,ver) < 0 && compareFuseVersions(ver,nextMajorVersion) < 0) {
+        if (isInMajorRange(artifactVersion,ver)) {
           possiblePatches.add(patch);
         }
         found=true;

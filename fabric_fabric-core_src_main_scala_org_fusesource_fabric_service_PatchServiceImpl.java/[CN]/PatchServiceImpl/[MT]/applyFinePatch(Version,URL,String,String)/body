@@ -1,13 +1,11 @@
 {
   try {
     URI uploadUri=fabric.getMavenRepoUploadURI();
-    URI downloadUri=fabric.getMavenRepoURI();
-    Properties patchMetadata=new Properties();
-    ZipFile zipFile=new ZipFile(patch);
+    List<PatchDescriptor> descriptors=new ArrayList<PatchDescriptor>();
+    ZipInputStream zis=new ZipInputStream(new BufferedInputStream(patch.openStream()));
     try {
-      Enumeration<? extends ZipEntry> entries=zipFile.entries();
-      while (entries.hasMoreElements()) {
-        ZipEntry entry=entries.nextElement();
+      ZipEntry entry=zis.getNextEntry();
+      while (entry != null) {
         if (!entry.isDirectory()) {
           String entryName=entry.getName();
           if (entryName.startsWith("repository/")) {
@@ -21,16 +19,15 @@
               ((HttpURLConnection)con).setRequestMethod("PUT");
             }
             if (login != null && password != null) {
-              con.setRequestProperty("Authorization","Basic " + new String(Base64Encoder.encode((login + ":" + password).getBytes())));
+              con.setRequestProperty("Authorization","Basic " + Base64Encoder.encode(login + ":" + password));
             }
             con.setDoInput(true);
             con.setDoOutput(true);
             con.connect();
             OutputStream os=con.getOutputStream();
             try {
-              InputStream is=zipFile.getInputStream(entry);
               try {
-                copy(is,os);
+                copy(zis,os);
                 if (con instanceof HttpURLConnection) {
                   int code=((HttpURLConnection)con).getResponseCode();
                   if (code < 200 || code >= 300) {
@@ -39,7 +36,7 @@
                 }
               }
   finally {
-                close(is);
+                zis.closeEntry();
               }
             }
   finally {
@@ -47,36 +44,34 @@
             }
           }
  else           if (entryName.endsWith(".patch") && !entryName.contains("/")) {
-            InputStream is=zipFile.getInputStream(entry);
             try {
-              patchMetadata.load(is);
+              Properties patchMetadata=new Properties();
+              patchMetadata.load(zis);
+              descriptors.add(new PatchDescriptor(patchMetadata));
             }
   finally {
-              close(is);
+              zis.closeEntry();
             }
           }
         }
+        entry=zis.getNextEntry();
       }
     }
   finally {
-      close(zipFile);
+      close(zis);
     }
-    String patchId=patchMetadata.getProperty(PATCH_ID);
-    List<String> newArtifactUrls=new ArrayList<String>();
-    int count=Integer.parseInt(patchMetadata.getProperty(PATCH_BUNDLES + "." + PATCH_COUNT,"0"));
-    for (int i=0; i < count; i++) {
-      String url=patchMetadata.getProperty(PATCH_BUNDLES + "." + Integer.toString(i));
-      newArtifactUrls.add(url);
-    }
-    Profile profile=version.getProfile("patch-" + patchId);
-    if (profile == null) {
-      profile=version.createProfile("patch-" + patchId);
-      profile.setOverrides(newArtifactUrls);
-      Profile defaultProfile=version.getProfile("default");
-      List<Profile> parents=new ArrayList<Profile>(Arrays.asList(defaultProfile.getParents()));
-      if (!parents.contains(profile)) {
-        parents.add(profile);
-        defaultProfile.setParents(parents.toArray(new Profile[parents.size()]));
+    for (    PatchDescriptor descriptor : descriptors) {
+      String profileId="patch-" + descriptor.getId();
+      Profile profile=version.getProfile(profileId);
+      if (profile == null) {
+        profile=version.createProfile(profileId);
+        profile.setOverrides(descriptor.getBundles());
+        Profile defaultProfile=version.getProfile("default");
+        List<Profile> parents=new ArrayList<Profile>(Arrays.asList(defaultProfile.getParents()));
+        if (!parents.contains(profile)) {
+          parents.add(profile);
+          defaultProfile.setParents(parents.toArray(new Profile[parents.size()]));
+        }
       }
     }
   }
