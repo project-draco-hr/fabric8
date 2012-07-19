@@ -1,0 +1,38 @@
+{
+  InstallParameters parameters=new InstallParameters();
+  for (Enumeration keys=incoming.keys(); keys.hasMoreElements(); ) {
+    String key=(String)keys.nextElement();
+    String value=(String)incoming.get(key);
+    try {
+      if ("url".equals(key)) {
+        Preconditions.checkNotNull(value,"Null url property");
+        Preconditions.checkArgument(!value.trim().isEmpty(),"Empty url property");
+        parameters.url=value.trim();
+      }
+ else       if ("controllerUrl".equals(key)) {
+        Preconditions.checkNotNull(value,"Null controllerUrl property");
+        Preconditions.checkArgument(!value.trim().isEmpty(),"Empty controllerUrl property");
+        parameters.controllerUrl=new URL(value.trim());
+      }
+ else       if ("kind".equals(key)) {
+        Preconditions.checkNotNull(value,"Null kind property");
+        Preconditions.checkArgument(!value.trim().isEmpty(),"Empty kind property");
+        String name=value.trim() + ".json";
+        parameters.controllerUrl=bundleContext.getBundle().getResource(name);
+        if (parameters.controllerUrl == null) {
+          String msg="Cannot find controller kind " + name + " on the classpath";
+          throw new IllegalArgumentException(msg);
+        }
+      }
+ else {
+        env.put(key,(String)incoming.get(key));
+      }
+    }
+ catch (    Exception e) {
+      String msg="Error getting install parameters: " + e.getMessage();
+      LOG.error(msg,e);
+      throw new ConfigurationException(key,msg);
+    }
+  }
+  return parameters;
+}

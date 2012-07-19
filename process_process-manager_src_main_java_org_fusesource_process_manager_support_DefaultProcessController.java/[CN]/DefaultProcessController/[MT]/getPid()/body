@@ -7,6 +7,10 @@
       return extractPidFromFile(file);
     }
   }
+  File pidFile=new File(baseDir,"var/process.pid");
+  if (pidFile.exists()) {
+    return extractPidFromFile(pidFile);
+  }
   File pidDir=new File(baseDir,"var/run");
   if (pidDir.exists() && pidDir.isDirectory()) {
     String launchScript=getLaunchScript();
@@ -18,9 +22,9 @@
     if (idx > 0) {
       script=script.substring(idx + 1);
     }
-    File pidFile=new File(pidDir,script + ".pid");
+    pidFile=new File(pidDir,script + ".pid");
     if (pidFile.exists()) {
-      answer=extractPidFromFile(pidFile);
+      return extractPidFromFile(pidFile);
     }
     if (answer == null) {
       File[] files=pidDir.listFiles();

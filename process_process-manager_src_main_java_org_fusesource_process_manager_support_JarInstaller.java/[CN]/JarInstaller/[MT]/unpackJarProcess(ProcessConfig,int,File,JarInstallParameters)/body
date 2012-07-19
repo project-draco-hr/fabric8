@@ -10,7 +10,12 @@
     System.out.println("Cannot find file for main jar " + mainJarDependency);
   }
  else {
-    Files.copy(mainJar,new File(libDir,"main.jar"));
+    File newMain=new File(libDir,"main.jar");
+    Files.copy(mainJar,newMain);
+    String mainClass=parameters.getMainClass();
+    if (mainClass != null) {
+      setMainClass(config,installDir,newMain,id,mainClass);
+    }
   }
   copyDependencies(mainJarDependency,libDir);
 }

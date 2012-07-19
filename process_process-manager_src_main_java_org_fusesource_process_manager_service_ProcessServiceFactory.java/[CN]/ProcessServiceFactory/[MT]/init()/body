@@ -1,0 +1,12 @@
+{
+  Preconditions.checkNotNull(processManager,"processManager property");
+  Preconditions.checkNotNull(bundleContext,"bundleContext property");
+  List<Installation> installations=processManager.listInstallations();
+  for (  Installation installation : installations) {
+    Map<String,String> env=installation.getEnvironment();
+    if (PROCESS_SERVICE_FACTORY_PID.equals(env.get("service.factoryPid"))) {
+      installationMap.put(env.get("service.pid"),installation);
+    }
+  }
+  LOG.info("Started");
+}
