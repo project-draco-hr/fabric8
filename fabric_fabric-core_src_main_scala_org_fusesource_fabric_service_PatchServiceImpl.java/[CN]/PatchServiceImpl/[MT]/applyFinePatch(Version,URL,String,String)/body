@@ -1,0 +1,81 @@
+{
+  try {
+    URI uploadUri=fabric.getMavenRepoUploadURI();
+    List<PatchDescriptor> descriptors=new ArrayList<PatchDescriptor>();
+    ZipInputStream zis=new ZipInputStream(new BufferedInputStream(patch.openStream()));
+    try {
+      ZipEntry entry=zis.getNextEntry();
+      while (entry != null) {
+        if (!entry.isDirectory()) {
+          String entryName=entry.getName();
+          if (entryName.startsWith("repository/")) {
+            String fileName=entryName.substring("repository/".length());
+            while (fileName.startsWith("/")) {
+              fileName=fileName.substring(1);
+            }
+            URL uploadUrl=uploadUri.resolve(fileName).toURL();
+            URLConnection con=uploadUrl.openConnection();
+            if (con instanceof HttpURLConnection) {
+              ((HttpURLConnection)con).setRequestMethod("PUT");
+            }
+            if (login != null && password != null) {
+              con.setRequestProperty("Authorization","Basic " + Base64Encoder.encode(login + ":" + password));
+            }
+            con.setDoInput(true);
+            con.setDoOutput(true);
+            con.connect();
+            OutputStream os=con.getOutputStream();
+            try {
+              try {
+                copy(zis,os);
+                if (con instanceof HttpURLConnection) {
+                  int code=((HttpURLConnection)con).getResponseCode();
+                  if (code < 200 || code >= 300) {
+                    throw new IOException("Error uploading patched jars: " + ((HttpURLConnection)con).getResponseMessage());
+                  }
+                }
+              }
+  finally {
+                zis.closeEntry();
+              }
+            }
+  finally {
+              close(os);
+            }
+          }
+ else           if (entryName.endsWith(".patch") && !entryName.contains("/")) {
+            try {
+              Properties patchMetadata=new Properties();
+              patchMetadata.load(zis);
+              descriptors.add(new PatchDescriptor(patchMetadata));
+            }
+  finally {
+              zis.closeEntry();
+            }
+          }
+        }
+        entry=zis.getNextEntry();
+      }
+    }
+  finally {
+      close(zis);
+    }
+    for (    PatchDescriptor descriptor : descriptors) {
+      String profileId="patch-" + descriptor.getId();
+      Profile profile=version.getProfile(profileId);
+      if (profile == null) {
+        profile=version.createProfile(profileId);
+        profile.setOverrides(descriptor.getBundles());
+        Profile defaultProfile=version.getProfile("default");
+        List<Profile> parents=new ArrayList<Profile>(Arrays.asList(defaultProfile.getParents()));
+        if (!parents.contains(profile)) {
+          parents.add(profile);
+          defaultProfile.setParents(parents.toArray(new Profile[parents.size()]));
+        }
+      }
+    }
+  }
+ catch (  Exception e) {
+    throw new RuntimeException("Unable to apply patch",e);
+  }
+}

@@ -2,7 +2,6 @@
   Set<String> allVersions=new TreeSet<String>(new FuseVersionComparator());
   String[] mvnParts=mvn.split(":");
   org.osgi.framework.Version artifactVersion=VersionTable.getVersion(mvnParts[2]);
-  org.osgi.framework.Version nextMajorVersion=VersionTable.getVersion(artifactVersion.getMajor() + 1,0,0);
   for (  String repo : repositories) {
     try {
       URL base=new URL(repo + "/" + mvnParts[0].replace('.','/')+ "/"+ mvnParts[1]+ "/");
@@ -19,7 +18,7 @@
           Node version=versions.item(i);
           String v=version.getTextContent();
           org.osgi.framework.Version ver=VersionTable.getVersion(v);
-          if (compareFuseVersions(artifactVersion,ver) < 0 && compareFuseVersions(ver,nextMajorVersion) < 0) {
+          if (isInMajorRange(artifactVersion,ver)) {
             if (includeNonFuseVersions || v.contains("fuse")) {
               allVersions.add(v.trim());
             }
