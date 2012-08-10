@@ -40,7 +40,7 @@
     String[] createContainers=create.split(",");
     for (    String url : createContainers) {
       String type=null;
-      String parent="root";
+      String parent=fabricService.getCurrentContainerName();
       String name=url;
       if (url.contains("://")) {
         URI uri=new URI(url);
@@ -50,7 +50,7 @@
       }
  else {
         type="child";
-        url="child://root";
+        url="child://" + parent;
       }
       CreateContainerOptions args=CreateContainerOptionsBuilder.type(type).name(name).parent(parent).number(1).ensembleServer(false).providerUri(url).proxyUri(fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl());
       CreateContainerMetadata[] metadatas=fabricService.createContainers(args);
