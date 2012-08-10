@@ -27,7 +27,7 @@
       String features="fabric-agent";
       String featuresUrls="mvn:org.fusesource.fabric/fuse-fabric/" + FabricConstants.FABRIC_VERSION + "/xml/features";
       String originalName=new String(options.getName());
-      Set<Integer> usedPorts=getContainerUsedPorts(parent);
+      usedPorts.addAll(getContainerUsedPorts(parent));
       for (int i=1; i <= options.getNumber(); i++) {
         String containerName;
         if (options.getNumber() > 1) {
