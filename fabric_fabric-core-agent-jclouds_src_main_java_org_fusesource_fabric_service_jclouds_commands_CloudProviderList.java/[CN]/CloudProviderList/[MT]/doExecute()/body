@@ -1,10 +1,21 @@
 {
-  Set<String> providers=computeProviderListener.getInstalledProviders();
-  if (providers != null && !providers.isEmpty()) {
-    printComputeProviders(providers,computeServices,"",System.out);
+  Map<String,ProviderMetadata> providers=computeProviderOrApiRegistry.getInstalledProviders();
+  Map<String,ApiMetadata> apis=computeProviderOrApiRegistry.getInstalledApis();
+  boolean providerOrApiFound=false;
+  if (apis != null && !apis.isEmpty()) {
+    providerOrApiFound=true;
+    System.out.println("Compute APIs:");
+    System.out.println("-------------");
+    printComputeProvidersOrApis(apis.keySet(),computeServices,"",System.out);
   }
- else {
-    System.out.println("No providers have been found.");
+  if (providers != null && !providers.isEmpty()) {
+    providerOrApiFound=true;
+    System.out.println("Compute Providers:");
+    System.out.println("-------------");
+    printComputeProvidersOrApis(providers.keySet(),computeServices,"",System.out);
+  }
+  if (!providerOrApiFound) {
+    System.out.println("No providers or apis have been found.");
   }
   return null;
 }

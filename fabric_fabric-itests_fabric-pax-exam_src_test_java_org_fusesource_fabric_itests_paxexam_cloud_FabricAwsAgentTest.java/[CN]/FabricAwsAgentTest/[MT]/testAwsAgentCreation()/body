@@ -14,7 +14,7 @@
     System.err.println("Switching to snapshot repository");
     executeCommands("config:propset --pid org.fusesource.fabric.service defaultRepo http://repo.fusesource.com/nexus/content/groups/public-snapshots/");
   }
-  executeCommand("fabric:cloud-provider-add aws-ec2 " + identity + " "+ credential);
+  executeCommand("fabric:cloud-provider-add --provider aws-ec2 --identity " + identity + " --credential "+ credential);
   ComputeService computeService=getOsgiService(ComputeService.class,3 * DEFAULT_TIMEOUT);
   System.err.println(executeCommand(String.format("fabric:container-create-cloud --provider aws-ec2 --group %s --ensemble-server ensemble1",group),10 * 60000L,false));
   String publicIp=getNodePublicIp(computeService);
