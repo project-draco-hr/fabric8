@@ -8,12 +8,13 @@
       }
     }
  else {
+      System.out.println("No container has been specified. Assuming the current container:" + System.getProperty("karaf.name") + ".");
       containerIds=Arrays.asList(fabricService.getCurrentContainer().getId());
     }
   }
  else {
     if (all) {
-      throw new IllegalArgumentException("Can not use --all with a list of containers simultaneously");
+      throw new IllegalArgumentException("Can not use --all with a list of containers simultaneously.");
     }
   }
   for (  String containerId : containerIds) {
