@@ -1,0 +1,14 @@
+{
+  if (event instanceof AuditEvent) {
+    AuditEvent auditEvent=(AuditEvent)event;
+    return auditEvent.endpointURI;
+  }
+ else   if (event instanceof AbstractExchangeEvent) {
+    AbstractExchangeEvent ae=(AbstractExchangeEvent)event;
+    Endpoint endpoint=ae.getExchange().getFromEndpoint();
+    if (endpoint != null) {
+      return endpoint.getEndpointUri();
+    }
+  }
+  return null;
+}

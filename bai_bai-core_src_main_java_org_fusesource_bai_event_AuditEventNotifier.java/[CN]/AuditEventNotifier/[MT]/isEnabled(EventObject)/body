@@ -1,21 +1,24 @@
 {
-  if (!(event instanceof AuditEvent)) {
-    return false;
+  EventObject coreEvent=event;
+  if (event instanceof AuditEvent) {
+    AuditEvent auditEvent=(AuditEvent)event;
+    coreEvent=auditEvent.event;
   }
-  AuditEvent ae=(AuditEvent)event;
   List<String> compareWith=null;
-  if (ae.event instanceof ExchangeSendingEvent || ae.event instanceof ExchangeCreatedEvent) {
+  if (coreEvent instanceof ExchangeSendingEvent || coreEvent instanceof ExchangeCreatedEvent) {
     compareWith=inRegex;
   }
- else   if (ae.event instanceof ExchangeSentEvent || ae.event instanceof ExchangeCompletedEvent) {
+ else   if (coreEvent instanceof ExchangeSentEvent || coreEvent instanceof ExchangeCompletedEvent) {
     compareWith=outRegex;
   }
- else   if (ae.event instanceof ExchangeRedeliveryEvent) {
+ else   if (coreEvent instanceof ExchangeRedeliveryEvent) {
     compareWith=redeliveryRegex;
   }
- else   if (ae.event instanceof ExchangeFailedEvent) {
-    String exceptionClassName=ae.event.getExchange().getException().getClass().getCanonicalName();
+ else   if (coreEvent instanceof ExchangeFailedEvent) {
+    ExchangeFailedEvent failedEvent=(ExchangeFailedEvent)coreEvent;
+    String exceptionClassName=failedEvent.getExchange().getException().getClass().getCanonicalName();
     return testRegexps(exceptionClassName,failureRegex);
   }
-  return compareWith == null ? false : testRegexps(ae.endpointURI,compareWith);
+  String uri=endpointUri(event);
+  return uri == null || compareWith == null ? false : testRegexps(uri,compareWith);
 }
