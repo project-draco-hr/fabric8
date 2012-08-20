@@ -1,0 +1,13 @@
+{
+  String expectedBody="<matched/>";
+  String ignoreBody="<shouldNotMatch/>";
+  resultEndpoint.expectedMinimumMessageCount(1);
+  template.sendBodyAndHeader(ignoreBody,"foo","ignored");
+  template.sendBodyAndHeader(expectedBody,"foo","cheese");
+  template.sendBodyAndHeader(ignoreBody,"foo","ignored");
+  resultEndpoint.assertIsSatisfied();
+  List<Exchange> exchanges=resultEndpoint.getExchanges();
+  Exchange exchange=exchanges.get(0);
+  AuditEvent body=exchange.getIn().getMandatoryBody(AuditEvent.class);
+  System.out.println("Got: " + body);
+}

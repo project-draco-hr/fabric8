@@ -1,0 +1,13 @@
+{
+  if (filter == null) {
+    return true;
+  }
+ else {
+    Exchange exchange=exchangeEvent.getExchange();
+    if (exchange != null) {
+      Predicate predicate=ExpressionToPredicateAdapter.toPredicate(filter);
+      return predicate.matches(exchange);
+    }
+  }
+  return false;
+}
