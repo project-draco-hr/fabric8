@@ -7,7 +7,7 @@
   }
  else   if (event instanceof AbstractExchangeEvent) {
     ae=(AbstractExchangeEvent)event;
-    auditEvent=new AuditEvent(ae.getExchange(),ae);
+    auditEvent=createAuditEvent(ae);
   }
   if (ae == null || auditEvent == null) {
     log.debug("Ignoring events like " + event + " as its neither a AbstractExchangeEvent or AuditEvent");
