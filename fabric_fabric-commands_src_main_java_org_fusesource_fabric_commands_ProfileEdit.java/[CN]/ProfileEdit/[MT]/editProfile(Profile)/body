@@ -1,8 +1,5 @@
 {
   String pid=AGENT_PID;
-  if (configAdminConfigList != null) {
-    pid=configAdminConfigList.substring(0,configAdminConfigList.indexOf(PID_KEY_SEPARATOR));
-  }
   Map<String,Map<String,String>> config=profile.getConfigurations();
   Map<String,String> pidConfig=config.get(pid);
   if (pidConfig == null) {
@@ -32,42 +29,54 @@
       updateConfig(pidConfig,FAB_PREFIX + fabsLocation.replace('/','_'),fabsLocation,set,delete);
     }
   }
-  if (configAdminConfigList != null && !configAdminConfigList.isEmpty()) {
-    Map<String,String> configMap=extractConfigs(configAdminConfigList);
-    for (    Map.Entry<String,String> configEntries : configMap.entrySet()) {
-      String key=configEntries.getKey();
-      if (key.contains(PID_KEY_SEPARATOR)) {
-        String currentPid=key.substring(0,key.lastIndexOf(PID_KEY_SEPARATOR));
-        key=key.substring(key.lastIndexOf(PID_KEY_SEPARATOR) + 1);
-        String value=configEntries.getValue();
-        Map<String,String> cfg=config.get(currentPid);
-        if (cfg == null) {
-          cfg=new HashMap<String,String>();
+  if (configAdminProperties != null && configAdminProperties.length > 0) {
+    for (    String configAdminProperty : configAdminProperties) {
+      String currentPid=null;
+      Map<String,String> existingConfig=null;
+      if (configAdminProperty != null) {
+        String keyValue="";
+        if (configAdminProperty.contains(PID_KEY_SEPARATOR)) {
+          currentPid=configAdminProperty.substring(0,configAdminProperty.indexOf(PID_KEY_SEPARATOR));
+          keyValue=configAdminProperty.substring(configAdminProperty.indexOf(PID_KEY_SEPARATOR) + 1);
         }
-        if (importPid) {
-          importPidFromLocalConfigAdmin(currentPid,cfg);
+ else {
+          currentPid=configAdminProperty;
         }
-        updatedDelimitedList(pidConfig,key,value,delimiter,set,delete,append,remove);
-        config.put(currentPid,cfg);
+        existingConfig=config.get(currentPid);
+        if (existingConfig == null) {
+          existingConfig=new HashMap<String,String>();
+        }
+        if (configAdminProperties.length == 1 && importPid) {
+          importPidFromLocalConfigAdmin(currentPid,existingConfig);
+        }
+        Map<String,String> configMap=extractConfigs(keyValue);
+        for (        Map.Entry<String,String> configEntries : configMap.entrySet()) {
+          String key=configEntries.getKey();
+          String value=configEntries.getValue();
+          updatedDelimitedList(existingConfig,key,value,delimiter,set,delete,append,remove);
+        }
+        config.put(currentPid,existingConfig);
       }
     }
   }
-  if (systemPropertyList != null && !systemPropertyList.isEmpty()) {
-    String[] keyValues=systemPropertyList.split("=");
-    Map<String,String> configMap=extractConfigs(systemPropertyList);
-    for (    Map.Entry<String,String> configEntries : configMap.entrySet()) {
-      String key=configEntries.getKey();
-      String value=configEntries.getValue();
-      updatedDelimitedList(pidConfig,SYSTEM_PREFIX + key,value,delimiter,set,delete,append,remove);
+  if (systemProperties != null && systemProperties.length > 0) {
+    for (    String systemProperty : systemProperties) {
+      Map<String,String> configMap=extractConfigs(systemProperty);
+      for (      Map.Entry<String,String> configEntries : configMap.entrySet()) {
+        String key=configEntries.getKey();
+        String value=configEntries.getValue();
+        updatedDelimitedList(pidConfig,SYSTEM_PREFIX + key,value,delimiter,set,delete,append,remove);
+      }
     }
   }
-  if (configPropertyList != null && !configPropertyList.isEmpty()) {
-    String[] keyValues=configPropertyList.split("=");
-    Map<String,String> configMap=extractConfigs(configPropertyList);
-    for (    Map.Entry<String,String> configEntries : configMap.entrySet()) {
-      String key=configEntries.getKey();
-      String value=configEntries.getValue();
-      updatedDelimitedList(pidConfig,CONFIG_PREFIX + key,value,delimiter,set,delete,append,remove);
+  if (configProperties != null && configProperties.length > 0) {
+    for (    String configProperty : configProperties) {
+      Map<String,String> configMap=extractConfigs(configProperty);
+      for (      Map.Entry<String,String> configEntries : configMap.entrySet()) {
+        String key=configEntries.getKey();
+        String value=configEntries.getValue();
+        updatedDelimitedList(pidConfig,CONFIG_PREFIX + key,value,delimiter,set,delete,append,remove);
+      }
     }
   }
   config.put(pid,pidConfig);
