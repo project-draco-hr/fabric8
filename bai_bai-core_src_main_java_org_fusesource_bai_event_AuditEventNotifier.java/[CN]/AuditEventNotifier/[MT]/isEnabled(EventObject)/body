@@ -10,12 +10,12 @@
   }
   Expression filter=null;
   List<String> compareWith=null;
-  if (coreEvent instanceof ExchangeSendingEvent) {
+  if (coreEvent instanceof ExchangeCreatedEvent) {
+    return includeExchangeCreatedEvents;
+  }
+ else   if (coreEvent instanceof ExchangeSendingEvent) {
     compareWith=inRegex;
     filter=getInFilter();
-  }
- else   if (coreEvent instanceof ExchangeCreatedEvent) {
-    return includeExchangeCreatedEvents;
   }
  else   if (coreEvent instanceof ExchangeSentEvent) {
     compareWith=outRegex;
