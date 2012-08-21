@@ -11,7 +11,7 @@
   Exchange exchange=exchanges.get(0);
   AuditEvent auditEvent=exchange.getIn().getMandatoryBody(AuditEvent.class);
   System.out.println("Got: " + auditEvent);
-  AbstractExchangeEvent event=auditEvent.event;
+  AbstractExchangeEvent event=auditEvent.getEvent();
   assertTrue("Should be a sent event",event instanceof ExchangeSentEvent);
   String body=auditEvent.getExchange().getIn().getBody(String.class);
   assertEquals("body of audit exchange",expectedBody,body);

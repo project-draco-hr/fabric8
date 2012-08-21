@@ -1,0 +1,36 @@
+{
+  AuditEvent auditEvent=null;
+  AbstractExchangeEvent ae=null;
+  if (event instanceof AuditEvent) {
+    auditEvent=(AuditEvent)event;
+    ae=auditEvent.getEvent();
+  }
+ else   if (event instanceof AbstractExchangeEvent) {
+    ae=(AbstractExchangeEvent)event;
+    auditEvent=new AuditEvent(ae.getExchange(),ae);
+  }
+  if (ae == null || auditEvent == null) {
+    log.debug("Ignoring events like " + event + " as its neither a AbstractExchangeEvent or AuditEvent");
+    return;
+  }
+  if (event instanceof ExchangeSendingEvent || event instanceof ExchangeCreatedEvent) {
+    ae.getExchange().setProperty(AuditConstants.DISPATCH_ID,ae.getExchange().getContext().getUuidGenerator().generateUuid());
+  }
+  if (!isStarted()) {
+    log.debug("Cannot publish event as notifier is not started: {}",event);
+    return;
+  }
+  if (!camelContext.getStatus().isStarted()) {
+    log.debug("Cannot publish event as CamelContext is not started: {}",event);
+    return;
+  }
+  Exchange exchange=producer.createExchange();
+  exchange.getIn().setBody(auditEvent);
+  exchange.setProperty(Exchange.NOTIFY_EVENT,Boolean.TRUE);
+  try {
+    producer.process(exchange);
+  }
+  finally {
+    exchange.removeProperty(Exchange.NOTIFY_EVENT);
+  }
+}

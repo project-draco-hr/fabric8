@@ -1,20 +1,20 @@
 {
-  String endpointId=ev.endpointURI;
+  String endpointId=ev.getEndpointURI();
   String srcContextId=ev.getExchange().getContext().getName();
   String srcRouteId=ev.getExchange().getFromRouteId();
   LOG.info("Received AuditEvent: " + ev + " | Extracted data: "+ endpointId+ ", "+ srcContextId+ ", "+ srcRouteId);
-  LOG.info("Breadcrumb ID for: " + ev + " is: "+ ev.breadCrumbId,String.class);
+  LOG.info("Breadcrumb ID for: " + ev + " is: "+ ev.getBreadCrumbId(),String.class);
   boolean handled=false;
-  if (ev.event instanceof ExchangeSendingEvent || ev.event instanceof ExchangeSentEvent || ev.event instanceof ExchangeCreatedEvent|| ev.event instanceof ExchangeCompletedEvent) {
+  if (ev.getEvent() instanceof ExchangeSendingEvent || ev.getEvent() instanceof ExchangeSentEvent || ev.getEvent() instanceof ExchangeCreatedEvent|| ev.getEvent() instanceof ExchangeCompletedEvent) {
     digestExchangeEvent(ev);
     handled=true;
   }
- else   if (ev.event instanceof ExchangeFailedEvent) {
+ else   if (ev.getEvent() instanceof ExchangeFailedEvent) {
     digestEndpointFailureEvent(ev);
     handled=true;
   }
- else   if (ev.event instanceof ExchangeRedeliveryEvent) {
-    if (ev.endpointURI != null) {
+ else   if (ev.getEvent() instanceof ExchangeRedeliveryEvent) {
+    if (ev.getEndpointURI() != null) {
       digestEndpointRedeliveryEvent(ev);
     }
  else {
