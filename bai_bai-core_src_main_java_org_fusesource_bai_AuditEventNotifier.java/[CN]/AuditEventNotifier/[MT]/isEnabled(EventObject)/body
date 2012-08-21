@@ -12,7 +12,13 @@
   List<String> compareWith=null;
   if (coreEvent instanceof ExchangeCreatedEvent) {
     if (!includeCreatedEvents)     return false;
+    compareWith=createdRegex;
     filter=getCreatedFilter();
+  }
+ else   if (coreEvent instanceof ExchangeCompletedEvent) {
+    if (!includeCompletedEvents)     return false;
+    compareWith=completedRegex;
+    filter=getCompletedFilter();
   }
  else   if (coreEvent instanceof ExchangeSendingEvent) {
     if (!includeSendingEvents)     return false;
@@ -23,10 +29,6 @@
     if (!includeSentEvents)     return false;
     compareWith=sentRegex;
     filter=getSentFilter();
-  }
- else   if (coreEvent instanceof ExchangeCompletedEvent) {
-    if (!includeCompletedEvents)     return false;
-    filter=getCompletedFilter();
   }
  else   if (coreEvent instanceof ExchangeRedeliveryEvent) {
     if (!includeRedeliveryEvents)     return false;
