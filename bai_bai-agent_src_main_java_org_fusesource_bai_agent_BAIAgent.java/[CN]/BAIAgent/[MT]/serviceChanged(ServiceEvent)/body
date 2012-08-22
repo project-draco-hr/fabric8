@@ -1,0 +1,45 @@
+{
+  ServiceReference reference=event.getServiceReference();
+  if (bundleContext != null && reference != null) {
+    int type=event.getType();
+    Object service=bundleContext.getService(reference);
+    if (service instanceof CamelContext) {
+      CamelContext camelContext=(CamelContext)service;
+      String name=camelContext.getName();
+      String camelContextSymbolicName=getCamelSymbolicName(reference);
+      String id=getCamelContextUUID(camelContext,reference,camelContextSymbolicName);
+      if (name.startsWith("audit-")) {
+        LOG.debug("Ignoring camel context " + id + " as its an audit context");
+        return;
+      }
+      if (type == ServiceEvent.UNREGISTERING) {
+        removeNotifier(id);
+      }
+ else       if (type == ServiceEvent.REGISTERED) {
+        Map<String,Object> properties=new HashMap<String,Object>();
+        String[] keys=reference.getPropertyKeys();
+        if (keys != null) {
+          for (          String key : keys) {
+            Object value=reference.getProperty(key);
+            properties.put(key,value);
+          }
+        }
+        ManagementStrategy managementStrategy=camelContext.getManagementStrategy();
+        if (managementStrategy != null) {
+          EventNotifier notifier=createEventNotifier(camelContext,reference,camelContextSymbolicName);
+          if (notifier == null) {
+            LOG.warn("Could not create an EventNotifier for CamelContext " + camelContextSymbolicName);
+          }
+ else {
+            try {
+              addNotifier(id,notifier,managementStrategy);
+            }
+ catch (            Exception e) {
+              LOG.error("Failed to start " + notifier + " for CamelContext "+ id+ ". Reason: "+ e,e);
+            }
+          }
+        }
+      }
+    }
+  }
+}
