@@ -1,0 +1,16 @@
+{
+  checkFabricAvailable();
+  Container cont=getContainer(container);
+  Profile[] existingProfiles=cont.getProfiles();
+  List<String> updatedProfiles=new LinkedList<String>();
+  if (existingProfiles != null) {
+    for (    Profile existingProfile : existingProfiles) {
+      if (!profiles.contains(existingProfile.getId())) {
+        updatedProfiles.add(existingProfile.getId());
+      }
+    }
+  }
+  Profile[] profs=getProfiles(cont.getVersion(),updatedProfiles);
+  cont.setProfiles(profs);
+  return null;
+}
