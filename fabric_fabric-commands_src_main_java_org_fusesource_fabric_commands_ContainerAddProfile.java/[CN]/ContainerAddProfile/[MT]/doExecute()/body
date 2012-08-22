@@ -1,0 +1,13 @@
+{
+  checkFabricAvailable();
+  Container cont=getContainer(container);
+  Profile[] existingProfiles=cont.getProfiles();
+  if (existingProfiles != null) {
+    for (    Profile existingProfile : existingProfiles) {
+      profiles.add(existingProfile.getId());
+    }
+  }
+  Profile[] profs=getProfiles(cont.getVersion(),this.profiles);
+  cont.setProfiles(profs);
+  return null;
+}

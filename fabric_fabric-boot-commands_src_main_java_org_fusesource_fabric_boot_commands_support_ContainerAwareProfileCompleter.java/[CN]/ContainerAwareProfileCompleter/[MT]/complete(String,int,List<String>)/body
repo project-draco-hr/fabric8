@@ -1,0 +1,46 @@
+{
+  StringsCompleter delegate=new StringsCompleter();
+  String versionName=null;
+  try {
+    Version defaultVersion=fabricService.getDefaultVersion();
+    if (defaultVersion != null) {
+      versionName=defaultVersion.getName();
+    }
+    if (versionName == null) {
+      versionName=ZkDefs.DEFAULT_VERSION;
+    }
+    Container container=fabricService.getCurrentContainer();
+    try {
+      container=fabricService.getContainer(getContainer(CommandSessionHolder.getSession(),containerArgumentIndex));
+    }
+ catch (    Exception ex) {
+    }
+    Profile[] containerProfiles=container.getProfiles();
+    List<String> containerProfileNames=new LinkedList<String>();
+    if (containerProfiles != null) {
+      for (      Profile p : containerProfiles) {
+        containerProfileNames.add(p.getId());
+      }
+    }
+    Profile[] profiles=fabricService.getProfiles(versionName);
+    List<String> allProfileNames=new LinkedList<String>();
+    if (containerProfiles != null) {
+      for (      Profile p : profiles) {
+        allProfileNames.add(p.getId());
+      }
+    }
+    if (assigned && unassigned) {
+      delegate.getStrings().addAll(allProfileNames);
+    }
+ else     if (assigned) {
+      delegate.getStrings().addAll(containerProfileNames);
+    }
+ else     if (unassigned) {
+      allProfileNames.removeAll(containerProfileNames);
+      delegate.getStrings().addAll(allProfileNames);
+    }
+  }
+ catch (  Exception ex) {
+  }
+  return delegate.complete(buffer,cursor,candidates);
+}
