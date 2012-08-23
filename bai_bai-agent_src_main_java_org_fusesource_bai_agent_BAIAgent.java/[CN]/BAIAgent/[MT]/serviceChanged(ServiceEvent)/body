@@ -7,7 +7,8 @@
       CamelContext camelContext=(CamelContext)service;
       String camelContextSymbolicName=getCamelSymbolicName(reference);
       String id=getCamelContextUUID(camelContext,reference,camelContextSymbolicName);
-      if (!isAuditEnabled(camelContext,reference)) {
+      CamelContextService camelContextService=new CamelContextService(camelContext,reference);
+      if (!getAuditPolicy().isAuditEnabled(camelContextService)) {
         LOG.debug("Ignoring camel context " + id + " as its an audit context");
         return;
       }
@@ -25,7 +26,7 @@
         }
         ManagementStrategy managementStrategy=camelContext.getManagementStrategy();
         if (managementStrategy != null) {
-          EventNotifier notifier=createEventNotifier(camelContext,reference,camelContextSymbolicName);
+          EventNotifier notifier=createEventNotifier(camelContextService);
           if (notifier == null) {
             LOG.warn("Could not create an EventNotifier for CamelContext " + camelContextSymbolicName);
           }
