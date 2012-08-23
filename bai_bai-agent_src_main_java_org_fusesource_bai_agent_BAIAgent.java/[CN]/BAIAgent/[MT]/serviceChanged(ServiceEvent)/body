@@ -5,10 +5,9 @@
     Object service=bundleContext.getService(reference);
     if (service instanceof CamelContext) {
       CamelContext camelContext=(CamelContext)service;
-      String name=camelContext.getName();
       String camelContextSymbolicName=getCamelSymbolicName(reference);
       String id=getCamelContextUUID(camelContext,reference,camelContextSymbolicName);
-      if (name.startsWith("audit-")) {
+      if (!isAuditEnabled(camelContext,reference)) {
         LOG.debug("Ignoring camel context " + id + " as its an audit context");
         return;
       }
