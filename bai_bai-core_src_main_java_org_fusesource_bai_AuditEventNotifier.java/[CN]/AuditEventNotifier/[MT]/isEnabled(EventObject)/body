@@ -8,40 +8,28 @@
   if (event instanceof AbstractExchangeEvent) {
     exchangeEvent=(AbstractExchangeEvent)event;
   }
-  Predicate filter=null;
-  List<String> compareWith=null;
+  EventTypeConfiguration config=null;
   if (coreEvent instanceof ExchangeCreatedEvent) {
-    if (!includeCreatedEvents)     return false;
-    compareWith=createdRegex;
-    filter=getCreatedFilter();
+    config=getCreatedConfig();
   }
  else   if (coreEvent instanceof ExchangeCompletedEvent) {
-    if (!includeCompletedEvents)     return false;
-    compareWith=completedRegex;
-    filter=getCompletedFilter();
+    config=getCompletedConfig();
   }
  else   if (coreEvent instanceof ExchangeSendingEvent) {
-    if (!includeSendingEvents)     return false;
-    compareWith=sendingRegex;
-    filter=getSendingFilter();
+    config=getSendingConfig();
   }
  else   if (coreEvent instanceof ExchangeSentEvent) {
-    if (!includeSentEvents)     return false;
-    compareWith=sentRegex;
-    filter=getSentFilter();
+    config=getSentConfig();
   }
  else   if (coreEvent instanceof ExchangeRedeliveryEvent) {
-    if (!includeRedeliveryEvents)     return false;
-    compareWith=redeliveryRegex;
-    filter=getRedeliveryFilter();
+    config=getRedeliveryConfig();
   }
  else   if (coreEvent instanceof ExchangeFailedEvent) {
-    if (!includeFailureEvents)     return false;
     ExchangeFailedEvent failedEvent=(ExchangeFailedEvent)coreEvent;
     String exceptionClassName=failedEvent.getExchange().getException().getClass().getCanonicalName();
-    filter=getFailureFilter();
-    return testRegexps(exceptionClassName,failureRegex,filter,exchangeEvent);
+    config=getFailureConfig();
   }
   String uri=endpointUri(event);
-  return uri == null || compareWith == null ? false : testRegexps(uri,compareWith,filter,exchangeEvent);
+  if (config == null)   return false;
+  return testConfig(uri,config,exchangeEvent);
 }
