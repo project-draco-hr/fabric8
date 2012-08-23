@@ -1,8 +1,3 @@
 {
-  for (  String pattern : patterns) {
-    CamelContextService camelService=new StubCamelContextService(bundleSymbolicName,camelContextId);
-    Filter<CamelContextService> filter=CamelContextFilters.createCamelContextFilter(pattern);
-    boolean matches=filter.matches(camelService);
-    assertTrue("Did not match pattern " + pattern + " for bundleSymbolicName: "+ bundleSymbolicName+ " camelContextId: "+ camelContextId,matches);
-  }
+  assertBundlePattern(bundleSymbolicName,camelContextId,true,patterns);
 }
