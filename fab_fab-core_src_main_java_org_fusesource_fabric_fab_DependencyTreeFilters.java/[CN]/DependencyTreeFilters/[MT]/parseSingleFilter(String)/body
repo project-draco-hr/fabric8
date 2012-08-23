@@ -4,13 +4,13 @@
     return null;
   }
  else {
-    Filter<String> groupFilter=createStringFilter(split[0]);
+    Filter<String> groupFilter=Filters.createStringFilter(split[0]);
     Filter<String> artifactFilter;
     if (split.length == 1) {
       artifactFilter=Filters.trueFilter();
     }
  else {
-      artifactFilter=createStringFilter(split[1]);
+      artifactFilter=Filters.createStringFilter(split[1]);
     }
     return new DependencyTreeFilter(groupFilter,artifactFilter);
   }
