@@ -2,10 +2,10 @@
   if (policyCache != null) {
     return policyCache;
   }
-  List<Policy> answer=new ArrayList<Policy>(properties.size());
+  PolicySet answer=new PolicySet();
   List<Object> keys=Collections.list(properties.keys());
   for (  Object k : keys) {
-    String value=(String)properties.getProperty((String)k);
+    String value=(String)properties.get((String)k);
     String[] splitKey=((String)k).split("\\.");
     String qualifier=splitKey[0];
     Policy result=null;

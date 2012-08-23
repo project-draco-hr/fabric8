@@ -1,5 +1,14 @@
 {
-  String pattern=getOrElse(dict,KEY_CAMEL_CONTEXT_EXCLUDE,DEFAULT_EXCLUDE_CAMEL_CONTEXT_FILTER);
-  LOG.info("Setting the camelContext exclude pattern to " + pattern);
-  setExcludeCamelContextPattern(pattern);
+  PropertyMapPolicySlurper pmps=new PropertyMapPolicySlurper(dict);
+  this.policies=pmps.slurp();
+  PolicySet excludedCamelContextsPolicies=policies.queryPolicyWithSingleScope(FilterElement.CONTEXT).queryAllExclusions();
+  if (excludedCamelContextsPolicies.size() > 1) {
+    throw new ConfigurationException("*","Inconsistency in audit policy configuration");
+  }
+  if (excludedCamelContextsPolicies.size() == 0) {
+    setExcludeCamelContextPattern(DEFAULT_EXCLUDE_CAMEL_CONTEXT_FILTER);
+  }
+ else {
+    setExcludeCamelContextPattern(excludedCamelContextsPolicies.iterator().next().scope.get(0).enumValues);
+  }
 }
