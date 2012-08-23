@@ -1,0 +1,33 @@
+{
+  Policy policy=new Policy();
+  Scope scope=new Scope();
+  scope.filterElement=FilterElement.EVENT;
+  scope.filterMethod=FilterMethod.ENUM_VALUE_ONE;
+  scope.enumValues.add(toEventType(splitKey[2]).toString());
+  policy.scope.add(scope);
+  String languageBundleContext[]=splitKey[3].split("/");
+  scope=new Scope();
+  scope.filterElement=FilterElement.EXCHANGE;
+  scope.filterMethod=FilterMethod.EXPRESSION;
+  scope.expressionLanguage=languageBundleContext[0];
+  scope.expression=value;
+  policy.scope.add(scope);
+  if (languageBundleContext.length >= 2) {
+    scope=new Scope();
+    scope.filterElement=FilterElement.BUNDLE;
+    scope.filterMethod=FilterMethod.EXPRESSION;
+    scope.expressionLanguage="wildcardAwareString";
+    scope.expression=languageBundleContext[1];
+    policy.scope.add(scope);
+  }
+  if (languageBundleContext.length == 3) {
+    scope=new Scope();
+    scope.filterElement=FilterElement.CONTEXT;
+    scope.filterMethod=FilterMethod.EXPRESSION;
+    scope.expressionLanguage="wildcardAwareString";
+    scope.expression=languageBundleContext[2];
+    policy.scope.add(scope);
+  }
+  policy.action.type=ActionType.INCLUDE;
+  return policy;
+}

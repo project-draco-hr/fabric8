@@ -1,0 +1,33 @@
+{
+  Policy policy=new Policy();
+  Scope scope=new Scope();
+  scope.filterElement=FilterElement.ENDPOINT;
+  scope.filterMethod=FilterMethod.EXPRESSION;
+  scope.expressionLanguage="wildcardAwareString";
+  scope.expression=value;
+  policy.scope.add(scope);
+  String remainingKey[]=splitKey[1].split("/");
+  if ("exclude".equals(remainingKey[0].toLowerCase())) {
+    policy.action.type=ActionType.EXCLUDE;
+  }
+ else {
+    policy.action.type=ActionType.INCLUDE;
+  }
+  if (remainingKey.length >= 2) {
+    scope=new Scope();
+    scope.filterElement=FilterElement.BUNDLE;
+    scope.filterMethod=FilterMethod.EXPRESSION;
+    scope.expressionLanguage="wildcardAwareString";
+    scope.expression=remainingKey[1];
+    policy.scope.add(scope);
+  }
+  if (remainingKey.length == 3) {
+    scope=new Scope();
+    scope.filterElement=FilterElement.CONTEXT;
+    scope.filterMethod=FilterMethod.EXPRESSION;
+    scope.expressionLanguage="wildcardAwareString";
+    scope.expression=remainingKey[2];
+    policy.scope.add(scope);
+  }
+  return policy;
+}
