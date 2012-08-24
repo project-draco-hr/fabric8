@@ -2,7 +2,7 @@
   System.out.println("Updating BAI Agent configuration " + dict);
   PropertyMapPolicySlurper pmps=new PropertyMapPolicySlurper(dict);
   this.policies=pmps.slurp();
-  PolicySet excludedCamelContextsPolicies=policies.queryPolicyWithSingleScope(FilterElement.CONTEXT).queryAllExclusions();
+  PolicySet excludedCamelContextsPolicies=policies.queryWithSingleScope(FilterElement.CONTEXT).queryAllExclusions();
   if (excludedCamelContextsPolicies.size() > 1) {
     throw new ConfigurationException("*","Inconsistency in audit policy configuration");
   }
@@ -10,7 +10,7 @@
     setExcludeCamelContextPattern(DEFAULT_EXCLUDE_CAMEL_CONTEXT_FILTER);
   }
  else {
-    setExcludeCamelContextPattern(excludedCamelContextsPolicies.iterator().next().scope.get(0).enumValues);
+    setExcludeCamelContextPattern(excludedCamelContextsPolicies.getOne().scope.getOne().enumValues);
   }
   updateNotifiersWithNewPolicy();
 }

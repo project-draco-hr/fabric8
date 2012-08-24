@@ -1,0 +1,11 @@
+{
+  PolicySet answer=new PolicySet();
+  for (  Policy policy : this) {
+    if (!policy.hasScopes())     continue;
+    Scope scope=policy.scope.queryWithFilterElement(e);
+    if (scope != null) {
+      answer.add(policy);
+    }
+  }
+  return answer;
+}
