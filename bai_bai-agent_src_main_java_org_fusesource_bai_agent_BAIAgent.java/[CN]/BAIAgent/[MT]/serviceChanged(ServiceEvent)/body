@@ -26,13 +26,13 @@
         }
         ManagementStrategy managementStrategy=camelContext.getManagementStrategy();
         if (managementStrategy != null) {
-          EventNotifier notifier=createEventNotifier(camelContextService);
+          AuditEventNotifier notifier=createEventNotifier(camelContextService);
           if (notifier == null) {
             LOG.warn("Could not create an EventNotifier for CamelContext " + camelContextSymbolicName);
           }
  else {
             try {
-              addNotifier(id,notifier,managementStrategy);
+              addNotifier(id,camelContextService,notifier,managementStrategy);
             }
  catch (            Exception e) {
               LOG.error("Failed to start " + notifier + " for CamelContext "+ id+ ". Reason: "+ e,e);

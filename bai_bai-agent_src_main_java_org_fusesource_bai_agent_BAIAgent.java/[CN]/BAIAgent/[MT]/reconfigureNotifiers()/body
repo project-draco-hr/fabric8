@@ -1,0 +1,11 @@
+{
+  List<NotifierRegistration> list;
+synchronized (this) {
+    list=new ArrayList<NotifierRegistration>(notifierMap.values());
+  }
+  for (  NotifierRegistration registration : list) {
+    CamelContextService camelContextService=registration.getCamelContextService();
+    AuditEventNotifier notifier=registration.getNotifier();
+    getAuditPolicy().configureNotifier(camelContextService,notifier);
+  }
+}
