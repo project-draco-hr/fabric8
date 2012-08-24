@@ -4,5 +4,7 @@
   properties.load(this.getClass().getClassLoader().getResourceAsStream("audit-policy-test.cfg"));
   slurper.setProperties(properties);
   PolicySet policies=slurper.slurp();
+  PolicySet contextPolicies=policies.queryPolicyWithSingleScope(Constants.FilterElement.CONTEXT);
+  System.out.println(contextPolicies);
   return;
 }

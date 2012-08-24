@@ -1,0 +1,24 @@
+{
+  if (key.startsWith(prefix)) {
+    String next=key.substring(0,prefix.length());
+    int idx=next.indexOf('.');
+    if (idx > 0) {
+      String eventText=next.substring(0,idx);
+      String remaining=next.substring(idx + 1);
+      EventType eventType=EventType.valueOf(eventText);
+      if (eventType != null) {
+        EventTypeConfiguration config=getConfig(eventType);
+        if (config == null) {
+          LOG.warn("Could not find an EventTypeConfiguration for eventType: " + eventType);
+        }
+ else {
+          return new Pair<EventTypeConfiguration,String>(config,remaining);
+        }
+      }
+ else {
+        LOG.warn("Invalid EventType: " + eventText + " when parsing "+ key);
+      }
+    }
+  }
+  return null;
+}
