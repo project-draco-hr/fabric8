@@ -1,23 +1,28 @@
 {
-  if (!config.isInclude()) {
+  if (!isInclude()) {
     return false;
   }
-  List<String> regexList=config.getIncludeRegexList();
+  List<String> regexList=getIncludeRegexList();
   if (!regexList.isEmpty()) {
     if (endpointUri == null) {
       return false;
     }
+    boolean matches=false;
     for (    String regex : regexList) {
-      if (!uri.matches(regex)) {
-        return false;
+      if (endpointUri.matches(regex)) {
+        matches=true;
+        break;
       }
+    }
+    if (!matches) {
+      return false;
     }
   }
   Exchange exchange=exchangeEvent.getExchange();
   if (exchange == null) {
     return false;
   }
-  List<Predicate> filters=config.getFilters();
+  List<Predicate> filters=getFilters();
   if (filters.isEmpty()) {
     return true;
   }

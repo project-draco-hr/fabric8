@@ -5,15 +5,20 @@
     String remaining=key.substring(idx + 1);
     Language language=camelContextService.getCamelContext().resolveLanguage(languageName);
     if (languageName == null) {
-      LOG.warn("Could not resolve language '" + languageName + "' with expression '"+ expression+ "'");
+      LOG.error("Could not resolve language '" + languageName + "' with expression '"+ expression+ "'");
     }
  else {
-      Predicate predicate=language.createPredicate(expression);
-      if (predicate == null) {
-        LOG.warn("Could not create predicate for language " + language + " and expression '"+ expression+ "'");
-      }
+      try {
+        Predicate predicate=language.createPredicate(expression);
+        if (predicate == null) {
+          LOG.error("Could not create predicate for language " + language + " and expression '"+ expression+ "'");
+        }
  else {
-        return new Pair<Predicate,String>(predicate,remaining);
+          return new Pair<Predicate,String>(predicate,remaining);
+        }
+      }
+ catch (      Exception e) {
+        LOG.error("Failed to parse " + language + " expression '"+ expression+ "'. Reason: "+ e);
       }
     }
   }
