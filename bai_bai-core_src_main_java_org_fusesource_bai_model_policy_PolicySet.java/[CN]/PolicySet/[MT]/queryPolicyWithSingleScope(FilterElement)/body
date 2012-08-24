@@ -1,10 +1,16 @@
 {
   PolicySet answer=new PolicySet();
   for (  Policy policy : this) {
-    if (policy.scope.size() == 0 || policy.scope.size() > 1 || policy.scope.get(0).filterElement != e) {
-      continue;
+    if (policy == null)     continue;
+    List<Scope> scopes=policy.scope;
+    if (scopes == null || scopes.isEmpty())     continue;
+    Scope scope=scopes.get(0);
+    if (scope != null) {
+      FilterElement filterElement=scope.filterElement;
+      if (filterElement != null && filterElement.equals(e)) {
+        answer.add(policy);
+      }
     }
-    answer.add(policy);
   }
   return answer;
 }
