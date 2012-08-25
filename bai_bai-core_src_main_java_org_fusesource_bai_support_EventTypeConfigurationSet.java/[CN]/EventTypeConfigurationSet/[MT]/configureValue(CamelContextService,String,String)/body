@@ -11,7 +11,7 @@
       Pair<Predicate,String> languageAndRemaining=parsePredicateAndRemaining(camelContextService,configAndRemaining.getSecond(),value);
       if (languageAndRemaining != null) {
         if (matchesCamelContextService(camelContextService,languageAndRemaining.getSecond())) {
-          configAndRemaining.getFirst().getFilters().add(languageAndRemaining.getFirst());
+          configAndRemaining.getFirst().addFilter(languageAndRemaining.getFirst());
         }
       }
     }
@@ -19,7 +19,7 @@
       configAndRemaining=parseEventType(key,ENDPOINT_REGEX);
       if (configAndRemaining != null) {
         if (matchesCamelContextService(camelContextService,configAndRemaining.getSecond())) {
-          configAndRemaining.getFirst().getIncludeRegexList().add(value);
+          configAndRemaining.getFirst().addIncludeRegex(value);
         }
       }
     }
