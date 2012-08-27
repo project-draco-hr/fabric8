@@ -1,0 +1,13 @@
+{
+  Set<ScopeElement> criteria=new HashSet<ScopeElement>(Arrays.asList(e));
+  PolicySet answer=new PolicySet();
+  for (  Policy policy : this) {
+    if (policy.getScope().size() < criteria.size()) {
+      continue;
+    }
+    if (policy.getScope().keySet().containsAll(criteria)) {
+      answer.add(policy);
+    }
+  }
+  return answer;
+}

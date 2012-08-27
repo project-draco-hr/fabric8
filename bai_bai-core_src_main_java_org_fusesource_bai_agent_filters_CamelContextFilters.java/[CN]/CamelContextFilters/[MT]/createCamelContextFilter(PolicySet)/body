@@ -1,0 +1,12 @@
+{
+  List<Filter<CamelContextService>> filters=new ArrayList<Filter<CamelContextService>>();
+  if (policies != null && policies.size() > 0) {
+    for (    Policy policy : policies) {
+      Filter<CamelContextService> filter=createFilterFromScope(policy.getScope());
+      if (filter != null) {
+        filters.add(filter);
+      }
+    }
+  }
+  return Filters.compositeFilter(filters);
+}

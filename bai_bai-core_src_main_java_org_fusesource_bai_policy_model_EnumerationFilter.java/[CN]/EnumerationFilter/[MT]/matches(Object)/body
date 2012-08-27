@@ -1,0 +1,15 @@
+{
+  if (o instanceof String) {
+    return enumValues.contains((String)o);
+  }
+  if (o instanceof Collection) {
+    Collection col=(Collection)o;
+    for (    Object item : col) {
+      if (!enumValues.contains(item.toString())) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return enumValues.contains(o.toString());
+}

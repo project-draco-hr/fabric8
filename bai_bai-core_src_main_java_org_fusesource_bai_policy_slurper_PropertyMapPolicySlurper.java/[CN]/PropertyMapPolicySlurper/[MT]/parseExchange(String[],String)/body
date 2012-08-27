@@ -1,0 +1,19 @@
+{
+  Set<Policy> policies=new HashSet<Policy>();
+  Policy policy=new Policy();
+  EventType et=toEventType(splitKey[2]);
+  if (et == null) {
+    return null;
+  }
+  policy.addNewEnumerationFilterFor(ScopeElement.EVENT).enumValues(et.toString());
+  policy.addNewExpressionFilterFor(ScopeElement.EXCHANGE).language(splitKey[3]).expression(value);
+  if (splitKey.length >= 5) {
+    policy.addNewExpressionFilterFor(ScopeElement.BUNDLE).language("wildcardAwareString").expression(splitKey[4]);
+  }
+  if (splitKey.length == 6) {
+    policy.addNewExpressionFilterFor(ScopeElement.CONTEXT).language("wildcardAwareString").expression(splitKey[5]);
+  }
+  policy.getAction().setType(ActionType.INCLUDE);
+  policies.add(policy);
+  return policies;
+}

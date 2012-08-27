@@ -1,0 +1,13 @@
+{
+  ExpressionFilter bundleExpression=scope.getAs(ScopeElement.BUNDLE,ExpressionFilter.class);
+  ExpressionFilter contextExpression=scope.getAs(ScopeElement.CONTEXT,ExpressionFilter.class);
+  Filter<String> groupFilter=Filters.trueFilter();
+  Filter<String> artifactFilter=Filters.trueFilter();
+  if (bundleExpression != null) {
+    groupFilter=Filters.createStringFilter(bundleExpression.getExpression());
+  }
+  if (contextExpression != null) {
+    artifactFilter=Filters.createStringFilter(contextExpression.getExpression());
+  }
+  return new CamelContextServiceFilter(groupFilter,artifactFilter);
+}

@@ -1,0 +1,19 @@
+{
+  Set<Policy> policies=new HashSet<Policy>();
+  Policy policy=new Policy();
+  if ("exclude".equals(splitKey[1].toLowerCase())) {
+    policy.getAction().setType(ActionType.EXCLUDE);
+  }
+ else {
+    policy.getAction().setType(ActionType.INCLUDE);
+  }
+  EventType et=toEventType(splitKey[2]);
+  if (et == null) {
+    return null;
+  }
+  policy.addNewEnumerationFilterFor(ScopeElement.EVENT).enumValues(et.toString());
+  policy.addNewExpressionFilterFor(ScopeElement.BUNDLE).language("wildcardAwareString").expression(splitKey[3]);
+  policy.addNewExpressionFilterFor(ScopeElement.CONTEXT).language("wildcardAwareString").expression(value);
+  policies.add(policy);
+  return policies;
+}
