@@ -1,0 +1,15 @@
+{
+  Set<Policy> globalPolicies=new HashSet<Policy>();
+  ActionType actionType="exclude".equals(splitKey[1].toLowerCase()) ? ActionType.EXCLUDE : ActionType.INCLUDE;
+  for (  String token : value.split(" ")) {
+    Policy policy=new Policy();
+    String[] splitToken=token.split(":");
+    policy.addNewExpressionFilterFor(ScopeElement.BUNDLE).language("wildcardAwareString").expression(splitToken[0]);
+    if (splitToken.length == 2) {
+      policy.addNewExpressionFilterFor(ScopeElement.CONTEXT).language("wildcardAwareString").expression(splitToken[1]);
+    }
+    policy.getAction().setType(actionType);
+    globalPolicies.add(policy);
+  }
+  return globalPolicies;
+}

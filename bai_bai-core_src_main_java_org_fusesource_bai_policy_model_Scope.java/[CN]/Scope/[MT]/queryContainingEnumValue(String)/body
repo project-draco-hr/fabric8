@@ -1,0 +1,10 @@
+{
+  Scope answer=this.queryByFilterType(EnumerationFilter.class);
+  for (  Entry<ScopeElement,Filter> entry : this.entrySet()) {
+    EnumerationFilter ef=(EnumerationFilter)entry.getValue();
+    if (ef.getEnumValues().contains(enumValue)) {
+      answer.put(entry.getKey(),entry.getValue());
+    }
+  }
+  return answer;
+}

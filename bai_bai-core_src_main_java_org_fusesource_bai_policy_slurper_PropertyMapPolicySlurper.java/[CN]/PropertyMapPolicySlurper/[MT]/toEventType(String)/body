@@ -1,0 +1,14 @@
+{
+  if ("*".equals(eventType)) {
+    return EventType.ALL;
+  }
+  EventType et;
+  try {
+    et=EventType.valueOf(eventType.toUpperCase());
+  }
+ catch (  Exception e) {
+    LOG.warn("Event-type policy could not be parsed. Contains invalid event type: %s",eventType);
+    return null;
+  }
+  return et;
+}
