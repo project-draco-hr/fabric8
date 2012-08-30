@@ -1,3 +1,39 @@
 {
-  System.out.println("Updating AuditEventNotifier " + notifier + " for bundle: "+ camelContextService.getBundleSymbolicName()+ " camelContext: "+ camelContextService);
+  LOG.info("Updating AuditEventNotifier " + notifier + " for bundle: "+ camelContextService.getBundleSymbolicName()+ " camelContext: "+ camelContextService);
+  PolicySet applicablePolicies=(PolicySet)policies.clone();
+  LOG.debug("Calculating applicable policies for notifier " + notifier + " for bundle: "+ camelContextService.getBundleSymbolicName()+ " camelContext: "+ camelContextService);
+  PolicySet p=policies.policiesContainingAnyScopeElements(ScopeElement.BUNDLE,ScopeElement.CONTEXT);
+  for (  Policy policy : p) {
+    if (!CamelContextFilters.createCamelContextFilter(policy).matches(camelContextService)) {
+      applicablePolicies.remove(policy);
+    }
+  }
+  LOG.debug("Policies retained for " + notifier + " for bundle: "+ camelContextService.getBundleSymbolicName()+ " after removal of non-matching ones "+ "due to context/bundle filtering: "+ applicablePolicies);
+  applicablePolicies.removeAll(applicablePolicies.policiesWithExactScopeElements(ScopeElement.BUNDLE,ScopeElement.CONTEXT));
+  applicablePolicies.removeAll(applicablePolicies.policiesWithExactScopeElements(ScopeElement.BUNDLE));
+  applicablePolicies.removeAll(applicablePolicies.policiesWithExactScopeElements(ScopeElement.CONTEXT));
+  LOG.debug("Policies retained for " + notifier + " for bundle: "+ camelContextService.getBundleSymbolicName()+ " after removal of global excludes: "+ applicablePolicies);
+  PolicySet allEvents=applicablePolicies.filtersForScopeElement(ScopeElement.EVENT).filtersOfType(EnumerationFilter.class).allMatchesFor(EventType.ALL).returnPolicies();
+  LOG.debug("Selected ALL EVENT policies for " + notifier + " for bundle: "+ camelContextService.getBundleSymbolicName()+ ": "+ allEvents);
+  if (!allEvents.isEmpty()) {
+    applyPoliciesMatchingAllEvents(camelContextService,notifier,allEvents);
+  }
+  PolicySet eventPolicies=applicablePolicies.policiesContainingAnyScopeElements(ScopeElement.EVENT);
+  eventPolicies.removeAll(allEvents);
+  LOG.debug("Selected INDIVIDUAL EVENT policies for " + notifier + " for bundle: "+ camelContextService.getBundleSymbolicName()+ ": "+ eventPolicies);
+  if (!eventPolicies.isEmpty()) {
+    applyPoliciesToIndividualEvents(camelContextService,notifier,eventPolicies);
+  }
+  PolicySet endpointPolicies=applicablePolicies.policiesContainingAnyScopeElements(ScopeElement.ENDPOINT);
+  LOG.debug("Selected ENDPOINT policies for " + notifier + " for bundle: "+ camelContextService.getBundleSymbolicName()+ ": "+ endpointPolicies);
+  for (  Policy policy : endpointPolicies) {
+    LOG.debug("Applying ENDPOINT policy to " + notifier + " for bundle: "+ camelContextService.getBundleSymbolicName()+ ": "+ policy);
+    Pair<EventType,EventTypeConfiguration> etc=getEventTypeConfigForPolicy(notifier,policy);
+    EventTypeConfiguration config=etc.getSecond();
+    ExpressionFilter ef=policy.getTypedFilterFor(ScopeElement.ENDPOINT,ExpressionFilter.class);
+    if (ef != null && ef.getExpression() != null) {
+      config.addEndpointIncludeRegexp(ef.getExpression());
+    }
+    LOG.debug("Resulting EventTypeConfiguration(" + etc.getFirst() + ") for "+ notifier+ " for bundle: "+ camelContextService.getBundleSymbolicName()+ ": "+ config);
+  }
 }

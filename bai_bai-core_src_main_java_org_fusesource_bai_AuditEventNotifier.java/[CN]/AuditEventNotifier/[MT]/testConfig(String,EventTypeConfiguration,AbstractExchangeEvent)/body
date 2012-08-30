@@ -2,9 +2,9 @@
   if (!config.isInclude()) {
     return false;
   }
-  List<String> regexList=config.getIncludeRegexList();
+  List<String> regexList=config.getEndpointIncludeRegexps();
   if (!regexList.isEmpty()) {
-    if (endpointUri == null) {
+    if (uri == null) {
       return false;
     }
     for (    String regex : regexList) {
@@ -17,7 +17,7 @@
   if (exchange == null) {
     return false;
   }
-  List<Predicate> filters=config.getFilters();
+  List<Predicate> filters=config.getExchangeFilters();
   if (filters.isEmpty()) {
     return true;
   }

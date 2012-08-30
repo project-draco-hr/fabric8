@@ -1,6 +1,9 @@
 {
   Filter f=scope.get(e);
-  if (!f.getClass().isAssignableFrom(filterClass)) {
+  if (f == null) {
+    return null;
+  }
+ else   if (!f.getClass().isAssignableFrom(filterClass)) {
     throw new IllegalArgumentException("Filter for scope element " + e + " is of type "+ f.getClass().getCanonicalName()+ ", not "+ filterClass.getCanonicalName());
   }
   return (T)f;
