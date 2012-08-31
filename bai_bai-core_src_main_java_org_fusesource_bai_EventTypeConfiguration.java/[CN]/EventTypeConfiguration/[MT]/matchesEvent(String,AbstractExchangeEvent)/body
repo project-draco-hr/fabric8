@@ -2,7 +2,7 @@
   if (!isInclude()) {
     return false;
   }
-  List<String> regexList=getIncludeRegexList();
+  List<String> regexList=getEndpointIncludeRegexps();
   if (!regexList.isEmpty()) {
     if (endpointUri == null) {
       return false;
@@ -22,7 +22,7 @@
   if (exchange == null) {
     return false;
   }
-  List<Predicate> filters=getFilters();
+  List<Predicate> filters=getExchangeFilters();
   if (filters.isEmpty()) {
     return true;
   }
