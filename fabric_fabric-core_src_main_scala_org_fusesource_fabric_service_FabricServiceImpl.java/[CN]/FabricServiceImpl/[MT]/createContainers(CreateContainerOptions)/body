@@ -23,6 +23,14 @@
             String value=entry.getValue();
             ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_ENTRY.getPath(metadata.getContainerName(),key),value);
           }
+          if (options.getResolver() != null) {
+          }
+ else           if (zooKeeper.exists(ZkPath.POLICIES.getPath(ZkDefs.RESOLVER)) != null) {
+            options.setResolver(zooKeeper.getStringData(ZkPath.POLICIES.getPath(ZkDefs.RESOLVER)));
+          }
+ else {
+            options.setResolver(ZkDefs.DEFAULT_RESOLVER);
+          }
           ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_RESOLVER.getPath(metadata.getContainerName()),options.getResolver());
         }
         metadata.setContainer(new ContainerImpl(parent,metadata.getContainerName(),FabricServiceImpl.this));

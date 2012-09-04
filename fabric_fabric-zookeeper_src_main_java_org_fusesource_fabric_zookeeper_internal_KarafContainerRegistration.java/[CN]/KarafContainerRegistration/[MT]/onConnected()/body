@@ -28,7 +28,7 @@
       zooKeeper.createOrSetWithParents(CONTAINER_SSH.getPath(name),getSshUrl(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
     }
     if (zooKeeper.exists(CONTAINER_RESOLVER.getPath(name)) == null) {
-      zooKeeper.createOrSetWithParents(CONTAINER_RESOLVER.getPath(name),getGlobalResolutionPolicy(zooKeeper),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+      zooKeeper.createOrSetWithParents(CONTAINER_RESOLVER.getPath(name),getContainerResolutionPolicy(zooKeeper,name),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
     }
     zooKeeper.createOrSetWithParents(CONTAINER_LOCAL_HOSTNAME.getPath(name),HostUtils.getLocalHostName(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
     zooKeeper.createOrSetWithParents(CONTAINER_LOCAL_IP.getPath(name),HostUtils.getLocalIp(),ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);

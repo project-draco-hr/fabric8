@@ -3,6 +3,12 @@
   if (containerName == null) {
     containerName=oldName;
   }
+  if (resolver != null) {
+    System.setProperty(ZkDefs.LOCAL_RESOLVER_PROPERTY,resolver);
+  }
+  if (manualIp != null) {
+    System.setProperty(ZkDefs.MANUAL_IP,manualIp);
+  }
   if (!containerName.equals(oldName)) {
     if (force || permissionToRenameContainer()) {
       if (!registerContainer(containerName,profile,force)) {

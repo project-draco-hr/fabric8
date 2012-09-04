@@ -1,0 +1,13 @@
+{
+  Container current=getFabricService().getCurrentContainer();
+  System.err.println(executeCommand("fabric:create -n -g manualip --manual-ip localhost --clean"));
+  Assert.assertEquals("manualip",current.getResolver());
+  System.getProperties().remove(ZkDefs.LOCAL_RESOLVER_PROPERTY);
+  System.getProperties().remove(ZkDefs.GLOBAL_RESOLVER_PROPERTY);
+  System.err.println(executeCommand("fabric:create -n -g manualip -r localhostname --manual-ip localhost --clean"));
+  Assert.assertEquals("localhostname",current.getResolver());
+  System.getProperties().remove(ZkDefs.LOCAL_RESOLVER_PROPERTY);
+  System.getProperties().remove(ZkDefs.GLOBAL_RESOLVER_PROPERTY);
+  System.err.println(executeCommand("fabric:create -n -g manualip"));
+  Assert.assertEquals("localhostname",current.getResolver());
+}
