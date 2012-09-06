@@ -1,0 +1,26 @@
+{
+  EventTypeConfiguration config=null;
+  if (coreEvent instanceof ExchangeCreatedEvent) {
+    config=getCreatedConfig();
+  }
+ else   if (coreEvent instanceof ExchangeCompletedEvent) {
+    config=getCompletedConfig();
+  }
+ else   if (coreEvent instanceof ExchangeSendingEvent) {
+    config=getSendingConfig();
+  }
+ else   if (coreEvent instanceof ExchangeSentEvent) {
+    config=getSentConfig();
+  }
+ else   if (coreEvent instanceof ExchangeRedeliveryEvent) {
+    config=getRedeliveryConfig();
+  }
+ else   if (coreEvent instanceof ExchangeFailedEvent) {
+    ExchangeFailedEvent failedEvent=(ExchangeFailedEvent)coreEvent;
+    String exceptionClassName=failedEvent.getExchange().getException().getClass().getCanonicalName();
+    config=getFailureConfig();
+  }
+  String uri=endpointUri(coreEvent);
+  if (config == null)   return false;
+  return config.matchesEvent(uri,exchangeEvent);
+}

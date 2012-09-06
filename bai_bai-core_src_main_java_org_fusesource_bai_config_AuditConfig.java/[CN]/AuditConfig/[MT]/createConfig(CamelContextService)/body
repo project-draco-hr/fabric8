@@ -1,0 +1,14 @@
+{
+  List<Policy> matching=new ArrayList<Policy>();
+  for (  Policy filter : policies) {
+    if (filter.matchesContext(contextService)) {
+      matching.add(filter);
+    }
+  }
+  if (matching.isEmpty()) {
+    return null;
+  }
+ else {
+    return new AuditConfig(endpointUri,matching);
+  }
+}
