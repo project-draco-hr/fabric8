@@ -2,13 +2,15 @@
   if (isEnabled() && (events == null || events.matches(event)) && (endpoints == null || endpoints.matches(event))) {
     Exchange exchange=event.getExchange();
     if (exchange != null) {
-      ExpressionDefinition expression=null;
-      if (filter != null) {
-        expression=filter.getFilter();
-      }
-      if (predicate == null && expression != null) {
-        CamelContext camelContext=exchange.getContext();
-        predicate=expression.createPredicate(camelContext);
+      if (predicate == null) {
+        ExpressionDefinition expression=null;
+        if (filter != null) {
+          expression=filter.getFilter();
+        }
+        if (expression != null) {
+          CamelContext camelContext=exchange.getContext();
+          predicate=expression.createPredicate(camelContext);
+        }
       }
       if (predicate != null) {
         return predicate.matches(exchange);
