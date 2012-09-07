@@ -1,0 +1,14 @@
+{
+  List<Policy> matching=new ArrayList<Policy>();
+  for (  Policy policy : policies) {
+    if (policy.isEnabled() && policy.matchesContext(contextService)) {
+      matching.add(policy);
+    }
+  }
+  if (matching.isEmpty()) {
+    return null;
+  }
+ else {
+    return new PolicySet(endpointUri,matching);
+  }
+}

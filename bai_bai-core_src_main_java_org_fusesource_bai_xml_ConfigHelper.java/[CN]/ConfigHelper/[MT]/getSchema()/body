@@ -1,0 +1,13 @@
+{
+  if (schema == null) {
+    SchemaFactory schemaFactory=SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    try {
+      Source[] sources={new StreamSource(getSchemaStream("camel-spring.xsd")),new StreamSource(getSchemaStream("bai.xsd"))};
+      schema=schemaFactory.newSchema(sources);
+    }
+ catch (    SAXException e) {
+      LOG.error("Could not parse BAI schemas. Reason: " + e,e);
+    }
+  }
+  return schema;
+}
