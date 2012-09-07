@@ -1,0 +1,16 @@
+{
+  if (filter != null && !unwrappedFilter) {
+    unwrappedFilter=true;
+    Expression exp=filter;
+    if (filter != null && filter.getExpressionValue() != null) {
+      exp=filter.getExpressionValue();
+    }
+    if (exp instanceof ExpressionClause) {
+      ExpressionClause<?> clause=(ExpressionClause<?>)exp;
+      if (clause.getExpressionType() != null) {
+        filter=clause.getExpressionType();
+      }
+    }
+  }
+  return filter;
+}

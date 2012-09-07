@@ -1,0 +1,8 @@
+{
+  JAXBContext context=createConfigJaxbContext();
+  Marshaller marshaller=context.createMarshaller();
+  marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,Boolean.TRUE);
+  NamespacePrefixMapper mapper=new AuditNamespacePrefixMapper();
+  marshaller.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper",mapper);
+  return marshaller;
+}
