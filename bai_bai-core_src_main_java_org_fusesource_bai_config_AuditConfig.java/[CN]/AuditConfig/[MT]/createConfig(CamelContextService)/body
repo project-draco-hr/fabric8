@@ -1,8 +1,8 @@
 {
   List<Policy> matching=new ArrayList<Policy>();
-  for (  Policy filter : policies) {
-    if (filter.matchesContext(contextService)) {
-      matching.add(filter);
+  for (  Policy policy : policies) {
+    if (policy.isEnabled() && policy.matchesContext(contextService)) {
+      matching.add(policy);
     }
   }
   if (matching.isEmpty()) {

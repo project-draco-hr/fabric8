@@ -1,0 +1,7 @@
+{
+  String bid=source.getIn().getHeader(Exchange.BREADCRUMB_ID,String.class);
+  if (bid == null && source.hasOut()) {
+    bid=source.getOut().getHeader(Exchange.BREADCRUMB_ID,String.class);
+  }
+  return bid;
+}

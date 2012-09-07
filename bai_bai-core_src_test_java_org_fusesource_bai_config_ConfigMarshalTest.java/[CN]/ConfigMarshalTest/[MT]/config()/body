@@ -1,8 +1,6 @@
 {
   AuditConfig config=new AuditConfig();
-  Policy policy=config.addPolicy("myId");
-  policy.excludeContext("*","audit*");
-  policy.getEndpointFilters().add("activemq:*");
+  config.addPolicy("myId").excludeContext("*","audit*").includeEndpoint("activemq:*").excludeEvent(EventType.FAILURE_HANDLED);
   String xml=ConfigHelper.toXml(config);
   System.out.println("XML: " + xml);
 }

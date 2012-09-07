@@ -20,7 +20,7 @@
     String exceptionClassName=failedEvent.getExchange().getException().getClass().getCanonicalName();
     config=getFailureConfig();
   }
-  String uri=endpointUri(coreEvent);
+  String uri=AuditEvent.endpointUri(coreEvent);
   if (config == null)   return false;
   return config.matchesEvent(uri,exchangeEvent);
 }
