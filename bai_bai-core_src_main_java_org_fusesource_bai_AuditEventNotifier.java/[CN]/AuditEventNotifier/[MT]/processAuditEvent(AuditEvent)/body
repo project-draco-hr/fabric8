@@ -1,0 +1,11 @@
+{
+  Exchange exchange=producer.createExchange();
+  exchange.getIn().setBody(createPayload(auditEvent));
+  exchange.setProperty(Exchange.NOTIFY_EVENT,Boolean.TRUE);
+  try {
+    producer.process(exchange);
+  }
+  finally {
+    exchange.removeProperty(Exchange.NOTIFY_EVENT);
+  }
+}

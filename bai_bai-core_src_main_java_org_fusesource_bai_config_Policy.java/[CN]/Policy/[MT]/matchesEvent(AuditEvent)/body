@@ -8,8 +8,7 @@
           expression=filter.getFilter();
         }
         if (expression != null) {
-          CamelContext camelContext=exchange.getContext();
-          predicate=expression.createPredicate(camelContext);
+          predicate=expression.createPredicate(event.getCamelContext());
         }
       }
       if (predicate != null) {
