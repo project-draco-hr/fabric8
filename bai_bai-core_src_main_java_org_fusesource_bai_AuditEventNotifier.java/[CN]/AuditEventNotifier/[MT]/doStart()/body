@@ -1,11 +1,4 @@
 {
   ObjectHelper.notNull(camelContext,"camelContext",this);
-  if (endpoint == null && endpointUri == null) {
-    throw new IllegalArgumentException("Either endpoint or endpointUri must be configured");
-  }
-  if (endpoint == null) {
-    endpoint=camelContext.getEndpoint(endpointUri);
-  }
-  producer=endpoint.createProducer();
-  ServiceHelper.startService(producer);
+  ServiceHelper.startService(getProducerTemplate());
 }

@@ -1,11 +1,6 @@
 {
-  Exchange exchange=producer.createExchange();
-  exchange.getIn().setBody(createPayload(auditEvent));
-  exchange.setProperty(Exchange.NOTIFY_EVENT,Boolean.TRUE);
-  try {
-    producer.process(exchange);
-  }
-  finally {
-    exchange.removeProperty(Exchange.NOTIFY_EVENT);
+  List<Policy> policies=config.getPolicies();
+  for (  Policy policy : policies) {
+    policy.process(this,auditEvent);
   }
 }
