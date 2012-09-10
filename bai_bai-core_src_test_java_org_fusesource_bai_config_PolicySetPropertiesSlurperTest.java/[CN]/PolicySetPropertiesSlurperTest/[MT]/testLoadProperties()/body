@@ -1,7 +1,7 @@
 {
   Properties properties=new Properties();
-  properties.load(this.getClass().getClassLoader().getResourceAsStream("policySet.cfg"));
-  PropertyMapPolicySlurper slurper=new PropertyMapPolicySlurper(properties);
+  properties.load(this.getClass().getClassLoader().getResourceAsStream("policySet.properties"));
+  PolicySetPropertiesSlurper slurper=new PolicySetPropertiesSlurper(properties);
   PolicySet policySet=slurper.slurp();
   List<Policy> policies=policySet.getPolicies();
   assertEquals("Policies were " + policies,2,policies.size());
