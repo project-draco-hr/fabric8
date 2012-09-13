@@ -1,5 +1,11 @@
 {
+  this.cachedConfig=dict;
   LOG.info("Updating BAI ConfigAdmin from " + dict);
-  PolicySetPropertiesSlurper pmps=new PolicySetPropertiesSlurper(dict);
-  setPolicySet(pmps.slurp());
+  try {
+    OsgiPropertiesPolicySetSlurper slurper=new OsgiPropertiesPolicySetSlurper(dict,getBundleContext(),fileWatcher);
+    setPolicySet(slurper.slurpXml());
+  }
+ catch (  Exception e) {
+    throw new ConfigurationException(OsgiPropertiesPolicySetSlurper.BAI_XML_PROPERTY,e.getMessage(),e);
+  }
 }
