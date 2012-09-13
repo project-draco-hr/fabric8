@@ -2,8 +2,9 @@
   String endpointId=ev.getEndpointURI();
   String srcContextId=ev.getExchange().getContext().getName();
   String srcRouteId=ev.getExchange().getFromRouteId();
-  LOG.info("Received AuditEvent: " + ev + " | Extracted data: "+ endpointId+ ", "+ srcContextId+ ", "+ srcRouteId);
-  LOG.info("Breadcrumb ID for: " + ev + " is: "+ ev.getBreadCrumbId(),String.class);
+  if (LOG.isDebugEnabled()) {
+    LOG.debug("Received AuditEvent: " + ev + " breadCrumbID: "+ ev.getBreadCrumbId()+ " | Extracted data: "+ endpointId+ ", "+ srcContextId+ ", "+ srcRouteId);
+  }
   boolean handled=false;
   if (ev.getEvent() instanceof ExchangeSendingEvent || ev.getEvent() instanceof ExchangeSentEvent || ev.getEvent() instanceof ExchangeCreatedEvent|| ev.getEvent() instanceof ExchangeCompletedEvent) {
     digestExchangeEvent(ev);
