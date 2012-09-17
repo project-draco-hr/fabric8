@@ -1,0 +1,33 @@
+{
+  System.err.println(executeCommand("fabric:create -n"));
+  try {
+    createAndAssertChildContainer("child1","root","default");
+    Container child1=getFabricService().getContainer("child1");
+    Assert.assertEquals("localhostname",child1.getResolver());
+    String sshUrlWithLocalhostResolver=child1.getSshUrl();
+    executeCommand("fabric:container-resolver-set --container child1 localip");
+    Assert.assertEquals("localip",child1.getResolver());
+    String sshUrlWithLocalIpResolver=child1.getSshUrl();
+    System.out.println("SSH URL with localhostname resolver:" + sshUrlWithLocalhostResolver);
+    System.out.println("SSH URL with localip resolver:" + sshUrlWithLocalIpResolver);
+    Assert.assertNotSame(sshUrlWithLocalhostResolver,sshUrlWithLocalIpResolver);
+    IZKClient zookeeper=getOsgiService(IZKClient.class);
+    ZooKeeperUtils.set(zookeeper,ZkPath.CONTAINER_PUBLIC_IP.getPath("child1"),"my.public.ip.address");
+    executeCommand("fabric:container-resolver-set --container child1 publicip");
+    Assert.assertEquals("publicip",child1.getResolver());
+    String sshUrlWithPublicIpResolver=child1.getSshUrl();
+    System.out.println("SSH URL with public resolver:" + sshUrlWithPublicIpResolver);
+    Assert.assertNotNull(sshUrlWithPublicIpResolver);
+    Assert.assertTrue(sshUrlWithPublicIpResolver.startsWith("my.public.ip.address"));
+    ZooKeeperUtils.set(zookeeper,ZkPath.CONTAINER_MANUAL_IP.getPath("child1"),"my.manual.ip.address");
+    executeCommand("fabric:container-resolver-set --container child1 manualip");
+    Assert.assertEquals("manualip",child1.getResolver());
+    String sshUrlWithManualIpResolver=child1.getSshUrl();
+    System.out.println("SSH URL with manual resolver:" + sshUrlWithManualIpResolver);
+    Assert.assertNotNull(sshUrlWithManualIpResolver);
+    Assert.assertTrue(sshUrlWithManualIpResolver.startsWith("my.manual.ip.address"));
+  }
+  finally {
+    destroyChildContainer("child1");
+  }
+}

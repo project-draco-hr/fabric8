@@ -1,28 +1,9 @@
 {
   Map<String,String> configMap=new HashMap<String,String>();
   if (configs.contains("=")) {
-    String[] keyValues=configs.split("=");
-    int index=0;
-    String prefix="";
-    while (index + 1 < keyValues.length) {
-      String key=!prefix.isEmpty() ? prefix : keyValues[index];
-      String value=keyValues[index + 1];
-      if (value.contains(DELIMETER) && index + 2 != keyValues.length) {
-        prefix=value.substring(value.lastIndexOf(DELIMETER) + 1);
-        value=value.substring(0,value.lastIndexOf(DELIMETER));
-      }
- else {
-        prefix="";
-      }
-      configMap.put(key,value);
-      index+=1;
-    }
-  }
- else {
-    String[] keys=configs.split(",");
-    for (    String key : keys) {
-      configMap.put(key,"");
-    }
+    String key=configs.substring(0,configs.indexOf("="));
+    String value=configs.substring(configs.indexOf("=") + 1);
+    configMap.put(key,value);
   }
   return configMap;
 }

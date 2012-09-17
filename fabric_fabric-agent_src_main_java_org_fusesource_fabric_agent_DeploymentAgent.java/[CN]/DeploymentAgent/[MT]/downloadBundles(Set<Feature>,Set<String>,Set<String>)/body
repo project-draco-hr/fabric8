@@ -1,0 +1,43 @@
+{
+  Set<String> locations=new HashSet<String>();
+  for (  Feature feature : features) {
+    for (    BundleInfo bundle : feature.getBundles()) {
+      locations.add(bundle.getLocation());
+    }
+  }
+  for (  String bundle : bundles) {
+    locations.add(bundle);
+  }
+  for (  String override : overrides) {
+    locations.add(override);
+  }
+  final CountDownLatch latch=new CountDownLatch(locations.size());
+  final Map<String,File> downloads=new ConcurrentHashMap<String,File>();
+  final List<Throwable> errors=new CopyOnWriteArrayList<Throwable>();
+  for (  final String location : locations) {
+    if (!location.startsWith(FAB_PROTOCOL)) {
+      manager.download(location).addListener(new FutureListener<DownloadFuture>(){
+        public void operationComplete(        DownloadFuture future){
+          try {
+            downloads.put(location,future.getFile());
+          }
+ catch (          Throwable e) {
+            errors.add(e);
+          }
+ finally {
+            latch.countDown();
+          }
+        }
+      }
+);
+    }
+ else {
+      latch.countDown();
+    }
+  }
+  latch.await();
+  if (!errors.isEmpty()) {
+    throw new MultiException("Error while downloading bundles",errors);
+  }
+  return downloads;
+}

@@ -1,0 +1,10 @@
+{
+  ServiceReference ref=bundleContext.getServiceReference(MBeanServer.class.getName());
+  if (ref != null) {
+    return (MBeanServer)bundleContext.getService(ref);
+  }
+ else {
+    LOG.warn("Could not find MBeanServer in the OSGi registry so using the platform MBeanServer instead");
+    return ManagementFactory.getPlatformMBeanServer();
+  }
+}
