@@ -3,7 +3,7 @@
   if (idx > 0) {
     String name=remaining.substring(0,idx);
     String fabricPath=getFabricPath(name);
-    String childUri=remaining.substring(idx + 1);
+    String childUri=replaceAnyIpAddress(remaining.substring(idx + 1));
     Group group=ZooKeeperGroupFactory.create(getZkClient(),fabricPath,accessControlList);
     return new FabricPublisherEndpoint(uri,this,group,childUri);
   }

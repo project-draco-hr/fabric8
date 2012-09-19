@@ -90,10 +90,10 @@
   }
   Set<String> bundles=new HashSet<String>();
   for (  String key : properties.keySet()) {
-    if (key.startsWith("bundle.")) {
+    if (key.startsWith("fab.")) {
       String url=properties.get(key);
       if (url == null || url.length() == 0) {
-        url=key.substring("bundle.".length());
+        url=key.substring("fab.".length());
       }
       if (url != null && url.length() > 0) {
         if (url.startsWith(FAB_PROTOCOL)) {
@@ -102,6 +102,18 @@
  else {
           bundles.add(url);
         }
+      }
+    }
+  }
+  Set<String> overrides=new HashSet<String>();
+  for (  String key : properties.keySet()) {
+    if (key.startsWith("override.")) {
+      String url=properties.get(key);
+      if (url == null || url.length() == 0) {
+        url=key.substring("override.".length());
+      }
+      if (url != null && url.length() > 0) {
+        overrides.add(url);
       }
     }
   }
@@ -114,6 +126,6 @@
     }
   }
 );
-  updateDeployment(fabResolverFactory,repositories,features,bundles,fabs);
+  updateDeployment(fabResolverFactory,repositories,features,bundles,fabs,overrides);
   return true;
 }

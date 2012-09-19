@@ -29,6 +29,12 @@
       updateConfig(pidConfig,FAB_PREFIX + fabsLocation.replace('/','_'),fabsLocation,set,delete);
     }
   }
+  if (overridesList != null && !overridesList.isEmpty()) {
+    String[] overrides=overridesList.split(DELIMETER);
+    for (    String overridesLocation : overrides) {
+      updateConfig(pidConfig,FAB_PREFIX + overridesLocation.replace('/','_'),overridesLocation,set,delete);
+    }
+  }
   if (configAdminProperties != null && configAdminProperties.length > 0) {
     for (    String configAdminProperty : configAdminProperties) {
       String currentPid=null;

@@ -1,7 +1,7 @@
 {
-  Map<String,Set<String>> artifactVersions=new TreeMap<String,Set<String>>();
+  Set<String> artifacts=new TreeSet<String>();
   for (  Version version : fabric.getVersions()) {
-    doGetPossibleUpgrades(version,artifactVersions);
+    doCollectArtifacts(version,artifacts);
   }
-  return artifactVersions;
+  return doGetPossibleUpgrades(artifacts);
 }
