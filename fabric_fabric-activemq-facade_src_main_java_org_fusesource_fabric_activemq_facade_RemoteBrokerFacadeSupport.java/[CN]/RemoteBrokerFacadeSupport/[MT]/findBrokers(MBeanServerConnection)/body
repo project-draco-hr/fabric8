@@ -1,0 +1,11 @@
+{
+  ObjectName name;
+  if (this.brokerName == null) {
+    name=new ObjectName("org.apache.activemq:Type=Broker,*");
+  }
+ else {
+    name=new ObjectName("org.apache.activemq:BrokerName=" + this.brokerName + ",Type=Broker");
+  }
+  Set<ObjectName> brokers=connection.queryNames(name,null);
+  return brokers;
+}

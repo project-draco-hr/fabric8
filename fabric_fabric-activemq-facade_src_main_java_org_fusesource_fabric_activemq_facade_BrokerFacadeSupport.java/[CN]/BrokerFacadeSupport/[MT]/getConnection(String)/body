@@ -1,0 +1,10 @@
+{
+  connectionName=StringUtils.replace(connectionName,":","_");
+  String brokerName=getBrokerName();
+  ObjectName query=new ObjectName("org.apache.activemq:BrokerName=" + brokerName + ",Type=Connection,*,Connection="+ connectionName);
+  Set<ObjectName> queryResult=queryNames(query,null);
+  if (queryResult.size() == 0)   return null;
+  ObjectName objectName=queryResult.iterator().next();
+  Object rc=newProxyInstance(objectName,ConnectionViewMBean.class,true);
+  return proxy(ConnectionViewFacade.class,rc,objectName.getCanonicalName());
+}

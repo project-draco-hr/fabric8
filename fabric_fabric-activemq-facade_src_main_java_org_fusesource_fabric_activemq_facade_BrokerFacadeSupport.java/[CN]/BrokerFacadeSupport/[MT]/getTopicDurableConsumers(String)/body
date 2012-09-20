@@ -1,0 +1,7 @@
+{
+  String brokerName=getBrokerName();
+  topicName=StringUtils.replace(topicName,"\"","_");
+  ObjectName query=new ObjectName("org.apache.activemq:BrokerName=" + brokerName + ",Type=Subscription,persistentMode=Durable,destinationType=Topic,destinationName="+ topicName+ ",*");
+  Set<ObjectName> queryResult=queryNames(query,null);
+  return getManagedObjects(queryResult.toArray(new ObjectName[queryResult.size()]),DurableSubscriptionViewMBean.class,DurableSubscriptionViewFacade.class);
+}

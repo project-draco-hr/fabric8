@@ -1,0 +1,8 @@
+{
+  String brokerName=getBrokerName();
+  ObjectName query=new ObjectName("org.apache.activemq:BrokerName=" + brokerName + ",Type=Connector,*");
+  Set<ObjectName> queryResult=queryNames(query,null);
+  Collection<String> result=new ArrayList<String>(queryResult.size());
+  for (  ObjectName on : queryResult)   result.add(on.getKeyProperty("ConnectorName"));
+  return result;
+}

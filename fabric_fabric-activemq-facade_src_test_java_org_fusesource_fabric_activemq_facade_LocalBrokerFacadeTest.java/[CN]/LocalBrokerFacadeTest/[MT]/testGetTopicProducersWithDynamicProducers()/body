@@ -1,0 +1,15 @@
+{
+  assertEquals(0,brokerFacade.getTopicProducers(TOPIC_NAME).size());
+  Destination destination=session.createTopic(TOPIC_NAME);
+  MessageProducer producer1=session.createProducer(destination);
+  Thread.sleep(500);
+  assertEquals(1,brokerFacade.getTopicProducers(TOPIC_NAME).size());
+  MessageProducer producer2=session.createProducer(null);
+  producer2.send(destination,session.createTextMessage("Dynamic Producer Made Me."));
+  Thread.sleep(500);
+  assertEquals(2,brokerFacade.getTopicProducers(TOPIC_NAME).size());
+  producer1.close();
+  producer2.close();
+  Thread.sleep(500);
+  assertEquals(0,brokerFacade.getTopicProducers(TOPIC_NAME).size());
+}

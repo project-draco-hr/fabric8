@@ -1,0 +1,7 @@
+{
+  connectionName=StringUtils.replace(connectionName,":","_");
+  String brokerName=getBrokerName();
+  ObjectName query=new ObjectName("org.apache.activemq:BrokerName=" + brokerName + ",Type=Subscription,clientId="+ connectionName+ ",*");
+  Set<ObjectName> queryResult=queryNames(query,null);
+  return getManagedObjects(queryResult.toArray(new ObjectName[queryResult.size()]),SubscriptionViewFacade.class,SubscriptionViewFacade.class);
+}

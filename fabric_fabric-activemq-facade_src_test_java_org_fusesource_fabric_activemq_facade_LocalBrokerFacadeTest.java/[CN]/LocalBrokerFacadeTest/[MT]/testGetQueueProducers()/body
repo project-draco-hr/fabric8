@@ -1,0 +1,20 @@
+{
+  assertEquals(0,brokerFacade.getQueueProducers(QUEUE_NAME).size());
+  Destination destination=session.createQueue(QUEUE_NAME);
+  MessageProducer producer1=session.createProducer(destination);
+  Thread.sleep(500);
+  assertEquals(1,brokerFacade.getQueueProducers(QUEUE_NAME).size());
+  producer1.close();
+  Thread.sleep(500);
+  assertEquals(0,brokerFacade.getQueueProducers(QUEUE_NAME).size());
+  MessageProducer producer2=session.createProducer(destination);
+  MessageProducer producer3=session.createProducer(destination);
+  MessageProducer producer4=session.createProducer(destination);
+  Thread.sleep(500);
+  assertEquals(3,brokerFacade.getQueueProducers(QUEUE_NAME).size());
+  producer2.close();
+  producer3.close();
+  producer4.close();
+  Thread.sleep(500);
+  assertEquals(0,brokerFacade.getQueueProducers(QUEUE_NAME).size());
+}

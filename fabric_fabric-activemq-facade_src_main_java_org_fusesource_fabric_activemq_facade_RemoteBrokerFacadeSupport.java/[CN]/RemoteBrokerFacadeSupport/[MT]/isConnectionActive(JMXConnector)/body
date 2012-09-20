@@ -1,0 +1,13 @@
+{
+  if (connector == null) {
+    return false;
+  }
+  try {
+    MBeanServerConnection connection=connector.getMBeanServerConnection();
+    int brokerCount=findBrokers(connection).size();
+    return brokerCount > 0;
+  }
+ catch (  Exception e) {
+    return false;
+  }
+}

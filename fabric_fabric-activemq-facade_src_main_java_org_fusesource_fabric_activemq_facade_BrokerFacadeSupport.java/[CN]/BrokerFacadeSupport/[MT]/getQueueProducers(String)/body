@@ -1,0 +1,16 @@
+{
+  String brokerName=getBrokerName();
+  queueName=StringUtils.replace(queueName,"\"","_");
+  ObjectName query=new ObjectName("org.apache.activemq:BrokerName=" + brokerName + ",Type=Producer,destinationType=Queue,destinationName="+ queueName+ ",*");
+  Set<ObjectName> queryResult=queryNames(query,null);
+  Collection<ProducerViewFacade> producers=getManagedObjects(queryResult.toArray(new ObjectName[queryResult.size()]),ProducerViewMBean.class,ProducerViewFacade.class);
+  query=new ObjectName("org.apache.activemq:BrokerName=" + brokerName + ",Type=Producer,destinationType=Dynamic,*");
+  queryResult=queryNames(query,null);
+  Collection<ProducerViewFacade> dynamics=getManagedObjects(queryResult.toArray(new ObjectName[queryResult.size()]),ProducerViewMBean.class,ProducerViewFacade.class);
+  for (  ProducerViewFacade dynamicProducer : dynamics) {
+    if (queueName.equals(dynamicProducer.getDestinationName())) {
+      producers.add(dynamicProducer);
+    }
+  }
+  return producers;
+}

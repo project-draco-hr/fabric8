@@ -1,0 +1,18 @@
+{
+  assertEquals(0,brokerFacade.getQueueProducers(QUEUE_NAME).size());
+  Destination destination=session.createQueue(QUEUE_NAME);
+  MessageProducer producer1=session.createProducer(destination);
+  Thread.sleep(500);
+  assertEquals(1,brokerFacade.getQueueProducers(QUEUE_NAME).size());
+  MessageProducer producer2=session.createProducer(null);
+  producer2.send(destination,session.createTextMessage("Dynamic Producer Made Me."));
+  Thread.sleep(500);
+  assertEquals(2,brokerFacade.getQueueProducers(QUEUE_NAME).size());
+  for (  ProducerViewMBean bean : brokerFacade.getQueueProducers(QUEUE_NAME)) {
+    LOG.debug("Got bean for producer " + bean.getSessionId() + " on dest = "+ bean.getDestinationName());
+  }
+  producer1.close();
+  producer2.close();
+  Thread.sleep(500);
+  assertEquals(0,brokerFacade.getQueueProducers(QUEUE_NAME).size());
+}

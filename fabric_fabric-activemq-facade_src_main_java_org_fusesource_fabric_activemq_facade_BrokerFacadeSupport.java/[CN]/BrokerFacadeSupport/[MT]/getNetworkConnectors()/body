@@ -1,0 +1,6 @@
+{
+  String brokerName=getBrokerName();
+  ObjectName query=new ObjectName("org.apache.activemq:BrokerName=" + brokerName + ",Type=NetworkConnector,*");
+  Set<ObjectName> queryResult=queryNames(query,null);
+  return getManagedObjects(queryResult.toArray(new ObjectName[queryResult.size()]),NetworkConnectorViewMBean.class,NetworkConnectorViewFacade.class);
+}

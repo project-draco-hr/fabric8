@@ -1,0 +1,10 @@
+{
+  if (brokerFacade == null) {
+    throw new IllegalArgumentException("No brokerFacade injected!");
+  }
+  BrokerViewMBean answer=brokerFacade.getBrokerAdmin();
+  if (answer == null) {
+    throw new IllegalArgumentException("No brokerAdmin on the injected brokerFacade: " + brokerFacade);
+  }
+  return answer;
+}

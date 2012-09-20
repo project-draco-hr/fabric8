@@ -1,0 +1,10 @@
+{
+  if (checkConnection()) {
+    return connection;
+  }
+synchronized (this) {
+    connection=getConnectionFactory().createConnection();
+    connection.start();
+    return connection;
+  }
+}
