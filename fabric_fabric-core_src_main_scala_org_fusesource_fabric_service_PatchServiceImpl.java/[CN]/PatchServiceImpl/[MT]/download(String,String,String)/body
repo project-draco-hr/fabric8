@@ -1,0 +1,11 @@
+{
+  String[] mvn=location.split("\\|");
+  String repo=mvn[0];
+  String groupId=mvn[1];
+  String artifactId=mvn[2];
+  String version=mvn[3];
+  URL url=new URL(repo + "/" + groupId.replace('.','/')+ "/"+ artifactId+ "/"+ version+ "/"+ artifactId+ "-"+ version+ (qualifier != null ? "-" + qualifier : "")+ "."+ type);
+  File file=new File(System.getProperty("karaf.home") + "/" + System.getProperty("karaf.default.repository")+ "/"+ groupId.replace('.','/')+ "/"+ artifactId+ "/"+ version+ "/"+ artifactId+ "-"+ version+ (qualifier != null ? "-" + qualifier : "")+ "."+ type);
+  download(file,url);
+  return file;
+}

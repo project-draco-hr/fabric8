@@ -1,6 +1,6 @@
 {
-  this.bundleContext=bundleContext;
-  String dir=bundleContext.getProperty("fuse.patch.location");
+  this.bundleContext=bundleContext.getBundle(0).getBundleContext();
+  String dir=this.bundleContext.getProperty("fuse.patch.location");
   patchDir=dir != null ? new File(dir) : this.bundleContext.getDataFile("patches");
   if (!patchDir.isDirectory()) {
     patchDir.mkdirs();
@@ -8,5 +8,5 @@
       throw new PatchException("Unable to create patch folder");
     }
   }
-  reload();
+  load();
 }
