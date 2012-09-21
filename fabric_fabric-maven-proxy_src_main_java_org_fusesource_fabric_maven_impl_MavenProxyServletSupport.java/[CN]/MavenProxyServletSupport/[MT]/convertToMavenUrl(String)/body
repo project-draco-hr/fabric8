@@ -1,4 +1,7 @@
 {
+  if (location == null) {
+    throw new InvalidMavenArtifactRequest("Cannot match request path to maven url, request path is empty.");
+  }
   String[] p=location.split("/");
   if (p.length >= 4) {
     String filename=p[p.length - 1];
@@ -35,10 +38,10 @@
       return sb.toString();
     }
  else {
-      return null;
+      throw new InvalidMavenArtifactRequest("Filename:" + filename + " doesn't match the artifactId:"+ artifactId+ " and version:"+ version+ ".");
     }
   }
  else {
-    return null;
+    throw new InvalidMavenArtifactRequest("Request path is incomplete.");
   }
 }
