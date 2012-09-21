@@ -8,4 +8,10 @@
   assertMatchesEvent(config,false,endpointSeda,EventType.CREATED,bodyB);
   Policy policy=config.getPolicies().get(0);
   assertEquals("policies[0].to","seda:dummy",policy.getTo());
+  ExchangeFilter filter=policy.getFilter();
+  assertNotNull(filter);
+  ExpressionDefinition expression=filter.getExpression();
+  assertTrue("expression should be XPath but was " + expression,expression instanceof XPathExpression);
+  XPathExpression xpath=(XPathExpression)expression;
+  assertEquals("XPath expression","/person/@name = 'James'",xpath.getExpression());
 }
