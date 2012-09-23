@@ -1,8 +1,8 @@
 {
   if (computeService != null) {
-    String providerName=computeService.getContext().unwrap().getId();
-    if (providerName != null) {
-      computeServiceMap.remove(providerName);
+    String serviceId=(String)computeService.getContext().unwrap().getProviderMetadata().getDefaultProperties().get(Constants.JCLOUDS_SERVICE_ID);
+    if (serviceId != null) {
+      computeServiceMap.remove(serviceId);
     }
   }
 }

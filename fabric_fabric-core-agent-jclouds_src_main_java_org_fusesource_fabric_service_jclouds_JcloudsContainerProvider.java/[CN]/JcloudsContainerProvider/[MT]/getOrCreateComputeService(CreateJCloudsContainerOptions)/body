@@ -5,8 +5,8 @@
     if (object instanceof ComputeService) {
       computeService=(ComputeService)object;
     }
-    if (computeService == null) {
-      computeService=computeServiceMap.get(options.getProviderName());
+    if (computeService == null && options.getServiceId() != null) {
+      computeService=computeServiceMap.get(options.getServiceId());
     }
     if (computeService == null) {
       options.getCreationStateListener().onStateChange("Compute Service not found. Creating ...");
@@ -15,8 +15,13 @@
       }
       Map<String,String> serviceOptions=options.getServiceOptions();
       try {
-        CloudUtils.registerProvider(zooKeeper,configurationAdmin,options.getProviderName(),options.getIdentity(),options.getCredential(),serviceOptions);
-        computeService=CloudUtils.waitForComputeService(bundleContext,options.getProviderName());
+        if (options.getProviderName() != null) {
+          CloudUtils.registerProvider(zooKeeper,configurationAdmin,options.getServiceId(),options.getProviderName(),options.getIdentity(),options.getCredential(),serviceOptions);
+        }
+ else         if (options.getApiName() != null) {
+          CloudUtils.registerApi(zooKeeper,configurationAdmin,options.getServiceId(),options.getApiName(),options.getEndpoint(),options.getIdentity(),options.getCredential(),serviceOptions);
+        }
+        computeService=CloudUtils.waitForComputeService(bundleContext,options.getServiceId());
       }
  catch (      Exception e) {
         LOGGER.warn("Did not manage to register compute cloud provider.");

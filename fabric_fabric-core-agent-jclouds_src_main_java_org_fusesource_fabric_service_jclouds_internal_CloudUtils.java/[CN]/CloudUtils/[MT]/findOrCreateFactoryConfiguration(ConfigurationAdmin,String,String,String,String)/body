@@ -6,8 +6,18 @@
       if (configurations != null) {
         for (        Configuration conf : configurations) {
           Dictionary dictionary=conf.getProperties();
-          if (dictionary != null && provider.equals(dictionary.get("provider"))) {
-            return conf;
+          if (dictionary != null && id != null) {
+            if (id.equals(dictionary.get(Constants.JCLOUDS_SERVICE_ID))) {
+              return conf;
+            }
+          }
+ else {
+            if (dictionary != null && provider != null && provider.equals(dictionary.get("provider"))) {
+              return conf;
+            }
+            if (dictionary != null && api != null && api.equals(dictionary.get("api"))) {
+              return conf;
+            }
           }
         }
       }

@@ -2,7 +2,7 @@
   ComputeService computeService=null;
   try {
     for (int r=0; r < 6; r++) {
-      ServiceReference[] references=bundleContext.getAllServiceReferences(ComputeService.class.getName(),"(provider=" + provider + ")");
+      ServiceReference[] references=bundleContext.getAllServiceReferences(ComputeService.class.getName(),"(" + Constants.JCLOUDS_SERVICE_ID + "="+ id+ ")");
       if (references != null && references.length > 0) {
         computeService=(ComputeService)bundleContext.getService(references[0]);
         return computeService;
