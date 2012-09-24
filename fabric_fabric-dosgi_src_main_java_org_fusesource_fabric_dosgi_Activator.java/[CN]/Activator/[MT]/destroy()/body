@@ -1,10 +1,9 @@
 {
-  if (manager != null) {
-    Manager mgr=manager;
+  destroyManager();
+  if (reference != null) {
     ServiceReference ref=reference;
     reference=null;
-    manager=null;
+    zookeeper=null;
     this.bundleContext.ungetService(ref);
-    mgr.destroy();
   }
 }

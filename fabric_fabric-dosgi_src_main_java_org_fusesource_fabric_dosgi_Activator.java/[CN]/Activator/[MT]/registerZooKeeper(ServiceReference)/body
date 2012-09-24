@@ -1,9 +1,9 @@
 {
+  destroy();
   try {
-    destroy();
     reference=ref;
-    manager=new Manager(this.bundleContext,(IZKClient)this.bundleContext.getService(reference),uri,exportedAddress);
-    manager.init();
+    zookeeper=(IZKClient)this.bundleContext.getService(reference);
+    zookeeper.registerListener(this);
   }
  catch (  Exception e) {
     throw new RuntimeException("Unable to start DOSGi service: " + e.getMessage(),e);
