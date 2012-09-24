@@ -5,14 +5,18 @@
       for (      Configuration configuration : configurations) {
         Dictionary properties=configuration.getProperties();
         if (properties != null) {
-          String provider=String.valueOf(properties.get("provider"));
+          String id=String.valueOf(properties.get(Constants.JCLOUDS_SERVICE_ID));
           String identity=String.valueOf(properties.get("identity"));
           String credential=String.valueOf(properties.get("credential"));
-          if (provider != null && identity != null && credential != null && getZooKeeper().isConnected()) {
-            if (getZooKeeper().exists(ZkPath.CLOUD_PROVIDER.getPath(provider)) == null) {
-              ZooKeeperUtils.create(getZooKeeper(),ZkPath.CLOUD_PROVIDER.getPath(provider));
-              ZooKeeperUtils.set(getZooKeeper(),ZkPath.CLOUD_PROVIDER_IDENTIY.getPath(provider),identity);
-              ZooKeeperUtils.set(getZooKeeper(),ZkPath.CLOUD_PROVIDER_CREDENTIAL.getPath(provider),credential);
+          if (id != null && identity != null && credential != null && getZooKeeper().isConnected()) {
+            if (getZooKeeper().exists(ZkPath.CLOUD_SERVICE.getPath(id)) == null) {
+              ZooKeeperUtils.create(getZooKeeper(),ZkPath.CLOUD_SERVICE.getPath(id));
+              Enumeration keys=properties.keys();
+              while (keys.hasMoreElements()) {
+                String key=String.valueOf(keys.nextElement());
+                String value=String.valueOf(properties.get(key));
+                ZooKeeperUtils.set(getZooKeeper(),ZkPath.CLOUD_SERVICE_PROPERTY.getPath(id,key),value);
+              }
             }
           }
         }
@@ -20,6 +24,6 @@
     }
   }
  catch (  Exception e) {
-    LOGGGER.error("Failed to retrieve compute service information from configuration admin.",e);
+    LOGGER.error("Failed to retrieve compute service information from configuration admin.",e);
   }
 }
