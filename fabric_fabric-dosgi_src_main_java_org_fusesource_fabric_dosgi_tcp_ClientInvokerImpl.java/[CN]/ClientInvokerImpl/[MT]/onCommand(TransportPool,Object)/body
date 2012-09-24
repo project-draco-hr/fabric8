@@ -3,6 +3,7 @@
     DataByteArrayInputStream bais=new DataByteArrayInputStream((Buffer)data);
     int size=bais.readInt();
     long correlation=bais.readVarLong();
+    pool.onDone(correlation);
     ResponseFuture response=requests.remove(correlation);
     if (response != null) {
       response.set(bais);

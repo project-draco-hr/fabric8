@@ -6,13 +6,13 @@
     public void run(){
       Transport transport=getIdleTransport();
       if (transport != null) {
-        transport.offer(data);
+        doOffer(transport,data,id);
         if (transport.full()) {
-          transports.put(transport,0L);
+          transports.get(transport).time=0L;
         }
       }
  else {
-        pending.add(data);
+        pending.add(new Pair(data,id));
       }
     }
   }
