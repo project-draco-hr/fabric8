@@ -15,10 +15,12 @@
  else   if (!configs.contains(CONFIG)) {
     throw new UnsupportedOperationException();
   }
+  URI connectUri=new URI(this.server.getConnectAddress());
+  String fabricAddress=connectUri.getScheme() + "://" + exportedAddress+ ":"+ connectUri.getPort();
   properties.remove(SERVICE_EXPORTED_CONFIGS);
   properties.put(SERVICE_IMPORTED_CONFIGS,new String[]{CONFIG});
   properties.put(ENDPOINT_FRAMEWORK_UUID,this.uuid);
-  properties.put(FABRIC_ADDRESS,this.server.getConnectAddress());
+  properties.put(FABRIC_ADDRESS,fabricAddress);
   String uuid=UuidGenerator.getUUID();
   properties.put(ENDPOINT_ID,uuid);
   EndpointDescription description=new EndpointDescription(properties);
