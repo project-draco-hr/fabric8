@@ -117,12 +117,11 @@
     LOGGER.info("  " + agentResource.getURI());
     InputStream is=getBundleInputStream(agentResource,downloads,infos);
     Bundle bundle=bundleContext.getBundle();
-    checksums.save();
-    bundle.update(is);
     if (newCheckums.containsKey(bundle.getLocation())) {
       checksums.put(bundle.getLocation(),newCheckums.get(bundle.getLocation()));
-      checksums.save();
     }
+    checksums.save();
+    bundle.update(is);
     return;
   }
   LOGGER.info("Changes to perform:");
