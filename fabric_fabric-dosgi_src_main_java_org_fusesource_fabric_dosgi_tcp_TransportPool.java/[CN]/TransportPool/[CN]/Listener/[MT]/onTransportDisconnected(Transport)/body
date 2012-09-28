@@ -1,8 +1,3 @@
 {
-  TransportState state=transports.remove(transport);
-  if (state != null) {
-    for (    Object id : state.inflight) {
-      onFailure(id,new IOException("Transport disconnected"));
-    }
-  }
+  onTransportFailure(transport,new IOException("Transport disconnected"));
 }

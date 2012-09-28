@@ -3,7 +3,7 @@
     queue().execute(new Runnable(){
       public void run(){
         final AtomicInteger latch=new AtomicInteger(transports.size());
-        final Runnable coutDown=new Runnable(){
+        final Runnable countDown=new Runnable(){
           public void run(){
             if (latch.decrementAndGet() == 0) {
               if (onComplete != null) {
@@ -14,7 +14,7 @@
         }
 ;
         for (        TransportPool pool : transports.values()) {
-          pool.stop(coutDown);
+          pool.stop(countDown);
         }
       }
     }

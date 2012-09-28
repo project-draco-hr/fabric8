@@ -8,5 +8,11 @@
       }
     }
     transport.stop();
+    if (transports.isEmpty()) {
+      while (!pending.isEmpty()) {
+        Pair p=pending.removeFirst();
+        onFailure(p.id,error);
+      }
+    }
   }
 }

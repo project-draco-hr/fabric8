@@ -1,4 +1,7 @@
 {
+  if (!running.get()) {
+    throw new IllegalStateException("DOSGi Client stopped");
+  }
   final long correlation=correlationGenerator.incrementAndGet();
   DataByteArrayOutputStream baos=new DataByteArrayOutputStream((int)(handler.lastRequestSize * 1.10));
   baos.writeInt(0);
@@ -25,6 +28,7 @@
       }
  catch (      Exception e) {
         LOGGER.info("Error while sending request",e);
+        future.fail(e);
       }
     }
   }
