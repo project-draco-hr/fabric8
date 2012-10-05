@@ -1,0 +1,15 @@
+{
+synchronized (_lock) {
+    try {
+      connect();
+    }
+ catch (    Throwable e) {
+      LOG.warn("Error while restarting:",e);
+      if (_expiredSessionRecovery == null) {
+        _expiredSessionRecovery=new ExpiredSessionRecovery();
+        _expiredSessionRecovery.setDaemon(true);
+        _expiredSessionRecovery.start();
+      }
+    }
+  }
+}

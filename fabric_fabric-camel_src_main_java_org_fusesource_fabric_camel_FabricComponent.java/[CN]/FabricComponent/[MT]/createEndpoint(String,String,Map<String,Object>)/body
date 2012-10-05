@@ -4,12 +4,12 @@
     String name=remaining.substring(0,idx);
     String fabricPath=getFabricPath(name);
     String childUri=replaceAnyIpAddress(remaining.substring(idx + 1));
-    Group group=ZooKeeperGroupFactory.create(getZkClient(),fabricPath,accessControlList);
+    Group group=ZooKeeperGroupFactory.create(getZkClient(),fabricPath);
     return new FabricPublisherEndpoint(uri,this,group,childUri);
   }
  else {
     String fabricPath=getFabricPath(remaining);
-    Group group=ZooKeeperGroupFactory.create(getZkClient(),fabricPath,accessControlList);
+    Group group=ZooKeeperGroupFactory.create(getZkClient(),fabricPath);
     return new FabricLocatorEndpoint(uri,this,group);
   }
 }

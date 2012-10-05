@@ -12,6 +12,6 @@
       ((ZKClient)zkClient).start();
     }
   }
-  checkZkConnected();
+  zkClient.waitForConnected(new Timespan(getMaximumConnectionTimeout()));
   return zkClient;
 }

@@ -1,11 +1,9 @@
 {
-  if (_stateChangeDispatcher != null) {
-    _stateChangeDispatcher.end();
+  if (managedServiceRegistration != null) {
+    managedServiceRegistration.unregister();
   }
-  if (isConnected()) {
-    super.close();
+  if (zkClientRegistration != null) {
+    zkClientRegistration.unregister();
   }
-  if (_zk != null) {
-    _zk.close();
-  }
+  super.close();
 }

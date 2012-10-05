@@ -3,7 +3,7 @@
   zkClient=new ZKClient(connectString,getTimeout(),watcher);
   zkClient.start();
   try {
-    zkClient.waitForStart(connectTimeout);
+    zkClient.waitForConnected(connectTimeout);
   }
  catch (  TimeoutException e) {
     throw new Exception("Failed to connect to ZooKeeper on " + connectString,e);

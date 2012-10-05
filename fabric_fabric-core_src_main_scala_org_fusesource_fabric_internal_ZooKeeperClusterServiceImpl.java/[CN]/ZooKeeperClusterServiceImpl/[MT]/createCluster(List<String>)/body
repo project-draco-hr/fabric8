@@ -90,7 +90,7 @@
       ZKClient dst=new ZKClient(realConnectionUrl,Timespan.ONE_MINUTE,null);
       try {
         dst.start();
-        dst.waitForStart(new Timespan(30,Timespan.TimeUnit.SECOND));
+        dst.waitForConnected(new Timespan(30,Timespan.TimeUnit.SECOND));
         ZooKeeperUtils.copy(zooKeeper,dst,"/fabric/registry");
         ZooKeeperUtils.copy(zooKeeper,dst,"/fabric/authentication");
         ZooKeeperUtils.copy(zooKeeper,dst,"/fabric/configs");
@@ -109,7 +109,7 @@
         setConfigProperty(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.url",connectionUrl);
       }
   finally {
-        dst.destroy();
+        dst.close();
       }
     }
  else {

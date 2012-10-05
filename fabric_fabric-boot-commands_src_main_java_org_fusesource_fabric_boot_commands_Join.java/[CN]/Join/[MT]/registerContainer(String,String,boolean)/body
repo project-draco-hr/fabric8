@@ -4,7 +4,7 @@
   try {
     zkClient=new ZKClient(zookeeperUrl,Timespan.ONE_MINUTE,null);
     zkClient.start();
-    zkClient.waitForStart();
+    zkClient.waitForConnected();
     exists=zkClient.exists(ZkPath.CONTAINER.getPath(name)) != null;
     if (!exists || force) {
       ZkPath.createContainerPaths(zkClient,containerName,version,profile);
@@ -12,7 +12,7 @@
   }
   finally {
     if (zkClient != null) {
-      zkClient.destroy();
+      zkClient.close();
     }
   }
   return !exists || force;

@@ -8,28 +8,8 @@
     zkServerFactoryBean.setClientPortAddress(new InetSocketAddress("localhost",zooKeeperPort));
     zkServerFactoryBean.afterPropertiesSet();
     ZKClient zooKeeper=new ZKClient("localhost:" + zooKeeperPort,Timespan.ONE_MINUTE,null);
-    final AtomicBoolean connected=new AtomicBoolean(false);
-    zooKeeper.registerListener(new LifecycleListener(){
-      public void onConnected(){
-synchronized (connected) {
-          connected.set(true);
-          connected.notifyAll();
-        }
-      }
-      public void onDisconnected(){
-synchronized (connected) {
-          connected.set(false);
-          connected.notifyAll();
-        }
-      }
-    }
-);
     zooKeeper.start();
-synchronized (connected) {
-      while (!zooKeeper.isConnected()) {
-        connected.wait();
-      }
-    }
+    zooKeeper.waitForConnected();
     BundleContext bundleContext=createMock(BundleContext.class);
     ServiceRegistration registration=createMock(ServiceRegistration.class);
     Manager manager=new Manager(bundleContext,zooKeeper,"tcp://localhost:" + serverPort,"localhost",TimeUnit.MINUTES.toMillis(5));

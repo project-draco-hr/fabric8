@@ -1,0 +1,8 @@
+{
+  setACL(path,getNodeACLs(path),-1);
+  if (recursive) {
+    for (    String child : getChildren(path)) {
+      doFixACLs(path.equals("/") ? "/" + child : path + "/" + child,recursive);
+    }
+  }
+}

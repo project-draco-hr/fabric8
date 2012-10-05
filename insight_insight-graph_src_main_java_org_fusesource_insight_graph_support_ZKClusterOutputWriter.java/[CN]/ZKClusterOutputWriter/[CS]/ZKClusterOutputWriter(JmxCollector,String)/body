@@ -1,7 +1,7 @@
 {
   this.collector=collector;
   ZKDataReader<OutputWriter> reader=new ZKDataReader<OutputWriter>(){
-    @Override public ZKData<OutputWriter> readData(    IZKClient zkClient,    String path,    Watcher watcher) throws InterruptedException, KeeperException {
+    @Override public ZKData<OutputWriter> readData(    org.linkedin.zookeeper.client.IZKClient zkClient,    String path,    Watcher watcher) throws InterruptedException, KeeperException {
       Stat stat=new Stat();
       Unmarshaller<OutputWriter> unmarshaller=null;
       if (path.endsWith(".json")) {

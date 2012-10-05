@@ -1,6 +1,7 @@
 {
 synchronized (_lock) {
     String url=System.getProperty("zookeeper.url");
+    Map<String,String> acls=new HashMap<String,String>();
     if (properties != null) {
       if (properties.get("zookeeper.url") != null) {
         url=(String)properties.get("zookeeper.url");
@@ -8,11 +9,22 @@ synchronized (_lock) {
       if (properties.get("zookeeper.timeout") != null) {
         sessionTimeout=Timespan.parse((String)properties.get("zookeeper.timeout"));
       }
+      for (Enumeration e=properties.keys(); e.hasMoreElements(); ) {
+        String key=e.nextElement().toString();
+        if (key.startsWith("acls.")) {
+          String val=properties.get(key).toString();
+          acls.put(key.substring("acls.".length()),val);
+        }
+      }
     }
-    if (_factory == null && url == null || _factory != null && url != null && _factory.getConnectString().equals(url)) {
+    if (!acls.containsKey("/")) {
+      acls.put("/","world:anyone:acdrw");
+    }
+    setACLs(acls);
+    if (_factory == null && url == null || _factory != null && url != null && getConnectString().equals(url)) {
       return;
     }
-    if (_state != State.NONE) {
+    if (isConfigured()) {
       changeState(url != null ? State.RECONNECTING : State.NONE);
       try {
         _zk.close();
@@ -24,7 +36,7 @@ synchronized (_lock) {
     }
     if (url != null) {
       _factory=new ZooKeeperFactory(url,sessionTimeout,this);
-      tryStart();
+      tryConnect();
     }
     zkClientRegistration.setProperties(properties);
   }

@@ -12,8 +12,12 @@
     Bundle bundleFabricCommands=installOrStopBundle(bundleContext,"org.fusesource.fabric.fabric-commands  ","mvn:org.fusesource.fabric/fabric-commands/" + FabricConstants.FABRIC_VERSION);
     Bundle bundleFabricMavenProxy=installOrStopBundle(bundleContext,"org.fusesource.fabric.fabric-commands  ","mvn:org.fusesource.fabric/fabric-maven-proxy/" + FabricConstants.FABRIC_VERSION);
     String connectionUrl=HostUtils.getLocalHostName() + ":" + Integer.toString(mappedPort);
+    String autoImportFrom=System.getProperty(PROFILES_AUTOIMPORT_PATH);
     Configuration config=configurationAdmin.createFactoryConfiguration("org.fusesource.fabric.zookeeper.server");
     properties=new Properties();
+    if (autoImportFrom != null) {
+      loadPropertiesFrom(properties,autoImportFrom + "/fabric/configs/versions/1.0/profiles/default/org.fusesource.fabric.zookeeper.server.properties");
+    }
     properties.put("tickTime","2000");
     properties.put("initLimit","10");
     properties.put("syncLimit","5");
@@ -24,6 +28,9 @@
     config.update(properties);
     config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
     properties=new Properties();
+    if (autoImportFrom != null) {
+      loadPropertiesFrom(properties,autoImportFrom + "/fabric/configs/versions/1.0/profiles/default/org.fusesource.fabric.zookeeper.properties");
+    }
     properties.put("zookeeper.url",connectionUrl);
     properties.put("zookeeper.timeout",System.getProperties().containsKey("zookeeper.timeout") ? System.getProperties().getProperty("zookeeper.timeout") : "30000");
     properties.put("fabric.zookeeper.pid","org.fusesource.fabric.zookeeper");
@@ -38,7 +45,6 @@
     }
     tracker.close();
     client.waitForConnected();
-    String autoImportFrom=System.getProperty(PROFILES_AUTOIMPORT_PATH);
     if (autoImportFrom != null) {
       ZookeeperImportUtils.importFromFileSystem(client,autoImportFrom,"/",null,null,false,false,false);
     }
@@ -51,6 +57,7 @@
     p.put("initLimit","10");
     p.put("syncLimit","5");
     p.put("dataDir","data/zookeeper/0000");
+    loadPropertiesFrom(p,autoImportFrom + "/fabric/configs/versions/1.0/profiles/default/org.fusesource.fabric.zookeeper.server.properties");
     ZooKeeperUtils.set(client,profileNode,toString(p));
     ZooKeeperUtils.set(client,ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"fabric-ensemble-0000-1"),"parents=fabric-ensemble-0000\nhidden=true");
     profileNode=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"fabric-ensemble-0000-1") + "/org.fusesource.fabric.zookeeper.server-0000.properties";
@@ -76,6 +83,7 @@
     ZooKeeperUtils.createDefault(client,"/fabric/authentication/encryption.enabled","true");
     ZooKeeperUtils.createDefault(client,"/fabric/authentication/domain","karaf");
     ZooKeeperUtils.createDefault(client,"/fabric/authentication/users","admin={CRYPT}21232f297a57a5a743894a0e4a801fc3{CRYPT},admin\nsystem={CRYPT}1d0258c2440a8d19e716292b231e3190{CRYPT},admin");
+    client.fixACLs("/",true);
     if (ensembleAutoStart) {
       System.setProperty(ENSEMBLE_AUTOSTART,Boolean.FALSE.toString());
       File file=new File(System.getProperty("karaf.base") + "/etc/system.properties");

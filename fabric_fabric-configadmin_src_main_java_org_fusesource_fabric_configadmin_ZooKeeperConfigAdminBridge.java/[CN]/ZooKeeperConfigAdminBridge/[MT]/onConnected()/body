@@ -14,7 +14,7 @@
       track(versionNode);
       node=ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,name);
       if (zooKeeper.exists(node) == null) {
-        zooKeeper.createWithParents(node,null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+        zooKeeper.createWithParents(node,CreateMode.PERSISTENT);
       }
       track(node);
       resolutionPolicy=ZkPath.CONTAINER_RESOLVER.getPath(name);

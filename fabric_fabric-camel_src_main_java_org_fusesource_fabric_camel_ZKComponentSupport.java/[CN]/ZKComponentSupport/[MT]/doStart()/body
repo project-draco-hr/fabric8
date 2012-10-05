@@ -13,16 +13,12 @@
   }
   if (zkClient == null) {
     String connectString=System.getProperty("zookeeper.url","localhost:2181");
-    ZKClient client=new ZKClient(connectString,Timespan.parse("10s"),null);
     LOG.debug("IZKClient not find in camel registry, creating new with connection " + connectString);
+    ZKClient client=new ZKClient(connectString,Timespan.parse("10s"),null);
+    LOG.debug("Starting IZKClient " + zkClient);
+    client.start();
     zkClient=client;
     setShouldCloseZkClient(true);
   }
-  if (zkClient instanceof ZKClient) {
-    if (!zkClient.isConnected()) {
-      LOG.debug("Staring IZKClient " + zkClient);
-      ((ZKClient)zkClient).start();
-    }
-  }
-  checkZkConnected();
+  zkClient.waitForConnected(new Timespan(getMaximumConnectionTimeout()));
 }

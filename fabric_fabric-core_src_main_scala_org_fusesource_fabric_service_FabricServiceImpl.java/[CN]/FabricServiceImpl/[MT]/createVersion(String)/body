@@ -1,7 +1,7 @@
 {
   try {
-    zooKeeper.createWithParents(ZkPath.CONFIG_VERSION.getPath(version),null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-    zooKeeper.createWithParents(ZkPath.CONFIG_VERSIONS_PROFILES.getPath(version),null,ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+    zooKeeper.createWithParents(ZkPath.CONFIG_VERSION.getPath(version),CreateMode.PERSISTENT);
+    zooKeeper.createWithParents(ZkPath.CONFIG_VERSIONS_PROFILES.getPath(version),CreateMode.PERSISTENT);
     return new VersionImpl(version,this);
   }
  catch (  Exception e) {
