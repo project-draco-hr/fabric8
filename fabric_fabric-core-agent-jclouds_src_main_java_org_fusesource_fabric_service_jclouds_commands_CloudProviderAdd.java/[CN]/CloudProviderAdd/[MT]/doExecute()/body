@@ -5,11 +5,11 @@
   String endpointValue=EnvHelper.getComputeEndpoint(endpoint);
   String identityValue=EnvHelper.getComputeIdentity(identity);
   String credentialValue=EnvHelper.getComputeCredential(credential);
-  if (serviceId == null && providerValue != null) {
-    serviceId=providerValue;
+  if (contextName == null && providerValue != null) {
+    contextName=providerValue;
   }
- else   if (serviceId == null && apiValue != null) {
-    serviceId=apiValue;
+ else   if (contextName == null && apiValue != null) {
+    contextName=apiValue;
   }
   Map<String,String> props=CloudUtils.parseProviderOptions(options);
   if (options != null && options.length > 1) {
@@ -35,23 +35,23 @@
   }
  else   if (!Strings.isNullOrEmpty(providerValue) && (Strings.isNullOrEmpty(apiValue) || Strings.isNullOrEmpty(endpointValue))) {
     serviceName=providerValue;
-    CloudUtils.registerProvider(getZooKeeper(),configurationAdmin,serviceId,providerValue,identityValue,credentialValue,props);
+    CloudUtils.registerProvider(getZooKeeper(),configurationAdmin,contextName,providerValue,identityValue,credentialValue,props);
   }
  else   if (Strings.isNullOrEmpty(providerValue) && (!Strings.isNullOrEmpty(apiValue) && !Strings.isNullOrEmpty(endpointValue))) {
     serviceName=apiValue;
-    CloudUtils.registerApi(getZooKeeper(),configurationAdmin,serviceId,apiValue,endpointValue,identityValue,credentialValue,props);
+    CloudUtils.registerApi(getZooKeeper(),configurationAdmin,contextName,apiValue,endpointValue,identityValue,credentialValue,props);
   }
  else   if (Strings.isNullOrEmpty(api)) {
     serviceName=apiValue;
-    CloudUtils.registerApi(getZooKeeper(),configurationAdmin,serviceId,apiValue,endpointValue,identityValue,credentialValue,props);
+    CloudUtils.registerApi(getZooKeeper(),configurationAdmin,contextName,apiValue,endpointValue,identityValue,credentialValue,props);
   }
  else {
     serviceName=providerValue;
-    CloudUtils.registerProvider(getZooKeeper(),configurationAdmin,serviceId,providerValue,identityValue,credentialValue,props);
+    CloudUtils.registerProvider(getZooKeeper(),configurationAdmin,contextName,providerValue,identityValue,credentialValue,props);
   }
   if (!registerAsync) {
     System.out.println("Waiting for " + serviceName + " service to initialize.");
-    CloudUtils.waitForComputeService(bundleContext,serviceId);
+    CloudUtils.waitForComputeService(bundleContext,contextName);
   }
   return null;
 }

@@ -3,23 +3,34 @@
   try {
     options.getCreationStateListener().onStateChange("Looking up for compute service.");
     ComputeService computeService=getOrCreateComputeService(options);
+    if (Strings.isNullOrEmpty(options.getProviderName())) {
+      options.setProviderName(computeService.getContext().unwrap().getProviderMetadata().getId());
+    }
     if (computeService == null) {
       throw new IllegalStateException("Compute service could not be found or created.");
     }
     TemplateBuilder builder=computeService.templateBuilder();
     builder.any();
+    if (options.getInstanceType() == null && Strings.isNullOrEmpty(options.getHardwareId())) {
+      builder.minRam(1024);
+    }
+ else     if (!Strings.isNullOrEmpty(options.getHardwareId())) {
+      builder.hardwareId(options.getHardwareId());
+    }
+ else     if (options.getInstanceType() != null) {
 switch (options.getInstanceType()) {
 case Smallest:
-      builder.smallest();
-    break;
+        builder.smallest();
+      break;
 case Biggest:
-  builder.biggest();
-break;
+    builder.biggest();
+  break;
 case Fastest:
 builder.fastest();
 break;
 default :
 builder.fastest();
+}
 }
 StringBuilder overviewBuilder=new StringBuilder();
 overviewBuilder.append(String.format("Creating %s nodes in the cloud. Using",options.getNumber()));
@@ -42,9 +53,6 @@ overviewBuilder.append(".");
 if (!Strings.isNullOrEmpty(options.getLocationId())) {
 overviewBuilder.append(" On location: ").append(options.getLocationId()).append(".");
 builder.locationId(options.getLocationId());
-}
-if (!Strings.isNullOrEmpty(options.getHardwareId())) {
-builder.hardwareId(options.getHardwareId());
 }
 AdminAccess.Builder adminAccess=AdminAccess.builder();
 TemplateOptions templateOptions=computeService.templateOptions();

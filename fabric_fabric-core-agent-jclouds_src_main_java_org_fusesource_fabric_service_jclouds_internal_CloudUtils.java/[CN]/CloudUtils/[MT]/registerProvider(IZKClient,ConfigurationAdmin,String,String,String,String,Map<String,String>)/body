@@ -2,17 +2,16 @@
   Runnable registrationTask=new Runnable(){
     @Override public void run(){
       try {
-        Configuration configuration=findOrCreateFactoryConfiguration(configurationAdmin,"org.jclouds.compute",id,provider,null);
+        Configuration configuration=findOrCreateFactoryConfiguration(configurationAdmin,"org.jclouds.compute",name,provider,null);
         if (configuration != null) {
           Dictionary dictionary=configuration.getProperties();
           if (dictionary == null) {
             dictionary=new Properties();
           }
-          dictionary.put("fabric.zookeeper.pid","org.jclouds.compute-" + id.replaceAll("-",""));
-          dictionary.put(Constants.JCLOUDS_SERVICE_ID,id);
-          dictionary.put(ServiceFactorySupport.PROVIDER,provider);
-          dictionary.put(ServiceFactorySupport.CREDENTIAL,credential);
-          dictionary.put(ServiceFactorySupport.IDENTITY,identity);
+          dictionary.put(Constants.NAME,name);
+          dictionary.put(Constants.PROVIDER,provider);
+          dictionary.put(Constants.CREDENTIAL,credential);
+          dictionary.put(Constants.IDENTITY,identity);
           dictionary.put("credential-store","zookeeper");
           dictionary.put("jclouds.ssh.max-retries","40");
           if (provider != null && provider.equals("aws-ec2") && props != null && props.containsKey("owner") && props.get("owner") != null) {
@@ -25,13 +24,13 @@
           }
           configuration.update(dictionary);
           if (zooKeeper.isConnected()) {
-            if (zooKeeper.exists(ZkPath.CLOUD_SERVICE.getPath(id)) == null) {
-              ZooKeeperUtils.create(zooKeeper,ZkPath.CLOUD_SERVICE.getPath(id));
+            if (zooKeeper.exists(ZkPath.CLOUD_SERVICE.getPath(name)) == null) {
+              ZooKeeperUtils.create(zooKeeper,ZkPath.CLOUD_SERVICE.getPath(name));
             }
             for (            Map.Entry<String,String> entry : props.entrySet()) {
               String key=entry.getKey();
               String value=entry.getValue();
-              ZooKeeperUtils.set(zooKeeper,ZkPath.CLOUD_SERVICE_PROPERTY.getPath(id,key),value);
+              ZooKeeperUtils.set(zooKeeper,ZkPath.CLOUD_SERVICE_PROPERTY.getPath(name,key),value);
             }
           }
  else {

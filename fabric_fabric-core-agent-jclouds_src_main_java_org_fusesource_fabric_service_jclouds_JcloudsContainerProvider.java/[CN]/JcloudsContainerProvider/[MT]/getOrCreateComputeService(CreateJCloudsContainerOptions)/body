@@ -5,8 +5,8 @@
     if (object instanceof ComputeService) {
       computeService=(ComputeService)object;
     }
-    if (computeService == null && options.getServiceId() != null) {
-      computeService=computeServiceMap.get(options.getServiceId());
+    if (computeService == null && options.getContextName() != null) {
+      computeService=computeServiceMap.get(options.getContextName());
     }
     if (computeService == null) {
       options.getCreationStateListener().onStateChange("Compute Service not found. Creating ...");
@@ -16,17 +16,24 @@
       Map<String,String> serviceOptions=options.getServiceOptions();
       try {
         if (options.getProviderName() != null) {
-          CloudUtils.registerProvider(zooKeeper,configurationAdmin,options.getServiceId(),options.getProviderName(),options.getIdentity(),options.getCredential(),serviceOptions);
+          CloudUtils.registerProvider(zooKeeper,configurationAdmin,options.getContextName(),options.getProviderName(),options.getIdentity(),options.getCredential(),serviceOptions);
         }
  else         if (options.getApiName() != null) {
-          CloudUtils.registerApi(zooKeeper,configurationAdmin,options.getServiceId(),options.getApiName(),options.getEndpoint(),options.getIdentity(),options.getCredential(),serviceOptions);
+          CloudUtils.registerApi(zooKeeper,configurationAdmin,options.getContextName(),options.getApiName(),options.getEndpoint(),options.getIdentity(),options.getCredential(),serviceOptions);
         }
-        computeService=CloudUtils.waitForComputeService(bundleContext,options.getServiceId());
+        computeService=CloudUtils.waitForComputeService(bundleContext,options.getContextName());
       }
  catch (      Exception e) {
         LOGGER.warn("Did not manage to register compute cloud provider.");
-        return computeService;
       }
+    }
+  }
+  if (computeService != null) {
+    if (Strings.isNullOrEmpty(options.getProviderName())) {
+      options.setProviderName(computeService.getContext().unwrap().getProviderMetadata().getId());
+    }
+    if (Strings.isNullOrEmpty(options.getApiName())) {
+      options.setApiName(computeService.getContext().unwrap().getProviderMetadata().getApiMetadata().getId());
     }
   }
   return computeService;
