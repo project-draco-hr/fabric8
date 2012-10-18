@@ -7,8 +7,13 @@
       return new Profile[0];
     }
     List<Profile> profiles=new ArrayList<Profile>();
-    for (    String p : str.split(" ")) {
-      profiles.add(new ProfileImpl(p,version,service));
+    if (!str.trim().isEmpty()) {
+      for (      String p : str.split(" +")) {
+        profiles.add(new ProfileImpl(p,version,service));
+      }
+    }
+    if (profiles.isEmpty()) {
+      profiles.add(new ProfileImpl("default",version,service));
     }
     return profiles.toArray(new Profile[profiles.size()]);
   }
