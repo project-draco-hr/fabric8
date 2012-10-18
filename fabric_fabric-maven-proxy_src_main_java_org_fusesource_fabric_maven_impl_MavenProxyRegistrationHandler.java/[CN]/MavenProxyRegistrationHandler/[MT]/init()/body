@@ -1,10 +1,11 @@
 {
-  this.port=getPortFromConfig();
-  try {
-    httpService.registerServlet("/maven/download",mavenDownloadProxyServlet,null,null);
-    httpService.registerServlet("/maven/upload",mavenUploadProxyServlet,null,secureHttpContext);
+  httpServiceTracker=new ServiceTracker(bundleContext,HttpService.class.getName(),null){
+    public Object addingService(    ServiceReference reference){
+      HttpService service=(HttpService)super.addingService(reference);
+      bindHttpService(service);
+      return service;
+    }
   }
- catch (  Throwable t) {
-    LOGGER.warn("Failed to register fabric maven proxy servlets, due to:" + t.getMessage());
-  }
+;
+  httpServiceTracker.open();
 }
