@@ -28,7 +28,7 @@
         installBundles();
       }
       org.osgi.service.cm.Configuration config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
-      Properties properties=new Properties();
+      Hashtable<String,Object> properties=new Hashtable<String,Object>();
       properties.put("zookeeper.url",zookeeperUrl);
       config.setBundleLocation(null);
       config.update(properties);
@@ -47,7 +47,7 @@
       return null;
     }
     org.osgi.service.cm.Configuration config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
-    Properties properties=new Properties();
+    Hashtable<String,Object> properties=new Hashtable<String,Object>();
     properties.put("zookeeper.url",zookeeperUrl);
     config.setBundleLocation(null);
     config.update(properties);

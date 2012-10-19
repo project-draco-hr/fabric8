@@ -1,7 +1,7 @@
 {
   try {
     IZKClient client;
-    Properties properties;
+    Hashtable<String,Object> properties;
     String karafName=System.getProperty("karaf.name");
     String minimumPort=System.getProperty(ZkDefs.MINIMUM_PORT);
     String maximumPort=System.getProperty(ZkDefs.MAXIMUM_PORT);
@@ -14,7 +14,7 @@
     String connectionUrl=HostUtils.getLocalHostName() + ":" + Integer.toString(mappedPort);
     String autoImportFrom=System.getProperty(PROFILES_AUTOIMPORT_PATH);
     Configuration config=configurationAdmin.createFactoryConfiguration("org.fusesource.fabric.zookeeper.server");
-    properties=new Properties();
+    properties=new Hashtable<String,Object>();
     if (autoImportFrom != null) {
       loadPropertiesFrom(properties,autoImportFrom + "/fabric/configs/versions/1.0/profiles/default/org.fusesource.fabric.zookeeper.server.properties");
     }
@@ -27,7 +27,7 @@
     config.setBundleLocation(null);
     config.update(properties);
     config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
-    properties=new Properties();
+    properties=new Hashtable<String,Object>();
     if (autoImportFrom != null) {
       loadPropertiesFrom(properties,autoImportFrom + "/fabric/configs/versions/1.0/profiles/default/org.fusesource.fabric.zookeeper.properties");
     }

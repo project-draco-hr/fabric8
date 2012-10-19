@@ -1,8 +1,12 @@
 {
   InputStream is=null;
+  Properties properties=new Properties();
   try {
     is=new FileInputStream(from);
     properties.load(is);
+    for (    String key : properties.stringPropertyNames()) {
+      hashtable.put(key,properties.get(key));
+    }
   }
  catch (  Exception e) {
   }
