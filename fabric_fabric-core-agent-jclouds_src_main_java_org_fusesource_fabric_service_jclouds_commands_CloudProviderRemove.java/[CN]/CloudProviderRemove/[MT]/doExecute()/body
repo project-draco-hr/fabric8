@@ -2,8 +2,8 @@
   boolean connected=getZooKeeper().isConnected();
   Container current=null;
   if (connected) {
-    if (getZooKeeper().exists(ZkPath.CLOUD_SERVICE.getPath(serviceId)) != null) {
-      getZooKeeper().deleteWithChildren(ZkPath.CLOUD_SERVICE.getPath(serviceId));
+    if (getZooKeeper().exists(ZkPath.CLOUD_SERVICE.getPath(name)) != null) {
+      getZooKeeper().deleteWithChildren(ZkPath.CLOUD_SERVICE.getPath(name));
     }
     current=fabricService.getCurrentContainer();
   }
@@ -12,8 +12,8 @@
     for (    Configuration configuration : computeConfigs) {
       Dictionary props=configuration.getProperties();
       if (props != null) {
-        String fabricPid=(String)props.get("fabric.zookeeper.pid");
-        if (fabricPid.equals("org.jclouds.compute-" + serviceId.replaceAll("-",""))) {
+        String contextName=(String)props.get(Constants.NAME);
+        if (name.equals(contextName)) {
           configuration.delete();
         }
       }
