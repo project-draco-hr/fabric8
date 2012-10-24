@@ -1,0 +1,15 @@
+{
+  System.err.println(executeCommand("fabric:create -n -g localip -r manualip --manual-ip localhost"));
+  IZKClient zookeeper=getOsgiService(IZKClient.class);
+  try {
+    createAndAssertChildContainer("child1","root","default");
+    Assert.assertEquals("manualip",ZooKeeperUtils.getSubstitutedPath(zookeeper,ZkPath.CONTAINER_RESOLVER.getPath("child1")));
+    Assert.assertEquals("manualip",getFabricService().getCurrentContainer().getResolver());
+    getOsgiService(BlueprintContainer.class,"(osgi.blueprint.container.symbolicname=org.fusesource.fabric.fabric-commands)",DEFAULT_TIMEOUT);
+    System.err.println(executeCommand("fabric:container-resolver-set --container root localip"));
+    Assert.assertEquals("localip",ZooKeeperUtils.getSubstitutedPath(zookeeper,ZkPath.CONTAINER_RESOLVER.getPath("child1")));
+  }
+  finally {
+    destroyChildContainer("child1");
+  }
+}
