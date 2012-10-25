@@ -1,0 +1,15 @@
+{
+  boolean result=false;
+  Container container=fabricService.getContainer(containerName);
+  String version=container.getVersion().toString();
+  try {
+    List<String> containerList=new ArrayList<String>();
+    String clusterId=zooKeeper.getStringData("/fabric/configs/versions/" + version + "/general/fabric-ensemble");
+    String containers=zooKeeper.getStringData("/fabric/configs/versions/" + version + "/general/fabric-ensemble/"+ clusterId);
+    Collections.addAll(containerList,containers.split(","));
+    result=containerList.contains(containerName);
+  }
+ catch (  Throwable t) {
+  }
+  return result;
+}
