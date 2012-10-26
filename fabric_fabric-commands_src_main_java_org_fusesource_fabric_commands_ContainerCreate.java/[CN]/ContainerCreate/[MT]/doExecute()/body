@@ -12,7 +12,7 @@
       parent=uri.getHost();
     }
   }
-  CreateContainerOptions args=CreateContainerOptionsBuilder.type(type).name(name).parent(parent).resolver(resolver).number(number).ensembleServer(isEnsembleServer).providerUri(url).proxyUri(proxyUri != null ? proxyUri : fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl()).jvmOpts(jvmOpts);
+  CreateContainerOptions args=CreateContainerOptionsBuilder.type(type).name(name).parent(parent).resolver(resolver).number(number).ensembleServer(isEnsembleServer).providerUri(url).proxyUri(proxyUri != null ? proxyUri : fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword(fabricService.getZookeeperPassword()).jvmOpts(jvmOpts);
   CreateContainerMetadata[] metadatas=fabricService.createContainers(args);
   displayContainers(metadatas);
   postCreateContainers(metadatas);
