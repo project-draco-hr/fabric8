@@ -7,7 +7,14 @@
     final JmDNS closeTarget=jmdns;
     Thread thread=new Thread(){
       public void run(){
-        closeTarget.close();
+        try {
+          if (JmDNSFactory.onClose(getLocalAddress())) {
+            closeTarget.close();
+          }
+        }
+ catch (        IOException e) {
+          LOG.debug("Error closing JmDNS " + getLocalhost() + ". This exception will be ignored.",e);
+        }
       }
     }
 ;
