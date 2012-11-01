@@ -1,0 +1,18 @@
+{
+  if (repositoryUris.contains(uri)) {
+    return;
+  }
+  repositoryUris.add(uri);
+  try {
+    Repository repository=new RepositoryImpl(new URI(uri));
+    URI[] internalUris=repository.getRepositories();
+    if (internalUris != null) {
+      for (      URI u : internalUris) {
+        addRepositoryUri(u.toString(),repositoryUris);
+      }
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.debug("Error while adding internal repositories of {}.",uri);
+  }
+}

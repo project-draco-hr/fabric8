@@ -1,0 +1,27 @@
+{
+  if (repositories.isEmpty()) {
+    Set<String> repositoryUris=new LinkedHashSet<String>();
+    Container container=fabricService.getCurrentContainer();
+    Version version=container.getVersion();
+    Profile[] profiles=fabricService.getProfiles(version.getName());
+    if (profiles != null) {
+      for (      Profile profile : profiles) {
+        if (profile.getRepositories() != null) {
+          for (          String uri : profile.getRepositories()) {
+            repositoryUris.add(uri);
+            addRepositoryUri(uri,repositoryUris);
+          }
+        }
+      }
+    }
+    for (    String uri : repositoryUris) {
+      try {
+        repositories.add(new RepositoryImpl(new URI(uri)));
+      }
+ catch (      URISyntaxException e) {
+        LOGGER.debug("Error while adding repository with uri {}.",uri);
+      }
+    }
+  }
+  return repositories.toArray(new Repository[repositories.size()]);
+}
