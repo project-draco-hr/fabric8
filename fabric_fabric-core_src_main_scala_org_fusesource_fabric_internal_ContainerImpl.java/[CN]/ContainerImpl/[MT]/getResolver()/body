@@ -1,6 +1,6 @@
 {
   try {
-    return service.getZooKeeper().getStringData(ZkPath.CONTAINER_RESOLVER.getPath(id));
+    return ZooKeeperUtils.getSubstitutedPath(service.getZooKeeper(),ZkPath.CONTAINER_RESOLVER.getPath(id));
   }
  catch (  Exception e) {
     throw new FabricException(e);
