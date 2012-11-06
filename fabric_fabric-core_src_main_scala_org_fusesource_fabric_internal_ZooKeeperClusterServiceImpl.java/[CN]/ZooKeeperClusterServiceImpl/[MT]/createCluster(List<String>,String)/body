@@ -1,0 +1,131 @@
+{
+  try {
+    if (password == null) {
+      password=generatePassword();
+    }
+    if (containers == null || containers.size() == 2) {
+      throw new IllegalArgumentException("One or at least 3 containers must be used to create a zookeeper ensemble");
+    }
+    Configuration config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper",null);
+    String zooKeeperUrl=config != null && config.getProperties() != null ? (String)config.getProperties().get("zookeeper.url") : null;
+    if (zooKeeperUrl == null) {
+      if (containers.size() != 1 || !containers.get(0).equals(System.getProperty("karaf.name"))) {
+        throw new FabricException("The first zookeeper cluster must be configured on this container only.");
+      }
+      createLocalServer(2181,password);
+      return;
+    }
+    String url=ZooKeeperUtils.getSubstitutedPath(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties#zookeeper.url");
+    if (!url.equals(zooKeeperUrl)) {
+      throw new IllegalStateException("The zookeeper configuration is not properly backed in the zookeeper tree.");
+    }
+    for (    String container : containers) {
+      if (zooKeeper.exists(ZkPath.CONTAINER_ALIVE.getPath(container)) == null) {
+        throw new FabricException("The container " + container + " is not alive");
+      }
+    }
+    Map<String,List<Integer>> usedPorts=new HashMap<String,List<Integer>>();
+    String oldClusterId=ZooKeeperUtils.get(zooKeeper,"/fabric/configs/versions/" + version + "/general/fabric-ensemble");
+    if (oldClusterId != null) {
+      Properties p=toProperties(zooKeeper.getStringData("/fabric/configs/versions/" + version + "/profiles/fabric-ensemble-"+ oldClusterId+ "/org.fusesource.fabric.zookeeper.server-"+ oldClusterId+ ".properties"));
+      for (      Object n : p.keySet()) {
+        String node=(String)n;
+        if (node.startsWith("server.")) {
+          String data=ZooKeeperUtils.getSubstitutedPath(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/fabric-ensemble-"+ oldClusterId+ "/org.fusesource.fabric.zookeeper.server-"+ oldClusterId+ ".properties#"+ node);
+          addUsedPorts(usedPorts,data);
+        }
+      }
+      String datas=ZooKeeperUtils.getSubstitutedPath(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties#zookeeper.url");
+      for (      String data : datas.split(",")) {
+        addUsedPorts(usedPorts,data);
+      }
+    }
+    String newClusterId;
+    if (oldClusterId == null) {
+      newClusterId="0000";
+    }
+ else {
+      newClusterId=new DecimalFormat("0000").format(Integer.parseInt(oldClusterId) + 1);
+    }
+    ZooKeeperUtils.set(zooKeeper,ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"fabric-ensemble-" + newClusterId),"abstract=true\nhidden=true");
+    String profileNode="/fabric/configs/versions/" + version + "/profiles/fabric-ensemble-"+ newClusterId+ "/org.fusesource.fabric.zookeeper.server-"+ newClusterId+ ".properties";
+    Properties profileNodeProperties=new Properties();
+    profileNodeProperties.put("tickTime","2000");
+    profileNodeProperties.put("initLimit","10");
+    profileNodeProperties.put("syncLimit","5");
+    profileNodeProperties.put("dataDir","data/zookeeper/" + newClusterId);
+    int index=1;
+    String connectionUrl="";
+    String realConnectionUrl="";
+    String containerList="";
+    for (    String container : containers) {
+      String ip=ZooKeeperUtils.getSubstitutedPath(zooKeeper,ZkPath.CONTAINER_IP.getPath(container));
+      String minimumPort=ZooKeeperUtils.getSubstitutedPath(zooKeeper,ZkPath.CONTAINER_PORT_MIN.getPath(container));
+      String maximumPort=ZooKeeperUtils.getSubstitutedPath(zooKeeper,ZkPath.CONTAINER_PORT_MAX.getPath(container));
+      String profNode="/fabric/configs/versions/" + version + "/profiles/fabric-ensemble-"+ newClusterId+ "-"+ Integer.toString(index);
+      String pidNode=profNode + "/org.fusesource.fabric.zookeeper.server-" + newClusterId+ ".properties";
+      Properties pidNodeProperties=new Properties();
+      ZooKeeperUtils.set(zooKeeper,profNode,"parents=fabric-ensemble-" + newClusterId + "\nhidden=true");
+      String port1=Integer.toString(findPort(usedPorts,ip,mapPortToRange(2181,minimumPort,maximumPort)));
+      if (containers.size() > 1) {
+        String port2=Integer.toString(findPort(usedPorts,ip,mapPortToRange(2888,minimumPort,maximumPort)));
+        String port3=Integer.toString(findPort(usedPorts,ip,mapPortToRange(3888,minimumPort,maximumPort)));
+        profileNodeProperties.put("server." + Integer.toString(index),"${zk:" + container + "/ip}:"+ port2+ ":"+ port3);
+        pidNodeProperties.put("server.id",Integer.toString(index));
+      }
+      pidNodeProperties.put("clientPort",port1);
+      ZooKeeperUtils.set(zooKeeper,pidNode,toString(pidNodeProperties));
+      ZooKeeperUtils.add(zooKeeper,"/fabric/configs/versions/" + version + "/containers/"+ container,"fabric-ensemble-" + newClusterId + "-"+ Integer.toString(index));
+      if (connectionUrl.length() > 0) {
+        connectionUrl+=",";
+        realConnectionUrl+=",";
+      }
+      connectionUrl+="${zk:" + container + "/ip}:"+ port1;
+      realConnectionUrl+=ip + ":" + port1;
+      if (containerList.length() > 0) {
+        containerList+=",";
+      }
+      containerList+=container;
+      index++;
+    }
+    ZooKeeperUtils.set(zooKeeper,profileNode,toString(profileNodeProperties));
+    if (oldClusterId != null) {
+      Properties properties=ZooKeeperUtils.getProperties(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties");
+      properties.put("zookeeper.url",realConnectionUrl);
+      properties.put("zookeeper.password",password);
+      OsgiZkClient dst=new OsgiZkClient();
+      dst.updated(properties);
+      try {
+        dst.waitForConnected(new Timespan(30,Timespan.TimeUnit.SECOND));
+        ZooKeeperUtils.copy(zooKeeper,dst,"/fabric/registry");
+        ZooKeeperUtils.copy(zooKeeper,dst,"/fabric/authentication");
+        ZooKeeperUtils.copy(zooKeeper,dst,"/fabric/configs");
+        for (        String container : containers) {
+          String alivePath="/fabric/registry/containers/alive/" + container;
+          if (dst.exists(alivePath) != null) {
+            dst.deleteWithChildren(alivePath);
+          }
+        }
+        ZooKeeperUtils.set(dst,"/fabric/configs/versions/" + version + "/general/fabric-ensemble",newClusterId);
+        ZooKeeperUtils.set(dst,"/fabric/configs/versions/" + version + "/general/fabric-ensemble/"+ newClusterId,containerList);
+        for (        String container : dst.getChildren("/fabric/configs/versions/" + version + "/containers")) {
+          ZooKeeperUtils.remove(dst,"/fabric/configs/versions/" + version + "/containers/"+ container,"fabric-ensemble-" + oldClusterId + "-.*");
+        }
+        setConfigProperty(dst,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.password",password);
+        setConfigProperty(dst,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.url",connectionUrl);
+        setConfigProperty(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.password",password);
+        setConfigProperty(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.url",connectionUrl);
+      }
+  finally {
+        dst.close();
+      }
+    }
+ else {
+      setConfigProperty(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.password",password);
+      setConfigProperty(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.url",connectionUrl);
+    }
+  }
+ catch (  Exception e) {
+    throw new FabricException("Unable to create zookeeper quorum: " + e.getMessage(),e);
+  }
+}
