@@ -5,6 +5,9 @@
   if (options.getProxyUri() == null) {
     options.setProxyUri(getMavenRepoURI());
   }
+  if (options.getJvmOpts() == null || options.getJvmOpts().length() == 0) {
+    options.setJvmOpts(getDefaultJvmOptions());
+  }
   try {
     ContainerProvider provider=getProvider(options.getProviderType());
     if (provider == null) {
