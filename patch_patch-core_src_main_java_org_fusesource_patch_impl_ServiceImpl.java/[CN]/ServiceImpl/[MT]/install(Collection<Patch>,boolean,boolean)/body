@@ -22,7 +22,7 @@
           VersionRange range=new VersionRange(false,lower,v,true);
           for (          Bundle bundle : allBundles) {
             Version oldV=bundle.getVersion();
-            if (bundle.getBundleId() != 0 && sn.equals(bundle.getSymbolicName()) && range.contains(oldV)) {
+            if (bundle.getBundleId() != 0 && stripSymbolicName(sn).equals(stripSymbolicName(bundle.getSymbolicName())) && range.contains(oldV)) {
               String location=bundle.getLocation();
               BundleUpdate update=new BundleUpdateImpl(sn,v.toString(),url,oldV.toString(),location);
               updates.add(update);
