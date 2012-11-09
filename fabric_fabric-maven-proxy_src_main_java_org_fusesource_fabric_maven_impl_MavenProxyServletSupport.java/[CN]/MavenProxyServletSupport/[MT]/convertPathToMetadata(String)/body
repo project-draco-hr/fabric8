@@ -1,0 +1,15 @@
+{
+  DefaultMetadata metadata=null;
+  StringBuilder sb=new StringBuilder();
+  if (path == null) {
+    throw new InvalidMavenArtifactRequest("Cannot match request path to maven url, request path is empty.");
+  }
+  Matcher pathMatcher=ARTIFACT_METADATA_URL_REGEX.matcher(path);
+  if (pathMatcher.matches()) {
+    String groupId=pathMatcher.group(1).replaceAll("/",".");
+    String artifactId=pathMatcher.group(2);
+    String version=pathMatcher.group(3);
+    metadata=new DefaultMetadata(groupId,artifactId,version,"",Metadata.Nature.RELEASE_OR_SNAPSHOT);
+  }
+  return metadata;
+}

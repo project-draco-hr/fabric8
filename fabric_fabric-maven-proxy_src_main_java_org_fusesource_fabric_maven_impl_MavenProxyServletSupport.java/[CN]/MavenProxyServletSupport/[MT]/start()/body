@@ -3,7 +3,7 @@
     tmpFolder.mkdirs();
   }
   if (localRepository.equals("")) {
-    localRepository=System.getProperty("user.home") + File.separator + ".m2"+ File.separator+ "repository";
+    localRepository=System.getProperty("karaf.data") + File.separator + "maven"+ File.separator+ "proxy"+ File.separator+ "downloads";
   }
   if (system == null) {
     system=newRepositorySystem();
@@ -11,13 +11,25 @@
   if (session == null) {
     session=newSession(system,localRepository);
   }
-  repositories=new ArrayList<RemoteRepository>();
-  repositories.add(new RemoteRepository("local","default","file://" + localRepository));
-  repositories.add(new RemoteRepository("karaf.default.repo","default","file://" + System.getProperty("karaf.home") + File.separator+ System.getProperty("karaf.default.repository")));
-  int i=0;
+  repositories=new HashMap<String,RemoteRepository>();
   for (  String rep : remoteRepositories.split(",")) {
-    RemoteRepository remoteRepository=new RemoteRepository("repo-" + i++,"default",rep);
+    String id="";
+    RemoteRepository remoteRepository=null;
+    rep=rep.trim();
+    Matcher idMatcher=REPOSITORY_ID_REGEX.matcher(rep);
+    if (idMatcher.matches()) {
+      id=idMatcher.group(2);
+      rep=cleanUpRepositorySpec(rep);
+      remoteRepository=new RemoteRepository(id + Math.abs(rep.hashCode()),"default",rep);
+    }
+ else {
+      id="rep-" + rep.hashCode();
+      rep=cleanUpRepositorySpec(rep);
+      remoteRepository=new RemoteRepository("repo-" + Math.abs(rep.hashCode()),"default",rep);
+    }
     remoteRepository.setPolicy(true,new RepositoryPolicy(true,updatePolicy,checksumPolicy));
-    repositories.add(remoteRepository);
+    repositories.put(id,remoteRepository);
   }
+  repositories.put("local",new RemoteRepository("local","default","file://" + localRepository));
+  repositories.put("karaf",new RemoteRepository("karaf","default","file://" + System.getProperty("karaf.home") + File.separator+ System.getProperty("karaf.default.repository")));
 }

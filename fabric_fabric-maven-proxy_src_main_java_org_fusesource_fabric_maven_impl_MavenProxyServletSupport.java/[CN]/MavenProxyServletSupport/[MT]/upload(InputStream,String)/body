@@ -1,44 +1,42 @@
 {
   boolean success=true;
-  FileOutputStream fos=null;
-  String filename=path.substring(path.lastIndexOf("/") + 1);
-  if (path.startsWith("/")) {
-    path=path.substring(1);
+  Matcher artifactMatcher=ARTIFACT_REQUEST_URL_REGEX.matcher(path);
+  Matcher metdataMatcher=ARTIFACT_METADATA_URL_REGEX.matcher(path);
+  if (path == null) {
+    throw new InvalidMavenArtifactRequest();
   }
-  String mvn=convertToMavenUrl(path);
-  if (mvn != null) {
+ else   if (metdataMatcher.matches()) {
+    LOGGER.log(Level.INFO,String.format("Received upload request for maven metadata : %s",path));
     try {
-      File tmpFile=new File(tmpFolder,filename);
-      if (tmpFile.exists()) {
-        tmpFile.delete();
-      }
-      fos=new FileOutputStream(tmpFile);
-      int length=0;
-      byte buffer[]=new byte[4096];
-      while ((length=is.read(buffer)) != -1) {
-        fos.write(buffer,0,length);
-      }
-      fos.flush();
-      fos.close();
-      Artifact artifact=new DefaultArtifact(mvn,null);
-      artifact=artifact.setFile(tmpFile);
+      String filename=path.substring(path.lastIndexOf("/") + 1);
+      Metadata metadata=convertPathToMetadata(path);
+      metadata=metadata.setFile(readFile(is,tmpFolder,filename));
+      InstallRequest request=new InstallRequest();
+      request.addMetadata(metadata);
+      InstallResult result=system.install(session,request);
+      success=true;
+    }
+ catch (    Exception e) {
+      LOGGER.log(Level.WARNING,String.format("Failed to uploade metadata: %s due to %s",path,e));
+      success=false;
+    }
+  }
+ else   if (artifactMatcher.matches()) {
+    LOGGER.log(Level.INFO,String.format("Received upload request for maven artifact : %s",path));
+    Artifact artifact=null;
+    try {
+      String filename=path.substring(path.lastIndexOf("/") + 1);
+      artifact=convertPathToArtifact(path);
+      artifact=artifact.setFile(readFile(is,tmpFolder,filename));
       InstallRequest request=new InstallRequest();
       request.addArtifact(artifact);
       InstallResult result=system.install(session,request);
-      LOGGER.log(Level.INFO,"Artifact installed: " + mvn);
+      success=true;
+      LOGGER.log(Level.INFO,"Artifact installed: " + artifact.toString());
     }
  catch (    Exception e) {
       success=false;
-      LOGGER.log(Level.WARNING,String.format("Could not find artifact : %s due to %s",mvn,e),e);
-    }
- finally {
-      if (fos != null) {
-        try {
-          fos.close();
-        }
- catch (        Exception ex) {
-        }
-      }
+      LOGGER.log(Level.WARNING,String.format("Failed to upload artifact : %s due to %s",artifact,e),e);
     }
   }
   return success;
