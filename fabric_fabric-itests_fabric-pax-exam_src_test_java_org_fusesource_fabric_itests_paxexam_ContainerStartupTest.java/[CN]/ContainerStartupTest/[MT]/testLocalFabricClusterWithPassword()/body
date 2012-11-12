@@ -1,6 +1,5 @@
 {
-  assertNotNull(fabricService);
-  Thread.sleep(DEFAULT_WAIT);
+  executeCommand("fabric:ensemble-create -n --clean --zookeeper-password testpassword root");
   Container[] containers=fabricService.getContainers();
   assertNotNull(containers);
   assertEquals("Expected to find 1 container",1,containers.length);
@@ -8,5 +7,5 @@
   ConfigurationAdmin configurationAdmin=getOsgiService(ConfigurationAdmin.class);
   org.osgi.service.cm.Configuration configuration=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
   Dictionary<String,Object> dictionary=configuration.getProperties();
-  assertNotNull("Expected a generated zookeeper password",dictionary.get("zookeeper.password"));
+  assertEquals("Expected provided zookeeper password","testpassword",dictionary.get("zookeeper.password"));
 }

@@ -11,7 +11,7 @@
   }
   if (!containerName.equals(oldName)) {
     if (force || permissionToRenameContainer()) {
-      if (!registerContainer(containerName,profile,force)) {
+      if (!registerContainer(containerName,zookeeperPassword,profile,force)) {
         System.err.print("A container with the name: " + containerName + " is already member of the cluster. You can specify a different name as an argument.");
         return null;
       }
@@ -23,6 +23,7 @@
       org.apache.felix.utils.properties.Properties props=new org.apache.felix.utils.properties.Properties(file);
       props.put("karaf.name",containerName);
       props.put("zookeeper.url",zookeeperUrl);
+      props.put("zookeeper.password",zookeeperPassword);
       props.save();
       if (!nonManaged) {
         installBundles();
@@ -30,6 +31,7 @@
       org.osgi.service.cm.Configuration config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
       Hashtable<String,Object> properties=new Hashtable<String,Object>();
       properties.put("zookeeper.url",zookeeperUrl);
+      properties.put("zookeeper.password",zookeeperPassword);
       config.setBundleLocation(null);
       config.update(properties);
       System.setProperty("karaf.restart","true");
@@ -42,13 +44,14 @@
     }
   }
  else {
-    if (!registerContainer(containerName,profile,force)) {
+    if (!registerContainer(containerName,zookeeperPassword,profile,force)) {
       System.err.println("A container with the name: " + containerName + " is already member of the cluster. You can specify a different name as an argument.");
       return null;
     }
     org.osgi.service.cm.Configuration config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
     Hashtable<String,Object> properties=new Hashtable<String,Object>();
     properties.put("zookeeper.url",zookeeperUrl);
+    properties.put("zookeeper.password",zookeeperPassword);
     config.setBundleLocation(null);
     config.update(properties);
     installBundles();

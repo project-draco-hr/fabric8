@@ -6,8 +6,13 @@
     String minimumPort=System.getProperty(ZkDefs.MINIMUM_PORT);
     String maximumPort=System.getProperty(ZkDefs.MAXIMUM_PORT);
     int mappedPort=mapPortToRange(port,minimumPort,maximumPort);
-    if (password == null) {
-      password=generatePassword();
+    if (password != null) {
+    }
+ else     if (System.getProperties().containsKey(ZOOKEEPER_PASSWORD)) {
+      password=System.getProperty(ZOOKEEPER_PASSWORD);
+    }
+ else {
+      password=ZooKeeperUtils.generatePassword();
     }
     Bundle bundleFabricConfigAdmin=installOrStopBundle(bundleContext,"org.fusesource.fabric.fabric-configadmin","mvn:org.fusesource.fabric/fabric-configadmin/" + FabricConstants.FABRIC_VERSION);
     Bundle bundleFabricZooKeeper=installOrStopBundle(bundleContext,"org.fusesource.fabric.fabric-zookeeper","mvn:org.fusesource.fabric/fabric-zookeeper/" + FabricConstants.FABRIC_VERSION);

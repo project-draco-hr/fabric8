@@ -1,9 +1,11 @@
 {
-  FabricService fabricService=getOsgiService(FabricService.class);
-  assertNotNull(fabricService);
   executeCommand("fabric:ensemble-create -n --clean root");
   Container[] containers=fabricService.getContainers();
   assertNotNull(containers);
   assertEquals("Expected to find 1 container",1,containers.length);
   assertEquals("Expected to find the root container","root",containers[0].getId());
+  ConfigurationAdmin configurationAdmin=getOsgiService(ConfigurationAdmin.class);
+  org.osgi.service.cm.Configuration configuration=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
+  Dictionary<String,Object> dictionary=configuration.getProperties();
+  assertEquals("Expected provided zookeeper password","systempassword",dictionary.get("zookeeper.password"));
 }

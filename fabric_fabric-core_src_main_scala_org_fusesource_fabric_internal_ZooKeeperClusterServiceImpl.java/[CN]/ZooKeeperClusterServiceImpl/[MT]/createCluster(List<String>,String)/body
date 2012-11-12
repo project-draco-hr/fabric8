@@ -1,7 +1,12 @@
 {
   try {
-    if (password == null) {
-      password=generatePassword();
+    if (password != null) {
+    }
+ else     if (System.getProperties().containsKey(ZOOKEEPER_PASSWORD)) {
+      password=System.getProperty(ZOOKEEPER_PASSWORD);
+    }
+ else {
+      password=ZooKeeperUtils.generatePassword();
     }
     if (containers == null || containers.size() == 2) {
       throw new IllegalArgumentException("One or at least 3 containers must be used to create a zookeeper ensemble");

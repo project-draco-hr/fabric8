@@ -3,6 +3,9 @@
   ZKClient zkClient=null;
   try {
     zkClient=new ZKClient(zookeeperUrl,Timespan.ONE_MINUTE,null);
+    if (registryPassword != null && !registryPassword.isEmpty()) {
+      zkClient.setPassword(registryPassword);
+    }
     zkClient.start();
     zkClient.waitForConnected();
     exists=zkClient.exists(ZkPath.CONTAINER.getPath(name)) != null;
