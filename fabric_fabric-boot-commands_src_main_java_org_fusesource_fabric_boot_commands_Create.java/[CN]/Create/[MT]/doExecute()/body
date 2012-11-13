@@ -28,8 +28,16 @@
   }
   System.setProperty(ZkDefs.MINIMUM_PORT,String.valueOf(minimumPort));
   System.setProperty(ZkDefs.MAXIMUM_PORT,String.valueOf(maximumPort));
+  Properties userProps=new Properties(new File(System.getProperty("karaf.home") + "/etc/users.properties"));
+  if (userProps.isEmpty()) {
+    String[] credentials=promptForNewUser(newUser,newUserPassword);
+    newUser=credentials[0];
+    newUserPassword=credentials[1];
+  }
+  CreateEnsembleOptions options=CreateEnsembleOptions.build().zookeeperPassword(zookeeperPassword).user(newUser,newUserPassword + "," + newUserRole);
+  options.getUsers().putAll(userProps);
   if (containers != null && !containers.isEmpty()) {
-    service.createCluster(containers,zookeeperPassword);
+    service.createCluster(containers,options);
   }
   return null;
 }

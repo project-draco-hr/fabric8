@@ -8,6 +8,14 @@
  else {
     System.setProperty(ZooKeeperClusterService.AGENT_AUTOSTART,"true");
   }
-  service.createCluster(containers,zookeeperPassword);
+  Properties userProps=new Properties(new File(System.getProperty("karaf.home") + "/etc/users.properties"));
+  if (userProps.isEmpty()) {
+    String[] credentials=promptForNewUser(newUser,newUserPassword);
+    newUser=credentials[0];
+    newUserPassword=credentials[1];
+  }
+  CreateEnsembleOptions options=CreateEnsembleOptions.build().zookeeperPassword(zookeeperPassword).user(newUser,newUserPassword + "," + newUserRole);
+  options.getUsers().putAll(userProps);
+  service.createCluster(containers,options);
   return null;
 }
