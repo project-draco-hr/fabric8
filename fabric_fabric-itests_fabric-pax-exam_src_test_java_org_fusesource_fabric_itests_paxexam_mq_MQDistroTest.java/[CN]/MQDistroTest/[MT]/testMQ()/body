@@ -1,6 +1,8 @@
 {
   HttpClient client=new HttpClient();
+  client.getState().setCredentials(new AuthScope(AuthScope.ANY_HOST,AuthScope.ANY_PORT),new UsernamePasswordCredentials("fusemq","fusemq"));
   GetMethod get=new GetMethod(WEB_CONSOLE_URL + "send.jsp");
+  get.setDoAuthentication(true);
   for (int i=0; i < 20; i++) {
     Thread.currentThread().sleep(1000);
     try {
@@ -17,12 +19,13 @@
   final String destination="validate.console.send";
   final String content="Hi for the " + Math.random() + "' time";
   PostMethod post=new PostMethod(WEB_CONSOLE_URL + "sendMessage.action");
+  post.setDoAuthentication(true);
   post.addParameter("secret",secret);
   post.addParameter("JMSText",content);
   post.addParameter("JMSDestination",destination);
   post.addParameter("JMSDestinationType","queue");
   assertEquals("post succeeded, " + post,302,client.executeMethod(post));
-  ActiveMQConnection connection=(ActiveMQConnection)new ActiveMQConnectionFactory().createConnection();
+  ActiveMQConnection connection=(ActiveMQConnection)new ActiveMQConnectionFactory().createConnection("fusemq","fusemq");
   connection.start();
   try {
     Session session=connection.createSession(false,Session.AUTO_ACKNOWLEDGE);
@@ -35,7 +38,7 @@
   }
   ConnectionFactory connectionFactory=getOsgiService(ConnectionFactory.class);
   assertTrue(connectionFactory instanceof ActiveMQConnectionFactory);
-  ActiveMQConnection connectionFromOsgiFactory=(ActiveMQConnection)connectionFactory.createConnection();
+  ActiveMQConnection connectionFromOsgiFactory=(ActiveMQConnection)connectionFactory.createConnection("fusemq","fusemq");
   connectionFromOsgiFactory.start();
   try {
     assertEquals("same broker",connection.getBrokerName(),connectionFromOsgiFactory.getBrokerName());
