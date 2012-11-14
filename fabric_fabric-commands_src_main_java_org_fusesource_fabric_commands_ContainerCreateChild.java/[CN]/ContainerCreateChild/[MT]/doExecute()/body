@@ -1,7 +1,8 @@
 {
   preCreateContainer(name);
+  promptForJmxCredentialsIfNeeded();
   String url="child://" + parent;
-  CreateContainerOptions options=CreateContainerOptionsBuilder.child().name(name).parent(parent).providerUri(url).resolver(resolver).ensembleServer(isEnsembleServer).number(number).zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword(fabricService.getZookeeperPassword()).jvmOpts(jvmOpts);
+  CreateContainerOptions options=CreateContainerOptionsBuilder.child().name(name).parent(parent).providerUri(url).resolver(resolver).ensembleServer(isEnsembleServer).number(number).zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword(fabricService.getZookeeperPassword()).jvmOpts(jvmOpts).jmxUser(jmxUser).jmxPassword(jmxPassword);
   CreateContainerMetadata[] metadatas=fabricService.createContainers(options);
   displayContainers(metadatas);
   postCreateContainers(metadatas);

@@ -2,7 +2,7 @@
   final Set<CreateContainerChildMetadata> result=new LinkedHashSet<CreateContainerChildMetadata>();
   final String parentName=options.getParent();
   final Container parent=service.getContainer(parentName);
-  ContainerTemplate containerTemplate=service.getContainerTemplate(parent);
+  ContainerTemplate containerTemplate=service.getContainerTemplate(parent,options.getJmxUser(),options.getJmxPassword());
   if (options.getProviderURI() != null && options.getProviderURI().getUserInfo() != null) {
     String ui=options.getProviderURI().getUserInfo();
     String[] uip=ui != null ? ui.split(":") : null;
