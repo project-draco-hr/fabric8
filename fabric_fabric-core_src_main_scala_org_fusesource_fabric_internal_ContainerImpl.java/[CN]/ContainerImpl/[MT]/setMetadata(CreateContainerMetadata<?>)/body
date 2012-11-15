@@ -1,3 +1,13 @@
 {
   this.metadata=metadata;
+  try {
+    if (service.getZooKeeper().isConnected()) {
+      byte[] metadataBytes=ObjectUtils.toBytes(metadata);
+      byte[] encoded=Base64Encoder.encode(metadataBytes);
+      ZooKeeperUtils.set(service.getZooKeeper(),ZkPath.CONTAINER_METADATA.getPath(id),new String(encoded));
+    }
+  }
+ catch (  Exception e) {
+    logger.warn("Error while storing metadata. This exception will be ignored.",e);
+  }
 }
