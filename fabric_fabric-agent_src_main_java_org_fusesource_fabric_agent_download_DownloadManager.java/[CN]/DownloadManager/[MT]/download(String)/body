@@ -16,7 +16,7 @@
     mvnUrl=mvnUrl.substring(mvnUrl.indexOf(':') + 1);
   }
   if (mvnUrl.startsWith("mvn:")) {
-    MavenDownloadTask task=new MavenDownloadTask(mvnUrl,system,configuration,executor);
+    MavenDownloadTask task=new MavenDownloadTask(mvnUrl,cache,system,configuration,executor);
     executor.submit(task);
     if (!mvnUrl.equals(url)) {
       final DummyDownloadTask download=new DummyDownloadTask(url,executor);

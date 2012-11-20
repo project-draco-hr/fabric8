@@ -2,9 +2,8 @@
   Parser parser=new Parser(url.substring("mvn:".length()));
   Set<DownloadableArtifact> downloadables;
   if (!parser.getVersion().contains("SNAPSHOT")) {
-    downloadables=doCollectPossibleDownloads(parser,Collections.singletonList(system));
-    if (!downloadables.isEmpty()) {
-      DownloadableArtifact artifact=downloadables.iterator().next();
+    downloadables=doCollectPossibleDownloads(parser,Arrays.asList(cache,system,configuration.getLocalRepository()));
+    for (    DownloadableArtifact artifact : downloadables) {
       URL url=artifact.getArtifactURL();
       File file=new File(url.getFile());
       if (file.exists()) {
@@ -23,7 +22,7 @@
     LOG.trace("Downloading [" + artifact + "]");
     try {
       configuration.enableProxy(artifact.getArtifactURL());
-      String repository=system.getFile().getAbsolutePath();
+      String repository=cache.getFile().getAbsolutePath();
       if (!repository.endsWith(Parser.FILE_SEPARATOR)) {
         repository=repository + Parser.FILE_SEPARATOR;
       }
