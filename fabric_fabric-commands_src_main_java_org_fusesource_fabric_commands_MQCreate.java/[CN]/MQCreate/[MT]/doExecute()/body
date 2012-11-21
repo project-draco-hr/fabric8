@@ -37,6 +37,7 @@
     }
   }
   if (create != null) {
+    promptForJmxCredentialsIfNeeded();
     String[] createContainers=create.split(",");
     for (    String url : createContainers) {
       String type=null;
@@ -52,7 +53,10 @@
         type="child";
         url="child://" + parent;
       }
-      CreateContainerOptions args=CreateContainerOptionsBuilder.type(type).name(name).parent(parent).number(1).ensembleServer(false).providerUri(url).proxyUri(fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl());
+      if (!type.equals("child")) {
+        throw new Exception("mq-create command can only create child containers. " + "For any other kind, create your container first and then use --assign");
+      }
+      CreateContainerOptions args=CreateContainerOptionsBuilder.child().name(name).parent(parent).number(1).ensembleServer(false).providerUri(url).proxyUri(fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword(fabricService.getZookeeperPassword()).jvmOpts(jvmOpts).jmxUser(jmxUser).jmxPassword(jmxPassword);
       CreateContainerMetadata[] metadatas=fabricService.createContainers(args);
       for (      CreateContainerMetadata metadata : metadatas) {
         if (metadata.isSuccess()) {
