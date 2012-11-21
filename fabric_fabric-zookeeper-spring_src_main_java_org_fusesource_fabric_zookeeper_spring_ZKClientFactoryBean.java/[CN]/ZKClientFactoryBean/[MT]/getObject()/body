@@ -1,6 +1,7 @@
 {
   LOG.debug("Connecting to ZooKeeper on " + connectString);
   zkClient=new ZKClient(connectString,getTimeout(),watcher);
+  zkClient.setPassword(password);
   zkClient.start();
   try {
     zkClient.waitForConnected(connectTimeout);
