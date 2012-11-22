@@ -34,7 +34,17 @@
     newUser=credentials[0];
     newUserPassword=credentials[1];
   }
-  CreateEnsembleOptions options=CreateEnsembleOptions.build().zookeeperPassword(zookeeperPassword).user(newUser,newUserPassword + "," + newUserRole);
+ else   if (newUser == null || newUserPassword == null) {
+    newUser=userProps.keySet().iterator().next();
+    newUserPassword=userProps.get(newUser);
+    if (newUserPassword.contains(ROLE_DELIMITER)) {
+      newUserPassword=newUserPassword.substring(0,newUserPassword.indexOf(ROLE_DELIMITER));
+    }
+  }
+  if (zookeeperPassword == null && !generateZookeeperPassword) {
+    zookeeperPassword=newUserPassword;
+  }
+  CreateEnsembleOptions options=CreateEnsembleOptions.build().zookeeperPassword(zookeeperPassword).user(newUser,newUserPassword + ROLE_DELIMITER + newUserRole);
   options.getUsers().putAll(userProps);
   if (containers != null && !containers.isEmpty()) {
     service.createCluster(containers,options);
