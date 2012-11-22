@@ -1,10 +1,10 @@
 {
   unregister(type);
-  String mavenProxyUrl="http://${zk:" + name + "/ip}:"+ getPortSafe()+ "/maven/"+ type+ "/";
-  String parentPath=ZkPath.MAVEN_PROXY.getPath(type);
-  String path=parentPath + "/p_";
   try {
-    if (zookeeper.isConnected()) {
+    if (connected && httpService != null) {
+      String mavenProxyUrl="http://${zk:" + name + "/ip}:"+ getPortSafe()+ "/maven/"+ type+ "/";
+      String parentPath=ZkPath.MAVEN_PROXY.getPath(type);
+      String path=parentPath + "/p_";
       if (zookeeper.exists(parentPath) == null) {
         zookeeper.createWithParents(parentPath,CreateMode.PERSISTENT);
       }
