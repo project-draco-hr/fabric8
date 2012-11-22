@@ -1,4 +1,9 @@
 {
+  if (FrameworkUtil.getBundle(getClass()) != null) {
+    context=FrameworkUtil.getBundle(getClass()).getBundleContext();
+    tracker=new ServiceTracker(context,IZKClient.class.getName(),this);
+    tracker.open();
+  }
   singleton.add(new ChangeListener(){
     @Override public void changed(){
       update(singleton.masters());
