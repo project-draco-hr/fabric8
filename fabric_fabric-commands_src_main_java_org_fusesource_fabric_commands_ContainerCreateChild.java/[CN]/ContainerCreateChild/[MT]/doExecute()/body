@@ -1,9 +1,21 @@
 {
+  CreateContainerMetadata[] metadatas=null;
   preCreateContainer(name);
-  promptForJmxCredentialsIfNeeded();
+  String jmxUser=username != null ? username : ShellUtils.retrieveFabricUser(session);
+  String jmxPassword=password != null ? password : ShellUtils.retrieveFabricUserPassword(session);
   String url="child://" + parent;
-  CreateContainerOptions options=CreateContainerOptionsBuilder.child().name(name).parent(parent).providerUri(url).resolver(resolver).ensembleServer(isEnsembleServer).number(number).zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword(fabricService.getZookeeperPassword()).jvmOpts(jvmOpts).jmxUser(jmxUser).jmxPassword(jmxPassword);
-  CreateContainerMetadata[] metadatas=fabricService.createContainers(options);
+  CreateContainerChildOptions options=CreateContainerOptionsBuilder.child().name(name).parent(parent).providerUri(url).resolver(resolver).ensembleServer(isEnsembleServer).number(number).zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword(fabricService.getZookeeperPassword()).jvmOpts(jvmOpts).jmxUser(jmxUser).jmxPassword(jmxPassword);
+  try {
+    metadatas=fabricService.createContainers(options);
+    ShellUtils.storeFabricCredentials(session,jmxUser,jmxPassword);
+  }
+ catch (  FabricAuthenticationException ex) {
+    promptForJmxCredentialsIfNeeded();
+    options.setJmxUser(username);
+    options.setJmxPassword(password);
+    metadatas=fabricService.createContainers(options);
+    ShellUtils.storeFabricCredentials(session,username,password);
+  }
   displayContainers(metadatas);
   postCreateContainers(metadatas);
   return null;

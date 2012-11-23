@@ -1,0 +1,12 @@
+{
+  Subject subject=Subject.getSubject(AccessController.getContext());
+  if (!subject.getPrivateCredentials(String.class).isEmpty() && subject.getPrincipals(UserPrincipal.class) != null && !subject.getPrincipals(UserPrincipal.class).isEmpty()) {
+    Set<UserPrincipal> userPrincipals=subject.getPrincipals(UserPrincipal.class);
+    UserPrincipal userPrincipal=userPrincipals.iterator().next();
+    return userPrincipal.getName();
+  }
+  if (session != null && session.get(FABRIC_USER) != null) {
+    return (String)session.get(FABRIC_USER);
+  }
+  return null;
+}

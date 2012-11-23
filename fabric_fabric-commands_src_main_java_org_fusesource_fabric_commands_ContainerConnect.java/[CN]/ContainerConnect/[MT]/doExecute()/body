@@ -9,7 +9,8 @@
       }
       sb.append(cmd);
     }
-    cmdStr="'" + sb.toString().replaceAll("'","\\'") + "'";
+    sb.append("\n");
+    cmdStr=sb.toString();
   }
   Container found=getContainer(container);
   String sshUrl=found.getSshUrl();
@@ -20,6 +21,14 @@
   if (ssh.length < 2) {
     throw new IllegalArgumentException("Container " + container + " has an invalid SSH URL '"+ sshUrl+ "'");
   }
-  session.execute("ssh -l " + username + " -p "+ ssh[1]+ " "+ ssh[0]+ " "+ cmdStr);
+  String sshUser=username != null ? username : ShellUtils.retrieveFabricUser(session);
+  String sshPassword=password != null ? password : ShellUtils.retrieveFabricUserPassword(session);
+  try {
+    executSshCommand(session,sshUser,sshPassword,ssh[0],ssh[1],cmdStr);
+  }
+ catch (  FabricAuthenticationException ex) {
+    promptForSshCredentialsIfNeeded();
+    executSshCommand(session,username,password,ssh[0],ssh[1],cmdStr);
+  }
   return null;
 }
