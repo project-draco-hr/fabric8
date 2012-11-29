@@ -14,16 +14,6 @@
     try {
       System.out.println("Connected");
       boolean authed=false;
-      if (agentSocket != null) {
-        sshSession.authAgent(username);
-        int ret=sshSession.waitFor(ClientSession.WAIT_AUTH | ClientSession.CLOSED | ClientSession.AUTHED,0);
-        if ((ret & ClientSession.AUTHED) == 0) {
-          System.err.println("Agent authentication failed, falling back to password authentication.");
-        }
- else {
-          authed=true;
-        }
-      }
       if (!authed) {
         log.debug("Prompting user for password");
         String pwd=password != null ? password : ShellUtils.readLine(session,"Password: ",true);
