@@ -3,12 +3,12 @@
     CreateJCloudsContainerMetadata metadata=getContainerCloudMetadata(targetContainerName);
     if (metadata != null) {
       CreateJCloudsContainerOptions options=metadata.getCreateOptions();
-      providerName=options.getProviderName();
+      contextName=options.getContextName();
     }
   }
-  if (!Strings.isNullOrEmpty(providerName)) {
+  if (!Strings.isNullOrEmpty(contextName)) {
     for (    ComputeService computeService : computeServices) {
-      if (computeService.getContext().unwrap().getId().equals(providerName)) {
+      if (computeService.getContext().unwrap().getName().equals(contextName)) {
         return computeService;
       }
     }
