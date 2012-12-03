@@ -2,7 +2,7 @@
   Set<Integer> rmiPorts=new LinkedHashSet<Integer>();
   String jmxUrl=container.getJmxUrl();
   String address=container.getIp();
-  if (address != null) {
+  if (jmxUrl != null && address != null) {
     Pattern pattern=Pattern.compile(address + ":\\d{1,5}");
     Matcher mather=pattern.matcher(jmxUrl);
     while (mather.find()) {
