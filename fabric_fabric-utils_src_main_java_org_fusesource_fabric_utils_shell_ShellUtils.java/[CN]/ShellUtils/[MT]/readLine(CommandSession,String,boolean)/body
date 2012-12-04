@@ -1,20 +1,13 @@
 {
-  StringBuffer sb=new StringBuffer();
-  System.out.print(msg);
-  System.out.flush();
-  for (; ; ) {
-    int c=session.getKeyboard().read();
-    if (c < 0) {
-      return null;
+  Object obj=session.get(".jline.reader");
+  if (obj instanceof ConsoleReader) {
+    ConsoleReader reader=(ConsoleReader)obj;
+    if (hidden) {
+      return reader.readLine(msg,ConsoleReader.NULL_MASK);
     }
-    if (!hidden) {
-      System.out.print((char)c);
-      System.out.flush();
+ else {
+      return reader.readLine(msg);
     }
-    if (c == '\r' || c == '\n') {
-      break;
-    }
-    sb.append((char)c);
   }
-  return sb.toString();
+  return null;
 }
