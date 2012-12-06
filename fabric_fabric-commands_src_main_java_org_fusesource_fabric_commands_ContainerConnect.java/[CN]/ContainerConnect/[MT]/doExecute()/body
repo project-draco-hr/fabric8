@@ -21,10 +21,10 @@
   if (ssh.length < 2) {
     throw new IllegalArgumentException("Container " + container + " has an invalid SSH URL '"+ sshUrl+ "'");
   }
-  String sshUser=username != null ? username : ShellUtils.retrieveFabricUser(session);
-  String sshPassword=password != null ? password : ShellUtils.retrieveFabricUserPassword(session);
+  username=username != null && !username.isEmpty() ? username : ShellUtils.retrieveFabricUser(session);
+  password=password != null ? password : ShellUtils.retrieveFabricUserPassword(session);
   try {
-    executSshCommand(session,sshUser,sshPassword,ssh[0],ssh[1],cmdStr);
+    executSshCommand(session,username,password,ssh[0],ssh[1],cmdStr);
   }
  catch (  FabricAuthenticationException ex) {
     promptForSshCredentialsIfNeeded();

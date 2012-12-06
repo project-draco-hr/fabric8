@@ -15,6 +15,9 @@
       System.out.println("Connected");
       boolean authed=false;
       if (!authed) {
+        if (username == null) {
+          throw new FabricAuthenticationException("No username specified.");
+        }
         log.debug("Prompting user for password");
         String pwd=password != null ? password : ShellUtils.readLine(session,"Password: ",true);
         sshSession.authPassword(username,pwd);
