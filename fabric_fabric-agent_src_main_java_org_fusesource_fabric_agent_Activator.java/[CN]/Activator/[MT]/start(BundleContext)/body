@@ -1,7 +1,12 @@
 {
   agent=new DeploymentAgent();
   agent.setBundleContext(context);
-  agent.setObrResolver(new ObrResolver(new RepositoryAdminImpl(context,new Logger(context))));
+  ObrResolver obr=new ObrResolver(new RepositoryAdminImpl(context,new Logger(context)));
+  Dictionary config=getConfig(context);
+  if (config != null) {
+    obr.setResolveOptionalImports(getResolveOptionalImports(config));
+  }
+  agent.setObrResolver(obr);
   agent.setPackageAdmin(getPackageAdmin(context));
   agent.setStartLevel(getStartLevel(context));
   agent.setZkClient(getZkClient(context));

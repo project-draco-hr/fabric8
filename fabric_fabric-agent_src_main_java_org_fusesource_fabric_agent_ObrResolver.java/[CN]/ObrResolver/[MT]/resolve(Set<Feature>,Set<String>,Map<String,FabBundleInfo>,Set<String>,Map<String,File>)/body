@@ -98,7 +98,7 @@
   for (  Requirement req : reqs) {
     resolver.add(req);
   }
-  if (!resolver.resolve(org.apache.felix.bundlerepository.Resolver.NO_OPTIONAL_RESOURCES)) {
+  if (!doResolve(resolver)) {
     StringWriter w=new StringWriter();
     PrintWriter out=new PrintWriter(w);
     Reason[] failedReqs=resolver.getUnsatisfiedRequirements();
@@ -118,5 +118,8 @@
   }
   Collections.addAll(deploy,resolver.getAddedResources());
   Collections.addAll(deploy,resolver.getRequiredResources());
+  if (resolveOptionalImports) {
+    Collections.addAll(deploy,resolver.getOptionalResources());
+  }
   return deploy;
 }
