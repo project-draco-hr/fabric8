@@ -1,5 +1,10 @@
 {
-  if (healthCheck != null && mbeanServer != null) {
-    healthCheck.unregisterMBeanServer(mbeanServer);
+  if (mbeanServer != null) {
+    if (managerMBean != null) {
+      managerMBean.unregisterMBeanServer(mbeanServer);
+    }
+    if (healthCheck != null) {
+      healthCheck.unregisterMBeanServer(mbeanServer);
+    }
   }
 }
