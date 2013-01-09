@@ -1,5 +1,6 @@
 {
-  logger.info("Destroying container {}",container.getId());
+  String containerId=container.getId();
+  logger.info("Destroying container {}",containerId);
   ContainerProvider provider=getProvider(container);
   try {
     provider.destroy(container);
@@ -7,10 +8,10 @@
  catch (  Exception e) {
   }
   try {
-    zooKeeper.deleteWithChildren(ZkPath.CONFIG_CONTAINER.getPath(container.getId()));
-    zooKeeper.deleteWithChildren(ZkPath.CONTAINER.getPath(container.getId()));
-    zooKeeper.deleteWithChildren(ZkPath.CONTAINER_DOMAINS.getPath(container.getId()));
-    zooKeeper.deleteWithChildren(ZkPath.CONTAINER_PROVISION.getPath(container.getId()));
+    zooKeeper.deleteWithChildren(ZkPath.CONFIG_CONTAINER.getPath(containerId));
+    zooKeeper.deleteWithChildren(ZkPath.CONTAINER.getPath(containerId));
+    zooKeeper.deleteWithChildren(ZkPath.CONTAINER_DOMAINS.getPath(containerId));
+    zooKeeper.deleteWithChildren(ZkPath.CONTAINER_PROVISION.getPath(containerId));
   }
  catch (  Exception e) {
   }
