@@ -10,6 +10,8 @@
     System.setProperty(ZkDefs.MANUAL_IP,manualIp);
   }
   zookeeperPassword=zookeeperPassword != null ? zookeeperPassword : ShellUtils.retrieveFabricZookeeperPassword(session);
+  System.setProperty(ZkDefs.MINIMUM_PORT,String.valueOf(minimumPort));
+  System.setProperty(ZkDefs.MAXIMUM_PORT,String.valueOf(maximumPort));
   if (!containerName.equals(oldName)) {
     if (force || permissionToRenameContainer()) {
       if (!registerContainer(containerName,zookeeperPassword,profile,force)) {
@@ -18,8 +20,6 @@
       }
       System.setProperty("karaf.name",containerName);
       System.setProperty("zookeeper.url",zookeeperUrl);
-      System.setProperty(ZkDefs.MINIMUM_PORT,String.valueOf(minimumPort));
-      System.setProperty(ZkDefs.MAXIMUM_PORT,String.valueOf(maximumPort));
       File file=new File(System.getProperty("karaf.base") + "/etc/system.properties");
       org.apache.felix.utils.properties.Properties props=new org.apache.felix.utils.properties.Properties(file);
       props.put("karaf.name",containerName);
