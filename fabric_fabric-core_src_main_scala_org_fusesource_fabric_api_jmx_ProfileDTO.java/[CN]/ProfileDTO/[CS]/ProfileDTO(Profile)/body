@@ -7,6 +7,14 @@
   this.overrides=profile.getOverrides();
   this.repositories=profile.getRepositories();
   this.parentIds=Ids.getIds(profile.getParents());
+  this.abstractProfile=profile.isAbstract();
+  this.hidden=profile.isHidden();
+  this.locked=profile.isLocked();
+  this.overlay=profile.isOverlay();
+  Map<String,byte[]> fileConfigurations=profile.getFileConfigurations();
+  if (fileConfigurations != null) {
+    this.fileConfigurationCount=fileConfigurations.size();
+  }
   Container[] containers=profile.getAssociatedContainers();
   if (containers != null) {
     this.containerCount=containers.length;
