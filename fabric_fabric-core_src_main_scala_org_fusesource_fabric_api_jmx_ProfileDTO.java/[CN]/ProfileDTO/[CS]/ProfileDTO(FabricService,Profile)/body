@@ -1,0 +1,30 @@
+{
+  this.id=profile.getId();
+  this.attributes=profile.getAttributes();
+  this.bundles=profile.getBundles();
+  this.fabs=profile.getFabs();
+  this.features=profile.getFeatures();
+  this.overrides=profile.getOverrides();
+  this.repositories=profile.getRepositories();
+  this.parentIds=Ids.getIds(profile.getParents());
+  this.abstractProfile=profile.isAbstract();
+  this.hidden=profile.isHidden();
+  this.locked=profile.isLocked();
+  this.overlay=profile.isOverlay();
+  this.configurations=profile.getFileConfigurations();
+  this.childIds=new ArrayList<String>();
+  for (  Profile p : service.getVersion(profile.getVersion()).getProfiles()) {
+    for (    Profile parent : p.getParents()) {
+      if (parent.getId().equals(getId())) {
+        childIds.add(p.getId());
+        break;
+      }
+    }
+  }
+  this.containers=new ArrayList<String>();
+  this.containerCount=0;
+  for (  Container c : profile.getAssociatedContainers()) {
+    containerCount++;
+    containers.add(c.getId());
+  }
+}
