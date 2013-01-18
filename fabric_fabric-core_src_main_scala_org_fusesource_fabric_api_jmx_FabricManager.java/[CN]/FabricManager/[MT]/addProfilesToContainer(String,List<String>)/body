@@ -1,0 +1,12 @@
+{
+  Container cont=getFabricService().getContainer(container);
+  Profile[] existing=cont.getProfiles();
+  if (existing != null) {
+    for (    Profile p : existing) {
+      if (!profiles.contains(p.getId())) {
+        profiles.add(p.getId());
+      }
+    }
+  }
+  cont.setProfiles(getProfiles(cont.getVersion(),profiles));
+}
