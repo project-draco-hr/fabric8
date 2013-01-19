@@ -11,7 +11,8 @@
   this.hidden=profile.isHidden();
   this.locked=profile.isLocked();
   this.overlay=profile.isOverlay();
-  this.configurations=profile.getFileConfigurations();
+  this.configurations=new ArrayList<String>();
+  this.configurations.addAll(profile.getFileConfigurations().keySet());
   this.childIds=new ArrayList<String>();
   for (  Profile p : service.getVersion(profile.getVersion()).getProfiles()) {
     for (    Profile parent : p.getParents()) {
