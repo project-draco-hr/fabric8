@@ -1,0 +1,7 @@
+{
+  File f=new File(System.getProperty("karaf.data") + "/editor/" + UUID.randomUUID());
+  if (!f.exists() && !f.getParentFile().exists() && !f.getParentFile().mkdirs()) {
+    throw new IOException("Can't create file:" + f.getAbsolutePath());
+  }
+  return f;
+}

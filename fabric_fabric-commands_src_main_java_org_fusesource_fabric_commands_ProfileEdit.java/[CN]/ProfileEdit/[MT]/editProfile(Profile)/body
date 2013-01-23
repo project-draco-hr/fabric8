@@ -1,41 +1,48 @@
 {
   String pid=AGENT_PID;
+  boolean editInLine=false;
   Map<String,Map<String,String>> config=profile.getConfigurations();
   Map<String,String> pidConfig=config.get(pid);
   if (pidConfig == null) {
     pidConfig=new HashMap<String,String>();
   }
   if (featuresList != null && !featuresList.isEmpty()) {
+    editInLine=true;
     String[] features=featuresList.split(DELIMETER);
     for (    String feature : features) {
       updateConfig(pidConfig,FEATURE_PREFIX + feature.replace('/','_'),feature,set,delete);
     }
   }
   if (repositoryUriList != null && !repositoryUriList.isEmpty()) {
+    editInLine=true;
     String[] repositoryURIs=repositoryUriList.split(DELIMETER);
     for (    String repopsitoryURI : repositoryURIs) {
       updateConfig(pidConfig,REPOSITORY_PREFIX + repopsitoryURI.replace('/','_'),repopsitoryURI,set,delete);
     }
   }
   if (bundlesList != null && !bundlesList.isEmpty()) {
+    editInLine=true;
     String[] bundles=bundlesList.split(DELIMETER);
     for (    String bundlesLocation : bundles) {
       updateConfig(pidConfig,BUNDLE_PREFIX + bundlesLocation.replace('/','_'),bundlesLocation,set,delete);
     }
   }
   if (fabsList != null && !fabsList.isEmpty()) {
+    editInLine=true;
     String[] fabs=fabsList.split(DELIMETER);
     for (    String fabsLocation : fabs) {
       updateConfig(pidConfig,FAB_PREFIX + fabsLocation.replace('/','_'),fabsLocation,set,delete);
     }
   }
   if (overridesList != null && !overridesList.isEmpty()) {
+    editInLine=true;
     String[] overrides=overridesList.split(DELIMETER);
     for (    String overridesLocation : overrides) {
       updateConfig(pidConfig,OVERRIDE_PREFIX + overridesLocation.replace('/','_'),overridesLocation,set,delete);
     }
   }
   if (configAdminProperties != null && configAdminProperties.length > 0) {
+    editInLine=true;
     for (    String configAdminProperty : configAdminProperties) {
       String currentPid=null;
       Map<String,String> existingConfig=null;
@@ -66,6 +73,7 @@
     }
   }
   if (systemProperties != null && systemProperties.length > 0) {
+    editInLine=true;
     for (    String systemProperty : systemProperties) {
       Map<String,String> configMap=extractConfigs(systemProperty);
       for (      Map.Entry<String,String> configEntries : configMap.entrySet()) {
@@ -76,6 +84,7 @@
     }
   }
   if (configProperties != null && configProperties.length > 0) {
+    editInLine=true;
     for (    String configProperty : configProperties) {
       Map<String,String> configMap=extractConfigs(configProperty);
       for (      Map.Entry<String,String> configEntries : configMap.entrySet()) {
@@ -85,6 +94,11 @@
       }
     }
   }
-  config.put(pid,pidConfig);
-  profile.setConfigurations(config);
+  if (editInLine) {
+    config.put(pid,pidConfig);
+    profile.setConfigurations(config);
+  }
+ else {
+    openInEditor(profile);
+  }
 }
