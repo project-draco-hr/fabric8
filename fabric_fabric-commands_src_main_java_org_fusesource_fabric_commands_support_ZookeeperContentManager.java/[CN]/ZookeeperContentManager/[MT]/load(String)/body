@@ -1,0 +1,12 @@
+{
+  try {
+    String data=zookeeper.getStringData(location);
+    return data != null ? data : "";
+  }
+ catch (  InterruptedException e) {
+    throw new IOException("Failed to read data from zookeeper.",e);
+  }
+catch (  KeeperException e) {
+    throw new IOException("Failed to read data from zookeeper.",e);
+  }
+}

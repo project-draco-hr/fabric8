@@ -1,12 +1,11 @@
 {
-  String data=zk.getStringData(path);
-  File tmpFile=createTemporaryFile();
-  Files.writeToFile(tmpFile,data,UTF_8);
+  if (zk.exists(path) == null) {
+    zk.createWithParents(path,"",ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+  }
   ConsoleEditor editor=editorFactory.create(getTerminal());
   editor.setTitle("Znode");
-  editor.open(tmpFile,path);
+  editor.setContentManager(new ZookeeperContentManager(zk));
+  editor.open(path);
   editor.setOpenEnabled(false);
   editor.start();
-  data=Files.toString(tmpFile,UTF_8);
-  zk.setData(path,data);
 }
