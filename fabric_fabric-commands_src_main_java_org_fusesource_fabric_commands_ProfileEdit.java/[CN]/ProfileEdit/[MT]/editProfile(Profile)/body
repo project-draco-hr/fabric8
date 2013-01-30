@@ -42,7 +42,6 @@
     }
   }
   if (configAdminProperties != null && configAdminProperties.length > 0) {
-    editInLine=true;
     for (    String configAdminProperty : configAdminProperties) {
       String currentPid=null;
       Map<String,String> existingConfig=null;
@@ -51,6 +50,7 @@
         if (configAdminProperty.contains(PID_KEY_SEPARATOR)) {
           currentPid=configAdminProperty.substring(0,configAdminProperty.indexOf(PID_KEY_SEPARATOR));
           keyValue=configAdminProperty.substring(configAdminProperty.indexOf(PID_KEY_SEPARATOR) + 1);
+          editInLine=true;
         }
  else {
           currentPid=configAdminProperty;
@@ -60,6 +60,7 @@
           existingConfig=new HashMap<String,String>();
         }
         if (configAdminProperties.length == 1 && importPid) {
+          editInLine=true;
           importPidFromLocalConfigAdmin(currentPid,existingConfig);
         }
         Map<String,String> configMap=extractConfigs(keyValue);
@@ -99,6 +100,10 @@
     profile.setConfigurations(config);
   }
  else {
-    openInEditor(profile);
+    resource=resource != null ? resource : "org.fusesource.fabric.agent.properties";
+    if (configAdminProperties != null && configAdminProperties.length == 1) {
+      resource=configAdminProperties[0] + ".properties";
+    }
+    openInEditor(profile,resource);
   }
 }
