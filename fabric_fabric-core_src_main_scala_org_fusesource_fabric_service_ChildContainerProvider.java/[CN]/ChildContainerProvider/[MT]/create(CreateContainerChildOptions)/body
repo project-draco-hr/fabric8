@@ -14,18 +14,15 @@
   containerTemplate.execute(new ContainerTemplate.AdminServiceCallback<Object>(){
     public Object doWithAdminService(    AdminServiceMBean adminService) throws Exception {
       StringBuilder jvmOptsBuilder=new StringBuilder();
-      if (options.getJvmOpts() != null && !options.getJvmOpts().isEmpty()) {
-        jvmOptsBuilder.append(options.getJvmOpts()).append(" ");
-      }
       jvmOptsBuilder.append("-server -Dcom.sun.management.jmxremote").append(options.getZookeeperUrl() != null ? " -Dzookeeper.url=\"" + options.getZookeeperUrl() + "\"" : "").append(options.getZookeeperPassword() != null ? " -Dzookeeper.password=\"" + options.getZookeeperPassword() + "\"" : "");
       if (options.getJvmOpts() == null || !options.getJvmOpts().contains("-Xmx")) {
         jvmOptsBuilder.append(" -Xmx512m");
       }
- else       if (options.getJvmOpts() != null) {
-        jvmOptsBuilder.append(" ").append(options.getJvmOpts());
-      }
       if (options.isEnsembleServer()) {
         jvmOptsBuilder.append(" ").append(ENSEMBLE_SERVER_CONTAINER);
+      }
+      if (options.getJvmOpts() == null && !options.getJvmOpts().isEmpty()) {
+        jvmOptsBuilder.append(" ").append(options.getJvmOpts());
       }
       String features="fabric-agent";
       String featuresUrls="mvn:org.fusesource.fabric/fuse-fabric/" + FabricConstants.FABRIC_VERSION + "/xml/features";
