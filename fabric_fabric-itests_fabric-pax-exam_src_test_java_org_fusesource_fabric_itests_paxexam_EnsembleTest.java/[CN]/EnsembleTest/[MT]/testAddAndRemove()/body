@@ -1,0 +1,9 @@
+{
+  System.err.println(executeCommand("fabric:create -n"));
+  createAndAssertChildContainer("child1","root","default");
+  createAndAssertChildContainer("child2","root","default");
+  System.err.println(executeCommand("fabric:ensemble-add child1 child2"));
+  System.err.println(executeCommand("fabric:container-list"));
+  System.err.println(executeCommand("fabric:ensemble-remove child1 child2"));
+  System.err.println(executeCommand("fabric:container-list"));
+}

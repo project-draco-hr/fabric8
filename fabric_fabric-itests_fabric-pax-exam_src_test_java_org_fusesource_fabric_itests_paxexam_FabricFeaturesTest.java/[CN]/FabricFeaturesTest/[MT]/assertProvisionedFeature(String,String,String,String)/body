@@ -11,7 +11,7 @@
   testFeatures.add(featureName);
   targetProfile.setFeatures(testFeatures);
   containerSetProfile(containerName,profileName);
-  String bundles=executeCommand("container-connect " + containerName + " osgi:list -s -t 0 | grep "+ expectedSymbolicName);
+  String bundles=executeCommand("container-connect -u admin -p admin " + containerName + " osgi:list -s -t 0 | grep "+ expectedSymbolicName);
   Assert.assertNotNull(bundles);
   Assert.assertTrue(bundles.contains(expectedSymbolicName));
   System.out.println(bundles);
