@@ -5,8 +5,9 @@
       list.add(r);
     }
   }
+  BufferedReader reader=null;
   try {
-    BufferedReader reader=new BufferedReader(new FileReader(ignore));
+    reader=new BufferedReader(new FileReader(ignore));
     String s=reader.readLine();
     while (s != null) {
       list.add(s);
@@ -15,6 +16,9 @@
   }
  catch (  Exception e) {
     throw new RuntimeException("Error reading from " + ignore + " : "+ e);
+  }
+ finally {
+    Closeables.closeQuitely(reader);
   }
   String rc[]=new String[list.size()];
   list.toArray(rc);

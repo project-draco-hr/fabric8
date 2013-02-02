@@ -2,8 +2,8 @@
   try {
     if (options.getZookeeperPassword() != null) {
     }
- else     if (System.getProperties().containsKey(ZOOKEEPER_PASSWORD)) {
-      options.setZookeeperPassword(System.getProperty(ZOOKEEPER_PASSWORD));
+ else     if (System.getProperties().containsKey(SystemProperties.ZOOKEEPER_PASSWORD)) {
+      options.setZookeeperPassword(System.getProperty(SystemProperties.ZOOKEEPER_PASSWORD));
     }
  else {
       options.setZookeeperPassword(ZooKeeperUtils.generatePassword());
@@ -14,7 +14,7 @@
     Configuration config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper",null);
     String zooKeeperUrl=config != null && config.getProperties() != null ? (String)config.getProperties().get("zookeeper.url") : null;
     if (zooKeeperUrl == null) {
-      if (containers.size() != 1 || !containers.get(0).equals(System.getProperty("karaf.name"))) {
+      if (containers.size() != 1 || !containers.get(0).equals(System.getProperty(SystemProperties.KARAF_NAME))) {
         throw new FabricException("The first zookeeper cluster must be configured on this container only.");
       }
       createLocalServer(2181,options);
@@ -65,8 +65,8 @@
     String containerList="";
     for (    String container : containers) {
       String ip=ZooKeeperUtils.getSubstitutedPath(zooKeeper,ZkPath.CONTAINER_IP.getPath(container));
-      String minimumPort=String.valueOf(PortUtils.MIN_PORT_NUMBER);
-      String maximumPort=String.valueOf(PortUtils.MAX_PORT_NUMBER);
+      String minimumPort=String.valueOf(Ports.MIN_PORT_NUMBER);
+      String maximumPort=String.valueOf(Ports.MAX_PORT_NUMBER);
       if (zooKeeper.exists(ZkPath.CONTAINER_PORT_MIN.getPath(container)) != null) {
         minimumPort=ZooKeeperUtils.getSubstitutedPath(zooKeeper,ZkPath.CONTAINER_PORT_MIN.getPath(container));
       }
@@ -77,10 +77,10 @@
       String pidNode=profNode + "/org.fusesource.fabric.zookeeper.server-" + newClusterId+ ".properties";
       Properties pidNodeProperties=new Properties();
       ZooKeeperUtils.set(zooKeeper,profNode,"parents=fabric-ensemble-" + newClusterId + "\nhidden=true");
-      String port1=Integer.toString(findPort(usedPorts,ip,mapPortToRange(2181,minimumPort,maximumPort)));
+      String port1=Integer.toString(findPort(usedPorts,ip,mapPortToRange(Ports.DEFAULT_ZOOKEEPER_SERVER_PORT,minimumPort,maximumPort)));
       if (containers.size() > 1) {
-        String port2=Integer.toString(findPort(usedPorts,ip,mapPortToRange(2888,minimumPort,maximumPort)));
-        String port3=Integer.toString(findPort(usedPorts,ip,mapPortToRange(3888,minimumPort,maximumPort)));
+        String port2=Integer.toString(findPort(usedPorts,ip,mapPortToRange(Ports.DEFAULT_ZOOKEEPER_PEER_PORT,minimumPort,maximumPort)));
+        String port3=Integer.toString(findPort(usedPorts,ip,mapPortToRange(Ports.DEFAULT_ZOOKEEPER_ELECTION_PORT,minimumPort,maximumPort)));
         profileNodeProperties.put("server." + Integer.toString(index),"${zk:" + container + "/ip}:"+ port2+ ":"+ port3);
         pidNodeProperties.put("server.id",Integer.toString(index));
       }

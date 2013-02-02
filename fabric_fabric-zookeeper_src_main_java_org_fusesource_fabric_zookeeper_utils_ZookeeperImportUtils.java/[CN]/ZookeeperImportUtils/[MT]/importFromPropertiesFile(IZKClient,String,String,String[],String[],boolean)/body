@@ -1,28 +1,33 @@
 {
   List<Pattern> includes=getPatterns(includeRegex);
   List<Pattern> excludes=getPatterns(excludeRegex);
-  InputStream in=new BufferedInputStream(new URL(source).openStream());
-  List<String> paths=new ArrayList<String>();
-  Properties props=new Properties();
-  props.load(in);
-  for (Enumeration names=props.propertyNames(); names.hasMoreElements(); ) {
-    String name=(String)names.nextElement();
-    String value=props.getProperty(name);
-    if (value != null && value.isEmpty()) {
-      value=null;
-    }
-    if (!name.startsWith("/")) {
-      name="/" + name;
-    }
-    name=target + name;
-    if (!matches(includes,name,true) || matches(excludes,name,false)) {
-      continue;
-    }
-    if (!dryRun) {
-      zooKeeper.createOrSetWithParents(name,value,CreateMode.PERSISTENT);
-    }
+  InputStream in=null;
+  try {
+    new BufferedInputStream(new URL(source).openStream());
+    Properties props=new Properties();
+    props.load(in);
+    for (Enumeration names=props.propertyNames(); names.hasMoreElements(); ) {
+      String name=(String)names.nextElement();
+      String value=props.getProperty(name);
+      if (value != null && value.isEmpty()) {
+        value=null;
+      }
+      if (!name.startsWith("/")) {
+        name="/" + name;
+      }
+      name=target + name;
+      if (!matches(includes,name,true) || matches(excludes,name,false)) {
+        continue;
+      }
+      if (!dryRun) {
+        zooKeeper.createOrSetWithParents(name,value,CreateMode.PERSISTENT);
+      }
  else {
-      System.out.printf("Creating path \"%s\" with value \"%s\"\n",name,value);
+        System.out.printf("Creating path \"%s\" with value \"%s\"\n",name,value);
+      }
     }
+  }
+  finally {
+    Closeables.closeQuitely(in);
   }
 }

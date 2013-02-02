@@ -18,7 +18,9 @@
         String key=profile.getId();
         ProfileStatus status=profileStatusMap.get(key);
         if (status == null) {
-          status=createStatus(key,null);
+          ProfileRequirements profileRequirement=new ProfileRequirements(key);
+          requirements.addOrUpdateProfileRequirements(profileRequirement);
+          status=createStatus(key,profileRequirement);
           profileStatusMap.put(key,status);
         }
         status.incrementCount();

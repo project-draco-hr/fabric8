@@ -1,12 +1,12 @@
 {
   if (containers == null || containers.isEmpty()) {
-    containers=Arrays.asList(System.getProperty("karaf.name"));
+    containers=Arrays.asList(System.getProperty(SystemProperties.KARAF_NAME));
   }
   if (clean) {
     service.clean();
   }
   if (!noImport && importDir != null) {
-    System.setProperty(ZooKeeperClusterService.PROFILES_AUTOIMPORT_PATH,importDir);
+    System.setProperty(SystemProperties.PROFILES_AUTOIMPORT_PATH,importDir);
   }
   if (globalResolver != null) {
     System.setProperty(ZkDefs.GLOBAL_RESOLVER_PROPERTY,globalResolver);
@@ -18,13 +18,13 @@
     System.setProperty(ZkDefs.MANUAL_IP,manualIp);
   }
   if (profile != null) {
-    System.setProperty(ZooKeeperClusterService.PROFILE,profile);
+    System.setProperty(SystemProperties.PROFILE,profile);
   }
   if (nonManaged) {
-    System.setProperty(ZooKeeperClusterService.AGENT_AUTOSTART,"false");
+    System.setProperty(SystemProperties.AGENT_AUTOSTART,"false");
   }
  else {
-    System.setProperty(ZooKeeperClusterService.AGENT_AUTOSTART,"true");
+    System.setProperty(SystemProperties.AGENT_AUTOSTART,"true");
   }
   System.setProperty(ZkDefs.MINIMUM_PORT,String.valueOf(minimumPort));
   System.setProperty(ZkDefs.MAXIMUM_PORT,String.valueOf(maximumPort));
@@ -46,6 +46,9 @@
   StringBuilder sb=new StringBuilder();
   if (session != null) {
     ShellUtils.storeFabricCredentials(session,newUser,newUserPassword);
+  }
+  if (zookeeperPassword == null) {
+    zookeeperPassword=System.getProperty(SystemProperties.ZOOKEEPER_PASSWORD);
   }
   if (zookeeperPassword == null && !generateZookeeperPassword) {
     zookeeperPassword=newUserPassword;

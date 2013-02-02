@@ -6,9 +6,10 @@
     IZKClient zooKeeper=service.getZooKeeper();
     Map<String,Map<String,String>> oldCfgs=getConfigurations();
     String path=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id);
-    for (    String pid : configurations.keySet()) {
+    for (    Map.Entry<String,Map<String,String>> entry : configurations.entrySet()) {
+      String pid=entry.getKey();
       oldCfgs.remove(pid);
-      byte[] data=toBytes(toProperties(configurations.get(pid)));
+      byte[] data=toBytes(toProperties(entry.getValue()));
       String p=path + "/" + pid+ ".properties";
       ZooKeeperUtils.set(zooKeeper,p,data);
     }

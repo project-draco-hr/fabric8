@@ -6,6 +6,7 @@
       parts=new ArrayList<String>(Arrays.asList(data.split(" ")));
     }
     boolean changed=false;
+    StringBuilder sb=new StringBuilder();
     for (Iterator<String> it=parts.iterator(); it.hasNext(); ) {
       String v=it.next();
       if (v.matches(value)) {
@@ -14,14 +15,14 @@
       }
     }
     if (changed) {
-      data="";
+      sb.delete(0,sb.length());
       for (      String part : parts) {
         if (data.length() > 0) {
-          data+=" ";
+          sb.append(" ");
         }
-        data+=part;
+        sb.append(part);
       }
-      zooKeeper.setData(path,data);
+      zooKeeper.setData(path,sb.toString());
     }
   }
 }

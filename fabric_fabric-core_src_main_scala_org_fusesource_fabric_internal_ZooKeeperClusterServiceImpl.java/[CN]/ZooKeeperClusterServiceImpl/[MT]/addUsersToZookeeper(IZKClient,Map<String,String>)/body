@@ -11,8 +11,9 @@
   EncryptionSupport encryptionSupport=new EncryptionSupport(options);
   Encryption encryption=encryptionSupport.getEncryption();
   StringBuilder sb=new StringBuilder();
-  for (  String user : users.keySet()) {
-    Matcher m=p.matcher(users.get(user));
+  for (  Map.Entry<String,String> entry : users.entrySet()) {
+    String user=entry.getKey();
+    Matcher m=p.matcher(entry.getValue());
     if (m.matches() && m.groupCount() >= 2) {
       String password=m.group(1).trim();
       if (!password.startsWith(encryptionSupport.getEncryptionPrefix()) || !password.endsWith(encryptionSupport.getEncryptionSuffix())) {

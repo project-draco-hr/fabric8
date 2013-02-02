@@ -6,9 +6,10 @@
     IZKClient zooKeeper=service.getZooKeeper();
     Map<String,byte[]> oldCfgs=getFileConfigurations();
     String path=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id);
-    for (    String pid : configurations.keySet()) {
+    for (    Map.Entry<String,byte[]> entry : configurations.entrySet()) {
+      String pid=entry.getKey();
       oldCfgs.remove(pid);
-      byte[] newCfg=configurations.get(pid);
+      byte[] newCfg=entry.getValue();
       String configPath=path + "/" + pid;
       if (zooKeeper.exists(configPath) != null && zooKeeper.getChildren(configPath).size() > 0) {
         List<String> kids=zooKeeper.getChildren(configPath);
@@ -17,13 +18,13 @@
           if (line.startsWith("#") || line.length() == 0) {
             continue;
           }
-          String name_value[]=line.split("=",2);
-          if (name_value.length < 2) {
+          String nameValue[]=line.split("=",2);
+          if (nameValue.length < 2) {
             continue;
           }
-          String newPath=configPath + "/" + name_value[0].trim();
-          ZooKeeperUtils.set(zooKeeper,newPath,name_value[1].trim());
-          saved.add(name_value[0].trim());
+          String newPath=configPath + "/" + nameValue[0].trim();
+          ZooKeeperUtils.set(zooKeeper,newPath,nameValue[1].trim());
+          saved.add(nameValue[0].trim());
         }
         for (        String kid : kids) {
           if (!saved.contains(kid)) {

@@ -2,14 +2,14 @@
   try {
     IZKClient client;
     Hashtable<String,Object> properties;
-    String karafName=System.getProperty("karaf.name");
+    String karafName=System.getProperty(SystemProperties.KARAF_NAME);
     String minimumPort=System.getProperty(ZkDefs.MINIMUM_PORT);
     String maximumPort=System.getProperty(ZkDefs.MAXIMUM_PORT);
     int mappedPort=mapPortToRange(port,minimumPort,maximumPort);
     if (options.getZookeeperPassword() != null) {
     }
- else     if (System.getProperties().containsKey(ZOOKEEPER_PASSWORD)) {
-      options.setZookeeperPassword(System.getProperty(ZOOKEEPER_PASSWORD));
+ else     if (System.getProperties().containsKey(SystemProperties.ZOOKEEPER_PASSWORD)) {
+      options.setZookeeperPassword(System.getProperty(SystemProperties.ZOOKEEPER_PASSWORD));
     }
  else {
       options.setZookeeperPassword(ZooKeeperUtils.generatePassword());
@@ -21,7 +21,7 @@
     Bundle bundleFabricCommands=installOrStopBundle(bundleContext,"org.fusesource.fabric.fabric-commands  ","mvn:org.fusesource.fabric/fabric-commands/" + FabricConstants.FABRIC_VERSION);
     Bundle bundleFabricMavenProxy=installOrStopBundle(bundleContext,"org.fusesource.fabric.fabric-commands  ","mvn:org.fusesource.fabric/fabric-maven-proxy/" + FabricConstants.FABRIC_VERSION);
     String connectionUrl=HostUtils.getLocalHostName() + ":" + Integer.toString(mappedPort);
-    String autoImportFrom=System.getProperty(PROFILES_AUTOIMPORT_PATH);
+    String autoImportFrom=System.getProperty(SystemProperties.PROFILES_AUTOIMPORT_PATH);
     Configuration config=configurationAdmin.createFactoryConfiguration("org.fusesource.fabric.zookeeper.server");
     properties=new Hashtable<String,Object>();
     if (autoImportFrom != null) {
@@ -83,7 +83,7 @@
     p.put("feature.fabric-commands","fabric-commands");
     ZooKeeperUtils.set(client,fabricProfile + "/org.fusesource.fabric.agent.properties",toString(p));
     ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_CONTAINER.getPath(karafName),version);
-    String assignedProfile=System.getProperty(PROFILE);
+    String assignedProfile=System.getProperty(SystemProperties.PROFILE);
     if (assignedProfile != null && !assignedProfile.isEmpty() && !"fabric".equals(assignedProfile)) {
       ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,karafName),"fabric fabric-ensemble-0000-1 " + assignedProfile);
     }
@@ -96,17 +96,17 @@
     addUsersToZookeeper(client,options.getUsers());
     client.fixACLs("/",true);
     if (ensembleAutoStart) {
-      System.setProperty(ENSEMBLE_AUTOSTART,Boolean.FALSE.toString());
+      System.setProperty(SystemProperties.ENSEMBLE_AUTOSTART,Boolean.FALSE.toString());
       File file=new File(System.getProperty("karaf.base") + "/etc/system.properties");
       org.apache.felix.utils.properties.Properties props=new org.apache.felix.utils.properties.Properties(file);
-      props.put(ENSEMBLE_AUTOSTART,Boolean.FALSE.toString());
+      props.put(SystemProperties.ENSEMBLE_AUTOSTART,Boolean.FALSE.toString());
       props.save();
     }
     bundleFabricConfigAdmin.start();
     bundleFabricJaas.start();
     bundleFabricCommands.start();
     bundleFabricMavenProxy.start();
-    if (!System.getProperties().containsKey(AGENT_AUTOSTART) || Boolean.parseBoolean(System.getProperty(AGENT_AUTOSTART))) {
+    if (!System.getProperties().containsKey(SystemProperties.AGENT_AUTOSTART) || Boolean.parseBoolean(System.getProperty(SystemProperties.AGENT_AUTOSTART))) {
       bundleFabricAgent=findOrInstallBundle(bundleContext,"org.fusesource.fabric.fabric-agent  ","mvn:org.fusesource.fabric/fabric-agent/" + FabricConstants.FABRIC_VERSION);
       bundleFabricAgent.start();
     }

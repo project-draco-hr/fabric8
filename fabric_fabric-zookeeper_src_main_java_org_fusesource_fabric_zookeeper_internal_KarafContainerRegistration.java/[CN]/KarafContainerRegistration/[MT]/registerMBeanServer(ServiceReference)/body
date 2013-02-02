@@ -1,7 +1,6 @@
 {
   try {
-    lock.lock();
-    String name=System.getProperty("karaf.name");
+    String name=System.getProperty(SystemProperties.KARAF_NAME);
     mbeanServer=(MBeanServer)bundleContext.getService(ref);
     if (mbeanServer != null) {
       mbeanServer.addNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this,null,name);
@@ -10,8 +9,5 @@
   }
  catch (  Exception e) {
     logger.warn("An error occurred during mbean server registration. This exception will be ignored.",e);
-  }
- finally {
-    lock.unlock();
   }
 }

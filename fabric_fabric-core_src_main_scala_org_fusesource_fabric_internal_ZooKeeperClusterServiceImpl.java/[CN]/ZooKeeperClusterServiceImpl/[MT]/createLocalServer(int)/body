@@ -8,12 +8,15 @@
  catch (  IOException e) {
     LOGGER.warn("Failed to load users from etc/users.properties. No users will be imported.",e);
   }
+  String zookeeperPassword=System.getProperty(SystemProperties.ZOOKEEPER_PASSWORD);
+  CreateEnsembleOptions createOpts=CreateEnsembleOptions.build();
   if (userProps != null && !userProps.isEmpty()) {
     newUser=(String)userProps.keySet().iterator().next();
     newUserPassword=(String)userProps.get(newUser);
-    createLocalServer(port,CreateEnsembleOptions.build().user(newUser,newUserPassword));
+    createOpts.user(newUser,newUserPassword);
   }
- else {
-    createLocalServer(port,CreateEnsembleOptions.build());
+  if (zookeeperPassword != null && !zookeeperPassword.isEmpty()) {
+    createOpts.zookeeperPassword(zookeeperPassword);
   }
+  createLocalServer(port,createOpts);
 }

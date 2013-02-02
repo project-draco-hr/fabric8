@@ -3,17 +3,17 @@
     throw new UnsupportedOperationException("The profile " + id + " is locked and can not be modified");
   }
   try {
-    String str="";
+    StringBuilder sb=new StringBuilder();
     for (    Profile parent : parents) {
       if (!version.equals(parent.getVersion())) {
         throw new IllegalArgumentException("Version mismatch setting parent profile " + parent + " with version "+ parent.getVersion()+ " expected version "+ version);
       }
-      if (!str.isEmpty()) {
-        str+=" ";
+      if (sb.length() > 0) {
+        sb.append(" ");
       }
-      str+=parent.getId();
+      sb.append(parent.getId());
     }
-    setAttribute(PARENTS,str);
+    setAttribute(PARENTS,sb.toString());
   }
  catch (  Exception e) {
     throw new FabricException(e);

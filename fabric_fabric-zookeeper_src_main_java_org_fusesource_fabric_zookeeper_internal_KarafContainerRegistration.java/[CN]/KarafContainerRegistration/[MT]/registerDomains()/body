@@ -1,6 +1,6 @@
 {
   if (isConnected() && mbeanServer != null) {
-    String name=System.getProperty("karaf.name");
+    String name=System.getProperty(SystemProperties.KARAF_NAME);
     domains.addAll(Arrays.asList(mbeanServer.getDomains()));
     for (    String domain : mbeanServer.getDomains()) {
       zooKeeper.createOrSetWithParents(CONTAINER_DOMAIN.getPath(name,domain),(byte[])null,CreateMode.PERSISTENT);

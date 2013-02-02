@@ -26,7 +26,7 @@
       }
       String features="fabric-agent";
       String featuresUrls="mvn:org.fusesource.fabric/fuse-fabric/" + FabricConstants.FABRIC_VERSION + "/xml/features";
-      String originalName=new String(options.getName());
+      String originalName=options.getName();
       usedPorts.addAll(getContainerUsedPorts(parent));
       for (int i=1; i <= options.getNumber(); i++) {
         String containerName;
@@ -44,17 +44,17 @@
         ZooKeeperUtils.set(service.getZooKeeper(),ZkPath.CONTAINER_PORT_MIN.getPath(containerName),String.valueOf(minimumPort));
         ZooKeeperUtils.set(service.getZooKeeper(),ZkPath.CONTAINER_PORT_MAX.getPath(containerName),String.valueOf(maximumPort));
         inheritAddresses(service.getZooKeeper(),parentName,containerName,options);
-        int sshPort=mapPortToRange(8101 + i,minimumPort,maximumPort);
+        int sshPort=mapPortToRange(Ports.DEFAULT_SSH_PORT + i,minimumPort,maximumPort);
         while (usedPorts.contains(sshPort)) {
           sshPort++;
         }
         usedPorts.add(sshPort);
-        int rmiServerPort=mapPortToRange(44444 + i,minimumPort,maximumPort);
+        int rmiServerPort=mapPortToRange(Ports.DEFAULT_RMI_SERVER_PORT + i,minimumPort,maximumPort);
         while (usedPorts.contains(rmiServerPort)) {
           rmiServerPort++;
         }
         usedPorts.add(rmiServerPort);
-        int rmiRegistryPort=mapPortToRange(1099 + i,minimumPort,maximumPort);
+        int rmiRegistryPort=mapPortToRange(Ports.DEFAULT_RMI_REGISTRY_PORT + i,minimumPort,maximumPort);
         while (usedPorts.contains(rmiRegistryPort)) {
           rmiRegistryPort++;
         }

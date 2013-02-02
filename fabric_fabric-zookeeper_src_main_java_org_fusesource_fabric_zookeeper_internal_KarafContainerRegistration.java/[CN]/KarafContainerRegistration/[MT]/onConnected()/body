@@ -1,9 +1,8 @@
 {
-  String name=System.getProperty("karaf.name");
+  String name=System.getProperty(SystemProperties.KARAF_NAME);
   logger.trace("onConnected");
+  String nodeAlive=CONTAINER_ALIVE.getPath(name);
   try {
-    lock.tryLock(10,TimeUnit.SECONDS);
-    String nodeAlive=CONTAINER_ALIVE.getPath(name);
     Stat stat=zooKeeper.exists(nodeAlive);
     if (stat != null) {
       if (stat.getEphemeralOwner() != zooKeeper.getSessionId()) {
@@ -35,10 +34,8 @@
     zooKeeper.createOrSetWithParents(CONTAINER_IP.getPath(name),getContainerPointer(zooKeeper,name),CreateMode.PERSISTENT);
     for (    String resolver : ZkDefs.VALID_RESOLVERS) {
       String address=System.getProperty(resolver);
-      if (address != null && !address.isEmpty()) {
-        if (zooKeeper.exists(CONTAINER_ADDRESS.getPath(name,resolver)) == null) {
-          zooKeeper.createOrSetWithParents(CONTAINER_ADDRESS.getPath(name,resolver),address,CreateMode.PERSISTENT);
-        }
+      if (address != null && !address.isEmpty() && zooKeeper.exists(CONTAINER_ADDRESS.getPath(name,resolver)) == null) {
+        zooKeeper.createOrSetWithParents(CONTAINER_ADDRESS.getPath(name,resolver),address,CreateMode.PERSISTENT);
       }
     }
     String minimumPort=System.getProperty(ZkDefs.MINIMUM_PORT);
@@ -65,8 +62,5 @@
   }
  catch (  Exception e) {
     logger.warn("Error updating Fabric Container information. This exception will be ignored.",e);
-  }
- finally {
-    lock.unlock();
   }
 }

@@ -1,5 +1,5 @@
 {
-  String oldName=System.getProperty("karaf.name");
+  String oldName=System.getProperty(SystemProperties.KARAF_NAME);
   if (containerName == null) {
     containerName=oldName;
   }
@@ -18,11 +18,11 @@
         System.err.print("A container with the name: " + containerName + " is already member of the cluster. You can specify a different name as an argument.");
         return null;
       }
-      System.setProperty("karaf.name",containerName);
+      System.setProperty(SystemProperties.KARAF_NAME,containerName);
       System.setProperty("zookeeper.url",zookeeperUrl);
       File file=new File(System.getProperty("karaf.base") + "/etc/system.properties");
       org.apache.felix.utils.properties.Properties props=new org.apache.felix.utils.properties.Properties(file);
-      props.put("karaf.name",containerName);
+      props.put(SystemProperties.KARAF_NAME,containerName);
       props.put("zookeeper.url",zookeeperUrl);
       props.put("zookeeper.password",zookeeperPassword);
       props.save();

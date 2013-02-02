@@ -1,9 +1,7 @@
 {
   try {
-    if (jvmOptions == null) {
-      jvmOptions="";
-    }
-    zooKeeper.createOrSetWithParents(jvmOptionsPath,jvmOptions,CreateMode.PERSISTENT);
+    String opts=jvmOptions != null ? jvmOptions : "";
+    zooKeeper.createOrSetWithParents(JVM_OPTIONS_PATH,opts,CreateMode.PERSISTENT);
   }
  catch (  Exception e) {
     throw new FabricException(e);

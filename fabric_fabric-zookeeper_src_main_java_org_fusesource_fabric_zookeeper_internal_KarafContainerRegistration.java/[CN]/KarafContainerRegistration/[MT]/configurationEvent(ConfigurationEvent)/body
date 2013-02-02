@@ -1,14 +1,14 @@
 {
   try {
     if (zooKeeper.isConnected()) {
-      String name=System.getProperty("karaf.name");
-      if (event.getPid().equals("org.apache.karaf.shell") && event.getType() == ConfigurationEvent.CM_UPDATED) {
+      String name=System.getProperty(SystemProperties.KARAF_NAME);
+      if (event.getPid().equals(SHELL_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
         String sshUrl=getSshUrl();
         if (sshUrl != null) {
           zooKeeper.createOrSetWithParents(CONTAINER_SSH.getPath(name),getSshUrl(),CreateMode.PERSISTENT);
         }
       }
-      if (event.getPid().equals("org.apache.karaf.management") && event.getType() == ConfigurationEvent.CM_UPDATED) {
+      if (event.getPid().equals(MANAGEMENT_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
         String jmxUrl=getJmxUrl();
         if (jmxUrl != null) {
           zooKeeper.createOrSetWithParents(CONTAINER_JMX.getPath(name),getJmxUrl(),CreateMode.PERSISTENT);
