@@ -2,16 +2,12 @@
   if (profiles == null) {
     return "";
   }
-  int iMax=profiles.length - 1;
-  if (iMax == -1) {
-    return "";
-  }
-  StringBuilder b=new StringBuilder();
-  for (int i=0; ; i++) {
-    b.append(profiles[i].getId());
-    if (i == iMax) {
-      return b.toString();
+  StringBuilder sb=new StringBuilder();
+  for (int i=0; i < profiles.length; i++) {
+    if (i != 0) {
+      sb.append(", ");
     }
-    b.append(", ");
+    sb.append(profiles[i].getId());
   }
+  return sb.toString();
 }

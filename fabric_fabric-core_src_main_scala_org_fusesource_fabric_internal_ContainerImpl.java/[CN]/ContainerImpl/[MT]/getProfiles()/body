@@ -9,7 +9,9 @@
     List<Profile> profiles=new ArrayList<Profile>();
     if (!str.trim().isEmpty()) {
       for (      String p : str.split(" +")) {
-        profiles.add(new ProfileImpl(p,version,service));
+        if (!p.isEmpty()) {
+          profiles.add(new ProfileImpl(p,version,service));
+        }
       }
     }
     if (profiles.isEmpty()) {
