@@ -1,0 +1,23 @@
+{
+  System.err.println(executeCommand("fabric:create -n"));
+  createAndAssertChildContainer("child1","root","default");
+  createAndAssertChildContainer("child2","root","default");
+  System.err.println(executeCommand("fabric:version-create"));
+  System.err.println(executeCommand("fabric:container-upgrade --all 1.1"));
+  System.err.println(executeCommand("fabric:ensemble-add child1 child2"));
+  ZooKeeperClusterService service=getOsgiService(ZooKeeperClusterService.class);
+  List<String> containers=service.getEnsembleContainers();
+  Assert.assertTrue(containers.contains("child1"));
+  Assert.assertTrue(containers.contains("child2"));
+  IZKClient zookeeper=getOsgiService(IZKClient.class);
+  Thread.sleep(5000);
+  zookeeper.waitForConnected();
+  System.err.println(executeCommand("fabric:container-list"));
+  System.err.println(executeCommand("fabric:ensemble-remove child1 child2"));
+  Thread.sleep(5000);
+  zookeeper.waitForConnected();
+  System.err.println(executeCommand("fabric:container-list"));
+  containers=service.getEnsembleContainers();
+  Assert.assertFalse(containers.contains("child1"));
+  Assert.assertFalse(containers.contains("child2"));
+}

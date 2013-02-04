@@ -20,13 +20,14 @@
       createLocalServer(2181,options);
       return;
     }
-    String url=ZooKeeperUtils.getSubstitutedPath(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties#zookeeper.url");
-    if (!url.equals(zooKeeperUrl)) {
-      throw new IllegalStateException("The zookeeper configuration is not properly backed in the zookeeper tree.");
-    }
+    String version=zooKeeper.getStringData(ZkPath.CONFIG_DEFAULT_VERSION.getPath());
     for (    String container : containers) {
       if (zooKeeper.exists(ZkPath.CONTAINER_ALIVE.getPath(container)) == null) {
         throw new FabricException("The container " + container + " is not alive");
+      }
+      String containerVersion=zooKeeper.getStringData(ZkPath.CONFIG_CONTAINER.getPath(container));
+      if (!version.equals(containerVersion)) {
+        throw new FabricException("The container " + container + " is not using the default-version:"+ version);
       }
     }
     Map<String,List<Integer>> usedPorts=new HashMap<String,List<Integer>>();

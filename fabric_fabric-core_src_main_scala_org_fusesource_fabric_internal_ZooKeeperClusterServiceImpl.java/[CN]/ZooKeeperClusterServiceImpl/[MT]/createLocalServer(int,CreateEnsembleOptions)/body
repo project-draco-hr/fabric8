@@ -2,6 +2,7 @@
   try {
     IZKClient client;
     Hashtable<String,Object> properties;
+    String version=ZkDefs.DEFAULT_VERSION;
     String karafName=System.getProperty(SystemProperties.KARAF_NAME);
     String minimumPort=System.getProperty(ZkDefs.MINIMUM_PORT);
     String maximumPort=System.getProperty(ZkDefs.MAXIMUM_PORT);
@@ -61,6 +62,7 @@
     String defaultProfile=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"default");
     setConfigProperty(client,defaultProfile + "/org.fusesource.fabric.zookeeper.properties","zookeeper.url","${zk:" + karafName + "/ip}:"+ Integer.toString(mappedPort));
     setConfigProperty(client,defaultProfile + "/org.fusesource.fabric.zookeeper.properties","zookeeper.password",options.getZookeeperPassword());
+    ZooKeeperUtils.set(client,ZkPath.CONFIG_DEFAULT_VERSION.getPath(),version);
     ZooKeeperUtils.set(client,ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"fabric-ensemble-0000"),"abstract=true\nhidden=true");
     String profileNode=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"fabric-ensemble-0000") + "/org.fusesource.fabric.zookeeper.server-0000.properties";
     Properties p=new Properties();

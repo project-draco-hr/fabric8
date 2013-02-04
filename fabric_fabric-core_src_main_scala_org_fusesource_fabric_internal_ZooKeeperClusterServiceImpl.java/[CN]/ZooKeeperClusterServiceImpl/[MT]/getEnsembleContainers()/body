@@ -1,5 +1,6 @@
 {
   try {
+    String version=zooKeeper.getStringData(ZkPath.CONFIG_DEFAULT_VERSION.getPath());
     Configuration[] configs=configurationAdmin.listConfigurations("(service.pid=org.fusesource.fabric.zookeeper)");
     if (configs == null || configs.length == 0) {
       return Collections.emptyList();
