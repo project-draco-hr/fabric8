@@ -12,9 +12,13 @@
     }
   }
   if (zkClient == null) {
-    String connectString=System.getProperty("zookeeper.url","localhost:2181");
+    String connectString=System.getProperty(ZOOKEEPER_URL,"localhost:2181");
+    String password=System.getProperty(ZOOKEEPER_PASSWORD);
     LOG.debug("IZKClient not find in camel registry, creating new with connection " + connectString);
     ZKClient client=new ZKClient(connectString,Timespan.parse("10s"),null);
+    if (password != null && !password.isEmpty()) {
+      client.setPassword(password);
+    }
     LOG.debug("Starting IZKClient " + zkClient);
     client.start();
     zkClient=client;
