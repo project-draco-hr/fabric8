@@ -1,0 +1,12 @@
+{
+  System.err.println(executeCommand("fabric:create -n"));
+  createAndAssertChildContainer("child1","root","default");
+  System.err.println(executeCommand("fabric:version-create"));
+  destroyChildContainer("child1");
+  IZKClient zooKeeper=getOsgiService(IZKClient.class);
+  Assert.assertNull(zooKeeper.exists(ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.1","child1")));
+  Assert.assertNull(zooKeeper.exists(ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.0","child1")));
+  Assert.assertNull(zooKeeper.exists(ZkPath.CONTAINER.getPath("child1")));
+  Assert.assertNull(zooKeeper.exists(ZkPath.CONTAINER_DOMAINS.getPath("child1")));
+  Assert.assertNull(zooKeeper.exists(ZkPath.CONTAINER_PROVISION.getPath("child1")));
+}

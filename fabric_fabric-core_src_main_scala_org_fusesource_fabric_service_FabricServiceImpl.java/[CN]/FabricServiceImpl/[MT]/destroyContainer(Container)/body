@@ -8,6 +8,9 @@
  catch (  Exception e) {
   }
   try {
+    for (    Version version : getVersions()) {
+      zooKeeper.deleteWithChildren(ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version.getName(),containerId));
+    }
     zooKeeper.deleteWithChildren(ZkPath.CONFIG_CONTAINER.getPath(containerId));
     zooKeeper.deleteWithChildren(ZkPath.CONTAINER.getPath(containerId));
     zooKeeper.deleteWithChildren(ZkPath.CONTAINER_DOMAINS.getPath(containerId));
