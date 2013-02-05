@@ -4,8 +4,10 @@
     FabricService fabricService=getOsgiService(FabricService.class);
     assertNotNull(fabricService);
     Thread.sleep(DEFAULT_WAIT);
-    Container container=fabricService.getContainer(name);
-    new ChildContainerProvider((FabricServiceImpl)fabricService).destroy(container);
+    if (zooKeeper.exists(ZkPath.CONTAINER.getPath(name)) != null) {
+      Container container=fabricService.getContainer(name);
+      container.destroy();
+    }
   }
  catch (  Exception ex) {
     ex.printStackTrace();
