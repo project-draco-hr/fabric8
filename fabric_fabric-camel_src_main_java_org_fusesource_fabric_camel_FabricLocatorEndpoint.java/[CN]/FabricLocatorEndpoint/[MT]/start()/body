@@ -4,13 +4,29 @@
     loadBalancer=createLoadBalancer();
   }
   group.add(new ChangeListener(){
-    public void changed(){
-      for (      byte[] uri : group.members().values()) {
+    public synchronized void changed(){
+      Set<String> removed=new LinkedHashSet<String>();
+      for (      Map.Entry<String,Processor> entry : processors.entrySet()) {
+        String key=entry.getKey();
+        if (!group.members().containsKey(key)) {
+          removed.add(key);
+        }
+      }
+      for (      Map.Entry<String,byte[]> entry : group.members().entrySet()) {
         try {
-          loadBalancer.addProcessor(getProcessor(new String(uri,"UTF-8")));
+          String key=entry.getKey();
+          if (!processors.containsKey(key)) {
+            Processor p=getProcessor(new String(entry.getValue(),"UTF-8"));
+            processors.put(key,p);
+            loadBalancer.addProcessor(p);
+          }
         }
  catch (        UnsupportedEncodingException ignore) {
         }
+      }
+      for (      String key : removed) {
+        Processor p=processors.remove(key);
+        loadBalancer.removeProcessor(p);
       }
     }
     public void connected(){

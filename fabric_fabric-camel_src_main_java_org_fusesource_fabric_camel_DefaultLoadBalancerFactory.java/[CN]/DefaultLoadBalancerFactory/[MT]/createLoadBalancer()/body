@@ -1,3 +1,14 @@
 {
-  return new RandomLoadBalancer();
+  return new RandomLoadBalancer(){
+    @Override public boolean process(    Exchange exchange,    AsyncCallback callback){
+      List<Processor> list=getProcessors();
+      if (!list.isEmpty()) {
+        return super.process(exchange,callback);
+      }
+ else {
+        throw new IllegalStateException("No processors found.");
+      }
+    }
+  }
+;
 }

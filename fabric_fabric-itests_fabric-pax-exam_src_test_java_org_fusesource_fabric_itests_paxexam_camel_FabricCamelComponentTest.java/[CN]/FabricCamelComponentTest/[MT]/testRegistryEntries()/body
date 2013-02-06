@@ -1,0 +1,33 @@
+{
+  FabricService fabricService=getOsgiService(FabricService.class);
+  assertNotNull(fabricService);
+  System.err.println(executeCommand("fabric:create -n root"));
+  IZKClient zooKeeper=getOsgiService(IZKClient.class);
+  executeCommand("fabric:profile-create --parents camel fabric-camel");
+  executeCommand("fabric:profile-create --parents fabric-camel fabric-camel-server");
+  executeCommand("fabric:profile-create --parents fabric-camel-server fabric-camel-server-1");
+  executeCommand("fabric:profile-create --parents fabric-camel-server fabric-camel-server-2");
+  executeCommand("fabric:profile-create --parents fabric-camel fabric-camel-client");
+  executeCommand("fabric:profile-edit --repositories mvn:org.fusesource.examples.fabric-camel-cluster/features/" + System.getProperty("fabric.version") + "/xml/features fabric-camel");
+  executeCommand("fabric:profile-edit --features camel-server fabric-camel-server");
+  executeCommand("fabric:profile-edit --features camel-client fabric-camel-client");
+  executeCommand("fabric:profile-edit --pid org.fusesource.fabric.examples.camel.loadbalancing.server/portNumber=9191 fabric-camel-server-1");
+  executeCommand("fabric:profile-edit --pid org.fusesource.fabric.examples.camel.loadbalancing.server/portNumber=9292 fabric-camel-server-2");
+  createAndAssertChildContainer("server1","root","fabric-camel-server-1","-Xms512m -Xmx512m");
+  createAndAssertChildContainer("server2","root","fabric-camel-server-2","-Xms512m -Xmx512m");
+  createAndAssertChildContainer("client1","root","fabric-camel-client","-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005");
+  Assert.assertNotNull(zooKeeper.exists("/fabric/registry/camel/endpoints/"));
+  Assert.assertEquals(1,zooKeeper.getChildren("/fabric/registry/camel/endpoints/").size());
+  Thread.sleep(5000);
+  System.err.println(executeCommand("fabric:container-connect -u admin -p admin client1 camel:route-list"));
+  String response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin client1 camel:route-info fabric-client | grep Failed")).getPlain().toString();
+  System.err.println(response);
+  int failed=Integer.parseInt(response.replaceAll("[^0-9]",""));
+  Assert.assertEquals(0,failed);
+  destroyChildContainer("server1");
+  Thread.sleep(25000);
+  response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin client1 camel:route-info fabric-client | grep Failed")).getPlain().toString();
+  System.err.println(response);
+  failed=Integer.parseInt(response.replaceAll("[^0-9]",""));
+  Assert.assertEquals(0,failed);
+}

@@ -1,21 +1,3 @@
 {
-  FabricService fabricService=getFabricService();
-  Thread.sleep(DEFAULT_WAIT);
-  Container parentContainer=fabricService.getContainer(parent);
-  assertNotNull(parentContainer);
-  CreateContainerOptions args=CreateContainerOptionsBuilder.child().name(name).parent(parent).jvmOpts("-Xms1024m -Xmx1024m").zookeeperPassword(fabricService.getZookeeperPassword()).jmxUser("admin").jmxPassword("admin");
-  CreateContainerMetadata[] metadata=fabricService.createContainers(args);
-  if (metadata.length > 0) {
-    if (metadata[0].getFailure() != null) {
-      throw new Exception("Error creating child container:" + name,metadata[0].getFailure());
-    }
-    Container container=metadata[0].getContainer();
-    Version version=fabricService.getDefaultVersion();
-    Profile profile=fabricService.getProfile(version.getName(),profileName);
-    assertNotNull("Expected to find profile with name:" + profileName,profile);
-    container.setProfiles(new Profile[]{profile});
-    waitForProvisionSuccess(container,PROVISION_TIMEOUT);
-    return container;
-  }
-  throw new Exception("Could container not created");
+  return createChildContainer(name,parent,profileName,null);
 }
