@@ -1,6 +1,6 @@
 {
   String brokerName=getBrokerName();
-  queueName=StringUtils.replace(queueName,"\"","_");
+  queueName=queueName.replace('\"','_');
   ObjectName query=new ObjectName("org.apache.activemq:BrokerName=" + brokerName + ",Type=Producer,destinationType=Queue,destinationName="+ queueName+ ",*");
   Set<ObjectName> queryResult=queryNames(query,null);
   Collection<ProducerViewFacade> producers=getManagedObjects(queryResult.toArray(new ObjectName[queryResult.size()]),ProducerViewMBean.class,ProducerViewFacade.class);

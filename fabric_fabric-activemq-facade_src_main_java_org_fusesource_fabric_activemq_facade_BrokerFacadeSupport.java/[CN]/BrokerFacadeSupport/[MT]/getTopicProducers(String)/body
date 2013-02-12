@@ -1,6 +1,6 @@
 {
   String brokerName=getBrokerName();
-  topicName=StringUtils.replace(topicName,"\"","_");
+  topicName=topicName.replace('\"','_');
   ObjectName query=new ObjectName("org.apache.activemq:BrokerName=" + brokerName + ",Type=Producer,destinationType=Topic,destinationName="+ topicName+ ",*");
   Set<ObjectName> queryResult=queryNames(query,null);
   Collection<ProducerViewFacade> producers=getManagedObjects(queryResult.toArray(new ObjectName[queryResult.size()]),ProducerViewMBean.class,ProducerViewFacade.class);

@@ -4,7 +4,7 @@
   Set<ObjectName> queryResult=queryNames(query,null);
   Collection<String> result=new ArrayList<String>(queryResult.size());
   for (  ObjectName on : queryResult) {
-    String name=StringUtils.replace(on.getKeyProperty("Connection"),"_",":");
+    String name=on.getKeyProperty("Connection").replace('_',':');
     result.add(name);
   }
   return result;

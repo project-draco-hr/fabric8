@@ -1,5 +1,5 @@
 {
-  connectionName=StringUtils.replace(connectionName,":","_");
+  connectionName=connectionName.replace(':','_');
   String brokerName=getBrokerName();
   ObjectName query=new ObjectName("org.apache.activemq:BrokerName=" + brokerName + ",Type=Subscription,clientId="+ connectionName+ ",*");
   Set<ObjectName> queryResult=queryNames(query,null);
