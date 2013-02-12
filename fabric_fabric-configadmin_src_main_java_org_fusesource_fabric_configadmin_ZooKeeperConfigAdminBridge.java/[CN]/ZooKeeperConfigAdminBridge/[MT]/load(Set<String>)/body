@@ -40,20 +40,20 @@ catch (          Exception e) {
           }
         }
  else {
-          String value=null;
+          String value="";
           BundleContext context=getBundleContext();
           if (context != null) {
             value=context.getProperty(key);
           }
           if (value == null) {
-            value=System.getProperty(key);
+            value=System.getProperty(key,"");
           }
           return value;
         }
-        return null;
+        return "";
       }
     }
-,true);
+);
   }
   return configs;
 }
