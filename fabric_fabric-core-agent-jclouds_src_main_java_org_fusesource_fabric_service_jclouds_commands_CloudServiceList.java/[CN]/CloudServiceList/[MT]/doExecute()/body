@@ -1,18 +1,30 @@
 {
-  Map<String,ProviderMetadata> providers=computeProviderOrApiRegistry.getInstalledProviders();
-  Map<String,ApiMetadata> apis=computeProviderOrApiRegistry.getInstalledApis();
+  Iterable<ProviderMetadata> providers=Providers.viewableAs(TypeToken.of(ComputeServiceContext.class));
+  Iterable<ApiMetadata> apis=Apis.viewableAs(TypeToken.of(ComputeServiceContext.class));
+  Iterable<String> providerIds=Iterables.transform(providers,new Function<ProviderMetadata,String>(){
+    @Override public String apply(    @Nullable ProviderMetadata input){
+      return input.getId();
+    }
+  }
+);
+  Iterable<String> apiIds=Iterables.transform(apis,new Function<ApiMetadata,String>(){
+    @Override public String apply(    @Nullable ApiMetadata input){
+      return input.getId();
+    }
+  }
+);
   boolean providerOrApiFound=false;
-  if (apis != null && !apis.isEmpty()) {
+  if (apiIds != null) {
     providerOrApiFound=true;
     System.out.println("Compute APIs:");
     System.out.println("-------------");
-    printComputeProvidersOrApis(apis.keySet(),computeServices,"",System.out);
+    printComputeProvidersOrApis(apiIds,computeServices,"",System.out);
   }
-  if (providers != null && !providers.isEmpty()) {
+  if (providers != null) {
     providerOrApiFound=true;
     System.out.println("Compute Providers:");
     System.out.println("-------------");
-    printComputeProvidersOrApis(providers.keySet(),computeServices,"",System.out);
+    printComputeProvidersOrApis(providerIds,computeServices,"",System.out);
   }
   if (!providerOrApiFound) {
     System.out.println("No providers or apis have been found.");
