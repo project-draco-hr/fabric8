@@ -1,0 +1,26 @@
+{
+  Set<Resource> result=new LinkedHashSet<Resource>();
+  Requirement[] requirements=resource.getRequirements();
+  for (  Requirement requirement : requirements) {
+    boolean isSatisfied=false;
+    for (    Resource r : result) {
+      for (      Capability capability : r.getCapabilities()) {
+        if (requirement.isSatisfied(capability)) {
+          isSatisfied=true;
+          break;
+        }
+      }
+    }
+    for (    Resource r : allResources) {
+      if (!isSatisfied) {
+        for (        Capability capability : r.getCapabilities()) {
+          if (requirement.isSatisfied(capability)) {
+            result.add(r);
+            break;
+          }
+        }
+      }
+    }
+  }
+  return result;
+}
