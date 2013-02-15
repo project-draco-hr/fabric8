@@ -1,0 +1,16 @@
+{
+  checkFabricAvailable();
+  Version version=versionName != null ? fabricService.getVersion(versionName) : fabricService.getDefaultVersion();
+  Profile profile=fabricService.getProfile(version.getName(),profileName);
+  if (profile == null) {
+    throw new IllegalArgumentException("No profile found with name:" + profileName + " and version:"+ version.getName());
+  }
+  Map<String,Map<String,String>> configuration=profile.getConfigurations();
+  Map<String,String> agentConfiguration=configuration.get("org.fusesource.fabric.agent");
+  if (agentConfiguration == null) {
+    agentConfiguration=new HashMap<String,String>();
+  }
+  agentConfiguration.put("lastRefresh." + profileName,String.valueOf(System.currentTimeMillis()));
+  profile.setConfigurations(configuration);
+  return null;
+}
