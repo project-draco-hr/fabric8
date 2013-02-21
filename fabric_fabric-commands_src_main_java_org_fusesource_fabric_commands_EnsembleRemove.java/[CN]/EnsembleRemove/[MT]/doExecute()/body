@@ -1,5 +1,22 @@
 {
   checkFabricAvailable();
-  service.removeFromCluster(containers);
+  StringBuilder builder=new StringBuilder();
+  builder.append("Removing containers:");
+  for (  String container : containers) {
+    builder.append(" ").append(container);
+  }
+  builder.append(" from the ensemble. This may take a while.");
+  System.out.println(builder.toString());
+  if (generateZookeeperPassword) {
+    CreateEnsembleOptions options=CreateEnsembleOptions.build();
+    service.removeFromCluster(containers,options);
+  }
+ else   if (zookeeperPassword == null || zookeeperPassword.isEmpty()) {
+    service.removeFromCluster(containers);
+  }
+ else {
+    CreateEnsembleOptions options=CreateEnsembleOptions.build().zookeeperPassword(zookeeperPassword);
+    service.removeFromCluster(containers,options);
+  }
   return null;
 }

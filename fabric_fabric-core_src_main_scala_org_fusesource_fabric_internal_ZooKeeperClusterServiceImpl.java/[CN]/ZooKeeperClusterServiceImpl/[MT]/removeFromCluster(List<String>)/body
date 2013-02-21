@@ -1,10 +1,5 @@
 {
-  try {
-    List<String> current=getEnsembleContainers();
-    current.removeAll(containers);
-    createCluster(current);
-  }
- catch (  Exception e) {
-    throw new FabricException("Unable to remove containers to fabric ensemble: " + e.getMessage(),e);
-  }
+  CreateEnsembleOptions options=CreateEnsembleOptions.build();
+  options.setZookeeperPassword(fabricService.getZookeeperPassword());
+  removeFromCluster(containers,options);
 }
