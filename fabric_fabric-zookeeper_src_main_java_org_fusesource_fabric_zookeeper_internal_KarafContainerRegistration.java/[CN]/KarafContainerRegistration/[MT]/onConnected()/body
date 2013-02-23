@@ -32,7 +32,10 @@
     zooKeeper.createOrSetWithParents(CONTAINER_LOCAL_HOSTNAME.getPath(name),HostUtils.getLocalHostName(),CreateMode.PERSISTENT);
     zooKeeper.createOrSetWithParents(CONTAINER_LOCAL_IP.getPath(name),HostUtils.getLocalIp(),CreateMode.PERSISTENT);
     zooKeeper.createOrSetWithParents(CONTAINER_IP.getPath(name),getContainerPointer(zooKeeper,name),CreateMode.PERSISTENT);
-    zooKeeper.createOrSetWithParents(CONTAINER_GEOLOCATION.getPath(name),HostUtils.getGeoLocation(),CreateMode.PERSISTENT);
+    byte[] data=zooKeeper.getData(CONTAINER_GEOLOCATION.getPath(name));
+    if (data == null || data.length == 0) {
+      zooKeeper.createOrSetWithParents(CONTAINER_GEOLOCATION.getPath(name),HostUtils.getGeoLocation(),CreateMode.PERSISTENT);
+    }
     for (    String resolver : ZkDefs.VALID_RESOLVERS) {
       String address=System.getProperty(resolver);
       if (address != null && !address.isEmpty() && zooKeeper.exists(CONTAINER_ADDRESS.getPath(name,resolver)) == null) {
