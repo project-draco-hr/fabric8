@@ -3,18 +3,22 @@
   final String LATITUDE="Latitude";
   final String LONGITUDE="Longitude";
   String result="";
-  String urlStr="http://gd.geobytes.com/gd?after=-1&variables=" + VAR;
-  urlStr+="," + VAR + LATITUDE+ ","+ VAR+ LONGITUDE;
-  URL url=new URL(urlStr);
-  URLConnection urlConnection=url.openConnection();
-  BufferedReader in=new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-  String inputLine;
-  String temp="";
-  while ((inputLine=in.readLine()) != null) {
-    temp+=inputLine;
+  try {
+    String urlStr="http://gd.geobytes.com/gd?after=-1&variables=" + VAR;
+    urlStr+="," + VAR + LATITUDE+ ","+ VAR+ LONGITUDE;
+    URL url=new URL(urlStr);
+    URLConnection urlConnection=url.openConnection();
+    BufferedReader in=new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+    String inputLine;
+    String temp="";
+    while ((inputLine=in.readLine()) != null) {
+      temp+=inputLine;
+    }
+    String latitude=getVariable(temp,VAR + LATITUDE);
+    String longitude=getVariable(temp,VAR + LONGITUDE);
+    result=latitude + "," + longitude;
   }
-  String latitude=getVariable(temp,VAR + LATITUDE);
-  String longitude=getVariable(temp,VAR + LONGITUDE);
-  result=latitude + "," + longitude;
+ catch (  Exception e) {
+  }
   return result;
 }
