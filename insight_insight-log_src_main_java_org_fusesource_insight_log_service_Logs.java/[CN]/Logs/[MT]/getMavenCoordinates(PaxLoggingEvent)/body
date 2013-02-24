@@ -1,0 +1,11 @@
+{
+  Map props=event.getProperties();
+  String bundleIdStr=null;
+  if (props != null) {
+    bundleIdStr=(String)props.get("bundle.id");
+  }
+  if (bundleIdStr == null) {
+    return null;
+  }
+  return getMavenCoordinates(bundleIdStr);
+}

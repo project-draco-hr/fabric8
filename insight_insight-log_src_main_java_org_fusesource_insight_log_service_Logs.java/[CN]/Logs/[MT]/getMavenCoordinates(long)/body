@@ -1,0 +1,37 @@
+{
+  Bundle m_bundle=FrameworkUtil.getBundle(Logs.class).getBundleContext().getBundle(bundleId);
+  String id=Long.toString(m_bundle.getBundleId()) + ":" + Long.toString(m_bundle.getLastModified());
+  String maven=MAVEN_COORDINATES.get(id);
+  if (maven == null) {
+    try {
+      StringBuilder buf=new StringBuilder();
+      Enumeration<URL> e=m_bundle.findEntries("META-INF/maven/","pom.properties",true);
+      while (e != null && e.hasMoreElements()) {
+        URL url=e.nextElement();
+        Properties props=new Properties();
+        InputStream is=url.openStream();
+        try {
+          props.load(is);
+          String groupId=props.getProperty("groupId");
+          String artifactId=props.getProperty("artifactId");
+          String version=props.getProperty("version");
+          if (groupId != null && artifactId != null & version != null) {
+            if (buf.length() > 0) {
+              buf.append(" ");
+            }
+            buf.append(groupId).append(":").append(artifactId).append(":").append(version);
+          }
+        }
+  finally {
+          is.close();
+        }
+      }
+      maven=buf.toString();
+    }
+ catch (    Throwable t) {
+      maven="";
+    }
+    MAVEN_COORDINATES.put(id,maven);
+  }
+  return maven;
+}

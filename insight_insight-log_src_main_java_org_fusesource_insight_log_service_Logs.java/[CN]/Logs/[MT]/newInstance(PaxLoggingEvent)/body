@@ -5,7 +5,7 @@
   answer.setLogger(event.getLoggerName());
   answer.setTimestamp(new Date(event.getTimeStamp()));
   answer.setThread(event.getThreadName());
-  answer.setException(event.getThrowableStrRep());
+  answer.setException(addMavenCoord(event.getThrowableStrRep()));
   Map eventProperties=event.getProperties();
   if (eventProperties != null && eventProperties.size() > 0) {
     Map<String,String> properties=new HashMap<String,String>();
@@ -15,6 +15,12 @@
       Object value=entry.getValue();
       if (key != null && value != null) {
         properties.put(toString(key),toString(value));
+      }
+    }
+    if (properties.get("maven.coordinates") == null) {
+      String mavenCoord=getMavenCoordinates(event);
+      if (mavenCoord != null && !mavenCoord.isEmpty()) {
+        properties.put("maven.coordinates",mavenCoord);
       }
     }
     answer.setProperties(properties);
