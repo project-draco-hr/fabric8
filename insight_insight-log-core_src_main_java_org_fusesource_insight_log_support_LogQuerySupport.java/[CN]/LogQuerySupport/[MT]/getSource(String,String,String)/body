@@ -1,0 +1,36 @@
+{
+  String classNamePath=null;
+  if (!isEmpty(className)) {
+    classNamePath=className.replace('.','/') + ".java";
+  }
+  if (isEmpty(filePath)) {
+    filePath=classNamePath;
+  }
+ else {
+    if (filePath.lastIndexOf('/') <= 0 && classNamePath != null) {
+      int idx=classNamePath.lastIndexOf('/');
+      if (idx > 0) {
+        filePath=classNamePath.substring(0,idx) + ensureStartsWithSlash(filePath);
+      }
+    }
+  }
+  filePath=ensureStartsWithSlash(filePath);
+  String coords=mavenCoords.replace(':','/');
+  String[] array=coords.split("\\s+");
+  if (array == null || array.length < 2) {
+    return loadCoords(filePath,coords);
+  }
+ else {
+    for (    String coord : array) {
+      try {
+        return loadCoords(filePath,coord);
+      }
+ catch (      IOException e) {
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("" + e);
+        }
+      }
+    }
+    return null;
+  }
+}
