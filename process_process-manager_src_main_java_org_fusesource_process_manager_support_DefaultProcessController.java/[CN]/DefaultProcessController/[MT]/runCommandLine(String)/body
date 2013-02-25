@@ -1,7 +1,7 @@
 {
   if (command != null) {
-    String[] commandArgs=command.split("\\s+");
-    return config.runCommand(executor,baseDir,commandArgs);
+    List<String> commandArgs=ExecParseUtils.splitToWhiteSpaceSeparatedTokens(command);
+    return config.runCommand(executor,baseDir,commandArgs.toArray(new String[commandArgs.size()]));
   }
  else {
     return 0;
