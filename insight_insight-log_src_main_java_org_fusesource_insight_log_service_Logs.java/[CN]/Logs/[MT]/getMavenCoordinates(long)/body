@@ -4,27 +4,11 @@
   String maven=MAVEN_COORDINATES.get(id);
   if (maven == null) {
     try {
-      StringBuilder buf=new StringBuilder();
       Enumeration<URL> e=m_bundle.findEntries("META-INF/maven/","pom.properties",true);
+      StringBuilder buf=new StringBuilder();
       while (e != null && e.hasMoreElements()) {
         URL url=e.nextElement();
-        Properties props=new Properties();
-        InputStream is=url.openStream();
-        try {
-          props.load(is);
-          String groupId=props.getProperty("groupId");
-          String artifactId=props.getProperty("artifactId");
-          String version=props.getProperty("version");
-          if (groupId != null && artifactId != null & version != null) {
-            if (buf.length() > 0) {
-              buf.append(" ");
-            }
-            buf.append(groupId).append(":").append(artifactId).append(":").append(version);
-          }
-        }
-  finally {
-          is.close();
-        }
+        MavenCoordinates.appendMavenCoordinateFromPomProperties(url.openStream(),buf);
       }
       maven=buf.toString();
     }

@@ -1,0 +1,16 @@
+{
+  String coordinates=null;
+  if (!Strings.isEmpty(className)) {
+    coordinates=classToMavenCoordMap.get(className);
+    if (coordinates == null) {
+      try {
+        Class cls=findClass(className);
+        coordinates=getMavenCoordinates(cls);
+      }
+ catch (      Throwable t) {
+        System.out.println("Ignored: " + t);
+      }
+    }
+  }
+  return coordinates;
+}
