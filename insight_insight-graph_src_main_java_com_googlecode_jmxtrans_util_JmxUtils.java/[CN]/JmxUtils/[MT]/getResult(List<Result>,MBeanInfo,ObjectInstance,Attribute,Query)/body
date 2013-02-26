@@ -1,0 +1,39 @@
+{
+  Object value=attribute.getValue();
+  if (value != null) {
+    if (value instanceof CompositeDataSupport) {
+      getResult(resList,info,oi,attribute.getName(),(CompositeData)value,query);
+    }
+ else     if (value instanceof CompositeData[]) {
+      for (      CompositeData cd : (CompositeData[])value) {
+        getResult(resList,info,oi,attribute.getName(),cd,query);
+      }
+    }
+ else     if (value instanceof ObjectName[]) {
+      Result r=getNewResultObject(info,oi,attribute.getName(),query);
+      for (      ObjectName obj : (ObjectName[])value) {
+        r.addValue(obj.getCanonicalName(),obj.getKeyPropertyListString());
+      }
+      resList.add(r);
+    }
+ else     if (value.getClass().isArray()) {
+      Result r=getNewResultObject(info,oi,attribute.getName(),query);
+      for (int i=0; i < Array.getLength(value); i++) {
+        Object val=Array.get(value,i);
+        r.addValue(attribute.getName() + "." + i,val);
+      }
+      resList.add(r);
+    }
+ else     if (value instanceof TabularDataSupport) {
+      TabularDataSupport tds=(TabularDataSupport)value;
+      Result r=getNewResultObject(info,oi,attribute.getName(),query);
+      processTabularDataSupport(resList,info,oi,r,attribute.getName(),tds,query);
+      resList.add(r);
+    }
+ else {
+      Result r=getNewResultObject(info,oi,attribute.getName(),query);
+      r.addValue(attribute.getName(),value);
+      resList.add(r);
+    }
+  }
+}

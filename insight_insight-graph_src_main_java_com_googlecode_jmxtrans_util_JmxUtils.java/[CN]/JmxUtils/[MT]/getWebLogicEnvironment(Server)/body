@@ -1,0 +1,11 @@
+{
+  Map<String,String> environment=new HashMap<String,String>();
+  String username=server.getUsername();
+  String password=server.getPassword();
+  if ((username != null) && (password != null)) {
+    environment.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES,server.getProtocolProviderPackages());
+    environment.put(Context.SECURITY_PRINCIPAL,username);
+    environment.put(Context.SECURITY_CREDENTIALS,password);
+  }
+  return environment;
+}

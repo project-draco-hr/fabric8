@@ -1,0 +1,27 @@
+{
+  if (server.isQueriesMultiThreaded()) {
+    ExecutorService service=null;
+    try {
+      service=Executors.newFixedThreadPool(server.getNumQueryThreads());
+      if (log.isDebugEnabled()) {
+        log.debug("----- Creating " + server.getQueries().size() + " query threads");
+      }
+      List<Callable<Object>> threads=new ArrayList<Callable<Object>>(server.getQueries().size());
+      for (      Query query : server.getQueries()) {
+        query.setServer(server);
+        ProcessQueryThread pqt=new ProcessQueryThread(mbeanServer,query);
+        threads.add(Executors.callable(pqt));
+      }
+      service.invokeAll(threads);
+    }
+  finally {
+      shutdownAndAwaitTermination(service);
+    }
+  }
+ else {
+    for (    Query query : server.getQueries()) {
+      query.setServer(server);
+      processQuery(mbeanServer,query);
+    }
+  }
+}

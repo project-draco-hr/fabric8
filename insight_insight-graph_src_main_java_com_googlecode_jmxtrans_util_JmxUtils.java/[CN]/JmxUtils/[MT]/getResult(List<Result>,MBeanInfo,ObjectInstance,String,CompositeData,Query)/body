@@ -1,0 +1,22 @@
+{
+  CompositeType t=cds.getCompositeType();
+  Result r=getNewResultObject(info,oi,attributeName,query);
+  Set<String> keys=t.keySet();
+  for (  String key : keys) {
+    Object value=cds.get(key);
+    if (value instanceof TabularDataSupport) {
+      TabularDataSupport tds=(TabularDataSupport)value;
+      processTabularDataSupport(resList,info,oi,r,attributeName + "." + key,tds,query);
+      r.addValue(key,value);
+    }
+ else     if (value instanceof CompositeDataSupport) {
+      CompositeDataSupport cds2=(CompositeDataSupport)value;
+      getResult(resList,info,oi,attributeName,cds2,query);
+      return;
+    }
+ else {
+      r.addValue(key,value);
+    }
+  }
+  resList.add(r);
+}

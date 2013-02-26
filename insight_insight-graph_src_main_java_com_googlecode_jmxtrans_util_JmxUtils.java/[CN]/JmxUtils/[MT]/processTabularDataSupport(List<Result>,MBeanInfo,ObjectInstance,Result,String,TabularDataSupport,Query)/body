@@ -1,0 +1,24 @@
+{
+  Set<Entry<Object,Object>> entries=tds.entrySet();
+  for (  Entry<Object,Object> entry : entries) {
+    Object entryKeys=entry.getKey();
+    if (entryKeys instanceof List) {
+      StringBuilder sb=new StringBuilder();
+      for (      Object entryKey : (List<?>)entryKeys) {
+        sb.append(".");
+        sb.append(entryKey);
+      }
+      String attributeName2=sb.toString();
+      Object entryValue=entry.getValue();
+      if (entryValue instanceof CompositeDataSupport) {
+        getResult(resList,info,oi,attributeName + attributeName2,(CompositeDataSupport)entryValue,query);
+      }
+ else {
+        throw new RuntimeException("!!!!!!!!!! Please file a bug: http://code.google.com/p/jmxtrans/issues/entry entryValue is: " + entryValue.getClass().getCanonicalName());
+      }
+    }
+ else {
+      throw new RuntimeException("!!!!!!!!!! Please file a bug: http://code.google.com/p/jmxtrans/issues/entry entryKeys is: " + entryKeys.getClass().getCanonicalName());
+    }
+  }
+}

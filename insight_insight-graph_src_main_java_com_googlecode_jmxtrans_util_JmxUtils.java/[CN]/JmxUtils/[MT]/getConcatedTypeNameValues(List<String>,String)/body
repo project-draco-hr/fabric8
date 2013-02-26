@@ -1,0 +1,15 @@
+{
+  if ((typeNames == null) || (typeNames.size() == 0)) {
+    return null;
+  }
+  String[] tokens=typeNameStr.split(",");
+  StringBuilder sb=new StringBuilder();
+  for (  String key : typeNames) {
+    String result=getTypeNameValue(key,tokens);
+    if (result != null) {
+      sb.append(result);
+      sb.append("_");
+    }
+  }
+  return StringUtils.chomp(sb.toString(),"_");
+}
