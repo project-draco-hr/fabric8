@@ -1,0 +1,19 @@
+{
+  Node node=bundleContext.getService(nodeServiceReference);
+  sender.setNode(node);
+  CreateIndexRequest request=new CreateIndexRequest(index);
+  HashMap<String,Object> properties=new HashMap<String,Object>();
+  HashMap<String,Object> seq=new HashMap<String,Object>();
+  seq.put("type","string");
+  seq.put("index","not_analyzed");
+  properties.put("seq",seq);
+  HashMap<String,Object> value=new HashMap<String,Object>();
+  value.put("type","double");
+  properties.put("value",value);
+  HashMap<String,Object> options=new HashMap<String,Object>();
+  options.put("properties",properties);
+  request.mapping(type,options);
+  sender.createIndexIfNeeded(request);
+  sender.init();
+  return node;
+}

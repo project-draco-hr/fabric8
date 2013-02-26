@@ -1,0 +1,34 @@
+{
+  for (  Result result : query.getResults()) {
+    Map<String,Object> resultValues=result.getValues();
+    if (resultValues != null) {
+      for (      Map.Entry<String,Object> values : resultValues.entrySet()) {
+        if (JmxUtils.isNumeric(values.getValue())) {
+          StringBuilder writer=new StringBuilder();
+          writer.append("{ \"host\": ");
+          quote(query.getServer().getAlias(),writer);
+          writer.append(", \"seq\" : " + SEQUENCE_COUNTER.incrementAndGet());
+          writer.append(", \"timestamp\" : ");
+          quote(formatDate(result.getEpoch()),writer);
+          writer.append(", \"object\" : ");
+          quote(query.getObj(),writer);
+          writer.append(", \"attribute\" : ");
+          quote(result.getAttributeName(),writer);
+          writer.append(", \"class\" : ");
+          quote(result.getClassName(),writer);
+          writer.append(", \"alias\" : ");
+          quote(result.getClassNameAlias(),writer);
+          writer.append(", \"type\" : ");
+          quote(result.getTypeName(),writer);
+          writer.append(", \"key\" : ");
+          quote(values.getKey(),writer);
+          writer.append(", \"value\" : ");
+          quote(values.getValue().toString(),writer);
+          writer.append(" }");
+          IndexRequest request=new IndexRequest().index(index).type(type).source(writer.toString()).create(true);
+          sender.put(request);
+        }
+      }
+    }
+  }
+}
