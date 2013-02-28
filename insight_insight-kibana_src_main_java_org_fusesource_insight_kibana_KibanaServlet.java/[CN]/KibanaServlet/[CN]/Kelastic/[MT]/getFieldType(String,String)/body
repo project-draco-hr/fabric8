@@ -2,9 +2,7 @@
   ObjectNode node=ElasticSearch.getJson("/" + index + "/_mapping");
   JsonNode in=node.get(index);
   for (  JsonNode tn : in) {
-    JsonNode pn=tn != null ? tn.get("properties") : null;
-    JsonNode fn=pn != null ? pn.get(field) : null;
-    JsonNode n=fn != null ? fn.get("type") : null;
+    JsonNode n=tn.path("properties").path(field).get("type");
     if (n != null) {
       return n.asText();
     }

@@ -7,15 +7,14 @@
   LOGGER.debug("\tquery: {}",query);
   Collection<String> indices=Kelastic.getIndices(req.getFrom(),req.getTo());
   LOGGER.debug("\tindices: {}",indices);
-  ObjectNode result=new KelasticMulti(query,indices).getResponse();
-  ObjectNode time=((ObjectNode)result.get("kibana")).putObject("time");
+  ObjectNode result=kelasticMulti(query,indices);
+  ObjectNode time=result.with("kibana").putObject("time");
   time.put("from",formatDate(new Date(req.getFrom())));
   time.put("to",formatDate(new Date(req.getTo())));
-  ArrayNode fields=((ObjectNode)result.get("kibana")).putArray("default_fields");
+  ArrayNode fields=result.with("kibana").putArray("default_fields");
   for (  String s : Config.defaultFields) {
     fields.add(s);
   }
-  ((ObjectNode)result.get("kibana")).put("clickable_urls",Config.clickableUrls);
-  String str=Json.serialize(result);
-  return str;
+  result.with("kibana").put("clickable_urls",Config.clickableUrls);
+  return Json.serialize(result);
 }

@@ -5,17 +5,17 @@
   LOGGER.debug("\tclient: {}",req);
   Query queryEnd=new SortedQuery(req.getSearch(),req.getFrom(),req.getTo(),0,limit,Config.timestamp,"desc");
   List<String> indicesEnd=Kelastic.getIndices(req.getFrom(),req.getTo());
-  ObjectNode resultEnd=new KelasticMulti(queryEnd,indicesEnd).getResponse();
+  ObjectNode resultEnd=kelasticMulti(queryEnd,indicesEnd);
   if (resultEnd.get("hits").get("hits").size() < limit) {
     limit=resultEnd.get("hits").get("hits").size() / 2;
     queryEnd=new SortedQuery(req.getSearch(),req.getFrom(),req.getTo(),0,limit,Config.timestamp,"desc");
-    resultEnd=new KelasticMulti(queryEnd,indicesEnd).getResponse();
+    resultEnd=kelasticMulti(queryEnd,indicesEnd);
   }
   Map<String,Integer> countEnd=KelasticResponse.countFields(resultEnd,field);
   Query queryBegin=new SortedQuery(req.getSearch(),req.getFrom(),req.getTo(),0,limit,Config.timestamp,"asc");
   List<String> indicesBegin=Kelastic.getIndices(req.getFrom(),req.getTo());
   Collections.reverse(indicesBegin);
-  ObjectNode resultBegin=new KelasticMulti(queryBegin,indicesBegin).getResponse();
+  ObjectNode resultBegin=kelasticMulti(queryBegin,indicesBegin);
   Map<String,Integer> countBegin=KelasticResponse.countFields(resultBegin,field);
   ObjectNode time=((ObjectNode)resultEnd.get("kibana")).putObject("time");
   time.put("from",formatDate(new Date(req.getFrom())));
@@ -45,8 +45,7 @@
   for (  ObjectNode n : trends) {
     hits.add(n);
   }
-  ((ObjectNode)resultEnd.get("hits")).put("count",resultEnd.get("hits").get("hits").size());
-  ((ObjectNode)resultEnd.get("hits")).put("hits",hits);
-  String str=Json.serialize(resultEnd);
-  return str;
+  resultEnd.with("hits").put("count",resultEnd.get("hits").get("hits").size());
+  resultEnd.with("hits").put("hits",hits);
+  return Json.serialize(resultEnd);
 }

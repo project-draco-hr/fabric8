@@ -6,8 +6,8 @@
   List<String> indices=Kelastic.getIndices(req.getFrom(),req.getTo(),Config.facetIndexLimit);
   String type=Kelastic.getFieldType(indices.get(0),field);
   if ("long".equals(type) || "integer".equals(type) || "double".equals(type)|| "float".equals(type)) {
-    ObjectNode result=new KelasticMultiFlat(query,indices).getResponse();
-    ObjectNode time=((ObjectNode)result.get("kibana")).putObject("time");
+    ObjectNode result=kelasticMultiFlat(query,indices);
+    ObjectNode time=result.with("kibana").putObject("time");
     time.put("from",formatDate(new Date(req.getFrom())));
     time.put("to",formatDate(new Date(req.getTo())));
     String str=Json.serialize(result);

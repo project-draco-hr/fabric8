@@ -6,8 +6,8 @@
   LOGGER.debug("\tclient: {}",req);
   LOGGER.debug("\tquery: {}",query);
   List<String> indices=Kelastic.getIndices(req.getFrom(),req.getTo());
-  ObjectNode result=new KelasticMulti(query,indices).getResponse();
-  ObjectNode time=((ObjectNode)result.get("kibana")).putObject("time");
+  ObjectNode result=kelasticMulti(query,indices);
+  ObjectNode time=result.with("kibana").putObject("time");
   time.put("from",formatDate(new Date(req.getFrom())));
   time.put("to",formatDate(new Date(req.getTo())));
   Map<String,Integer> count=KelasticResponse.countFields(result,field,show);
@@ -18,8 +18,7 @@
     n.put("count",entry.getValue().intValue());
     hits.add(n);
   }
-  ((ObjectNode)result.get("hits")).put("count",result.get("hits").get("hits").size());
-  ((ObjectNode)result.get("hits")).put("hits",hits);
-  String str=Json.serialize(result);
-  return str;
+  result.with("hits").put("count",result.get("hits").get("hits").size());
+  result.with("hits").put("hits",hits);
+  return Json.serialize(result);
 }

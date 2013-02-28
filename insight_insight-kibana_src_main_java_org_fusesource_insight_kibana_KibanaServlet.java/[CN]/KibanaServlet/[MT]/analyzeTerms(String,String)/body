@@ -5,10 +5,9 @@
   LOGGER.debug("\tclient: {}",req);
   LOGGER.debug("\tquery: {}",query);
   List<String> indices=Kelastic.getIndices(req.getFrom(),req.getTo(),Config.facetIndexLimit);
-  ObjectNode result=new KelasticMultiFlat(query,indices).getResponse();
+  ObjectNode result=kelasticMultiFlat(query,indices);
   ObjectNode time=((ObjectNode)result.get("kibana")).putObject("time");
   time.put("from",formatDate(new Date(req.getFrom())));
   time.put("to",formatDate(new Date(req.getTo())));
-  String str=Json.serialize(result);
-  return str;
+  return Json.serialize(result);
 }

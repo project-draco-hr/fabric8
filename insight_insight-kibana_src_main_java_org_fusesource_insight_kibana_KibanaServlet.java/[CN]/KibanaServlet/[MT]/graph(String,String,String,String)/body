@@ -18,7 +18,6 @@
   LOGGER.debug("\tclient: {}",req);
   LOGGER.debug("\tquery: {}",query);
   List<String> indices=Kelastic.getIndices(req.getFrom(),req.getTo());
-  ObjectNode result=new KelasticSegment(query,indices,seg).getResponse();
-  String str=Json.serialize(result);
-  return str;
+  ObjectNode result=kelasticSegment(query,indices,seg);
+  return Json.serialize(result);
 }
