@@ -1,0 +1,12 @@
+{
+  url="http://" + Config.elasticSearch + url;
+  String str=query.toString();
+  ObjectNode response=ElasticSearch.postJson(url,str);
+  ObjectNode kibana=response.putObject("kibana");
+  kibana.put("per_page",Config.perPage);
+  if (false) {
+    kibana.put("error","Invalid query");
+  }
+  kibana.put("cur_call","curl -XGET " + url + "?pretty -d '"+ str+ "'");
+  return response;
+}

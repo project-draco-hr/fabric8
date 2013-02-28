@@ -1,0 +1,16 @@
+{
+  if (indices.isEmpty()) {
+    response=Kelastic.error("no index");
+    return;
+  }
+  String index=indices.get(segment);
+  url="/" + index + (Config.type.isEmpty() ? "" : "/" + Config.type)+ "/_search";
+  response=Kelastic.run(url,query);
+  ArrayNode indexNode=((ObjectNode)response.get("kibana")).putArray("index");
+  for (  String i : indices) {
+    indexNode.add(i);
+  }
+  if (segment < indices.size() - 1) {
+    ((ObjectNode)response.get("kibana")).put("next",segment + 1);
+  }
+}

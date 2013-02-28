@@ -1,0 +1,20 @@
+{
+  query=Json.objectNode();
+  query.put("size",0);
+  ObjectNode filtered=query.putObject("query").putObject("filtered");
+  ObjectNode questionNode=filtered.putObject("query");
+  question=(question == null || question.isEmpty()) ? "*" : question;
+  question=Config.filter.isEmpty() ? question : "(#{question}) AND " + Config.filter;
+  if ("*".equals(question)) {
+    questionNode.putObject("match_all");
+  }
+ else {
+    ObjectNode n=questionNode.putObject("query_string");
+    n.put("default_operator",Config.defaultOperator);
+    n.put("default_field",Config.primaryField);
+    n.put("query",question);
+  }
+  ObjectNode timestampNode=filtered.putObject("filter").putObject("range").putObject(Config.timestamp);
+  timestampNode.put("from",formatDate(new Date(from)));
+  timestampNode.put("to",formatDate(new Date(to)));
+}

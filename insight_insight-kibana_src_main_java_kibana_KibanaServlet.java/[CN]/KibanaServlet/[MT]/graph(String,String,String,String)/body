@@ -1,0 +1,24 @@
+{
+  System.out.println("\tmode: " + mode);
+  System.out.println("\tinterval: " + interval);
+  System.out.println("\thash: " + hash);
+  System.out.println("\tsegment: " + segment);
+  int seg=segment.isEmpty() ? 0 : Integer.parseInt(segment);
+  ClientRequest req=new ClientRequest(hash);
+  Query query;
+  if ("count".equals(mode)) {
+    query=new DateHistogram(req.getSearch(),req.getFrom(),req.getTo(),interval);
+  }
+ else   if ("mean".equals(mode)) {
+    query=new StatsHistogram(req.getSearch(),req.getFrom(),req.getTo(),req.getAnalyze(),interval);
+  }
+ else {
+    throw new IllegalArgumentException("unsupported mode " + mode);
+  }
+  System.out.println("\tclient: " + req);
+  System.out.println("\tquery: " + query);
+  List<String> indices=Kelastic.getIndices(req.getFrom(),req.getTo());
+  ObjectNode result=new KelasticSegment(query,indices,seg).getResponse();
+  String str=Json.serialize(result);
+  return str;
+}

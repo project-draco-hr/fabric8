@@ -1,0 +1,21 @@
+{
+  System.out.println("\thash: " + hash);
+  System.out.println("\tsegment: " + segment);
+  ClientRequest req=new ClientRequest(hash);
+  Query query=Config.highlightResults ? new HighlightedQuery(req.getSearch(),req.getFrom(),req.getTo(),req.getOffset()) : new SortedQuery(req.getSearch(),req.getFrom(),req.getTo(),req.getOffset());
+  System.out.println("\tclient: " + req);
+  System.out.println("\tquery: " + query);
+  Collection<String> indices=Kelastic.getIndices(req.getFrom(),req.getTo());
+  System.out.println("\tindices: " + indices);
+  ObjectNode result=new KelasticMulti(query,indices).getResponse();
+  ObjectNode time=((ObjectNode)result.get("kibana")).putObject("time");
+  time.put("from",formatDate(new Date(req.getFrom())));
+  time.put("to",formatDate(new Date(req.getTo())));
+  ArrayNode fields=((ObjectNode)result.get("kibana")).putArray("default_fields");
+  for (  String s : Config.defaultFields) {
+    fields.add(s);
+  }
+  ((ObjectNode)result.get("kibana")).put("clickable_urls",Config.clickableUrls);
+  String str=Json.serialize(result);
+  return str;
+}

@@ -1,0 +1,11 @@
+{
+  try {
+    ObjectMapper om=new ObjectMapper();
+    StringWriter sw=new StringWriter();
+    om.writeTree(om.getJsonFactory().createJsonGenerator(sw),node);
+    return sw.toString();
+  }
+ catch (  IOException e) {
+    throw new RuntimeException(e);
+  }
+}

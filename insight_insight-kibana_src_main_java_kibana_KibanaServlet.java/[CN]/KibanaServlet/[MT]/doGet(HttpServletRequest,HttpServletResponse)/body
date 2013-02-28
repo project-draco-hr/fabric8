@@ -1,0 +1,72 @@
+{
+  String path=req.getServletPath();
+  String info=req.getPathInfo();
+  String request=path + (info != null ? info : "");
+  Pattern search;
+  Matcher matcher;
+  search=Pattern.compile("/js/timezone\\.js");
+  matcher=search.matcher(request);
+  if (matcher.matches()) {
+    System.out.println("Timezone Javascript");
+    System.out.println("\trequest: " + request);
+    String str="var tmp_offset = \"" + ("user".equals(Config.timeZone) ? "user" : TimeZone.getTimeZone(Config.timeZone).getRawOffset() / 1000) + "\"\n"+ "\n"+ "window.time_format = \""+ (Config.timeFormat != null ? Config.timeFormat : "mm/dd HH:MM:ss")+ "\"\n"+ "\n"+ "if (tmp_offset == 'user') {\n"+ "\tvar d = new Date()\n"+ "\twindow.tOffset = -d.getTimezoneOffset() * 60 * 1000;\n"+ "} else {\n"+ "\twindow.tOffset = parseFloat(tmp_offset) * 3600 * 1000;\n"+ "}\n"+ "\n"+ "window.timestamp = \""+ Config.timestamp+ "\";\n";
+    resp.setHeader("Content-Type","application/json");
+    resp.getWriter().write(str);
+    return;
+  }
+  search=Pattern.compile("/api/search/([^/?]+)(?:/([^/?]+))?");
+  matcher=search.matcher(request);
+  if (matcher.matches()) {
+    System.out.println("Search");
+    System.out.println("\trequest: " + request);
+    String hash=matcher.group(1);
+    String segment=matcher.group(2);
+    String result=search(hash,segment);
+    resp.getWriter().write(result);
+    return;
+  }
+  search=Pattern.compile("/api/graph/([^/?]+)/([^/?]+)/([^/?]+)/([^/?]*)");
+  matcher=search.matcher(request);
+  if (matcher.matches()) {
+    System.out.println("Graph");
+    System.out.println("\trequest: " + request);
+    String mode=matcher.group(1);
+    String interval=matcher.group(2);
+    String hash=matcher.group(3);
+    String segment=matcher.group(4);
+    String result=graph(mode,interval,hash,segment);
+    resp.getWriter().write(result);
+    return;
+  }
+  search=Pattern.compile("/api/analyze/([^/?]+)/([^/?]+)/([^/?]+)");
+  matcher=search.matcher(request);
+  if (matcher.matches()) {
+    String field=matcher.group(1);
+    String mode=matcher.group(2);
+    String hash=matcher.group(3);
+    System.out.println("Analyze " + mode);
+    System.out.println("\trequest: " + request);
+    String result;
+    if ("score".equals(mode)) {
+      result=analyzeScore(field,hash);
+    }
+ else     if ("mean".equals(mode)) {
+      result=analyzeMean(field,hash);
+    }
+ else     if ("terms".equals(mode)) {
+      result=analyzeTerms(field,hash);
+    }
+ else     if ("trend".equals(mode)) {
+      result=analyzeTrend(field,hash);
+    }
+ else {
+      resp.sendError(404);
+      return;
+    }
+    resp.getWriter().write(result);
+    return;
+  }
+  System.out.println("Unknown request");
+  System.out.println("\trequest: " + request);
+  resp.sendError(404);
+}

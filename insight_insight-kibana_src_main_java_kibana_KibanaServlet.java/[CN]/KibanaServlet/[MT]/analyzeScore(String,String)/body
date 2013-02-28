@@ -1,0 +1,25 @@
+{
+  int limit=Config.analyzeLimit;
+  int show=Config.analyzeShow;
+  ClientRequest req=new ClientRequest(hash);
+  Query query=new SortedQuery(req.getSearch(),req.getFrom(),req.getTo(),0,limit);
+  System.out.println("\tclient: " + req);
+  System.out.println("\tquery: " + query);
+  List<String> indices=Kelastic.getIndices(req.getFrom(),req.getTo());
+  ObjectNode result=new KelasticMulti(query,indices).getResponse();
+  ObjectNode time=((ObjectNode)result.get("kibana")).putObject("time");
+  time.put("from",formatDate(new Date(req.getFrom())));
+  time.put("to",formatDate(new Date(req.getTo())));
+  Map<String,Integer> count=KelasticResponse.countFields(result,field,show);
+  ArrayNode hits=result.arrayNode();
+  for (  Map.Entry<String,Integer> entry : count.entrySet()) {
+    ObjectNode n=hits.objectNode();
+    n.put("id",entry.getKey());
+    n.put("count",entry.getValue().intValue());
+    hits.add(n);
+  }
+  ((ObjectNode)result.get("hits")).put("count",result.get("hits").get("hits").size());
+  ((ObjectNode)result.get("hits")).put("hits",hits);
+  String str=Json.serialize(result);
+  return str;
+}
