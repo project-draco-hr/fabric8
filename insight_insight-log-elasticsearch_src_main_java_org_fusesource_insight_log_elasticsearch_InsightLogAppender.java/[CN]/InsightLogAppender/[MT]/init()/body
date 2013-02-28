@@ -1,20 +1,2 @@
 {
-  CreateIndexRequest request=new CreateIndexRequest(index);
-  request=request.settings("{" + "\"analysis\":{" + "\"analyzer\":{"+ "\"lower\":{"+ "\"type\":\"custom\","+ "\"tokenizer\":\"keyword\","+ "\"filter\":[\"lowercase\"]"+ "}"+ "}"+ "}"+ "}");
-  HashMap<String,Object> not_analyzed=new HashMap<String,Object>();
-  not_analyzed.put("type","string");
-  not_analyzed.put("index","not_analyzed");
-  HashMap<String,Object> lower=new HashMap<String,Object>();
-  lower.put("type","string");
-  lower.put("analyzer","lower");
-  HashMap<String,Object> properties=new HashMap<String,Object>();
-  properties.put("host",lower);
-  properties.put("level",lower);
-  properties.put("thread",lower);
-  properties.put("seq",not_analyzed);
-  properties.put("logger",lower);
-  HashMap<String,Object> options=new HashMap<String,Object>();
-  options.put("properties",properties);
-  request.mapping(type,options);
-  sender.createIndexIfNeeded(request);
 }

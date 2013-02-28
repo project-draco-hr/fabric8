@@ -24,6 +24,7 @@
           quote(values.getKey(),writer);
           writer.append(", \"value\" : " + values.getValue().toString());
           writer.append(" }");
+          String index=this.index + "-" + new SimpleDateFormat("yyyy.MM.dd").format(new Date(result.getEpoch()));
           IndexRequest request=new IndexRequest().index(index).type(type).source(writer.toString()).create(true);
           sender.put(request);
         }
