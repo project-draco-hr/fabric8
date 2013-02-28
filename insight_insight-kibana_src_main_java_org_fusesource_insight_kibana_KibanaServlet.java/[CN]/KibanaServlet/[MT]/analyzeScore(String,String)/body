@@ -3,8 +3,8 @@
   int show=Config.analyzeShow;
   ClientRequest req=new ClientRequest(hash);
   Query query=new SortedQuery(req.getSearch(),req.getFrom(),req.getTo(),0,limit);
-  System.out.println("\tclient: " + req);
-  System.out.println("\tquery: " + query);
+  LOGGER.debug("\tclient: {}",req);
+  LOGGER.debug("\tquery: {}",query);
   List<String> indices=Kelastic.getIndices(req.getFrom(),req.getTo());
   ObjectNode result=new KelasticMulti(query,indices).getResponse();
   ObjectNode time=((ObjectNode)result.get("kibana")).putObject("time");

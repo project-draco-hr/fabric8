@@ -1,12 +1,12 @@
 {
-  System.out.println("\thash: " + hash);
-  System.out.println("\tsegment: " + segment);
+  LOGGER.debug("\thash: {}",hash);
+  LOGGER.debug("\tsegment: {}",segment);
   ClientRequest req=new ClientRequest(hash);
   Query query=Config.highlightResults ? new HighlightedQuery(req.getSearch(),req.getFrom(),req.getTo(),req.getOffset()) : new SortedQuery(req.getSearch(),req.getFrom(),req.getTo(),req.getOffset());
-  System.out.println("\tclient: " + req);
-  System.out.println("\tquery: " + query);
+  LOGGER.debug("\tclient: {}",req);
+  LOGGER.debug("\tquery: {}",query);
   Collection<String> indices=Kelastic.getIndices(req.getFrom(),req.getTo());
-  System.out.println("\tindices: " + indices);
+  LOGGER.debug("\tindices: {}",indices);
   ObjectNode result=new KelasticMulti(query,indices).getResponse();
   ObjectNode time=((ObjectNode)result.get("kibana")).putObject("time");
   time.put("from",formatDate(new Date(req.getFrom())));

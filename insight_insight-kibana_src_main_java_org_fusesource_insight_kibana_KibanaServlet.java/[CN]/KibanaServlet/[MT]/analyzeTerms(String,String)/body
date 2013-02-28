@@ -2,14 +2,13 @@
   int limit=Config.analyzeShow;
   ClientRequest req=new ClientRequest(hash);
   Query query=new TermsFacet(req.getSearch(),req.getFrom(),req.getTo(),field.split(","),limit);
-  System.out.println("\tclient: " + req);
-  System.out.println("\tquery: " + query);
+  LOGGER.debug("\tclient: {}",req);
+  LOGGER.debug("\tquery: {}",query);
   List<String> indices=Kelastic.getIndices(req.getFrom(),req.getTo(),Config.facetIndexLimit);
   ObjectNode result=new KelasticMultiFlat(query,indices).getResponse();
   ObjectNode time=((ObjectNode)result.get("kibana")).putObject("time");
   time.put("from",formatDate(new Date(req.getFrom())));
   time.put("to",formatDate(new Date(req.getTo())));
   String str=Json.serialize(result);
-  System.out.println(str);
   return str;
 }

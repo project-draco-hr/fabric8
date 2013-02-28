@@ -1,8 +1,8 @@
 {
-  System.out.println("\tmode: " + mode);
-  System.out.println("\tinterval: " + interval);
-  System.out.println("\thash: " + hash);
-  System.out.println("\tsegment: " + segment);
+  LOGGER.debug("\tmode: {}",mode);
+  LOGGER.debug("\tinterval: {}",interval);
+  LOGGER.debug("\thash: {}",hash);
+  LOGGER.debug("\tsegment: {}",segment);
   int seg=segment.isEmpty() ? 0 : Integer.parseInt(segment);
   ClientRequest req=new ClientRequest(hash);
   Query query;
@@ -15,8 +15,8 @@
  else {
     throw new IllegalArgumentException("unsupported mode " + mode);
   }
-  System.out.println("\tclient: " + req);
-  System.out.println("\tquery: " + query);
+  LOGGER.debug("\tclient: {}",req);
+  LOGGER.debug("\tquery: {}",query);
   List<String> indices=Kelastic.getIndices(req.getFrom(),req.getTo());
   ObjectNode result=new KelasticSegment(query,indices,seg).getResponse();
   String str=Json.serialize(result);

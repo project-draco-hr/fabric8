@@ -2,7 +2,7 @@
   int limit=Config.analyzeLimit;
   int show=Config.analyzeShow;
   ClientRequest req=new ClientRequest(hash);
-  System.out.println("\tclient: " + req);
+  LOGGER.debug("\tclient: {}",req);
   Query queryEnd=new SortedQuery(req.getSearch(),req.getFrom(),req.getTo(),0,limit,Config.timestamp,"desc");
   List<String> indicesEnd=Kelastic.getIndices(req.getFrom(),req.getTo());
   ObjectNode resultEnd=new KelasticMulti(queryEnd,indicesEnd).getResponse();
@@ -48,6 +48,5 @@
   ((ObjectNode)resultEnd.get("hits")).put("count",resultEnd.get("hits").get("hits").size());
   ((ObjectNode)resultEnd.get("hits")).put("hits",hits);
   String str=Json.serialize(resultEnd);
-  System.out.println(str);
   return str;
 }
