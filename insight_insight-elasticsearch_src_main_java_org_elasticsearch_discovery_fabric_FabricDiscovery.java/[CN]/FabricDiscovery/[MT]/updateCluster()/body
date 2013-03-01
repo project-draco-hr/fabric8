@@ -4,7 +4,7 @@
       @Override public ClusterState execute(      ClusterState currentState){
         ClusterState.Builder stateBuilder=newClusterStateBuilder().state(currentState);
         DiscoveryNodes.Builder nodesBuilder=newNodesBuilder().localNodeId(localNode.id()).masterNodeId(singleton.master().get().node().id()).put(singleton.master().get().node);
-        for (        ESNode node : JavaConversions$.MODULE$.asJavaCollection(singleton.slaves())) {
+        for (        ESNode node : JavaConversions$.MODULE$.<ESNode>asJavaCollection(singleton.slaves())) {
           nodesBuilder.put(node.node());
         }
         latestDiscoNodes=nodesBuilder.build();

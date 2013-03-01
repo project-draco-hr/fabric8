@@ -4,6 +4,7 @@
   }
   ESLogger logger=Loggers.getLogger(Node.class,settings.get("name"));
   logger.info("{{}}[{}]: starting ...",Version.CURRENT,JvmInfo.jvmInfo().pid());
+  injector.getInstance(Discovery.class).setAllocationService(injector.getInstance(AllocationService.class));
   for (  Class<? extends LifecycleComponent> plugin : pluginsService.services()) {
     injector.getInstance(plugin).start();
   }
@@ -23,6 +24,7 @@
   if (settings.getAsBoolean("http.enabled",true)) {
     injector.getInstance(HttpServer.class).start();
   }
+  injector.getInstance(BulkUdpService.class).start();
   injector.getInstance(JmxService.class).connectAndRegister(discoService.nodeDescription(),injector.getInstance(NetworkService.class));
   logger.info("{{}}[{}]: started",Version.CURRENT,JvmInfo.jvmInfo().pid());
   return this;

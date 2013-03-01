@@ -2,9 +2,14 @@
   Tuple<Settings,Environment> tuple=InternalSettingsPerparer.prepareSettings(pSettings,loadConfigSettings);
   ESLogger logger=Loggers.getLogger(Node.class,tuple.v1().get("name"));
   logger.info("{{}}[{}]: initializing ...",Version.CURRENT,JvmInfo.jvmInfo().pid());
+  if (logger.isDebugEnabled()) {
+    Environment env=tuple.v2();
+    logger.debug("using home [{}], config [{}], data [{}], logs [{}], work [{}], plugins [{}]",env.homeFile(),env.configFile(),Arrays.toString(env.dataFiles()),env.logsFile(),env.workFile(),env.pluginsFile());
+  }
   this.pluginsService=new PluginsService(tuple.v1(),tuple.v2());
   this.settings=pluginsService.updatedSettings();
   this.environment=tuple.v2();
+  CompressorFactory.configure(settings);
   NodeEnvironment nodeEnvironment=new NodeEnvironment(this.settings,this.environment);
   boolean success=false;
   try {
@@ -34,6 +39,8 @@
     modules.add(new MonitorModule(settings));
     modules.add(new GatewayModule(settings));
     modules.add(new NodeClientModule());
+    modules.add(new BulkUdpModule());
+    modules.add(new ShapeModule());
     injector=modules.createInjector();
     client=injector.getInstance(Client.class);
     success=true;
