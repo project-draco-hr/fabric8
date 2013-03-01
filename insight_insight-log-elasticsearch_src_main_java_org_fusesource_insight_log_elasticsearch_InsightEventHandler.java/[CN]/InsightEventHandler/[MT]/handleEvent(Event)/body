@@ -3,7 +3,6 @@
     StringBuilder writer=new StringBuilder();
     writer.append("{ \"host\": ");
     quote(name,writer);
-    writer.append(", \"seq\" : " + SEQUENCE_COUNTER.incrementAndGet());
     writer.append(", \"topic\": ");
     quote(event.getTopic(),writer);
     writer.append(", \"properties\": { ");
@@ -48,8 +47,7 @@
     if (timestamp == 0) {
       timestamp=System.currentTimeMillis();
     }
-    String index=this.index + "-" + new SimpleDateFormat("yyyy.MM.dd").format(new Date(timestamp));
-    IndexRequest request=new IndexRequest().index(index).type(type).source(writer.toString()).create(true);
+    IndexRequest request=new IndexRequest().index(getIndex(timestamp)).type(type).source(writer.toString()).create(true);
     sender.put(request);
   }
  catch (  Exception e) {

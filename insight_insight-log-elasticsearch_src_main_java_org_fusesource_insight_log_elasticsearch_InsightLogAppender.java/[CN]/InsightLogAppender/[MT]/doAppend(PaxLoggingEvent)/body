@@ -6,7 +6,6 @@
     StringBuilder writer=new StringBuilder();
     writer.append("{ \"host\" : ");
     quote(name,writer);
-    writer.append(",\n  \"seq\" : " + SEQUENCE_COUNTER.incrementAndGet());
     writer.append(",\n  \"timestamp\" : ");
     quote(formatDate(paxLoggingEvent.getTimeStamp()),writer);
     writer.append(",\n  \"level\" : ");
@@ -41,8 +40,7 @@
     }
     writer.append(" }");
     writer.append("\n}");
-    String index=this.index + "-" + new SimpleDateFormat("yyyy.MM.dd").format(new Date(paxLoggingEvent.getTimeStamp()));
-    IndexRequest request=new IndexRequest().index(index).type(type).source(writer.toString()).create(true);
+    IndexRequest request=new IndexRequest().index(getIndex(paxLoggingEvent.getTimeStamp())).type(type).source(writer.toString()).create(true);
     sender.put(request);
   }
  catch (  Exception e) {

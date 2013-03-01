@@ -7,7 +7,6 @@
           StringBuilder writer=new StringBuilder();
           writer.append("{ \"host\": ");
           quote(query.getServer().getAlias(),writer);
-          writer.append(", \"seq\" : " + SEQUENCE_COUNTER.incrementAndGet());
           writer.append(", \"timestamp\" : ");
           quote(formatDate(result.getEpoch()),writer);
           writer.append(", \"object\" : ");
@@ -22,10 +21,9 @@
           quote(result.getTypeName(),writer);
           writer.append(", \"key\" : ");
           quote(values.getKey(),writer);
-          writer.append(", \"value\" : " + values.getValue().toString());
+          writer.append(", \"value\" : ").append(values.getValue().toString());
           writer.append(" }");
-          String index=this.index + "-" + new SimpleDateFormat("yyyy.MM.dd").format(new Date(result.getEpoch()));
-          IndexRequest request=new IndexRequest().index(index).type(type).source(writer.toString()).create(true);
+          IndexRequest request=new IndexRequest().index(getIndex(result.getEpoch())).type(type).source(writer.toString()).create(true);
           sender.put(request);
         }
       }
