@@ -1,0 +1,18 @@
+{
+  assertNotNull(bus);
+  assertNotNull(feature);
+  JAXRSServerFactoryBean factory=new JAXRSServerFactoryBean();
+  factory.setResourceClasses(CustomerService.class);
+  factory.setAddress("http://localhost:9000/simple/server");
+  factory.setBus(bus);
+  factory.create();
+  JAXRSClientFactoryBean clientFactory=new JAXRSClientFactoryBean();
+  clientFactory.setServiceClass(CustomerServiceResources.class);
+  clientFactory.setAddress("http://someotherplace");
+  List<AbstractFeature> features=new ArrayList<AbstractFeature>();
+  features.add(feature);
+  clientFactory.setFeatures(features);
+  CustomerServiceResources proxy=clientFactory.create(CustomerServiceResources.class);
+  Customer response=proxy.getCustomer("123");
+  assertEquals("Get a wrong customer name","John",response.getName());
+}
