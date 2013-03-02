@@ -1,9 +1,5 @@
 {
-  if (!(address.startsWith("http") || address.startsWith("jms"))) {
-    if (addressResolver == null) {
-      LOG.warn("Cannot find a full address for the CXF service of " + address + " , due to lack of the configuration of ServerAddressResolver");
-      return address;
-    }
+  if (addressResolver != null) {
     return addressResolver.getFullAddress(address);
   }
  else {
