@@ -4,7 +4,7 @@
   String jmxUser=username != null ? username : ShellUtils.retrieveFabricUser(session);
   String jmxPassword=password != null ? password : ShellUtils.retrieveFabricUserPassword(session);
   String url="child://" + parent;
-  CreateContainerChildOptions options=CreateContainerOptionsBuilder.child().name(name).parent(parent).providerUri(url).resolver(resolver).ensembleServer(isEnsembleServer).number(number).zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword(fabricService.getZookeeperPassword()).jvmOpts(jvmOpts).jmxUser(jmxUser).jmxPassword(jmxPassword);
+  CreateContainerChildOptions options=CreateContainerOptionsBuilder.child().name(name).parent(parent).resolver(resolver).ensembleServer(isEnsembleServer).number(number).zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword(fabricService.getZookeeperPassword()).jvmOpts(jvmOpts).jmxUser(jmxUser).jmxPassword(jmxPassword);
   try {
     metadatas=fabricService.createContainers(options);
     ShellUtils.storeFabricCredentials(session,jmxUser,jmxPassword);
