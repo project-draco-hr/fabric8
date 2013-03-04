@@ -5,7 +5,7 @@
   try {
     IZKClient zooKeeper=service.getZooKeeper();
     Map<String,Map<String,String>> oldCfgs=getConfigurations();
-    String path=ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,id);
+    String path=getPath(version,id);
     for (    Map.Entry<String,Map<String,String>> entry : configurations.entrySet()) {
       String pid=entry.getKey();
       oldCfgs.remove(pid);

@@ -1,7 +1,8 @@
 {
   try {
-    List<String> names=zooKeeper.getChildren(ZkPath.CONFIG_VERSIONS_PROFILES.getPath(version));
     List<Profile> profiles=new ArrayList<Profile>();
+    List<String> names=zooKeeper.getChildren(ZkPath.CONFIG_VERSIONS_PROFILES.getPath(version));
+    names.addAll(zooKeeper.getChildren(ZkPath.CONFIG_ENSEMBLE_PROFILES.getPath()));
     for (    String name : names) {
       profiles.add(new ProfileImpl(name,version,this));
     }

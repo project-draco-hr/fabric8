@@ -6,9 +6,9 @@
       return Collections.emptyList();
     }
     List<String> list=new ArrayList<String>();
-    if (zooKeeper.exists("/fabric/configs/versions/" + version + "/general/fabric-ensemble") != null) {
-      String clusterId=zooKeeper.getStringData("/fabric/configs/versions/" + version + "/general/fabric-ensemble");
-      String containers=zooKeeper.getStringData("/fabric/configs/versions/" + version + "/general/fabric-ensemble/"+ clusterId);
+    if (zooKeeper.exists(ZkPath.CONFIG_ENSEMBLES.getPath()) != null) {
+      String clusterId=zooKeeper.getStringData(ZkPath.CONFIG_ENSEMBLES.getPath());
+      String containers=zooKeeper.getStringData(ZkPath.CONFIG_ENSEMBLE.getPath(clusterId));
       Collections.addAll(list,containers.split(","));
     }
     return list;

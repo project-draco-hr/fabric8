@@ -17,6 +17,10 @@
         zooKeeper.createWithParents(node,CreateMode.PERSISTENT);
       }
       track(node);
+      ensemble=ZkPath.CONFIG_ENSEMBLES.getPath();
+      if (zooKeeper.exists(ensemble) == null) {
+        zooKeeper.createWithParents(ensemble,CreateMode.PERSISTENT);
+      }
       resolutionPolicy=ZkPath.CONTAINER_RESOLVER.getPath(name);
       track(resolutionPolicy);
     }
