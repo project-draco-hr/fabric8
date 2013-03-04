@@ -1,9 +1,8 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
   System.err.println(executeCommand("fabric:profile-create --parents default child-profile"));
-  createAndAssertChildContainer("child1","root","child-profile");
-  FabricService fabricService=getOsgiService(FabricService.class);
-  Container child1=fabricService.getContainer("child1");
+  Set<Container> containers=ContainerBuilder.child(1).withName("cnt").withProfiles("default").assertProvisioningResult().build();
+  Container child1=containers.iterator().next();
   System.err.println(executeCommand("fabric:profile-edit --i org.apache.karaf.management child-profile"));
   System.err.println(executeCommand("fabric:profile-edit --pid org.apache.karaf.management/serviceUrl=service:jmx:rmi://localhost:55555/jndi/rmi://localhost:1099/karaf-${karaf.name} child-profile"));
   Thread.sleep(DEFAULT_TIMEOUT);

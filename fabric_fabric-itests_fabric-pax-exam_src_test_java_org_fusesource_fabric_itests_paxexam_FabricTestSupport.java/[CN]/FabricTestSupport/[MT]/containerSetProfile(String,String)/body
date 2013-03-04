@@ -1,8 +1,6 @@
 {
   System.out.println("Switching profile: " + profileName + " on container:"+ containerName);
   FabricService fabricService=getFabricService();
-  IZKClient zookeeper=getOsgiService(IZKClient.class);
-  assertNotNull(zookeeper);
   Container container=fabricService.getContainer(containerName);
   Version version=container.getVersion();
   Profile[] profiles=new Profile[]{fabricService.getProfile(version.getName(),profileName)};
@@ -21,7 +19,7 @@
     }
   }
   if (!same) {
-    ZooKeeperUtils.set(zookeeper,ZkPath.CONTAINER_PROVISION_RESULT.getPath(containerName),"switching profile");
+    ZooKeeperUtils.set(getZookeeper(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(containerName),"switching profile");
     container.setProfiles(profiles);
     waitForProvisionSuccess(container,PROVISION_TIMEOUT);
   }

@@ -1,11 +1,11 @@
 {
-  FabricService fabricService=getOsgiService(FabricService.class);
   System.out.println(executeCommand("fabric:create -n"));
   System.out.println(executeCommand("fabric:version-create --parent 1.0 1.1"));
   System.out.println(executeCommand("fabric:container-upgrade --all 1.1"));
-  createAndAssertChildContainer("camel1","root","camel");
+  Set<Container> containers=ContainerBuilder.create().withName("camel").withProfiles("camel").assertProvisioningResult().build();
   System.out.println(executeCommand("fabric:container-rollback --all 1.0"));
-  waitForProvisionSuccess(fabricService.getContainer("camel1"),PROVISION_TIMEOUT);
-  IZKClient zookeeper=getOsgiService(IZKClient.class);
-  assertNotNull(zookeeper.exists("/fabric/configs/versions/1.0/containers/camel1"));
+  Provision.assertSuccess(containers,PROVISION_TIMEOUT);
+  for (  Container container : containers) {
+    assertNotNull(ServiceLocator.getOsgiService(IZKClient.class).exists("/fabric/configs/versions/1.0/containers/" + container.getId()));
+  }
 }

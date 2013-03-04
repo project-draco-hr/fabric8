@@ -1,10 +1,10 @@
 {
+  FabricService fabricService=getFabricService();
   String version=System.getProperty("fabric.version");
   System.err.println(executeCommand("admin:create --java-opts \"-Dzookeeper.url=localhost:2181 -Dzookeeper.password=admin\" --featureURL mvn:org.fusesource.fabric/fuse-fabric/" + version + "/xml/features --feature fabric-agent child1"));
   try {
     System.err.println(executeCommand("admin:start child1"));
     System.err.println(executeCommand("fabric:create -n"));
-    FabricService fabricService=getOsgiService(FabricService.class);
     Container child1=fabricService.getContainer("child1");
     waitForProvisionSuccess(child1,PROVISION_TIMEOUT);
     System.err.println(executeCommand("fabric:container-list"));

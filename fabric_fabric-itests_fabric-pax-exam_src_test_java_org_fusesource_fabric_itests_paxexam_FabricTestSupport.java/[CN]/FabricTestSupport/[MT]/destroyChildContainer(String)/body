@@ -1,11 +1,8 @@
 {
   try {
-    IZKClient zooKeeper=getOsgiService(IZKClient.class);
-    FabricService fabricService=getOsgiService(FabricService.class);
-    assertNotNull(fabricService);
     Thread.sleep(DEFAULT_WAIT);
-    if (zooKeeper.exists(ZkPath.CONTAINER.getPath(name)) != null) {
-      Container container=fabricService.getContainer(name);
+    if (getZookeeper().exists(ZkPath.CONTAINER.getPath(name)) != null) {
+      Container container=getFabricService().getContainer(name);
       container.destroy();
     }
   }

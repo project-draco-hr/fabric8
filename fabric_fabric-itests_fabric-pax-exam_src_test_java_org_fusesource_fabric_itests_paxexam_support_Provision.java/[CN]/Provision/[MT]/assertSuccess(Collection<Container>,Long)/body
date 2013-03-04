@@ -1,0 +1,8 @@
+{
+  waitForContainerStatus(containers,timeout);
+  for (  Container container : containers) {
+    if (!"success".equals(container.getProvisionStatus())) {
+      throw new Exception("Container " + container.getId() + " failed to provision.");
+    }
+  }
+}

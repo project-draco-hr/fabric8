@@ -1,0 +1,13 @@
+{
+  for (long t=0; (!(container.isAlive() && (status == null || container.getProvisionStatus().equals(status)) && container.getSshUrl() != null) && t < provisionTimeOut); t+=2000L) {
+    if (container.getProvisionException() != null) {
+      return false;
+    }
+    Thread.sleep(2000L);
+    System.out.println("Container:" + container.getId() + " Alive:"+ container.isAlive()+ " Status:"+ container.getProvisionStatus()+ " SSH URL:"+ container.getSshUrl());
+  }
+  if (!container.isAlive() || !(status == null || container.getProvisionStatus().equals(status)) || container.getSshUrl() == null) {
+    return false;
+  }
+  return true;
+}

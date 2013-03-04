@@ -1,0 +1,46 @@
+{
+  Set<Container> containers=new HashSet<Container>();
+  FabricService fabricService=getOsgiService(FabricService.class);
+  CompletionService<Set<Container>> completionService=new ExecutorCompletionService<Set<Container>>(executorService);
+  int tasks=0;
+  for (  CreateContainerOptions options : optionList) {
+    if (!options.isEnsembleServer()) {
+      options.setZookeeperUrl(fabricService.getZookeeperUrl());
+      completionService.submit(new CreateContainerTask(fabricService,options));
+      tasks++;
+    }
+  }
+  try {
+    for (int i=0; i < tasks; i++) {
+      Future<Set<Container>> futureContainerSet=completionService.poll(CREATE_TIMEOUT,TimeUnit.MILLISECONDS);
+      Set<Container> containerSet=futureContainerSet.get();
+      CONTAINERS.addAll(containerSet);
+      containers.addAll(containerSet);
+    }
+    for (    Container container : containers) {
+      Version version=fabricService.getDefaultVersion();
+      container.setVersion(version);
+      Set<Profile> profiles=new HashSet(Arrays.asList(container.getProfiles()));
+      for (      String profileName : profileNames) {
+        Profile profile=fabricService.getProfile(container.getVersion().getName(),profileName);
+        profiles.add(profile);
+      }
+      container.setProfiles(profiles.toArray(new Profile[profiles.size()]));
+    }
+    try {
+      if (waitForProvisioning) {
+        Provision.waitForContainerStatus(containers,provisionTimeOut);
+      }
+      if (assertProvisioningResult) {
+        Provision.assertSuccess(containers,provisionTimeOut);
+      }
+    }
+ catch (    Exception e) {
+      throw new FabricException(e);
+    }
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+  return containers;
+}

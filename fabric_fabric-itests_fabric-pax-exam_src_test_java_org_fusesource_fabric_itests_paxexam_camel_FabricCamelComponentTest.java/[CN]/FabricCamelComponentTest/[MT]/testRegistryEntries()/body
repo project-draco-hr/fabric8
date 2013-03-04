@@ -1,8 +1,5 @@
 {
-  FabricService fabricService=getOsgiService(FabricService.class);
-  assertNotNull(fabricService);
   System.err.println(executeCommand("fabric:create -n root"));
-  IZKClient zooKeeper=getOsgiService(IZKClient.class);
   executeCommand("fabric:profile-create --parents camel fabric-camel");
   executeCommand("fabric:profile-create --parents fabric-camel fabric-camel-server");
   executeCommand("fabric:profile-create --parents fabric-camel-server fabric-camel-server-1");
@@ -16,8 +13,8 @@
   createAndAssertChildContainer("server1","root","fabric-camel-server-1","-Xms512m -Xmx512m");
   createAndAssertChildContainer("server2","root","fabric-camel-server-2","-Xms512m -Xmx512m");
   createAndAssertChildContainer("client1","root","fabric-camel-client","-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005");
-  Assert.assertNotNull(zooKeeper.exists("/fabric/registry/camel/endpoints/"));
-  Assert.assertEquals(1,zooKeeper.getChildren("/fabric/registry/camel/endpoints/").size());
+  Assert.assertNotNull(getZookeeper().exists("/fabric/registry/camel/endpoints/"));
+  Assert.assertEquals(1,getZookeeper().getChildren("/fabric/registry/camel/endpoints/").size());
   Thread.sleep(5000);
   System.err.println(executeCommand("fabric:container-connect -u admin -p admin client1 camel:route-list"));
   String response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin client1 camel:route-info fabric-client | grep Failed")).getPlain().toString();

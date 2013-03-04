@@ -1,5 +1,4 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  addStagingRepoToDefaultProfile();
-  createAndAssertChildContainer("esb1","root","jboss-fuse-medium");
+  Set<Container> containers=ContainerBuilder.create().withName("esb").withProfiles("jboss-fuse-minimal").assertProvisioningResult().build();
 }

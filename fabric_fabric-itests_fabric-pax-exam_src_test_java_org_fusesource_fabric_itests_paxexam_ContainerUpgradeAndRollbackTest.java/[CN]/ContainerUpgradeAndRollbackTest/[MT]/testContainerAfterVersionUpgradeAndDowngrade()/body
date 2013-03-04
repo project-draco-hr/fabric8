@@ -1,21 +1,25 @@
 {
-  FabricService fabricService=getOsgiService(FabricService.class);
   System.out.println(executeCommand("fabric:create -n"));
   System.out.println(executeCommand("fabric:version-create --parent 1.0 1.1"));
-  createAndAssertChildContainer("camel1","root","camel");
+  Set<Container> containers=ContainerBuilder.create().withName("camel").withProfiles("camel").assertProvisioningResult().build();
   System.out.println(executeCommand("fabric:profile-edit --features camel-hazelcast camel 1.1"));
   System.out.println(executeCommand("fabric:container-upgrade --all 1.1"));
-  waitForProvisionSuccess(fabricService.getContainer("camel1"),PROVISION_TIMEOUT);
-  String bundles=executeCommand("container-connect -u admin -p admin camel1 osgi:list -s | grep camel-hazelcast");
+  Provision.assertSuccess(containers,PROVISION_TIMEOUT);
   System.out.println(executeCommand("fabric:container-list"));
-  assertNotNull(bundles);
-  System.out.println(bundles);
-  assertFalse("Expected camel-hazelcast installed.",bundles.isEmpty());
+  for (  Container container : containers) {
+    String bundles=executeCommand("container-connect -u admin -p admin " + container.getId() + " osgi:list -s | grep camel-hazelcast");
+    System.out.println(executeCommand("fabric:container-list"));
+    assertNotNull(bundles);
+    System.out.println(bundles);
+    assertFalse("Expected camel-hazelcast installed.",bundles.isEmpty());
+  }
   System.out.println(executeCommand("fabric:container-rollback --all 1.0"));
-  waitForProvisionSuccess(fabricService.getContainer("camel1"),PROVISION_TIMEOUT);
+  Provision.assertSuccess(containers,PROVISION_TIMEOUT);
   System.out.println(executeCommand("fabric:container-list"));
-  bundles=executeCommand("container-connect -u admin -p admin camel1 osgi:list -s | grep camel-hazelcast");
-  assertNotNull(bundles);
-  System.out.println(bundles);
-  assertTrue("Expected no camel-hazelcast installed.",bundles.isEmpty());
+  for (  Container container : containers) {
+    String bundles=executeCommand("container-connect -u admin -p admin " + container.getId() + " osgi:list -s | grep camel-hazelcast");
+    assertNotNull(bundles);
+    System.out.println(bundles);
+    assertTrue("Expected no camel-hazelcast installed.",bundles.isEmpty());
+  }
 }
