@@ -1,6 +1,5 @@
 {
-  String url="http://" + Config.elasticSearch + "/"+ index+ "/_search";
-  ObjectNode response=run(url,query);
+  ObjectNode response=run("/" + index + "/_search",query);
   response.with("kibana").put("index",index);
   return response;
 }

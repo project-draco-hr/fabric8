@@ -40,10 +40,10 @@
     }
     writer.append(" }");
     writer.append("\n}");
-    IndexRequest request=new IndexRequest().index(getIndex(paxLoggingEvent.getTimeStamp())).type(type).source(writer.toString()).create(true);
-    sender.put(request);
+    IndexRequest request=new IndexRequest().index(getIndex(this.index,paxLoggingEvent.getTimeStamp())).type(type).source(writer.toString()).create(true);
+    sender.push(request);
   }
  catch (  Exception e) {
-    e.printStackTrace();
+    LOGGER.warn("Error appending log to elastic search",e);
   }
 }

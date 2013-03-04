@@ -1,26 +1,15 @@
 {
-  InputStream is=null;
   try {
-    URL url=new URL("http://" + Config.elasticSearch + request);
-    HttpURLConnection conn=(HttpURLConnection)url.openConnection();
-    conn.setDoOutput(false);
-    conn.setRequestMethod("GET");
-    conn.setRequestProperty("Connection","close");
-    conn.setRequestProperty("Accept","application/json");
-    is=conn.getInputStream();
-    JsonNode node=new ObjectMapper().readTree(is);
-    return (ObjectNode)node;
+    ElasticRest rest=tracker.getService();
+    if (rest != null) {
+      String response=rest.get(request);
+      return (ObjectNode)new ObjectMapper().readTree(response);
+    }
+ else {
+      throw new RuntimeException("ElasticSearch not available");
+    }
   }
  catch (  IOException e) {
     throw new RuntimeException(e);
-  }
- finally {
-    try {
-      if (is != null) {
-        is.close();
-      }
-    }
- catch (    IOException e) {
-    }
   }
 }

@@ -47,10 +47,10 @@
     if (timestamp == 0) {
       timestamp=System.currentTimeMillis();
     }
-    IndexRequest request=new IndexRequest().index(getIndex(timestamp)).type(type).source(writer.toString()).create(true);
-    sender.put(request);
+    IndexRequest request=new IndexRequest().index(getIndex(this.index,timestamp)).type(type).source(writer.toString()).create(true);
+    sender.push(request);
   }
  catch (  Exception e) {
-    e.printStackTrace();
+    LOGGER.warn("Error appending log to elastic search",e);
   }
 }

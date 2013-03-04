@@ -1,33 +1,15 @@
 {
-  InputStream is=null;
-  OutputStream os=null;
   try {
-    URL url=new URL(request);
-    HttpURLConnection conn=(HttpURLConnection)url.openConnection();
-    conn.setDoInput(true);
-    conn.setDoOutput(true);
-    conn.setUseCaches(false);
-    conn.setRequestMethod("POST");
-    conn.setRequestProperty("Connection","close");
-    conn.setRequestProperty("Accept","application/json");
-    conn.setRequestProperty("Content-Type","application/json");
-    conn.connect();
-    os=conn.getOutputStream();
-    os.write(query.getBytes());
-    os.close();
-    is=conn.getInputStream();
-    return (ObjectNode)new ObjectMapper().readTree(is);
+    ElasticRest rest=tracker.getService();
+    if (rest != null) {
+      String response=rest.post(request,query);
+      return (ObjectNode)new ObjectMapper().readTree(response);
+    }
+ else {
+      throw new RuntimeException("ElasticSearch not available");
+    }
   }
  catch (  IOException e) {
     throw new RuntimeException(e);
-  }
- finally {
-    try {
-      if (is != null) {
-        is.close();
-      }
-    }
- catch (    IOException e) {
-    }
   }
 }

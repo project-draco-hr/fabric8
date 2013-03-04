@@ -24,7 +24,10 @@
           writer.append(", \"value\" : ").append(toString(values.getValue()));
           writer.append(" }");
           IndexRequest request=new IndexRequest().index(getIndex(result.getEpoch())).type(type).source(writer.toString()).create(true);
-          sender.put(request);
+          ElasticSender sender=tracker.getService();
+          if (sender != null) {
+            sender.push(request);
+          }
         }
       }
     }
