@@ -10,7 +10,7 @@
       builder.put(key,val);
     }
   }
-  Node node=new InternalNode(builder.build(),false);
+  ExtendedInternalNode node=new ExtendedInternalNode(new InternalNode(builder.build(),false));
   try {
     node.start();
     node.client().admin().cluster().prepareHealth().setWaitForGreenStatus().execute().actionGet();
