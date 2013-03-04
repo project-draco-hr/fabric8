@@ -41,5 +41,9 @@
     log.debug("Rolled back container {} from {} to {}",new Object[]{container,oldVersion,version});
     System.out.println("Rolled back container " + container.getId() + " from version "+ oldVersion+ " to "+ version);
   }
+  if (all) {
+    fabricService.setDefaultVersion(version);
+    System.out.println("Changed default version to " + version);
+  }
   return null;
 }
