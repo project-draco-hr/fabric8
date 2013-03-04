@@ -21,7 +21,7 @@
           quote(result.getTypeName(),writer);
           writer.append(", \"key\" : ");
           quote(values.getKey(),writer);
-          writer.append(", \"value\" : ").append(values.getValue().toString());
+          writer.append(", \"value\" : ").append(toString(values.getValue()));
           writer.append(" }");
           IndexRequest request=new IndexRequest().index(getIndex(result.getEpoch())).type(type).source(writer.toString()).create(true);
           sender.put(request);
