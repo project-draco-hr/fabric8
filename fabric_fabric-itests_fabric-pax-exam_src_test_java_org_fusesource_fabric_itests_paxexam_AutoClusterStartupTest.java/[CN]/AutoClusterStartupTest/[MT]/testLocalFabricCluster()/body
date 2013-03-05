@@ -1,7 +1,8 @@
 {
   FabricService fabricService=getFabricService();
   assertNotNull(fabricService);
-  Thread.sleep(DEFAULT_WAIT);
+  IZKClient zookeeer=getZookeeper();
+  zookeeer.waitForConnected(new Timespan(60,Timespan.TimeUnit.SECOND));
   Container[] containers=fabricService.getContainers();
   assertNotNull(containers);
   assertEquals("Expected to find 1 container",1,containers.length);
