@@ -15,25 +15,21 @@
   final Map<String,File> downloads=new ConcurrentHashMap<String,File>();
   final List<Throwable> errors=new CopyOnWriteArrayList<Throwable>();
   for (  final String location : locations) {
-    if (!location.startsWith(FAB_PROTOCOL)) {
-      manager.download(location).addListener(new FutureListener<DownloadFuture>(){
-        public void operationComplete(        DownloadFuture future){
-          try {
-            downloads.put(location,future.getFile());
-          }
- catch (          Throwable e) {
-            errors.add(e);
-          }
+    final String strippedLocation=location.startsWith(FAB_PROTOCOL) ? location.substring(FAB_PROTOCOL.length()) : location;
+    manager.download(strippedLocation).addListener(new FutureListener<DownloadFuture>(){
+      public void operationComplete(      DownloadFuture future){
+        try {
+          downloads.put(strippedLocation,future.getFile());
+        }
+ catch (        Throwable e) {
+          errors.add(e);
+        }
  finally {
-            latch.countDown();
-          }
+          latch.countDown();
         }
       }
+    }
 );
-    }
- else {
-      latch.countDown();
-    }
   }
   latch.await();
   if (!errors.isEmpty()) {
