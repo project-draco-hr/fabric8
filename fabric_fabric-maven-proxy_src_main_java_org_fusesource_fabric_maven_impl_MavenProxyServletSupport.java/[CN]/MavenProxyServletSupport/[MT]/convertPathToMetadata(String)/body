@@ -9,7 +9,11 @@
     String groupId=pathMatcher.group(1).replaceAll("/",".");
     String artifactId=pathMatcher.group(2);
     String version=pathMatcher.group(3);
-    metadata=new DefaultMetadata(groupId,artifactId,version,"",Metadata.Nature.RELEASE_OR_SNAPSHOT);
+    String type=pathMatcher.group(9);
+    if (type == null) {
+      type="";
+    }
+    metadata=new DefaultMetadata(groupId,artifactId,version,type,Metadata.Nature.RELEASE_OR_SNAPSHOT);
   }
   return metadata;
 }
