@@ -24,7 +24,7 @@
         state.lock.join(new QueryNodeState(q.getName(),container.getId()));
       }
       long delay=q.getPeriod() > 0 ? q.getPeriod() : defaultDelay;
-      state.future=this.executor.scheduleAtFixedRate(new Task(state),Math.round(Math.random() * 1000),delay * 1000,TimeUnit.MILLISECONDS);
+      state.future=this.executor.scheduleAtFixedRate(new Task(state),Math.round(Math.random() * 1000) + 1,delay * 1000,TimeUnit.MILLISECONDS);
       queries.put(q,state);
     }
   }
