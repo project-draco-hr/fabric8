@@ -3,7 +3,7 @@
   byte[] bytes=fileConfigurations.get(GRAPH_JSON);
   if (bytes != null && bytes.length > 0) {
     try {
-      Map object=(Map)new JSONReader().read(new String(bytes));
+      Map object=new ObjectMapper().readValue(bytes,Map.class);
       for (      Map q : (List<Map>)object.get(QUERIES)) {
         String name=(String)q.get(NAME);
         String url=(String)q.get(URL);

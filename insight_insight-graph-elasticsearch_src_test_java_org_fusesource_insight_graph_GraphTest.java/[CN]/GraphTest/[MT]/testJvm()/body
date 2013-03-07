@@ -3,10 +3,7 @@
   System.gc();
   QueryResult qrs=JmxUtils.execute(new Server("local"),query,ManagementFactory.getPlatformMBeanServer());
   String output=new Renderer().render(qrs);
-  Object json=new JSONReader().read(output);
-  assertNotNull(json);
-  assertTrue(json instanceof Map);
-  Map map=(Map)json;
+  Map map=new ObjectMapper().readValue(output,Map.class);
   assertEquals("local",map.get("host"));
   assertNotNull(map.get("timestamp"));
   assertNotNull(map.get("mem"));
