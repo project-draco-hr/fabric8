@@ -2,7 +2,7 @@
   if (!repositories.containsKey(uri)) {
     File file=manager.download(uri.toString()).await().getFile();
     FeatureValidationUtil.validate(file.toURI());
-    RepositoryImpl repo=new RepositoryImpl(uri);
+    RepositoryImpl repo=new RepositoryImpl(file.toURI());
     repositories.put(uri,repo);
     repo.load();
     for (    URI ref : repo.getRepositories()) {
