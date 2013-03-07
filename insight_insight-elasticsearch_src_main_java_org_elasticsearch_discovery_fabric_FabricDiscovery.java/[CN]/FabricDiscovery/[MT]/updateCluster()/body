@@ -1,4 +1,7 @@
 {
+  if (singletonConnected) {
+    singleton.update(new ESNode(clusterName.value(),localNode,singleton.isMaster()));
+  }
   if (singleton.isMaster()) {
     clusterService.submitStateUpdateTask("fabric-discovery",new ProcessedClusterStateUpdateTask(){
       @Override public ClusterState execute(      ClusterState currentState){

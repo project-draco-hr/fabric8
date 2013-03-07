@@ -1,6 +1,12 @@
 {
   jgen.writeStartObject();
   jgen.writeStringField("id",value.id());
+  jgen.writeStringField("agent",System.getProperty("karaf.name"));
+  if (value.isMaster()) {
+    jgen.writeArrayFieldStart("services");
+    jgen.writeString("elasticsearch");
+    jgen.writeEndArray();
+  }
   jgen.writeStringField("nodeName",value.node().name());
   jgen.writeStringField("nodeId",value.node().id());
   jgen.writeStringField("address",value.node().address().toString());
