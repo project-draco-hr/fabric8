@@ -1,0 +1,55 @@
+{
+  skipWhiteSpace();
+  char ch=c;
+  next();
+switch (ch) {
+case '"':
+    token=string();
+  break;
+case '[':
+token=array();
+break;
+case ']':
+token=ARRAY_END;
+break;
+case ',':
+token=COMMA;
+break;
+case '{':
+token=object();
+break;
+case '}':
+token=OBJECT_END;
+break;
+case ':':
+token=COLON;
+break;
+case 't':
+next();
+next();
+next();
+token=Boolean.TRUE;
+break;
+case 'f':
+next();
+next();
+next();
+next();
+token=Boolean.FALSE;
+break;
+case 'n':
+next();
+next();
+next();
+token=null;
+break;
+default :
+c=it.previous();
+if (Character.isDigit(c) || c == '-') {
+token=number();
+break;
+}
+throw new IllegalStateException("Unexpected json token");
+}
+return token;
+}

@@ -1,0 +1,16 @@
+{
+  return new JSONWriter(){
+    @SuppressWarnings("unchecked") protected void value(    Object object){
+      if (object instanceof Date) {
+        date((Date)object);
+      }
+ else {
+        super.value(object);
+      }
+    }
+    protected void date(    Date d){
+      string(toIso(d));
+    }
+  }
+.write(o);
+}

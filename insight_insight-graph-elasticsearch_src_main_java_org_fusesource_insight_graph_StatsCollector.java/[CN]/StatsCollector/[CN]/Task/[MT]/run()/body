@@ -1,0 +1,15 @@
+{
+  try {
+    MBeanServer mbs=mbeanServer.getService();
+    ElasticSender snd=sender.getService();
+    if (mbs != null && snd != null) {
+      QueryResult qrs=JmxUtils.execute(server,query,mbs);
+      String output=renderer.render(qrs);
+      IndexRequest request=new IndexRequest().index(getIndex(index,qrs)).type(getType(type,qrs)).source(output).create(true);
+      snd.push(request);
+    }
+  }
+ catch (  Exception e) {
+    LOG.debug("Error sending stats",e);
+  }
+}

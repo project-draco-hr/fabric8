@@ -1,0 +1,42 @@
+{
+  Map<String,byte[]> fileConfigurations=profile.getFileConfigurations();
+  byte[] bytes=fileConfigurations.get(GRAPH_JSON);
+  if (bytes != null && bytes.length > 0) {
+    try {
+      Map object=(Map)new JSONReader().read(new String(bytes));
+      for (      Map q : (List<Map>)object.get(QUERIES)) {
+        String name=(String)q.get(NAME);
+        String url=(String)q.get(URL);
+        String template=(String)q.get(TEMPLATE);
+        int period=q.get(PERIOD) != null ? ((Number)q.get(PERIOD)).intValue() : 0;
+        Set<Request> requests=new HashSet<Request>();
+        for (        Map mb : (List<Map>)q.get(REQUESTS)) {
+          if (mb.containsKey(ATTRS)) {
+            String mname=(String)mb.get(NAME);
+            String mobj=(String)mb.get(OBJ);
+            List<String> mattrs=(List<String>)mb.get(ATTRS);
+            requests.add(new MBeanAttrs(mname,mobj,mattrs));
+          }
+ else           if (mb.containsKey(OPER)) {
+            String mname=(String)mb.get(NAME);
+            String mobj=(String)mb.get(OBJ);
+            String moper=(String)mb.get(OPER);
+            List<Object> margs=(List<Object>)mb.get(ARGS);
+            List<String> msig=(List<String>)mb.get(SIG);
+            requests.add(new MBeanOpers(mname,mobj,moper,margs,msig));
+          }
+ else {
+            throw new IllegalArgumentException("Unknown request " + ScriptUtils.toJson(mb));
+          }
+        }
+        queries.add(new Query(name,requests,url,template,period));
+      }
+    }
+ catch (    Throwable t) {
+      LOG.warn("Unable to load queries from profile " + profile.getId(),t);
+    }
+  }
+  for (  Profile p : profile.getParents()) {
+    loadProfile(p,queries);
+  }
+}
