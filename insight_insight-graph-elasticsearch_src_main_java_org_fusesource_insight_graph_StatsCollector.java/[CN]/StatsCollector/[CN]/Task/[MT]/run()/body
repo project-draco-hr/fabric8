@@ -3,10 +3,22 @@
     MBeanServer mbs=mbeanServer.getService();
     ElasticSender snd=sender.getService();
     if (mbs != null && snd != null) {
-      QueryResult qrs=JmxUtils.execute(server,query,mbs);
-      String output=renderer.render(qrs);
-      IndexRequest request=new IndexRequest().index(getIndex(index,qrs)).type(getType(type,qrs)).source(output).create(true);
-      snd.push(request);
+      QueryResult qrs=JmxUtils.execute(query.server,query.query,mbs);
+      boolean forceSend=query.query.getMinPeriod() == query.query.getPeriod() || qrs.getTimestamp().getTime() - query.lastSent >= TimeUnit.SECONDS.toMillis(query.query.getMinPeriod());
+      if (!forceSend && query.lastResult != null) {
+        if (qrs.getResults().equals(query.lastResult.getResults())) {
+          query.lastResult=qrs;
+          query.lastResultSent=false;
+          return;
+        }
+        if (!query.lastResultSent) {
+          renderAndSend(snd,query.lastResult);
+        }
+      }
+      query.lastResult=qrs;
+      query.lastResultSent=true;
+      query.lastSent=qrs.getTimestamp().getTime();
+      renderAndSend(snd,qrs);
     }
   }
  catch (  Exception e) {

@@ -8,7 +8,8 @@
         String name=(String)q.get(NAME);
         String url=(String)q.get(URL);
         String template=(String)q.get(TEMPLATE);
-        int period=q.get(PERIOD) != null ? ((Number)q.get(PERIOD)).intValue() : 0;
+        int period=DEFAULT.equals(q.get(PERIOD)) ? defaultDelay : q.get(PERIOD) != null ? ((Number)q.get(PERIOD)).intValue() : defaultDelay;
+        int minPeriod=DEFAULT.equals(q.get(MIN_PERIOD)) ? defaultDelay : q.get(MIN_PERIOD) != null ? ((Number)q.get(MIN_PERIOD)).intValue() : period;
         Set<Request> requests=new HashSet<Request>();
         for (        Map mb : (List<Map>)q.get(REQUESTS)) {
           if (mb.containsKey(ATTRS)) {
@@ -29,7 +30,7 @@
             throw new IllegalArgumentException("Unknown request " + ScriptUtils.toJson(mb));
           }
         }
-        queries.add(new Query(name,requests,url,template,period));
+        queries.add(new Query(name,requests,url,template,period,minPeriod));
       }
     }
  catch (    Throwable t) {

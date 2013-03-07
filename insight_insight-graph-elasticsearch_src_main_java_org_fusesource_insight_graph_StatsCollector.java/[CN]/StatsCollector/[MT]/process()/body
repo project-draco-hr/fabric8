@@ -10,14 +10,17 @@
     }
     for (    Query q : queries.keySet()) {
       if (!newQueries.remove(q)) {
-        queries.remove(q).cancel(false);
+        queries.remove(q).future.cancel(false);
       }
     }
     Server server=new Server(container.getId());
     for (    Query q : newQueries) {
+      QueryState state=new QueryState();
+      state.server=server;
+      state.query=q;
       long delay=q.getPeriod() > 0 ? q.getPeriod() : defaultDelay;
-      ScheduledFuture<?> future=this.executor.scheduleAtFixedRate(new Task(server,q),Math.round(Math.random() * 1000),delay * 1000,TimeUnit.MILLISECONDS);
-      queries.put(q,future);
+      state.future=this.executor.scheduleAtFixedRate(new Task(state),Math.round(Math.random() * 1000),delay * 1000,TimeUnit.MILLISECONDS);
+      queries.put(q,state);
     }
   }
 }
