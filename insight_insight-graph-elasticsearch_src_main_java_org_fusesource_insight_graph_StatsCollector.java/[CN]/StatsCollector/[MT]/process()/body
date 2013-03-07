@@ -10,7 +10,7 @@
     }
     for (    Query q : queries.keySet()) {
       if (!newQueries.remove(q)) {
-        queries.remove(q).future.cancel(false);
+        queries.remove(q).close();
       }
     }
     Server server=new Server(container.getId());
@@ -18,6 +18,11 @@
       QueryState state=new QueryState();
       state.server=server;
       state.query=q;
+      if (q.getLock() != null) {
+        state.lock=new ClusteredSingleton<QueryNodeState>(QueryNodeState.class);
+        state.lock.start(startGroup(q.getLock()));
+        state.lock.join(new QueryNodeState(q.getName(),container.getId()));
+      }
       long delay=q.getPeriod() > 0 ? q.getPeriod() : defaultDelay;
       state.future=this.executor.scheduleAtFixedRate(new Task(state),Math.round(Math.random() * 1000),delay * 1000,TimeUnit.MILLISECONDS);
       queries.put(q,state);

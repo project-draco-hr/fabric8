@@ -2,24 +2,28 @@
   try {
     MBeanServer mbs=mbeanServer.getService();
     ElasticSender snd=sender.getService();
-    if (mbs != null && snd != null) {
-      QueryResult qrs=JmxUtils.execute(query.server,query.query,mbs);
-      boolean forceSend=query.query.getMinPeriod() == query.query.getPeriod() || qrs.getTimestamp().getTime() - query.lastSent >= TimeUnit.SECONDS.toMillis(query.query.getMinPeriod());
-      if (!forceSend && query.lastResult != null) {
-        if (qrs.getResults().equals(query.lastResult.getResults())) {
-          query.lastResult=qrs;
-          query.lastResultSent=false;
-          return;
-        }
-        if (!query.lastResultSent) {
-          renderAndSend(snd,query.lastResult);
-        }
-      }
-      query.lastResult=qrs;
-      query.lastResultSent=true;
-      query.lastSent=qrs.getTimestamp().getTime();
-      renderAndSend(snd,qrs);
+    if (mbs == null || snd == null) {
+      return;
     }
+    if (query.lock != null && !query.lock.isMaster()) {
+      return;
+    }
+    QueryResult qrs=JmxUtils.execute(query.server,query.query,mbs);
+    boolean forceSend=query.query.getMinPeriod() == query.query.getPeriod() || qrs.getTimestamp().getTime() - query.lastSent >= TimeUnit.SECONDS.toMillis(query.query.getMinPeriod());
+    if (!forceSend && query.lastResult != null) {
+      if (qrs.getResults().equals(query.lastResult.getResults())) {
+        query.lastResult=qrs;
+        query.lastResultSent=false;
+        return;
+      }
+      if (!query.lastResultSent) {
+        renderAndSend(snd,query.lastResult);
+      }
+    }
+    query.lastResult=qrs;
+    query.lastResultSent=true;
+    query.lastSent=qrs.getTimestamp().getTime();
+    renderAndSend(snd,qrs);
   }
  catch (  Exception e) {
     LOG.debug("Error sending stats",e);

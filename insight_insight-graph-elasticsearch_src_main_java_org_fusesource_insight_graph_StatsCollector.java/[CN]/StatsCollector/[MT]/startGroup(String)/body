@@ -1,0 +1,24 @@
+{
+  if (LOCK_GLOBAL.equals(lock)) {
+    if (globalGroup == null) {
+      globalGroup=ZooKeeperGroupFactory.create(zookeeper,"/fabric/registry/clusters/insight-graph/global");
+    }
+    return globalGroup;
+  }
+ else   if (LOCK_HOST.equals(lock)) {
+    if (hostGroup == null) {
+      String host;
+      try {
+        host=InetAddress.getLocalHost().getHostName();
+      }
+ catch (      UnknownHostException e) {
+        throw new IllegalStateException("Unable to retrieve host name",e);
+      }
+      hostGroup=ZooKeeperGroupFactory.create(zookeeper,"/fabric/registry/clusters/insight-graph/host-" + host);
+    }
+    return hostGroup;
+  }
+ else {
+    throw new IllegalArgumentException("Unknown lock type: " + lock);
+  }
+}
