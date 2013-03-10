@@ -1,0 +1,18 @@
+{
+  try {
+    if (!enabled) {
+      return;
+    }
+    ElasticSender s=sender.getService();
+    if (s == null) {
+      return;
+    }
+    if (ignorePathMap != null && ignorePathMap.getMatch(request.getRequestURI()) != null)     return;
+    String output="{ " + "\"host\": \"" + host + "\", "+ "\"timestamp\": \""+ formatDate(request.getTimeStamp())+ "\", "+ "\"remote\": \""+ request.getRemoteAddr()+ "\", "+ "\"user\": \""+ (request.getAuthentication() instanceof Authentication.User ? ((Authentication.User)request.getAuthentication()).getUserIdentity().getUserPrincipal().getName() : "")+ "\", "+ "\"method\": \""+ request.getMethod()+ "\", "+ "\"uri\": \""+ request.getUri().toString()+ "\", "+ "\"protocol\": \""+ request.getProtocol()+ "\", "+ "\"status\": \""+ response.getStatus()+ "\", "+ "\"responseLength\": \""+ response.getContentCount()+ "\" "+ " }";
+    IndexRequest ir=new IndexRequest().index(getIndex(index,request.getTimeStamp())).type(type).source(output).create(true);
+    s.push(ir);
+  }
+ catch (  Exception e) {
+    LOG.warn(e);
+  }
+}
