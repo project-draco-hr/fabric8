@@ -1,0 +1,15 @@
+{
+  this.executor=new ScheduledThreadPoolExecutor(threadPoolSize);
+  this.executor.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
+  this.executor.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
+  this.mbeanServer=new ServiceTracker<MBeanServer,MBeanServer>(bundleContext,MBeanServer.class,null);
+  this.storage=new ServiceTracker<StorageService,StorageService>(bundleContext,StorageService.class,null);
+  this.mbeanServer.open();
+  this.storage.open();
+  this.executor.scheduleWithFixedDelay(new Runnable(){
+    @Override public void run(){
+      process();
+    }
+  }
+,1,defaultDelay,TimeUnit.SECONDS);
+}
