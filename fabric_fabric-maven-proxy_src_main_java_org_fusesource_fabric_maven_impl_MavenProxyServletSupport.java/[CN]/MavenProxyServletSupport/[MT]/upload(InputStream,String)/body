@@ -8,12 +8,12 @@
  else   if (metdataMatcher.matches()) {
     LOGGER.log(Level.INFO,String.format("Received upload request for maven metadata : %s",path));
     try {
-      String filename=path.substring(path.lastIndexOf("/") + 1);
+      String filename=path.substring(path.lastIndexOf('/') + 1);
       Metadata metadata=convertPathToMetadata(path);
       metadata=metadata.setFile(readFile(is,tmpFolder,filename));
       InstallRequest request=new InstallRequest();
       request.addMetadata(metadata);
-      InstallResult result=system.install(session,request);
+      system.install(session,request);
       success=true;
     }
  catch (    Exception e) {
@@ -25,12 +25,12 @@
     LOGGER.log(Level.INFO,String.format("Received upload request for maven artifact : %s",path));
     Artifact artifact=null;
     try {
-      String filename=path.substring(path.lastIndexOf("/") + 1);
+      String filename=path.substring(path.lastIndexOf('/') + 1);
       artifact=convertPathToArtifact(path);
       artifact=artifact.setFile(readFile(is,tmpFolder,filename));
       InstallRequest request=new InstallRequest();
       request.addArtifact(artifact);
-      InstallResult result=system.install(session,request);
+      system.install(session,request);
       success=true;
       LOGGER.log(Level.INFO,"Artifact installed: " + artifact.toString());
     }

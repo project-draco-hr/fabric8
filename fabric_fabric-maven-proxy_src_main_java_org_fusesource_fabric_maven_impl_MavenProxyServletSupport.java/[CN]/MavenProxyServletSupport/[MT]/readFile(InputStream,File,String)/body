@@ -3,12 +3,12 @@
   FileOutputStream fos=null;
   try {
     tmpFile=new File(tempLocation,name);
-    if (tmpFile.exists()) {
-      tmpFile.delete();
+    if (tmpFile.exists() && !tmpFile.delete()) {
+      throw new IOException("Failed to delete file");
     }
     fos=new FileOutputStream(tmpFile);
-    int length=0;
-    byte buffer[]=new byte[4096];
+    int length;
+    byte buffer[]=new byte[8192];
     while ((length=is.read(buffer)) != -1) {
       fos.write(buffer,0,length);
     }

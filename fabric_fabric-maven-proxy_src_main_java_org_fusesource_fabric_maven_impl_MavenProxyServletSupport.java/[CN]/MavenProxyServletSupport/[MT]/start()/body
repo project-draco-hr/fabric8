@@ -1,6 +1,6 @@
 {
-  if (!tmpFolder.exists()) {
-    tmpFolder.mkdirs();
+  if (!tmpFolder.exists() && !tmpFolder.mkdirs()) {
+    throw new IOException("Failed to create temporary artifact folder");
   }
   if (localRepository.equals("")) {
     localRepository=System.getProperty("karaf.data") + File.separator + "maven"+ File.separator+ "proxy"+ File.separator+ "downloads";
@@ -20,17 +20,17 @@
     if (idMatcher.matches()) {
       id=idMatcher.group(2);
       rep=cleanUpRepositorySpec(rep);
-      remoteRepository=new RemoteRepository(id + Math.abs(rep.hashCode()),"default",rep);
+      remoteRepository=new RemoteRepository(id + Math.abs(rep.hashCode()),DEFAULT_REPO_ID,rep);
     }
  else {
       id="rep-" + rep.hashCode();
       rep=cleanUpRepositorySpec(rep);
-      remoteRepository=new RemoteRepository("repo-" + Math.abs(rep.hashCode()),"default",rep);
+      remoteRepository=new RemoteRepository("repo-" + Math.abs(rep.hashCode()),DEFAULT_REPO_ID,rep);
     }
     remoteRepository.setPolicy(true,new RepositoryPolicy(true,updatePolicy,checksumPolicy));
     repositories.put(id,remoteRepository);
   }
-  repositories.put("local",new RemoteRepository("local","default","file://" + localRepository));
-  repositories.put("karaf",new RemoteRepository("karaf","default","file://" + System.getProperty("karaf.home") + File.separator+ System.getProperty("karaf.default.repository")));
-  repositories.put("user",new RemoteRepository("user","default","file://" + System.getProperty("user.home") + File.separator+ ".m2"+ File.separator+ "repository"));
+  repositories.put("local",new RemoteRepository("local",DEFAULT_REPO_ID,"file://" + localRepository));
+  repositories.put("karaf",new RemoteRepository("karaf",DEFAULT_REPO_ID,"file://" + System.getProperty("karaf.home") + File.separator+ System.getProperty("karaf.default.repository")));
+  repositories.put("user",new RemoteRepository("user",DEFAULT_REPO_ID,"file://" + System.getProperty("user.home") + File.separator+ ".m2"+ File.separator+ "repository"));
 }
