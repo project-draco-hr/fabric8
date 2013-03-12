@@ -9,6 +9,7 @@
         if (resolutionPointer == null || !resolutionPointer.contains(resolutionPolicy)) {
           zooKeeper.setData(ZkPath.CONTAINER_IP.getPath(name),"${zk:" + name + "/"+ resolutionPolicy+ "}");
         }
+        System.setProperty(SystemProperties.JAVA_RMI_SERVER_HOSTNAME,ZooKeeperUtils.getSubstitutedData(zooKeeper,zooKeeper.getStringData(ZkPath.CONTAINER_IP.getPath(name))));
       }
       if (!this.version.equals(version)) {
         this.version=version;
