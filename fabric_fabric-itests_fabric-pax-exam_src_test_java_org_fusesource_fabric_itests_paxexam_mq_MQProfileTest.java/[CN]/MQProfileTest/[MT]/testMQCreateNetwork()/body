@@ -1,18 +1,19 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
   addStagingRepoToDefaultProfile();
-  executeCommand("mq-create --group east --networks west --create-container east east");
-  Container container1=getFabricService().getContainer("east");
+  executeCommand("mq-create --group us-east --networks us-west --create-container us-east --jmx-user admin --jmx-password admin --networks-username admin --networks-password admin us-east");
+  Container container1=getFabricService().getContainer("us-east");
   containers.add(container1);
   waitForProvisionSuccess(container1,PROVISION_TIMEOUT);
-  executeCommand("mq-create --group west --networks east --create-container west west");
-  Container container2=getFabricService().getContainer("west");
+  executeCommand("mq-create --group us-west --networks us-east --create-container us-west --jmx-user admin --jmx-password admin --networks-username admin --networks-password admin us-west");
+  Container container2=getFabricService().getContainer("us-west");
   containers.add(container2);
   waitForProvisionSuccess(container2,PROVISION_TIMEOUT);
   containers.add(createAndAssertChildContainer("example","root","example-mq-cluster"));
   Thread.sleep(10000);
-  BrokerViewMBean brokerEast=(BrokerViewMBean)getMBean(container1,new ObjectName("org.apache.activemq:Type=Broker,BrokerName=east"),BrokerViewMBean.class);
-  BrokerViewMBean brokerWest=(BrokerViewMBean)getMBean(container2,new ObjectName("org.apache.activemq:Type=Broker,BrokerName=west"),BrokerViewMBean.class);
+  installAndCheckFeature("activemq");
+  BrokerViewMBean brokerEast=(BrokerViewMBean)getMBean(container1,new ObjectName("org.apache.activemq:type=Broker,brokerName=us-east"),BrokerViewMBean.class);
+  BrokerViewMBean brokerWest=(BrokerViewMBean)getMBean(container2,new ObjectName("org.apache.activemq:type=Broker,brokerName=us-west"),BrokerViewMBean.class);
   assertFalse("Messages not sent",brokerEast.getTotalEnqueueCount() == 0);
   assertFalse("Messages not received",brokerWest.getTotalDequeueCount() == 0);
 }
