@@ -1,0 +1,11 @@
+{
+  try {
+    ObjectName name=getObjectName();
+    if (!mbeanServer.isRegistered(name)) {
+      mbeanServer.registerMBean(this,name);
+    }
+  }
+ catch (  Exception e) {
+    LOG.warn("An error occured during mbean server registration: " + e,e);
+  }
+}

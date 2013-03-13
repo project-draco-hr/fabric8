@@ -1,0 +1,10 @@
+{
+  IZKClient zk=getZooKeeper();
+  Stat exists=zk.exists(path);
+  int numChildren=exists.getNumChildren();
+  List<String> children=null;
+  if (numChildren > 0) {
+    children=zk.getChildren(path);
+  }
+  return new ZkContents(exists.getDataLength(),children);
+}
