@@ -22,7 +22,7 @@
     }
     String version=ZooKeeperUtils.get(zooKeeper,ZkPath.CONFIG_DEFAULT_VERSION.getPath());
     for (    String container : containers) {
-      if (ZookeeperCommandBuilder.exists(ZkPath.CONTAINER_ALIVE.getPath(container)).execute(zooKeeper) == null) {
+      if (ZooKeeperUtils.exists(zooKeeper,ZkPath.CONTAINER_ALIVE.getPath(container)) == null) {
         throw new FabricException("The container " + container + " is not alive");
       }
     }

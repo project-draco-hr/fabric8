@@ -85,6 +85,7 @@
     ZooKeeperUtils.createDefault(client,fabricProfile,"default");
     p=getProperties(client,fabricProfile + "/org.fusesource.fabric.agent.properties",new Properties());
     p.put("feature.fabric-commands","fabric-commands");
+    ZooKeeperUtils.set(client,fabricProfile + "/org.fusesource.fabric.agent.properties",toString(p));
     ZooKeeperUtils.createDefault(client,ZkPath.CONFIG_CONTAINER.getPath(karafName),version);
     String assignedProfile=System.getProperty(SystemProperties.PROFILE);
     if (assignedProfile != null && !assignedProfile.isEmpty() && !"fabric".equals(assignedProfile)) {
