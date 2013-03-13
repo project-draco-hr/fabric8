@@ -1,7 +1,7 @@
 {
   ZooKeeperTreeTracker<String> tree=trees.get(path);
   if (tree == null) {
-    if (zooKeeper.exists(path) != null) {
+    if (ZooKeeperUtils.exists(zooKeeper,path) != null) {
       tree=new ZooKeeperTreeTracker<String>(zooKeeper,new ZKStringDataReader(),path);
       trees.put(path,tree);
       tree.track(this);

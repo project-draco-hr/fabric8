@@ -20,7 +20,7 @@
         continue;
       }
       if (!dryRun) {
-        zooKeeper.createOrSetWithParents(name,value,CreateMode.PERSISTENT);
+        ZookeeperCommandBuilder.set(name,value).execute(zooKeeper);
       }
  else {
         System.out.printf("Creating path \"%s\" with value \"%s\"\n",name,value);

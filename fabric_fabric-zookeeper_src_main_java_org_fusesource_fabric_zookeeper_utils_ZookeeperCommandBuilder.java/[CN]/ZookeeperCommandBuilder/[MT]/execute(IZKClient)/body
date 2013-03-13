@@ -1,0 +1,25 @@
+{
+  boolean completed=false;
+  boolean fatal=false;
+  boolean rethrow=false;
+  long startTime=System.currentTimeMillis();
+  KeeperException lastThrown=null;
+  for (int r=0; r <= retries && (System.currentTimeMillis() - startTime < timeout) && !completed && !fatal; r++) {
+    if (r == retries) {
+      rethrow=true;
+    }
+    try {
+      return command.execute(zooKeeper);
+    }
+ catch (    KeeperException ex) {
+      lastThrown=ex;
+      if (rethrow || !shouldRetry(ex.code().intValue())) {
+        throw ex;
+      }
+ else {
+        Thread.sleep(retryDelay);
+      }
+    }
+  }
+  throw lastThrown;
+}

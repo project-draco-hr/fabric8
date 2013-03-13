@@ -1,11 +1,11 @@
 {
-  if (zooKeeper.exists(path) != null) {
-    zooKeeper.setByteData(path,value);
+  if (ZookeeperCommandBuilder.exists(path).execute(zooKeeper) != null) {
+    ZookeeperCommandBuilder.set(path,value).execute(zooKeeper);
   }
   try {
-    zooKeeper.createWithParents(path,value,CreateMode.PERSISTENT);
+    ZookeeperCommandBuilder.set(path,value).execute(zooKeeper);
   }
  catch (  KeeperException.NodeExistsException e) {
-    zooKeeper.setByteData(path,value);
+    ZookeeperCommandBuilder.set(path,value).execute(zooKeeper);
   }
 }

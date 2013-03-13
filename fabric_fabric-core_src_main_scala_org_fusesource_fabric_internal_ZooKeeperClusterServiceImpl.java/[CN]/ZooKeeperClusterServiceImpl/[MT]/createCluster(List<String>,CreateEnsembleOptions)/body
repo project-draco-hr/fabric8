@@ -20,16 +20,16 @@
       createLocalServer(2181,options);
       return;
     }
-    String version=zooKeeper.getStringData(ZkPath.CONFIG_DEFAULT_VERSION.getPath());
+    String version=ZooKeeperUtils.get(zooKeeper,ZkPath.CONFIG_DEFAULT_VERSION.getPath());
     for (    String container : containers) {
-      if (zooKeeper.exists(ZkPath.CONTAINER_ALIVE.getPath(container)) == null) {
+      if (ZookeeperCommandBuilder.exists(ZkPath.CONTAINER_ALIVE.getPath(container)).execute(zooKeeper) == null) {
         throw new FabricException("The container " + container + " is not alive");
       }
     }
     Map<String,List<Integer>> usedPorts=new HashMap<String,List<Integer>>();
     String oldClusterId=ZooKeeperUtils.get(zooKeeper,ZkPath.CONFIG_ENSEMBLES.getPath());
     if (oldClusterId != null) {
-      Properties p=toProperties(zooKeeper.getStringData(ZkPath.CONFIG_ENSEMBLE_PROFILE.getPath("fabric-ensemble-" + oldClusterId) + "/org.fusesource.fabric.zookeeper.server-" + oldClusterId+ ".properties"));
+      Properties p=toProperties(ZooKeeperUtils.get(zooKeeper,ZkPath.CONFIG_ENSEMBLE_PROFILE.getPath("fabric-ensemble-" + oldClusterId) + "/org.fusesource.fabric.zookeeper.server-" + oldClusterId+ ".properties"));
       for (      Object n : p.keySet()) {
         String node=(String)n;
         if (node.startsWith("server.")) {
@@ -109,10 +109,7 @@
         ZooKeeperUtils.copy(zooKeeper,dst,"/fabric/authentication");
         ZooKeeperUtils.copy(zooKeeper,dst,"/fabric/configs");
         for (        String container : containers) {
-          String alivePath="/fabric/registry/containers/alive/" + container;
-          if (dst.exists(alivePath) != null) {
-            dst.deleteWithChildren(alivePath);
-          }
+          ZookeeperCommandBuilder.delete("/fabric/registry/containers/alive/" + container).execute(dst);
         }
         ZooKeeperUtils.set(dst,ZkPath.CONFIG_ENSEMBLES.getPath(),newClusterId);
         ZooKeeperUtils.set(dst,ZkPath.CONFIG_ENSEMBLE.getPath(newClusterId),containerList);

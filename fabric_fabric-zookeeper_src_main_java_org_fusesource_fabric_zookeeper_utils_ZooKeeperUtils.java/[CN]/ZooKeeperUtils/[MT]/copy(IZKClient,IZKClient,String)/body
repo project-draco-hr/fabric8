@@ -1,9 +1,9 @@
 {
-  for (  String child : source.getChildren(path)) {
+  for (  String child : ZookeeperCommandBuilder.getChildren(path).execute(source)) {
     child=path + "/" + child;
-    if (dest.exists(child) == null) {
-      byte[] data=source.getData(child);
-      set(dest,child,data);
+    if (ZookeeperCommandBuilder.exists(child).execute(dest) == null) {
+      byte[] data=ZookeeperCommandBuilder.getData(child).execute(source);
+      ZookeeperCommandBuilder.set(child,data).execute(dest);
       copy(source,dest,child);
     }
   }

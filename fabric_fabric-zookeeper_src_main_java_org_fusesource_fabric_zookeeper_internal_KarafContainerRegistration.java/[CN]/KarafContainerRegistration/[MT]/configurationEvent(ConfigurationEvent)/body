@@ -5,13 +5,13 @@
       if (event.getPid().equals(SHELL_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
         String sshUrl=getSshUrl();
         if (sshUrl != null) {
-          zooKeeper.createOrSetWithParents(CONTAINER_SSH.getPath(name),getSshUrl(),CreateMode.PERSISTENT);
+          ZooKeeperUtils.set(zooKeeper,CONTAINER_SSH.getPath(name),getSshUrl());
         }
       }
       if (event.getPid().equals(MANAGEMENT_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
         String jmxUrl=getJmxUrl();
         if (jmxUrl != null) {
-          zooKeeper.createOrSetWithParents(CONTAINER_JMX.getPath(name),getJmxUrl(),CreateMode.PERSISTENT);
+          ZooKeeperUtils.set(zooKeeper,CONTAINER_JMX.getPath(name),getJmxUrl());
         }
       }
     }

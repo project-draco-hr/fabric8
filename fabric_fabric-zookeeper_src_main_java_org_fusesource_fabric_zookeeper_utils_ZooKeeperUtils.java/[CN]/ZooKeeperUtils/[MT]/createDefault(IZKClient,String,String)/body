@@ -1,5 +1,5 @@
 {
-  if (zooKeeper.exists(path) == null) {
-    zooKeeper.createWithParents(path,value,CreateMode.PERSISTENT);
+  if (ZookeeperCommandBuilder.exists(path).execute(zooKeeper) == null) {
+    ZookeeperCommandBuilder.set(path,value).execute(zooKeeper);
   }
 }

@@ -2,7 +2,7 @@
   if (isConnected()) {
     String name=System.getProperty(SystemProperties.KARAF_NAME);
     String domainsPath=CONTAINER_DOMAINS.getPath(name);
-    if (zooKeeper.exists(domainsPath) != null) {
+    if (ZooKeeperUtils.exists(zooKeeper,domainsPath) != null) {
       for (      String child : zooKeeper.getChildren(domainsPath)) {
         zooKeeper.delete(domainsPath + "/" + child);
       }

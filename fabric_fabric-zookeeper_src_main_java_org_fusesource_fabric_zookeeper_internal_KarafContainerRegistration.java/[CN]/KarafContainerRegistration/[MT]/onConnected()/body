@@ -3,7 +3,7 @@
   logger.trace("onConnected");
   String nodeAlive=CONTAINER_ALIVE.getPath(name);
   try {
-    Stat stat=zooKeeper.exists(nodeAlive);
+    Stat stat=ZooKeeperUtils.exists(zooKeeper,nodeAlive);
     if (stat != null) {
       if (stat.getEphemeralOwner() != zooKeeper.getSessionId()) {
         zooKeeper.delete(nodeAlive);
@@ -14,51 +14,51 @@
       zooKeeper.createWithParents(nodeAlive,CreateMode.EPHEMERAL);
     }
     String domainsNode=CONTAINER_DOMAINS.getPath(name);
-    stat=zooKeeper.exists(domainsNode);
+    stat=ZooKeeperUtils.exists(zooKeeper,domainsNode);
     if (stat != null) {
       zooKeeper.deleteWithChildren(domainsNode);
     }
     String jmxUrl=getJmxUrl();
     if (jmxUrl != null) {
-      zooKeeper.createOrSetWithParents(CONTAINER_JMX.getPath(name),getJmxUrl(),CreateMode.PERSISTENT);
+      ZooKeeperUtils.set(zooKeeper,CONTAINER_JMX.getPath(name),getJmxUrl());
     }
     String sshUrl=getSshUrl();
     if (sshUrl != null) {
-      zooKeeper.createOrSetWithParents(CONTAINER_SSH.getPath(name),getSshUrl(),CreateMode.PERSISTENT);
+      ZooKeeperUtils.set(zooKeeper,CONTAINER_SSH.getPath(name),getSshUrl());
     }
-    if (zooKeeper.exists(CONTAINER_RESOLVER.getPath(name)) == null) {
-      zooKeeper.createOrSetWithParents(CONTAINER_RESOLVER.getPath(name),getContainerResolutionPolicy(zooKeeper,name),CreateMode.PERSISTENT);
+    if (ZooKeeperUtils.exists(zooKeeper,CONTAINER_RESOLVER.getPath(name)) == null) {
+      ZooKeeperUtils.set(zooKeeper,CONTAINER_RESOLVER.getPath(name),getContainerResolutionPolicy(zooKeeper,name));
     }
-    zooKeeper.createOrSetWithParents(CONTAINER_LOCAL_HOSTNAME.getPath(name),HostUtils.getLocalHostName(),CreateMode.PERSISTENT);
-    zooKeeper.createOrSetWithParents(CONTAINER_LOCAL_IP.getPath(name),HostUtils.getLocalIp(),CreateMode.PERSISTENT);
-    zooKeeper.createOrSetWithParents(CONTAINER_IP.getPath(name),getContainerPointer(zooKeeper,name),CreateMode.PERSISTENT);
-    if (zooKeeper.exists(CONTAINER_GEOLOCATION.getPath(name)) == null) {
-      zooKeeper.createOrSetWithParents(CONTAINER_GEOLOCATION.getPath(name),HostUtils.getGeoLocation(),CreateMode.PERSISTENT);
+    ZooKeeperUtils.set(zooKeeper,CONTAINER_LOCAL_HOSTNAME.getPath(name),HostUtils.getLocalHostName());
+    ZooKeeperUtils.set(zooKeeper,CONTAINER_LOCAL_IP.getPath(name),HostUtils.getLocalIp());
+    ZooKeeperUtils.set(zooKeeper,CONTAINER_IP.getPath(name),getContainerPointer(zooKeeper,name));
+    if (ZooKeeperUtils.exists(zooKeeper,CONTAINER_GEOLOCATION.getPath(name)) == null) {
+      ZooKeeperUtils.set(zooKeeper,CONTAINER_GEOLOCATION.getPath(name),HostUtils.getGeoLocation());
     }
     for (    String resolver : ZkDefs.VALID_RESOLVERS) {
       String address=System.getProperty(resolver);
-      if (address != null && !address.isEmpty() && zooKeeper.exists(CONTAINER_ADDRESS.getPath(name,resolver)) == null) {
-        zooKeeper.createOrSetWithParents(CONTAINER_ADDRESS.getPath(name,resolver),address,CreateMode.PERSISTENT);
+      if (address != null && !address.isEmpty() && ZooKeeperUtils.exists(zooKeeper,CONTAINER_ADDRESS.getPath(name,resolver)) == null) {
+        ZooKeeperUtils.set(zooKeeper,CONTAINER_ADDRESS.getPath(name,resolver),address);
       }
     }
     String minimumPort=System.getProperty(ZkDefs.MINIMUM_PORT);
     String maximumPort=System.getProperty(ZkDefs.MAXIMUM_PORT);
-    if (zooKeeper.exists(CONTAINER_PORT_MIN.getPath(name)) == null) {
-      zooKeeper.createOrSetWithParents(CONTAINER_PORT_MIN.getPath(name),minimumPort,CreateMode.PERSISTENT);
+    if (ZooKeeperUtils.exists(zooKeeper,CONTAINER_PORT_MIN.getPath(name)) == null) {
+      ZooKeeperUtils.set(zooKeeper,CONTAINER_PORT_MIN.getPath(name),minimumPort);
     }
-    if (zooKeeper.exists(CONTAINER_PORT_MAX.getPath(name)) == null) {
-      zooKeeper.createOrSetWithParents(CONTAINER_PORT_MAX.getPath(name),maximumPort,CreateMode.PERSISTENT);
+    if (ZooKeeperUtils.exists(zooKeeper,CONTAINER_PORT_MAX.getPath(name)) == null) {
+      ZooKeeperUtils.set(zooKeeper,CONTAINER_PORT_MAX.getPath(name),maximumPort);
     }
     String version=System.getProperty("fabric.version",ZkDefs.DEFAULT_VERSION);
     String profiles=System.getProperty("fabric.profiles");
     if (profiles != null) {
       String versionNode=CONFIG_CONTAINER.getPath(name);
       String profileNode=CONFIG_VERSIONS_CONTAINER.getPath(version,name);
-      if (zooKeeper.exists(versionNode) == null) {
-        zooKeeper.createOrSetWithParents(versionNode,version,CreateMode.PERSISTENT);
+      if (ZooKeeperUtils.exists(zooKeeper,versionNode) == null) {
+        ZooKeeperUtils.set(zooKeeper,versionNode,version);
       }
-      if (zooKeeper.exists(profileNode) == null) {
-        zooKeeper.createOrSetWithParents(profileNode,profiles,CreateMode.PERSISTENT);
+      if (ZooKeeperUtils.exists(zooKeeper,profileNode) == null) {
+        ZooKeeperUtils.set(zooKeeper,profileNode,profiles);
       }
     }
     registerDomains();

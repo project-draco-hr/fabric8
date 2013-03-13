@@ -19,7 +19,7 @@ catch (    KeeperException e) {
       public String getValue(      String key){
         if (key.startsWith("zk:")) {
           try {
-            return new String(ZkPath.loadURL(zooKeeper,key),"UTF-8");
+            return new String(ZookeeperCommandBuilder.loadUrl(key).execute(zooKeeper),"UTF-8");
           }
  catch (          KeeperException.ConnectionLossException e) {
             throw new RuntimeException(e);

@@ -1,10 +1,10 @@
 {
-  List<String> zkPaths=zookeeper.getAllChildren(target);
+  List<String> zkPaths=ZookeeperCommandBuilder.getChildren(target).execute(zookeeper);
   for (  String path : zkPaths) {
     path="/" + path;
     if (!paths.contains(path)) {
       if (!dryRun) {
-        zookeeper.deleteWithChildren(path);
+        ZookeeperCommandBuilder.delete(path).execute(zookeeper);
       }
  else {
         System.out.printf("Deleting path %s and everything under it\n",path);

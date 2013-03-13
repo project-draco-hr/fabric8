@@ -2,7 +2,7 @@
   StringWriter writer=new StringWriter();
   try {
     properties.store(writer,null);
-    zooKeeper.setData(path,writer.toString());
+    ZookeeperCommandBuilder.set(path,writer.toString()).execute(zooKeeper);
   }
  catch (  IOException e) {
   }

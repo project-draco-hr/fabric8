@@ -2,14 +2,14 @@
   LOGGER.trace("onEvents",nodeEvents);
   try {
     if (!tracking) {
-      String version=zooKeeper.getStringData(ZkPath.CONFIG_CONTAINER.getPath(name));
-      if (zooKeeper.exists(ZkPath.CONTAINER_IP.getPath(name)) != null) {
-        String resolutionPointer=zooKeeper.getStringData(ZkPath.CONTAINER_IP.getPath(name));
-        resolutionPolicy=zooKeeper.getStringData(ZkPath.CONTAINER_RESOLVER.getPath(name));
+      String version=ZooKeeperUtils.get(zooKeeper,ZkPath.CONFIG_CONTAINER.getPath(name));
+      if (ZooKeeperUtils.exists(zooKeeper,ZkPath.CONTAINER_IP.getPath(name)) != null) {
+        String resolutionPointer=ZooKeeperUtils.get(zooKeeper,ZkPath.CONTAINER_IP.getPath(name));
+        resolutionPolicy=ZooKeeperUtils.get(zooKeeper,ZkPath.CONTAINER_RESOLVER.getPath(name));
         if (resolutionPointer == null || !resolutionPointer.contains(resolutionPolicy)) {
-          zooKeeper.setData(ZkPath.CONTAINER_IP.getPath(name),"${zk:" + name + "/"+ resolutionPolicy+ "}");
+          ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_IP.getPath(name),"${zk:" + name + "/"+ resolutionPolicy+ "}");
         }
-        System.setProperty(SystemProperties.JAVA_RMI_SERVER_HOSTNAME,ZooKeeperUtils.getSubstitutedData(zooKeeper,zooKeeper.getStringData(ZkPath.CONTAINER_IP.getPath(name))));
+        System.setProperty(SystemProperties.JAVA_RMI_SERVER_HOSTNAME,ZooKeeperUtils.getSubstitutedData(zooKeeper,ZooKeeperUtils.get(zooKeeper,ZkPath.CONTAINER_IP.getPath(name))));
       }
       if (!this.version.equals(version)) {
         this.version=version;

@@ -1,9 +1,9 @@
 {
-  if (zooKeeper.exists(path) == null) {
-    zooKeeper.createOrSetWithParents(path,value,CreateMode.PERSISTENT);
+  if (ZookeeperCommandBuilder.exists(path).execute(zooKeeper) == null) {
+    ZookeeperCommandBuilder.set(path,value).execute(zooKeeper);
   }
  else {
-    String data=zooKeeper.getStringData(path);
+    String data=ZookeeperCommandBuilder.getStringData(path).execute(zooKeeper);
     if (data == null) {
       data="";
     }
@@ -11,6 +11,6 @@
       data+=" ";
     }
     data+=value;
-    zooKeeper.setData(path,data);
+    ZookeeperCommandBuilder.set(path,data).execute(zooKeeper);
   }
 }

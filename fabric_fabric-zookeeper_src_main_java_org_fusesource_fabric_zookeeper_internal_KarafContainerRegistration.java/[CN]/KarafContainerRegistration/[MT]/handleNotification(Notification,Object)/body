@@ -6,8 +6,8 @@
     String path=CONTAINER_DOMAIN.getPath((String)o,domain);
     try {
       if (MBeanServerNotification.REGISTRATION_NOTIFICATION.equals(notification.getType())) {
-        if (domains.add(domain) && zooKeeper.exists(path) == null) {
-          zooKeeper.createOrSetWithParents(path,"",CreateMode.PERSISTENT);
+        if (domains.add(domain) && ZooKeeperUtils.exists(zooKeeper,path) == null) {
+          ZooKeeperUtils.set(zooKeeper,path,"");
         }
       }
  else       if (MBeanServerNotification.UNREGISTRATION_NOTIFICATION.equals(notification.getType())) {

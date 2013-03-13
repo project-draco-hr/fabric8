@@ -4,22 +4,22 @@
     tracking=true;
     try {
       String versionNode=ZkPath.CONFIG_CONTAINER.getPath(name);
-      if (zooKeeper.exists(versionNode) == null) {
+      if (ZooKeeperUtils.exists(zooKeeper,versionNode) == null) {
         ZkPath.createContainerPaths(zooKeeper,name,null,"fabric");
       }
-      version=zooKeeper.getStringData(versionNode);
+      version=ZooKeeperUtils.get(zooKeeper,versionNode);
       if (version == null) {
         throw new IllegalStateException("Configuration for node " + name + " not found at "+ ZkPath.CONFIG_CONTAINER.getPath(name));
       }
       track(versionNode);
       node=ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,name);
-      if (zooKeeper.exists(node) == null) {
-        zooKeeper.createWithParents(node,CreateMode.PERSISTENT);
+      if (ZooKeeperUtils.exists(zooKeeper,node) == null) {
+        ZooKeeperUtils.create(zooKeeper,node);
       }
       track(node);
       ensemble=ZkPath.CONFIG_ENSEMBLES.getPath();
-      if (zooKeeper.exists(ensemble) == null) {
-        zooKeeper.createWithParents(ensemble,CreateMode.PERSISTENT);
+      if (ZooKeeperUtils.exists(zooKeeper,ensemble) == null) {
+        ZooKeeperUtils.create(zooKeeper,ensemble);
       }
       resolutionPolicy=ZkPath.CONTAINER_RESOLVER.getPath(name);
       track(resolutionPolicy);

@@ -1,14 +1,13 @@
 {
   try {
-    String version=zooKeeper.getStringData(ZkPath.CONFIG_DEFAULT_VERSION.getPath());
     Configuration[] configs=configurationAdmin.listConfigurations("(service.pid=org.fusesource.fabric.zookeeper)");
     if (configs == null || configs.length == 0) {
       return Collections.emptyList();
     }
     List<String> list=new ArrayList<String>();
     if (zooKeeper.exists(ZkPath.CONFIG_ENSEMBLES.getPath()) != null) {
-      String clusterId=zooKeeper.getStringData(ZkPath.CONFIG_ENSEMBLES.getPath());
-      String containers=zooKeeper.getStringData(ZkPath.CONFIG_ENSEMBLE.getPath(clusterId));
+      String clusterId=ZooKeeperUtils.get(zooKeeper,ZkPath.CONFIG_ENSEMBLES.getPath());
+      String containers=ZooKeeperUtils.get(zooKeeper,ZkPath.CONFIG_ENSEMBLE.getPath(clusterId));
       Collections.addAll(list,containers.split(","));
     }
     return list;
