@@ -1,5 +1,8 @@
 {
   Bundle m_bundle=FrameworkUtil.getBundle(Logs.class).getBundleContext().getBundle(bundleId);
+  if (m_bundle == null) {
+    return null;
+  }
   String id=Long.toString(m_bundle.getBundleId()) + ":" + Long.toString(m_bundle.getLastModified());
   String maven=MAVEN_COORDINATES.get(id);
   if (maven == null) {
