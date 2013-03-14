@@ -1,0 +1,50 @@
+{
+  IZKClient zooKeeper=getZookeeper();
+  StringBuilder sb=new StringBuilder();
+  sb.append("[ ");
+  for (  Container container : containers) {
+    sb.append(container.getId()).append(" ");
+  }
+  sb.append("]");
+  System.out.println("Testing profile:" + profileName + " on container:"+ sb.toString()+ " by adding feature:"+ featureNames);
+  FabricService fabricService=getFabricService();
+  Version version=fabricService.getDefaultVersion();
+  Profile defaultProfile=fabricService.getProfile(version.getName(),"default");
+  Profile targetProfile=fabricService.getProfile(version.getName(),profileName);
+  for (  Container container : containers) {
+    container.setProfiles(new Profile[]{defaultProfile});
+  }
+  Provision.waitForContainerStatus(containers,PROVISION_TIMEOUT);
+  for (  String featureName : featureNames.split(" ")) {
+    System.out.println(executeCommand("fabric:profile-edit --features " + featureName + " "+ targetProfile.getId()));
+  }
+  for (  Container container : containers) {
+    if (!defaultProfile.configurationEquals(targetProfile)) {
+      ZooKeeperUtils.set(getZookeeper(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(container.getId()),"switching profile");
+    }
+    container.setProfiles(new Profile[]{targetProfile});
+  }
+  Provision.waitForContainerStatus(containers,PROVISION_TIMEOUT);
+  System.out.println(executeCommand("fabric:profile-display " + profileName));
+  System.out.println(executeCommand("fabric:container-list"));
+  for (  Container container : containers) {
+    for (    String symbolicName : expectedSymbolicNames.split(" ")) {
+      System.out.println(executeCommand("container-connect -u admin -p admin " + container.getId() + " osgi:list -s -t 0"));
+      String bundles=executeCommand("container-connect -u admin -p admin " + container.getId() + " osgi:list -s -t 0 | grep "+ symbolicName);
+      System.out.flush();
+      Assert.assertNotNull(bundles);
+      Assert.assertTrue("Expected to find symbolic name:" + symbolicName,bundles.contains(symbolicName));
+      System.out.println(bundles);
+    }
+  }
+  for (  Container container : containers) {
+    if (!defaultProfile.configurationEquals(targetProfile)) {
+      ZooKeeperUtils.set(getZookeeper(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(container.getId()),"switching profile");
+    }
+    container.setProfiles(new Profile[]{defaultProfile});
+  }
+  Provision.waitForContainerStatus(containers,PROVISION_TIMEOUT);
+  for (  String featureName : featureNames.split(" ")) {
+    System.out.println(executeCommand("fabric:profile-edit --delete --features " + featureName + " "+ targetProfile.getId()));
+  }
+}
