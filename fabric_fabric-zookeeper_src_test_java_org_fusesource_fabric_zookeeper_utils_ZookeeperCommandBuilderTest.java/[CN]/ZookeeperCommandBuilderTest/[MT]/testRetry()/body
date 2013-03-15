@@ -1,0 +1,12 @@
+{
+  IZKClient zookeeper=createMock(IZKClient.class);
+  expect(zookeeper.getData("/tmp")).andThrow(new KeeperException.ConnectionLossException()).times(4);
+  replay(zookeeper);
+  try {
+    ZookeeperCommandBuilder.getData("/tmp").execute(zookeeper);
+  }
+ catch (  KeeperException ex) {
+    ex.printStackTrace(System.out);
+  }
+  verify(zookeeper);
+}

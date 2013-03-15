@@ -1,0 +1,11 @@
+{
+  String normalizedPath=path != null && path.contains("#") ? path.substring(0,path.lastIndexOf('#')) : path;
+  if (normalizedPath != null && exists(zooKeeper,normalizedPath) != null) {
+    byte[] data=ZookeeperCommandBuilder.loadUrl(path).execute(zooKeeper);
+    if (data != null && data.length > 0) {
+      String str=new String(ZookeeperCommandBuilder.loadUrl(path).execute(zooKeeper),"UTF-8");
+      return getSubstitutedData(zooKeeper,str);
+    }
+  }
+  return null;
+}

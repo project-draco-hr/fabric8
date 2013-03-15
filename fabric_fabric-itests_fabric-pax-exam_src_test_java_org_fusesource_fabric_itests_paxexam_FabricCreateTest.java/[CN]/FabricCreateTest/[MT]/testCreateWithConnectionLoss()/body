@@ -1,0 +1,29 @@
+{
+  FabricService fabricService=getFabricService();
+  assertNotNull(fabricService);
+  bundleContext.registerService(LifecycleListener.class.getName(),new LifecycleListener(){
+    private boolean first=true;
+    @Override public void onConnected(){
+      System.err.println("Connected");
+      System.err.flush();
+      if (first) {
+        first=false;
+        try {
+          final OsgiZkClient zooKeeper=(OsgiZkClient)getZookeeper();
+          Thread.sleep(200);
+          zooKeeper.testGenerateConnectionLoss();
+        }
+ catch (        Exception e) {
+          e.printStackTrace(System.err);
+        }
+      }
+    }
+    @Override public void onDisconnected(){
+      System.err.println("Disconnected");
+      System.err.flush();
+    }
+  }
+,new Hashtable<String,Object>());
+  System.err.println(executeCommand("fabric:create -n",90000L,false));
+  System.err.println(executeCommand("fabric:container-list",90000L,false));
+}

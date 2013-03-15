@@ -1,10 +1,8 @@
 {
-  boolean completed=false;
-  boolean fatal=false;
   boolean rethrow=false;
   long startTime=System.currentTimeMillis();
   KeeperException lastThrown=null;
-  for (int r=0; r <= retries && (System.currentTimeMillis() - startTime < timeout) && !completed && !fatal; r++) {
+  for (int r=0; r <= retries && (System.currentTimeMillis() - startTime < timeout); r++) {
     if (r == retries) {
       rethrow=true;
     }
@@ -17,9 +15,16 @@
         throw ex;
       }
  else {
-        Thread.sleep(retryDelay);
+        LOGGER.warn("Caught recoverable zookeeper exception {}. Retrying {}.",ex.code().name(),r + 1);
+        waitForZookeeper(zooKeeper);
       }
     }
+catch (    IllegalStateException ex) {
+      LOGGER.warn("Caught illegal state exception on zookeeper. Retrying {}.",r + 1);
+      lastThrown=new KeeperException.OperationTimeoutException();
+      waitForZookeeper(zooKeeper);
+    }
   }
+  LOGGER.warn("Exhausted retry attempts for recoverable Zookeeper error. Rethrowing.");
   throw lastThrown;
 }

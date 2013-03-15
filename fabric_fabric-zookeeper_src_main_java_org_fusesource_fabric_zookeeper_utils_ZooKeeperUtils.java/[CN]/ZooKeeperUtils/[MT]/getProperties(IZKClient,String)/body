@@ -1,5 +1,6 @@
 {
-  String value=ZookeeperCommandBuilder.getStringData(path).execute(zooKeeper);
+  ZKData<String> zkData=zooKeeper.getZKStringData(path);
+  String value=zkData.getData();
   Properties properties=new Properties();
   if (value != null) {
     try {

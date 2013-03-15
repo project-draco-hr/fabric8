@@ -1,10 +1,10 @@
 {
-  for (  String child : ZookeeperCommandBuilder.getChildren(from).execute(zk)) {
+  for (  String child : zk.getChildren(from)) {
     String fromChild=from + "/" + child;
     String toChild=to + "/" + child;
-    if (exists(zk,toChild) == null) {
-      byte[] data=ZookeeperCommandBuilder.getData(fromChild).execute(zk);
-      ZookeeperCommandBuilder.set(toChild,data).execute(zk);
+    if (zk.exists(toChild) == null) {
+      byte[] data=zk.getData(fromChild);
+      set(zk,toChild,data);
       copy(zk,fromChild,toChild);
     }
   }

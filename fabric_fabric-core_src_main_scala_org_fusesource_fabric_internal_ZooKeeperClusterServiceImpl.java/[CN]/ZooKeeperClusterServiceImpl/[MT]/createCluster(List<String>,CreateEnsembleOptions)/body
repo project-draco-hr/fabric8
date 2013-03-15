@@ -6,7 +6,7 @@
       options.setZookeeperPassword(System.getProperty(SystemProperties.ZOOKEEPER_PASSWORD));
     }
  else {
-      options.setZookeeperPassword(ZooKeeperUtils.generatePassword());
+      options.setZookeeperPassword(ZooKeeperRetriableUtils.generatePassword());
     }
     if (containers == null || containers.size() == 2) {
       throw new IllegalArgumentException("One or at least 3 containers must be used to create a zookeeper ensemble");
@@ -20,24 +20,24 @@
       createLocalServer(2181,options);
       return;
     }
-    String version=ZooKeeperUtils.get(zooKeeper,ZkPath.CONFIG_DEFAULT_VERSION.getPath());
+    String version=ZooKeeperRetriableUtils.get(zooKeeper,ZkPath.CONFIG_DEFAULT_VERSION.getPath());
     for (    String container : containers) {
-      if (ZooKeeperUtils.exists(zooKeeper,ZkPath.CONTAINER_ALIVE.getPath(container)) == null) {
+      if (ZooKeeperRetriableUtils.exists(zooKeeper,ZkPath.CONTAINER_ALIVE.getPath(container)) == null) {
         throw new FabricException("The container " + container + " is not alive");
       }
     }
     Map<String,List<Integer>> usedPorts=new HashMap<String,List<Integer>>();
-    String oldClusterId=ZooKeeperUtils.get(zooKeeper,ZkPath.CONFIG_ENSEMBLES.getPath());
+    String oldClusterId=ZooKeeperRetriableUtils.get(zooKeeper,ZkPath.CONFIG_ENSEMBLES.getPath());
     if (oldClusterId != null) {
-      Properties p=toProperties(ZooKeeperUtils.get(zooKeeper,ZkPath.CONFIG_ENSEMBLE_PROFILE.getPath("fabric-ensemble-" + oldClusterId) + "/org.fusesource.fabric.zookeeper.server-" + oldClusterId+ ".properties"));
+      Properties p=toProperties(ZooKeeperRetriableUtils.get(zooKeeper,ZkPath.CONFIG_ENSEMBLE_PROFILE.getPath("fabric-ensemble-" + oldClusterId) + "/org.fusesource.fabric.zookeeper.server-" + oldClusterId+ ".properties"));
       for (      Object n : p.keySet()) {
         String node=(String)n;
         if (node.startsWith("server.")) {
-          String data=ZooKeeperUtils.getSubstitutedPath(zooKeeper,ZkPath.CONFIG_ENSEMBLE_PROFILE.getPath("fabric-ensemble-" + oldClusterId) + "/org.fusesource.fabric.zookeeper.server-" + oldClusterId+ ".properties#"+ node);
+          String data=ZooKeeperRetriableUtils.getSubstitutedPath(zooKeeper,ZkPath.CONFIG_ENSEMBLE_PROFILE.getPath("fabric-ensemble-" + oldClusterId) + "/org.fusesource.fabric.zookeeper.server-" + oldClusterId+ ".properties#"+ node);
           addUsedPorts(usedPorts,data);
         }
       }
-      String datas=ZooKeeperUtils.getSubstitutedPath(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties#zookeeper.url");
+      String datas=ZooKeeperRetriableUtils.getSubstitutedPath(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties#zookeeper.url");
       for (      String data : datas.split(",")) {
         addUsedPorts(usedPorts,data);
       }
@@ -49,7 +49,7 @@
  else {
       newClusterId=new DecimalFormat("0000").format(Integer.parseInt(oldClusterId) + 1);
     }
-    ZooKeeperUtils.set(zooKeeper,ZkPath.CONFIG_ENSEMBLE_PROFILE.getPath("fabric-ensemble-" + newClusterId),"abstract=true\nhidden=true");
+    ZooKeeperRetriableUtils.set(zooKeeper,ZkPath.CONFIG_ENSEMBLE_PROFILE.getPath("fabric-ensemble-" + newClusterId),"abstract=true\nhidden=true");
     String profileNode=ZkPath.CONFIG_ENSEMBLE_PROFILE.getPath("fabric-ensemble-" + newClusterId) + "/org.fusesource.fabric.zookeeper.server-" + newClusterId+ ".properties";
     Properties profileNodeProperties=new Properties();
     profileNodeProperties.put("tickTime","2000");
@@ -61,19 +61,19 @@
     String realConnectionUrl="";
     String containerList="";
     for (    String container : containers) {
-      String ip=ZooKeeperUtils.getSubstitutedPath(zooKeeper,ZkPath.CONTAINER_IP.getPath(container));
+      String ip=ZooKeeperRetriableUtils.getSubstitutedPath(zooKeeper,ZkPath.CONTAINER_IP.getPath(container));
       String minimumPort=String.valueOf(Ports.MIN_PORT_NUMBER);
       String maximumPort=String.valueOf(Ports.MAX_PORT_NUMBER);
       if (zooKeeper.exists(ZkPath.CONTAINER_PORT_MIN.getPath(container)) != null) {
-        minimumPort=ZooKeeperUtils.getSubstitutedPath(zooKeeper,ZkPath.CONTAINER_PORT_MIN.getPath(container));
+        minimumPort=ZooKeeperRetriableUtils.getSubstitutedPath(zooKeeper,ZkPath.CONTAINER_PORT_MIN.getPath(container));
       }
       if (zooKeeper.exists(ZkPath.CONTAINER_PORT_MAX.getPath(container)) != null) {
-        maximumPort=ZooKeeperUtils.getSubstitutedPath(zooKeeper,ZkPath.CONTAINER_PORT_MAX.getPath(container));
+        maximumPort=ZooKeeperRetriableUtils.getSubstitutedPath(zooKeeper,ZkPath.CONTAINER_PORT_MAX.getPath(container));
       }
       String profNode=ZkPath.CONFIG_ENSEMBLE_PROFILE.getPath("fabric-ensemble-" + newClusterId + "-"+ Integer.toString(index));
       String pidNode=profNode + "/org.fusesource.fabric.zookeeper.server-" + newClusterId+ ".properties";
       Properties pidNodeProperties=new Properties();
-      ZooKeeperUtils.set(zooKeeper,profNode,"parents=fabric-ensemble-" + newClusterId + "\nhidden=true");
+      ZooKeeperRetriableUtils.set(zooKeeper,profNode,"parents=fabric-ensemble-" + newClusterId + "\nhidden=true");
       String port1=Integer.toString(findPort(usedPorts,ip,mapPortToRange(Ports.DEFAULT_ZOOKEEPER_SERVER_PORT,minimumPort,maximumPort)));
       if (containers.size() > 1) {
         String port2=Integer.toString(findPort(usedPorts,ip,mapPortToRange(Ports.DEFAULT_ZOOKEEPER_PEER_PORT,minimumPort,maximumPort)));
@@ -82,8 +82,8 @@
         pidNodeProperties.put("server.id",Integer.toString(index));
       }
       pidNodeProperties.put("clientPort",port1);
-      ZooKeeperUtils.set(zooKeeper,pidNode,toString(pidNodeProperties));
-      ZooKeeperUtils.add(zooKeeper,"/fabric/configs/versions/" + version + "/containers/"+ container,"fabric-ensemble-" + newClusterId + "-"+ Integer.toString(index));
+      ZooKeeperRetriableUtils.set(zooKeeper,pidNode,toString(pidNodeProperties));
+      ZooKeeperRetriableUtils.add(zooKeeper,"/fabric/configs/versions/" + version + "/containers/"+ container,"fabric-ensemble-" + newClusterId + "-"+ Integer.toString(index));
       if (connectionUrl.length() > 0) {
         connectionUrl+=",";
         realConnectionUrl+=",";
@@ -96,30 +96,30 @@
       containerList+=container;
       index++;
     }
-    ZooKeeperUtils.set(zooKeeper,profileNode,toString(profileNodeProperties));
+    ZooKeeperRetriableUtils.set(zooKeeper,profileNode,toString(profileNodeProperties));
     if (oldClusterId != null) {
-      Properties properties=ZooKeeperUtils.getProperties(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties");
+      Properties properties=ZooKeeperRetriableUtils.getProperties(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties");
       properties.put("zookeeper.url",realConnectionUrl);
       properties.put("zookeeper.password",options.getZookeeperPassword());
       OsgiZkClient dst=new OsgiZkClient();
       dst.updated(properties);
       try {
         dst.waitForConnected(new Timespan(30,Timespan.TimeUnit.SECOND));
-        ZooKeeperUtils.copy(zooKeeper,dst,"/fabric/registry");
-        ZooKeeperUtils.copy(zooKeeper,dst,"/fabric/authentication");
-        ZooKeeperUtils.copy(zooKeeper,dst,"/fabric/configs");
+        ZooKeeperRetriableUtils.copy(zooKeeper,dst,"/fabric/registry");
+        ZooKeeperRetriableUtils.copy(zooKeeper,dst,"/fabric/authentication");
+        ZooKeeperRetriableUtils.copy(zooKeeper,dst,"/fabric/configs");
         for (        String container : containers) {
           ZookeeperCommandBuilder.delete("/fabric/registry/containers/alive/" + container).execute(dst);
         }
-        ZooKeeperUtils.set(dst,ZkPath.CONFIG_ENSEMBLES.getPath(),newClusterId);
-        ZooKeeperUtils.set(dst,ZkPath.CONFIG_ENSEMBLE.getPath(newClusterId),containerList);
+        ZooKeeperRetriableUtils.set(dst,ZkPath.CONFIG_ENSEMBLES.getPath(),newClusterId);
+        ZooKeeperRetriableUtils.set(dst,ZkPath.CONFIG_ENSEMBLE.getPath(newClusterId),containerList);
         for (        String container : dst.getChildren("/fabric/configs/versions/" + version + "/containers")) {
-          ZooKeeperUtils.remove(dst,"/fabric/configs/versions/" + version + "/containers/"+ container,"fabric-ensemble-" + oldClusterId + "-.*");
+          ZooKeeperRetriableUtils.remove(dst,"/fabric/configs/versions/" + version + "/containers/"+ container,"fabric-ensemble-" + oldClusterId + "-.*");
         }
-        ZooKeeperUtils.set(dst,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl);
-        ZooKeeperUtils.set(dst,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
-        ZooKeeperUtils.set(zooKeeper,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl);
-        ZooKeeperUtils.set(zooKeeper,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
+        ZooKeeperRetriableUtils.set(dst,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl);
+        ZooKeeperRetriableUtils.set(dst,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
+        ZooKeeperRetriableUtils.set(zooKeeper,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl);
+        ZooKeeperRetriableUtils.set(zooKeeper,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
         setConfigProperty(dst,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.password","${zk:" + ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath() + "}");
         setConfigProperty(dst,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.url","${zk:" + ZkPath.CONFIG_ENSEMBLE_URL.getPath() + "}");
         setConfigProperty(zooKeeper,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.password","${zk:" + ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath() + "}");

@@ -6,8 +6,8 @@
     }
     List<String> list=new ArrayList<String>();
     if (zooKeeper.exists(ZkPath.CONFIG_ENSEMBLES.getPath()) != null) {
-      String clusterId=ZooKeeperUtils.get(zooKeeper,ZkPath.CONFIG_ENSEMBLES.getPath());
-      String containers=ZooKeeperUtils.get(zooKeeper,ZkPath.CONFIG_ENSEMBLE.getPath(clusterId));
+      String clusterId=ZooKeeperRetriableUtils.get(zooKeeper,ZkPath.CONFIG_ENSEMBLES.getPath());
+      String containers=ZooKeeperRetriableUtils.get(zooKeeper,ZkPath.CONFIG_ENSEMBLE.getPath(clusterId));
       Collections.addAll(list,containers.split(","));
     }
     return list;

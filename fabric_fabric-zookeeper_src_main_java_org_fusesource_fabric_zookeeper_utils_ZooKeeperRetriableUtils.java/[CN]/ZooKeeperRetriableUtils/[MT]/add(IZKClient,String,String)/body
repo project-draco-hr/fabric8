@@ -1,0 +1,16 @@
+{
+  if (exists(zooKeeper,path) == null) {
+    ZookeeperCommandBuilder.set(path,value).execute(zooKeeper);
+  }
+ else {
+    String data=ZookeeperCommandBuilder.getStringData(path).execute(zooKeeper);
+    if (data == null) {
+      data="";
+    }
+    if (data.length() > 0) {
+      data+=" ";
+    }
+    data+=value;
+    ZookeeperCommandBuilder.set(path,data).execute(zooKeeper);
+  }
+}
