@@ -1,5 +1,6 @@
 {
   preCreateContainer(name);
+  validateProfileName(profiles);
   CreateEnsembleOptions ensembleOptions=CreateEnsembleOptions.build().zookeeperPassword(zookeeperPassword).user(newUser,newUserPassword + "," + newUserRole);
   CreateJCloudsContainerOptions args=CreateContainerOptionsBuilder.jclouds().name(name).resolver(resolver).ensembleServer(isEnsembleServer).credential(credential).group(group).hardwareId(hardwareId).identity(identity).osFamily(osFamily).osVersion(osVersion).imageId(imageId).instanceType(instanceType).locationId(locationId).number(number).nodeOptions(CloudUtils.parseProviderOptions(options)).owner(owner).adminAccess(!disableAdminAccess).publicKeyFile(publicKeyFile).contextName(contextName).providerName(providerName).apiName(apiName).user(user).password(password).proxyUri(proxyUri != null ? proxyUri : fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword(isEnsembleServer && zookeeperPassword != null ? zookeeperPassword : fabricService.getZookeeperPassword()).jvmOpts(jvmOpts).creationStateListener(new PrintStreamCreationStateListener(System.out)).createEnsembleOptions(ensembleOptions);
   if (path != null && !path.isEmpty()) {
