@@ -40,18 +40,14 @@
     LOGGER.log(Level.INFO,String.format("Received request for maven artifact : %s",path));
     Artifact artifact=convertPathToArtifact(path);
     String id=artifact.getGroupId() + ":" + artifact.getArtifactId();
-    artifactLocks.putIfAbsent(id,new Object());
-    final Object lock=artifactLocks.get(id);
-synchronized (lock) {
-      try {
-        ArtifactRequest request=new ArtifactRequest(artifact,new ArrayList<RemoteRepository>(repositories.values()),null);
-        ArtifactResult result=system.resolveArtifact(session,request);
-        return result.getArtifact().getFile();
-      }
- catch (      Exception e) {
-        LOGGER.log(Level.WARNING,String.format("Could not find artifact : %s due to %s",artifact,e));
-        return null;
-      }
+    try {
+      ArtifactRequest request=new ArtifactRequest(artifact,new ArrayList<RemoteRepository>(repositories.values()),null);
+      ArtifactResult result=system.resolveArtifact(session,request);
+      return result.getArtifact().getFile();
+    }
+ catch (    Exception e) {
+      LOGGER.log(Level.WARNING,String.format("Could not find artifact : %s due to %s",artifact,e));
+      return null;
     }
   }
   return null;
