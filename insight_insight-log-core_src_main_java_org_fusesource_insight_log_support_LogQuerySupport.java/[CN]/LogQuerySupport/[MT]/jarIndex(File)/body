@@ -1,10 +1,4 @@
 {
-  StringBuilder buffer=new StringBuilder();
   JarFile jarFile=new JarFile(file);
-  Enumeration<JarEntry> entries=jarFile.entries();
-  while (entries.hasMoreElements()) {
-    JarEntry entry=entries.nextElement();
-    addJarEntryToIndex(entry,buffer);
-  }
-  return buffer.toString();
+  return jarIndex(jarFile);
 }

@@ -1,11 +1,5 @@
 {
   StringBuilder buffer=new StringBuilder();
-  JarInputStream in=new JarInputStream(url.openStream());
-  while (true) {
-    JarEntry entry=in.getNextJarEntry();
-    if (entry == null) {
-      return buffer.toString();
-    }
-    addJarEntryToIndex(entry,buffer);
-  }
+  JarURLConnection uc=(JarURLConnection)url.openConnection();
+  return jarIndex(uc.getJarFile());
 }
