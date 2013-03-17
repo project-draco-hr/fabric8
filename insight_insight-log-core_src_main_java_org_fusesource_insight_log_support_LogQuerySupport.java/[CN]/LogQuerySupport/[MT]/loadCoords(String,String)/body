@@ -1,4 +1,7 @@
 {
   URL url=new URL("jar:mvn:" + coords + "/jar/sources!"+ filePath);
+  if (isRoot(filePath)) {
+    return jarIndex(url);
+  }
   return loadString(url);
 }
