@@ -17,12 +17,7 @@
         properties.put(toString(key),toString(value));
       }
     }
-    if (properties.get("maven.coordinates") == null) {
-      String mavenCoord=getMavenCoordinates(event);
-      if (mavenCoord != null && !mavenCoord.isEmpty()) {
-        properties.put("maven.coordinates",mavenCoord);
-      }
-    }
+    addMavenCoord(properties);
     answer.setProperties(properties);
   }
   PaxLocationInfo locationInformation=event.getLocationInformation();
