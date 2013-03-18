@@ -21,6 +21,9 @@
         final QueryState state=new QueryState();
         state.server=server;
         state.query=q;
+        if (q.getMetadata() != null) {
+          state.metadata=parseJson(loadFully(new URL(q.getMetadata())));
+        }
         if (q.getLock() != null) {
           state.lock=new ClusteredSingleton<QueryNodeState>(QueryNodeState.class);
           state.lock.add(new ChangeListener(){
