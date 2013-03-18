@@ -1,13 +1,13 @@
 {
-  Bundle m_bundle=FrameworkUtil.getBundle(Logs.class).getBundleContext().getBundle(bundleId);
-  if (m_bundle == null) {
+  Bundle bundle=getBundle(bundleId);
+  if (bundle == null) {
     return null;
   }
-  String id=Long.toString(m_bundle.getBundleId()) + ":" + Long.toString(m_bundle.getLastModified());
+  String id=Long.toString(bundle.getBundleId()) + ":" + Long.toString(bundle.getLastModified());
   String maven=MAVEN_COORDINATES.get(id);
   if (maven == null) {
     try {
-      Enumeration<URL> e=m_bundle.findEntries("META-INF/maven/","pom.properties",true);
+      Enumeration<URL> e=bundle.findEntries("META-INF/maven/","pom.properties",true);
       StringBuilder buf=new StringBuilder();
       while (e != null && e.hasMoreElements()) {
         URL url=e.nextElement();
