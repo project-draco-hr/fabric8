@@ -10,7 +10,10 @@
     String version=pathMatcher.group(3);
     String type=pathMatcher.group(9);
     if (type == null) {
-      type="";
+      type="maven-metadata.xml";
+    }
+ else {
+      type="maven-metadata.xml." + type;
     }
     metadata=new DefaultMetadata(groupId,artifactId,version,type,Metadata.Nature.RELEASE_OR_SNAPSHOT);
   }

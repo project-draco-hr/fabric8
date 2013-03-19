@@ -1,6 +1,11 @@
 {
   File download=download(path);
-  File tmpFile=Files.createTempFile();
-  Files.copy(download,tmpFile);
-  return tmpFile;
+  if (download != null) {
+    File tmpFile=Files.createTempFile();
+    Files.copy(download,tmpFile);
+    return tmpFile;
+  }
+ else {
+    return null;
+  }
 }

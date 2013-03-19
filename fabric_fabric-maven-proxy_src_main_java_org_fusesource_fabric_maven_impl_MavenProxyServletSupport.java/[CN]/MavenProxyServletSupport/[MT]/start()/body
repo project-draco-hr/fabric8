@@ -13,7 +13,7 @@
   }
   repositories=new HashMap<String,RemoteRepository>();
   for (  String rep : remoteRepositories.split(",")) {
-    String id="";
+    String id;
     RemoteRepository remoteRepository=null;
     rep=rep.trim();
     Matcher idMatcher=REPOSITORY_ID_REGEX.matcher(rep);
@@ -28,9 +28,16 @@
       remoteRepository=new RemoteRepository("repo-" + Math.abs(rep.hashCode()),DEFAULT_REPO_ID,rep);
     }
     remoteRepository.setPolicy(true,new RepositoryPolicy(true,updatePolicy,checksumPolicy));
+    remoteRepository.setProxy(session.getProxySelector().getProxy(remoteRepository));
     repositories.put(id,remoteRepository);
   }
   repositories.put("local",new RemoteRepository("local",DEFAULT_REPO_ID,"file://" + localRepository));
   repositories.put("karaf",new RemoteRepository("karaf",DEFAULT_REPO_ID,"file://" + System.getProperty("karaf.home") + File.separator+ System.getProperty("karaf.default.repository")));
   repositories.put("user",new RemoteRepository("user",DEFAULT_REPO_ID,"file://" + System.getProperty("user.home") + File.separator+ ".m2"+ File.separator+ "repository"));
+  if (appendSystemRepos) {
+    for (    RemoteRepository sysRepo : MavenUtils.getRemoteRepositories()) {
+      sysRepo.setProxy(session.getProxySelector().getProxy(sysRepo));
+      repositories.put(sysRepo.getId(),sysRepo);
+    }
+  }
 }

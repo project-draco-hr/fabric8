@@ -13,9 +13,13 @@
     String extension="jar";
     String classifier="";
     String filePerfix=artifactId + "-" + version;
-    String stripedFileName=filename.substring(filePerfix.length());
+    String stripedFileName=null;
     if (version.endsWith("SNAPSHOT")) {
-      stripedFileName=stripedFileName.replaceAll("\\d{8}.\\d+-\\d+","SNAPSHOT");
+      stripedFileName=filename.replaceAll("\\d{8}.\\d+-\\d+","SNAPSHOT");
+      stripedFileName=stripedFileName.substring(filePerfix.length());
+    }
+ else {
+      stripedFileName=filename.substring(filePerfix.length());
     }
     if (stripedFileName != null && stripedFileName.startsWith("-") && stripedFileName.contains(".")) {
       classifier=stripedFileName.substring(1,stripedFileName.indexOf('.'));

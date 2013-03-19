@@ -1,5 +1,10 @@
 {
-  MavenRepositorySystemSession session=new MavenRepositorySystemSession();
+  DefaultRepositorySystemSession session=new MavenRepositorySystemSession();
+  session.setOffline(false);
+  session.setProxySelector(MavenUtils.getProxySelector(proxyProtocol,proxyHost,proxyPort,proxyNonProxyHosts,proxyUsername,proxyPassword));
+  session.setMirrorSelector(MavenUtils.getMirrorSelector());
+  session.setAuthenticationSelector(MavenUtils.getAuthSelector());
+  session.setCache(new DefaultRepositoryCache());
   LocalRepository localRepo=new LocalRepository(localRepository);
   session.setLocalRepositoryManager(system.newLocalRepositoryManager(localRepo));
   return session;
