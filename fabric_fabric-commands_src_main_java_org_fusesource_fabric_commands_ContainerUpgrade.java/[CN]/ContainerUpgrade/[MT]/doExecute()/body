@@ -21,7 +21,7 @@
   List<Container> toUpgrade=new ArrayList<Container>();
   List<Container> same=new ArrayList<Container>();
   for (  String containerName : containerIds) {
-    Container container=fabricService.getContainer(containerName);
+    Container container=getContainer(containerName);
     int num=canUpgrade(version,container);
     if (num < 0) {
       throw new IllegalArgumentException("Container " + container.getId() + " already has a higher version "+ container.getVersion()+ " than the requested version "+ version+ ".");

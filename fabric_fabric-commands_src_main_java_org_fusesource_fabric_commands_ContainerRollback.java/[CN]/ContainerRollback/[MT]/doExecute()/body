@@ -21,7 +21,7 @@
   List<Container> toRollback=new ArrayList<Container>();
   List<Container> same=new ArrayList<Container>();
   for (  String containerName : containerIds) {
-    Container container=fabricService.getContainer(containerName);
+    Container container=getContainer(containerName);
     int num=canRollback(version,container);
     if (num < 0) {
       throw new IllegalArgumentException("Container " + container.getId() + " has already lower version "+ container.getVersion()+ " than the requested version "+ version+ " to rollback.");
