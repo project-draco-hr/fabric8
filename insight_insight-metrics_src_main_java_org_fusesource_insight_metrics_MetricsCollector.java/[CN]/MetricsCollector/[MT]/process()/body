@@ -27,17 +27,16 @@
         if (q.getLock() != null) {
           state.lock=new ClusteredSingleton<QueryNodeState>(QueryNodeState.class);
           state.lock.add(new ChangeListener(){
-            volatile boolean connected;
             @Override public void changed(){
-              if (connected) {
+              try {
                 state.lock.update(new QueryNodeState(queryName,containerName,state.lock.isMaster() ? new String[]{"stat"} : null));
+              }
+ catch (              IllegalStateException e) {
               }
             }
             @Override public void connected(){
-              this.connected=true;
             }
             @Override public void disconnected(){
-              this.connected=false;
             }
           }
 );
@@ -50,7 +49,9 @@
       }
     }
   }
- catch (  Throwable t) {
+ catch (  RejectedExecutionException t) {
+  }
+catch (  Throwable t) {
     LOG.warn("Error while starting metrics",t);
   }
 }

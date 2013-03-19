@@ -13,6 +13,9 @@
   }
   this.mbeanServer.close();
   this.storage.close();
+  for (  QueryState q : queries.values()) {
+    q.close();
+  }
   if (globalGroup != null) {
     globalGroup.close();
   }
