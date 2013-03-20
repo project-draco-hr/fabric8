@@ -39,7 +39,7 @@
         ZooKeeperUtils.set(service.getZooKeeper(),ZkPath.CONTAINER_PORT_MIN.getPath(containerName),String.valueOf(minimumPort));
         ZooKeeperUtils.set(service.getZooKeeper(),ZkPath.CONTAINER_PORT_MAX.getPath(containerName),String.valueOf(maximumPort));
         inheritAddresses(service.getZooKeeper(),parentName,containerName,options);
-        int sshPort=mapPortToRange(Ports.DEFAULT_SSH_PORT + i,minimumPort,maximumPort);
+        int sshPort=mapPortToRange(Ports.DEFAULT_KARAF_SSH_PORT + i,minimumPort,maximumPort);
         while (usedPorts.contains(sshPort)) {
           sshPort++;
         }
