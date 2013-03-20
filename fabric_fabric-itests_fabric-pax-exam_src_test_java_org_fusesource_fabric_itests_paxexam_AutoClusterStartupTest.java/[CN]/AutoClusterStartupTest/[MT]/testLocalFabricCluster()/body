@@ -3,6 +3,7 @@
   assertNotNull(fabricService);
   IZKClient zookeeer=getZookeeper();
   zookeeer.waitForConnected(new Timespan(60,Timespan.TimeUnit.SECOND));
+  Provision.waitForContainerAlive(Arrays.<Container>asList(new ContainerImpl(null,"root",(FabricServiceImpl)fabricService)),PROVISION_TIMEOUT);
   Container[] containers=fabricService.getContainers();
   assertNotNull(containers);
   assertEquals("Expected to find 1 container",1,containers.length);

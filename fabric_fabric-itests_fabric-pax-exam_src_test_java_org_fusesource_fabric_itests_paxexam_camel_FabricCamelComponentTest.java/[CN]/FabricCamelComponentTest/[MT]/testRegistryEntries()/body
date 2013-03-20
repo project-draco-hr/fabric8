@@ -1,30 +1,46 @@
 {
+  int startingPort=9191;
   System.err.println(executeCommand("fabric:create -n root"));
-  executeCommand("fabric:profile-create --parents camel fabric-camel");
-  executeCommand("fabric:profile-create --parents fabric-camel fabric-camel-server");
-  executeCommand("fabric:profile-create --parents fabric-camel-server fabric-camel-server-1");
-  executeCommand("fabric:profile-create --parents fabric-camel-server fabric-camel-server-2");
-  executeCommand("fabric:profile-create --parents fabric-camel fabric-camel-client");
-  executeCommand("fabric:profile-edit --repositories mvn:org.fusesource.examples.fabric-camel-cluster/features/" + System.getProperty("fabric.version") + "/xml/features fabric-camel");
-  executeCommand("fabric:profile-edit --features camel-server fabric-camel-server");
+  IZKClient zooKeeper=getZookeeper();
+  System.err.println(executeCommand("fabric:profile-create --parents camel fabric-camel"));
+  System.err.println(executeCommand("fabric:profile-create --parents fabric-camel fabric-camel-server"));
+  System.err.println(executeCommand("fabric:profile-create --parents fabric-camel fabric-camel-client"));
+  System.err.println(executeCommand("fabric:profile-edit --repositories mvn:org.fusesource.examples.fabric-camel-cluster/features/" + System.getProperty("fabric.version") + "/xml/features fabric-camel"));
+  System.err.println(executeCommand("fabric:profile-edit --features camel-server fabric-camel-server"));
   executeCommand("fabric:profile-edit --features camel-client fabric-camel-client");
-  executeCommand("fabric:profile-edit --pid org.fusesource.fabric.examples.camel.loadbalancing.server/portNumber=9191 fabric-camel-server-1");
-  executeCommand("fabric:profile-edit --pid org.fusesource.fabric.examples.camel.loadbalancing.server/portNumber=9292 fabric-camel-server-2");
-  createAndAssertChildContainer("server1","root","fabric-camel-server-1","-Xms512m -Xmx512m");
-  createAndAssertChildContainer("server2","root","fabric-camel-server-2","-Xms512m -Xmx512m");
-  createAndAssertChildContainer("client1","root","fabric-camel-client","-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005");
-  Assert.assertNotNull(getZookeeper().exists("/fabric/registry/camel/endpoints/"));
-  Assert.assertEquals(1,getZookeeper().getChildren("/fabric/registry/camel/endpoints/").size());
+  Set<Container> containers=ContainerBuilder.create(3).withName("fabric-camel").withProfiles("camel").assertProvisioningResult().build();
+  Container camelClientContainer=containers.iterator().next();
+  containers.remove(camelClientContainer);
+  Set<Container> camelServerContainers=new LinkedHashSet<Container>(containers);
+  int index=1;
+  for (  Container c : camelServerContainers) {
+    zooKeeper.setData(ZkPath.CONTAINER_PROVISION_RESULT.getPath(c.getId()),"changing");
+    System.err.println(executeCommand("fabric:profile-create --parents fabric-camel-server fabric-camel-server-" + index));
+    System.err.println(executeCommand("fabric:profile-edit --pid org.fusesource.fabric.examples.camel.loadbalancing.server/portNumber=" + (startingPort++) + " fabric-camel-server-"+ index));
+    System.err.println(executeCommand("fabric:container-change-profile " + c.getId() + " fabric-camel-server-"+ (index++)));
+  }
+  Provision.assertSuccess(camelServerContainers,PROVISION_TIMEOUT);
+  zooKeeper.setData(ZkPath.CONTAINER_PROVISION_RESULT.getPath(camelClientContainer.getId()),"changing");
+  System.err.println(executeCommand("fabric:container-change-profile " + camelClientContainer.getId() + " fabric-camel-client"));
+  Provision.assertSuccess(Arrays.asList(new Container[]{camelClientContainer}),PROVISION_TIMEOUT);
+  System.err.println(executeCommand("fabric:container-list"));
+  System.err.println(executeCommand("fabric:profile-display --overlay fabric-camel-server"));
+  Assert.assertNotNull(zooKeeper.exists("/fabric/registry/camel/endpoints/"));
+  Assert.assertEquals(1,zooKeeper.getChildren("/fabric/registry/camel/endpoints/").size());
   Thread.sleep(5000);
-  System.err.println(executeCommand("fabric:container-connect -u admin -p admin client1 camel:route-list"));
-  String response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin client1 camel:route-info fabric-client | grep Failed")).getPlain().toString();
+  System.err.println(executeCommand("fabric:container-connect -u admin -p admin " + camelClientContainer.getId() + " camel:route-list"));
+  String response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin " + camelClientContainer.getId() + " camel:route-info fabric-client | grep Failed")).getPlain().toString();
   System.err.println(response);
   int failed=Integer.parseInt(response.replaceAll("[^0-9]",""));
   Assert.assertEquals(0,failed);
-  destroyChildContainer("server1");
-  Thread.sleep(25000);
-  response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin client1 camel:route-info fabric-client | grep Failed")).getPlain().toString();
-  System.err.println(response);
-  failed=Integer.parseInt(response.replaceAll("[^0-9]",""));
-  Assert.assertEquals(0,failed);
+  Container lastActiveServerContainer=camelServerContainers.iterator().next();
+  camelServerContainers.remove(lastActiveServerContainer);
+  for (  Container c : camelServerContainers) {
+    c.destroy();
+    Thread.sleep(25000);
+    response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin " + camelClientContainer.getId() + " camel:route-info fabric-client | grep Failed")).getPlain().toString();
+    System.err.println(response);
+    failed=Integer.parseInt(response.replaceAll("[^0-9]",""));
+    Assert.assertEquals(0,failed);
+  }
 }
