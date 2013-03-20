@@ -14,6 +14,7 @@
   sb.append(REPLACE_IN_FILE).append("\n");
   sb.append(CONFIGURE_HOSTNAMES).append("\n");
   sb.append(FIND_FREE_PORT).append("\n");
+  sb.append(WAIT_FOR_PORT).append("\n");
   sb.append("run mkdir -p ").append(options.getPath()).append("\n");
   sb.append("run cd ").append(options.getPath()).append("\n");
   sb.append("run mkdir -p ").append(options.getName()).append("\n");
@@ -90,9 +91,11 @@
     options.setJvmOpts(options.getJvmOpts() + " -XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass");
   }
   if (options.getJvmOpts() != null && !options.getJvmOpts().isEmpty()) {
-    sb.append("export JAVA_OPTS=" + options.getJvmOpts()).append("\n");
+    sb.append("export JAVA_OPTS=\"" + options.getJvmOpts()).append("\"\n");
   }
   sb.append("nohup bin/start &").append("\n");
   sb.append("karaf_check `pwd`").append("\n");
+  sb.append("wait_for_port $SSH_PORT").append("\n");
+  sb.append("wait_for_port $RMI_REGISTRY_PORT").append("\n");
   return sb.toString();
 }
