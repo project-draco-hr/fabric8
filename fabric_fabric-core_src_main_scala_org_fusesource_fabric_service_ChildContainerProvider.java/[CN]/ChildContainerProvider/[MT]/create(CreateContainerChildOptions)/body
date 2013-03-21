@@ -19,8 +19,9 @@
       if (options.getJvmOpts() != null && !options.getJvmOpts().contains("-XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass")) {
         jvmOptsBuilder.append(" -XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass");
       }
-      String features="fabric-agent";
-      String featuresUrls="mvn:org.fusesource.fabric/fuse-fabric/" + FabricConstants.FABRIC_VERSION + "/xml/features";
+      Profile defaultProfile=service.getProfile(parent.getVersion().getName(),"default");
+      String featuresUrls=listAsString(defaultProfile.getRepositories());
+      String features=listAsString(defaultProfile.getFeatures());
       String originalName=options.getName();
       usedPorts.addAll(getContainerUsedPorts(parent));
       for (int i=1; i <= options.getNumber(); i++) {
