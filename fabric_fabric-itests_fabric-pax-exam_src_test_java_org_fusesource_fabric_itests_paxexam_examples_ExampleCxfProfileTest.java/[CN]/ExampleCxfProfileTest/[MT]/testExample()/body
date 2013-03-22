@@ -1,8 +1,12 @@
 {
+  System.err.println(executeCommand("features:install cxf"));
+  Thread.sleep(10000);
+  System.err.println(executeCommand("features:install fabric-cxf"));
+  Thread.sleep(5000);
   System.err.println(executeCommand("fabric:create -n"));
   createAndAssertChildContainer("cxf-server","root","example-cxf");
   System.err.println(executeCommand("fabric:cluster-list"));
-  System.err.println(executeCommand("features:install fabric-cxf"));
+  Thread.sleep(5000);
   String projectVersion=System.getProperty("fabricitest.version");
   System.err.println(executeCommand("osgi:install -s mvn:org.fusesource.examples/fabric-cxf-demo-client/" + projectVersion));
   Client client=new Client();
