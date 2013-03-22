@@ -9,7 +9,6 @@
   Thread.sleep(5000);
   System.err.println(executeCommand("fabric:container-connect -u admin -p admin child1 osgi:list"));
   System.err.println(executeCommand("fabric:container-connect -u admin -p admin child1 camel:route-list"));
-  String response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin child1 camel:route-info fabric-camel-cxf | grep Started")).getPlain().toString();
-  System.err.println(response);
+  String response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin child1 camel:route-list | grep fabric-camel-cxf")).getPlain().toString();
   Assert.assertTrue(response.contains("fabric-camel-cxf"));
 }
