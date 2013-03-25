@@ -1,5 +1,5 @@
 {
-  int startingPort=9191;
+  int startingPort=9090;
   System.err.println(executeCommand("fabric:create -n root"));
   IZKClient zooKeeper=getZookeeper();
   System.err.println(executeCommand("fabric:profile-create --parents camel fabric-camel"));
@@ -8,15 +8,17 @@
   System.err.println(executeCommand("fabric:profile-edit --repositories mvn:org.fusesource.examples.fabric-camel-cluster/features/" + System.getProperty("fabric.version") + "/xml/features fabric-camel"));
   System.err.println(executeCommand("fabric:profile-edit --features camel-server fabric-camel-server"));
   executeCommand("fabric:profile-edit --features camel-client fabric-camel-client");
-  Set<Container> containers=ContainerBuilder.create(3).withName("fabric-camel").withProfiles("camel").assertProvisioningResult().build();
+  Set<Container> containers=ContainerBuilder.create(3).withName("fabric-camel").withProfiles("fabric-camel").assertProvisioningResult().build();
   Container camelClientContainer=containers.iterator().next();
   containers.remove(camelClientContainer);
   Set<Container> camelServerContainers=new LinkedHashSet<Container>(containers);
   int index=1;
   for (  Container c : camelServerContainers) {
     zooKeeper.setData(ZkPath.CONTAINER_PROVISION_RESULT.getPath(c.getId()),"changing");
+    executeCommand("fabric:container-connect -u admin -p admin " + camelClientContainer.getId() + " log:set DEBUG");
     System.err.println(executeCommand("fabric:profile-create --parents fabric-camel-server fabric-camel-server-" + index));
     System.err.println(executeCommand("fabric:profile-edit --pid org.fusesource.fabric.examples.camel.loadbalancing.server/portNumber=" + (startingPort++) + " fabric-camel-server-"+ index));
+    System.err.println(executeCommand("fabric:profile-display fabric-camel-server-" + index));
     System.err.println(executeCommand("fabric:container-change-profile " + c.getId() + " fabric-camel-server-"+ (index++)));
   }
   Provision.assertSuccess(camelServerContainers,PROVISION_TIMEOUT);
@@ -32,7 +34,7 @@
   String response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin " + camelClientContainer.getId() + " camel:route-info fabric-client | grep Failed")).getPlain().toString();
   System.err.println(response);
   int failed=Integer.parseInt(response.replaceAll("[^0-9]",""));
-  Assert.assertEquals(0,failed);
+  Assert.assertEquals("Failed exchanges found on client",0,failed);
   Container lastActiveServerContainer=camelServerContainers.iterator().next();
   camelServerContainers.remove(lastActiveServerContainer);
   for (  Container c : camelServerContainers) {
@@ -41,6 +43,6 @@
     response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin " + camelClientContainer.getId() + " camel:route-info fabric-client | grep Failed")).getPlain().toString();
     System.err.println(response);
     failed=Integer.parseInt(response.replaceAll("[^0-9]",""));
-    Assert.assertEquals(0,failed);
+    Assert.assertEquals("Failed exchanges found after container:" + c.getId() + " shut down",0,failed);
   }
 }
