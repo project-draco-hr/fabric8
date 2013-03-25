@@ -1,0 +1,11 @@
+{
+  String fabricRepoUrl="http://${zk:" + name + "/ip}:"+ getPortSafe()+ "/git/fabric/";
+  GitNode state=new GitNode();
+  state.setId("fabric-repo");
+  state.setUrl(fabricRepoUrl);
+  state.setAgent(name);
+  if (singleton.isMaster()) {
+    state.setServices(new String[]{"git"});
+  }
+  return state;
+}

@@ -1,0 +1,14 @@
+{
+  try {
+    if (httpService != null) {
+      if (connected) {
+        singleton.leave();
+      }
+      httpService.unregister("/git");
+    }
+  }
+ catch (  Exception ex) {
+    LOGGER.warn("Http service returned error on servlet unregister. Possibly the service has already been stopped");
+  }
+  this.httpService=null;
+}

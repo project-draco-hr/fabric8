@@ -1,0 +1,26 @@
+{
+  unbindHttpService(null);
+  this.httpService=httpService;
+  this.port=getPortFromConfig();
+  try {
+    HttpContext base=httpService.createDefaultHttpContext();
+    HttpContext secure=new SecureHttpContext(base,realm,role);
+    String basePath=System.getProperty("karaf.data") + File.separator + "git"+ File.separator;
+    String fabricGitPath=basePath + "fabric";
+    File fabricRoot=new File(fabricGitPath);
+    if (!fabricRoot.exists() && !fabricRoot.mkdirs()) {
+      throw new FileNotFoundException("Could not found git root:" + basePath);
+    }
+    Dictionary<String,Object> initParams=new Hashtable<String,Object>();
+    initParams.put("base-path",basePath);
+    initParams.put("repository-root",basePath);
+    initParams.put("export-all","true");
+    httpService.registerServlet("/git",gitServlet,initParams,secure);
+    if (connected) {
+      singleton.join(createState());
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.error("Error while registering git servlet",e);
+  }
+}

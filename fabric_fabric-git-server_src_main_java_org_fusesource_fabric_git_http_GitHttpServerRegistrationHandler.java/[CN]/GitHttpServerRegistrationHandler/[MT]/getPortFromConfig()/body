@@ -1,0 +1,16 @@
+{
+  String port="8181";
+  try {
+    Configuration[] configurations=configurationAdmin.listConfigurations("(" + Constants.SERVICE_PID + "=org.ops4j.pax.web)");
+    if (configurations != null && configurations.length > 0) {
+      Configuration configuration=configurations[0];
+      Dictionary properties=configuration.getProperties();
+      if (properties != null && properties.get("org.osgi.service.http.port") != null) {
+        port=String.valueOf(properties.get("org.osgi.service.http.port"));
+      }
+    }
+  }
+ catch (  Exception e) {
+  }
+  return port;
+}

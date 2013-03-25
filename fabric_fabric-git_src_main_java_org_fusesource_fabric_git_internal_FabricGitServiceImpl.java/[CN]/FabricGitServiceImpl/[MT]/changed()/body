@@ -1,0 +1,14 @@
+{
+  GitNode[] masters=watcher.masters();
+  if (masters == null || masters.length == 0) {
+    return;
+  }
+  try {
+    StoredConfig config=get().getRepository().getConfig();
+    config.setString("remote","origin","url",ZooKeeperUtils.getSubstitutedData(zookeeper,masters[0].getUrl()));
+    config.save();
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to point origin to the new master.",e);
+  }
+}
