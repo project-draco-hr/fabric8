@@ -1,0 +1,15 @@
+{
+  String address=(c.getCustomer().getAddress().get(0) != null) ? c.getCustomer().getAddress().get(0) : "Unknown address";
+  XMLGregorianCalendar birthDate=c.getCustomer().getBirthDate();
+  Customer customer=new Customer();
+  customer.setName(c.getCustomer().getName());
+  customer.getAddress().add(address);
+  customer.setBirthDate(birthDate);
+  customer.setNumOrders(randomGenerator.nextInt(100));
+  customer.setRevenue(randomGenerator.nextInt(10000));
+  customer.setType(CustomerType.PRIVATE);
+  customer.setTest(BigDecimal.valueOf(100.00));
+  customers.add(customer);
+  log.info(">> Customer created and added in the array.");
+  return customer;
+}
