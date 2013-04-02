@@ -1,16 +1,3 @@
 {
-  try {
-    Map<String,Map<String,String>> configurations=new HashMap<String,Map<String,String>>();
-    Map<String,byte[]> configs=getFileConfigurations();
-    for (    Map.Entry<String,byte[]> entry : configs.entrySet()) {
-      if (entry.getKey().endsWith(".properties")) {
-        String pid=stripSuffix(entry.getKey(),".properties");
-        configurations.put(pid,getConfiguration(pid));
-      }
-    }
-    return configurations;
-  }
- catch (  Exception e) {
-    throw new FabricException(e);
-  }
+  return getService().getProfileDataStore().getConfigurations(version,id);
 }

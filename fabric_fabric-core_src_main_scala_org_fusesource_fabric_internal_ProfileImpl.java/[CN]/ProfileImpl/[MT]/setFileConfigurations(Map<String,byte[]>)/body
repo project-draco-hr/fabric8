@@ -2,45 +2,5 @@
   if (isLocked()) {
     throw new UnsupportedOperationException("The profile " + id + " is locked and can not be modified");
   }
-  try {
-    IZKClient zooKeeper=service.getZooKeeper();
-    Map<String,byte[]> oldCfgs=getFileConfigurations();
-    String path=getPath(version,id);
-    for (    Map.Entry<String,byte[]> entry : configurations.entrySet()) {
-      String pid=entry.getKey();
-      oldCfgs.remove(pid);
-      byte[] newCfg=entry.getValue();
-      String configPath=path + "/" + pid;
-      if (zooKeeper.exists(configPath) != null && zooKeeper.getChildren(configPath).size() > 0) {
-        List<String> kids=zooKeeper.getChildren(configPath);
-        ArrayList<String> saved=new ArrayList<String>();
-        for (        String line : new String(newCfg).split("\n")) {
-          if (line.startsWith("#") || line.length() == 0) {
-            continue;
-          }
-          String nameValue[]=line.split("=",2);
-          if (nameValue.length < 2) {
-            continue;
-          }
-          String newPath=configPath + "/" + nameValue[0].trim();
-          ZooKeeperUtils.set(zooKeeper,newPath,nameValue[1].trim());
-          saved.add(nameValue[0].trim());
-        }
-        for (        String kid : kids) {
-          if (!saved.contains(kid)) {
-            zooKeeper.deleteWithChildren(configPath + "/" + kid);
-          }
-        }
-      }
- else {
-        ZooKeeperUtils.set(zooKeeper,configPath,newCfg);
-      }
-    }
-    for (    String pid : oldCfgs.keySet()) {
-      zooKeeper.deleteWithChildren(path + "/" + pid);
-    }
-  }
- catch (  Exception e) {
-    throw new FabricException(e);
-  }
+  getService().getProfileDataStore().setFileConfigurations(version,id,configurations);
 }

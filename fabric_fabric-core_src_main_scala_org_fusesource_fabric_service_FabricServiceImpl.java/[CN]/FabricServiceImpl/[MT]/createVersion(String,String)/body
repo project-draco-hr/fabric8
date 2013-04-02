@@ -1,9 +1,4 @@
 {
-  try {
-    ZooKeeperUtils.copy(zooKeeper,ZkPath.CONFIG_VERSION.getPath(parentVersionId),ZkPath.CONFIG_VERSION.getPath(toVersion));
-    return new VersionImpl(toVersion,this);
-  }
- catch (  Exception e) {
-    throw new FabricException(e);
-  }
+  getProfileDataStore().createVersion(parentVersionId,toVersion);
+  return new VersionImpl(toVersion,this);
 }

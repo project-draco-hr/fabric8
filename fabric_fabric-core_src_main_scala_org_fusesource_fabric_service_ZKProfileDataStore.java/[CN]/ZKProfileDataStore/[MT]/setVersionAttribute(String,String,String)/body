@@ -1,0 +1,16 @@
+{
+  try {
+    Properties props=getVersionAttributes(version);
+    if (value != null) {
+      props.setProperty(key,value);
+    }
+ else {
+      props.remove(key);
+    }
+    String node=ZkPath.CONFIG_VERSION.getPath(version);
+    ZooKeeperUtils.setProperties(zk,node,props);
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

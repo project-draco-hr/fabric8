@@ -1,0 +1,17 @@
+{
+  try {
+    String path=ZkProfiles.getPath(version,profile);
+    if (ZooKeeperUtils.exists(zk,path) == null) {
+      if (!create) {
+        return null;
+      }
+ else {
+        return createProfile(version,profile);
+      }
+    }
+    return profile;
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

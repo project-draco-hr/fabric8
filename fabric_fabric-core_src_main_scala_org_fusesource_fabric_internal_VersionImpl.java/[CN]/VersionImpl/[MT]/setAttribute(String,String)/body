@@ -1,16 +1,3 @@
 {
-  try {
-    Properties props=getAttributes();
-    if (value != null) {
-      props.setProperty(key,value);
-    }
- else {
-      props.remove(key);
-    }
-    String node=ZkPath.CONFIG_VERSION.getPath(name);
-    ZooKeeperUtils.setProperties(service.getZooKeeper(),node,props);
-  }
- catch (  Exception e) {
-    throw new FabricException(e);
-  }
+  service.getProfileDataStore().setVersionAttribute(name,key,value);
 }

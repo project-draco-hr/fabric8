@@ -1,9 +1,3 @@
 {
-  try {
-    String node=ZkPath.CONFIG_VERSION.getPath(name);
-    return ZooKeeperUtils.getProperties(service.getZooKeeper(),node);
-  }
- catch (  Exception e) {
-    throw new FabricException(e);
-  }
+  return service.getProfileDataStore().getVersionAttributes(name);
 }

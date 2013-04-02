@@ -1,0 +1,14 @@
+{
+  try {
+    if (zk != null && zk.isConnected() && ZooKeeperUtils.exists(zk,ZkPath.CONFIG_VERSION.getPath(name)) == null) {
+      return null;
+    }
+    return name;
+  }
+ catch (  FabricException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

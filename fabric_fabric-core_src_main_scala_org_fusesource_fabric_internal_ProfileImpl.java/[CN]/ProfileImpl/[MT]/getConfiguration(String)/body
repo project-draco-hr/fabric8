@@ -1,9 +1,0 @@
-{
-  IZKClient zooKeeper=service.getZooKeeper();
-  String path=getPath(version,id) + "/" + pid+ ".properties";
-  if (zooKeeper.exists(path) == null) {
-    return null;
-  }
-  byte[] data=zooKeeper.getData(path);
-  return toMap(toProperties(data));
-}

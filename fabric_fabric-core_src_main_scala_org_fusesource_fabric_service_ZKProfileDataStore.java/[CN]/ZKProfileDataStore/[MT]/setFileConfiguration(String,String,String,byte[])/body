@@ -1,0 +1,33 @@
+{
+  try {
+    String path=ZkProfiles.getPath(version,profile);
+    String configPath=path + "/" + pid;
+    if (ZooKeeperUtils.exists(zk,configPath) != null && zk.getChildren(configPath).size() > 0) {
+      List<String> kids=zk.getChildren(configPath);
+      ArrayList<String> saved=new ArrayList<String>();
+      for (      String line : new String(configuration).split("\n")) {
+        if (line.startsWith("#") || line.length() == 0) {
+          continue;
+        }
+        String nameValue[]=line.split("=",2);
+        if (nameValue.length < 2) {
+          continue;
+        }
+        String newPath=configPath + "/" + nameValue[0].trim();
+        ZooKeeperRetriableUtils.set(zk,newPath,nameValue[1].trim());
+        saved.add(nameValue[0].trim());
+      }
+      for (      String kid : kids) {
+        if (!saved.contains(kid)) {
+          zk.deleteWithChildren(configPath + "/" + kid);
+        }
+      }
+    }
+ else {
+      ZooKeeperRetriableUtils.set(zk,configPath,configuration);
+    }
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

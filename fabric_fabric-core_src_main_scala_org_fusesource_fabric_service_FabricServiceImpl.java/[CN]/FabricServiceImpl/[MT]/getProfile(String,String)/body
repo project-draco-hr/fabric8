@@ -1,12 +1,6 @@
 {
-  try {
-    String path=getPath(version,name);
-    if (zooKeeper.exists(path) == null) {
-      return null;
-    }
+  if (getProfileDataStore().getProfile(version,name) != null) {
     return new ProfileImpl(name,version,this);
   }
- catch (  Exception e) {
-    throw new FabricException(e);
-  }
+  throw new FabricException("Profile '" + name + "' does not exist in version '"+ version+ "'.");
 }

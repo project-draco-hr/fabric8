@@ -1,0 +1,11 @@
+{
+  try {
+    List<String> profiles=new ArrayList<String>();
+    profiles.addAll(zk.getChildren(ZkPath.CONFIG_ENSEMBLE_PROFILES.getPath()));
+    profiles.addAll(zk.getChildren(ZkPath.CONFIG_VERSIONS_PROFILES.getPath(version)));
+    return profiles;
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

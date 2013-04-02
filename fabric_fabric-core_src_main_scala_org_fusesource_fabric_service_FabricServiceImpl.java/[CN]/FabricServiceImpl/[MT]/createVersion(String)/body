@@ -1,10 +1,4 @@
 {
-  try {
-    zooKeeper.createWithParents(ZkPath.CONFIG_VERSION.getPath(version),CreateMode.PERSISTENT);
-    zooKeeper.createWithParents(ZkPath.CONFIG_VERSIONS_PROFILES.getPath(version),CreateMode.PERSISTENT);
-    return new VersionImpl(version,this);
-  }
- catch (  Exception e) {
-    throw new FabricException(e);
-  }
+  getProfileDataStore().createVersion(version);
+  return new VersionImpl(version,this);
 }

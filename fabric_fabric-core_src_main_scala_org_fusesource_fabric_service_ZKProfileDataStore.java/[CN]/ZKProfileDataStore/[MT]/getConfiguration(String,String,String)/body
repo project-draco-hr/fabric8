@@ -1,0 +1,8 @@
+{
+  String path=ZkProfiles.getPath(version,profile) + "/" + pid+ ".properties";
+  if (ZooKeeperUtils.exists(zk,path) == null) {
+    return null;
+  }
+  byte[] data=zk.getData(path);
+  return DataStoreHelpers.toMap(DataStoreHelpers.toProperties(data));
+}
