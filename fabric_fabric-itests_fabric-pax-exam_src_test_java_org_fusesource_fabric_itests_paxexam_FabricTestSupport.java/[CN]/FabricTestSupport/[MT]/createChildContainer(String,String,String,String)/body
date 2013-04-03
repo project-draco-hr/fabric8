@@ -17,7 +17,7 @@
     }
     Container container=metadata[0].getContainer();
     Version version=fabricService.getDefaultVersion();
-    Profile profile=fabricService.getProfile(version.getName(),profileName);
+    Profile profile=version.getProfile(profileName);
     assertNotNull("Expected to find profile with name:" + profileName,profile);
     container.setProfiles(new Profile[]{profile});
     waitForProvisionSuccess(container,PROVISION_TIMEOUT);

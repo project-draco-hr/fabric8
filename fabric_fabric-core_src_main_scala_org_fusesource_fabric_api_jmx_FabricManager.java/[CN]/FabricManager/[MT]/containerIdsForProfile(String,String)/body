@@ -1,5 +1,6 @@
 {
-  Profile profile=getFabricService().getProfile(versionId,profileId);
+  Version version=getFabricService().getVersion(versionId);
+  Profile profile=version != null ? version.getProfile(profileId) : null;
   if (profile != null) {
     return new ArrayList<String>();
   }

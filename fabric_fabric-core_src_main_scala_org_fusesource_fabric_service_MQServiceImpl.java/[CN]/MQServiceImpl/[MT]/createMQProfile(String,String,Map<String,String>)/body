@@ -1,12 +1,13 @@
 {
-  Profile parentProfile=fabricService.getProfile(version,MQ_PROFILE_BASE);
+  Version version=fabricService.getVersion(versionId);
+  Profile parentProfile=version.getProfile(MQ_PROFILE_BASE);
   String pidName="org.fusesource.mq.fabric.server-" + brokerName;
   Profile result=parentProfile;
   if (brokerName != null) {
-    result=fabricService.getProfile(version,brokerName);
+    result=version.getProfile(brokerName);
     Map config=null;
     if (result == null) {
-      result=fabricService.createProfile(version,brokerName);
+      result=version.createProfile(brokerName);
       result.setParents(new Profile[]{parentProfile});
     }
  else {
