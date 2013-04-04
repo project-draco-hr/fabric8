@@ -16,31 +16,12 @@
     if (provider == null) {
       throw new FabricException("Unable to find a container provider supporting '" + options.getProviderType() + "'");
     }
-    Container parent=options.getParent() != null ? getContainer(options.getParent()) : null;
     Set<? extends CreateContainerMetadata> metadatas=provider.create(options);
     for (    CreateContainerMetadata metadata : metadatas) {
       if (metadata.isSuccess()) {
+        Container parent=options.getParent() != null ? getContainer(options.getParent()) : null;
         if (!options.isEnsembleServer()) {
-          getDataStore().createContainerConfig(parent != null ? parent.getId() : "",metadata.getContainerName());
-          ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_METADATA.getPath(metadata.getContainerName()),Base64Encoder.encode(ObjectUtils.toBytes(metadata)));
-          Map<String,String> configuration=metadata.getContainerConfiguration();
-          for (          Map.Entry<String,String> entry : configuration.entrySet()) {
-            String key=entry.getKey();
-            String value=entry.getValue();
-            ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_ENTRY.getPath(metadata.getContainerName(),key),value);
-          }
-          if (options.getResolver() == null && zooKeeper.exists(ZkPath.CONTAINER_RESOLVER.getPath(metadata.getContainerName())) != null) {
-            options.setResolver(zooKeeper.getStringData(ZkPath.CONTAINER_RESOLVER.getPath(metadata.getContainerName())));
-          }
- else           if (options.getResolver() != null) {
-          }
- else           if (zooKeeper.exists(ZkPath.POLICIES.getPath(ZkDefs.RESOLVER)) != null) {
-            options.setResolver(zooKeeper.getStringData(ZkPath.POLICIES.getPath(ZkDefs.RESOLVER)));
-          }
- else {
-            options.setResolver(ZkDefs.DEFAULT_RESOLVER);
-          }
-          ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_RESOLVER.getPath(metadata.getContainerName()),options.getResolver());
+          getDataStore().createContainerConfig(metadata);
         }
         ContainerImpl container=new ContainerImpl(parent,metadata.getContainerName(),FabricServiceImpl.this);
         metadata.setContainer(container);

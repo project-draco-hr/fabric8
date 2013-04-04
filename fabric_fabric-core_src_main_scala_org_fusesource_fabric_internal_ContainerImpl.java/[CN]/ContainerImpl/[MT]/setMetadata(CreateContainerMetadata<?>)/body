@@ -1,11 +1,3 @@
 {
   this.metadata=metadata;
-  try {
-    byte[] metadataBytes=ObjectUtils.toBytes(metadata);
-    byte[] encoded=Base64Encoder.encode(metadataBytes);
-    setAttribute(DataStore.ContainerAttribute.Metadata,new String(encoded,Base64Encoder.base64CharSet));
-  }
- catch (  Exception e) {
-    logger.warn("Error while storing metadata. This exception will be ignored.",e);
-  }
 }

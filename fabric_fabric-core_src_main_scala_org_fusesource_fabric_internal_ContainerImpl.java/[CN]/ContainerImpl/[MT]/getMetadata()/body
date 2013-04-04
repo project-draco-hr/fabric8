@@ -1,12 +1,7 @@
 {
   try {
     if (metadata == null) {
-      String encoded=getOptionalAttribute(DataStore.ContainerAttribute.Metadata,null);
-      if (encoded != null) {
-        byte[] decoded=Base64Encoder.decode(encoded).getBytes(Base64Encoder.base64CharSet);
-        ObjectInputStream ois=new ObjectInputStream(new ByteArrayInputStream(decoded));
-        metadata=(CreateContainerMetadata)ois.readObject();
-      }
+      metadata=service.getDataStore().getContainerMetadata(id);
     }
     return metadata;
   }
