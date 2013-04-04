@@ -20,7 +20,7 @@
       createLocalServer(2181,options);
       return;
     }
-    String version=getProfileDataStore().getDefaultVersion();
+    String version=getDataStore().getDefaultVersion();
     for (    String container : containers) {
       Container c=fabricService.getContainer(container);
       if (ZooKeeperRetriableUtils.exists(zooKeeper,ZkPath.CONTAINER_ALIVE.getPath(container)) == null) {
@@ -36,7 +36,7 @@
     if (oldClusterId != null) {
       String profile="fabric-ensemble-" + oldClusterId;
       String pid="org.fusesource.fabric.zookeeper.server-" + oldClusterId;
-      Map<String,String> p=getProfileDataStore().getConfiguration(version,profile,pid);
+      Map<String,String> p=getDataStore().getConfiguration(version,profile,pid);
       if (p == null) {
         throw new FabricException("Failed to find old cluster configuration for ID " + oldClusterId);
       }
@@ -47,7 +47,7 @@
           addUsedPorts(usedPorts,data);
         }
       }
-      Map<String,String> zkConfig=getProfileDataStore().getConfiguration(version,"default","org.fusesource.fabric.zookeeper");
+      Map<String,String> zkConfig=getDataStore().getConfiguration(version,"default","org.fusesource.fabric.zookeeper");
       if (zkConfig == null) {
         throw new FabricException("Failed to find old zookeeper configuration in default profile");
       }
@@ -63,9 +63,9 @@
  else {
       newClusterId=new DecimalFormat("0000").format(Integer.parseInt(oldClusterId) + 1);
     }
-    String ensembleProfile=getProfileDataStore().getProfile(version,"fabric-ensemble-" + newClusterId,true);
-    getProfileDataStore().setProfileAttribute(version,ensembleProfile,"abstract","true");
-    getProfileDataStore().setProfileAttribute(version,ensembleProfile,"hidden","true");
+    String ensembleProfile=getDataStore().getProfile(version,"fabric-ensemble-" + newClusterId,true);
+    getDataStore().setProfileAttribute(version,ensembleProfile,"abstract","true");
+    getDataStore().setProfileAttribute(version,ensembleProfile,"hidden","true");
     Properties ensembleProperties=new Properties();
     ensembleProperties.put("tickTime","2000");
     ensembleProperties.put("initLimit","10");
@@ -87,9 +87,9 @@
       }
       String ensembleMemberPid="org.fusesource.fabric.zookeeper.server-" + newClusterId + ".properties";
       Properties ensembleMemberProperties=new Properties();
-      String ensembleMemberProfile=getProfileDataStore().getProfile(version,"fabric-ensemble-" + newClusterId + "-"+ Integer.toString(index),true);
-      getProfileDataStore().setProfileAttribute(version,ensembleMemberProfile,"hidden","true");
-      getProfileDataStore().setProfileAttribute(version,ensembleMemberProfile,"parents",ensembleProfile);
+      String ensembleMemberProfile=getDataStore().getProfile(version,"fabric-ensemble-" + newClusterId + "-"+ Integer.toString(index),true);
+      getDataStore().setProfileAttribute(version,ensembleMemberProfile,"hidden","true");
+      getDataStore().setProfileAttribute(version,ensembleMemberProfile,"parents",ensembleProfile);
       String port1=Integer.toString(findPort(usedPorts,ip,mapPortToRange(Ports.DEFAULT_ZOOKEEPER_SERVER_PORT,minimumPort,maximumPort)));
       if (containers.size() > 1) {
         String port2=Integer.toString(findPort(usedPorts,ip,mapPortToRange(Ports.DEFAULT_ZOOKEEPER_PEER_PORT,minimumPort,maximumPort)));
@@ -98,7 +98,7 @@
         ensembleMemberProperties.put("server.id",Integer.toString(index));
       }
       ensembleMemberProperties.put("clientPort",port1);
-      getProfileDataStore().setFileConfiguration(version,ensembleMemberProfile,ensembleMemberPid,DataStoreHelpers.toBytes(ensembleMemberProperties));
+      getDataStore().setFileConfiguration(version,ensembleMemberProfile,ensembleMemberPid,DataStoreHelpers.toBytes(ensembleMemberProperties));
       ZooKeeperRetriableUtils.add(zooKeeper,"/fabric/configs/versions/" + version + "/containers/"+ container,"fabric-ensemble-" + newClusterId + "-"+ Integer.toString(index));
       if (connectionUrl.length() > 0) {
         connectionUrl+=",";
@@ -113,9 +113,9 @@
       index++;
     }
     String ensembleConfigName="org.fusesource.fabric.zookeeper.server-" + newClusterId;
-    getProfileDataStore().setFileConfiguration(version,ensembleProfile,ensembleConfigName,DataStoreHelpers.toBytes(ensembleProperties));
+    getDataStore().setFileConfiguration(version,ensembleProfile,ensembleConfigName,DataStoreHelpers.toBytes(ensembleProperties));
     if (oldClusterId != null) {
-      Properties properties=DataStoreHelpers.toProperties(getProfileDataStore().getConfiguration(version,"default","org.fusesource.fabric.zookeeper"));
+      Properties properties=DataStoreHelpers.toProperties(getDataStore().getConfiguration(version,"default","org.fusesource.fabric.zookeeper"));
       properties.put("zookeeper.url",ZooKeeperRetriableUtils.getSubstitutedData(zooKeeper,realConnectionUrl));
       properties.put("zookeeper.password",options.getZookeeperPassword());
       OsgiZkClient dst=new OsgiZkClient();

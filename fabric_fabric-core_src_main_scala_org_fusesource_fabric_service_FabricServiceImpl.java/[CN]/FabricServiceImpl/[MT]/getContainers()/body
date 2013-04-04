@@ -1,28 +1,23 @@
 {
-  try {
-    Map<String,Container> containers=new HashMap<String,Container>();
-    List<String> configs=zooKeeper.getChildren(ZkPath.CONFIGS_CONTAINERS.getPath());
-    for (    String name : configs) {
-      String parentId=getParentOf(name);
-      if (parentId.isEmpty()) {
-        if (!containers.containsKey(name)) {
-          Container container=new ContainerImpl(null,name,this);
-          containers.put(name,container);
-        }
-      }
- else {
-        Container parent=containers.get(parentId);
-        if (parent == null) {
-          parent=new ContainerImpl(null,parentId,this);
-          containers.put(parentId,parent);
-        }
-        Container container=new ContainerImpl(parent,name,this);
-        containers.put(name,container);
+  Map<String,Container> containers=new HashMap<String,Container>();
+  List<String> containerIds=getDataStore().getContainers();
+  for (  String containerId : containerIds) {
+    String parentId=getDataStore().getContainerParent(containerId);
+    if (parentId.isEmpty()) {
+      if (!containers.containsKey(containerId)) {
+        Container container=new ContainerImpl(null,containerId,this);
+        containers.put(containerId,container);
       }
     }
-    return containers.values().toArray(new Container[containers.size()]);
+ else {
+      Container parent=containers.get(parentId);
+      if (parent == null) {
+        parent=new ContainerImpl(null,parentId,this);
+        containers.put(parentId,parent);
+      }
+      Container container=new ContainerImpl(parent,containerId,this);
+      containers.put(containerId,container);
+    }
   }
- catch (  Exception e) {
-    throw new FabricException(e);
-  }
+  return containers.values().toArray(new Container[containers.size()]);
 }

@@ -1,0 +1,16 @@
+{
+  try {
+    FabricRequirements answer=null;
+    if (zk.exists(REQUIREMENTS_JSON_PATH) != null) {
+      String json=zk.getStringData(REQUIREMENTS_JSON_PATH);
+      answer=RequirementsJson.fromJSON(json);
+    }
+    if (answer == null) {
+      answer=new FabricRequirements();
+    }
+    return answer;
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

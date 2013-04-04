@@ -21,7 +21,7 @@
     for (    CreateContainerMetadata metadata : metadatas) {
       if (metadata.isSuccess()) {
         if (!options.isEnsembleServer()) {
-          createContainerConfig(parent != null ? parent.getId() : "",metadata.getContainerName());
+          getDataStore().createContainerConfig(parent != null ? parent.getId() : "",metadata.getContainerName());
           ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_METADATA.getPath(metadata.getContainerName()),Base64Encoder.encode(ObjectUtils.toBytes(metadata)));
           Map<String,String> configuration=metadata.getContainerConfiguration();
           for (          Map.Entry<String,String> entry : configuration.entrySet()) {
@@ -42,8 +42,9 @@
           }
           ZooKeeperUtils.set(zooKeeper,ZkPath.CONTAINER_RESOLVER.getPath(metadata.getContainerName()),options.getResolver());
         }
-        metadata.setContainer(new ContainerImpl(parent,metadata.getContainerName(),FabricServiceImpl.this));
-        ((ContainerImpl)metadata.getContainer()).setMetadata(metadata);
+        ContainerImpl container=new ContainerImpl(parent,metadata.getContainerName(),FabricServiceImpl.this);
+        metadata.setContainer(container);
+        container.setMetadata(metadata);
         LOGGER.info("The container " + metadata.getContainerName() + " has been successfully created");
       }
  else {

@@ -1,11 +1,3 @@
 {
-  try {
-    return service.getZooKeeper().exists(ZkPath.CONTAINER_ALIVE.getPath(id)) != null;
-  }
- catch (  KeeperException.NoNodeException e) {
-    return false;
-  }
-catch (  Exception e) {
-    throw new FabricException(e);
-  }
+  return service.getDataStore().isContainerAlive(id);
 }

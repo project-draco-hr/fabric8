@@ -1,0 +1,11 @@
+{
+  try {
+    return zk.getStringData(ZkPath.CONTAINER_PARENT.getPath(containerId)).trim();
+  }
+ catch (  KeeperException.NoNodeException e) {
+    return "";
+  }
+catch (  Throwable e) {
+    throw new FabricException(e);
+  }
+}

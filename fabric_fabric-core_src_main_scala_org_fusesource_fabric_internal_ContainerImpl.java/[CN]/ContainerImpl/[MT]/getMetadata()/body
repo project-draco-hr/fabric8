@@ -1,8 +1,8 @@
 {
   try {
     if (metadata == null) {
-      if (service.getZooKeeper().exists(ZkPath.CONTAINER_METADATA.getPath(id)) != null) {
-        String encoded=service.getZooKeeper().getStringData(ZkPath.CONTAINER_METADATA.getPath(id));
+      String encoded=getOptionalAttribute(DataStore.ContainerAttribute.Metadata,null);
+      if (encoded != null) {
         byte[] decoded=Base64Encoder.decode(encoded).getBytes(Base64Encoder.base64CharSet);
         ObjectInputStream ois=new ObjectInputStream(new ByteArrayInputStream(decoded));
         metadata=(CreateContainerMetadata)ois.readObject();

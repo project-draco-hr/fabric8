@@ -1,17 +1,9 @@
 {
   int minimumPort=0;
   try {
-    if (service.getZooKeeper().exists(ZkPath.CONTAINER_PORT_MIN.getPath(id)) != null) {
-      minimumPort=Integer.parseInt(service.getZooKeeper().getStringData(ZkPath.CONTAINER_PORT_MIN.getPath(id)));
-    }
+    minimumPort=Integer.parseInt(getOptionalAttribute(DataStore.ContainerAttribute.PortMin,"0"));
   }
- catch (  InterruptedException e) {
-    throw new FabricException(e);
-  }
-catch (  KeeperException e) {
-    throw new FabricException(e);
-  }
-catch (  NumberFormatException e) {
+ catch (  NumberFormatException e) {
   }
   return minimumPort;
 }

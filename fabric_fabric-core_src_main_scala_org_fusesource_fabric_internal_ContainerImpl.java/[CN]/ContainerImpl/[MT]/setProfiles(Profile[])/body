@@ -1,33 +1,21 @@
 {
-  try {
-    String version=service.getZooKeeper().getStringData(ZkPath.CONFIG_CONTAINER.getPath(id));
-    String node=ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,id);
-    List<String> existingProfiles=Arrays.asList(service.getZooKeeper().getStringData(node).split(" "));
-    StringBuilder sb=new StringBuilder();
-    if (profiles != null) {
-      for (      Profile profile : profiles) {
-        if (!version.equals(profile.getVersion())) {
-          throw new IllegalArgumentException("Version mismatch setting profile " + profile.getId() + " with version "+ profile.getVersion()+ " expected version "+ version);
-        }
- else         if (profile.isAbstract()) {
-          throw new IllegalArgumentException("The profile " + profile.getId() + " is abstract and can not "+ "be associated to containers");
-        }
- else         if (profile.getId().matches(ENSEMBLE_PROFILE_PATTERN) && !existingProfiles.contains(profile.getId())) {
-          throw new IllegalArgumentException("The profile " + profile.getId() + " is not assignable.");
-        }
-        if (sb.length() > 0) {
-          sb.append(" ");
-        }
-        sb.append(profile.getId());
-      }
+  String versionId=service.getDataStore().getContainerVersion(id);
+  List<String> currentProfileIds=service.getDataStore().getContainerProfiles(id);
+  List<String> profileIds=new ArrayList<String>();
+  for (  Profile profile : profiles) {
+    if (!versionId.equals(profile.getVersion())) {
+      throw new IllegalArgumentException("Version mismatch setting profile " + profile.getId() + " with version "+ profile.getVersion()+ " expected version "+ versionId);
     }
-    String str=sb.toString();
-    if (str.trim().isEmpty()) {
-      str="default";
+ else     if (profile.isAbstract()) {
+      throw new IllegalArgumentException("The profile " + profile.getId() + " is abstract and can not "+ "be associated to containers");
     }
-    service.getZooKeeper().setData(node,str);
+ else     if (profile.getId().matches(ENSEMBLE_PROFILE_PATTERN) && !currentProfileIds.contains(profile.getId())) {
+      throw new IllegalArgumentException("The profile " + profile.getId() + " is not assignable.");
+    }
+    profileIds.add(profile.getId());
   }
- catch (  Exception e) {
-    throw new FabricException(e);
+  if (profileIds.isEmpty()) {
+    profileIds.add(ZkDefs.DEFAULT_PROFILE);
   }
+  service.getDataStore().setContainerProfiles(id,profileIds);
 }

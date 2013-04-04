@@ -1,3 +1,8 @@
 {
-  return service.getProfiles(name);
+  List<String> names=service.getDataStore().getProfiles(id);
+  List<Profile> profiles=new ArrayList<Profile>();
+  for (  String name : names) {
+    profiles.add(new ProfileImpl(name,id,service));
+  }
+  return profiles.toArray(new Profile[profiles.size()]);
 }

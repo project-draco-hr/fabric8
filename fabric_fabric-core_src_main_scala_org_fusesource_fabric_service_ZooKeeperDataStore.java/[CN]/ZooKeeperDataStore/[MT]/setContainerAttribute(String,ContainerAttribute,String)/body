@@ -1,0 +1,26 @@
+{
+  if (attribute == ContainerAttribute.Resolver) {
+    try {
+      ZooKeeperUtils.set(zk,ZkPath.CONTAINER_IP.getPath(containerId),"${zk:" + containerId + "/"+ value+ "}");
+      ZooKeeperUtils.set(zk,ZkPath.CONTAINER_RESOLVER.getPath(containerId),value);
+    }
+ catch (    Exception e) {
+      throw new FabricException(e);
+    }
+  }
+ else {
+    try {
+      if (value == null) {
+        ZooKeeperUtils.deleteSafe(zk,getAttributePath(containerId,attribute));
+      }
+ else {
+        ZooKeeperUtils.set(zk,getAttributePath(containerId,attribute),value);
+      }
+    }
+ catch (    KeeperException.NoNodeException e) {
+    }
+catch (    Exception e) {
+      throw new FabricException(e);
+    }
+  }
+}

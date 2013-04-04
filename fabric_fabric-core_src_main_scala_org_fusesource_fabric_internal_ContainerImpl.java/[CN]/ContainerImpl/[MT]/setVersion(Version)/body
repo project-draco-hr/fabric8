@@ -1,26 +1,9 @@
 {
-  try {
-    Version curretVersion=getVersion();
-    Profile[] profiles=getProfiles();
+  if (version.compareTo(getVersion()) != 0) {
     if (requiresUpgrade(version) && isManaged()) {
-      if (version.compareTo(curretVersion) > 0) {
-        ZooKeeperUtils.set(service.getZooKeeper(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(getId()),"upgrading");
-      }
- else {
-        ZooKeeperUtils.set(service.getZooKeeper(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(getId()),"downgrading");
-      }
+      String status=version.compareTo(getVersion()) > 0 ? "upgrading" : "downgrading";
+      service.getDataStore().setContainerAttribute(id,DataStore.ContainerAttribute.ProvisionStatus,status);
     }
-    StringBuilder sb=new StringBuilder();
-    for (int i=0; i < profiles.length; i++) {
-      if (i > 0) {
-        sb.append(" ");
-      }
-      sb.append(profiles[i].getId());
-    }
-    ZooKeeperUtils.set(service.getZooKeeper(),ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version.getName(),id),sb.toString());
-    ZooKeeperUtils.set(service.getZooKeeper(),ZkPath.CONFIG_CONTAINER.getPath(id),version.getName());
-  }
- catch (  Exception e) {
-    throw new RuntimeException(e);
+    service.getDataStore().setContainerVersion(id,version.getId());
   }
 }

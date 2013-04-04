@@ -57,38 +57,38 @@
     tracker.close();
     client.waitForConnected();
     if (autoImportFrom != null) {
-      getProfileDataStore().importFromFileSystem(autoImportFrom);
+      getDataStore().importFromFileSystem(autoImportFrom);
     }
-    getProfileDataStore().setDefaultVersion(version);
-    String defaultProfile=getProfileDataStore().getProfile(version,"default",true);
+    getDataStore().setDefaultVersion(version);
+    String defaultProfile=getDataStore().getProfile(version,"default",true);
     ZooKeeperRetriableUtils.set(client,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),"${zk:" + karafName + "/ip}:"+ Integer.toString(mappedPort));
     ZooKeeperRetriableUtils.set(client,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
     Properties zkProps=new Properties();
     zkProps.setProperty("zookeeper.url","${zk:" + ZkPath.CONFIG_ENSEMBLE_URL.getPath() + "}");
     zkProps.setProperty("zookeeper.password","${zk:" + ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath() + "}");
-    getProfileDataStore().setFileConfiguration(version,defaultProfile,"org.fusesource.fabric.zookeeper.properties",DataStoreHelpers.toBytes(zkProps));
-    String ensembleProfile=getProfileDataStore().getProfile(version,"fabric-ensemble-0000",true);
-    getProfileDataStore().setProfileAttribute(version,ensembleProfile,"abstract","true");
-    getProfileDataStore().setProfileAttribute(version,ensembleProfile,"hidden","true");
+    getDataStore().setFileConfiguration(version,defaultProfile,"org.fusesource.fabric.zookeeper.properties",DataStoreHelpers.toBytes(zkProps));
+    String ensembleProfile=getDataStore().getProfile(version,"fabric-ensemble-0000",true);
+    getDataStore().setProfileAttribute(version,ensembleProfile,"abstract","true");
+    getDataStore().setProfileAttribute(version,ensembleProfile,"hidden","true");
     Properties ensembleProps=new Properties();
     ensembleProps.put("tickTime","2000");
     ensembleProps.put("initLimit","10");
     ensembleProps.put("syncLimit","5");
     ensembleProps.put("dataDir","data/zookeeper/0000");
     loadPropertiesFrom(ensembleProps,autoImportFrom + "/fabric/configs/versions/1.0/profiles/default/org.fusesource.fabric.zookeeper.server.properties");
-    getProfileDataStore().setFileConfiguration(version,ensembleProfile,"org.fusesource.fabric.zookeeper.server-0000.properties",DataStoreHelpers.toBytes(ensembleProps));
-    String ensembleServerProfile=getProfileDataStore().getProfile(version,"fabric-ensemble-0000-1",true);
-    getProfileDataStore().setProfileAttribute(version,ensembleServerProfile,"hidden","true");
-    getProfileDataStore().setProfileAttribute(version,ensembleServerProfile,"parents",ensembleProfile);
+    getDataStore().setFileConfiguration(version,ensembleProfile,"org.fusesource.fabric.zookeeper.server-0000.properties",DataStoreHelpers.toBytes(ensembleProps));
+    String ensembleServerProfile=getDataStore().getProfile(version,"fabric-ensemble-0000-1",true);
+    getDataStore().setProfileAttribute(version,ensembleServerProfile,"hidden","true");
+    getDataStore().setProfileAttribute(version,ensembleServerProfile,"parents",ensembleProfile);
     Properties serverProps=new Properties();
     serverProps.put("clientPort",String.valueOf(mappedPort));
-    getProfileDataStore().setFileConfiguration(version,ensembleServerProfile,"org.fusesource.fabric.zookeeper.server-0000.properties",DataStoreHelpers.toBytes(serverProps));
+    getDataStore().setFileConfiguration(version,ensembleServerProfile,"org.fusesource.fabric.zookeeper.server-0000.properties",DataStoreHelpers.toBytes(serverProps));
     ZooKeeperRetriableUtils.set(client,ZkPath.CONFIG_ENSEMBLES.getPath(),"0000");
     ZooKeeperRetriableUtils.set(client,ZkPath.CONFIG_ENSEMBLE.getPath("0000"),karafName);
-    String fabricProfile=getProfileDataStore().getProfile(version,"fabric",true);
-    Properties agentProps=DataStoreHelpers.toProperties(getProfileDataStore().getFileConfiguration(version,fabricProfile,"org.fusesource.fabric.agent.properties"));
+    String fabricProfile=getDataStore().getProfile(version,"fabric",true);
+    Properties agentProps=DataStoreHelpers.toProperties(getDataStore().getFileConfiguration(version,fabricProfile,"org.fusesource.fabric.agent.properties"));
     agentProps.put("feature.fabric-commands","fabric-commands");
-    getProfileDataStore().setFileConfiguration(version,"fabric","org.fusesource.fabric.agent.properties",DataStoreHelpers.toBytes(agentProps));
+    getDataStore().setFileConfiguration(version,"fabric","org.fusesource.fabric.agent.properties",DataStoreHelpers.toBytes(agentProps));
     ZooKeeperRetriableUtils.createDefault(client,ZkPath.CONFIG_CONTAINER.getPath(karafName),version);
     String assignedProfile=System.getProperty(SystemProperties.PROFILE);
     if (assignedProfile != null && !assignedProfile.isEmpty() && !"fabric".equals(assignedProfile)) {
@@ -99,7 +99,7 @@
     }
     Map<String,String> configs=new HashMap<String,String>();
     configs.put("encryption.enabled","${zk:/fabric/authentication/encryption.enabled}");
-    getProfileDataStore().setConfiguration(version,defaultProfile,"org.fusesource.fabric.jaas",configs);
+    getDataStore().setConfiguration(version,defaultProfile,"org.fusesource.fabric.jaas",configs);
     ZooKeeperRetriableUtils.createDefault(client,"/fabric/authentication/encryption.enabled","true");
     ZooKeeperRetriableUtils.createDefault(client,"/fabric/authentication/domain","karaf");
     addUsersToZookeeper(client,options.getUsers());

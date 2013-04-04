@@ -1,13 +1,3 @@
 {
-  try {
-    if (zooKeeper.isConnected() && zooKeeper.exists(JVM_OPTIONS_PATH) != null) {
-      return zooKeeper.getStringData(JVM_OPTIONS_PATH);
-    }
- else {
-      return "";
-    }
-  }
- catch (  Exception e) {
-    throw new FabricException(e);
-  }
+  return getDataStore().getDefaultJvmOptions();
 }

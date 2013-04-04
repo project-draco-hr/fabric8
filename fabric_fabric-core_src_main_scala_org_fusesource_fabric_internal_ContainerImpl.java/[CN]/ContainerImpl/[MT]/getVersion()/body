@@ -1,12 +1,7 @@
 {
-  try {
-    String version=getZkData(ZkPath.CONFIG_CONTAINER);
-    if (version == null) {
-      return null;
-    }
-    return new VersionImpl(version,service);
+  String versionId=service.getDataStore().getContainerVersion(id);
+  if (versionId == null) {
+    return null;
   }
- catch (  Exception e) {
-    throw new RuntimeException(e);
-  }
+  return new VersionImpl(versionId,service);
 }

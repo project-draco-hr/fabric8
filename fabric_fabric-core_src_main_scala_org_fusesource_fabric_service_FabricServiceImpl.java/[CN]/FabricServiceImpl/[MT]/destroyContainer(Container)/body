@@ -4,13 +4,7 @@
   ContainerProvider provider=getProvider(container);
   provider.destroy(container);
   try {
-    for (    Version version : getVersions()) {
-      ZooKeeperUtils.deleteSafe(zooKeeper,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version.getName(),containerId));
-    }
-    ZooKeeperUtils.deleteSafe(zooKeeper,ZkPath.CONFIG_CONTAINER.getPath(containerId));
-    ZooKeeperUtils.deleteSafe(zooKeeper,ZkPath.CONTAINER.getPath(containerId));
-    ZooKeeperUtils.deleteSafe(zooKeeper,ZkPath.CONTAINER_DOMAINS.getPath(containerId));
-    ZooKeeperUtils.deleteSafe(zooKeeper,ZkPath.CONTAINER_PROVISION.getPath(containerId));
+    getDataStore().deleteContainer(container.getId());
   }
  catch (  Exception e) {
     LOGGER.warn("Failed to cleanup container {} entries due to: {}. This will be ignored.",containerId,e.getMessage());

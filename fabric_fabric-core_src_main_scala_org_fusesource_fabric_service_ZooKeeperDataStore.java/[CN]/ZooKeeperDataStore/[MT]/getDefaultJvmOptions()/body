@@ -1,0 +1,13 @@
+{
+  try {
+    if (zk.isConnected() && zk.exists(JVM_OPTIONS_PATH) != null) {
+      return zk.getStringData(JVM_OPTIONS_PATH);
+    }
+ else {
+      return "";
+    }
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}
