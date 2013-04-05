@@ -1,14 +1,14 @@
 {
   try {
-    IZKClient zk;
+    FabricService fs;
     if (force) {
-      zk=(IZKClient)zkClient.waitForService(0);
+      fs=fabricService.waitForService(0);
     }
  else {
-      zk=(IZKClient)zkClient.getService();
+      fs=fabricService.getService();
     }
-    if (zk != null) {
-      String name=System.getProperty(SystemProperties.KARAF_NAME);
+    if (fs != null) {
+      Container container=fs.getCurrentContainer();
       String e;
       if (result == null) {
         e=null;
@@ -19,17 +19,17 @@
         e=sw.toString();
       }
       if (resources != null) {
-        StringWriter sw=new StringWriter();
+        List<String> uris=new ArrayList<String>();
         for (        Resource res : resources) {
-          sw.write(res.getURI() + "\n");
+          uris.add(res.getURI());
         }
-        zk.createOrSetWithParents(ZkPath.CONTAINER_PROVISION_LIST.getPath(name),sw.toString(),CreateMode.PERSISTENT);
+        container.setProvisionList(uris);
       }
-      zk.createOrSetWithParents(ZkPath.CONTAINER_PROVISION_RESULT.getPath(name),status,CreateMode.PERSISTENT);
-      zk.createOrSetWithParents(ZkPath.CONTAINER_PROVISION_EXCEPTION.getPath(name),e,CreateMode.PERSISTENT);
+      container.setProvisionResult(status);
+      container.setProvisionException(e);
     }
  else {
-      LOGGER.info("ZooKeeper not available");
+      LOGGER.info("FabricService not available");
     }
   }
  catch (  Throwable e) {
