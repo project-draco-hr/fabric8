@@ -1,0 +1,33 @@
+{
+  String id=CONTAINER_ID;
+  String version="1.0";
+  expect(izkClient.getStringData(ZkPath.CONFIG_CONTAINER.getPath(id))).andReturn(version).anyTimes();
+  expect(izkClient.exists(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"camel"))).andReturn(new Stat()).anyTimes();
+  expect(izkClient.exists(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"cxf"))).andReturn(new Stat()).anyTimes();
+  expect(izkClient.exists(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"esb"))).andReturn(new Stat()).anyTimes();
+  expect(izkClient.getStringData(ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,id))).andReturn("esb").anyTimes();
+  expect(izkClient.getStringData(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"esb"))).andReturn("parents=cxf camel\n").anyTimes();
+  expect(izkClient.getStringData(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"cxf"))).andReturn(null).anyTimes();
+  expect(izkClient.getStringData(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"camel"))).andReturn(null).anyTimes();
+  expect(izkClient.getChildren(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"esb"))).andReturn(Collections.<String>emptyList()).anyTimes();
+  expect(izkClient.getChildren(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"cxf"))).andReturn(Arrays.asList(new String[]{"pid1.properties","pid2.properties"})).anyTimes();
+  expect(izkClient.getChildren(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"camel"))).andReturn(Arrays.asList(new String[]{"pid1.properties"})).anyTimes();
+  expect(izkClient.exists(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"cxf") + "/pid1.properties")).andReturn(new Stat()).anyTimes();
+  expect(izkClient.exists(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"cxf") + "/pid2.properties")).andReturn(new Stat()).anyTimes();
+  expect(izkClient.exists(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"camel") + "/pid1.properties")).andReturn(new Stat()).anyTimes();
+  expect(izkClient.getData(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"cxf") + "/pid1.properties")).andReturn("k1=v1\nk2=v2".getBytes()).anyTimes();
+  expect(izkClient.getData(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"cxf") + "/pid2.properties")).andReturn("k3=v3".getBytes()).anyTimes();
+  expect(izkClient.getData(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,"camel") + "/pid1.properties")).andReturn("k1=v4".getBytes()).anyTimes();
+  replay(izkClient);
+  Map<String,Map<String,String>> configs=container.getOverlayProfile().getConfigurations();
+  assertNotNull(configs);
+  assertEquals(2,configs.size());
+  assertNotNull(configs.get("pid1"));
+  assertEquals(2,configs.get("pid1").size());
+  assertEquals("v4",configs.get("pid1").get("k1"));
+  assertEquals("v2",configs.get("pid1").get("k2"));
+  assertNotNull(configs.get("pid2"));
+  assertEquals(1,configs.get("pid2").size());
+  assertEquals("v3",configs.get("pid2").get("k3"));
+  verify(izkClient);
+}
