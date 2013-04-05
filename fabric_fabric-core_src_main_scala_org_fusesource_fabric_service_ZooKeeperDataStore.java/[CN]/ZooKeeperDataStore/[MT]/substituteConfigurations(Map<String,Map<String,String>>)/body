@@ -1,0 +1,43 @@
+{
+  for (  Map.Entry<String,Map<String,String>> entry : configs.entrySet()) {
+    Map<String,String> props=entry.getValue();
+    InterpolationHelper.performSubstitution(props,new InterpolationHelper.SubstitutionCallback(){
+      public String getValue(      String key){
+        if (key.startsWith("zk:")) {
+          try {
+            return new String(ZookeeperCommandBuilder.loadUrl(key).execute(zk),"UTF-8");
+          }
+ catch (          KeeperException.NoNodeException e) {
+            return key;
+          }
+catch (          Exception e) {
+            throw new FabricException(e);
+          }
+        }
+ else         if (key.startsWith("profile:")) {
+          String pid=key.substring("profile:".length(),key.indexOf("/"));
+          String propertyKey=key.substring(key.indexOf("/") + 1);
+          Map<String,String> targetProps=configs.get(pid);
+          if (targetProps != null && targetProps.containsKey(propertyKey)) {
+            return targetProps.get(propertyKey);
+          }
+ else {
+            return key;
+          }
+        }
+ else {
+          String value="";
+          BundleContext context=getBundleContext();
+          if (context != null) {
+            value=context.getProperty(key);
+          }
+          if (value == null) {
+            value=System.getProperty(key,"");
+          }
+          return value;
+        }
+      }
+    }
+);
+  }
+}

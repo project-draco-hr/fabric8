@@ -9,6 +9,9 @@
         rc.put(DataStoreHelpers.stripSuffix(entry.getKey(),".properties"),DataStoreHelpers.toMap(ctrl.props));
       }
     }
+    if (substitute && dataStore != null) {
+      dataStore.substituteConfigurations(rc);
+    }
     return rc;
   }
  catch (  Exception e) {
