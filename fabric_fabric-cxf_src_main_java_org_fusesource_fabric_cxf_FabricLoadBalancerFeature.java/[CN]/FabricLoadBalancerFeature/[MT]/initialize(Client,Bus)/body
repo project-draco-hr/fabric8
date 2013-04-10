@@ -1,13 +1,5 @@
 {
-  LoadBalanceTargetSelector selector=getDefaultLoadBalanceTargetSelector();
-  selector.setEndpoint(client.getEndpoint());
-  try {
-    selector.setLoadBalanceStrategy(getLoadBalanceStrategy());
-    client.setConduitSelector(selector);
-  }
- catch (  Exception e) {
-    LOG.error("Cannot setup the LoadBalanceStrategy due to " + e);
-  }
+  setupClientConduitSelector(client);
   BusLifeCycleManager manager=bus.getExtension(BusLifeCycleManager.class);
   manager.registerLifeCycleListener(this);
 }
