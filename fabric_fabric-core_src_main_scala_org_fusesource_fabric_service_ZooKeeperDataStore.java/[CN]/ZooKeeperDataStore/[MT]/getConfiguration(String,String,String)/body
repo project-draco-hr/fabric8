@@ -1,8 +1,13 @@
 {
-  String path=ZkProfiles.getPath(version,profile) + "/" + pid+ ".properties";
-  if (ZooKeeperUtils.exists(zk,path) == null) {
-    return null;
+  try {
+    String path=ZkProfiles.getPath(version,profile) + "/" + pid+ ".properties";
+    if (ZooKeeperUtils.exists(zk,path) == null) {
+      return null;
+    }
+    byte[] data=zk.getData(path);
+    return DataStoreHelpers.toMap(DataStoreHelpers.toProperties(data));
   }
-  byte[] data=zk.getData(path);
-  return DataStoreHelpers.toMap(DataStoreHelpers.toProperties(data));
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
 }
