@@ -5,7 +5,10 @@
     ObjectInputStream ois=new ObjectInputStream(new ByteArrayInputStream(decoded));
     return (CreateContainerMetadata)ois.readObject();
   }
- catch (  Exception e) {
+ catch (  KeeperException.NoNodeException e) {
+    return null;
+  }
+catch (  Exception e) {
     throw new FabricException(e);
   }
 }
