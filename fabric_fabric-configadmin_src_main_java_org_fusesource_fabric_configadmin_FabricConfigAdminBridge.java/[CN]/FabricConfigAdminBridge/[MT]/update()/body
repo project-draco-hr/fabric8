@@ -11,6 +11,9 @@
       configs.remove(config);
       Dictionary props=config.getProperties();
       Hashtable old=props != null ? new Hashtable() : null;
+      if (pid.equals(AGENT_PID)) {
+        c.put(LAST_MODIFIED,String.valueOf(profile.getLastModfied()));
+      }
       if (old != null) {
         for (Enumeration e=props.keys(); e.hasMoreElements(); ) {
           Object key=e.nextElement();

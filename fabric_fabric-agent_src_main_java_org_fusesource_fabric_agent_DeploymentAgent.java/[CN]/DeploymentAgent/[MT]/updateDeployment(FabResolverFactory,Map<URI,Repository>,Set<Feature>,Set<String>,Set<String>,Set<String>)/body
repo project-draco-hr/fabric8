@@ -61,7 +61,7 @@
       for (      Resource res : toDeploy) {
         if (res.getSymbolicName().equals(bundle.getSymbolicName())) {
           if (res.getVersion().equals(bundle.getVersion())) {
-            if (res.getVersion().getQualifier().endsWith("SNAPSHOT")) {
+            if (isUpdateable(res)) {
               InputStream is=null;
               try {
                 is=getBundleInputStream(res,downloads,infos);
@@ -178,7 +178,7 @@
     Bundle bundle=systemBundleContext.installBundle(resource.getURI(),is);
     toRefresh.add(bundle);
     resToBnd.put(resource,bundle);
-    if (bundle.getVersion().getQualifier().endsWith("SNAPSHOT") && !newCheckums.containsKey(bundle.getLocation())) {
+    if (bundle.getVersion().getQualifier().endsWith(SNAPSHOT) && !newCheckums.containsKey(bundle.getLocation())) {
       newCheckums.put(bundle.getLocation(),Long.toString(ChecksumUtils.checksum(getBundleInputStream(resource,downloads,infos))));
     }
   }

@@ -1,0 +1,13 @@
+{
+  long lastModified=0;
+  List<String> children=zooKeeper.getChildren(path);
+  if (children.isEmpty()) {
+    return zooKeeper.exists(path).getMtime();
+  }
+ else {
+    for (    String child : children) {
+      lastModified=Math.max(getLastModified(zooKeeper,path + "/" + child),lastModified);
+    }
+  }
+  return lastModified;
+}

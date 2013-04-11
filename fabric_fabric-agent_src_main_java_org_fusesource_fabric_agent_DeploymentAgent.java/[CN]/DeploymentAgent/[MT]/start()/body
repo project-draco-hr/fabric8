@@ -8,7 +8,7 @@
   }
   for (  Bundle bundle : systemBundleContext.getBundles()) {
     try {
-      if (bundle.getLocation().endsWith("SNAPSHOT")) {
+      if (isUpdateable(bundle)) {
         org.fusesource.fabric.agent.mvn.Parser parser=new org.fusesource.fabric.agent.mvn.Parser(bundle.getLocation());
         String systemPath=System.getProperty("karaf.home") + File.separator + "system"+ File.separator+ parser.getArtifactPath().substring(4);
         String agentDownloadsPath=System.getProperty("karaf.data") + "/maven/agent" + File.separator+ parser.getArtifactPath().substring(4);
