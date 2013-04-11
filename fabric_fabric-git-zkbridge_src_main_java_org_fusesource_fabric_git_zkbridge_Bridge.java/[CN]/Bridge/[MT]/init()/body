@@ -1,0 +1,14 @@
+{
+  executors=Executors.newSingleThreadScheduledExecutor();
+  executors.scheduleWithFixedDelay(new Runnable(){
+    @Override public void run(){
+      try {
+        update(gitService.get(),zookeeper);
+      }
+ catch (      Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+,period,period,TimeUnit.MILLISECONDS);
+}

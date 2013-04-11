@@ -1,0 +1,149 @@
+{
+  String remoteName="origin";
+  boolean remoteAvailable=false;
+  try {
+    FetchCommand fetch=git.fetch();
+    fetch.setRemote(remoteName);
+    fetch.call();
+    remoteAvailable=true;
+  }
+ catch (  Exception e) {
+  }
+  List<String> zkVersions=zookeeper.getChildren(ZkPath.CONFIG_VERSIONS.getPath());
+  for (  String version : zkVersions) {
+    String zkNode=ZkPath.CONFIG_VERSION.getPath(version);
+    List<Ref> allBranches=git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call();
+    Ref local=null;
+    Ref remote=null;
+    Ref tmp=null;
+    for (    Ref ref : allBranches) {
+      if (ref.getName().equals("refs/remotes/" + remoteName + "/"+ version)) {
+        remote=ref;
+      }
+ else       if (ref.getName().equals("refs/heads/" + version)) {
+        local=ref;
+      }
+ else       if (ref.getName().equals("refs/heads/" + version + "-tmp")) {
+        tmp=ref;
+      }
+    }
+    if (local == null) {
+      git.branchCreate().setName(version).call();
+    }
+    if (tmp == null) {
+      tmp=git.branchCreate().setName(version + "-tmp").call();
+    }
+    git.clean().setCleanDirectories(true).call();
+    if (remote != null) {
+      git.rebase().setUpstream(remote.getObjectId()).call();
+    }
+    git.checkout().setName(version + "-tmp").setForce(true).call();
+    Properties versionProps=new Properties();
+    String versionAttrs=zookeeper.getStringData(zkNode);
+    if (versionAttrs != null) {
+      versionProps.load(new StringReader(versionAttrs));
+    }
+    String gitCommit=versionProps.remove("git");
+    if (gitCommit != null) {
+      git.reset().setMode(ResetCommand.ResetType.HARD).setRef(gitCommit).call();
+    }
+    versionProps.save(new File(git.getRepository().getWorkTree(),".metadata"));
+    git.add().addFilepattern(".metadata").call();
+    List<String> existingProfiles=list(git.getRepository().getWorkTree());
+    existingProfiles.remove(".git");
+    existingProfiles.remove(".metadata");
+    existingProfiles.remove("containers.properties");
+    for (    String profile : zookeeper.getChildren(zkNode + "/profiles")) {
+      Properties profileProps=new Properties();
+      String profileAttrs=zookeeper.getStringData(zkNode + "/profiles/" + profile);
+      if (profileAttrs != null) {
+        profileProps.load(new StringReader(profileAttrs));
+      }
+      File profileDir=new File(git.getRepository().getWorkTree(),profile);
+      profileDir.mkdirs();
+      profileProps.save(new File(git.getRepository().getWorkTree(),profile + "/" + ".metadata"));
+      git.add().addFilepattern(profile + "/" + ".metadata").call();
+      List<String> files=list(profileDir);
+      files.remove(".metadata");
+      for (      String file : zookeeper.getChildren(zkNode + "/profiles/" + profile)) {
+        byte[] data=zookeeper.getData(zkNode + "/profiles/" + profile+ "/"+ file);
+        Files.writeToFile(new File(git.getRepository().getWorkTree(),profile + "/" + file),data);
+        files.remove(file);
+        git.add().addFilepattern(profile + "/" + file).call();
+      }
+      for (      String file : files) {
+        new File(profileDir,file).delete();
+        git.rm().addFilepattern(profile + "/" + file).call();
+      }
+      existingProfiles.remove(profile);
+    }
+    for (    String profile : existingProfiles) {
+      delete(new File(git.getRepository().getWorkTree(),profile));
+      git.rm().addFilepattern(profile).call();
+    }
+    Properties containerProps=new Properties();
+    for (    String container : zookeeper.getChildren(zkNode + "/containers")) {
+      String str=zookeeper.getStringData(zkNode + "/containers/" + container);
+      if (str != null) {
+        containerProps.setProperty(container,str);
+      }
+    }
+    containerProps.save(new File(git.getRepository().getWorkTree(),"containers.properties"));
+    git.add().addFilepattern("containers.properties").call();
+    ObjectId rev=git.getRepository().getRef("HEAD").getObjectId();
+    boolean nochange=git.status().call().isClean();
+    if (!nochange) {
+      rev=git.commit().setMessage("Merge zookeeper update").call().getId();
+    }
+    git.checkout().setName(version).setForce(true).call();
+    if (!nochange) {
+      MergeResult result=git.merge().setStrategy(MergeStrategy.OURS).include(rev).call();
+      rev=result.getNewHead();
+    }
+    if (remoteAvailable) {
+      git.push().setRefSpecs(new RefSpec(version)).call();
+    }
+    List<String> profiles=list(git.getRepository().getWorkTree());
+    profiles.remove(".git");
+    profiles.remove(".metadata");
+    profiles.remove("containers.properties");
+    byte[] versionMetadata=read(new File(git.getRepository().getWorkTree(),".metadata"));
+    ZooKeeperUtils.set(zookeeper,zkNode,versionMetadata);
+    existingProfiles=zookeeper.getChildren(zkNode + "/profiles");
+    for (    String profile : profiles) {
+      byte[] profileMetadata=read(new File(git.getRepository().getWorkTree(),profile + "/" + ".metadata"));
+      ZooKeeperUtils.set(zookeeper,zkNode + "/profiles/" + profile,profileMetadata);
+      List<String> nodes=zookeeper.getChildren(zkNode + "/profiles/" + profile);
+      List<String> files=list(new File(git.getRepository().getWorkTree(),profile));
+      files.remove(".metadata");
+      for (      String file : files) {
+        byte[] data=read(new File(git.getRepository().getWorkTree(),profile + "/" + file));
+        ZooKeeperUtils.set(zookeeper,zkNode + "/profiles/" + profile+ "/"+ file,data);
+        nodes.remove(file);
+      }
+      for (      String file : nodes) {
+        zookeeper.delete(zkNode + "/profiles/" + profile+ "/"+ file);
+      }
+      existingProfiles.remove(profile);
+    }
+    for (    String profile : existingProfiles) {
+      ZooKeeperUtils.deleteSafe(zookeeper,zkNode + "/profiles/" + profile);
+    }
+    containerProps.clear();
+    if (new File(git.getRepository().getWorkTree(),"containers.properties").isFile()) {
+      containerProps.load(new File(git.getRepository().getWorkTree(),"containers.properties"));
+    }
+    for (    String container : containerProps.keySet()) {
+      ZooKeeperUtils.set(zookeeper,zkNode + "/containers/" + container,containerProps.getProperty(container));
+    }
+    for (    String container : zookeeper.getChildren(zkNode + "/containers")) {
+      if (!containerProps.containsKey(container)) {
+        ZooKeeperUtils.deleteSafe(zookeeper,zkNode + "/containers/" + container);
+      }
+    }
+    versionProps.put("git",rev.name());
+    StringWriter sw=new StringWriter();
+    versionProps.save(sw);
+    zookeeper.setData(zkNode,sw.toString());
+  }
+}
