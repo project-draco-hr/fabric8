@@ -1,0 +1,21 @@
+{
+  sfb=new ZKServerFactoryBean();
+  delete(sfb.getDataDir());
+  delete(sfb.getDataLogDir());
+  sfb.afterPropertiesSet();
+  ZKClient zk=new ZKClient("localhost:" + sfb.getClientPortAddress().getPort(),new Timespan(3600000),null);
+  zk.start();
+  zookeeper=zk;
+  File root=new File(System.getProperty("basedir",".") + "/target/git").getCanonicalFile();
+  delete(root);
+  new File(root,"remote").mkdirs();
+  remote=Git.init().setDirectory(new File(root,"remote")).call();
+  remote.commit().setMessage("First Commit").setCommitter("fabric","user@fabric").call();
+  new File(root,"local").mkdirs();
+  git=Git.init().setDirectory(new File(root,"local")).call();
+  git.commit().setMessage("First Commit").setCommitter("fabric","user@fabric").call();
+  StoredConfig config=git.getRepository().getConfig();
+  config.setString("remote","origin","url","file://" + new File(root,"remote").getCanonicalPath());
+  config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
+  config.save();
+}
