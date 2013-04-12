@@ -1,9 +1,12 @@
 {
+  singleton.add(this);
   executors=Executors.newSingleThreadScheduledExecutor();
   executors.scheduleWithFixedDelay(new Runnable(){
     @Override public void run(){
       try {
-        update(gitService.get(),zookeeper);
+        if (singleton.isMaster() && gitService != null) {
+          update(gitService.get(),zookeeper);
+        }
       }
  catch (      Exception e) {
         if (LOGGER.isDebugEnabled()) {

@@ -1,0 +1,13 @@
+{
+  if (singleton.isMaster()) {
+    LOGGER.info("Git/zk bridge is active");
+  }
+ else {
+    LOGGER.info("Git/zk bridge is inactive");
+  }
+  try {
+    singleton.update(createState());
+  }
+ catch (  IllegalStateException e) {
+  }
+}
