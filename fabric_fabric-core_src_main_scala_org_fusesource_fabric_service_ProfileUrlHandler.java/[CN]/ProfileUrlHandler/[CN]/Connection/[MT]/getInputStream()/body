@@ -1,12 +1,11 @@
 {
-  String profileId=getProfileFromUrl(url);
-  String path=getProfileResourceFromUrl(url);
-  Profile profile=fabricService.getCurrentContainer().getVersion().getProfile(profileId);
+  String path=url.getPath();
+  Profile profile=fabricService.getCurrentContainer().getOverlayProfile();
   if (profile.getFileConfigurations().containsKey(path)) {
     byte[] b=profile.getFileConfigurations().get(path);
     return new ByteArrayInputStream(b);
   }
  else {
-    throw new IllegalArgumentException("Resource " + path + " does not exist for the profile:"+ profileId);
+    throw new IllegalArgumentException("Resource " + path + " does not exist in the profile overlay.");
   }
 }
