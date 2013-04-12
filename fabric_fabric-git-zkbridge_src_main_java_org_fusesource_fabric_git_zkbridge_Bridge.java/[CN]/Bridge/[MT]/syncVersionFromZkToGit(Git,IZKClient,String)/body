@@ -1,0 +1,44 @@
+{
+  Properties versionProps=loadProps(zookeeper,zkNode);
+  versionProps.save(new File(git.getRepository().getWorkTree(),METADATA));
+  git.add().addFilepattern(METADATA).call();
+  List<String> gitProfiles=list(git.getRepository().getWorkTree());
+  gitProfiles.remove(".git");
+  gitProfiles.remove(METADATA);
+  gitProfiles.remove("containers.properties");
+  List<String> zkProfiles=zookeeper.getChildren(zkNode + "/profiles");
+  for (  String profile : zkProfiles) {
+    File profileDir=new File(git.getRepository().getWorkTree(),profile);
+    profileDir.mkdirs();
+    Properties profileProps=loadProps(zookeeper,zkNode + "/profiles/" + profile);
+    profileProps.save(new File(git.getRepository().getWorkTree(),profile + "/" + METADATA));
+    git.add().addFilepattern(profile + "/" + METADATA).call();
+    List<String> gitConfigs=list(profileDir);
+    gitConfigs.remove(METADATA);
+    List<String> zkConfigs=zookeeper.getChildren(zkNode + "/profiles/" + profile);
+    for (    String file : zkConfigs) {
+      byte[] data=zookeeper.getData(zkNode + "/profiles/" + profile+ "/"+ file);
+      Files.writeToFile(new File(git.getRepository().getWorkTree(),profile + "/" + file),data);
+      gitConfigs.remove(file);
+      git.add().addFilepattern(profile + "/" + file).call();
+    }
+    for (    String file : gitConfigs) {
+      new File(profileDir,file).delete();
+      git.rm().addFilepattern(profile + "/" + file).call();
+    }
+    gitProfiles.remove(profile);
+  }
+  for (  String profile : gitProfiles) {
+    delete(new File(git.getRepository().getWorkTree(),profile));
+    git.rm().addFilepattern(profile).call();
+  }
+  Properties containerProps=new Properties();
+  for (  String container : zookeeper.getChildren(zkNode + "/containers")) {
+    String str=zookeeper.getStringData(zkNode + "/containers/" + container);
+    if (str != null) {
+      containerProps.setProperty(container,str);
+    }
+  }
+  containerProps.save(new File(git.getRepository().getWorkTree(),CONTAINERS_PROPERTIES));
+  git.add().addFilepattern(CONTAINERS_PROPERTIES).call();
+}
