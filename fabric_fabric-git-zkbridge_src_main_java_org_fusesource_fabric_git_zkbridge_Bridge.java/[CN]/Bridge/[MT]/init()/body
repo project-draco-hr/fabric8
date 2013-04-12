@@ -6,7 +6,12 @@
         update(gitService.get(),zookeeper);
       }
  catch (      Exception e) {
-        e.printStackTrace();
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("Unable to sync git/zookeeper",e);
+        }
+ else {
+          LOGGER.info("Unable to sync git / zookeeper: " + e.getClass().getName() + ": "+ e.getMessage());
+        }
       }
     }
   }

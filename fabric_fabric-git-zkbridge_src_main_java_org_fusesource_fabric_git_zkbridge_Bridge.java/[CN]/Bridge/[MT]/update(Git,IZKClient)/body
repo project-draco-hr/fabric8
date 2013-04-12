@@ -96,7 +96,7 @@
       git.checkout().setName(version).setForce(true).call();
     }
  else {
-      ObjectId rev=git.commit().setMessage("Merge zookeeper update").call().getId();
+      ObjectId rev=git.commit().setMessage("Merge zookeeper updates in version " + version).call().getId();
       git.checkout().setName(version).setForce(true).call();
       MergeResult result=git.merge().setStrategy(MergeStrategy.OURS).include(rev).call();
     }
