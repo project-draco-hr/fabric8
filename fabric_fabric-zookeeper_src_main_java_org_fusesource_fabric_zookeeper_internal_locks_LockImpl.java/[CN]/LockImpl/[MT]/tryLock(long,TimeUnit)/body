@@ -1,0 +1,24 @@
+{
+  long waitFor=unit.toMillis(time);
+  long start=System.currentTimeMillis();
+  try {
+    ZooKeeperUtils.createDefault(zooKeeper,path,"");
+    if (node == null) {
+      node=zooKeeper.create(ZkPath.LOCK.getPath(path),CreateMode.EPHEMERAL_SEQUENTIAL);
+    }
+    while (start + waitFor >= System.currentTimeMillis()) {
+      List<String> children=zooKeeper.getChildren(path);
+      String id=stripPath(node);
+      if (hasLock(id,children)) {
+        return true;
+      }
+ else {
+        doWaitForPath(path,start + waitFor - System.currentTimeMillis());
+      }
+    }
+  }
+ catch (  Exception ex) {
+    return false;
+  }
+  return false;
+}

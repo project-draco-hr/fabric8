@@ -1,0 +1,24 @@
+{
+  String id="00000002";
+  String competitor="00000001";
+  IZKClient zooKeeper=createMock(IZKClient.class);
+  String path="/my/lock";
+  final LockImpl lock=new LockImpl(zooKeeper,path);
+  expect(zooKeeper.exists(path)).andReturn(new Stat()).once();
+  expect(zooKeeper.create(ZkPath.LOCK.getPath(path),CreateMode.EPHEMERAL_SEQUENTIAL)).andReturn("/my/lock/" + id).once();
+  expect(zooKeeper.getChildren(path)).andReturn(Arrays.asList(id,competitor)).once();
+  expect(zooKeeper.exists(eq(path),EasyMock.<Watcher>anyObject())).andReturn(new Stat()).once();
+  expect(zooKeeper.getChildren(path)).andReturn(Arrays.asList(id)).once();
+  replay(zooKeeper);
+  new Thread(new Runnable(){
+    @Override public void run(){
+      assertTrue(lock.tryLock(10,TimeUnit.SECONDS));
+    }
+  }
+).start();
+  Thread.sleep(5000);
+synchronized (lock) {
+    lock.notifyAll();
+  }
+  verify(zooKeeper);
+}
