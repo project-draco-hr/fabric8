@@ -4,8 +4,16 @@
   executors.scheduleWithFixedDelay(new Runnable(){
     @Override public void run(){
       try {
-        if (singleton.isMaster() && gitService != null) {
-          update(gitService.get(),zookeeper);
+        if (gitService != null) {
+          String user="karaf";
+          String password="karaf";
+          CredentialsProvider cp=new UsernamePasswordCredentialsProvider(user,password);
+          if (singleton.isMaster()) {
+            update(gitService.get(),zookeeper,cp);
+          }
+ else {
+            updateLocal(gitService.get(),zookeeper,cp);
+          }
         }
       }
  catch (      Exception e) {
