@@ -20,5 +20,12 @@
   }
   createContainerOptions.setZookeeperPassword(getFabricService().getZookeeperPassword());
   createContainerOptions.setZookeeperUrl(getFabricService().getZookeeperUrl());
-  return getFabricService().createContainers(createContainerOptions);
+  CreateContainerMetadata<?> metadatas[]=getFabricService().createContainers(createContainerOptions);
+  Map<String,String> rc=new HashMap<String,String>();
+  for (  CreateContainerMetadata<?> metadata : metadatas) {
+    if (!metadata.isSuccess()) {
+      rc.put(metadata.getContainerName(),metadata.getFailure().getMessage());
+    }
+  }
+  return rc;
 }
