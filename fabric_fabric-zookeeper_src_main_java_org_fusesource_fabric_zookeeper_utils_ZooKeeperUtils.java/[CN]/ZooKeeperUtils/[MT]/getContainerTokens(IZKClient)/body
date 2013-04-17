@@ -1,0 +1,7 @@
+{
+  Properties props=new Properties();
+  for (  String key : zooKeeper.getChildren(CONTAINERS_NODE)) {
+    props.setProperty("container#" + key,zooKeeper.getStringData(CONTAINERS_NODE + "/" + key));
+  }
+  return props;
+}

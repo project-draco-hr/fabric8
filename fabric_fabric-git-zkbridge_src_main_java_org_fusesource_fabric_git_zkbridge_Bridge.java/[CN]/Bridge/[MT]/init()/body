@@ -5,9 +5,10 @@
     @Override public void run(){
       try {
         if (gitService != null) {
-          String user="karaf";
-          String password="karaf";
-          CredentialsProvider cp=new UsernamePasswordCredentialsProvider(user,password);
+          String container=System.getProperty("karaf.name");
+          String login=ZooKeeperUtils.getContainerLogin(container);
+          String token=ZooKeeperUtils.generateContainerToken(zookeeper,container);
+          CredentialsProvider cp=new UsernamePasswordCredentialsProvider(login,token);
           if (singleton.isMaster()) {
             update(gitService.get(),zookeeper,cp);
           }

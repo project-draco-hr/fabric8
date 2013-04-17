@@ -6,6 +6,12 @@
     remoteAvailable=true;
   }
  catch (  Exception e) {
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("Unable to fetch master",e);
+    }
+ else     if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Unable to fetch master: " + e.getClass().getName() + ": "+ e.getMessage());
+    }
   }
   Map<String,Ref> localBranches=new HashMap<String,Ref>();
   Map<String,Ref> remoteBranches=new HashMap<String,Ref>();
@@ -93,7 +99,12 @@
         git.reset().setMode(ResetCommand.ResetType.HARD).setRef(gitCommit).call();
       }
  catch (      Exception e) {
-        e.printStackTrace();
+        if (LOGGER.isTraceEnabled()) {
+          LOGGER.trace("Unable to reset branch to commit",e);
+        }
+ else         if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("Unable to reset branch to commit " + gitCommit + ": "+ e.getClass().getName()+ ": "+ e.getMessage());
+        }
       }
     }
     syncVersionFromZkToGit(git,zookeeper,zkNode);

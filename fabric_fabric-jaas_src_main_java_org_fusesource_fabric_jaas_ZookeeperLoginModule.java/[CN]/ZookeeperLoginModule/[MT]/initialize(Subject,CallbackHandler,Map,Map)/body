@@ -9,20 +9,20 @@
       try {
         zookeeper=(IZKClient)bundleContext.getService(serviceReference);
         users=ZooKeeperUtils.getProperties(zookeeper,ZookeeperBackingEngine.USERS_NODE);
+        containers=ZooKeeperUtils.getContainerTokens(zookeeper);
       }
  catch (      Exception e) {
         LOG.warn("Failed fetching authentication data.",e);
       }
  finally {
-        if (serviceReference != null) {
-          bundleContext.ungetService(serviceReference);
-        }
+        bundleContext.ungetService(serviceReference);
       }
     }
   }
  else {
     try {
       users=ZooKeeperUtils.getProperties(zookeeper,ZookeeperBackingEngine.USERS_NODE);
+      containers=ZooKeeperUtils.getContainerTokens(zookeeper);
     }
  catch (    Exception e) {
       LOG.warn("Failed fetching authentication data.",e);
