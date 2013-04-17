@@ -1,0 +1,22 @@
+{
+  String providerType=options.get("providerType");
+  if (providerType == null) {
+    throw new RuntimeException("No providerType provided");
+  }
+  CreateContainerOptions createContainerOptions=null;
+  ObjectMapper mapper=new ObjectMapper();
+  if (providerType.equals("child")) {
+    createContainerOptions=mapper.convertValue(options,CreateContainerChildOptions.class);
+    createContainerOptions.setResolver(null);
+  }
+ else   if (providerType.equals("ssh")) {
+    createContainerOptions=mapper.convertValue(options,CreateSshContainerOptions.class);
+  }
+ else   if (providerType.equals("jclouds")) {
+    createContainerOptions=mapper.convertValue(options,CreateJCloudsContainerOptions.class);
+  }
+  if (createContainerOptions == null) {
+    throw new RuntimeException("Unknown provider type : " + providerType);
+  }
+  return getFabricService().createContainers(createContainerOptions);
+}
