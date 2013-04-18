@@ -1,30 +1,41 @@
 {
   long waitFor=unit.toMillis(time);
   long start=System.currentTimeMillis();
+  LockData lockData;
+  String lockPath=null;
   try {
     ZooKeeperUtils.createDefault(zooKeeper,path,"");
     Thread current=Thread.currentThread();
-    LockData lockData=threadLocks.get(current);
+    lockData=threadLocks.get(current);
     if (lockData == null) {
-      String lockPath=zooKeeper.create(ZkPath.LOCK.getPath(path),CreateMode.EPHEMERAL_SEQUENTIAL);
+      lockPath=createLockNode(path);
+      zooKeeper.setData(lockPath,System.getProperty("karaf.name") + "/" + current.getName());
       lockData=new LockData(current,lockPath);
       threadLocks.put(current,lockData);
     }
-    lockData.getCount().incrementAndGet();
+ else {
+      lockData.getCount().incrementAndGet();
+      return true;
+    }
     while (start + waitFor >= System.currentTimeMillis()) {
-      List<String> children=zooKeeper.getChildren(path);
+      List<String> children=zooKeeper.getChildren(path,watcher);
       String id=stripPath(lockData.getLockPath());
       if (hasLock(id,children)) {
         return true;
       }
  else {
-        doWaitForPath(path,start + waitFor - System.currentTimeMillis());
+synchronized (this) {
+          wait(start + waitFor - System.currentTimeMillis());
+        }
       }
     }
+    threadLocks.remove(current);
+    deleteLockNode(lockPath);
+    return false;
   }
  catch (  Exception ex) {
     LOGGER.warn("Error while trying to acquire lock on: {}.",path,ex);
+    deleteLockNode(lockPath);
     return false;
   }
-  return false;
 }

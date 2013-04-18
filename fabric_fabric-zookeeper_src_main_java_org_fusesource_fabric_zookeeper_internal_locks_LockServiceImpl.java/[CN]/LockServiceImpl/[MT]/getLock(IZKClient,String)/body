@@ -1,3 +1,9 @@
 {
-  return new LockImpl(zooKeeper,path);
+  if (locks.containsKey(path)) {
+    return locks.get(path);
+  }
+ else {
+    locks.put(path,new LockImpl(zooKeeper,path));
+    return locks.get(path);
+  }
 }
