@@ -1,5 +1,5 @@
 {
-  logger.trace("handleNotification[{}]",notif);
+  LOGGER.trace("handleNotification[{}]",notif);
   if (isConnected() && mbeanServer != null && notif instanceof MBeanServerNotification) {
     MBeanServerNotification notification=(MBeanServerNotification)notif;
     String domain=notification.getMBeanName().getDomain();
@@ -14,12 +14,12 @@
         domains.clear();
         domains.addAll(Arrays.asList(mbeanServer.getDomains()));
         if (!domains.contains(domain)) {
-          zooKeeper.delete(path);
+          ZooKeeperUtils.deleteSafe(zooKeeper,path);
         }
       }
     }
  catch (    Exception e) {
-      logger.warn("Exception while jmx domain synchronization from event: " + notif + ". This exception will be ignored.",e);
+      LOGGER.warn("Exception while jmx domain synchronization from event: " + notif + ". This exception will be ignored.",e);
     }
   }
 }

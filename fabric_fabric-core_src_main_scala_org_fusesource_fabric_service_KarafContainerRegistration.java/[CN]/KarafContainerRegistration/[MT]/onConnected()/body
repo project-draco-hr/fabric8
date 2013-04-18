@@ -2,7 +2,7 @@
   final String name=System.getProperty(SystemProperties.KARAF_NAME);
   String version=System.getProperty("fabric.version",ZkDefs.DEFAULT_VERSION);
   String profiles=System.getProperty("fabric.profiles");
-  logger.trace("onConnected");
+  LOGGER.trace("onConnected");
   String nodeAlive=CONTAINER_ALIVE.getPath(name);
   try {
     if (profiles != null) {
@@ -48,6 +48,6 @@
     registerDomains();
   }
  catch (  Exception e) {
-    logger.warn("Error updating Fabric Container information. This exception will be ignored.",e);
+    LOGGER.warn("Error updating Fabric Container information. This exception will be ignored.",e);
   }
 }
