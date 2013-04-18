@@ -1,8 +1,9 @@
 {
   String path=url.getPath();
   Profile profile=fabricService.getCurrentContainer().getOverlayProfile();
-  if (profile.getFileConfigurations().containsKey(path)) {
-    byte[] b=profile.getFileConfigurations().get(path);
+  Map<String,byte[]> configs=profile.getFileConfigurations();
+  if (configs.containsKey(path)) {
+    byte[] b=configs.get(path);
     return new ByteArrayInputStream(b);
   }
  else {
