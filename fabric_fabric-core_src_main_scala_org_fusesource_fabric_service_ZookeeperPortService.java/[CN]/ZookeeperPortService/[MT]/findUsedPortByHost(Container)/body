@@ -1,0 +1,30 @@
+{
+  String ip=container.getIp();
+  HashSet<Integer> ports=new HashSet<Integer>();
+  String path=ZkPath.PORTS_IP.getPath(ip);
+  try {
+    if (lock.tryLock(60,TimeUnit.SECONDS)) {
+      ZooKeeperUtils.createDefault(zooKeeper,path,"");
+      String boundPorts=zooKeeper.getStringData(path);
+      if (boundPorts != null && !boundPorts.isEmpty()) {
+        for (        String port : boundPorts.split(" ")) {
+          try {
+            ports.add(Integer.parseInt(port.trim()));
+          }
+ catch (          NumberFormatException ex) {
+          }
+        }
+      }
+    }
+ else {
+      throw new FabricException("Could not acquire port lock");
+    }
+  }
+ catch (  Exception ex) {
+    throw new FabricException(ex);
+  }
+ finally {
+    lock.unlock();
+  }
+  return ports;
+}

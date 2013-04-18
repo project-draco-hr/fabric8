@@ -1,0 +1,22 @@
+{
+  String containerPortsPath=ZkPath.PORTS_CONTAINER.getPath(container.getId());
+  try {
+    if (lock.tryLock(60,TimeUnit.SECONDS)) {
+      if (zooKeeper.exists(containerPortsPath) != null) {
+        for (        String pid : zooKeeper.getChildren(containerPortsPath)) {
+          unRegisterPort(container,pid);
+        }
+        ZooKeeperUtils.deleteSafe(zooKeeper,containerPortsPath);
+      }
+    }
+ else {
+      throw new FabricException("Could not acquire port lock");
+    }
+  }
+ catch (  Exception ex) {
+    throw new FabricException(ex);
+  }
+ finally {
+    lock.unlock();
+  }
+}

@@ -1,0 +1,35 @@
+{
+  String containerPortsPidKeyPath=ZkPath.PORTS_CONTAINER_PID_KEY.getPath(container.getId(),pid,key);
+  String ipPortsPath=ZkPath.PORTS_IP.getPath(container.getIp());
+  try {
+    if (lock.tryLock(60,TimeUnit.SECONDS)) {
+      if (zooKeeper.exists(containerPortsPidKeyPath) != null) {
+        int port=lookupPort(container,pid,key);
+        ZooKeeperUtils.deleteSafe(zooKeeper,containerPortsPidKeyPath);
+        Set<Integer> allPorts=findUsedPortByHost(container);
+        allPorts.remove(port);
+        StringBuilder sb=new StringBuilder();
+        boolean first=true;
+        for (        Integer p : allPorts) {
+          if (first) {
+            sb.append(p);
+            first=false;
+          }
+ else {
+            sb.append(" ").append(p);
+          }
+        }
+        ZooKeeperUtils.set(zooKeeper,ipPortsPath,sb.toString());
+      }
+    }
+ else {
+      throw new FabricException("Could not acquire port lock");
+    }
+  }
+ catch (  Exception ex) {
+    throw new FabricException(ex);
+  }
+ finally {
+    lock.unlock();
+  }
+}

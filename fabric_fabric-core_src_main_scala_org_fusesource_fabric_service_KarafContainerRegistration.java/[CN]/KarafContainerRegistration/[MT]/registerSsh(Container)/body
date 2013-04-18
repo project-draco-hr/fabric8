@@ -1,0 +1,8 @@
+{
+  int sshPort=getSshPort(container);
+  String sshUrl=getSshUrl(container.getId(),sshPort);
+  ZooKeeperUtils.set(zooKeeper,CONTAINER_SSH.getPath(container.getId()),sshUrl);
+  fabricService.getPortService().registerPort(container,SSH_PID,SSH_KEY,sshPort);
+  Configuration configuration=configurationAdmin.getConfiguration(SSH_PID);
+  updateIfNeeded(configuration,SSH_KEY,sshPort);
+}

@@ -3,6 +3,7 @@
   LOGGER.info("Destroying container {}",containerId);
   ContainerProvider provider=getProvider(container);
   provider.destroy(container);
+  portService.unRegisterPort(container);
   try {
     getDataStore().deleteContainer(container.getId());
   }

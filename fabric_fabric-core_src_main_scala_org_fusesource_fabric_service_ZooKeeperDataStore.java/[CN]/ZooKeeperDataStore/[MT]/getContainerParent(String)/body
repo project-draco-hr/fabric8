@@ -1,10 +1,8 @@
 {
   try {
     String parent=zk.getStringData(ZkPath.CONTAINER_PARENT.getPath(containerId));
-    if (parent == null) {
-      return "";
-    }
-    return parent.trim();
+    String parentName=zk.getStringData(ZkPath.CONTAINER_PARENT.getPath(containerId));
+    return parentName != null ? parentName.trim() : "";
   }
  catch (  KeeperException.NoNodeException e) {
     return "";

@@ -1,0 +1,19 @@
+{
+  try {
+    return fabricService.getCurrentContainer();
+  }
+ catch (  Exception e) {
+    final String name=System.getProperty(SystemProperties.KARAF_NAME);
+    return new ContainerImpl(null,name,null){
+      @Override public String getIp(){
+        try {
+          return ZooKeeperUtils.getSubstitutedPath(zooKeeper,CONTAINER_IP.getPath(name));
+        }
+ catch (        Exception e) {
+          throw new FabricException(e);
+        }
+      }
+    }
+;
+  }
+}

@@ -1,0 +1,11 @@
+{
+  String pid=key.substring("profile:".length(),key.indexOf("/"));
+  String propertyKey=key.substring(key.indexOf("/") + 1);
+  Map<String,String> targetProps=configs.get(pid);
+  if (targetProps != null && targetProps.containsKey(propertyKey)) {
+    return targetProps.get(propertyKey);
+  }
+ else {
+    return key;
+  }
+}

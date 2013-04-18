@@ -1,0 +1,13 @@
+{
+  int port=0;
+  String path=ZkPath.PORTS_CONTAINER_PID_KEY.getPath(container.getId(),pid,key);
+  try {
+    if (zooKeeper.exists(path) != null) {
+      port=Integer.parseInt(zooKeeper.getStringData(path));
+    }
+  }
+ catch (  Exception ex) {
+    throw new FabricException(ex);
+  }
+  return port;
+}

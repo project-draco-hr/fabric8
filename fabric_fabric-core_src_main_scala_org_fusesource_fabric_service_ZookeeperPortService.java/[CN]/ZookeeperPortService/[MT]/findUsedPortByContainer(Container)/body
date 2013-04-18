@@ -1,0 +1,30 @@
+{
+  HashSet<Integer> ports=new HashSet<Integer>();
+  String path=ZkPath.PORTS_CONTAINER.getPath(container.getId());
+  try {
+    if (lock.tryLock(60,TimeUnit.SECONDS)) {
+      if (zooKeeper.exists(path) != null) {
+        for (        String pid : zooKeeper.getChildren(path)) {
+          for (          String key : zooKeeper.getChildren(ZkPath.PORTS_CONTAINER_PID.getPath(container.getId(),pid))) {
+            String port=zooKeeper.getStringData(ZkPath.PORTS_CONTAINER_PID_KEY.getPath(container.getId(),pid,key));
+            try {
+              ports.add(Integer.parseInt(port));
+            }
+ catch (            Exception ex) {
+            }
+          }
+        }
+      }
+    }
+ else {
+      throw new FabricException("Could not acquire port lock");
+    }
+  }
+ catch (  Exception ex) {
+    throw new FabricException(ex);
+  }
+ finally {
+    lock.unlock();
+  }
+  return ports;
+}
