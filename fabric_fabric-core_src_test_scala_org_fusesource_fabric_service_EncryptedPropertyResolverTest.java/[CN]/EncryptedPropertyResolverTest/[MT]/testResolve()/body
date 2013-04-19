@@ -1,0 +1,10 @@
+{
+  IZKClient zooKeeper=createMock(IZKClient.class);
+  expect(zooKeeper.getStringData(AUTHENTICATION_CRYPT_ALGORITHM.getPath())).andReturn("PBEWithMD5AndDES").anyTimes();
+  expect(zooKeeper.getStringData(AUTHENTICATION_CRYPT_PASSWORD.getPath())).andReturn("mypassword").anyTimes();
+  replay(zooKeeper);
+  EncryptedPropertyResolver resolver=new EncryptedPropertyResolver();
+  resolver.setZooKeeper(zooKeeper);
+  assertEquals("encryptedpassword",resolver.resolve(null,null,"crypt:URdoo9++D3tsoC9ODrTfLNK5WzviknO3Ig6qbI2HuvQ="));
+  verify(zooKeeper);
+}

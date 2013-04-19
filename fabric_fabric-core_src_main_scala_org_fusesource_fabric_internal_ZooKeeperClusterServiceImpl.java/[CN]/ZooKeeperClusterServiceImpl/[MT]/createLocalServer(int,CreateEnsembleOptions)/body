@@ -103,6 +103,8 @@
     ZooKeeperRetriableUtils.createDefault(client,"/fabric/authentication/encryption.enabled","true");
     ZooKeeperRetriableUtils.createDefault(client,"/fabric/authentication/domain","karaf");
     addUsersToZookeeper(client,options.getUsers());
+    ZooKeeperRetriableUtils.createDefault(client,ZkPath.AUTHENTICATION_CRYPT_ALGORITHM.getPath(),"PBEWithMD5AndDES");
+    ZooKeeperRetriableUtils.createDefault(client,ZkPath.AUTHENTICATION_CRYPT_PASSWORD.getPath(),options.getZookeeperPassword());
     ZookeeperCommandBuilder.fixAcls("/",true).execute(client);
     if (ensembleAutoStart) {
       System.setProperty(SystemProperties.ENSEMBLE_AUTOSTART,Boolean.FALSE.toString());
