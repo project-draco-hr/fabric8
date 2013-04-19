@@ -1,0 +1,12 @@
+{
+  bundleEvents.put(webEvent.getBundle(),webEvent);
+switch (webEvent.getType()) {
+case WebEvent.DEPLOYING:
+    break;
+case WebEvent.DEPLOYED:
+  registerWebapp(fabricService.getCurrentContainer(),webEvent);
+break;
+default :
+unRegisterWebapp(fabricService.getCurrentContainer(),webEvent);
+}
+}

@@ -1,0 +1,9 @@
+{
+  String url=container.getHttpUrl() + webEvent.getContextPath();
+  try {
+    ZooKeeperRetriableUtils.set(zooKeeper,ZkPath.WEBAPPS_CONTAINER.getPath(webEvent.getBundle().getSymbolicName(),webEvent.getBundle().getVersion().toString(),container.getId()),url);
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to register webapp {}.",webEvent.getContextPath(),e);
+  }
+}
