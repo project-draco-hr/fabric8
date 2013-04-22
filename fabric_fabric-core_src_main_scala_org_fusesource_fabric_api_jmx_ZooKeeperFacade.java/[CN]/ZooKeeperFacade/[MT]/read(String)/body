@@ -5,9 +5,14 @@
     return null;
   }
   int numChildren=exists.getNumChildren();
+  int dataLength=exists.getDataLength();
   List<String> children=null;
+  String data=null;
   if (numChildren > 0) {
     children=zk.getChildren(path);
   }
-  return new ZkContents(exists.getDataLength(),children);
+ else {
+    data=zk.getStringData(path);
+  }
+  return new ZkContents(dataLength,children,data);
 }
