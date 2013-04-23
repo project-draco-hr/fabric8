@@ -43,6 +43,10 @@
       newUserPassword=newUserPassword.substring(0,newUserPassword.indexOf(ROLE_DELIMITER));
     }
   }
+  if (newUser == null) {
+    System.out.println("No user specified. Cannot create a new fabric ensemble.");
+    return null;
+  }
   StringBuilder sb=new StringBuilder();
   if (session != null) {
     ShellUtils.storeFabricCredentials(session,newUser,newUserPassword);
