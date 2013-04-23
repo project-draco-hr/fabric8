@@ -1,7 +1,11 @@
 {
-  Dictionary dictionary=configuration.getProperties();
-  if (!dictionary.get(key).equals(String.valueOf(port))) {
-    dictionary.put(key,String.valueOf(port));
-    configuration.update(dictionary);
+  if (configuration != null) {
+    Dictionary dictionary=configuration.getProperties();
+    if (dictionary != null) {
+      if (!dictionary.get(key).equals(String.valueOf(port))) {
+        dictionary.put(key,String.valueOf(port));
+        configuration.update(dictionary);
+      }
+    }
   }
 }
