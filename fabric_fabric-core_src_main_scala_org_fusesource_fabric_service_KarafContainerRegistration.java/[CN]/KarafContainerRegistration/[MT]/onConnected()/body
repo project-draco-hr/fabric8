@@ -31,7 +31,7 @@
     ZooKeeperUtils.set(zooKeeper,CONTAINER_LOCAL_HOSTNAME.getPath(name),HostUtils.getLocalHostName());
     ZooKeeperUtils.set(zooKeeper,CONTAINER_LOCAL_IP.getPath(name),HostUtils.getLocalIp());
     ZooKeeperUtils.set(zooKeeper,CONTAINER_IP.getPath(name),getContainerPointer(zooKeeper,name));
-    ZooKeeperUtils.createDefault(zooKeeper,CONTAINER_GEOLOCATION.getPath(name),HostUtils.getGeoLocation());
+    ZooKeeperUtils.createDefault(zooKeeper,CONTAINER_GEOLOCATION.getPath(name),GeoUtils.getGeoLocation());
     for (    String resolver : ZkDefs.VALID_RESOLVERS) {
       String address=System.getProperty(resolver);
       if (address != null && !address.isEmpty() && ZooKeeperUtils.exists(zooKeeper,CONTAINER_ADDRESS.getPath(name,resolver)) == null) {
