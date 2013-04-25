@@ -1,4 +1,7 @@
 {
+  if (Util.isASystemBundle(getBundleContext(),bundle) && !Util.accessToSystemBundleIsAllowed(bundle.getBundleId(),session)) {
+    return;
+  }
   stopBundle(bundle);
   if (bundle.getState() != Bundle.UNINSTALLED) {
     LOG.debug("Uninstalling bundle %s version %s",bundle.getSymbolicName(),bundle.getVersion());
