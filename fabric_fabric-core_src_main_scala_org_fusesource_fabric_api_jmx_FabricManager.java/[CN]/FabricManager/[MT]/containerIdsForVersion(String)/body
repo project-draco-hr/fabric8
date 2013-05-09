@@ -1,0 +1,12 @@
+{
+  Version version=getFabricService().getVersion(versionId);
+  List<String> rc=new ArrayList<String>();
+  if (version != null) {
+    for (    Container c : getFabricService().getContainers()) {
+      if (c.getVersion().equals(version)) {
+        rc.add(c.getId());
+      }
+    }
+  }
+  return rc;
+}

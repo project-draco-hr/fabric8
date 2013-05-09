@@ -1,8 +1,15 @@
 {
   Version version=getFabricService().getVersion(versionId);
   Profile profile=version != null ? version.getProfile(profileId) : null;
+  List<String> rc=new ArrayList<String>();
   if (profile != null) {
-    return new ArrayList<String>();
+    for (    Container c : getFabricService().getContainers()) {
+      for (      Profile p : c.getProfiles()) {
+        if (p.equals(profile)) {
+          rc.add(c.getId());
+        }
+      }
+    }
   }
-  throw new IllegalStateException(String.format("Profile %s not found.",profileId));
+  return rc;
 }
