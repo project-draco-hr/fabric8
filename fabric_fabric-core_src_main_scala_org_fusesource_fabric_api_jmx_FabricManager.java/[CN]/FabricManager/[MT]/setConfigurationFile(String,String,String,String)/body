@@ -1,0 +1,11 @@
+{
+  Profile profile=getFabricService().getVersion(versionId).getProfile(profileId);
+  Map<String,byte[]> configs=profile.getFileConfigurations();
+  try {
+    configs.put(fileName,Base64.decodeBase64(data));
+    profile.setFileConfigurations(configs);
+  }
+ catch (  Exception e) {
+    throw new FabricException("Error setting config file: ",e);
+  }
+}
