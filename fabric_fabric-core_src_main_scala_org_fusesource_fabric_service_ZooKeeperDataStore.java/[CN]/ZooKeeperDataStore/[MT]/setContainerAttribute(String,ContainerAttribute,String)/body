@@ -1,8 +1,8 @@
 {
   if (attribute == ContainerAttribute.Resolver) {
     try {
-      ZooKeeperUtils.set(zk,ZkPath.CONTAINER_IP.getPath(containerId),"${zk:" + containerId + "/"+ value+ "}");
-      ZooKeeperUtils.set(zk,ZkPath.CONTAINER_RESOLVER.getPath(containerId),value);
+      setData(zk,ZkPath.CONTAINER_IP.getPath(containerId),"${zk:" + containerId + "/"+ value+ "}");
+      setData(zk,ZkPath.CONTAINER_RESOLVER.getPath(containerId),value);
     }
  catch (    Exception e) {
       throw new FabricException(e);
@@ -10,7 +10,7 @@
   }
  else {
     try {
-      ZooKeeperUtils.set(zk,getAttributePath(containerId,attribute),value);
+      setData(zk,getAttributePath(containerId,attribute),value);
     }
  catch (    KeeperException.NoNodeException e) {
     }

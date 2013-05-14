@@ -19,7 +19,7 @@
     }
   }
   if (!same && waitForProvision) {
-    ZooKeeperUtils.set(getZookeeper(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(containerName),"switching profile");
+    setData(getZookeeper(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(containerName),"switching profile");
     container.setProfiles(profiles);
     waitForProvisionSuccess(container,PROVISION_TIMEOUT);
   }

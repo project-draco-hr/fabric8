@@ -32,11 +32,11 @@
       }
     }
   }
-  List<String> zkVersions=zookeeper.getChildren(ZkPath.CONFIG_VERSIONS.getPath());
-  ZooKeeperUtils.createDefault(zookeeper,"/fabric/configs/git",null);
+  List<String> zkVersions=getChildren(zookeeper,ZkPath.CONFIG_VERSIONS.getPath());
+  createDefault(zookeeper,"/fabric/configs/git",null);
   Properties versionsMetadata=loadProps(zookeeper,"/fabric/configs/git");
   boolean allDone=true;
-  String lastModified=Long.toString(ZooKeeperUtils.getLastModified(zookeeper,ZkPath.CONFIG_VERSIONS.getPath()));
+  String lastModified=Long.toString(lastModified(zookeeper,ZkPath.CONFIG_VERSIONS.getPath()));
   if (!lastModified.equals(versionsMetadata.get("zk-lastmodified"))) {
     allDone=false;
   }
@@ -139,7 +139,7 @@
       }
       git.checkout().setName(version).setForce(true).call();
       String zkNode=ZkPath.CONFIG_VERSION.getPath(version);
-      ZooKeeperUtils.create(zookeeper,zkNode);
+      create(zookeeper,zkNode);
       syncVersionFromGitToZk(git,zookeeper,zkNode);
       versionsMetadata.put(version,git.getRepository().getRef("HEAD").getObjectId().getName());
     }
@@ -150,6 +150,6 @@
       versionsMetadata.remove(version);
     }
   }
-  versionsMetadata.put("zk-lastmodified",Long.toString(ZooKeeperUtils.getLastModified(zookeeper,ZkPath.CONFIG_VERSIONS.getPath())));
-  ZooKeeperUtils.setPropertiesAsMap(zookeeper,"/fabric/configs/git",versionsMetadata);
+  versionsMetadata.put("zk-lastmodified",Long.toString(lastModified(zookeeper,ZkPath.CONFIG_VERSIONS.getPath())));
+  setPropertiesAsMap(zookeeper,"/fabric/configs/git",versionsMetadata);
 }

@@ -5,7 +5,7 @@
       container.setJolokiaUrl(null);
       System.clearProperty("jolokia.agent");
     }
-    zooKeeper.delete(ZkPath.WEBAPPS_CONTAINER.getPath(name,webEvent.getBundle().getVersion().toString(),container.getId()));
+    delete(zooKeeper,ZkPath.WEBAPPS_CONTAINER.getPath(name,webEvent.getBundle().getVersion().toString(),container.getId()));
   }
  catch (  Exception e) {
     LOGGER.error("Failed to unregister webapp {}.",webEvent.getContextPath(),e);

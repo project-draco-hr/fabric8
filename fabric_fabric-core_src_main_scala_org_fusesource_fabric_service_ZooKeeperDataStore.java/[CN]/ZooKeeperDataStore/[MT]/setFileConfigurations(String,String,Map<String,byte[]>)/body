@@ -9,7 +9,7 @@
       setFileConfiguration(version,profile,pid,newCfg);
     }
     for (    String pid : oldCfgs.keySet()) {
-      zk.deleteWithChildren(path + "/" + pid);
+      deleteSafe(zk,path + "/" + pid);
     }
   }
  catch (  Exception e) {

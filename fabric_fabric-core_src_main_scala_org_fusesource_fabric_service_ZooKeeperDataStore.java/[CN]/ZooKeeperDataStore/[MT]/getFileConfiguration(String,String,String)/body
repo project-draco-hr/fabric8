@@ -1,14 +1,14 @@
 {
   try {
     String path=ZkProfiles.getPath(version,profile) + "/" + pid;
-    if (ZooKeeperUtils.exists(zk,path) == null) {
+    if (exists(zk,path) == null) {
       return null;
     }
     if (zk.getData(path) == null) {
-      List<String> children=zk.getChildren(path);
+      List<String> children=getChildren(zk,path);
       StringBuilder buf=new StringBuilder();
       for (      String child : children) {
-        String value=zk.getStringData(path + "/" + child);
+        String value=getStringData(zk,path + "/" + child);
         buf.append(String.format("%s = %s\n",child,value));
       }
       return buf.toString().getBytes();

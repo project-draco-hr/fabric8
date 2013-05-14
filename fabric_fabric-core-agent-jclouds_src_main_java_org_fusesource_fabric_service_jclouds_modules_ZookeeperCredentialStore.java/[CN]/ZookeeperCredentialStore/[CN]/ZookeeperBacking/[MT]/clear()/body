@@ -3,12 +3,8 @@
   if (zookeeper.isConnected()) {
     try {
       for (      String nodeId : keySet()) {
-        if (zookeeper.exists(ZkPath.CLOUD_NODE_IDENTITY.getPath(nodeId)) != null) {
-          zookeeper.deleteWithChildren(ZkPath.CLOUD_NODE_IDENTITY.getPath(nodeId));
-        }
-        if (zookeeper.exists(ZkPath.CLOUD_NODE_CREDENTIAL.getPath(nodeId)) != null) {
-          zookeeper.deleteWithChildren(ZkPath.CLOUD_NODE_CREDENTIAL.getPath(nodeId));
-        }
+        deleteSafe(zookeeper,ZkPath.CLOUD_NODE_IDENTITY.getPath(nodeId));
+        deleteSafe(zookeeper,ZkPath.CLOUD_NODE_CREDENTIAL.getPath(nodeId));
       }
     }
  catch (    Exception e) {

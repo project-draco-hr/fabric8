@@ -4,9 +4,7 @@
     try {
       if (connected) {
         for (        String entry : registeredProxies.get(type)) {
-          if (zookeeper.exists(entry) != null) {
-            zookeeper.deleteWithChildren(entry);
-          }
+          deleteSafe(zookeeper,entry);
         }
       }
     }

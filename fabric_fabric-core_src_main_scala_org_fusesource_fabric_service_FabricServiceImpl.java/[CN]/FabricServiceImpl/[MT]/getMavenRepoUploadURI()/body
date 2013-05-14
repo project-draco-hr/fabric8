@@ -1,12 +1,12 @@
 {
   URI uri=URI.create(defaultRepo);
   try {
-    if (zooKeeper != null && zooKeeper.exists(ZkPath.MAVEN_PROXY.getPath("upload")) != null) {
-      List<String> children=zooKeeper.getChildren(ZkPath.MAVEN_PROXY.getPath("upload"));
+    if (zooKeeper != null && exists(zooKeeper,ZkPath.MAVEN_PROXY.getPath("upload")) != null) {
+      List<String> children=getChildren(zooKeeper,ZkPath.MAVEN_PROXY.getPath("upload"));
       if (children != null && !children.isEmpty()) {
         Collections.sort(children);
       }
-      String mavenRepo=ZooKeeperUtils.getSubstitutedPath(zooKeeper,ZkPath.MAVEN_PROXY.getPath("upload") + "/" + children.get(0));
+      String mavenRepo=getSubstitutedPath(zooKeeper,ZkPath.MAVEN_PROXY.getPath("upload") + "/" + children.get(0));
       if (mavenRepo != null && !mavenRepo.endsWith("/")) {
         mavenRepo+="/";
       }

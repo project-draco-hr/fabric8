@@ -27,8 +27,8 @@
   Provision.assertSuccess(Arrays.asList(new Container[]{camelClientContainer}),PROVISION_TIMEOUT);
   System.err.println(executeCommand("fabric:container-list"));
   System.err.println(executeCommand("fabric:profile-display --overlay fabric-camel-server"));
-  Assert.assertNotNull(zooKeeper.exists("/fabric/registry/camel/endpoints/"));
-  Assert.assertEquals(1,zooKeeper.getChildren("/fabric/registry/camel/endpoints/").size());
+  Assert.assertNotNull(exists(zooKeeper,"/fabric/registry/camel/endpoints/"));
+  Assert.assertEquals(1,getChildren(zooKeeper,"/fabric/registry/camel/endpoints/").size());
   Thread.sleep(5000);
   System.err.println(executeCommand("fabric:container-connect -u admin -p admin " + camelClientContainer.getId() + " camel:route-list"));
   String response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin " + camelClientContainer.getId() + " camel:route-info fabric-client | grep Failed")).getPlain().toString();

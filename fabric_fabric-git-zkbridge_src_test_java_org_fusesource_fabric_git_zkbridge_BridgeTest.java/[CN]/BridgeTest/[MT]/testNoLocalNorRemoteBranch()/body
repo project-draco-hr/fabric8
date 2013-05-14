@@ -1,9 +1,9 @@
 {
-  ZooKeeperUtils.deleteSafe(zookeeper,ZkPath.CONFIG_VERSIONS.getPath());
-  ZooKeeperUtils.set(zookeeper,ZkPath.CONFIG_VERSION.getPath("1.0"),"description = default version\n");
-  ZooKeeperUtils.set(zookeeper,ZkPath.CONFIG_VERSIONS_PROFILE.getPath("1.0","p1") + "/thepid.properties","foo = bar\n");
-  ZooKeeperUtils.set(zookeeper,ZkPath.CONFIG_VERSIONS_PROFILE.getPath("1.0","p1") + "/thexml.xml","<hello/>\n");
-  ZooKeeperUtils.set(zookeeper,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.0","root"),"p1");
+  deleteSafe(zookeeper,ZkPath.CONFIG_VERSIONS.getPath());
+  setData(zookeeper,ZkPath.CONFIG_VERSION.getPath("1.0"),"description = default version\n");
+  setData(zookeeper,ZkPath.CONFIG_VERSIONS_PROFILE.getPath("1.0","p1") + "/thepid.properties","foo = bar\n");
+  setData(zookeeper,ZkPath.CONFIG_VERSIONS_PROFILE.getPath("1.0","p1") + "/thexml.xml","<hello/>\n");
+  setData(zookeeper,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.0","root"),"p1");
   ObjectId rev1=git.getRepository().getRef("HEAD").getObjectId();
   Bridge.update(git,zookeeper);
   ObjectId rev2=git.getRepository().getRef("HEAD").getObjectId();
@@ -17,7 +17,7 @@
   Files.writeToFile(new File(tree,"p2/anotherpid.properties"),"key = value\n",Charset.forName("UTF-8"));
   remote.add().addFilepattern(".").call();
   remote.commit().setMessage("Add p2 profile").call();
-  ZooKeeperUtils.set(zookeeper,ZkPath.CONFIG_VERSIONS_PROFILE.getPath("1.0","p3") + "/thepid.properties","foo = bar\n");
+  setData(zookeeper,ZkPath.CONFIG_VERSIONS_PROFILE.getPath("1.0","p3") + "/thepid.properties","foo = bar\n");
   rev1=git.getRepository().getRef("HEAD").getObjectId();
   Bridge.update(git,zookeeper);
   rev2=git.getRepository().getRef("HEAD").getObjectId();

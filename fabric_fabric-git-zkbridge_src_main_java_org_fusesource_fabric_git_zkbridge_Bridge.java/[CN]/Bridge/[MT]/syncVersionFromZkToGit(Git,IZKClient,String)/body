@@ -6,7 +6,7 @@
   gitProfiles.remove(".git");
   gitProfiles.remove(METADATA);
   gitProfiles.remove(CONTAINERS_PROPERTIES);
-  List<String> zkProfiles=zookeeper.getChildren(zkNode + "/profiles");
+  List<String> zkProfiles=getChildren(zookeeper,zkNode + "/profiles");
   for (  String profile : zkProfiles) {
     File profileDir=new File(git.getRepository().getWorkTree(),profile);
     profileDir.mkdirs();
@@ -15,7 +15,7 @@
     git.add().addFilepattern(profile + "/" + METADATA).call();
     List<String> gitConfigs=list(profileDir);
     gitConfigs.remove(METADATA);
-    List<String> zkConfigs=zookeeper.getChildren(zkNode + "/profiles/" + profile);
+    List<String> zkConfigs=getChildren(zookeeper,zkNode + "/profiles/" + profile);
     for (    String file : zkConfigs) {
       byte[] data=zookeeper.getData(zkNode + "/profiles/" + profile+ "/"+ file);
       Files.writeToFile(new File(git.getRepository().getWorkTree(),profile + "/" + file),data);
@@ -33,8 +33,8 @@
     git.rm().addFilepattern(profile).call();
   }
   Properties containerProps=new Properties();
-  for (  String container : zookeeper.getChildren(zkNode + "/containers")) {
-    String str=zookeeper.getStringData(zkNode + "/containers/" + container);
+  for (  String container : getChildren(zookeeper,zkNode + "/containers")) {
+    String str=getStringData(zookeeper,zkNode + "/containers/" + container);
     if (str != null) {
       containerProps.setProperty(container,str);
     }

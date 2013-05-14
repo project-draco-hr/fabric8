@@ -1,8 +1,8 @@
 {
   if (zookeeper.isConnected()) {
     try {
-      ZooKeeperUtils.set(zookeeper,ZkPath.CLOUD_NODE_IDENTITY.getPath(normalizeKey(key)),credentials.identity);
-      ZooKeeperUtils.set(zookeeper,ZkPath.CLOUD_NODE_CREDENTIAL.getPath(normalizeKey(key)),credentials.credential);
+      setData(zookeeper,ZkPath.CLOUD_NODE_IDENTITY.getPath(normalizeKey(key)),credentials.identity);
+      setData(zookeeper,ZkPath.CLOUD_NODE_CREDENTIAL.getPath(normalizeKey(key)),credentials.credential);
     }
  catch (    Exception e) {
       LOGGER.warn("Failed to store jclouds credentials to zookeeper.",e);

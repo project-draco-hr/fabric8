@@ -25,22 +25,22 @@
           }
           configuration.update(dictionary);
           if (zooKeeper.isConnected()) {
-            if (zooKeeper.exists(ZkPath.CLOUD_SERVICE.getPath(name)) == null) {
-              ZooKeeperUtils.create(zooKeeper,ZkPath.CLOUD_SERVICE.getPath(name));
+            if (exists(zooKeeper,ZkPath.CLOUD_SERVICE.getPath(name)) == null) {
+              create(zooKeeper,ZkPath.CLOUD_SERVICE.getPath(name));
             }
             Enumeration keys=dictionary.keys();
             while (keys.hasMoreElements()) {
               Object key=keys.nextElement();
               Object value=dictionary.get(key);
               if (!key.equals("service.pid") && !key.equals("service.factoryPid")) {
-                ZooKeeperUtils.set(zooKeeper,ZkPath.CLOUD_SERVICE_PROPERTY.getPath(name,String.valueOf(key)),String.valueOf(value));
+                setData(zooKeeper,ZkPath.CLOUD_SERVICE_PROPERTY.getPath(name,String.valueOf(key)),String.valueOf(value));
               }
             }
             for (            Map.Entry<String,String> entry : props.entrySet()) {
               String key=entry.getKey();
               String value=entry.getValue();
               if (!key.equals("service.pid") && !key.equals("service.factoryPid")) {
-                ZooKeeperUtils.set(zooKeeper,ZkPath.CLOUD_SERVICE_PROPERTY.getPath(name,key),value);
+                setData(zooKeeper,ZkPath.CLOUD_SERVICE_PROPERTY.getPath(name,key),value);
               }
             }
           }

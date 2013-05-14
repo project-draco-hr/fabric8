@@ -2,7 +2,7 @@
   Set<String> keys=new HashSet<String>();
   if (zookeeper.isConnected()) {
     try {
-      keys=new HashSet<String>(zookeeper.getChildren(ZkPath.CLOUD_NODE.getPath()));
+      keys=new HashSet<String>(getChildren(zookeeper,ZkPath.CLOUD_NODE.getPath()));
     }
  catch (    Exception e) {
       LOGGER.warn("Failed to read from zookeeper jclouds credentials store.",e);

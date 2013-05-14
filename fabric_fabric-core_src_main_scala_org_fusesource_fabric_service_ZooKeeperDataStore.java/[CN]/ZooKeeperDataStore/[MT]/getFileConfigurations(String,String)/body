@@ -2,7 +2,7 @@
   try {
     Map<String,byte[]> configurations=new HashMap<String,byte[]>();
     String path=ZkProfiles.getPath(version,profile);
-    List<String> pids=zk.getChildren(path);
+    List<String> pids=getChildren(zk,path);
     for (    String pid : pids) {
       configurations.put(pid,getFileConfiguration(version,profile,pid));
     }

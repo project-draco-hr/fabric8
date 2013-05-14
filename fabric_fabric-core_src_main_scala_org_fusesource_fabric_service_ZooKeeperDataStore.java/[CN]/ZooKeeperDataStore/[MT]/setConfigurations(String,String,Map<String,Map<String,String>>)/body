@@ -8,7 +8,7 @@
       setConfiguration(version,profile,pid,entry.getValue());
     }
     for (    String key : oldCfgs.keySet()) {
-      zk.deleteWithChildren(path + "/" + key+ ".properties");
+      deleteSafe(zk,path + "/" + key+ ".properties");
     }
   }
  catch (  Exception e) {

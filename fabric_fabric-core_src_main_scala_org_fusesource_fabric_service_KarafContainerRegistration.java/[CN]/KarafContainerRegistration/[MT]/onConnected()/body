@@ -9,33 +9,33 @@
     if (profiles != null) {
       String versionNode=CONFIG_CONTAINER.getPath(name);
       String profileNode=CONFIG_VERSIONS_CONTAINER.getPath(version,name);
-      ZooKeeperUtils.createDefault(zooKeeper,versionNode,version);
-      ZooKeeperUtils.createDefault(zooKeeper,profileNode,profiles);
+      createDefault(zooKeeper,versionNode,version);
+      createDefault(zooKeeper,profileNode,profiles);
     }
-    Stat stat=ZooKeeperUtils.exists(zooKeeper,nodeAlive);
+    Stat stat=exists(zooKeeper,nodeAlive);
     if (stat != null) {
       if (stat.getEphemeralOwner() != zooKeeper.getSessionId()) {
-        zooKeeper.delete(nodeAlive);
-        zooKeeper.createWithParents(nodeAlive,CreateMode.EPHEMERAL);
+        delete(zooKeeper,nodeAlive);
+        create(zooKeeper,nodeAlive,CreateMode.EPHEMERAL);
       }
     }
  else {
-      zooKeeper.createWithParents(nodeAlive,CreateMode.EPHEMERAL);
+      create(zooKeeper,nodeAlive,CreateMode.EPHEMERAL);
     }
     String domainsNode=CONTAINER_DOMAINS.getPath(name);
-    stat=ZooKeeperUtils.exists(zooKeeper,domainsNode);
+    stat=exists(zooKeeper,domainsNode);
     if (stat != null) {
-      zooKeeper.deleteWithChildren(domainsNode);
+      deleteSafe(zooKeeper,domainsNode);
     }
-    ZooKeeperUtils.createDefault(zooKeeper,CONTAINER_RESOLVER.getPath(name),getContainerResolutionPolicy(zooKeeper,name));
-    ZooKeeperUtils.set(zooKeeper,CONTAINER_LOCAL_HOSTNAME.getPath(name),HostUtils.getLocalHostName());
-    ZooKeeperUtils.set(zooKeeper,CONTAINER_LOCAL_IP.getPath(name),HostUtils.getLocalIp());
-    ZooKeeperUtils.set(zooKeeper,CONTAINER_IP.getPath(name),getContainerPointer(zooKeeper,name));
-    ZooKeeperUtils.createDefault(zooKeeper,CONTAINER_GEOLOCATION.getPath(name),GeoUtils.getGeoLocation());
+    createDefault(zooKeeper,CONTAINER_RESOLVER.getPath(name),getContainerResolutionPolicy(zooKeeper,name));
+    setData(zooKeeper,CONTAINER_LOCAL_HOSTNAME.getPath(name),HostUtils.getLocalHostName());
+    setData(zooKeeper,CONTAINER_LOCAL_IP.getPath(name),HostUtils.getLocalIp());
+    setData(zooKeeper,CONTAINER_IP.getPath(name),getContainerPointer(zooKeeper,name));
+    createDefault(zooKeeper,CONTAINER_GEOLOCATION.getPath(name),GeoUtils.getGeoLocation());
     for (    String resolver : ZkDefs.VALID_RESOLVERS) {
       String address=System.getProperty(resolver);
-      if (address != null && !address.isEmpty() && ZooKeeperUtils.exists(zooKeeper,CONTAINER_ADDRESS.getPath(name,resolver)) == null) {
-        ZooKeeperUtils.set(zooKeeper,CONTAINER_ADDRESS.getPath(name,resolver),address);
+      if (address != null && !address.isEmpty() && exists(zooKeeper,CONTAINER_ADDRESS.getPath(name,resolver)) == null) {
+        setData(zooKeeper,CONTAINER_ADDRESS.getPath(name,resolver),address);
       }
     }
     Container current=getContainer();
@@ -44,8 +44,8 @@
     registerHttp(current);
     String minimumPort=System.getProperty(ZkDefs.MINIMUM_PORT);
     String maximumPort=System.getProperty(ZkDefs.MAXIMUM_PORT);
-    ZooKeeperUtils.createDefault(zooKeeper,CONTAINER_PORT_MIN.getPath(name),minimumPort);
-    ZooKeeperUtils.createDefault(zooKeeper,CONTAINER_PORT_MAX.getPath(name),maximumPort);
+    createDefault(zooKeeper,CONTAINER_PORT_MIN.getPath(name),minimumPort);
+    createDefault(zooKeeper,CONTAINER_PORT_MAX.getPath(name),maximumPort);
     registerDomains();
   }
  catch (  Exception e) {

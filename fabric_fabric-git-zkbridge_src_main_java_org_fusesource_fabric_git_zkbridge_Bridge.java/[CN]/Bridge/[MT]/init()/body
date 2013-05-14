@@ -6,8 +6,8 @@
       try {
         if (gitService != null) {
           String container=System.getProperty("karaf.name");
-          String login=ZooKeeperUtils.getContainerLogin(container);
-          String token=ZooKeeperUtils.generateContainerToken(zookeeper,container);
+          String login=getContainerLogin(container);
+          String token=generateContainerToken(zookeeper,container);
           CredentialsProvider cp=new UsernamePasswordCredentialsProvider(login,token);
           if (singleton.isMaster()) {
             update(gitService.get(),zookeeper,cp);

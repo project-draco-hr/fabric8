@@ -1,9 +1,9 @@
 {
   try {
-    String oldVersionId=ZooKeeperUtils.get(zk,ZkPath.CONFIG_CONTAINER.getPath(containerId));
-    String oldProfileIds=ZooKeeperUtils.get(zk,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(oldVersionId,containerId));
-    ZooKeeperUtils.set(zk,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId),oldProfileIds);
-    ZooKeeperUtils.set(zk,ZkPath.CONFIG_CONTAINER.getPath(containerId),versionId);
+    String oldVersionId=getStringData(zk,ZkPath.CONFIG_CONTAINER.getPath(containerId));
+    String oldProfileIds=getStringData(zk,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(oldVersionId,containerId));
+    setData(zk,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId),oldProfileIds);
+    setData(zk,ZkPath.CONFIG_CONTAINER.getPath(containerId),versionId);
   }
  catch (  Exception e) {
     throw new FabricException(e);

@@ -4,12 +4,12 @@
   LockData lockData;
   String lockPath=null;
   try {
-    ZooKeeperUtils.createDefault(zooKeeper,path,"");
+    createDefault(zooKeeper,path,"");
     Thread current=Thread.currentThread();
     lockData=threadLocks.get(current);
     if (lockData == null) {
       lockPath=createLockNode(path);
-      zooKeeper.setData(lockPath,System.getProperty("karaf.name") + "/" + current.getName());
+      setData(zooKeeper,lockPath,System.getProperty("karaf.name") + "/" + current.getName());
       lockData=new LockData(current,lockPath);
       threadLocks.put(current,lockData);
     }

@@ -20,7 +20,7 @@
   }
   for (  Container container : containers) {
     if (!defaultProfile.configurationEquals(targetProfile)) {
-      ZooKeeperUtils.set(getZookeeper(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(container.getId()),"switching profile");
+      setData(getZookeeper(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(container.getId()),"switching profile");
     }
     container.setProfiles(new Profile[]{targetProfile});
   }
@@ -39,7 +39,7 @@
   }
   for (  Container container : containers) {
     if (!defaultProfile.configurationEquals(targetProfile)) {
-      ZooKeeperUtils.set(getZookeeper(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(container.getId()),"switching profile");
+      setData(getZookeeper(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(container.getId()),"switching profile");
     }
     container.setProfiles(new Profile[]{defaultProfile});
   }

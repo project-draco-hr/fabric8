@@ -1,6 +1,6 @@
 {
   IZKClient zk=getZooKeeper();
-  Stat exists=zk.exists(path);
+  Stat exists=exists(zk,path);
   if (exists == null) {
     return null;
   }
@@ -9,10 +9,10 @@
   List<String> children=null;
   String data=null;
   if (numChildren > 0) {
-    children=zk.getChildren(path);
+    children=getChildren(zk,path);
   }
  else {
-    data=zk.getStringData(path);
+    data=getStringData(zk,path);
   }
   return new ZkContents(dataLength,children,data);
 }

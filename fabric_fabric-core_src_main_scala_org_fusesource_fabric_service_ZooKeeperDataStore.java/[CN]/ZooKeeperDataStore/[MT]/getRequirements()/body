@@ -1,8 +1,8 @@
 {
   try {
     FabricRequirements answer=null;
-    if (zk.exists(REQUIREMENTS_JSON_PATH) != null) {
-      String json=zk.getStringData(REQUIREMENTS_JSON_PATH);
+    if (exists(zk,REQUIREMENTS_JSON_PATH) != null) {
+      String json=getStringData(zk,REQUIREMENTS_JSON_PATH);
       answer=RequirementsJson.fromJSON(json);
     }
     if (answer == null) {

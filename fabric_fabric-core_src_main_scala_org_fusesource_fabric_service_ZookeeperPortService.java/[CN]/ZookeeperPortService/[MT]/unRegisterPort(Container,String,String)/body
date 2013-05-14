@@ -3,9 +3,9 @@
   String ipPortsPath=ZkPath.PORTS_IP.getPath(container.getIp());
   try {
     if (lock.tryLock(60,TimeUnit.SECONDS)) {
-      if (zooKeeper.exists(containerPortsPidKeyPath) != null) {
+      if (exists(zooKeeper,containerPortsPidKeyPath) != null) {
         int port=lookupPort(container,pid,key);
-        ZooKeeperUtils.deleteSafe(zooKeeper,containerPortsPidKeyPath);
+        deleteSafe(zooKeeper,containerPortsPidKeyPath);
         Set<Integer> allPorts=findUsedPortByHost(container);
         allPorts.remove(port);
         StringBuilder sb=new StringBuilder();
@@ -19,7 +19,7 @@
             sb.append(" ").append(p);
           }
         }
-        ZooKeeperUtils.set(zooKeeper,ipPortsPath,sb.toString());
+        setData(zooKeeper,ipPortsPath,sb.toString());
       }
     }
  else {

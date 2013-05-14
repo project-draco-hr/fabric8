@@ -2,8 +2,8 @@
   Credentials credentials=null;
   if (zookeeper.isConnected()) {
     try {
-      String identity=zookeeper.getStringData(ZkPath.CLOUD_NODE_IDENTITY.getPath(normalizeKey(key)));
-      String credential=zookeeper.getStringData(ZkPath.CLOUD_NODE_CREDENTIAL.getPath(normalizeKey(key)));
+      String identity=getStringData(zookeeper,ZkPath.CLOUD_NODE_IDENTITY.getPath(normalizeKey(key)));
+      String credential=getStringData(zookeeper,ZkPath.CLOUD_NODE_CREDENTIAL.getPath(normalizeKey(key)));
       credentials=LoginCredentials.fromCredentials(new Credentials(identity,credential));
     }
  catch (    Exception e) {

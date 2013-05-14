@@ -1,7 +1,7 @@
 {
   if (attribute == ContainerAttribute.Domains) {
     try {
-      List<String> list=zk.getChildren(ZkPath.CONTAINER_DOMAINS.getPath(containerId));
+      List<String> list=getChildren(zk,ZkPath.CONTAINER_DOMAINS.getPath(containerId));
       Collections.sort(list);
       StringBuilder sb=new StringBuilder();
       for (      String l : list) {
@@ -19,10 +19,10 @@
  else {
     try {
       if (substituted) {
-        return ZooKeeperUtils.getSubstitutedPath(zk,getAttributePath(containerId,attribute));
+        return getSubstitutedPath(zk,getAttributePath(containerId,attribute));
       }
  else {
-        return ZooKeeperUtils.get(zk,getAttributePath(containerId,attribute));
+        return getStringData(zk,getAttributePath(containerId,attribute));
       }
     }
  catch (    KeeperException.NoNodeException e) {

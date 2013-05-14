@@ -26,7 +26,7 @@
       if (ZooKeeperRetriableUtils.exists(zooKeeper,ZkPath.CONTAINER_ALIVE.getPath(container)) == null) {
         throw new FabricException("The container " + container + " is not alive");
       }
-      String containerVersion=zooKeeper.getStringData(ZkPath.CONFIG_CONTAINER.getPath(container));
+      String containerVersion=getStringData(zooKeeper,ZkPath.CONFIG_CONTAINER.getPath(container));
       if (!version.equals(containerVersion)) {
         throw new FabricException("The container " + container + " is not using the default-version:"+ version);
       }
@@ -79,10 +79,10 @@
       String ip=ZooKeeperRetriableUtils.getSubstitutedPath(zooKeeper,ZkPath.CONTAINER_IP.getPath(container));
       String minimumPort=String.valueOf(Ports.MIN_PORT_NUMBER);
       String maximumPort=String.valueOf(Ports.MAX_PORT_NUMBER);
-      if (zooKeeper.exists(ZkPath.CONTAINER_PORT_MIN.getPath(container)) != null) {
+      if (exists(zooKeeper,ZkPath.CONTAINER_PORT_MIN.getPath(container)) != null) {
         minimumPort=ZooKeeperRetriableUtils.getSubstitutedPath(zooKeeper,ZkPath.CONTAINER_PORT_MIN.getPath(container));
       }
-      if (zooKeeper.exists(ZkPath.CONTAINER_PORT_MAX.getPath(container)) != null) {
+      if (exists(zooKeeper,ZkPath.CONTAINER_PORT_MAX.getPath(container)) != null) {
         maximumPort=ZooKeeperRetriableUtils.getSubstitutedPath(zooKeeper,ZkPath.CONTAINER_PORT_MAX.getPath(container));
       }
       String ensembleMemberPid="org.fusesource.fabric.zookeeper.server-" + newClusterId + ".properties";
@@ -134,8 +134,8 @@
         ZooKeeperRetriableUtils.set(dst,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
         ZooKeeperRetriableUtils.set(zooKeeper,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl);
         ZooKeeperRetriableUtils.set(zooKeeper,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
-        for (        String v : zooKeeper.getChildren("/fabric/configs/versions/")) {
-          for (          String container : dst.getChildren("/fabric/configs/versions/" + v + "/containers")) {
+        for (        String v : getChildren(zooKeeper,"/fabric/configs/versions/")) {
+          for (          String container : getChildren(dst,"/fabric/configs/versions/" + v + "/containers")) {
             ZooKeeperRetriableUtils.remove(dst,"/fabric/configs/versions/" + v + "/containers/"+ container,"fabric-ensemble-" + oldClusterId + "-.*");
           }
           setConfigProperty(dst,"/fabric/configs/versions/" + v + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.password","${zk:" + ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath() + "}");

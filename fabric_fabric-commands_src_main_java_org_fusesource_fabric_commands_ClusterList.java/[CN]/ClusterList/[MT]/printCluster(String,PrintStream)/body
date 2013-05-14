@@ -1,8 +1,8 @@
 {
-  if (getZooKeeper().exists(dir) == null) {
+  if (exists(getZooKeeper(),dir) == null) {
     return;
   }
-  List<String> children=getZooKeeper().getAllChildren(dir);
+  List<String> children=getAllChildren(getZooKeeper(),dir);
   HashMap<String,HashMap<String,ClusterNode>> clusters=new HashMap<String,HashMap<String,ClusterNode>>();
   for (  String child : children) {
     String childDir=dir + "/" + child;
@@ -31,7 +31,7 @@
           if (services != null) {
             if (!services.isEmpty()) {
               for (              Object service : services) {
-                node.services.add(ZooKeeperUtils.getSubstitutedData(getZooKeeper(),service.toString()));
+                node.services.add(getSubstitutedData(getZooKeeper(),service.toString()));
               }
               node.masters.add(agent);
             }

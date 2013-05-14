@@ -8,7 +8,7 @@
     }
     zkClient.start();
     zkClient.waitForConnected();
-    exists=zkClient.exists(ZkPath.CONTAINER.getPath(name)) != null;
+    exists=exists(zkClient,ZkPath.CONTAINER.getPath(name)) != null;
     if (!exists || force) {
       ZkPath.createContainerPaths(zkClient,containerName,version,profile);
     }

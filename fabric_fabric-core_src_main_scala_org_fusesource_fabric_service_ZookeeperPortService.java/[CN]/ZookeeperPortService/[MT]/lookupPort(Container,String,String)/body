@@ -2,8 +2,8 @@
   int port=0;
   String path=ZkPath.PORTS_CONTAINER_PID_KEY.getPath(container.getId(),pid,key);
   try {
-    if (zooKeeper.exists(path) != null) {
-      port=Integer.parseInt(zooKeeper.getStringData(path));
+    if (exists(zooKeeper,path) != null) {
+      port=Integer.parseInt(getStringData(zooKeeper,path));
     }
   }
  catch (  Exception ex) {

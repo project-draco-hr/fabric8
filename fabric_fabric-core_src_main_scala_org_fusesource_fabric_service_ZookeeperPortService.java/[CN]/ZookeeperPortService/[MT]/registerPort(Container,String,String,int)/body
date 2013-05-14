@@ -4,12 +4,12 @@
   String ipPortsPath=ZkPath.PORTS_IP.getPath(container.getIp());
   try {
     if (lock.tryLock(60,TimeUnit.SECONDS)) {
-      ZooKeeperUtils.createDefault(zooKeeper,containerPortsPath,portAsString);
-      ZooKeeperUtils.createDefault(zooKeeper,ipPortsPath,portAsString);
+      createDefault(zooKeeper,containerPortsPath,portAsString);
+      createDefault(zooKeeper,ipPortsPath,portAsString);
       zooKeeper.setData(containerPortsPath,portAsString);
-      String existingPorts=ZooKeeperUtils.get(zooKeeper,ipPortsPath);
+      String existingPorts=getStringData(zooKeeper,ipPortsPath);
       if (!existingPorts.contains(portAsString)) {
-        ZooKeeperUtils.set(zooKeeper,ipPortsPath,existingPorts + " " + portAsString);
+        setData(zooKeeper,ipPortsPath,existingPorts + " " + portAsString);
       }
     }
  else {

@@ -5,12 +5,7 @@
       String mavenProxyUrl="http://${zk:" + name + "/ip}:"+ getPortSafe()+ "/maven/"+ type+ "/";
       String parentPath=ZkPath.MAVEN_PROXY.getPath(type);
       String path=parentPath + "/p_";
-      if (zookeeper.exists(parentPath) == null) {
-        zookeeper.createWithParents(parentPath,CreateMode.PERSISTENT);
-      }
-      if (zookeeper.exists(path) == null) {
-        registeredProxies.get(type).add(zookeeper.create(path,mavenProxyUrl,CreateMode.EPHEMERAL_SEQUENTIAL));
-      }
+      registeredProxies.get(type).add(create(zookeeper,path,mavenProxyUrl,CreateMode.EPHEMERAL_SEQUENTIAL));
     }
   }
  catch (  Exception e) {

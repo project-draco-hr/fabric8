@@ -19,7 +19,7 @@ catch (  UnsupportedCallbackException uce) {
   if (user == null) {
     throw new FailedLoginException("user name is null");
   }
-  if (ZooKeeperUtils.isContainerLogin(user)) {
+  if (isContainerLogin(user)) {
     String token=containers.getProperty(user);
     if (token == null) {
       throw new FailedLoginException("Container doesn't exist");

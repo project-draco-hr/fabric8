@@ -6,11 +6,11 @@
   for (  Container c : containers) {
     try {
       c.destroy();
-      Assert.assertNull(zooKeeper.exists(ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.1",c.getId())));
-      Assert.assertNull(zooKeeper.exists(ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.0",c.getId())));
-      Assert.assertNull(zooKeeper.exists(ZkPath.CONTAINER.getPath(c.getId())));
-      Assert.assertNull(zooKeeper.exists(ZkPath.CONTAINER_DOMAINS.getPath(c.getId())));
-      Assert.assertNull(zooKeeper.exists(ZkPath.CONTAINER_PROVISION.getPath(c.getId())));
+      Assert.assertNull(exists(zooKeeper,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.1",c.getId())));
+      Assert.assertNull(exists(zooKeeper,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.0",c.getId())));
+      Assert.assertNull(exists(zooKeeper,ZkPath.CONTAINER.getPath(c.getId())));
+      Assert.assertNull(exists(zooKeeper,ZkPath.CONTAINER_DOMAINS.getPath(c.getId())));
+      Assert.assertNull(exists(zooKeeper,ZkPath.CONTAINER_PROVISION.getPath(c.getId())));
     }
  catch (    Exception ex) {
     }

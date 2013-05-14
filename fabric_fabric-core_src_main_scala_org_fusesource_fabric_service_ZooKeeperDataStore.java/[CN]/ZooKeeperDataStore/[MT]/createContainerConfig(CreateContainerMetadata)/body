@@ -15,28 +15,28 @@
       }
       sb.append(profileId);
     }
-    ZooKeeperUtils.set(zk,ZkPath.CONFIG_CONTAINER.getPath(containerId),versionId);
-    ZooKeeperUtils.set(zk,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId),sb.toString());
-    ZooKeeperUtils.set(zk,ZkPath.CONTAINER_PARENT.getPath(containerId),parent);
-    ZooKeeperUtils.set(zk,ZkPath.CONTAINER_METADATA.getPath(containerId),Base64Encoder.encode(ObjectUtils.toBytes(metadata)));
+    setData(zk,ZkPath.CONFIG_CONTAINER.getPath(containerId),versionId);
+    setData(zk,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId),sb.toString());
+    setData(zk,ZkPath.CONTAINER_PARENT.getPath(containerId),parent);
+    setData(zk,ZkPath.CONTAINER_METADATA.getPath(containerId),Base64Encoder.encode(ObjectUtils.toBytes(metadata)));
     Map<String,String> configuration=metadata.getContainerConfiguration();
     for (    Map.Entry<String,String> entry : configuration.entrySet()) {
       String key=entry.getKey();
       String value=entry.getValue();
-      ZooKeeperUtils.set(zk,ZkPath.CONTAINER_ENTRY.getPath(metadata.getContainerName(),key),value);
+      setData(zk,ZkPath.CONTAINER_ENTRY.getPath(metadata.getContainerName(),key),value);
     }
-    if (options.getResolver() == null && zk.exists(ZkPath.CONTAINER_RESOLVER.getPath(containerId)) != null) {
-      options.setResolver(zk.getStringData(ZkPath.CONTAINER_RESOLVER.getPath(containerId)));
+    if (options.getResolver() == null && exists(zk,ZkPath.CONTAINER_RESOLVER.getPath(containerId)) != null) {
+      options.setResolver(getStringData(zk,ZkPath.CONTAINER_RESOLVER.getPath(containerId)));
     }
  else     if (options.getResolver() != null) {
     }
- else     if (zk.exists(ZkPath.POLICIES.getPath(ZkDefs.RESOLVER)) != null) {
-      options.setResolver(zk.getStringData(ZkPath.POLICIES.getPath(ZkDefs.RESOLVER)));
+ else     if (exists(zk,ZkPath.POLICIES.getPath(ZkDefs.RESOLVER)) != null) {
+      options.setResolver(getStringData(zk,ZkPath.POLICIES.getPath(ZkDefs.RESOLVER)));
     }
  else {
       options.setResolver(ZkDefs.DEFAULT_RESOLVER);
     }
-    ZooKeeperUtils.set(zk,ZkPath.CONTAINER_RESOLVER.getPath(containerId),options.getResolver());
+    setData(zk,ZkPath.CONTAINER_RESOLVER.getPath(containerId),options.getResolver());
   }
  catch (  FabricException e) {
     throw e;

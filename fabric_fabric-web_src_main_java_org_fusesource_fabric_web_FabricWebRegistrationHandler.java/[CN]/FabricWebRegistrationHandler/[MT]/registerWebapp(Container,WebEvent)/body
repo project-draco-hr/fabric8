@@ -11,7 +11,7 @@
   }
   String json="{\"id\":\"" + id + "\", \"services\":[\""+ url+ "\"],\"container\":\""+ id+ "\"}";
   try {
-    ZooKeeperRetriableUtils.set(zooKeeper,ZkPath.WEBAPPS_CONTAINER.getPath(name,webEvent.getBundle().getVersion().toString(),id),json);
+    setData(zooKeeper,ZkPath.WEBAPPS_CONTAINER.getPath(name,webEvent.getBundle().getVersion().toString(),id),json);
   }
  catch (  Exception e) {
     LOGGER.error("Failed to register webapp {}.",webEvent.getContextPath(),e);

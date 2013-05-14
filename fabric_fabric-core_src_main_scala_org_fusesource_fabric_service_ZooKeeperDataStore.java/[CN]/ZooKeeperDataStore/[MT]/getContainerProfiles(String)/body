@@ -1,7 +1,7 @@
 {
   try {
-    String versionId=ZooKeeperUtils.get(zk,ZkPath.CONFIG_CONTAINER.getPath(containerId));
-    String str=ZooKeeperUtils.get(zk,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId));
+    String versionId=getStringData(zk,ZkPath.CONFIG_CONTAINER.getPath(containerId));
+    String str=getStringData(zk,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId));
     return str == null || str.isEmpty() ? Collections.<String>emptyList() : Arrays.asList(str.split(" +"));
   }
  catch (  Exception e) {

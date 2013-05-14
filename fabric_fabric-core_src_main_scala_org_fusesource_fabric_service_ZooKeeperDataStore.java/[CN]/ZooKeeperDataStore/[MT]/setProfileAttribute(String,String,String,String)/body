@@ -1,14 +1,14 @@
 {
   try {
     String path=ZkProfiles.getPath(version,profile);
-    Properties props=ZooKeeperUtils.getProperties(zk,path);
+    Properties props=getProperties(zk,path);
     if (value != null) {
       props.setProperty(key,value);
     }
  else {
       props.remove(key);
     }
-    ZooKeeperUtils.setProperties(zk,path,props);
+    setProperties(zk,path,props);
   }
  catch (  Exception e) {
     throw new FabricException(e);

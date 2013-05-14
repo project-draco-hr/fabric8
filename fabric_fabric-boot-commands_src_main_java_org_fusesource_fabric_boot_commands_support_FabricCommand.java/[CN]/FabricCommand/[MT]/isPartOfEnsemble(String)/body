@@ -3,8 +3,8 @@
   Container container=fabricService.getContainer(containerName);
   try {
     List<String> containerList=new ArrayList<String>();
-    String clusterId=zooKeeper.getStringData(ZkPath.CONFIG_ENSEMBLES.getPath());
-    String containers=zooKeeper.getStringData(ZkPath.CONFIG_ENSEMBLE.getPath(clusterId));
+    String clusterId=getStringData(zooKeeper,ZkPath.CONFIG_ENSEMBLES.getPath());
+    String containers=getStringData(zooKeeper,ZkPath.CONFIG_ENSEMBLE.getPath(clusterId));
     Collections.addAll(containerList,containers.split(","));
     result=containerList.contains(containerName);
   }

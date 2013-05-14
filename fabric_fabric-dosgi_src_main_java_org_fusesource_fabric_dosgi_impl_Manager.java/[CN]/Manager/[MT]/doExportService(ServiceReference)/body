@@ -34,6 +34,6 @@
   }
 ,AriesFrameworkUtil.getClassLoader(reference.getBundle()));
   String descStr=Utils.getEndpointDescriptionXML(description);
-  final String nodePath=zooKeeper.create(DOSGI_REGISTRY + "/" + uuid,descStr,CreateMode.EPHEMERAL);
+  final String nodePath=create(zooKeeper,DOSGI_REGISTRY + "/" + uuid,descStr,CreateMode.EPHEMERAL);
   return new ExportRegistration(reference,description,nodePath);
 }

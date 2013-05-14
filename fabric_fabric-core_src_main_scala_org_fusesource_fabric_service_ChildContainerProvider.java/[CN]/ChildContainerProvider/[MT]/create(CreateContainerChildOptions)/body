@@ -38,8 +38,8 @@
         metadata.setContainerName(containerName);
         int minimumPort=parent.getMinimumPort();
         int maximumPort=parent.getMaximumPort();
-        ZooKeeperUtils.set(service.getZooKeeper(),ZkPath.CONTAINER_PORT_MIN.getPath(containerName),String.valueOf(minimumPort));
-        ZooKeeperUtils.set(service.getZooKeeper(),ZkPath.CONTAINER_PORT_MAX.getPath(containerName),String.valueOf(maximumPort));
+        setData(service.getZooKeeper(),ZkPath.CONTAINER_PORT_MIN.getPath(containerName),String.valueOf(minimumPort));
+        setData(service.getZooKeeper(),ZkPath.CONTAINER_PORT_MAX.getPath(containerName),String.valueOf(maximumPort));
         inheritAddresses(service.getZooKeeper(),parentName,containerName,options);
         Container child=new ContainerImpl(parent,containerName,service){
           @Override public String getIp(){

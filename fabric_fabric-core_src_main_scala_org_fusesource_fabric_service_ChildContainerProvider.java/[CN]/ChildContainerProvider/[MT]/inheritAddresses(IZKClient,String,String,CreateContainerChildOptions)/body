@@ -1,13 +1,13 @@
 {
   for (  String resolver : ZkDefs.VALID_RESOLVERS) {
-    zooKeeper.createOrSetWithParents(CONTAINER_ADDRESS.getPath(name,resolver),"${zk:" + parent + "/"+ resolver+ "}",CreateMode.PERSISTENT);
+    setData(zooKeeper,CONTAINER_ADDRESS.getPath(name,resolver),"${zk:" + parent + "/"+ resolver+ "}");
   }
   if (options.getResolver() != null) {
-    zooKeeper.createOrSetWithParents(CONTAINER_RESOLVER.getPath(name),options.getResolver(),CreateMode.PERSISTENT);
+    setData(zooKeeper,CONTAINER_RESOLVER.getPath(name),options.getResolver());
   }
  else {
-    zooKeeper.createOrSetWithParents(CONTAINER_RESOLVER.getPath(name),"${zk:" + parent + "/resolver}",CreateMode.PERSISTENT);
+    setData(zooKeeper,CONTAINER_RESOLVER.getPath(name),"${zk:" + parent + "/resolver}");
   }
-  zooKeeper.createOrSetWithParents(CONTAINER_RESOLVER.getPath(name),"${zk:" + parent + "/resolver}",CreateMode.PERSISTENT);
-  zooKeeper.createOrSetWithParents(CONTAINER_IP.getPath(name),"${zk:" + name + "/resolver}",CreateMode.PERSISTENT);
+  setData(zooKeeper,CONTAINER_RESOLVER.getPath(name),"${zk:" + parent + "/resolver}");
+  setData(zooKeeper,CONTAINER_IP.getPath(name),"${zk:" + name + "/resolver}");
 }

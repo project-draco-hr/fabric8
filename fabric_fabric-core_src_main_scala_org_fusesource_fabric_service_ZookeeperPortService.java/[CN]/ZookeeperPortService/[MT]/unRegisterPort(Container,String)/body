@@ -2,11 +2,11 @@
   String containerPortsPidPath=ZkPath.PORTS_CONTAINER_PID.getPath(container.getId(),pid);
   try {
     if (lock.tryLock(60,TimeUnit.SECONDS)) {
-      if (zooKeeper.exists(containerPortsPidPath) != null) {
-        for (        String key : zooKeeper.getChildren(containerPortsPidPath)) {
+      if (exists(zooKeeper,containerPortsPidPath) != null) {
+        for (        String key : getChildren(zooKeeper,containerPortsPidPath)) {
           unRegisterPort(container,pid,key);
         }
-        ZooKeeperUtils.deleteSafe(zooKeeper,containerPortsPidPath);
+        deleteSafe(zooKeeper,containerPortsPidPath);
       }
     }
  else {

@@ -3,9 +3,9 @@
   IZKClient zookeeper=getZookeeper();
   Set<Container> containers=ContainerBuilder.create(1,1).withName("child").withProfiles("default").assertProvisioningResult().build();
   Container child=containers.iterator().next();
-  Assert.assertEquals("manualip",ZooKeeperUtils.getSubstitutedPath(zookeeper,ZkPath.CONTAINER_RESOLVER.getPath(child.getId())));
+  Assert.assertEquals("manualip",getSubstitutedPath(zookeeper,ZkPath.CONTAINER_RESOLVER.getPath(child.getId())));
   Assert.assertEquals("manualip",getFabricService().getCurrentContainer().getResolver());
   waitForFabricCommands();
   System.err.println(executeCommand("fabric:container-resolver-set --container root localip"));
-  Assert.assertEquals("localip",ZooKeeperUtils.getSubstitutedPath(zookeeper,ZkPath.CONTAINER_RESOLVER.getPath(child.getId())));
+  Assert.assertEquals("localip",getSubstitutedPath(zookeeper,ZkPath.CONTAINER_RESOLVER.getPath(child.getId())));
 }

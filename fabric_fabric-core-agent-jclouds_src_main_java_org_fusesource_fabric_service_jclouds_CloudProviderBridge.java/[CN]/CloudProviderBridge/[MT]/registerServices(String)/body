@@ -9,14 +9,14 @@
           String identity=properties.get(Constants.IDENTITY) != null ? String.valueOf(properties.get(Constants.IDENTITY)) : null;
           String credential=properties.get(Constants.CREDENTIAL) != null ? String.valueOf(properties.get(Constants.CREDENTIAL)) : null;
           if (name != null && identity != null && credential != null && getZooKeeper().isConnected()) {
-            if (getZooKeeper().exists(ZkPath.CLOUD_SERVICE.getPath(name)) == null) {
-              ZooKeeperUtils.create(getZooKeeper(),ZkPath.CLOUD_SERVICE.getPath(name));
+            if (exists(getZooKeeper(),ZkPath.CLOUD_SERVICE.getPath(name)) == null) {
+              create(getZooKeeper(),ZkPath.CLOUD_SERVICE.getPath(name));
               Enumeration keys=properties.keys();
               while (keys.hasMoreElements()) {
                 String key=String.valueOf(keys.nextElement());
                 String value=String.valueOf(properties.get(key));
                 if (!key.equals("service.pid") && !key.equals("service.factoryPid")) {
-                  ZooKeeperUtils.set(getZooKeeper(),ZkPath.CLOUD_SERVICE_PROPERTY.getPath(name,key),value);
+                  setData(getZooKeeper(),ZkPath.CLOUD_SERVICE_PROPERTY.getPath(name,key),value);
                 }
               }
             }

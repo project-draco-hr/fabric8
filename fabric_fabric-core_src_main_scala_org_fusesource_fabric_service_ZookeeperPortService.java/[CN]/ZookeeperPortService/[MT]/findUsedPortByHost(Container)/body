@@ -4,8 +4,8 @@
   String path=ZkPath.PORTS_IP.getPath(ip);
   try {
     if (lock.tryLock(60,TimeUnit.SECONDS)) {
-      ZooKeeperUtils.createDefault(zooKeeper,path,"");
-      String boundPorts=zooKeeper.getStringData(path);
+      createDefault(zooKeeper,path,"");
+      String boundPorts=getStringData(zooKeeper,path);
       if (boundPorts != null && !boundPorts.isEmpty()) {
         for (        String port : boundPorts.split(" ")) {
           try {

@@ -2,8 +2,8 @@
   try {
     String path=ZkProfiles.getPath(version,profile);
     String configPath=path + "/" + pid;
-    if (ZooKeeperUtils.exists(zk,configPath) != null && zk.getChildren(configPath).size() > 0) {
-      List<String> kids=zk.getChildren(configPath);
+    if (exists(zk,configPath) != null && getChildren(zk,configPath).size() > 0) {
+      List<String> kids=getChildren(zk,configPath);
       ArrayList<String> saved=new ArrayList<String>();
       for (      String line : new String(configuration).split("\n")) {
         if (line.startsWith("#") || line.length() == 0) {
@@ -19,7 +19,7 @@
       }
       for (      String kid : kids) {
         if (!saved.contains(kid)) {
-          zk.deleteWithChildren(configPath + "/" + kid);
+          deleteSafe(zk,configPath + "/" + kid);
         }
       }
     }
