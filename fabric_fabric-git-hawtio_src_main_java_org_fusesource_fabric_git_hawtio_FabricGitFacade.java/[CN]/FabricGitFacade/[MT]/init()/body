@@ -1,0 +1,10 @@
+{
+  String basePath=System.getProperty("karaf.data","karaf/data") + File.separator + "git"+ File.separator;
+  String fabricGitPath=basePath + "fabric-edit";
+  File fabricRoot=new File(fabricGitPath);
+  if (!fabricRoot.exists() && !fabricRoot.mkdirs()) {
+    throw new FileNotFoundException("Could not found git root:" + basePath);
+  }
+  setConfigDirectory(fabricRoot);
+  super.init();
+}
