@@ -8,33 +8,39 @@
   try {
     GitNode state=createState();
     singleton.update(state);
-    if (singleton.isMaster()) {
-      String pid="org.fusesource.fabric.git";
-      String url=state.getUrl();
-      try {
-        String actualUrl=ZooKeeperUtils.getSubstitutedData(zookeeper,url);
-        Configuration conf=configurationAdmin.getConfiguration(pid);
-        if (conf == null) {
-          LOGGER.warn("No configuration for pid " + pid);
-        }
+    String url=state.getUrl();
+    try {
+      String actualUrl=ZooKeeperUtils.getSubstitutedData(zookeeper,url);
+      if (actualUrl != null && (this.gitRemoteUrl == null || !this.gitRemoteUrl.equals(actualUrl))) {
+        this.gitRemoteUrl=actualUrl;
+        fireGitRemoteUrlChanged(actualUrl);
+      }
+      if (singleton.isMaster()) {
+        String pid="org.fusesource.fabric.git";
+        try {
+          Configuration conf=configurationAdmin.getConfiguration(pid);
+          if (conf == null) {
+            LOGGER.warn("No configuration for pid " + pid);
+          }
  else {
-          Dictionary<String,Object> properties=conf.getProperties();
-          if (properties == null) {
-            properties=new Hashtable<String,Object>();
-          }
-          properties.put("fabric-git-url",actualUrl);
-          conf.update(properties);
-          if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Setting pid " + pid + " config admin to: "+ properties);
+            Dictionary<String,Object> properties=conf.getProperties();
+            if (properties == null) {
+              properties=new Hashtable<String,Object>();
+            }
+            properties.put("fabric.git.url",actualUrl);
+            conf.update(properties);
+            if (LOGGER.isDebugEnabled()) {
+              LOGGER.debug("Setting pid " + pid + " config admin to: "+ properties);
+            }
           }
         }
+ catch (        Throwable e) {
+          LOGGER.error("Could not load config admin for pid " + pid + ". Reason: "+ e,e);
+        }
       }
- catch (      URISyntaxException e) {
-        LOGGER.error("Could not resolve actual URL from " + url + ". Reason: "+ e,e);
-      }
-catch (      Throwable e) {
-        LOGGER.error("Could not load config admin for pid " + pid + ". Reason: "+ e,e);
-      }
+    }
+ catch (    URISyntaxException e) {
+      LOGGER.error("Could not resolve actual URL from " + url + ". Reason: "+ e,e);
     }
   }
  catch (  IllegalStateException e) {
