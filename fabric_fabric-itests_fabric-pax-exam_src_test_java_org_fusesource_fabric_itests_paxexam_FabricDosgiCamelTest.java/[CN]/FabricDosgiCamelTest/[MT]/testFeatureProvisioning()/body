@@ -11,12 +11,12 @@
   List<Container> dosgiProviderContainers=containerList.subList(0,containerList.size() / 2);
   List<Container> dosgiCamelContainers=containerList.subList(containerList.size() / 2,containerList.size());
   for (  Container c : dosgiProviderContainers) {
-    setData(getZookeeper(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(c.getId()),"changing profile");
+    setData(getCurator(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(c.getId()),"changing profile");
     Profile p=c.getVersion().getProfile("dosgi-provider");
     c.setProfiles(new Profile[]{p});
   }
   for (  Container c : dosgiCamelContainers) {
-    setData(getZookeeper(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(c.getId()),"changing profile");
+    setData(getCurator(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(c.getId()),"changing profile");
     Profile p=c.getVersion().getProfile("dosgi-camel");
     c.setProfiles(new Profile[]{p});
   }

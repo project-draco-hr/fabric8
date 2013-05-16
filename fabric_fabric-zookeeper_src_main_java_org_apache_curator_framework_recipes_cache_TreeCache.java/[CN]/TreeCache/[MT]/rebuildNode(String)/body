@@ -1,0 +1,7 @@
+{
+  Preconditions.checkArgument(ZKPaths.getPathAndNode(fullPath).getPath().equals(path),"Node is not part of this cache: " + fullPath);
+  Preconditions.checkState(!executorService.isShutdown(),"cache has been closed");
+  ensurePath.ensure(client.getZookeeperClient());
+  internalRebuildNode(fullPath);
+  offerOperation(new TreeRefreshOperation(this,path,RefreshMode.FORCE_GET_DATA_AND_STAT));
+}

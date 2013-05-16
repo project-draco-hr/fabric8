@@ -4,12 +4,13 @@
   this.client.start();
   this.server.start();
   try {
-    create(zooKeeper,DOSGI_REGISTRY,CreateMode.PERSISTENT);
+    create(curator,DOSGI_REGISTRY,CreateMode.PERSISTENT);
   }
  catch (  KeeperException.NodeExistsException e) {
   }
-  this.tree=new ZooKeeperTreeTracker<String>(this.zooKeeper,new ZKStringDataReader(),DOSGI_REGISTRY);
-  this.tree.track(this);
+  this.tree=new TreeCache(curator,DOSGI_REGISTRY,false);
+  this.tree.getListenable().addListener(this);
+  this.tree.start();
   this.uuid=Utils.getUUID(this.bundleContext);
   String filter="(" + RemoteConstants.SERVICE_EXPORTED_INTERFACES + "=*)";
   this.bundleContext.addServiceListener(this,filter);

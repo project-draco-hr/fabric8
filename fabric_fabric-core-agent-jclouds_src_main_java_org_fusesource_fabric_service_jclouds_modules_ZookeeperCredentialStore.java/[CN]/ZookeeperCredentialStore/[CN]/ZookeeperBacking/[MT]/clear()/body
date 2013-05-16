@@ -1,14 +1,12 @@
 {
   cache.cleanUp();
-  if (zookeeper.isConnected()) {
-    try {
-      for (      String nodeId : keySet()) {
-        deleteSafe(zookeeper,ZkPath.CLOUD_NODE_IDENTITY.getPath(nodeId));
-        deleteSafe(zookeeper,ZkPath.CLOUD_NODE_CREDENTIAL.getPath(nodeId));
-      }
+  try {
+    for (    String nodeId : keySet()) {
+      deleteSafe(curator,ZkPath.CLOUD_NODE_IDENTITY.getPath(nodeId));
+      deleteSafe(curator,ZkPath.CLOUD_NODE_CREDENTIAL.getPath(nodeId));
     }
- catch (    Exception e) {
-      LOGGER.warn("Failed to clear zookeeper jclouds credentials store.",e);
-    }
+  }
+ catch (  Exception e) {
+    LOGGER.warn("Failed to clear zookeeper jclouds credentials store.",e);
   }
 }

@@ -1,14 +1,14 @@
 {
   try {
     String path=ZkProfiles.getPath(version,profile);
-    Properties props=getProperties(zk,path);
+    Properties props=getProperties(curator,path);
     if (value != null) {
       props.setProperty(key,value);
     }
  else {
       props.remove(key);
     }
-    setProperties(zk,path,props);
+    setProperties(curator,path,props);
   }
  catch (  Exception e) {
     throw new FabricException(e);

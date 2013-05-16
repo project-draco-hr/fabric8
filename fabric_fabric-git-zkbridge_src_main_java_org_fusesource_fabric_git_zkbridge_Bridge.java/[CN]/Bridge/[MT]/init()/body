@@ -7,13 +7,13 @@
         if (gitService != null) {
           String container=System.getProperty("karaf.name");
           String login=getContainerLogin(container);
-          String token=generateContainerToken(zookeeper,container);
+          String token=generateContainerToken(curator,container);
           CredentialsProvider cp=new UsernamePasswordCredentialsProvider(login,token);
           if (singleton.isMaster()) {
-            update(gitService.get(),zookeeper,cp);
+            update(gitService.get(),curator,cp);
           }
  else {
-            updateLocal(gitService.get(),zookeeper,cp);
+            updateLocal(gitService.get(),curator,cp);
           }
         }
       }

@@ -7,7 +7,7 @@
     Set<String> sourceCidrs=collectCirds();
     FirewallManager firewallManager=firewallManagerFactory.getFirewallManager(computeService);
     NodeMetadata node=null;
-    if (!Strings.isNullOrEmpty(targetContainerName) && getZooKeeper().isConnected() && fabricService != null) {
+    if (!Strings.isNullOrEmpty(targetContainerName) && getCurator().getZookeeperClient().isConnected() && fabricService != null) {
       CreateJCloudsContainerMetadata metadata=getContainerCloudMetadata(targetContainerName);
       if (metadata != null && !Strings.isNullOrEmpty(metadata.getNodeId())) {
         targetNodeId=metadata.getNodeId();

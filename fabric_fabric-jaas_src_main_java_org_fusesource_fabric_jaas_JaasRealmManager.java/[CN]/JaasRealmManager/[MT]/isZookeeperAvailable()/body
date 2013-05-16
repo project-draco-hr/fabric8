@@ -4,8 +4,8 @@
   try {
     serviceReference=bundleContext.getServiceReference(ZOOKEEPER_CLIENT);
     if (serviceReference != null) {
-      IZKClient client=(IZKClient)bundleContext.getService(serviceReference);
-      if (client != null && client.isConnected()) {
+      CuratorFramework client=(CuratorFramework)bundleContext.getService(serviceReference);
+      if (client != null && client.getZookeeperClient().isConnected()) {
         available=true;
       }
     }

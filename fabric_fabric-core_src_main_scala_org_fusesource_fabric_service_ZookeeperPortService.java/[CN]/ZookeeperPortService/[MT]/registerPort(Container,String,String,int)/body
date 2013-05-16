@@ -3,13 +3,13 @@
   String containerPortsPath=ZkPath.PORTS_CONTAINER_PID_KEY.getPath(container.getId(),pid,key);
   String ipPortsPath=ZkPath.PORTS_IP.getPath(container.getIp());
   try {
-    if (lock.tryLock(60,TimeUnit.SECONDS)) {
-      createDefault(zooKeeper,containerPortsPath,portAsString);
-      createDefault(zooKeeper,ipPortsPath,portAsString);
-      zooKeeper.setData(containerPortsPath,portAsString);
-      String existingPorts=getStringData(zooKeeper,ipPortsPath);
+    if (lock.acquire(60,TimeUnit.SECONDS)) {
+      createDefault(curator,containerPortsPath,portAsString);
+      createDefault(curator,ipPortsPath,portAsString);
+      setData(curator,containerPortsPath,portAsString);
+      String existingPorts=getStringData(curator,ipPortsPath);
       if (!existingPorts.contains(portAsString)) {
-        setData(zooKeeper,ipPortsPath,existingPorts + " " + portAsString);
+        setData(curator,ipPortsPath,existingPorts + " " + portAsString);
       }
     }
  else {
@@ -20,6 +20,6 @@
     throw new FabricException(ex);
   }
  finally {
-    lock.unlock();
+    release();
   }
 }

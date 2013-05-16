@@ -27,9 +27,9 @@
   cfgClient.update(props);
   ServerStats.Provider server=getOsgiService(ServerStats.Provider.class);
   assertNotNull(server);
-  IZKClient client=getOsgiService(IZKClient.class);
+  CuratorFramework client=getOsgiService(CuratorFramework.class);
   assertNotNull(client);
-  client.waitForConnected();
+  client.getZookeeperClient().blockUntilConnectedOrTimedOut();
   Thread.sleep(500);
   assertNotNull(exists(client,ZkPath.CONTAINER_ALIVE.getPath(System.getProperty("karaf.name"))));
 }

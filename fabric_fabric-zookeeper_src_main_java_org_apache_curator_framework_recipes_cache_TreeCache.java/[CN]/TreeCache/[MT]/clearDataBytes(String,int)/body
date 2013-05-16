@@ -1,0 +1,10 @@
+{
+  ChildData data=currentData.get(fullPath);
+  if (data != null) {
+    if ((ifVersion < 0) || (ifVersion == data.getStat().getVersion())) {
+      data.clearData();
+      return true;
+    }
+  }
+  return false;
+}

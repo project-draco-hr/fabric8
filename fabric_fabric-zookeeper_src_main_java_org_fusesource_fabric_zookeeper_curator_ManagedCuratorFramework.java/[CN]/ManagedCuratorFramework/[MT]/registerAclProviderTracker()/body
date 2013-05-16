@@ -1,0 +1,10 @@
+{
+  try {
+    closeQuietly(aclProviderTracker);
+    this.aclProviderTracker=new ServiceTracker(bundleContext,ACLProvider.class.getName(),new ACLProviderTracker(bundleContext,aclProviders));
+    this.aclProviderTracker.open();
+  }
+ catch (  Exception ex) {
+    LOGGER.warn("Failed to register acl provider tracker.");
+  }
+}

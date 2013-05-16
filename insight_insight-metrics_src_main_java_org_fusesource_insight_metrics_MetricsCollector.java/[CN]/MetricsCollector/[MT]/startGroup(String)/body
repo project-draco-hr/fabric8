@@ -1,7 +1,7 @@
 {
   if (LOCK_GLOBAL.equals(lock)) {
     if (globalGroup == null) {
-      globalGroup=ZooKeeperGroupFactory.create(zookeeper,"/fabric/registry/clusters/insight-metrics/global");
+      globalGroup=ZooKeeperGroupFactory.create(curator,"/fabric/registry/clusters/insight-metrics/global");
     }
     return globalGroup;
   }
@@ -14,7 +14,7 @@
  catch (      UnknownHostException e) {
         throw new IllegalStateException("Unable to retrieve host name",e);
       }
-      hostGroup=ZooKeeperGroupFactory.create(zookeeper,"/fabric/registry/clusters/insight-metrics/host-" + host);
+      hostGroup=ZooKeeperGroupFactory.create(curator,"/fabric/registry/clusters/insight-metrics/host-" + host);
     }
     return hostGroup;
   }

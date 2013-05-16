@@ -2,8 +2,8 @@
   try {
     String path=ZkProfiles.getPath(version,profile);
     String configPath=path + "/" + pid;
-    if (exists(zk,configPath) != null && getChildren(zk,configPath).size() > 0) {
-      List<String> kids=getChildren(zk,configPath);
+    if (exists(curator,configPath) != null && getChildren(curator,configPath).size() > 0) {
+      List<String> kids=getChildren(curator,configPath);
       ArrayList<String> saved=new ArrayList<String>();
       for (      String line : new String(configuration).split("\n")) {
         if (line.startsWith("#") || line.length() == 0) {
@@ -14,17 +14,17 @@
           continue;
         }
         String newPath=configPath + "/" + nameValue[0].trim();
-        ZooKeeperRetriableUtils.set(zk,newPath,nameValue[1].trim());
+        setData(curator,newPath,nameValue[1].trim());
         saved.add(nameValue[0].trim());
       }
       for (      String kid : kids) {
         if (!saved.contains(kid)) {
-          deleteSafe(zk,configPath + "/" + kid);
+          deleteSafe(curator,configPath + "/" + kid);
         }
       }
     }
  else {
-      ZooKeeperRetriableUtils.set(zk,configPath,configuration);
+      setData(curator,configPath,configuration);
     }
   }
  catch (  Exception e) {

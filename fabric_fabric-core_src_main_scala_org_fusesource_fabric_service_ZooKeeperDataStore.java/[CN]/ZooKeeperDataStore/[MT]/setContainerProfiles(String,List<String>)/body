@@ -1,6 +1,6 @@
 {
   try {
-    String versionId=getStringData(zk,ZkPath.CONFIG_CONTAINER.getPath(containerId));
+    String versionId=getStringData(curator,ZkPath.CONFIG_CONTAINER.getPath(containerId));
     StringBuilder sb=new StringBuilder();
     for (    String profileId : profileIds) {
       if (sb.length() > 0) {
@@ -8,7 +8,7 @@
       }
       sb.append(profileId);
     }
-    setData(zk,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId),sb.toString());
+    setData(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId),sb.toString());
   }
  catch (  Exception e) {
     throw new FabricException(e);

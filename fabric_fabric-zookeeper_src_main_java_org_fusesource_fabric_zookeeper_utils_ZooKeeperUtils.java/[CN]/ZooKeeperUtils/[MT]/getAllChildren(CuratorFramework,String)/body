@@ -1,0 +1,10 @@
+{
+  List<String> children=getChildren(curator,path);
+  List<String> allChildren=new ArrayList();
+  for (  String child : children) {
+    String fullPath=ZKPaths.makePath(path,child);
+    allChildren.add(fullPath);
+    allChildren.addAll(getAllChildren(curator,fullPath));
+  }
+  return allChildren;
+}

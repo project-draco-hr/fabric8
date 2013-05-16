@@ -1,21 +1,22 @@
 {
   boolean exists=false;
-  ZKClient zkClient=null;
+  CuratorFramework curator=null;
   try {
-    zkClient=new ZKClient(zookeeperUrl,Timespan.ONE_MINUTE,null);
+    CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().connectString(zookeeperUrl).retryPolicy(new RetryOneTime(1000)).connectionTimeoutMs(60000);
     if (registryPassword != null && !registryPassword.isEmpty()) {
-      zkClient.setPassword(registryPassword);
+      builder.authorization("digest",("fabric:" + registryPassword).getBytes());
     }
-    zkClient.start();
-    zkClient.waitForConnected();
-    exists=exists(zkClient,ZkPath.CONTAINER.getPath(name)) != null;
+    curator=builder.build();
+    curator.start();
+    curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+    exists=exists(curator,ZkPath.CONTAINER.getPath(name)) != null;
     if (!exists || force) {
-      ZkPath.createContainerPaths(zkClient,containerName,version,profile);
+      ZkPath.createContainerPaths(curator,containerName,version,profile);
     }
   }
   finally {
-    if (zkClient != null) {
-      zkClient.close();
+    if (curator != null) {
+      curator.close();
     }
   }
   return !exists || force;

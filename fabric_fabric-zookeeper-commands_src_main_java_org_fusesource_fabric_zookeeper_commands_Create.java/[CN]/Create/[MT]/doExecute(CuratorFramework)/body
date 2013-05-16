@@ -1,0 +1,36 @@
+{
+  List<ACL> acls=acl == null ? ZooDefs.Ids.OPEN_ACL_UNSAFE : parseACLs(acl);
+  CreateMode mode;
+  if (ephemeral && sequential) {
+    mode=CreateMode.EPHEMERAL_SEQUENTIAL;
+  }
+ else   if (ephemeral) {
+    mode=CreateMode.EPHEMERAL;
+  }
+ else   if (sequential) {
+    mode=CreateMode.PERSISTENT_SEQUENTIAL;
+  }
+ else {
+    mode=CreateMode.PERSISTENT;
+  }
+  String nodeData=data;
+  if (importUrl) {
+    nodeData=loadUrl(new URL(data));
+  }
+  try {
+    if (recursive) {
+      curator.create().creatingParentsIfNeeded().withMode(mode).withACL(acls).forPath(path,nodeData.getBytes());
+    }
+ else {
+      curator.create().withMode(mode).withACL(acls).forPath(path,nodeData.getBytes());
+    }
+  }
+ catch (  KeeperException.NodeExistsException e) {
+    if (overwrite) {
+      curator.setData().forPath(path,nodeData.getBytes());
+    }
+ else {
+      throw e;
+    }
+  }
+}

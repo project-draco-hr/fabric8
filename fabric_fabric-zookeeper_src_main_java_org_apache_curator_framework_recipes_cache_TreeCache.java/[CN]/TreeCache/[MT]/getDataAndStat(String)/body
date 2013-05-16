@@ -1,0 +1,25 @@
+{
+  BackgroundCallback existsCallback=new BackgroundCallback(){
+    @Override public void processResult(    CuratorFramework client,    CuratorEvent event) throws Exception {
+      applyNewData(fullPath,event.getResultCode(),event.getStat(),null);
+    }
+  }
+;
+  BackgroundCallback getDataCallback=new BackgroundCallback(){
+    @Override public void processResult(    CuratorFramework client,    CuratorEvent event) throws Exception {
+      applyNewData(fullPath,event.getResultCode(),event.getStat(),event.getData());
+    }
+  }
+;
+  if (cacheData) {
+    if (dataIsCompressed) {
+      client.getData().decompressed().usingWatcher(dataWatcher).inBackground(getDataCallback).forPath(fullPath);
+    }
+ else {
+      client.getData().usingWatcher(dataWatcher).inBackground(getDataCallback).forPath(fullPath);
+    }
+  }
+ else {
+    client.checkExists().usingWatcher(dataWatcher).inBackground(existsCallback).forPath(fullPath);
+  }
+}

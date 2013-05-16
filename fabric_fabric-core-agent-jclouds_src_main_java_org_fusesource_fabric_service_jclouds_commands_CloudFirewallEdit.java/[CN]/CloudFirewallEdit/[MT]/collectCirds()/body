@@ -3,7 +3,7 @@
   if (!Strings.isNullOrEmpty(sourceCidr)) {
     sourceCidrs.add(sourceCidr);
   }
-  if (getZooKeeper().isConnected() && !Strings.isNullOrEmpty(sourceContainerName)) {
+  if (getCurator().getZookeeperClient().isConnected() && !Strings.isNullOrEmpty(sourceContainerName)) {
     Container sourceContainer=fabricService.getContainer(sourceContainerName);
     if (sourceContainer != null && !Strings.isNullOrEmpty(sourceContainer.getPublicIp())) {
       sourceCidrs.add(sourceContainer.getPublicIp() + "/32");

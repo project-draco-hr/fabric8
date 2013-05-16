@@ -6,6 +6,6 @@
   System.out.println(executeCommand("fabric:container-rollback --all 1.0"));
   Provision.assertSuccess(containers,PROVISION_TIMEOUT);
   for (  Container container : containers) {
-    assertNotNull(exists(ServiceLocator.getOsgiService(IZKClient.class),"/fabric/configs/versions/1.0/containers/" + container.getId()));
+    assertNotNull(exists(ServiceLocator.getOsgiService(CuratorFramework.class),"/fabric/configs/versions/1.0/containers/" + container.getId()));
   }
 }

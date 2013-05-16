@@ -7,12 +7,13 @@
     zkServerFactoryBean.setPurge(true);
     zkServerFactoryBean.setClientPortAddress(new InetSocketAddress("localhost",zooKeeperPort));
     zkServerFactoryBean.afterPropertiesSet();
-    ZKClient zooKeeper=new ZKClient("localhost:" + zooKeeperPort,Timespan.ONE_MINUTE,null);
-    zooKeeper.start();
-    zooKeeper.waitForConnected();
+    CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().connectString("localhost:" + zooKeeperPort).retryPolicy(new RetryOneTime(1000)).connectionTimeoutMs(60000);
+    CuratorFramework curator=builder.build();
+    curator.start();
+    curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
     BundleContext bundleContext=createMock(BundleContext.class);
     ServiceRegistration registration=createMock(ServiceRegistration.class);
-    Manager manager=new Manager(bundleContext,zooKeeper,"tcp://localhost:" + serverPort,"localhost",TimeUnit.MINUTES.toMillis(5));
+    Manager manager=new Manager(bundleContext,curator,"tcp://localhost:" + serverPort,"localhost",TimeUnit.MINUTES.toMillis(5));
     bundleContext.addServiceListener(manager,"(service.exported.interfaces=*)");
     expect(bundleContext.getProperty("org.osgi.framework.uuid")).andReturn("the-framework-uuid");
     expect(bundleContext.registerService(EasyMock.<String[]>anyObject(),same(manager),EasyMock.<Dictionary>same(null))).andReturn(registration);

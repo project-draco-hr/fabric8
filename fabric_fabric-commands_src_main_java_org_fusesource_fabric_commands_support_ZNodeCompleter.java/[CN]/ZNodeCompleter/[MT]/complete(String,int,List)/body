@@ -1,6 +1,6 @@
 {
   try {
-    if (zk.isConnected()) {
+    if (curator.getZookeeperClient().isConnected()) {
       if (buffer == null) {
         candidates.add("/");
         return 1;
@@ -13,7 +13,7 @@
       int idx=path.lastIndexOf("/") + 1;
       String prefix=path.substring(idx);
       String dir=idx == 1 ? "/" : path.substring(0,idx - 1);
-      List<String> children=zk.getChildren(dir,false);
+      List<String> children=getChildren(curator,dir);
       for (      String child : children) {
         if (child.startsWith(prefix)) {
           candidates.add(child);

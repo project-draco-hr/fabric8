@@ -1,12 +1,12 @@
 {
   try {
     for (    String version : getVersions()) {
-      deleteSafe(zk,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,containerId));
+      deleteSafe(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,containerId));
     }
-    deleteSafe(zk,ZkPath.CONFIG_CONTAINER.getPath(containerId));
-    deleteSafe(zk,ZkPath.CONTAINER.getPath(containerId));
-    deleteSafe(zk,ZkPath.CONTAINER_DOMAINS.getPath(containerId));
-    deleteSafe(zk,ZkPath.CONTAINER_PROVISION.getPath(containerId));
+    deleteSafe(curator,ZkPath.CONFIG_CONTAINER.getPath(containerId));
+    deleteSafe(curator,ZkPath.CONTAINER.getPath(containerId));
+    deleteSafe(curator,ZkPath.CONTAINER_DOMAINS.getPath(containerId));
+    deleteSafe(curator,ZkPath.CONTAINER_PROVISION.getPath(containerId));
   }
  catch (  Exception e) {
     throw new FabricException(e);

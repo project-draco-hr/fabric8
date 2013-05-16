@@ -1,8 +1,8 @@
 {
   FabricService fabricService=getFabricService();
   assertNotNull(fabricService);
-  IZKClient zookeeer=getZookeeper();
-  zookeeer.waitForConnected(new Timespan(60,Timespan.TimeUnit.SECOND));
+  CuratorFramework curator=getCurator();
+  curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
   Provision.waitForContainerAlive(Arrays.<Container>asList(new ContainerImpl(null,"root",(FabricServiceImpl)fabricService)),PROVISION_TIMEOUT);
   Container[] containers=fabricService.getContainers();
   assertNotNull(containers);

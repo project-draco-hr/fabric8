@@ -2,7 +2,7 @@
   bridgeLookupExecutor.shutdown();
   if (this.connected) {
     try {
-      zooKeeper.removeListener(this);
+      curator.getConnectionStateListenable().removeListener(this);
       this.connected=false;
     }
  catch (    Exception e) {

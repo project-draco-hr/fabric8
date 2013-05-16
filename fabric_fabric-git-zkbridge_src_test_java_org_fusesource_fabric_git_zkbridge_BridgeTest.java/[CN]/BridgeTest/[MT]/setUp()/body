@@ -3,9 +3,10 @@
   delete(sfb.getDataDir());
   delete(sfb.getDataLogDir());
   sfb.afterPropertiesSet();
-  ZKClient zk=new ZKClient("localhost:" + sfb.getClientPortAddress().getPort(),new Timespan(3600000),null);
-  zk.start();
-  zookeeper=zk;
+  CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().connectString("localhost:" + sfb.getClientPortAddress().getPort()).retryPolicy(new RetryOneTime(1000)).connectionTimeoutMs(360000);
+  curator=builder.build();
+  curator.start();
+  curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
   File root=new File(System.getProperty("basedir",".") + "/target/git").getCanonicalFile();
   delete(root);
   new File(root,"remote").mkdirs();

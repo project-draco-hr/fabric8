@@ -1,7 +1,7 @@
 {
   int startingPort=9090;
   System.err.println(executeCommand("fabric:create -n root"));
-  IZKClient zooKeeper=getZookeeper();
+  CuratorFramework curator=getCurator();
   System.err.println(executeCommand("fabric:profile-create --parents camel fabric-camel"));
   System.err.println(executeCommand("fabric:profile-create --parents fabric-camel fabric-camel-server"));
   System.err.println(executeCommand("fabric:profile-create --parents fabric-camel fabric-camel-client"));
@@ -14,7 +14,7 @@
   Set<Container> camelServerContainers=new LinkedHashSet<Container>(containers);
   int index=1;
   for (  Container c : camelServerContainers) {
-    zooKeeper.setData(ZkPath.CONTAINER_PROVISION_RESULT.getPath(c.getId()),"changing");
+    setData(curator,ZkPath.CONTAINER_PROVISION_RESULT.getPath(c.getId()),"changing");
     executeCommand("fabric:container-connect -u admin -p admin " + camelClientContainer.getId() + " log:set DEBUG");
     System.err.println(executeCommand("fabric:profile-create --parents fabric-camel-server fabric-camel-server-" + index));
     System.err.println(executeCommand("fabric:profile-edit --pid org.fusesource.fabric.examples.camel.loadbalancing.server/portNumber=" + (startingPort++) + " fabric-camel-server-"+ index));
@@ -22,13 +22,13 @@
     System.err.println(executeCommand("fabric:container-change-profile " + c.getId() + " fabric-camel-server-"+ (index++)));
   }
   Provision.assertSuccess(camelServerContainers,PROVISION_TIMEOUT);
-  zooKeeper.setData(ZkPath.CONTAINER_PROVISION_RESULT.getPath(camelClientContainer.getId()),"changing");
+  setData(curator,ZkPath.CONTAINER_PROVISION_RESULT.getPath(camelClientContainer.getId()),"changing");
   System.err.println(executeCommand("fabric:container-change-profile " + camelClientContainer.getId() + " fabric-camel-client"));
   Provision.assertSuccess(Arrays.asList(new Container[]{camelClientContainer}),PROVISION_TIMEOUT);
   System.err.println(executeCommand("fabric:container-list"));
   System.err.println(executeCommand("fabric:profile-display --overlay fabric-camel-server"));
-  Assert.assertNotNull(exists(zooKeeper,"/fabric/registry/camel/endpoints/"));
-  Assert.assertEquals(1,getChildren(zooKeeper,"/fabric/registry/camel/endpoints/").size());
+  Assert.assertNotNull(exists(curator,"/fabric/registry/camel/endpoints/"));
+  Assert.assertEquals(1,getChildren(curator,"/fabric/registry/camel/endpoints/").size());
   Thread.sleep(5000);
   System.err.println(executeCommand("fabric:container-connect -u admin -p admin " + camelClientContainer.getId() + " camel:route-list"));
   String response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin " + camelClientContainer.getId() + " camel:route-info fabric-client | grep Failed")).getPlain().toString();

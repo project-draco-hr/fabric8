@@ -1,5 +1,4 @@
 {
-  IZKClient zooKeeper=getZookeeper();
   StringBuilder sb=new StringBuilder();
   sb.append("[ ");
   for (  Container container : containers) {
@@ -20,7 +19,7 @@
   }
   for (  Container container : containers) {
     if (!defaultProfile.configurationEquals(targetProfile)) {
-      setData(getZookeeper(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(container.getId()),"switching profile");
+      setData(getCurator(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(container.getId()),"switching profile");
     }
     container.setProfiles(new Profile[]{targetProfile});
   }
@@ -39,7 +38,7 @@
   }
   for (  Container container : containers) {
     if (!defaultProfile.configurationEquals(targetProfile)) {
-      setData(getZookeeper(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(container.getId()),"switching profile");
+      setData(getCurator(),ZkPath.CONTAINER_PROVISION_RESULT.getPath(container.getId()),"switching profile");
     }
     container.setProfiles(new Profile[]{defaultProfile});
   }

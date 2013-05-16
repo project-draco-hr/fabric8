@@ -1,6 +1,6 @@
 {
-  IZKClient zk=getZooKeeper();
-  Stat exists=exists(zk,path);
+  CuratorFramework curator=getCurator();
+  Stat exists=exists(curator,path);
   if (exists == null) {
     return null;
   }
@@ -9,10 +9,10 @@
   List<String> children=null;
   String data=null;
   if (numChildren > 0) {
-    children=getChildren(zk,path);
+    children=getChildren(curator,path);
   }
  else {
-    data=getStringData(zk,path);
+    data=getStringData(curator,path);
   }
   return new ZkContents(dataLength,children,data);
 }

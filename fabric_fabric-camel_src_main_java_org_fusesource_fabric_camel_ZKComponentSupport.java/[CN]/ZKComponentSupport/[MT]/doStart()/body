@@ -1,17 +1,17 @@
 {
   super.doStart();
-  if (zkClient == null) {
+  if (curator == null) {
     try {
-      zkClient=(IZKClient)getCamelContext().getRegistry().lookup("zkClient");
+      curator=(CuratorFramework)getCamelContext().getRegistry().lookup("curator");
     }
  catch (    Exception exception) {
-      zkClient=(IZKClient)getCamelContext().getRegistry().lookup(IZKClient.class.getName());
+      curator=(CuratorFramework)getCamelContext().getRegistry().lookup(CuratorFramework.class.getName());
     }
-    if (zkClient != null) {
-      LOG.debug("IZKClient found in camel registry. " + zkClient);
+    if (curator != null) {
+      LOG.debug("IZKClient found in camel registry. " + curator);
     }
   }
-  if (zkClient == null) {
+  if (curator == null) {
     String connectString=getZooKeeperUrl();
     if (connectString == null) {
       connectString=System.getProperty(ZOOKEEPER_URL,"localhost:2181");
@@ -20,15 +20,16 @@
     if (password == null) {
       System.getProperty(ZOOKEEPER_PASSWORD);
     }
-    LOG.debug("IZKClient not find in camel registry, creating new with connection " + connectString);
-    ZKClient client=new ZKClient(connectString,Timespan.milliseconds(getMaximumConnectionTimeout()),null);
+    LOG.debug("CuratorFramework not find in camel registry, creating new with connection " + connectString);
+    CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().connectString(connectString).retryPolicy(new RetryOneTime(1000)).connectionTimeoutMs(getMaximumConnectionTimeout());
     if (password != null && !password.isEmpty()) {
-      client.setPassword(password);
+      builder.authorization("digest",("fabric:" + password).getBytes());
     }
-    LOG.debug("Starting IZKClient " + zkClient);
+    CuratorFramework client=builder.build();
+    LOG.debug("Starting curator " + curator);
     client.start();
-    zkClient=client;
+    curator=client;
     setShouldCloseZkClient(true);
   }
-  zkClient.waitForConnected(new Timespan(getMaximumConnectionTimeout()));
+  curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
 }

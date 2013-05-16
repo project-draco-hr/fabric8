@@ -1,15 +1,15 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  IZKClient zooKeeper=getZookeeper();
+  CuratorFramework curator=getCurator();
   Set<Container> containers=ContainerBuilder.create(2).withName("cnt").withProfiles("default").assertProvisioningResult().build();
   Container brokerContainer=containers.iterator().next();
   containers.remove(brokerContainer);
-  setData(zooKeeper,ZkPath.CONTAINER_PROVISION_RESULT.getPath(brokerContainer.getId()),"changing");
+  setData(curator,ZkPath.CONTAINER_PROVISION_RESULT.getPath(brokerContainer.getId()),"changing");
   System.err.println(executeCommand("fabric:container-change-profile " + brokerContainer.getId() + " mq"));
   Provision.assertSuccess(Arrays.asList(new Container[]{brokerContainer}),PROVISION_TIMEOUT);
   System.err.println(executeCommand("fabric:cluster-list"));
   for (  Container c : containers) {
-    setData(zooKeeper,ZkPath.CONTAINER_PROVISION_RESULT.getPath(c.getId()),"changing");
+    setData(curator,ZkPath.CONTAINER_PROVISION_RESULT.getPath(c.getId()),"changing");
     System.err.println(executeCommand("fabric:container-change-profile " + c.getId() + " example-camel"));
   }
   Provision.assertSuccess(containers,PROVISION_TIMEOUT);

@@ -1,30 +1,5 @@
 {
 synchronized (callbacks) {
-    try {
-      callbacks.add(callback);
-      if (tracker == null) {
-        tracker=new ZooKeeperTreeTracker<String>(zk,new ZKStringDataReader(),ZkPath.CONFIGS.getPath());
-        tracker.track(new NodeEventsListener<String>(){
-          @Override public void onEvents(          Collection<NodeEvent<String>> nodeEvents){
-            List<Runnable> cbs;
-synchronized (callbacks) {
-              cbs=new ArrayList<Runnable>(callbacks);
-              callbacks.clear();
-            }
-            for (            Runnable cb : cbs) {
-              try {
-                cb.run();
-              }
- catch (              Throwable t) {
-              }
-            }
-          }
-        }
-);
-      }
-    }
- catch (    Exception e) {
-      throw new FabricException(e);
-    }
+    callbacks.add(callback);
   }
 }

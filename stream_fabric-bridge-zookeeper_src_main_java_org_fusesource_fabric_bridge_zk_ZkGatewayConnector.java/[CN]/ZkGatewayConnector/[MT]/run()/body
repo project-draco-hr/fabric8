@@ -20,7 +20,7 @@
   for (  Container container : containers) {
     final String containerId=container.getId();
     try {
-      RemoteBridge remoteBridge=ZkConfigHelper.getBridgeConfig(zooKeeper,container,applicationContext);
+      RemoteBridge remoteBridge=ZkConfigHelper.getBridgeConfig(curator,container,applicationContext);
       RemoteBridge oldRemoteBridge=containerBridgeMap.get(containerId);
       if (remoteBridge != null) {
         if (oldRemoteBridge != null) {

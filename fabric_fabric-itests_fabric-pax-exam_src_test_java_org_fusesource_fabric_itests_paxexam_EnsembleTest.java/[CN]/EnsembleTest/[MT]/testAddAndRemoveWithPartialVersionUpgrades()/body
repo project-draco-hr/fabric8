@@ -2,7 +2,7 @@
   System.err.println(executeCommand("fabric:create -n"));
   ZooKeeperClusterService zooKeeperClusterService=ServiceLocator.getOsgiService(ZooKeeperClusterService.class);
   Assert.assertNotNull(zooKeeperClusterService);
-  IZKClient zookeeper=getZookeeper();
+  CuratorFramework curator=getCurator();
   FabricService fabricService=getFabricService();
   System.err.println(executeCommand("fabric:version-create"));
   System.err.println(executeCommand("fabric:container-upgrade --all 1.1"));
@@ -19,11 +19,11 @@
       Container cnt2=containerQueue.removeFirst();
       addedContainers.add(cnt1);
       addedContainers.add(cnt2);
-      WaitForZookeeperUrlChange waitTask=new WaitForZookeeperUrlChange(zookeeper,zookeeper.getConnectString());
+      WaitForZookeeperUrlChange waitTask=new WaitForZookeeperUrlChange(curator,curator.getZookeeperClient().getCurrentConnectionString());
       System.err.println(executeCommand("fabric:ensemble-add --force " + cnt1.getId() + " "+ cnt2.getId()));
       Future<String> future=excutorService.submit(waitTask);
       future.get(60,TimeUnit.SECONDS);
-      zookeeper.waitForConnected(new Timespan(30,Timespan.TimeUnit.SECOND));
+      curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
       System.err.println(executeCommand("config:proplist --pid org.fusesource.fabric.zookeeper"));
       System.err.println(executeCommand("fabric:container-list"));
       List<String> ensembleContainersResult=zooKeeperClusterService.getEnsembleContainers();
@@ -43,11 +43,11 @@
       Container cnt2=addedContainers.removeFirst();
       containerQueue.add(cnt1);
       containerQueue.add(cnt2);
-      WaitForZookeeperUrlChange waitTask=new WaitForZookeeperUrlChange(zookeeper,zookeeper.getConnectString());
+      WaitForZookeeperUrlChange waitTask=new WaitForZookeeperUrlChange(curator,curator.getZookeeperClient().getCurrentConnectionString());
       System.err.println(executeCommand("fabric:ensemble-remove --force " + cnt1.getId() + " "+ cnt2.getId()));
       Future<String> future=excutorService.submit(waitTask);
       future.get(60,TimeUnit.SECONDS);
-      zookeeper.waitForConnected(new Timespan(30,Timespan.TimeUnit.SECOND));
+      curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
       System.err.println(executeCommand("config:proplist --pid org.fusesource.fabric.zookeeper"));
       System.err.println(executeCommand("fabric:container-list"));
       List<String> ensembleContainersResult=zooKeeperClusterService.getEnsembleContainers();

@@ -1,9 +1,9 @@
 {
-  IZKClient client=((FabricServiceImpl)fabricService).getZooKeeper();
+  CuratorFramework client=((FabricServiceImpl)fabricService).getCurator();
   TestImport testImport=new TestImport();
   testImport.setSource("target/test-classes/zkexport");
   testImport.setNRegEx(new String[]{"dummy"});
-  testImport.setZooKeeper(client);
+  testImport.setCurator(client);
   try {
     testImport.doExecute(client);
   }

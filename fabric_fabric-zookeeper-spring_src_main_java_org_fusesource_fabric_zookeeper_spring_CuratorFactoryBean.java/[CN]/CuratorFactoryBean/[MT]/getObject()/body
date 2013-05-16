@@ -1,0 +1,11 @@
+{
+  LOG.debug("Connecting to ZooKeeper on " + connectString);
+  CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().connectString(connectString).retryPolicy(new RetryOneTime(1000)).connectionTimeoutMs(getTimeout());
+  if (password != null && !password.isEmpty()) {
+    builder.authorization("digest",("fabric:" + password).getBytes("UTF-8"));
+  }
+  this.curator=builder.build();
+  LOG.debug("Starting curator " + curator);
+  curator.start();
+  return curator;
+}

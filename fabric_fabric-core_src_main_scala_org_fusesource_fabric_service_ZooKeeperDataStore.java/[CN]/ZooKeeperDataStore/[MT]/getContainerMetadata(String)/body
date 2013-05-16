@@ -1,6 +1,6 @@
 {
   try {
-    byte[] encoded=zk.getData(ZkPath.CONTAINER_METADATA.getPath(containerId));
+    byte[] encoded=curator.getData().forPath(ZkPath.CONTAINER_METADATA.getPath(containerId));
     byte[] decoded=Base64Encoder.decode(encoded);
     ObjectInputStream ois=new ObjectInputStream(new ByteArrayInputStream(decoded));
     return (CreateContainerMetadata)ois.readObject();

@@ -1,14 +1,12 @@
 {
   Credentials credentials=null;
-  if (zookeeper.isConnected()) {
-    try {
-      String identity=getStringData(zookeeper,ZkPath.CLOUD_NODE_IDENTITY.getPath(normalizeKey(key)));
-      String credential=getStringData(zookeeper,ZkPath.CLOUD_NODE_CREDENTIAL.getPath(normalizeKey(key)));
-      credentials=LoginCredentials.fromCredentials(new Credentials(identity,credential));
-    }
- catch (    Exception e) {
-      LOGGER.debug("Failed to read jclouds credentials from zookeeper due to {}.",e.getMessage());
-    }
+  try {
+    String identity=getStringData(curator,ZkPath.CLOUD_NODE_IDENTITY.getPath(normalizeKey(key)));
+    String credential=getStringData(curator,ZkPath.CLOUD_NODE_CREDENTIAL.getPath(normalizeKey(key)));
+    credentials=LoginCredentials.fromCredentials(new Credentials(identity,credential));
+  }
+ catch (  Exception e) {
+    LOGGER.debug("Failed to read jclouds credentials from zookeeper due to {}.",e.getMessage());
   }
   return credentials;
 }

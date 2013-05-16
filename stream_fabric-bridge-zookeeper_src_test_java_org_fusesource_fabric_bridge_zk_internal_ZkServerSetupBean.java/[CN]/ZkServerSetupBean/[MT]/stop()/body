@@ -1,14 +1,9 @@
 {
   try {
-    IZKClient client=((FabricServiceImpl)fabricService).getZooKeeper();
-    client.deleteWithChildren(FABRIC_ROOT_PATH);
+    CuratorFramework client=((FabricServiceImpl)fabricService).getCurator();
+    ZooKeeperUtils.deleteSafe(client,FABRIC_ROOT_PATH);
   }
- catch (  InterruptedException e) {
-    String msg="Error cleaning up old ZK config: " + e.getMessage();
-    LOG.error(msg,e);
-    throw new BeanCreationException(msg,e);
-  }
-catch (  KeeperException e) {
+ catch (  Exception e) {
     String msg="Error cleaning up old ZK config: " + e.getMessage();
     LOG.error(msg,e);
     throw new BeanCreationException(msg,e);

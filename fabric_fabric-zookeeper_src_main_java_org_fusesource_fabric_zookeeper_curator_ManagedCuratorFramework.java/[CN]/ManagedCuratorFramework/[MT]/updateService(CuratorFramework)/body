@@ -1,0 +1,13 @@
+{
+  if (registration != null) {
+    registration.unregister();
+    try {
+      Closeables.close(curatorFramework,true);
+    }
+ catch (    IOException ex) {
+    }
+  }
+  this.registration=bundleContext.registerService(CuratorFramework.class.getName(),framework,new Hashtable<String,Object>());
+  this.curatorFramework=framework;
+  registerConnectionStateListenerTracker();
+}

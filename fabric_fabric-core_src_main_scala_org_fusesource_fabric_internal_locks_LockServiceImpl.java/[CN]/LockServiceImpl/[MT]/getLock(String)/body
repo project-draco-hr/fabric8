@@ -3,7 +3,7 @@
     return locks.get(path);
   }
  else {
-    locks.put(path,new LockImpl(zooKeeper,path));
+    locks.put(path,new InterProcessMutex(curator,path));
     return locks.get(path);
   }
 }

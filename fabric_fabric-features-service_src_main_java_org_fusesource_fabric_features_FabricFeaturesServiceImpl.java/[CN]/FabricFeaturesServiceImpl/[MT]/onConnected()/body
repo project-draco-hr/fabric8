@@ -1,13 +1,12 @@
 {
-  profilesTracker=new ZooKeeperTreeTracker<String>(zooKeeper,new ZKStringDataReader(),ZkPath.CONFIG_VERSIONS.getPath());
+  if (profileTracker == null) {
+    profileTracker=new TreeCache(curator,ZkPath.CONFIG_VERSIONS.getPath(),false);
+  }
   try {
-    profilesTracker.track(this);
+    profileTracker.start();
+    childEvent(curator,null);
   }
- catch (  InterruptedException e) {
+ catch (  Exception e) {
     LOGGER.error("Error while setting tracker for Fabric Features Service.",e);
   }
-catch (  KeeperException e) {
-    LOGGER.error("Error while setting tracker for Fabric Features Service.",e);
-  }
-  onEvents(null);
 }

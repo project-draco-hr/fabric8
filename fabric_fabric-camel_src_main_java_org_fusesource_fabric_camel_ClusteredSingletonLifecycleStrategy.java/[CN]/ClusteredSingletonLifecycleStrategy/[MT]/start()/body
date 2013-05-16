@@ -1,15 +1,22 @@
 {
-  if (zkClient == null) {
+  if (curator == null) {
     managedZkClient=true;
-    ZKClient client=new ZKClient(System.getProperty("zookeeper.url","localhost:2181"),Timespan.parse("10s"),null);
+    String connectString=System.getProperty("zookeeper.url","localhost:2181");
+    String password=System.getProperty("zookeeper.password");
+    CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().connectString(connectString).retryPolicy(new RetryOneTime(1000)).connectionTimeoutMs(10000);
+    if (password != null && !password.isEmpty()) {
+      builder.authorization("digest",("fabric:" + password).getBytes());
+    }
+    CuratorFramework client=builder.build();
+    LOG.debug("Starting curator " + curator);
     client.start();
-    client.waitForConnected();
-    zkClient=client;
+    client.getZookeeperClient().blockUntilConnectedOrTimedOut();
+    curator=client;
   }
  else {
     managedZkClient=false;
   }
-  group=ZooKeeperGroupFactory.create(zkClient,"/fabric/camel-clusters/" + groupName);
+  group=ZooKeeperGroupFactory.create(curator,"/fabric/camel-clusters/" + groupName);
   singleton.start(group);
   singleton.join(createState());
   info("Camel context %s is waiting to become the master",id);

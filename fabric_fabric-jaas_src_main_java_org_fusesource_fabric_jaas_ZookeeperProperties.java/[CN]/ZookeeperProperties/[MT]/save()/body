@@ -1,8 +1,11 @@
 {
+  if (curator == null) {
+    throw new IOException("Curator not bound");
+  }
   StringWriter writer=new StringWriter();
   saveLayout(writer);
   try {
-    setData(zooKeeper,path,writer.toString());
+    curator.setData().forPath(path,writer.toString().getBytes());
   }
  catch (  Exception e) {
     throw new IOException(e);

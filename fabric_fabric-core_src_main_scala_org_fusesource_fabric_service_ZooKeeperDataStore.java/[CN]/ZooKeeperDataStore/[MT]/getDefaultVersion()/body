@@ -1,13 +1,13 @@
 {
   try {
     String version=null;
-    if (exists(zk,ZkPath.CONFIG_DEFAULT_VERSION.getPath()) != null) {
-      version=getStringData(zk,ZkPath.CONFIG_DEFAULT_VERSION.getPath());
+    if (exists(curator,ZkPath.CONFIG_DEFAULT_VERSION.getPath()) != null) {
+      version=getStringData(curator,ZkPath.CONFIG_DEFAULT_VERSION.getPath());
     }
     if (version == null || version.isEmpty()) {
       version=ZkDefs.DEFAULT_VERSION;
-      setData(zk,ZkPath.CONFIG_DEFAULT_VERSION.getPath(),version);
-      setData(zk,ZkPath.CONFIG_VERSION.getPath(version),(String)null);
+      setData(curator,ZkPath.CONFIG_DEFAULT_VERSION.getPath(),version);
+      setData(curator,ZkPath.CONFIG_VERSION.getPath(version),(String)null);
     }
     return version;
   }

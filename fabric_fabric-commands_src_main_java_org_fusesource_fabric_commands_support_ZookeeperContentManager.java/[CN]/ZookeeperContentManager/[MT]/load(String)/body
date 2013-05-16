@@ -1,12 +1,9 @@
 {
   try {
-    String data=getStringData(zookeeper,location);
+    String data=getStringData(curator,location);
     return data != null ? data : "";
   }
- catch (  InterruptedException e) {
-    throw new IOException("Failed to read data from zookeeper.",e);
-  }
-catch (  KeeperException e) {
+ catch (  Exception e) {
     throw new IOException("Failed to read data from zookeeper.",e);
   }
 }

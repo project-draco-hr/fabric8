@@ -1,12 +1,12 @@
 {
   String containerPortsPidPath=ZkPath.PORTS_CONTAINER_PID.getPath(container.getId(),pid);
   try {
-    if (lock.tryLock(60,TimeUnit.SECONDS)) {
-      if (exists(zooKeeper,containerPortsPidPath) != null) {
-        for (        String key : getChildren(zooKeeper,containerPortsPidPath)) {
+    if (lock.acquire(60,TimeUnit.SECONDS)) {
+      if (exists(curator,containerPortsPidPath) != null) {
+        for (        String key : getChildren(curator,containerPortsPidPath)) {
           unRegisterPort(container,pid,key);
         }
-        deleteSafe(zooKeeper,containerPortsPidPath);
+        deleteSafe(curator,containerPortsPidPath);
       }
     }
  else {
@@ -17,6 +17,6 @@
     throw new FabricException(ex);
   }
  finally {
-    lock.unlock();
+    release();
   }
 }

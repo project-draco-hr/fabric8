@@ -1,8 +1,8 @@
 {
-  boolean connected=getZooKeeper().isConnected();
+  boolean connected=getCurator().getZookeeperClient().isConnected();
   Container current=null;
   if (connected) {
-    deleteSafe(getZooKeeper(),ZkPath.CLOUD_SERVICE.getPath(name));
+    deleteSafe(getCurator(),ZkPath.CLOUD_SERVICE.getPath(name));
     current=fabricService.getCurrentContainer();
   }
   Configuration[] computeConfigs=findConfigurationByFactoryPid("org.jclouds.compute");

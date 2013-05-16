@@ -1,12 +1,10 @@
 {
   boolean result=cache.asMap().containsKey(o);
   if (!result) {
-    if (zookeeper.isConnected()) {
-      try {
-        result=(exists(zookeeper,ZkPath.CLOUD_NODE.getPath(normalizeKey(o))) != null);
-      }
- catch (      Exception ex) {
-      }
+    try {
+      result=(exists(curator,ZkPath.CLOUD_NODE.getPath(normalizeKey(o))) != null);
+    }
+ catch (    Exception ex) {
     }
   }
   return result;

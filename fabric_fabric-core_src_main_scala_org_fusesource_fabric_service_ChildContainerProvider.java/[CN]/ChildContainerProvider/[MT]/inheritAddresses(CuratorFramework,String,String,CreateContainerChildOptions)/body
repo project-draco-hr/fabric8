@@ -1,0 +1,13 @@
+{
+  for (  String resolver : ZkDefs.VALID_RESOLVERS) {
+    setData(curator,CONTAINER_ADDRESS.getPath(name,resolver),"${zk:" + parent + "/"+ resolver+ "}");
+  }
+  if (options.getResolver() != null) {
+    setData(curator,CONTAINER_RESOLVER.getPath(name),options.getResolver());
+  }
+ else {
+    setData(curator,CONTAINER_RESOLVER.getPath(name),"${zk:" + parent + "/resolver}");
+  }
+  setData(curator,CONTAINER_RESOLVER.getPath(name),"${zk:" + parent + "/resolver}");
+  setData(curator,CONTAINER_IP.getPath(name),"${zk:" + name + "/resolver}");
+}

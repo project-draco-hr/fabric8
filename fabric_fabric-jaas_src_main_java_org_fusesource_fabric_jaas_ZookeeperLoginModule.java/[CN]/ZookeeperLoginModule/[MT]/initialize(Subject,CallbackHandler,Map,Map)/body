@@ -1,15 +1,15 @@
 {
   debug="true".equalsIgnoreCase((String)options.get("debug"));
-  IZKClient zookeeper=ZOOKEEPER_CONTEXT.get();
-  if (zookeeper == null) {
+  CuratorFramework curator=ZOOKEEPER_CONTEXT.get();
+  if (curator == null) {
     BundleContext bundleContext=((BundleReference)getClass().getClassLoader()).getBundle().getBundleContext();
     encryptionSupport=new EncryptionSupport(options);
-    ServiceReference serviceReference=bundleContext.getServiceReference(IZKClient.class.getName());
+    ServiceReference serviceReference=bundleContext.getServiceReference(CuratorFramework.class.getName());
     if (serviceReference != null) {
       try {
-        zookeeper=(IZKClient)bundleContext.getService(serviceReference);
-        users=getProperties(zookeeper,ZookeeperBackingEngine.USERS_NODE);
-        containers=getContainerTokens(zookeeper);
+        curator=(CuratorFramework)bundleContext.getService(serviceReference);
+        users=getProperties(curator,ZookeeperBackingEngine.USERS_NODE);
+        containers=getContainerTokens(curator);
       }
  catch (      Exception e) {
         LOG.warn("Failed fetching authentication data.",e);
@@ -21,8 +21,8 @@
   }
  else {
     try {
-      users=getProperties(zookeeper,ZookeeperBackingEngine.USERS_NODE);
-      containers=getContainerTokens(zookeeper);
+      users=getProperties(curator,ZookeeperBackingEngine.USERS_NODE);
+      containers=getContainerTokens(curator);
     }
  catch (    Exception e) {
       LOG.warn("Failed fetching authentication data.",e);

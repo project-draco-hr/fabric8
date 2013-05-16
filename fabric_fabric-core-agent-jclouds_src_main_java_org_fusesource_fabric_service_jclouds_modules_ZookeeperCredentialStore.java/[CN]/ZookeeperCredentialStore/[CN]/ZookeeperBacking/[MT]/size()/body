@@ -1,16 +1,14 @@
 {
   int size=0;
-  if (zookeeper.isConnected()) {
+{
     try {
-      if (exists(zookeeper,ZkPath.CLOUD_NODES.getPath()) != null) {
-        size=getChildren(zookeeper,ZkPath.CLOUD_NODES.getPath()).size();
+      if (exists(curator,ZkPath.CLOUD_NODES.getPath()) != null) {
+        size=getChildren(curator,ZkPath.CLOUD_NODES.getPath()).size();
       }
     }
  catch (    Exception ex) {
+      size=(int)cache.size();
     }
-  }
- else {
-    size=(int)cache.size();
   }
   return size;
 }

@@ -1,8 +1,8 @@
 {
   try {
-    String versionId=getStringData(zk,ZkPath.CONFIG_CONTAINER.getPath(containerId));
-    String str=getStringData(zk,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId));
-    return str == null || str.isEmpty() ? Collections.<String>emptyList() : Arrays.asList(str.split(" +"));
+    String versionId=getStringData(curator,ZkPath.CONFIG_CONTAINER.getPath(containerId));
+    String str=getStringData(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId));
+    return str == null || str.isEmpty() ? Collections.<String>emptyList() : Arrays.asList(str.trim().split(" +"));
   }
  catch (  Exception e) {
     throw new FabricException(e);

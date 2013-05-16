@@ -1,17 +1,15 @@
 {
   Credentials credentials=cache.asMap().remove(o);
-  if (zookeeper.isConnected()) {
-    try {
-      if (credentials == null) {
-        credentials=get(o);
-      }
-      String normalizedKey=normalizeKey(o);
-      deleteSafe(zookeeper,ZkPath.CLOUD_NODE_IDENTITY.getPath(normalizedKey));
-      deleteSafe(zookeeper,ZkPath.CLOUD_NODE_CREDENTIAL.getPath(normalizedKey));
+  try {
+    if (credentials == null) {
+      credentials=get(o);
     }
- catch (    Exception e) {
-      LOGGER.warn("Failed to remove jclouds credentials to zookeeper.",e);
-    }
+    String normalizedKey=normalizeKey(o);
+    deleteSafe(curator,ZkPath.CLOUD_NODE_IDENTITY.getPath(normalizedKey));
+    deleteSafe(curator,ZkPath.CLOUD_NODE_CREDENTIAL.getPath(normalizedKey));
+  }
+ catch (  Exception e) {
+    LOGGER.warn("Failed to remove jclouds credentials to zookeeper.",e);
   }
   return credentials;
 }

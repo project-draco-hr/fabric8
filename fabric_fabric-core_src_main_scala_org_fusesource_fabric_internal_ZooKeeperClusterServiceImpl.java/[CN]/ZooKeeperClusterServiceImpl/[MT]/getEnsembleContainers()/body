@@ -5,9 +5,9 @@
       return Collections.emptyList();
     }
     List<String> list=new ArrayList<String>();
-    if (exists(zooKeeper,ZkPath.CONFIG_ENSEMBLES.getPath()) != null) {
-      String clusterId=ZooKeeperRetriableUtils.get(zooKeeper,ZkPath.CONFIG_ENSEMBLES.getPath());
-      String containers=ZooKeeperRetriableUtils.get(zooKeeper,ZkPath.CONFIG_ENSEMBLE.getPath(clusterId));
+    if (exists(curator,ZkPath.CONFIG_ENSEMBLES.getPath()) != null) {
+      String clusterId=getStringData(curator,ZkPath.CONFIG_ENSEMBLES.getPath());
+      String containers=getStringData(curator,ZkPath.CONFIG_ENSEMBLE.getPath(clusterId));
       Collections.addAll(list,containers.split(","));
     }
     return list;

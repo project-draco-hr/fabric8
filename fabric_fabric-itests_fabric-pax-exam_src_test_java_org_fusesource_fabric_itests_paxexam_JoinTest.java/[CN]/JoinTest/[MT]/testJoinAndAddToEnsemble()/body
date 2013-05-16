@@ -1,7 +1,7 @@
 {
   FabricService fabricService=getFabricService();
   System.err.println(executeCommand("fabric:create -n"));
-  IZKClient zookeeper=getZookeeper();
+  CuratorFramework curator=getCurator();
   String version=System.getProperty("fabric.version");
   System.err.println(executeCommand("admin:create --java-opts \"-Dzookeeper.url=localhost:2181 -Dzookeeper.password=admin\" --featureURL mvn:org.fusesource.fabric/fuse-fabric/" + version + "/xml/features --feature fabric-agent child1"));
   System.err.println(executeCommand("admin:create --java-opts \"-Dzookeeper.url=localhost:2181 -Dzookeeper.password=admin\" --featureURL mvn:org.fusesource.fabric/fuse-fabric/" + version + "/xml/features --feature fabric-agent child2"));
@@ -14,11 +14,11 @@
     waitForProvisionSuccess(child2,PROVISION_TIMEOUT);
     System.err.println(executeCommand("fabric:ensemble-add --force child1 child2"));
     Thread.sleep(5000);
-    zookeeper.waitForConnected();
+    curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
     System.err.println(executeCommand("fabric:container-list"));
     System.err.println(executeCommand("fabric:ensemble-remove --force child1 child2"));
     Thread.sleep(5000);
-    zookeeper.waitForConnected();
+    curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
     System.err.println(executeCommand("fabric:container-list"));
   }
   finally {
