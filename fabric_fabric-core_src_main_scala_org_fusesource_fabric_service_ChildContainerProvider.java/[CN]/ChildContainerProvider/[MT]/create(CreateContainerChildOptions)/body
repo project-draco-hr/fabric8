@@ -20,8 +20,10 @@
         jvmOptsBuilder.append(" -XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass");
       }
       Profile defaultProfile=parent.getVersion().getProfile("default");
-      String featuresUrls=listAsString(defaultProfile.getRepositories());
-      String features=listAsString(defaultProfile.getFeatures());
+      String featuresUrls=collectionAsString(defaultProfile.getRepositories());
+      Set<String> features=new LinkedHashSet<String>();
+      features.add("war");
+      features.addAll(defaultProfile.getFeatures());
       String originalName=options.getName();
       PortService portService=service.getPortService();
       Set<Integer> usedPorts=portService.findUsedPortByHost(parent);
@@ -60,7 +62,7 @@
         int rmiRegistryTo=mapPortToRange(Ports.DEFAULT_RMI_REGISTRY_PORT + 100,minimumPort,maximumPort);
         int rmiRegistryPort=portService.registerPort(child,"org.apache.karaf.management","rmiRegistryPort",rmiRegistryFrom,rmiRegistryTo,usedPorts);
         try {
-          adminService.createInstance(containerName,sshPort,rmiServerPort,rmiRegistryPort,null,jvmOptsBuilder.toString(),features,featuresUrls);
+          adminService.createInstance(containerName,sshPort,rmiServerPort,rmiRegistryPort,null,jvmOptsBuilder.toString(),collectionAsString(features),featuresUrls);
           adminService.startInstance(containerName,null);
         }
  catch (        Throwable t) {
