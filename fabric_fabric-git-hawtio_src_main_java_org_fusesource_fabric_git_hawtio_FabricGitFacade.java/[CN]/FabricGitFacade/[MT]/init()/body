@@ -6,9 +6,11 @@
     throw new FileNotFoundException("Could not found git root:" + basePath);
   }
   setConfigDirectory(fabricRoot);
-  String username="admin";
-  String password="admin";
-  setCredentials(new UsernamePasswordCredentialsProvider(username,password));
+  String container=System.getProperty("karaf.name");
+  String login=ZooKeeperUtils.getContainerLogin(container);
+  String token=ZooKeeperUtils.generateContainerToken(zookeeper,container);
+  CredentialsProvider cp=new UsernamePasswordCredentialsProvider(login,token);
+  setCredentials(cp);
   initCalled=true;
   updateConfiguration();
   initCheck();
