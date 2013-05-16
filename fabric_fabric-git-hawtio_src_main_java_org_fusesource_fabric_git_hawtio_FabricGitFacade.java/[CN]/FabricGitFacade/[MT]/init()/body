@@ -6,5 +6,10 @@
     throw new FileNotFoundException("Could not found git root:" + basePath);
   }
   setConfigDirectory(fabricRoot);
-  super.init();
+  String username="admin";
+  String password="admin";
+  setCredentials(new UsernamePasswordCredentialsProvider(username,password));
+  initCalled=true;
+  updateConfiguration();
+  initCheck();
 }
