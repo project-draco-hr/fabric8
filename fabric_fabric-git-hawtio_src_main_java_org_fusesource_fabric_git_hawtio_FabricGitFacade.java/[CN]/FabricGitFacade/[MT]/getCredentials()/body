@@ -1,0 +1,13 @@
+{
+  try {
+    String container=System.getProperty("karaf.name");
+    String login=ZooKeeperUtils.getContainerLogin(container);
+    String token=ZooKeeperUtils.generateContainerToken(zookeeper,container);
+    CredentialsProvider cp=new UsernamePasswordCredentialsProvider(login,token);
+    setCredentials(cp);
+  }
+ catch (  Exception e) {
+    LOG.warn("Failed to get container credentials " + e,e);
+  }
+  return super.getCredentials();
+}
