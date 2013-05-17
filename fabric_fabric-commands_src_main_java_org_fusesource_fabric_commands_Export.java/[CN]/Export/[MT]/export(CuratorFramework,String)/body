@@ -12,10 +12,12 @@
   List<String> paths=getAllChildren(curator,path);
   SortedSet<File> directories=new TreeSet<File>();
   Map<File,String> settings=new HashMap<File,String>();
+  boolean founMatch=false;
   for (  String p : paths) {
     if (!matches(include,p,true) || matches(exclude,p,false) || matches(profile,p,false)) {
       continue;
     }
+    founMatch=true;
     byte[] data=curator.getData().forPath(p);
     if (data != null && data.length > 0) {
       String name=p;
@@ -41,6 +43,10 @@
  else {
       directories.add(new File(target + File.separator + p));
     }
+  }
+  if (!founMatch) {
+    System.out.println("No entry matched the criteria.");
+    return;
   }
   if (delete) {
     if (!dryRun) {
@@ -103,4 +109,5 @@
       System.out.printf("Writing value \"%s\" to file : %s\n",settings.get(f),f);
     }
   }
+  System.out.printf("Export to %s completed successfully\n",target);
 }
