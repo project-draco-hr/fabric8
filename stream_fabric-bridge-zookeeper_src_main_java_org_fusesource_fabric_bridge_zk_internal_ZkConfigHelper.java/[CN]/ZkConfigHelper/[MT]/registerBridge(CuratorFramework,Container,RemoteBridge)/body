@@ -2,14 +2,9 @@
   byte[] data=getZkData(remoteBridge);
   final String bridgeConfigPath=getBridgeConfigPath(container);
   try {
-    ZooKeeperUtils.set(client,bridgeConfigPath,data);
+    setData(client,bridgeConfigPath,data);
   }
- catch (  InterruptedException e) {
-    String msg="Error registering bridge config at " + bridgeConfigPath + " : "+ e.getMessage();
-    LOG.error(msg,e);
-    throw new IllegalArgumentException(msg,e);
-  }
-catch (  KeeperException e) {
+ catch (  Exception e) {
     String msg="Error registering bridge config at " + bridgeConfigPath + " : "+ e.getMessage();
     LOG.error(msg,e);
     throw new IllegalArgumentException(msg,e);
