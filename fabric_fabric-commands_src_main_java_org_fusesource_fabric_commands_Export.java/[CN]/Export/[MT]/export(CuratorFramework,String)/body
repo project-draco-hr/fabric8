@@ -13,12 +13,11 @@
   SortedSet<File> directories=new TreeSet<File>();
   Map<File,String> settings=new HashMap<File,String>();
   for (  String p : paths) {
-    p=path + p;
     if (!matches(include,p,true) || matches(exclude,p,false) || matches(profile,p,false)) {
       continue;
     }
     byte[] data=curator.getData().forPath(p);
-    if (data != null) {
+    if (data != null && data.length > 0) {
       String name=p;
       if (!p.contains(".") || p.endsWith("fabric-ensemble")) {
         name+=".cfg";
