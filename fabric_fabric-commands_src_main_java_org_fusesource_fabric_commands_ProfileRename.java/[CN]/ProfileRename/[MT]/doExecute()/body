@@ -1,0 +1,37 @@
+{
+  checkFabricAvailable();
+  validateProfileName(profileName);
+  validateProfileName(newName);
+  Version ver=version != null ? fabricService.getVersion(version) : fabricService.getDefaultVersion();
+  if (!ver.hasProfile(profileName)) {
+    System.out.println("Profile " + newName + " not found.");
+    return null;
+  }
+ else   if (ver.hasProfile(newName)) {
+    if (!force) {
+      System.out.println("New name " + newName + " already exists. Use --force if you want to overwrite.");
+      return null;
+    }
+ else {
+    }
+    ver.getProfile(newName).delete();
+  }
+  for (  Profile profile : ver.getProfiles()) {
+    if (profileName.equals(profile.getId())) {
+      Profile targetProfile=ver.createProfile(newName);
+      targetProfile.setParents(profile.getParents());
+      targetProfile.setConfigurations(profile.getConfigurations());
+      for (      Map.Entry<String,String> entry : profile.getAttributes().entrySet()) {
+        targetProfile.setAttribute(entry.getKey(),entry.getValue());
+      }
+      for (      Container container : profile.getAssociatedContainers()) {
+        Profile[] containerProfiles=container.getProfiles();
+        Set<Profile> profileSet=new HashSet<Profile>(Arrays.asList(containerProfiles));
+        profileSet.remove(profile);
+        profileSet.add(targetProfile);
+        container.setProfiles(profileSet.toArray(new Profile[profileSet.size()]));
+      }
+    }
+  }
+  return null;
+}
