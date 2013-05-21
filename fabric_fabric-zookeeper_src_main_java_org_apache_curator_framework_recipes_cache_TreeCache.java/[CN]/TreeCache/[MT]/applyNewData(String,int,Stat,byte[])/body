@@ -1,7 +1,11 @@
 {
   if (resultCode == KeeperException.Code.OK.intValue()) {
     ChildData data=new ChildData(fullPath,stat,bytes);
-    ChildData previousData=currentData.put(fullPath,data);
+    ChildData previousData=null;
+synchronized (this) {
+      previousData=currentData.getIfPresent(fullPath);
+      currentData.put(fullPath,data);
+    }
     if (previousData == null) {
       offerOperation(new TreeEventOperation(this,new PathChildrenCacheEvent(PathChildrenCacheEvent.Type.CHILD_ADDED,data)));
     }

@@ -1,0 +1,10 @@
+{
+  List<String> children=Lists.newArrayList();
+  for (  Map.Entry<String,ChildData> entry : currentData.asMap().entrySet()) {
+    String path=entry.getKey();
+    if (path.matches(fullPath + "/[^ /]+")) {
+      children.add(path.substring(fullPath.length() + 1));
+    }
+  }
+  return children;
+}

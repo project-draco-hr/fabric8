@@ -6,7 +6,7 @@
       currentData.put(fullPath,new ChildData(fullPath,stat,bytes));
     }
  catch (    KeeperException.NoNodeException ignore) {
-      currentData.remove(fullPath);
+      currentData.invalidate(fullPath);
     }
   }
  else {
@@ -15,7 +15,7 @@
       currentData.put(fullPath,new ChildData(fullPath,stat,null));
     }
  else {
-      currentData.remove(fullPath);
+      currentData.invalidate(fullPath);
     }
   }
 }

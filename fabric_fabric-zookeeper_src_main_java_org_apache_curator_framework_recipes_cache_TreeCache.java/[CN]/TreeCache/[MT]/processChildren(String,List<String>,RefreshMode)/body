@@ -5,7 +5,7 @@
     }
   }
 ));
-  Set<String> removedNodes=Sets.filter(Sets.newHashSet(currentData.keySet()),new Predicate<String>(){
+  Set<String> removedNodes=Sets.filter(Sets.newHashSet(currentData.asMap().keySet()),new Predicate<String>(){
     @Override public boolean apply(    String input){
       if (input.matches(String.format(CHILD_OF_ZNODE_PATTERN,path))) {
         return true;
@@ -22,10 +22,10 @@
   }
   for (  String name : children) {
     String fullPath=ZKPaths.makePath(path,name);
-    if ((mode == RefreshMode.FORCE_GET_DATA_AND_STAT) || !currentData.containsKey(fullPath)) {
+    if ((mode == RefreshMode.FORCE_GET_DATA_AND_STAT) || currentData.getIfPresent(fullPath) == null) {
       getDataAndStat(fullPath);
     }
-    updateInitialSet(name,NULL_CHILD_DATA);
+    updateInitialSet(fullPath,NULL_CHILD_DATA);
     offerOperation(new TreeRefreshOperation(this,fullPath,mode));
   }
   maybeOfferInitializedEvent(initialSet.get());

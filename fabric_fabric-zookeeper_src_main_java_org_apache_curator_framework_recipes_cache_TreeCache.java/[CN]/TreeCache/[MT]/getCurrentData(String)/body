@@ -1,3 +1,11 @@
 {
-  return currentData.get(fullPath);
+  try {
+    return currentData.get(fullPath);
+  }
+ catch (  ExecutionException e) {
+    return null;
+  }
+catch (  CacheLoader.InvalidCacheLoadException e) {
+    return null;
+  }
 }
