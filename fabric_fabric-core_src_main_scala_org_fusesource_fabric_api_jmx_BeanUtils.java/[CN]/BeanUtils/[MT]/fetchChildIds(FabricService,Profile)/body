@@ -1,0 +1,12 @@
+{
+  List<String> ids=new ArrayList<String>();
+  for (  Profile p : service.getVersion(self.getVersion()).getProfiles()) {
+    for (    Profile parent : p.getParents()) {
+      if (parent.getId().equals(self.getId())) {
+        ids.add(p.getId());
+        break;
+      }
+    }
+  }
+  return ids;
+}

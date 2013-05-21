@@ -1,15 +1,3 @@
 {
-  Version version=getFabricService().getVersion(versionId);
-  Profile profile=version != null ? version.getProfile(profileId) : null;
-  List<ContainerDTO> rc=new ArrayList<ContainerDTO>();
-  if (profile != null) {
-    for (    Container c : getFabricService().getContainers()) {
-      for (      Profile p : c.getProfiles()) {
-        if (p.equals(profile)) {
-          rc.add(ContainerDTO.newInstance(c));
-        }
-      }
-    }
-  }
-  return rc;
+  return containersForProfile(versionId,profileId,BeanUtils.getFields(Container.class));
 }

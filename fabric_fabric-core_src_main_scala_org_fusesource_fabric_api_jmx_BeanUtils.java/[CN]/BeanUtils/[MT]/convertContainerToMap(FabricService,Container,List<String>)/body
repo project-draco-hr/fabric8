@@ -1,0 +1,24 @@
+{
+  Map<String,Object> answer=new HashMap<String,Object>();
+  for (  String field : fields) {
+    if (field.equalsIgnoreCase("profiles") || field.equalsIgnoreCase("profileIds")) {
+      answer.put(field,Ids.getIds(container.getProfiles()));
+    }
+ else     if (field.equalsIgnoreCase("childrenIds") || field.equalsIgnoreCase("children")) {
+      answer.put(field,Ids.getIds(container.getChildren()));
+    }
+ else     if (field.equalsIgnoreCase("parent") || field.equalsIgnoreCase("parentId")) {
+      answer.put(field,Ids.getId(container.getParent()));
+    }
+ else     if (field.equalsIgnoreCase("version") || field.equalsIgnoreCase("versionId")) {
+      answer.put(field,Ids.getId(container.getVersion()));
+    }
+ else     if (field.equalsIgnoreCase("overlayProfile")) {
+      answer.put(field,convertProfileToMap(service,container.getOverlayProfile(),getFields(Profile.class)));
+    }
+ else {
+      addProperty(container,field,answer);
+    }
+  }
+  return answer;
+}

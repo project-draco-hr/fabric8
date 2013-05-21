@@ -1,15 +1,5 @@
 {
-  Version version=getFabricService().getVersion(versionId);
-  Profile profile=version != null ? version.getProfile(profileId) : null;
-  List<String> rc=new ArrayList<String>();
-  if (profile != null) {
-    for (    Container c : getFabricService().getContainers()) {
-      for (      Profile p : c.getProfiles()) {
-        if (p.equals(profile)) {
-          rc.add(c.getId());
-        }
-      }
-    }
-  }
-  return rc;
+  List<String> fields=new ArrayList<String>();
+  fields.add("id");
+  return BeanUtils.collapseToList(containersForProfile(versionId,profileId,fields),"id");
 }

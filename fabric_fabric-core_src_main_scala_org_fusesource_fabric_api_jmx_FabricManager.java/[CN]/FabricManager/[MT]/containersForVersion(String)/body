@@ -1,12 +1,3 @@
 {
-  Version version=getFabricService().getVersion(versionId);
-  List<ContainerDTO> rc=new ArrayList<ContainerDTO>();
-  if (version != null) {
-    for (    Container c : getFabricService().getContainers()) {
-      if (c.getVersion().equals(version)) {
-        rc.add(ContainerDTO.newInstance(c));
-      }
-    }
-  }
-  return rc;
+  return containersForVersion(versionId,BeanUtils.getFields(Container.class));
 }

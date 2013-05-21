@@ -1,15 +1,3 @@
 {
-  String defaultVersionId=null;
-  Version defaultVersion=getFabricService().getDefaultVersion();
-  if (defaultVersion != null) {
-    defaultVersionId=defaultVersion.getId();
-  }
-  List<VersionDTO> answer=VersionDTO.newInstances(getFabricService().getVersions());
-  for (  VersionDTO versionDTO : answer) {
-    if (defaultVersionId == null || defaultVersionId.equals(versionDTO.getId())) {
-      versionDTO.setDefaultVersion(true);
-      break;
-    }
-  }
-  return answer;
+  return versions(BeanUtils.getFields(Version.class));
 }

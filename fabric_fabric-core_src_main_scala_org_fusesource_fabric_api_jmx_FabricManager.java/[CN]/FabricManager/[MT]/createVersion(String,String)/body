@@ -1,3 +1,4 @@
 {
-  return VersionDTO.newInstance(getFabricService().createVersion(parentVersionId,toVersion));
+  Version version=getFabricService().createVersion(parentVersionId,toVersion);
+  return BeanUtils.convertVersionToMap(getFabricService(),version,BeanUtils.getFields(Version.class));
 }
