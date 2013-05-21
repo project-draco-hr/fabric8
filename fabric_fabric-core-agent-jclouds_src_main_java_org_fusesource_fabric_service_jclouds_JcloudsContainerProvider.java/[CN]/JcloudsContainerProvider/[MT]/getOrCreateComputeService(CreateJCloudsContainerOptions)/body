@@ -16,10 +16,10 @@
       Map<String,String> serviceOptions=options.getServiceOptions();
       try {
         if (options.getProviderName() != null) {
-          CloudUtils.registerProvider(zooKeeper,configurationAdmin,options.getContextName(),options.getProviderName(),options.getIdentity(),options.getCredential(),serviceOptions);
+          CloudUtils.registerProvider(curator,configurationAdmin,options.getContextName(),options.getProviderName(),options.getIdentity(),options.getCredential(),serviceOptions);
         }
  else         if (options.getApiName() != null) {
-          CloudUtils.registerApi(zooKeeper,configurationAdmin,options.getContextName(),options.getApiName(),options.getEndpoint(),options.getIdentity(),options.getCredential(),serviceOptions);
+          CloudUtils.registerApi(curator,configurationAdmin,options.getContextName(),options.getApiName(),options.getEndpoint(),options.getIdentity(),options.getCredential(),serviceOptions);
         }
         computeService=CloudUtils.waitForComputeService(bundleContext,options.getContextName());
       }
