@@ -1,18 +1,10 @@
 {
-  if (pendingEvents.incrementAndGet() == 1) {
-    try {
-      List<Runnable> copyOfCallbacks=new ArrayList<Runnable>(callbacks);
-      callbacks.clear();
-      for (      Runnable callback : copyOfCallbacks) {
-        try {
-          callback.run();
-        }
- catch (        Throwable t) {
-        }
-      }
-    }
-  finally {
-      pendingEvents.set(0);
-    }
-  }
+switch (event.getType()) {
+case CHILD_ADDED:
+case CHILD_REMOVED:
+case CHILD_UPDATED:
+case INITIALIZED:
+    runCallbacks();
+  break;
+}
 }

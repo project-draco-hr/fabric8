@@ -1,8 +1,8 @@
 {
   try {
     FabricRequirements answer=null;
-    if (exists(curator,REQUIREMENTS_JSON_PATH) != null) {
-      String json=getStringData(curator,REQUIREMENTS_JSON_PATH);
+    if (treeCache.getCurrentData(REQUIREMENTS_JSON_PATH) != null) {
+      String json=getStringData(treeCache,REQUIREMENTS_JSON_PATH);
       answer=RequirementsJson.fromJSON(json);
     }
     if (answer == null) {

@@ -1,13 +1,14 @@
 {
+  final List<String> children=client.getChildren().forPath(fullPath);
   BackgroundCallback existsCallback=new BackgroundCallback(){
     @Override public void processResult(    CuratorFramework client,    CuratorEvent event) throws Exception {
-      applyNewData(fullPath,event.getResultCode(),event.getStat(),null);
+      applyNewData(fullPath,event.getResultCode(),event.getStat(),null,children);
     }
   }
 ;
   BackgroundCallback getDataCallback=new BackgroundCallback(){
     @Override public void processResult(    CuratorFramework client,    CuratorEvent event) throws Exception {
-      applyNewData(fullPath,event.getResultCode(),event.getStat(),event.getData());
+      applyNewData(fullPath,event.getResultCode(),event.getStat(),event.getData(),children);
     }
   }
 ;

@@ -1,10 +1,10 @@
 {
   try {
     String path=ZkProfiles.getPath(version,profile) + "/" + pid+ ".properties";
-    if (exists(curator,path) == null) {
+    if (treeCache.getCurrentData(path) == null) {
       return null;
     }
-    byte[] data=curator.getData().forPath(path);
+    byte[] data=getByteData(treeCache,path);
     return DataStoreHelpers.toMap(DataStoreHelpers.toProperties(data));
   }
  catch (  Exception e) {

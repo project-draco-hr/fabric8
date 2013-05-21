@@ -1,20 +1,20 @@
 {
   try {
     String path=ZkProfiles.getPath(version,profile) + "/" + pid;
-    if (exists(curator,path) == null) {
+    if (treeCache.getCurrentData(path) == null) {
       return null;
     }
-    if (curator.getData().forPath(path) == null) {
-      List<String> children=getChildren(curator,path);
+    if (treeCache.getCurrentData(path).getData() == null) {
+      List<String> children=treeCache.getChildrenNames(path);
       StringBuilder buf=new StringBuilder();
       for (      String child : children) {
-        String value=getStringData(curator,path + "/" + child);
+        String value=new String(treeCache.getCurrentData(path + "/" + child).getData(),"UTF-8");
         buf.append(String.format("%s = %s\n",child,value));
       }
       return buf.toString().getBytes();
     }
  else {
-      return curator.getData().forPath(path);
+      return getByteData(treeCache,path);
     }
   }
  catch (  Exception e) {

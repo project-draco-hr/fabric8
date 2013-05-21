@@ -1,10 +1,8 @@
 {
-  List<ChildData> children=Lists.newArrayList();
-  for (  Map.Entry<String,ChildData> entry : currentData.asMap().entrySet()) {
-    String path=entry.getKey();
-    if (path.matches(fullPath + "/[^ /]+")) {
-      children.add(entry.getValue());
-    }
+  List<TreeData> children=Lists.newArrayList();
+  for (  String child : getChildrenNames(fullPath)) {
+    String childFullPath=ZKPaths.makePath(fullPath,child);
+    children.add(getCurrentData(childFullPath));
   }
   return children;
 }

@@ -3,7 +3,8 @@
     try {
       Stat stat=new Stat();
       byte[] bytes=dataIsCompressed ? client.getData().decompressed().storingStatIn(stat).forPath(fullPath) : client.getData().storingStatIn(stat).forPath(fullPath);
-      currentData.put(fullPath,new ChildData(fullPath,stat,bytes));
+      List<String> children=client.getChildren().forPath(fullPath);
+      currentData.put(fullPath,new TreeData(fullPath,stat,bytes,children));
     }
  catch (    KeeperException.NoNodeException ignore) {
       currentData.invalidate(fullPath);
@@ -12,7 +13,8 @@
  else {
     Stat stat=client.checkExists().forPath(fullPath);
     if (stat != null) {
-      currentData.put(fullPath,new ChildData(fullPath,stat,null));
+      List<String> children=client.getChildren().forPath(fullPath);
+      currentData.put(fullPath,new TreeData(fullPath,stat,null,children));
     }
  else {
       currentData.invalidate(fullPath);

@@ -1,10 +1,17 @@
 {
   if (resultCode == KeeperException.Code.OK.intValue()) {
-    ChildData data=new ChildData(fullPath,stat,bytes);
-    ChildData previousData=null;
+    TreeData data=new TreeData(fullPath,stat,bytes,children);
+    TreeData previousData=null;
+    Optional<String> parent=getParentOf(fullPath);
 synchronized (this) {
       previousData=currentData.getIfPresent(fullPath);
       currentData.put(fullPath,data);
+      if (parent.isPresent()) {
+        TreeData parentData=currentData.getIfPresent(parent.get());
+        if (parentData != null) {
+          parentData.getChildren().add(ZKPaths.getNodeFromPath(fullPath));
+        }
+      }
     }
     if (previousData == null) {
       offerOperation(new TreeEventOperation(this,new PathChildrenCacheEvent(PathChildrenCacheEvent.Type.CHILD_ADDED,data)));
