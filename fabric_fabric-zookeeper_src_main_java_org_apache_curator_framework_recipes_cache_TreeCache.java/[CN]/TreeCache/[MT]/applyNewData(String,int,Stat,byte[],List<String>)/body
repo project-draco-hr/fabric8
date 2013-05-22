@@ -17,7 +17,9 @@ synchronized (this) {
       offerOperation(new TreeEventOperation(this,new PathChildrenCacheEvent(PathChildrenCacheEvent.Type.CHILD_ADDED,data)));
     }
  else     if (previousData.getStat().getVersion() != stat.getVersion()) {
-      offerOperation(new TreeEventOperation(this,new PathChildrenCacheEvent(PathChildrenCacheEvent.Type.CHILD_UPDATED,data)));
+      if (!diffData || !Arrays.equals(data.getData(),previousData.getData())) {
+        offerOperation(new TreeEventOperation(this,new PathChildrenCacheEvent(PathChildrenCacheEvent.Type.CHILD_UPDATED,data)));
+      }
     }
     updateInitialSet(ZKPaths.getNodeFromPath(fullPath),data);
   }
