@@ -1,0 +1,14 @@
+{
+  String container=System.getProperty("karaf.name");
+  long time=System.currentTimeMillis();
+  String password=null;
+  if (time - lastTokenGenerationTime < 60 * 1000) {
+    password=getStringData(curator,CONTAINERS_NODE + "/" + container);
+  }
+  if (password == null) {
+    password=generatePassword();
+    setData(curator,CONTAINERS_NODE + "/" + container,password);
+    lastTokenGenerationTime=time;
+  }
+  return password;
+}

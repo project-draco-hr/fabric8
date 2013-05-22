@@ -5,9 +5,8 @@
     @Override public void run(){
       try {
         if (gitService != null) {
-          String container=System.getProperty("karaf.name");
-          String login=getContainerLogin(container);
-          String token=generateContainerToken(curator,container);
+          String login=getContainerLogin();
+          String token=generateContainerToken(curator);
           CredentialsProvider cp=new UsernamePasswordCredentialsProvider(login,token);
           if (singleton.isMaster()) {
             update(gitService.get(),curator,cp);
