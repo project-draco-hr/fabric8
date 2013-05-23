@@ -1,12 +1,3 @@
 {
-  if (profileTracker == null) {
-    profileTracker=new TreeCache(curator,ZkPath.CONFIG_VERSIONS.getPath(),false);
-  }
-  try {
-    profileTracker.start();
-    childEvent(curator,null);
-  }
- catch (  Exception e) {
-    LOGGER.error("Error while setting tracker for Fabric Features Service.",e);
-  }
+  fabricService.trackConfiguration(this);
 }
