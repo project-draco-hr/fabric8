@@ -11,10 +11,7 @@
   if (appenderAttachable != null) {
     Appender appender=new AppenderSkeleton(){
       protected void append(      LoggingEvent loggingEvent){
-        if (addMavenCoordinates) {
-          appendMavenCoordinates(loggingEvent);
-        }
-        getEvents().add(loggingEvent);
+        logMessage(loggingEvent);
       }
       public void close(){
       }
