@@ -1,0 +1,12 @@
+{
+  Container current=fabricService.getCurrentContainer();
+  Version version=current.getVersion();
+  for (  Partition partition : partitions) {
+    String profileId=taskDefinition + "-" + ZKPaths.getNodeFromPath(partition.getId());
+    Profile toBeRemoved=fabricService.getVersion(version.getId()).getProfile(profileId);
+    Set<Profile> localProfiles=Sets.newHashSet(current.getProfiles());
+    localProfiles.remove(toBeRemoved);
+    current.setProfiles(localProfiles.toArray(new Profile[localProfiles.size()]));
+    toBeRemoved.delete();
+  }
+}

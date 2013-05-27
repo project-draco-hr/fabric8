@@ -1,0 +1,10 @@
+{
+  this.curator=checkNotNull(curator,"curator");
+  this.taskId=checkNotNull(taskId);
+  this.taskDefinition=checkNotNull(taskDefinition);
+  this.partitionPath=checkNotNull(partitionPath);
+  this.partitionListener=partitionListener;
+  this.balancingPolicy=balancingPolicy;
+  this.group=ZooKeeperGroupFactory.create(curator,ZkPath.TASK.getPath(taskId));
+  this.partitionCache=new PathChildrenCache(curator,partitionPath,true,false,executorService);
+}

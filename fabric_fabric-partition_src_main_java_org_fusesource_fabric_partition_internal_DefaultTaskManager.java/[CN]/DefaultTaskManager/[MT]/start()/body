@@ -1,0 +1,19 @@
+{
+  node=createNode();
+  try {
+    workerCache=createWorkerCache(node);
+    workerCache.getListenable().addListener(this);
+    workerCache.start(true);
+    ZooKeeperUtils.createDefault(curator,partitionPath,null);
+    partitionCache.getListenable().addListener(this);
+    partitionCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
+    partitionCache.rebuild();
+    workerCache.rebuild();
+  }
+ catch (  Exception e) {
+    Throwables.propagate(e);
+  }
+  singleton.add(this);
+  singleton.start(group);
+  singleton.join(node);
+}
