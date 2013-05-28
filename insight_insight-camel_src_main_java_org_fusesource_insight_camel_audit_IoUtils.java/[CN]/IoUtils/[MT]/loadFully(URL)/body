@@ -1,0 +1,15 @@
+{
+  ByteArrayOutputStream baos=new ByteArrayOutputStream();
+  byte[] buf=new byte[4096];
+  int l;
+  InputStream is=url.openStream();
+  try {
+    while ((l=is.read(buf)) >= 0) {
+      baos.write(buf,0,l);
+    }
+  }
+  finally {
+    is.close();
+  }
+  return baos.toString();
+}

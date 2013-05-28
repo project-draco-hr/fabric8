@@ -1,0 +1,7 @@
+{
+  if (breadcrumbs.isEnabled(exchange)) {
+    Set<String> breadcrumbs=Breadcrumbs.getBreadcrumbs(exchange);
+    breadcrumbs.add((String)exchange.getIn().getHeader(Exchange.BREADCRUMB_ID));
+  }
+  return processor.process(exchange,callback);
+}

@@ -1,0 +1,11 @@
+{
+  this.storage=storage;
+  disable();
+  context=new ParserContext();
+  try {
+    context.addImport("toJson",ScriptUtils.class.getMethod("toJson",Object.class));
+  }
+ catch (  NoSuchMethodException e) {
+    throw new IllegalStateException("Unable to find method toJson",e);
+  }
+}

@@ -1,0 +1,9 @@
+{
+  if (eventObject instanceof AbstractExchangeEvent) {
+    AbstractExchangeEvent aee=(AbstractExchangeEvent)eventObject;
+    if (isEnabled(aee.getExchange())) {
+      String json=toJson(aee);
+      storage.store(type,System.currentTimeMillis(),json);
+    }
+  }
+}

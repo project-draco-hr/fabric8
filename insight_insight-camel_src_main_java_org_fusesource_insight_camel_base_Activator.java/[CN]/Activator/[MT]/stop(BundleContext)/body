@@ -1,0 +1,14 @@
+{
+  Container.Instance.set(null);
+  if (mbeanServer != null) {
+    for (    ContainerStrategy strategy : strategies) {
+      try {
+        mbeanServer.unregisterMBean(getObjectName(strategy));
+      }
+ catch (      Exception e) {
+        LOG.warn("An error occured during mbean server unregistration: " + e,e);
+      }
+    }
+  }
+  storageProxy.destroy();
+}

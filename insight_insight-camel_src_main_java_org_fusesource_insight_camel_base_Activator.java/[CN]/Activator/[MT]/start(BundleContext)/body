@@ -1,0 +1,17 @@
+{
+  this.bundleContext=context;
+  storageProxy.setContext(context);
+  storageProxy.init();
+  mbeanServer=lookupMBeanServer();
+  if (mbeanServer != null) {
+    for (    ContainerStrategy strategy : strategies) {
+      try {
+        mbeanServer.registerMBean(strategy,getObjectName(strategy));
+      }
+ catch (      Exception e) {
+        LOG.warn("An error occured during mbean server unregistration: " + e,e);
+      }
+    }
+  }
+  Container.Instance.set(this);
+}
