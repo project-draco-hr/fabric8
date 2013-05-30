@@ -1,6 +1,7 @@
 {
   try {
     copy(curator,ZkPath.CONFIG_VERSION.getPath(parentVersionId),ZkPath.CONFIG_VERSION.getPath(toVersion));
+    treeCache.rebuildNode(ZkPath.CONFIG_VERSION.getPath(toVersion));
   }
  catch (  Exception e) {
     throw new FabricException(e);

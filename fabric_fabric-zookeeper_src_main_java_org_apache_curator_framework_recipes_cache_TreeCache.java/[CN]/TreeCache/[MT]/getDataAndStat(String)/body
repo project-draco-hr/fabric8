@@ -1,5 +1,8 @@
 {
-  final List<String> children=client.getChildren().forPath(fullPath);
+  if (client.checkExists().forPath(fullPath) == null) {
+    return;
+  }
+  final List<String> children=client.getChildren().usingWatcher(watcher).forPath(fullPath);
   BackgroundCallback existsCallback=new BackgroundCallback(){
     @Override public void processResult(    CuratorFramework client,    CuratorEvent event) throws Exception {
       applyNewData(fullPath,event.getResultCode(),event.getStat(),null,children);
@@ -14,13 +17,13 @@
 ;
   if (cacheData) {
     if (dataIsCompressed) {
-      client.getData().decompressed().usingWatcher(dataWatcher).inBackground(getDataCallback).forPath(fullPath);
+      client.getData().decompressed().usingWatcher(watcher).inBackground(getDataCallback).forPath(fullPath);
     }
  else {
-      client.getData().usingWatcher(dataWatcher).inBackground(getDataCallback).forPath(fullPath);
+      client.getData().usingWatcher(watcher).inBackground(getDataCallback).forPath(fullPath);
     }
   }
  else {
-    client.checkExists().usingWatcher(dataWatcher).inBackground(existsCallback).forPath(fullPath);
+    client.checkExists().usingWatcher(watcher).inBackground(existsCallback).forPath(fullPath);
   }
 }

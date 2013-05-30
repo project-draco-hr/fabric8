@@ -3,8 +3,9 @@
   final BackgroundCallback callback=new BackgroundCallback(){
     @Override public void processResult(    CuratorFramework client,    CuratorEvent event) throws Exception {
       processChildren(path,event.getChildren(),mode);
+      updateIfNeeded(path,event.getStat());
     }
   }
 ;
-  client.getChildren().usingWatcher(childrenWatcher).inBackground(callback).forPath(path);
+  client.getChildren().usingWatcher(watcher).inBackground(callback).forPath(path);
 }
