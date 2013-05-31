@@ -6,6 +6,7 @@
     String karafName=System.getProperty(SystemProperties.KARAF_NAME);
     String minimumPort=System.getProperty(ZkDefs.MINIMUM_PORT);
     String maximumPort=System.getProperty(ZkDefs.MAXIMUM_PORT);
+    String bindAddress=System.getProperty(ZkDefs.BIND_ADDRESS,"0.0.0.0");
     int mappedPort=mapPortToRange(port,minimumPort,maximumPort);
     if (options.getZookeeperPassword() != null) {
     }
@@ -21,7 +22,7 @@
     Bundle bundleFabricJaas=installOrStopBundle(bundleContext,"org.fusesource.fabric.fabric-jaas  ","mvn:org.fusesource.fabric/fabric-jaas/" + FabricConstants.FABRIC_VERSION);
     Bundle bundleFabricCommands=installOrStopBundle(bundleContext,"org.fusesource.fabric.fabric-commands  ","mvn:org.fusesource.fabric/fabric-commands/" + FabricConstants.FABRIC_VERSION);
     Bundle bundleFabricMavenProxy=installOrStopBundle(bundleContext,"org.fusesource.fabric.fabric-commands  ","mvn:org.fusesource.fabric/fabric-maven-proxy/" + FabricConstants.FABRIC_VERSION);
-    String connectionUrl=HostUtils.getLocalHostName() + ":" + Integer.toString(mappedPort);
+    String connectionUrl=getConnectionAddress() + ":" + Integer.toString(mappedPort);
     String autoImportFrom=System.getProperty(SystemProperties.PROFILES_AUTOIMPORT_PATH);
     Configuration config=configurationAdmin.createFactoryConfiguration("org.fusesource.fabric.zookeeper.server");
     properties=new Hashtable<String,Object>();
@@ -33,6 +34,7 @@
     properties.put("syncLimit","5");
     properties.put("dataDir","data/zookeeper/0000");
     properties.put("clientPort",Integer.toString(mappedPort));
+    properties.put("clientPortAddress",bindAddress);
     properties.put("fabric.zookeeper.pid","org.fusesource.fabric.zookeeper.server-0000");
     config.setBundleLocation(null);
     config.update(properties);
@@ -82,6 +84,7 @@
     getDataStore().setProfileAttribute(version,ensembleServerProfile,"parents",ensembleProfile);
     Properties serverProps=new Properties();
     serverProps.put("clientPort",String.valueOf(mappedPort));
+    serverProps.put("clientPortAddress",bindAddress);
     getDataStore().setFileConfiguration(version,ensembleServerProfile,"org.fusesource.fabric.zookeeper.server-0000.properties",DataStoreHelpers.toBytes(serverProps));
     setData(client,ZkPath.CONFIG_ENSEMBLES.getPath(),"0000");
     setData(client,ZkPath.CONFIG_ENSEMBLE.getPath("0000"),karafName);

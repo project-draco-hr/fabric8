@@ -19,6 +19,15 @@
       if (options.getJvmOpts() != null && !options.getJvmOpts().contains("-XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass")) {
         jvmOptsBuilder.append(" -XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass");
       }
+      if (options.getBindAddress() != null && !options.getBindAddress().isEmpty()) {
+        jvmOptsBuilder.append(" -D" + ZkDefs.BIND_ADDRESS + "="+ options.getBindAddress());
+      }
+      if (options.getResolver() != null && !options.getResolver().isEmpty()) {
+        jvmOptsBuilder.append(" -D" + ZkDefs.LOCAL_RESOLVER_PROPERTY + "="+ options.getResolver());
+      }
+      if (options.getManualIp() != null && !options.getManualIp().isEmpty()) {
+        jvmOptsBuilder.append(" -D" + ZkDefs.MANUAL_IP + "="+ options.getManualIp());
+      }
       Profile defaultProfile=parent.getVersion().getProfile("default");
       String featuresUrls=collectionAsString(defaultProfile.getRepositories());
       Set<String> features=new LinkedHashSet<String>();

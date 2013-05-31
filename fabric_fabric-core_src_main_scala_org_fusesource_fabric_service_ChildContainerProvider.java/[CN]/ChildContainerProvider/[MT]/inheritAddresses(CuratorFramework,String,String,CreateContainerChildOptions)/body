@@ -1,13 +1,22 @@
 {
+  if (options.getManualIp() != null) {
+    createDefault(curator,CONTAINER_MANUAL_IP.getPath(name),options.getManualIp());
+  }
   for (  String resolver : ZkDefs.VALID_RESOLVERS) {
-    setData(curator,CONTAINER_ADDRESS.getPath(name,resolver),"${zk:" + parent + "/"+ resolver+ "}");
+    createDefault(curator,CONTAINER_ADDRESS.getPath(name,resolver),"${zk:" + parent + "/"+ resolver+ "}");
   }
   if (options.getResolver() != null) {
-    setData(curator,CONTAINER_RESOLVER.getPath(name),options.getResolver());
+    createDefault(curator,CONTAINER_RESOLVER.getPath(name),options.getResolver());
   }
  else {
-    setData(curator,CONTAINER_RESOLVER.getPath(name),"${zk:" + parent + "/resolver}");
+    createDefault(curator,CONTAINER_RESOLVER.getPath(name),"${zk:" + parent + "/resolver}");
   }
-  setData(curator,CONTAINER_RESOLVER.getPath(name),"${zk:" + parent + "/resolver}");
-  setData(curator,CONTAINER_IP.getPath(name),"${zk:" + name + "/resolver}");
+  if (options.getBindAddress() != null) {
+    createDefault(curator,CONTAINER_BINDADDRESS.getPath(name),options.getBindAddress());
+  }
+ else {
+    createDefault(curator,CONTAINER_BINDADDRESS.getPath(name),"${zk:" + parent + "/bindaddress}");
+  }
+  createDefault(curator,CONTAINER_RESOLVER.getPath(name),"${zk:" + parent + "/resolver}");
+  createDefault(curator,CONTAINER_IP.getPath(name),"${zk:" + name + "/resolver}");
 }

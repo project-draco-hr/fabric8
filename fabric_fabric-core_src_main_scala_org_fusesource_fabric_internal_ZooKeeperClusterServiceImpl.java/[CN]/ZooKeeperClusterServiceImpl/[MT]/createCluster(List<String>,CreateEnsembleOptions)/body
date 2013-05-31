@@ -79,11 +79,15 @@
       String ip=getSubstitutedPath(curator,ZkPath.CONTAINER_IP.getPath(container));
       String minimumPort=String.valueOf(Ports.MIN_PORT_NUMBER);
       String maximumPort=String.valueOf(Ports.MAX_PORT_NUMBER);
+      String bindAddress="0.0.0.0";
       if (exists(curator,ZkPath.CONTAINER_PORT_MIN.getPath(container)) != null) {
         minimumPort=getSubstitutedPath(curator,ZkPath.CONTAINER_PORT_MIN.getPath(container));
       }
       if (exists(curator,ZkPath.CONTAINER_PORT_MAX.getPath(container)) != null) {
         maximumPort=getSubstitutedPath(curator,ZkPath.CONTAINER_PORT_MAX.getPath(container));
+      }
+      if (exists(curator,ZkPath.CONTAINER_BINDADDRESS.getPath(container)) != null) {
+        bindAddress=getSubstitutedPath(curator,ZkPath.CONTAINER_BINDADDRESS.getPath(container));
       }
       String ensembleMemberPid="org.fusesource.fabric.zookeeper.server-" + newClusterId + ".properties";
       Properties ensembleMemberProperties=new Properties();
@@ -98,6 +102,7 @@
         ensembleMemberProperties.put("server.id",Integer.toString(index));
       }
       ensembleMemberProperties.put("clientPort",port1);
+      ensembleMemberProperties.put("clientPortAddress",bindAddress);
       getDataStore().setFileConfiguration(version,ensembleMemberProfile,ensembleMemberPid,DataStoreHelpers.toBytes(ensembleMemberProperties));
       if (connectionUrl.length() > 0) {
         connectionUrl+=",";
