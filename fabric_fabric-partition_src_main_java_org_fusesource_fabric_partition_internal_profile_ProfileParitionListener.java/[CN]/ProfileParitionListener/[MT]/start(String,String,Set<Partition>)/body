@@ -1,4 +1,7 @@
 {
+  if (fabricService == null) {
+    LOGGER.warn("Cannot start {}. Fabric Service is unavailable.",taskDefinition);
+  }
   Container current=fabricService.getCurrentContainer();
   Version version=current.getVersion();
   Profile templateProfile=version.getProfile(taskDefinition);
@@ -32,5 +35,6 @@
     Set<Profile> localProfiles=Sets.newHashSet(current.getProfiles());
     localProfiles.add(targetProfile);
     current.setProfiles(localProfiles.toArray(new Profile[localProfiles.size()]));
+    assignedPartitons.put(taskDefinition,partition);
   }
 }

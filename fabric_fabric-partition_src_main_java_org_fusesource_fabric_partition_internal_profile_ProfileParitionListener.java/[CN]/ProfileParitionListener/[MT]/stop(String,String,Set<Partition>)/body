@@ -1,4 +1,7 @@
 {
+  if (fabricService == null) {
+    LOGGER.warn("Cannot stop {}. Fabric Service is unavailable.",taskDefinition);
+  }
   Container current=fabricService.getCurrentContainer();
   Version version=current.getVersion();
   for (  Partition partition : partitions) {
@@ -7,6 +10,7 @@
     Set<Profile> localProfiles=Sets.newHashSet(current.getProfiles());
     localProfiles.remove(toBeRemoved);
     current.setProfiles(localProfiles.toArray(new Profile[localProfiles.size()]));
+    assignedPartitons.remove(taskDefinition,partition);
     toBeRemoved.delete();
   }
 }
