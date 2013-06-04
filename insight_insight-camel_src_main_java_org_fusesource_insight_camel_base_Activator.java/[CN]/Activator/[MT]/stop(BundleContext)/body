@@ -1,7 +1,11 @@
 {
+  for (  ServiceRegistration sr : commandRegistrations) {
+    sr.unregister();
+  }
+  registration.unregister();
   Container.Instance.set(null);
   if (mbeanServer != null) {
-    for (    ContainerStrategy strategy : strategies) {
+    for (    ContainerStrategy strategy : strategies.values()) {
       try {
         mbeanServer.unregisterMBean(getObjectName(strategy));
       }

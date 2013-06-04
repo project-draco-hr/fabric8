@@ -4,7 +4,7 @@
   storageProxy.init();
   mbeanServer=lookupMBeanServer();
   if (mbeanServer != null) {
-    for (    ContainerStrategy strategy : strategies) {
+    for (    ContainerStrategy strategy : strategies.values()) {
       try {
         mbeanServer.registerMBean(strategy,getObjectName(strategy));
       }
@@ -14,4 +14,8 @@
     }
   }
   Container.Instance.set(this);
+  Hashtable<String,Object> props=new Hashtable<String,Object>();
+  props.put(Constants.SERVICE_PID,INSIGHT_CAMEL_PID);
+  registration=bundleContext.registerService(ManagedService.class,this,props);
+  commandRegistrations=Arrays.asList(new ServiceRegistration[]{SimpleCommand.export(bundleContext,AuditorCommand.class),SimpleCommand.export(bundleContext,BreadcrumbsCommand.class),SimpleCommand.export(bundleContext,ProfilerCommand.class),SimpleCommand.export(bundleContext,TracerCommand.class)});
 }
