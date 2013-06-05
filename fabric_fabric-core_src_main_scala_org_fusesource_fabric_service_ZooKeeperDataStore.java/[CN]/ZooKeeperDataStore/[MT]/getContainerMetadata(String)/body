@@ -1,6 +1,9 @@
 {
   try {
     byte[] encoded=getByteData(treeCache,ZkPath.CONTAINER_METADATA.getPath(containerId));
+    if (encoded == null) {
+      return null;
+    }
     byte[] decoded=Base64Encoder.decode(encoded);
     ObjectInputStream ois=new ObjectInputStream(new ByteArrayInputStream(decoded));
     return (CreateContainerMetadata)ois.readObject();
