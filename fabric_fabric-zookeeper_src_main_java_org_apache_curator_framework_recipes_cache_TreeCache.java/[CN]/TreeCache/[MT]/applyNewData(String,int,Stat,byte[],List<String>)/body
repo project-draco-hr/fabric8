@@ -1,7 +1,7 @@
 {
   if (resultCode == KeeperException.Code.OK.intValue()) {
     TreeData data=new TreeData(fullPath,stat,bytes,children);
-    TreeData previousData=null;
+    TreeData previousData;
 synchronized (this) {
       previousData=currentData.getIfPresent(fullPath);
       currentData.put(fullPath,data);
