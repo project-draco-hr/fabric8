@@ -3,27 +3,19 @@
     return;
   }
   final List<String> children=client.getChildren().usingWatcher(watcher).forPath(fullPath);
-  BackgroundCallback existsCallback=new BackgroundCallback(){
-    @Override public void processResult(    CuratorFramework client,    CuratorEvent event) throws Exception {
-      applyNewData(fullPath,event.getResultCode(),event.getStat(),null,children);
-    }
-  }
-;
-  BackgroundCallback getDataCallback=new BackgroundCallback(){
-    @Override public void processResult(    CuratorFramework client,    CuratorEvent event) throws Exception {
-      applyNewData(fullPath,event.getResultCode(),event.getStat(),event.getData(),children);
-    }
-  }
-;
   if (cacheData) {
+    Stat stat=new Stat();
+    byte[] data=null;
     if (dataIsCompressed) {
-      client.getData().decompressed().usingWatcher(watcher).inBackground(getDataCallback).forPath(fullPath);
+      data=client.getData().decompressed().storingStatIn(stat).usingWatcher(watcher).forPath(fullPath);
     }
  else {
-      client.getData().usingWatcher(watcher).inBackground(getDataCallback).forPath(fullPath);
+      data=client.getData().storingStatIn(stat).usingWatcher(watcher).forPath(fullPath);
     }
+    applyNewData(fullPath,KeeperException.Code.OK.intValue(),stat,data,children);
   }
  else {
-    client.checkExists().usingWatcher(watcher).inBackground(existsCallback).forPath(fullPath);
+    Stat stat=client.checkExists().usingWatcher(watcher).forPath(fullPath);
+    applyNewData(fullPath,KeeperException.Code.OK.intValue(),stat,null,children);
   }
 }
