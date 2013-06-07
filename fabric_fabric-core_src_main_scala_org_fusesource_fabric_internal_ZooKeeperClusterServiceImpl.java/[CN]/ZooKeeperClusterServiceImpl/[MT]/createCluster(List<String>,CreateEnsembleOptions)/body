@@ -131,9 +131,7 @@
       dst.start();
       try {
         dst.getZookeeperClient().blockUntilConnectedOrTimedOut();
-        copy(curator,dst,"/fabric/registry");
-        copy(curator,dst,"/fabric/authentication");
-        copy(curator,dst,"/fabric/configs");
+        copy(curator,dst,"/fabric");
         for (        String container : containers) {
           deleteSafe(dst,"/fabric/registry/containers/alive/" + container);
         }
