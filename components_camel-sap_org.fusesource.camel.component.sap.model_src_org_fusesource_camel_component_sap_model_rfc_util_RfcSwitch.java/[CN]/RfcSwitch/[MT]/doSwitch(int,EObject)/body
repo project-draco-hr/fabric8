@@ -1,0 +1,41 @@
+{
+switch (classifierID) {
+case RfcPackage.REPOSITORY:
+{
+      Repository repository=(Repository)theEObject;
+      T result=caseRepository(repository);
+      if (result == null)       result=defaultCase(theEObject);
+      return result;
+    }
+case RfcPackage.GROUP:
+{
+    Group group=(Group)theEObject;
+    T result=caseGroup(group);
+    if (result == null)     result=defaultCase(theEObject);
+    return result;
+  }
+case RfcPackage.FUNCTION:
+{
+  Function function=(Function)theEObject;
+  T result=caseFunction(function);
+  if (result == null)   result=defaultCase(theEObject);
+  return result;
+}
+case RfcPackage.TABLE:
+{
+Table<?> table=(Table<?>)theEObject;
+T result=caseTable(table);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case RfcPackage.STRUCTURE:
+{
+Structure structure=(Structure)theEObject;
+T result=caseStructure(structure);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+default :
+return defaultCase(theEObject);
+}
+}

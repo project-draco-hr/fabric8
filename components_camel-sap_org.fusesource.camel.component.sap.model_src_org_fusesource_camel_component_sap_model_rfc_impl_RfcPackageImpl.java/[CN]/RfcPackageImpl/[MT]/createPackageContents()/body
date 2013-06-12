@@ -1,0 +1,22 @@
+{
+  if (isCreated)   return;
+  isCreated=true;
+  repositoryEClass=createEClass(REPOSITORY);
+  createEAttribute(repositoryEClass,REPOSITORY__DESTINATION_NAME);
+  createEAttribute(repositoryEClass,REPOSITORY__NAME);
+  createEReference(repositoryEClass,REPOSITORY__GROUPS);
+  groupEClass=createEClass(GROUP);
+  createEAttribute(groupEClass,GROUP__NAME);
+  createEAttribute(groupEClass,GROUP__DESCRIPTION);
+  createEReference(groupEClass,GROUP__REPOSITORY);
+  createEReference(groupEClass,GROUP__FUNCTIONS);
+  functionEClass=createEClass(FUNCTION);
+  createEAttribute(functionEClass,FUNCTION__NAME);
+  createEAttribute(functionEClass,FUNCTION__DESCRIPTION);
+  createEReference(functionEClass,FUNCTION__GROUP);
+  createEReference(functionEClass,FUNCTION__REQUEST);
+  createEReference(functionEClass,FUNCTION__RESPONSE);
+  tableEClass=createEClass(TABLE);
+  createEReference(tableEClass,TABLE__ROW);
+  structureEClass=createEClass(STRUCTURE);
+}

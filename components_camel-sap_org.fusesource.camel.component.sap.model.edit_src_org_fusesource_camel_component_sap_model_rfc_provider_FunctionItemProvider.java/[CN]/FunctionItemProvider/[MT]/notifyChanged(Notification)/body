@@ -1,0 +1,14 @@
+{
+  updateChildren(notification);
+switch (notification.getFeatureID(Function.class)) {
+case RfcPackage.FUNCTION__NAME:
+case RfcPackage.FUNCTION__DESCRIPTION:
+    fireNotifyChanged(new ViewerNotification(notification,notification.getNotifier(),false,true));
+  return;
+case RfcPackage.FUNCTION__REQUEST:
+case RfcPackage.FUNCTION__RESPONSE:
+fireNotifyChanged(new ViewerNotification(notification,notification.getNotifier(),true,false));
+return;
+}
+super.notifyChanged(notification);
+}

@@ -1,0 +1,11 @@
+{
+  if (newGroup != eInternalContainer() || (eContainerFeatureID() != RfcPackage.FUNCTION__GROUP && newGroup != null)) {
+    if (EcoreUtil.isAncestor(this,newGroup))     throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
+    NotificationChain msgs=null;
+    if (eInternalContainer() != null)     msgs=eBasicRemoveFromContainer(msgs);
+    if (newGroup != null)     msgs=((InternalEObject)newGroup).eInverseAdd(this,RfcPackage.GROUP__FUNCTIONS,Group.class,msgs);
+    msgs=basicSetGroup(newGroup,msgs);
+    if (msgs != null)     msgs.dispatch();
+  }
+ else   if (eNotificationRequired())   eNotify(new ENotificationImpl(this,Notification.SET,RfcPackage.FUNCTION__GROUP,newGroup,newGroup));
+}

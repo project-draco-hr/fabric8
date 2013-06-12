@@ -1,0 +1,13 @@
+{
+switch (featureID) {
+case RfcPackage.GROUP__NAME:
+    return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+case RfcPackage.GROUP__DESCRIPTION:
+  return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
+case RfcPackage.GROUP__REPOSITORY:
+return getRepository() != null;
+case RfcPackage.GROUP__FUNCTIONS:
+return functions != null && !functions.isEmpty();
+}
+return super.eIsSet(featureID);
+}

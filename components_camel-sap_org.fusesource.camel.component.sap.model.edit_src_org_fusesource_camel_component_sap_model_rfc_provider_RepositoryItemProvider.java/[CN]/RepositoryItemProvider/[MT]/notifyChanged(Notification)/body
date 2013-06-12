@@ -1,0 +1,13 @@
+{
+  updateChildren(notification);
+switch (notification.getFeatureID(Repository.class)) {
+case RfcPackage.REPOSITORY__DESTINATION_NAME:
+case RfcPackage.REPOSITORY__NAME:
+    fireNotifyChanged(new ViewerNotification(notification,notification.getNotifier(),false,true));
+  return;
+case RfcPackage.REPOSITORY__GROUPS:
+fireNotifyChanged(new ViewerNotification(notification,notification.getNotifier(),true,false));
+return;
+}
+super.notifyChanged(notification);
+}
