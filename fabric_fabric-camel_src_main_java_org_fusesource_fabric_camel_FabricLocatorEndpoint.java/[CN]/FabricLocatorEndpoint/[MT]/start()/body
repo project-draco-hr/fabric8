@@ -16,12 +16,13 @@
         try {
           String key=entry.getKey();
           if (!processors.containsKey(key)) {
-            Processor p=getProcessor(new String(entry.getValue(),"UTF-8"));
+            Processor p=getProcessor(new String(entry.getValue(),Charset.forName("UTF-8")));
             processors.put(key,p);
             loadBalancer.addProcessor(p);
           }
         }
- catch (        UnsupportedEncodingException ignore) {
+ catch (        URISyntaxException e) {
+          LOG.warn("Unable to add endpoint " + new String(entry.getValue(),Charset.forName("UTF-8")),e);
         }
       }
       for (      String key : removed) {

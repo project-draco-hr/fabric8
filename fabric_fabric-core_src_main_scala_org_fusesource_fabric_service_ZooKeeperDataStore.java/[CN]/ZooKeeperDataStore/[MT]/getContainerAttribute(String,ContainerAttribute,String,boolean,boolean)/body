@@ -1,7 +1,7 @@
 {
   if (attribute == ContainerAttribute.Domains) {
     try {
-      List<String> list=treeCache.getChildrenNames(ZkPath.CONTAINER_DOMAINS.getPath(containerId));
+      List<String> list=curator.getChildren().forPath(ZkPath.CONTAINER_DOMAINS.getPath(containerId));
       Collections.sort(list);
       StringBuilder sb=new StringBuilder();
       for (      String l : list) {

@@ -1,0 +1,33 @@
+{
+  String answer=null;
+  try {
+    String versionsPath=ZkPath.WEBAPPS_CLUSTER.getPath(webAppId);
+    if (curator != null && exists(curator,versionsPath) != null) {
+      List<String> children=getChildren(curator,versionsPath);
+      if (children != null && !children.isEmpty()) {
+        for (        String child : children) {
+          String containerPath=versionsPath + "/" + child+ "/"+ name;
+          if (curator.checkExists().forPath(containerPath) != null) {
+            byte[] bytes=ZkPath.loadURL(curator,containerPath);
+            String text=new String(bytes);
+            int idx=text.indexOf("\"http");
+            answer=text;
+            if (idx > 0) {
+              int endIdx=text.indexOf('\"',idx + 5);
+              if (endIdx > 0) {
+                answer=text.substring(idx + 1,endIdx);
+                if (answer.length() > 0) {
+                  return answer;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to find container Jolokia URL " + e,e);
+  }
+  return answer;
+}

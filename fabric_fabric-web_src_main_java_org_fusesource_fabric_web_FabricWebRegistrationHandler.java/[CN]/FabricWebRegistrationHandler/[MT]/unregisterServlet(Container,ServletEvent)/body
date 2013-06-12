@@ -1,0 +1,10 @@
+{
+  try {
+    String id=container.getId();
+    String path="/fabric/registry/clusters/servlets/" + servletEvent.getBundle().getSymbolicName() + "/"+ servletEvent.getBundle().getVersion().toString()+ servletEvent.getAlias()+ "/"+ id;
+    delete(curator,path);
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to unregister servlet {}.",servletEvent.getAlias(),e);
+  }
+}

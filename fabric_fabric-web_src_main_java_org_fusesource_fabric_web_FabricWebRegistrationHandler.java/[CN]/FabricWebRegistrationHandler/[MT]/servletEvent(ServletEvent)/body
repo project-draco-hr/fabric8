@@ -1,0 +1,22 @@
+{
+  WebEvent webEvent=webEvents.get(servletEvent.getBundle());
+  if (webEvent != null || servletEvent.getAlias() == null) {
+    return;
+  }
+  Map<String,ServletEvent> events=servletEvents.get(servletEvent.getBundle());
+  if (events == null) {
+    events=new HashMap<String,ServletEvent>();
+    servletEvents.put(servletEvent.getBundle(),events);
+  }
+  events.put(servletEvent.getAlias(),servletEvent);
+switch (servletEvent.getType()) {
+case ServletEvent.DEPLOYING:
+    break;
+case ServletEvent.DEPLOYED:
+  registerServlet(fabricService.getCurrentContainer(),servletEvent);
+break;
+default :
+unregisterServlet(fabricService.getCurrentContainer(),servletEvent);
+break;
+}
+}

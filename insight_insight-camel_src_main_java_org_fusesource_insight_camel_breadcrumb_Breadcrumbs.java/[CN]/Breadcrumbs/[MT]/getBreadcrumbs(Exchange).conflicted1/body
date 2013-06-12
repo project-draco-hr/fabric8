@@ -1,11 +1,8 @@
 {
-  Set<String> breadcrumbs=new HashSet<String>();
+  Set<String> breadcrumbs=new BreadcrumbSet();
   for (  Exchange exchange : exchanges) {
     if (exchange != null) {
-      Set<String> breadcrumb=(Set<String>)exchange.getIn().getHeader(BREADCRUMB);
-      if (breadcrumb != null) {
-        breadcrumbs.addAll(breadcrumb);
-      }
+      breadcrumbs.addAll(getBreadcrumbs(exchange));
     }
   }
   return breadcrumbs;

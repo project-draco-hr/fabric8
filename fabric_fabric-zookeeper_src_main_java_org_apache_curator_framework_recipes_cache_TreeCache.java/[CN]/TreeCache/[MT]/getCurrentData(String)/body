@@ -1,6 +1,14 @@
 {
   try {
-    return currentData.get(fullPath);
+    while (true) {
+      TreeData data=currentData.get(fullPath);
+      if (data.isInvalidated()) {
+        currentData.invalidate(fullPath);
+      }
+ else {
+        return data;
+      }
+    }
   }
  catch (  ExecutionException e) {
     return null;

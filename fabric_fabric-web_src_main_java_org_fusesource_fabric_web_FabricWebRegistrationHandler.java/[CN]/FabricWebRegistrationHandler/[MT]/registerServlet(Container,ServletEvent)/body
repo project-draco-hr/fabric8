@@ -1,0 +1,15 @@
+{
+  String id=container.getId();
+  String url=container.getHttpUrl() + servletEvent.getAlias();
+  if (!url.startsWith("http")) {
+    url="http://" + url;
+  }
+  String json="{\"id\":\"" + id + "\", \"services\":[\""+ url+ "\"],\"container\":\""+ id+ "\"}";
+  try {
+    String path="/fabric/registry/clusters/servlets/" + servletEvent.getBundle().getSymbolicName() + "/"+ servletEvent.getBundle().getVersion().toString()+ servletEvent.getAlias()+ "/"+ id;
+    setData(curator,path,json,CreateMode.EPHEMERAL);
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to register servlet {}.",servletEvent.getAlias(),e);
+  }
+}
