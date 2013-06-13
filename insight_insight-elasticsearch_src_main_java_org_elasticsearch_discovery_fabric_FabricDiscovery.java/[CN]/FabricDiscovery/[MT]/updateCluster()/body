@@ -8,8 +8,8 @@
     clusterService.submitStateUpdateTask("fabric-discovery",new ProcessedClusterStateUpdateTask(){
       @Override public ClusterState execute(      ClusterState currentState){
         ClusterState.Builder stateBuilder=newClusterStateBuilder().state(currentState);
-        DiscoveryNodes.Builder nodesBuilder=newNodesBuilder().localNodeId(localNode.id()).masterNodeId(singleton.master().get().node().id()).put(singleton.master().get().node);
-        for (        ESNode node : JavaConversions$.MODULE$.<ESNode>asJavaCollection(singleton.slaves())) {
+        DiscoveryNodes.Builder nodesBuilder=newNodesBuilder().localNodeId(localNode.id()).masterNodeId(singleton.master().node().id()).put(singleton.master().node);
+        for (        ESNode node : singleton.slaves()) {
           nodesBuilder.put(node.node());
         }
         latestDiscoNodes=nodesBuilder.build();
@@ -31,8 +31,8 @@
     }
 );
   }
- else   if (joined && singleton.master().isDefined()) {
-    DiscoveryNode masterNode=singleton.master().get().node();
+ else   if (singleton.master() != null) {
+    DiscoveryNode masterNode=singleton.master().node();
     try {
       transportService.connectToNode(masterNode);
     }

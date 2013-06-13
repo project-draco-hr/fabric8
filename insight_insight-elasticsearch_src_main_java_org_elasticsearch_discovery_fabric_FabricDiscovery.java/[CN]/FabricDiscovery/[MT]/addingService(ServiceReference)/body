@@ -1,9 +1,0 @@
-{
-  CuratorFramework curator=(CuratorFramework)context.getService(reference);
-  group=ZooKeeperGroupFactory.create(curator,"/fabric/registry/clusters/elasticsearch/" + clusterName.value());
-  joined=false;
-  singleton.start(group);
-  joined=true;
-  singleton.join(new ESNode(clusterName.value(),localNode,false));
-  return curator;
-}

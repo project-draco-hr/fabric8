@@ -34,7 +34,9 @@
       }
     }
  catch (    Throwable throwable) {
-      LOGGER.warn("Error creating service for ManagedServiceFactory " + getName(),throwable);
+      if (!destroyed.get()) {
+        LOGGER.warn("Error creating service for ManagedServiceFactory " + getName(),throwable);
+      }
     }
   }
 }

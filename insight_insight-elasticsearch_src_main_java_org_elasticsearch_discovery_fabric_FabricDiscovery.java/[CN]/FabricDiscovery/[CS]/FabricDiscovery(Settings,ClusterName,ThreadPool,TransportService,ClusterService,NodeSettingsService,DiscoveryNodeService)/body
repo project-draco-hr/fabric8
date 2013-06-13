@@ -8,7 +8,5 @@
   this.discoveryNodeService=discoveryNodeService;
   this.publishClusterState=new PublishClusterStateAction(settings,transportService,this,this);
   this.context=FrameworkUtil.getBundle(getClass()).getBundleContext();
-  this.tracker=new ServiceTracker(context,CuratorFramework.class.getName(),this);
-  this.singleton=new ClusteredSingleton<ESNode>(ESNode.class);
-  this.singleton.add(this);
+  this.tracker=new ServiceTracker<CuratorFramework,CuratorFramework>(context,CuratorFramework.class.getName(),this);
 }
