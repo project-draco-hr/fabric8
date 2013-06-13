@@ -1,8 +1,9 @@
 {
   connected=true;
-  group=ZooKeeperGroupFactory.create(curator,"/fabric/registry/clusters/gitzkbridge");
-  singleton.start(group);
+  group=new ZooKeeperGroup<GitZkBridgeNode>(curator,"/fabric/registry/clusters/gitzkbridge",GitZkBridgeNode.class);
+  group.add(this);
   if (gitService != null) {
-    singleton.join(createState());
+    group.update(createState());
   }
+  group.start();
 }

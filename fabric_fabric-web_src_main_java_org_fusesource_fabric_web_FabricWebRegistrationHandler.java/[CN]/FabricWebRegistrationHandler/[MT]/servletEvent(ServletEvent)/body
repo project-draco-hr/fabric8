@@ -9,14 +9,16 @@
     servletEvents.put(servletEvent.getBundle(),events);
   }
   events.put(servletEvent.getAlias(),servletEvent);
+  if (curator != null && curator.getZookeeperClient().isConnected()) {
 switch (servletEvent.getType()) {
 case ServletEvent.DEPLOYING:
-    break;
+      break;
 case ServletEvent.DEPLOYED:
-  registerServlet(fabricService.getCurrentContainer(),servletEvent);
-break;
+    registerServlet(fabricService.getCurrentContainer(),servletEvent);
+  break;
 default :
 unregisterServlet(fabricService.getCurrentContainer(),servletEvent);
 break;
+}
 }
 }

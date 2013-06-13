@@ -1,12 +1,14 @@
 {
   webEvents.put(webEvent.getBundle(),webEvent);
+  if (curator != null && curator.getZookeeperClient().isConnected()) {
 switch (webEvent.getType()) {
 case WebEvent.DEPLOYING:
-    break;
+      break;
 case WebEvent.DEPLOYED:
-  registerWebapp(fabricService.getCurrentContainer(),webEvent);
-break;
+    registerWebapp(fabricService.getCurrentContainer(),webEvent);
+  break;
 default :
 unRegisterWebapp(fabricService.getCurrentContainer(),webEvent);
+}
 }
 }

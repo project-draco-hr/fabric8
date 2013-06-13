@@ -1,5 +1,5 @@
 {
-  if (singleton.isMaster()) {
+  if (group.isMaster()) {
     LOGGER.info("Git repo is the master");
   }
  else {
@@ -7,7 +7,7 @@
   }
   try {
     GitNode state=createState();
-    singleton.update(state);
+    group.update(state);
     String url=state.getUrl();
     try {
       String actualUrl=getSubstitutedData(curator,url);
@@ -15,7 +15,7 @@
         this.gitRemoteUrl=actualUrl;
         fireGitRemoteUrlChanged(actualUrl);
       }
-      if (singleton.isMaster()) {
+      if (group.isMaster()) {
         String pid="org.fusesource.fabric.git";
         try {
           Configuration conf=configurationAdmin.getConfiguration(pid);

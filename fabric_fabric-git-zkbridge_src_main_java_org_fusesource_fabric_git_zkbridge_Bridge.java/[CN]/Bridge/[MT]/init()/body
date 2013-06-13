@@ -1,14 +1,13 @@
 {
-  singleton.add(this);
   executors=Executors.newSingleThreadScheduledExecutor();
   executors.scheduleWithFixedDelay(new Runnable(){
     @Override public void run(){
       try {
-        if (gitService != null) {
+        if (gitService != null && connected) {
           String login=getContainerLogin();
           String token=generateContainerToken(curator);
           CredentialsProvider cp=new UsernamePasswordCredentialsProvider(login,token);
-          if (singleton.isMaster()) {
+          if (group.isMaster()) {
             update(gitService.get(),curator,cp);
           }
  else {

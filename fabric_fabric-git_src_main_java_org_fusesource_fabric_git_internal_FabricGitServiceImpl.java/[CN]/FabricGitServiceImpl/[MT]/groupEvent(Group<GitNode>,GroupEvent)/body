@@ -1,13 +1,13 @@
 {
   String masterUrl=null;
-  GitNode[] masters=watcher.masters();
-  if (masters != null && masters.length > 0 && !masters[0].getAgent().equals(System.getProperty("karaf.name"))) {
-    masterUrl=masters[0].getUrl();
+  GitNode master=group.master();
+  if (master != null && !master.getAgent().equals(System.getProperty("karaf.name"))) {
+    masterUrl=master.getUrl();
   }
   try {
     StoredConfig config=get().getRepository().getConfig();
     if (masterUrl != null) {
-      config.setString("remote","origin","url",getSubstitutedData(curator,masters[0].getUrl()));
+      config.setString("remote","origin","url",getSubstitutedData(curator,masterUrl));
       config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
     }
  else {

@@ -7,7 +7,9 @@
     }
     delete(curator,ZkPath.WEBAPPS_CONTAINER.getPath(name,webEvent.getBundle().getVersion().toString(),container.getId()));
   }
- catch (  Exception e) {
+ catch (  KeeperException.NoNodeException e) {
+  }
+catch (  Exception e) {
     LOGGER.error("Failed to unregister webapp {}.",webEvent.getContextPath(),e);
   }
 }
