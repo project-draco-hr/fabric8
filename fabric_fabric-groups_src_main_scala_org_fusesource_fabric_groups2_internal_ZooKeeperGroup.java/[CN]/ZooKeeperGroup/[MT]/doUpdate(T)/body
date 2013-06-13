@@ -1,0 +1,27 @@
+{
+  if (isConnected()) {
+    if (state == null) {
+      if (id != null) {
+        try {
+          client.delete().guaranteed().forPath(id);
+        }
+ catch (        KeeperException.NoNodeException e) {
+        }
+ finally {
+          id=null;
+        }
+      }
+    }
+ else     if (id == null) {
+      id=client.create().creatingParentsIfNeeded().withProtection().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(path + "/0",encode(state));
+    }
+ else {
+      try {
+        client.setData().forPath(id,encode(state));
+      }
+ catch (      KeeperException.NoNodeException e) {
+        id=client.create().creatingParentsIfNeeded().withProtection().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(path + "/0",encode(state));
+      }
+    }
+  }
+}

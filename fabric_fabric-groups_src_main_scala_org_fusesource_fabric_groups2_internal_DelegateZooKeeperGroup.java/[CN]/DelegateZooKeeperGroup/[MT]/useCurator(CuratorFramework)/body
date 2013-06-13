@@ -1,0 +1,19 @@
+{
+  Group<T> group=this.group;
+  if (group != null) {
+    if (started.get()) {
+      Closeables.closeQuietly(group);
+    }
+  }
+  if (curator != null) {
+    group=new ZooKeeperGroup<T>(curator,path,clazz);
+    group.update(state);
+    for (    GroupListener<T> listener : listeners) {
+      group.add(listener);
+    }
+    if (started.get()) {
+      group.start();
+    }
+    this.group=group;
+  }
+}
