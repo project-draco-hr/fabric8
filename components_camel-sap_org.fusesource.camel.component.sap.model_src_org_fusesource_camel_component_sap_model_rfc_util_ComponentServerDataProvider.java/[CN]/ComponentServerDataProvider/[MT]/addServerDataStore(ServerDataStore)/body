@@ -1,0 +1,10 @@
+{
+  stores.add(store);
+  store.eAdapters().add(serverDataStoreListener);
+  if (serverDataEventListener == null) {
+    return;
+  }
+  for (  String serverName : store.getEntries().keySet()) {
+    serverDataEventListener.updated(serverName);
+  }
+}

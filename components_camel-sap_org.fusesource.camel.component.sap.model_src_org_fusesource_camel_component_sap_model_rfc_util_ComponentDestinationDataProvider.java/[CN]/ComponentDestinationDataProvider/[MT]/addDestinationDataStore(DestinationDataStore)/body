@@ -1,0 +1,10 @@
+{
+  stores.add(store);
+  store.eAdapters().add(destinationDataStoreListener);
+  if (destinationDataEventListener == null) {
+    return;
+  }
+  for (  String destinationName : store.getEntries().keySet()) {
+    destinationDataEventListener.updated(destinationName);
+  }
+}
