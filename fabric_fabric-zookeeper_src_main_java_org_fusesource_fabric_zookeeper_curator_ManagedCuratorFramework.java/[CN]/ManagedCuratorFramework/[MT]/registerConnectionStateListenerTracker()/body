@@ -1,7 +1,7 @@
 {
   try {
     closeQuietly(connectionStateListenerTracker);
-    this.connectionStateListenerTracker=new ServiceTracker(bundleContext,ConnectionStateListener.class.getName(),new CuratorStateChangeListenerTracker(bundleContext,curatorFramework,executor));
+    this.connectionStateListenerTracker=new ServiceTracker<ConnectionStateListener,ConnectionStateListener>(bundleContext,ConnectionStateListener.class,new CuratorStateChangeListenerTracker(bundleContext,curatorFramework,executor));
     this.connectionStateListenerTracker.open();
   }
  catch (  Exception ex) {

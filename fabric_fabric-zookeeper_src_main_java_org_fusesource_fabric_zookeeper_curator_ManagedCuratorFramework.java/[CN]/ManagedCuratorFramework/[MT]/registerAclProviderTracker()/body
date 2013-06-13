@@ -1,7 +1,7 @@
 {
   try {
     closeQuietly(aclProviderTracker);
-    this.aclProviderTracker=new ServiceTracker(bundleContext,ACLProvider.class.getName(),new ACLProviderTracker(bundleContext,aclProviders));
+    this.aclProviderTracker=new ServiceTracker<ACLProvider,ACLProvider>(bundleContext,ACLProvider.class,new ACLProviderTracker(bundleContext,aclProviders));
     this.aclProviderTracker.open();
   }
  catch (  Exception ex) {

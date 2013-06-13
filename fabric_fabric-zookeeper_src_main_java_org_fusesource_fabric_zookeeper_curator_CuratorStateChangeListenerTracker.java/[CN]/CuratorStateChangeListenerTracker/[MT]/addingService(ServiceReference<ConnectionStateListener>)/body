@@ -1,0 +1,13 @@
+{
+  final ConnectionStateListener listener=bundleContext.getService(reference);
+  if (curator.getZookeeperClient().isConnected()) {
+    executor.submit(new Runnable(){
+      @Override public void run(){
+        listener.stateChanged(curator,ConnectionState.CONNECTED);
+      }
+    }
+);
+  }
+  curator.getConnectionStateListenable().addListener(listener,executor);
+  return listener;
+}
