@@ -2,4 +2,8 @@
   super(endpoint,processor);
   this.endpoint=endpoint;
   this.processor=processor;
+  MasterComponent component=endpoint.getComponent();
+  String path=component.getFabricPath(endpoint.getSingletonId());
+  this.singleton=component.createGroup(path);
+  this.singleton.add(this);
 }

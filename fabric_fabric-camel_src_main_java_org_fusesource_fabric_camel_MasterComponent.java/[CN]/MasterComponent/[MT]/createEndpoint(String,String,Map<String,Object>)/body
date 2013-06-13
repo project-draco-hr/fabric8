@@ -4,11 +4,9 @@
     throw new IllegalArgumentException("Missing : in URI so can't split the group name from the actual URI for '" + remaining + "'");
   }
   String name=remaining.substring(0,idx);
-  String fabricPath=getFabricPath(name);
   String childUri=remaining.substring(idx + 1);
   if (params != null && params.size() > 0) {
     childUri=childUri + "?" + URISupport.createQueryString(params);
   }
-  Group group=ZooKeeperGroupFactory.create(getCurator(),fabricPath);
-  return new MasterEndpoint(uri,this,name,group,childUri);
+  return new MasterEndpoint(uri,this,name,childUri);
 }

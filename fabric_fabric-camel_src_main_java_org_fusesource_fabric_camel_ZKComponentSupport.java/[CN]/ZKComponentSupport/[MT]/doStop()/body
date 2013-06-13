@@ -1,6 +1,7 @@
 {
   super.doStop();
-  if (curator != null && isShouldCloseZkClient()) {
-    curator.close();
+  if (managedCurator != null) {
+    managedCurator.close();
+    managedCurator=null;
   }
 }

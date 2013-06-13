@@ -2,16 +2,23 @@
   super.doStart();
   if (curator == null) {
     try {
-      curator=(CuratorFramework)getCamelContext().getRegistry().lookup("curator");
+      curator=(CuratorFramework)getCamelContext().getRegistry().lookupByName("curator");
     }
  catch (    Exception exception) {
-      curator=(CuratorFramework)getCamelContext().getRegistry().lookup(CuratorFramework.class.getName());
-    }
-    if (curator != null) {
-      LOG.debug("IZKClient found in camel registry. " + curator);
     }
   }
-  if (curator == null) {
+  if (managedCurator == null && curator != null) {
+    LOG.debug("IZKClient found in camel registry. " + curator);
+    managedCurator=new StaticManagedCurator();
+  }
+  if (managedCurator == null) {
+    try {
+      managedCurator=OsgiSupport.getTrackingManagedCurator();
+    }
+ catch (    NoClassDefFoundError e) {
+    }
+  }
+  if (managedCurator == null) {
     String connectString=getZooKeeperUrl();
     if (connectString == null) {
       connectString=System.getProperty(ZOOKEEPER_URL,"localhost:2181");
@@ -30,6 +37,6 @@
     client.start();
     curator=client;
     setShouldCloseZkClient(true);
+    managedCurator=new StaticManagedCurator();
   }
-  curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
 }
