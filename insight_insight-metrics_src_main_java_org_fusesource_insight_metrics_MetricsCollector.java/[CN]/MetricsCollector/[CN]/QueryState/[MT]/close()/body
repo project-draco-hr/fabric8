@@ -1,6 +1,10 @@
 {
   future.cancel(false);
   if (lock != null) {
-    lock.leave();
+    try {
+      lock.close();
+    }
+ catch (    IOException e) {
+    }
   }
 }

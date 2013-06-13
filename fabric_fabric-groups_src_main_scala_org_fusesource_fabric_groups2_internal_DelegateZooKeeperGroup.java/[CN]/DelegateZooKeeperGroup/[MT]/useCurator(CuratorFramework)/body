@@ -1,9 +1,7 @@
 {
   Group<T> group=this.group;
   if (group != null) {
-    if (started.get()) {
-      Closeables.closeQuietly(group);
-    }
+    closeQuietly(group);
   }
   if (curator != null) {
     group=new ZooKeeperGroup<T>(curator,path,clazz);
