@@ -1,57 +1,8 @@
 {
-  if (curator == null) {
-    managedZkClient=true;
-    String connectString=System.getProperty("zookeeper.url","localhost:2181");
-    String password=System.getProperty("zookeeper.password");
-    CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().connectString(connectString).retryPolicy(new RetryOneTime(1000)).connectionTimeoutMs(10000);
-    if (password != null && !password.isEmpty()) {
-      builder.authorization("digest",("fabric:" + password).getBytes());
-    }
-    CuratorFramework client=builder.build();
-    LOG.debug("Starting curator " + curator);
-    client.start();
-    client.getZookeeperClient().blockUntilConnectedOrTimedOut();
-    curator=client;
-  }
- else {
-    managedZkClient=false;
-  }
-  group=ZooKeeperGroupFactory.create(curator,"/fabric/camel-clusters/" + groupName);
-  singleton.start(group);
-  singleton.join(createState());
-  info("Camel context %s is waiting to become the master",id);
-  singleton.add(new ChangeListener(){
-    @Override public void changed(){
-      if (singleton.isMaster()) {
-        if (started.compareAndSet(false,true)) {
-          info("Camel context %s is now the master, starting the context.",id);
-          try {
-            camelContext.start();
-            singleton.update(createState());
-          }
- catch (          Exception e) {
-            e.printStackTrace();
-          }
-        }
-      }
- else {
-        if (started.compareAndSet(true,false)) {
-          info("Camel context %s is now a slave, stopping the context.",id);
-          try {
-            camelContext.stop();
-          }
- catch (          Exception e) {
-            e.printStackTrace();
-          }
-        }
-      }
-    }
-    public void connected(){
-      this.changed();
-    }
-    public void disconnected(){
-      this.changed();
-    }
-  }
-);
+  factory=ManagedGroupFactoryBuilder.create(curator,getClass().getClassLoader(),this);
+  group=factory.createGroup("/fabric/camel-clusters/" + groupName,CamelNodeState.class);
+  group.update(createState());
+  group.add(this);
+  group.start();
+  info("Camel context %s is waiting to become the master",groupName);
 }

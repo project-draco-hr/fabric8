@@ -3,40 +3,12 @@
   if (curator == null) {
     try {
       curator=(CuratorFramework)getCamelContext().getRegistry().lookupByName("curator");
+      if (curator != null) {
+        LOG.debug("IZKClient found in camel registry. " + curator);
+      }
     }
  catch (    Exception exception) {
     }
   }
-  if (managedCurator == null && curator != null) {
-    LOG.debug("IZKClient found in camel registry. " + curator);
-    managedCurator=new StaticManagedCurator();
-  }
-  if (managedCurator == null) {
-    try {
-      managedCurator=OsgiSupport.getTrackingManagedCurator();
-    }
- catch (    NoClassDefFoundError e) {
-    }
-  }
-  if (managedCurator == null) {
-    String connectString=getZooKeeperUrl();
-    if (connectString == null) {
-      connectString=System.getProperty(ZOOKEEPER_URL,"localhost:2181");
-    }
-    String password=getZooKeeperPassword();
-    if (password == null) {
-      System.getProperty(ZOOKEEPER_PASSWORD);
-    }
-    LOG.debug("CuratorFramework not find in camel registry, creating new with connection " + connectString);
-    CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().connectString(connectString).retryPolicy(new RetryOneTime(1000)).connectionTimeoutMs(getMaximumConnectionTimeout());
-    if (password != null && !password.isEmpty()) {
-      builder.authorization("digest",("fabric:" + password).getBytes());
-    }
-    CuratorFramework client=builder.build();
-    LOG.debug("Starting curator " + curator);
-    client.start();
-    curator=client;
-    setShouldCloseZkClient(true);
-    managedCurator=new StaticManagedCurator();
-  }
+  managedGroupFactory=ManagedGroupFactoryBuilder.create(curator,getClass().getClassLoader(),this);
 }
