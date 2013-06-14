@@ -1,5 +1,10 @@
 {
-  for (  Map.Entry<Bundle,WebEvent> entry : webEvents.entrySet()) {
-    webEvent(entry.getValue());
+  for (  WebEvent event : webEvents.values()) {
+    webEvent(event);
+  }
+  for (  Map<String,ServletEvent> map : servletEvents.values()) {
+    for (    ServletEvent event : map.values()) {
+      servletEvent(event);
+    }
   }
 }

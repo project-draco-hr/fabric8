@@ -6,6 +6,12 @@
   factory.setAddress("http://localhost:9000/simple/server");
   factory.setBus(bus);
   factory.create();
+  for (int i=0; i < 100; i++) {
+    if (!feature.getLoadBalanceStrategy().getAlternateAddressList().isEmpty()) {
+      break;
+    }
+    Thread.sleep(100);
+  }
   JAXRSClientFactoryBean clientFactory=new JAXRSClientFactoryBean();
   clientFactory.setServiceClass(CustomerServiceResources.class);
   clientFactory.setAddress("http://someotherplace");

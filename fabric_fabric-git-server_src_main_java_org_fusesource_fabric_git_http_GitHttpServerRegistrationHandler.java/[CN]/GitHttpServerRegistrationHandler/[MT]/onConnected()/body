@@ -1,8 +1,9 @@
 {
   connected=true;
-  group=ZooKeeperGroupFactory.create(curator,ZkPath.GIT.getPath());
-  singleton.start(group);
+  group=new ZooKeeperGroup(curator,ZkPath.GIT.getPath(),GitNode.class);
+  group.add(this);
   if (httpService != null) {
-    singleton.join(createState());
+    group.update(createState());
   }
+  group.start();
 }

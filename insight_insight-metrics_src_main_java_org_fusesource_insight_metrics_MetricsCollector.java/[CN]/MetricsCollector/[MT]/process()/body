@@ -25,23 +25,19 @@
           state.metadata=parseJson(loadFully(new URL(q.getMetadata())));
         }
         if (q.getLock() != null) {
-          state.lock=new ClusteredSingleton<QueryNodeState>(QueryNodeState.class);
-          state.lock.add(new ChangeListener(){
-            @Override public void changed(){
+          state.lock=new TrackingZooKeeperGroup<QueryNodeState>(bundleContext,getGroupPath(q),QueryNodeState.class);
+          state.lock.add(new GroupListener<QueryNodeState>(){
+            @Override public void groupEvent(            Group<QueryNodeState> group,            GroupEvent event){
               try {
                 state.lock.update(new QueryNodeState(queryName,containerName,state.lock.isMaster() ? new String[]{"stat"} : null));
               }
  catch (              IllegalStateException e) {
               }
             }
-            @Override public void connected(){
-            }
-            @Override public void disconnected(){
-            }
           }
 );
-          state.lock.start(startGroup(q.getLock()));
-          state.lock.join(new QueryNodeState(queryName,containerName,null));
+          state.lock.update(new QueryNodeState(queryName,containerName,null));
+          state.lock.start();
         }
         long delay=q.getPeriod() > 0 ? q.getPeriod() : defaultDelay;
         state.future=this.executor.scheduleAtFixedRate(new Task(state),Math.round(Math.random() * 1000) + 1,delay * 1000,TimeUnit.MILLISECONDS);

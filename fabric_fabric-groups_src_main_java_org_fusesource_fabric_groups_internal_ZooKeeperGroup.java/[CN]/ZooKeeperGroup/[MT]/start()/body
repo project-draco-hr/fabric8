@@ -1,0 +1,14 @@
+{
+  if (started.compareAndSet(false,true)) {
+    client.getConnectionStateListenable().addListener(connectionStateListener);
+    executorService.execute(new Runnable(){
+      @Override public void run(){
+        mainLoop();
+      }
+    }
+);
+    if (isConnected()) {
+      handleStateChange(ConnectionState.CONNECTED);
+    }
+  }
+}

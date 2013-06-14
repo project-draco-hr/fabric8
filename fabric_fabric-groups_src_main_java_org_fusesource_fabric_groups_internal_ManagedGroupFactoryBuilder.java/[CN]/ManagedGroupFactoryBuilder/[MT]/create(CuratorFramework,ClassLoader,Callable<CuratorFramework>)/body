@@ -1,0 +1,11 @@
+{
+  if (curator != null) {
+    return new StaticManagedGroupFactory(curator,false);
+  }
+  try {
+    return new OsgiManagedGroupFactory(loader);
+  }
+ catch (  NoClassDefFoundError e) {
+  }
+  return new StaticManagedGroupFactory(factory.call(),true);
+}

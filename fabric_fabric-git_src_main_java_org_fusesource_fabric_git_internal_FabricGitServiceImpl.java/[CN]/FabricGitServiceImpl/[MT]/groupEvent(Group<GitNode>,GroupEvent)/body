@@ -1,0 +1,21 @@
+{
+  String masterUrl=null;
+  GitNode master=group.master();
+  if (master != null && !master.getContainer().equals(System.getProperty("karaf.name"))) {
+    masterUrl=master.getUrl();
+  }
+  try {
+    StoredConfig config=get().getRepository().getConfig();
+    if (masterUrl != null) {
+      config.setString("remote","origin","url",getSubstitutedData(curator,masterUrl));
+      config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
+    }
+ else {
+      config.unsetSection("remote","origin");
+    }
+    config.save();
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to point origin to the new master.",e);
+  }
+}

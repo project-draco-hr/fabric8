@@ -1,6 +1,7 @@
 {
   super.doStop();
-  if (curator != null && isShouldCloseZkClient()) {
-    curator.close();
+  if (managedGroupFactory != null) {
+    managedGroupFactory.close();
+    managedGroupFactory=null;
   }
 }

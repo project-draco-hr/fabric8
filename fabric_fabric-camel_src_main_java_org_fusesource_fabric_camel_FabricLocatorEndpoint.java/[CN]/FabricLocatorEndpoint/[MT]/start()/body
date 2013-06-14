@@ -3,39 +3,5 @@
   if (loadBalancer == null) {
     loadBalancer=createLoadBalancer();
   }
-  group.add(new ChangeListener(){
-    public synchronized void changed(){
-      Set<String> removed=new LinkedHashSet<String>();
-      for (      Map.Entry<String,Processor> entry : processors.entrySet()) {
-        String key=entry.getKey();
-        if (!group.members().containsKey(key)) {
-          removed.add(key);
-        }
-      }
-      for (      Map.Entry<String,byte[]> entry : group.members().entrySet()) {
-        try {
-          String key=entry.getKey();
-          if (!processors.containsKey(key)) {
-            Processor p=getProcessor(new String(entry.getValue(),Charset.forName("UTF-8")));
-            processors.put(key,p);
-            loadBalancer.addProcessor(p);
-          }
-        }
- catch (        URISyntaxException e) {
-          LOG.warn("Unable to add endpoint " + new String(entry.getValue(),Charset.forName("UTF-8")),e);
-        }
-      }
-      for (      String key : removed) {
-        Processor p=processors.remove(key);
-        loadBalancer.removeProcessor(p);
-      }
-    }
-    public void connected(){
-      changed();
-    }
-    public void disconnected(){
-      changed();
-    }
-  }
-);
+  group.start();
 }

@@ -1,7 +1,7 @@
 {
   node=createNode();
   try {
-    workerCache=createWorkerCache(node);
+    workerCache=createWorkerCache();
     workerCache.getListenable().addListener(this);
     workerCache.start(true);
     ZooKeeperUtils.createDefault(curator,partitionPath,null);
@@ -11,9 +11,8 @@
     workerCache.rebuild();
   }
  catch (  Exception e) {
-    Throwables.propagate(e);
+    throw Throwables.propagate(e);
   }
-  singleton.add(this);
-  singleton.start(group);
-  singleton.join(node);
+  group.update(node);
+  group.start();
 }

@@ -1,0 +1,8 @@
+{
+  if (group.isConnected()) {
+    group.update(createNode());
+    if (group.isMaster()) {
+      executorService.submit(new RebalanceTask());
+    }
+  }
+}

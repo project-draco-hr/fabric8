@@ -2,7 +2,11 @@
   try {
     if (httpService != null) {
       if (connected) {
-        singleton.leave();
+        try {
+          group.close();
+        }
+ catch (        IOException e) {
+        }
       }
       httpService.unregister("/git");
     }

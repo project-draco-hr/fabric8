@@ -3,9 +3,9 @@
   attr.put("key","value");
   DiscoveryNode n=new DiscoveryNode("thename","theid",new InetSocketTransportAddress("thehost",3234),attr);
   FabricDiscovery.ESNode node=new FabricDiscovery.ESNode("thecluster",n,false);
-  byte[] data=ClusteredSupport$.MODULE$.encode(node,ClusteredSupport$.MODULE$.DEFAULT_MAPPER());
+  byte[] data=encode(node);
   System.err.println(new String(data));
-  FabricDiscovery.ESNode newNode=ClusteredSupport$.MODULE$.decode(FabricDiscovery.ESNode.class,data,ClusteredSupport$.MODULE$.DEFAULT_MAPPER());
+  FabricDiscovery.ESNode newNode=decode(data);
   assertEquals(node.id(),newNode.id());
   assertEquals(node.node().id(),newNode.node().id());
   assertEquals(node.node().name(),newNode.node().name());

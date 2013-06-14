@@ -1,0 +1,10 @@
+{
+  T oldState=this.state;
+  this.state=state;
+  if (started.get()) {
+    boolean update=state == null && oldState != null || state != null && oldState == null || !Arrays.equals(encode(state),encode(oldState));
+    if (update) {
+      offerOperation(new UpdateOperation<T>(this,state));
+    }
+  }
+}
