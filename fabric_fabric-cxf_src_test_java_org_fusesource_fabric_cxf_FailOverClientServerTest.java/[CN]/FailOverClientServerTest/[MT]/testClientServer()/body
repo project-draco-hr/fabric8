@@ -10,6 +10,12 @@
   factory.setAddress("http://localhost:9000/simple/server");
   factory.setBus(bus);
   factory.create();
+  for (int i=0; i < 100; i++) {
+    if (!feature.getLoadBalanceStrategy().getAlternateAddressList().isEmpty()) {
+      break;
+    }
+    Thread.sleep(100);
+  }
   JaxWsProxyFactoryBean clientFactory=new JaxWsProxyFactoryBean();
   clientFactory.setServiceClass(Hello.class);
   clientFactory.setAddress("http://someotherplace");

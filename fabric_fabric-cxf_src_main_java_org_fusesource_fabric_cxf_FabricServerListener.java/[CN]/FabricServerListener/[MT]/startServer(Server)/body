@@ -3,10 +3,6 @@
   if (LOG.isDebugEnabled()) {
     LOG.debug("The CXF server is start with address " + address);
   }
-  try {
-    eid=group.join(address.getBytes("UTF-8"));
-  }
- catch (  Exception ex) {
-    LOG.warn("Cannot bind the address " + address + " to the group, due to ",ex);
-  }
+  services.add(address);
+  group.update(createState());
 }

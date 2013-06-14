@@ -19,12 +19,6 @@
     curator=client;
     setShouldCloseZkClient(true);
   }
-  if (curator instanceof CuratorFramework) {
-    if (!curator.getZookeeperClient().isConnected()) {
-      LOG.debug("Staring IZKClient " + curator);
-      ((CuratorFramework)curator).start();
-    }
-  }
   curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
   return curator;
 }

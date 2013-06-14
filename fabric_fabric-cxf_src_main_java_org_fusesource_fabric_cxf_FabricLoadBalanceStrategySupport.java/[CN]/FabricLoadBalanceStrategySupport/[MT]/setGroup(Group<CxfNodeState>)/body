@@ -1,0 +1,19 @@
+{
+  this.group=group;
+  group.add(new GroupListener<CxfNodeState>(){
+    @Override public void groupEvent(    Group<CxfNodeState> group,    GroupEvent event){
+      alternateAddressList.clear();
+      for (      CxfNodeState node : group.members().values()) {
+        if (node.services != null) {
+          for (          String url : node.services) {
+            if (LOG.isDebugEnabled()) {
+              LOG.debug("Added the CXF endpoint address " + url);
+            }
+            alternateAddressList.add(url);
+          }
+        }
+      }
+    }
+  }
+);
+}
