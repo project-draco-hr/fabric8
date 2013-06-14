@@ -4,16 +4,4 @@
     tracker=new ServiceTracker(context,CuratorFramework.class.getName(),this);
     tracker.open();
   }
-  singleton.add(new ChangeListener(){
-    @Override public void changed(){
-      update(singleton.masters());
-    }
-    @Override public void connected(){
-      changed();
-    }
-    public void disconnected(){
-      changed();
-    }
-  }
-);
 }
