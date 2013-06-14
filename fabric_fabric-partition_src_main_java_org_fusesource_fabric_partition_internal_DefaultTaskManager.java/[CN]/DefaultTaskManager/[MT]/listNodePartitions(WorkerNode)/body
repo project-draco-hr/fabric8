@@ -3,7 +3,7 @@
   return Sets.newHashSet(Iterables.transform(paths,new Function<String,Partition>(){
     @Override public Partition apply(    String input){
       try {
-        return new PartitionImpl(input,(Map<String,String>)singleton.mapper().readValue(curator.getData().forPath(input),partitionTypeRef));
+        return new PartitionImpl(input,(Map<String,String>)mapper.readValue(curator.getData().forPath(input),partitionTypeRef));
       }
  catch (      Exception e) {
         LOGGER.warn("Failed to read partition data, using empty configuration instead.");

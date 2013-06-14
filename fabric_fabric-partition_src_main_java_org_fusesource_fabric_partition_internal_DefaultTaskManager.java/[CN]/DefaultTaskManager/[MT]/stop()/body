@@ -2,7 +2,7 @@
   Closeables.closeQuitely(partitionCache);
   Closeables.closeQuitely(workerCache);
   executorService.shutdown();
-  group.close();
+  Closeables.closeQuitely(group);
   partitionListener.destroy();
   assignedPartitions.clear();
   node=null;

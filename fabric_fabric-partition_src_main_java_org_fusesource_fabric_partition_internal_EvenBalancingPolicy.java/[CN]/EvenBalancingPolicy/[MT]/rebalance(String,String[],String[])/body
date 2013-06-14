@@ -8,8 +8,7 @@
   }
   for (  String member : members) {
     try {
-      String fullPath=ZkPath.TAKS_MEMBERS.getPath(workId,member);
-      WorkerNode node=mapper.readValue(curator.getData().forPath(fullPath),WorkerNode.class);
+      WorkerNode node=mapper.readValue(curator.getData().forPath(member),WorkerNode.class);
       Collection<String> assignedItems=distribution.get(member);
       if (assignedItems != null) {
         node.setPartitions(assignedItems.toArray(new String[assignedItems.size()]));

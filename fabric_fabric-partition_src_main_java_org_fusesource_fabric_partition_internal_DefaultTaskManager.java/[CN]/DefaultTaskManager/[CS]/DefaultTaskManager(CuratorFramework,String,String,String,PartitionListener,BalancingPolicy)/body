@@ -5,6 +5,7 @@
   this.partitionPath=checkNotNull(partitionPath);
   this.partitionListener=partitionListener;
   this.balancingPolicy=balancingPolicy;
-  this.group=ZooKeeperGroupFactory.create(curator,ZkPath.TASK.getPath(taskId));
   this.partitionCache=new PathChildrenCache(curator,partitionPath,true,false,executorService);
+  this.group=new ZooKeeperGroup<WorkerNode>(curator,ZkPath.TASK.getPath(taskId),WorkerNode.class);
+  this.group.add(this);
 }
