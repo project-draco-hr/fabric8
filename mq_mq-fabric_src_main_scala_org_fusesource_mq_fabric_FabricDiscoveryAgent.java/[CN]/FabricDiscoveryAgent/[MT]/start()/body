@@ -17,8 +17,7 @@
  else {
       managedZkClient=false;
     }
-    group=new ZooKeeperGroup<ActiveMQNode>(curator,"/fabric/registry/clusters/fusemq/" + groupName,ActiveMQNode.class);
-    group.add(new GroupListener<ActiveMQNode>(){
+    getGroup().add(new GroupListener<ActiveMQNode>(){
       @Override public void groupEvent(      Group<ActiveMQNode> group,      GroupEvent event){
         Map<String,ActiveMQNode> masters=new HashMap<String,ActiveMQNode>();
         for (        ActiveMQNode node : group.members().values()) {
@@ -31,8 +30,8 @@
     }
 );
     if (id != null) {
-      group.update(createState());
+      getGroup().update(createState());
     }
-    group.start();
+    getGroup().start();
   }
 }
