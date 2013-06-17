@@ -1,0 +1,14 @@
+{
+  try {
+    EditingDomain editingDomain=AdapterFactoryEditingDomain.getEditingDomainFor(object);
+    if (editingDomain == null) {
+      object.eSet(feature,value);
+    }
+ else {
+      Command setCommand=SetCommand.create(editingDomain,object,feature,value);
+      editingDomain.getCommandStack().execute(setCommand);
+    }
+  }
+ catch (  Throwable exception) {
+  }
+}

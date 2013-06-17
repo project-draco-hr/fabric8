@@ -1,0 +1,14 @@
+{
+  try {
+    JCoRequest jcoRequest=destination.getRepository().getRequest(functionName);
+    fillStructure(request,jcoRequest);
+    JCoResponse jcoResponse=jcoRequest.execute(destination);
+    Structure response=getResponse(destination,functionName);
+    extractStructure(jcoResponse,response);
+    return response;
+  }
+ catch (  JCoException e) {
+    e.printStackTrace();
+  }
+  return null;
+}
