@@ -8,11 +8,11 @@
     Object value=getValue(eObject,feature);
     if (field.isStructure()) {
       if (value == null || !(value instanceof Structure))       continue;
-      fillStructure((Structure)value,field.getStructure());
+      fillJCoRecordFromStructure((Structure)value,field.getStructure());
     }
  else     if (field.isTable()) {
       if (value == null || !(value instanceof Table))       continue;
-      fillTable((Table<? extends Structure>)value,field.getTable());
+      fillJCoTableFromTable((Table<? extends Structure>)value,field.getTable());
     }
  else {
       field.setValue(value);

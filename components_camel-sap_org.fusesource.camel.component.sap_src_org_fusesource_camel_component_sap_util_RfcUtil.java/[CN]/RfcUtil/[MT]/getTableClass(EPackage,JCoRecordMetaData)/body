@@ -1,18 +1,16 @@
 {
   EClassifier tableClass=ePackage.getEClassifier(jcoRecordMetaData.getName() + "_TABLE");
   if (!(tableClass instanceof EClass)) {
+    EGenericType tableGenericSuperType=EcoreFactory.eINSTANCE.createEGenericType();
+    tableGenericSuperType.setEClassifier(RfcPackage.eINSTANCE.getTable());
+    EGenericType rowGenericType=EcoreFactory.eINSTANCE.createEGenericType();
+    EClass structureType=getStructureClass(ePackage,jcoRecordMetaData);
+    rowGenericType.setEClassifier(structureType);
+    tableGenericSuperType.getETypeArguments().add(rowGenericType);
     tableClass=EcoreFactory.eINSTANCE.createEClass();
     ePackage.getEClassifiers().add(tableClass);
     tableClass.setName(jcoRecordMetaData.getName() + "_TABLE");
-    EClass rowStructureClass=getStructureClass(ePackage,jcoRecordMetaData);
-    EReference reference=EcoreFactory.eINSTANCE.createEReference();
-    reference.setEType(rowStructureClass);
-    reference.setContainment(true);
-    reference.setName(ROW);
-    reference.setLowerBound(0);
-    reference.setUpperBound(-1);
-    ((EClass)tableClass).getEStructuralFeatures().add(reference);
-    ((EClass)tableClass).getESuperTypes().add(RfcPackage.eINSTANCE.getTable());
+    ((EClass)tableClass).getEGenericSuperTypes().add(tableGenericSuperType);
   }
   return (EClass)tableClass;
 }

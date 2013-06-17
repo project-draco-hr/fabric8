@@ -1,13 +1,13 @@
 {
-  Destination destination=null;
   try {
     JCoDestination jcoDestination=JCoDestinationManager.getDestination(destinationName);
-    destination=RfcFactory.eINSTANCE.createDestination();
+    Destination destination=RfcFactory.eINSTANCE.createDestination();
     String repositoryName=jcoDestination.getRepository().getName();
     destination.setName(destinationName);
     destination.setRepositoryName(repositoryName);
+    return destination;
   }
  catch (  JCoException e) {
+    return null;
   }
-  return destination;
 }
