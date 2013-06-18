@@ -1,6 +1,6 @@
 {
-  InstallScript installScript=new InstallScript(){
-    @Override public void doInstall(    ProcessConfig config,    int id,    File installDir) throws Exception {
+  InstallTask installTask=new InstallTask(){
+    @Override public void install(    ProcessConfig config,    int id,    File installDir) throws Exception {
       String name=parameters.getGroupId() + ":" + parameters.getArtifactId();
       String version=parameters.getVersion();
       if (!Strings.isNullOrEmpty(version)) {
@@ -27,5 +27,5 @@
     }
   }
 ;
-  return installViaScript(parameters.getControllerJson(),installScript);
+  return installViaScript(parameters.getControllerJson(),installTask);
 }
