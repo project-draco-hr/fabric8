@@ -132,9 +132,6 @@
       try {
         dst.getZookeeperClient().blockUntilConnectedOrTimedOut();
         copy(curator,dst,"/fabric");
-        for (        String container : containers) {
-          deleteSafe(dst,"/fabric/registry/containers/alive/" + container);
-        }
         setData(dst,ZkPath.CONFIG_ENSEMBLES.getPath(),newClusterId);
         setData(dst,ZkPath.CONFIG_ENSEMBLE.getPath(newClusterId),containerList);
         setData(dst,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl);
