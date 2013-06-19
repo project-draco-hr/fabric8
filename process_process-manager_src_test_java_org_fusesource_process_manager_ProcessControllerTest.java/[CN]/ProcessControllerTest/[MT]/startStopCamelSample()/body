@@ -1,8 +1,10 @@
 {
+  System.setProperty("java.protocol.handler.pkgs","org.ops4j.pax.url.mvn");
   processManager.init();
   InstallTask postInstall=null;
-  String version="99-master-SNAPSHOT";
-  Installation install=processManager.install("mvn:org.fusesource.process.samples/process-sample-camel-spring/" + version + "/tar.gz",null,postInstall);
+  String version=FabricConstants.FABRIC_VERSION;
+  InstallOptions options=InstallOptions.builder().name("camel-sample").url(new URL(null,"mvn:org.fusesource.fabric.samples/process-sample-camel-spring/" + version + "/tar.gz",new Handler())).build();
+  Installation install=processManager.install(options,postInstall);
   int id=install.getId();
   assertTrue("ID should be > 0 but was " + id,id > 0);
   File installDir=install.getInstallDir();

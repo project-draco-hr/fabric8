@@ -71,7 +71,7 @@
         int rmiRegistryTo=mapPortToRange(Ports.DEFAULT_RMI_REGISTRY_PORT + 100,minimumPort,maximumPort);
         int rmiRegistryPort=portService.registerPort(child,"org.apache.karaf.management","rmiRegistryPort",rmiRegistryFrom,rmiRegistryTo,usedPorts);
         try {
-          adminService.createInstance(containerName,sshPort,rmiServerPort,rmiRegistryPort,null,jvmOptsBuilder.toString(),collectionAsString(features),featuresUrls);
+          adminService.createInstance(containerName,sshPort,rmiRegistryPort,rmiServerPort,null,jvmOptsBuilder.toString(),collectionAsString(features),featuresUrls);
           adminService.startInstance(containerName,null);
         }
  catch (        Throwable t) {

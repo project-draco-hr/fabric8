@@ -1,8 +1,8 @@
 {
   checkRequirements();
-  URL controllerUrl=getControllerURL();
+  InstallOptions options=InstallOptions.builder().name(name).url(url).controllerUrl(getControllerURL()).build();
   InstallTask postInstall=null;
-  Installation install=getProcessManager().install(url,controllerUrl,postInstall);
+  Installation install=getProcessManager().install(options,postInstall);
   System.out.println("Installed process " + install.getId() + " to "+ install.getInstallDir());
   return null;
 }

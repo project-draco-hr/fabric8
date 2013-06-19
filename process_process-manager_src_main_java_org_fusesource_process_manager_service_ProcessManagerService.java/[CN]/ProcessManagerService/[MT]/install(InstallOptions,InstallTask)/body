@@ -1,0 +1,13 @@
+{
+  InstallTask installTask=new InstallTask(){
+    @Override public void install(    ProcessConfig config,    int id,    File installDir) throws Exception {
+      config.setName(options.getName());
+      untarTarball(options.getUrl(),installDir);
+      if (postInstall != null) {
+        postInstall.install(config,id,installDir);
+      }
+    }
+  }
+;
+  return installViaScript(options.getControllerUrl(),installTask);
+}

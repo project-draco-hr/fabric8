@@ -1,13 +1,18 @@
 {
-  Map<String,String> env=new HashMap<String,String>();
-  InstallParameters parameters=getInstallParameters(incoming,env);
-  final Installation installation=installationMap.get(pid);
-  if (null != installation) {
-    LOG.info("Refreshing Process " + pid);
-    updateConfig(pid,installation,env);
-  }
+  try {
+    Map<String,String> env=new HashMap<String,String>();
+    InstallOptions options=getInstallOptions(incoming,env);
+    final Installation installation=installationMap.get(pid);
+    if (null != installation) {
+      LOG.info("Refreshing Process " + pid);
+      updateConfig(pid,installation,env);
+    }
  else {
-    installationMap.put(pid,installProcess(pid,parameters,env));
-    LOG.info("Started Process " + pid);
+      installationMap.put(pid,installProcess(pid,options,env));
+      LOG.info("Started Process " + pid);
+    }
+  }
+ catch (  Exception ex) {
+    Throwables.propagate(ex);
   }
 }
