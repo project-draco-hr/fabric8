@@ -1,0 +1,10 @@
+{
+  Container container=fabricService.getCurrentContainer();
+  Profile profile=container.getOverlayProfile();
+  Map<String,Map<String,String>> configurations=profile.getConfigurations();
+  Map<String,String> map=configurations.get("org.fusesource.process.fabric.child");
+  System.out.println("child map: " + map);
+  if (map != null) {
+    Map<String,ContainerRequirements> containerRequirements=loadContainerRequiremnets(map);
+  }
+}
