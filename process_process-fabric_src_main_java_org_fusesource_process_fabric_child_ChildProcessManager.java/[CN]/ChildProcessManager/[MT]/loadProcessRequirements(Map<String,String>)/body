@@ -1,5 +1,5 @@
 {
-  Map<String,ContainerRequirements> answer=new HashMap<String,ContainerRequirements>();
+  Map<String,ProcessRequirements> answer=new HashMap<String,ProcessRequirements>();
   Set<Map.Entry<String,String>> entries=properties.entrySet();
   for (  Map.Entry<String,String> entry : entries) {
     String key=entry.getKey();
@@ -8,9 +8,9 @@
     if (split != null && split.length > 1) {
       String containerId=split[0];
       String propertyName=split[1];
-      ContainerRequirements container=answer.get(containerId);
+      ProcessRequirements container=answer.get(containerId);
       if (container == null) {
-        container=new ContainerRequirements(containerId);
+        container=new ProcessRequirements(containerId);
         answer.put(containerId,container);
       }
       if (split.length == 2) {

@@ -4,7 +4,9 @@
   Map<String,Map<String,String>> configurations=profile.getConfigurations();
   Map<String,String> map=configurations.get("org.fusesource.process.fabric.child");
   if (map != null) {
-    Map<String,ContainerRequirements> containerRequirements=loadContainerRequiremnets(map);
-    System.out.println("Require containers: " + containerRequirements);
+    Map<String,ProcessRequirements> requirementsMap=loadProcessRequirements(map);
+    System.out.println("Require containers: " + requirementsMap);
+    for (    ProcessRequirements requirements : requirementsMap.values()) {
+    }
   }
 }
