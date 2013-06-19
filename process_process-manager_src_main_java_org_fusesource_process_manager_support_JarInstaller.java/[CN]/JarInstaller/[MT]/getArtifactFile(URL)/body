@@ -1,0 +1,15 @@
+{
+  File tmpFile=File.createTempFile("artifact",".jar");
+  FileOutputStream fos=null;
+  try {
+    fos=new FileOutputStream(tmpFile);
+    Resources.copy(url,fos);
+  }
+ catch (  Exception ex) {
+    Throwables.propagate(ex);
+  }
+ finally {
+    Closeables.closeQuietly(fos);
+  }
+  return tmpFile;
+}
