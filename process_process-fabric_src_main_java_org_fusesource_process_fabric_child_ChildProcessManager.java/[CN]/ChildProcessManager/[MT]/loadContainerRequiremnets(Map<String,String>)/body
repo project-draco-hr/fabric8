@@ -4,6 +4,42 @@
   for (  Map.Entry<String,String> entry : entries) {
     String key=entry.getKey();
     String value=entry.getValue();
+    String[] split=key.split("\\.");
+    if (split != null && split.length > 1) {
+      String containerId=split[0];
+      String propertyName=split[1];
+      ContainerRequirements container=answer.get(containerId);
+      if (container == null) {
+        container=new ContainerRequirements(containerId);
+        answer.put(containerId,container);
+      }
+      if (split.length == 2) {
+        if ("kind".equals(propertyName)) {
+          container.setKind(value);
+        }
+ else         if ("url".equals(propertyName)) {
+          container.setUrl(value);
+        }
+ else {
+          LOG.warn("Unknown property " + propertyName + " for container process "+ containerId);
+        }
+      }
+ else       if (split.length == 3 && "profile".equals(propertyName)) {
+        StringTokenizer iter=new StringTokenizer(value);
+        while (iter.hasMoreElements()) {
+          String token=iter.nextToken();
+          if (!Strings.isNullOrEmpty(token)) {
+            container.addProfile(value);
+          }
+        }
+      }
+ else {
+        LOG.warn("Ignored invalid entry " + key + " = "+ value);
+      }
+    }
+ else {
+      LOG.warn("Ignored invalid entry " + key + " = "+ value);
+    }
   }
   return answer;
 }
