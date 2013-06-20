@@ -1,9 +1,8 @@
 {
   try {
-    String clusterId=getStringData(service.getCurator(),ZkPath.CONFIG_ENSEMBLES.getPath());
-    String containers=getStringData(service.getCurator(),ZkPath.CONFIG_ENSEMBLE.getPath(clusterId));
-    for (    String name : containers.split(",")) {
-      if (id.equals(name)) {
+    List<String> containers=service.getDataStore().getContainers();
+    for (    String container : containers) {
+      if (id.equals(container)) {
         return true;
       }
     }

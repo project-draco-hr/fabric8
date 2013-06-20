@@ -1,0 +1,8 @@
+{
+  Map<String,String> rendered=Maps.transformValues(configuration,new MvelTemplateRendering(variables));
+  for (  Map.Entry<String,String> entry : rendered.entrySet()) {
+    String path=entry.getKey();
+    String content=entry.getValue();
+    copyToContent(installDir,path,content);
+  }
+}
