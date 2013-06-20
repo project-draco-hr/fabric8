@@ -4,8 +4,10 @@
   InstallOptions installOptions=requirements.createInstallOptions();
   Profile processProfile=getProcessProfile(requirements);
   Map<String,String> configuration=getProcessLayout(processProfile,requirements.getLayout());
+  DownloadManager downloadManager=createDownloadManager(fabricService,processProfile,executorService);
   InstallTask applyConfiguration=new ApplyConfigurationTask(configuration,installOptions.getProperties());
-  InstallTask compositeTask=new CompositeTask(applyConfiguration);
+  InstallTask applyProfile=new DeploymentTask(downloadManager,processProfile);
+  InstallTask compositeTask=new CompositeTask(applyConfiguration,applyProfile);
   Installation installation=processManager.install(installOptions,compositeTask);
   if (installation != null) {
     installation.getController().start();

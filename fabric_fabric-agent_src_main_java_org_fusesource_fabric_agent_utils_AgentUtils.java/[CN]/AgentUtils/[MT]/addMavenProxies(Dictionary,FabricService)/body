@@ -1,9 +1,8 @@
 {
   try {
-    FabricService fs=fabricService.waitForService(0);
-    if (fs != null) {
+    if (fabricService != null) {
       StringBuilder sb=new StringBuilder();
-      for (      URI uri : fs.getMavenRepoURIs()) {
+      for (      URI uri : fabricService.getMavenRepoURIs()) {
         String mavenRepo=uri.toString();
         if (!mavenRepo.endsWith("/")) {
           mavenRepo+="/";

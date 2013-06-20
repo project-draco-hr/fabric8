@@ -2,7 +2,7 @@
   if (props == null) {
     return false;
   }
-  addMavenProxies(props);
+  addMavenProxies(props,fabricService.waitForService(0));
   updateStatus("analyzing",null);
   DictionaryPropertyResolver propertyResolver=new DictionaryPropertyResolver(props,new PropertiesPropertyResolver(System.getProperties()));
   final MavenConfigurationImpl config=new MavenConfigurationImpl(new DictionaryPropertyResolver(props,new PropertiesPropertyResolver(System.getProperties())),"org.ops4j.pax.url.mvn");
@@ -58,7 +58,7 @@
       }
       if (url != null && url.length() > 0) {
         URI uri=URI.create(url);
-        addRepository(repositories,uri);
+        addRepository(manager,repositories,uri);
       }
     }
   }

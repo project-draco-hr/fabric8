@@ -1,6 +1,6 @@
 {
   updateStatus("downloading",null);
-  Map<String,File> fabDownloads=downloadBundles(Collections.<Feature>emptySet(),fabs,Collections.<String>emptySet());
+  Map<String,File> fabDownloads=downloadBundles(manager,Collections.<Feature>emptySet(),fabs,Collections.<String>emptySet());
   updateStatus("resolving",null);
   Map<String,FabBundleInfo> infos=new HashMap<String,FabBundleInfo>();
   for (  Map.Entry<String,File> entry : fabDownloads.entrySet()) {
@@ -34,7 +34,7 @@
     return;
   }
   updateStatus("downloading",null);
-  Map<String,File> downloads=downloadBundles(allFeatures,bundles,overrides);
+  Map<String,File> downloads=downloadBundles(manager,allFeatures,bundles,overrides);
   updateStatus("resolving",null);
   List<Resource> allResources=getObrResolver().resolve(allFeatures,bundles,infos,overrides,downloads);
   updateStatus("installing",null,allResources,true);

@@ -1,0 +1,9 @@
+{
+  Set<Feature> features=new LinkedHashSet<Feature>();
+  List<String> featureNames=p.getFeatures();
+  Map<URI,Repository> repositories=getRepositories(p);
+  for (  String featureName : featureNames) {
+    features.add(FeatureUtils.search(featureName,repositories.values()));
+  }
+  return features;
+}
