@@ -6,7 +6,17 @@
   if (map != null) {
     Map<String,ProcessRequirements> requirementsMap=loadProcessRequirements(map);
     System.out.println("Require containers: " + requirementsMap + " for processManager "+ processManager);
+    if (processManager == null) {
+      LOG.warn("No ProcessManager so cannot provision the child processes");
+      return;
+    }
     for (    ProcessRequirements requirements : requirementsMap.values()) {
+      try {
+        provisionProcess(requirements);
+      }
+ catch (      Exception e) {
+        LOG.error("Failed to provision process " + requirements + ". "+ e,e);
+      }
     }
   }
 }

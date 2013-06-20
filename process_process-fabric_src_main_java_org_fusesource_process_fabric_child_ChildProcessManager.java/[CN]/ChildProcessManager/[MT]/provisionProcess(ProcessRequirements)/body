@@ -1,0 +1,26 @@
+{
+  String id=requirements.getId();
+  Installation installation=findProcessInstallation(id);
+  if (installation != null) {
+    ProcessController controller=installation.getController();
+    try {
+      controller.stop();
+    }
+ catch (    Exception e) {
+      LOG.warn("Ignored exception while trying to stop process " + installation + " "+ e);
+    }
+    controller.uninstall();
+    controller=null;
+  }
+  InstallOptions installOptions=requirements.createInstallOptions();
+  InstallTask copyFiles=new InstallTask(){
+    public void install(    ProcessConfig config,    int id,    File installDir) throws Exception {
+    }
+  }
+;
+  installation=processManager.install(installOptions,copyFiles);
+  if (installation != null) {
+    installation.getController().start();
+  }
+  return installation;
+}
