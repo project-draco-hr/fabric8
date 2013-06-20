@@ -2,12 +2,11 @@
   uninstallProcess(requirements);
   String id=requirements.getId();
   InstallOptions installOptions=requirements.createInstallOptions();
-  InstallTask copyFiles=new InstallTask(){
-    public void install(    ProcessConfig config,    int id,    File installDir) throws Exception {
-    }
-  }
-;
-  Installation installation=processManager.install(installOptions,copyFiles);
+  Profile processProfile=getProcessProfile(requirements);
+  Map<String,String> configuration=getProcessLayout(processProfile,requirements.getLayout());
+  InstallTask applyConfiguration=new ApplyConfigurationTask(configuration,installOptions.getProperties());
+  InstallTask compositeTask=new CompositeTask(applyConfiguration);
+  Installation installation=processManager.install(installOptions,compositeTask);
   if (installation != null) {
     installation.getController().start();
   }
