@@ -1,3 +1,6 @@
 {
-  return new SAPProducer(this);
+  if (!isServer) {
+    return new SAPProducer(this);
+  }
+  throw new UnsupportedOperationException("Server endpoints do not support producers");
 }
