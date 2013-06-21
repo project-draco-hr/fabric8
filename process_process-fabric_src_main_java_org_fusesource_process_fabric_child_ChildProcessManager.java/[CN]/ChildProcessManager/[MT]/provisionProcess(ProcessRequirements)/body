@@ -2,11 +2,12 @@
   uninstallProcess(requirements);
   String id=requirements.getId();
   InstallOptions installOptions=requirements.createInstallOptions();
-  Profile processProfile=getProcessProfile(requirements);
+  Profile processProfile=getProcessProfile(requirements,true);
+  Profile deployProcessProfile=getProcessProfile(requirements,false);
   Map<String,String> configuration=getProcessLayout(processProfile,requirements.getLayout());
   DownloadManager downloadManager=createDownloadManager(fabricService,processProfile,executorService);
   InstallTask applyConfiguration=new ApplyConfigurationTask(configuration,installOptions.getProperties());
-  InstallTask applyProfile=new DeploymentTask(downloadManager,processProfile);
+  InstallTask applyProfile=new DeploymentTask(downloadManager,deployProcessProfile);
   InstallTask compositeTask=new CompositeTask(applyConfiguration,applyProfile);
   Installation installation=processManager.install(installOptions,compositeTask);
   if (installation != null) {
