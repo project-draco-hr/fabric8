@@ -1,6 +1,6 @@
 {
   String region=AWSUtils.parseHandle(node.getId())[0];
-  EC2Client ec2Client=EC2Client.class.cast(service.getContext().getProviderSpecificContext().getApi());
+  EC2Client ec2Client=EC2Client.class.cast(service.getContext().unwrap().getProviderMetadata().getApiMetadata());
   String groupName="jclouds#" + node.getGroup() + "#"+ region;
   Set<SecurityGroup> matchedSecurityGroups=ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region,groupName);
   for (  SecurityGroup securityGroup : matchedSecurityGroups) {
