@@ -1,0 +1,10 @@
+{
+  Set<ObjectName> answer=new HashSet<ObjectName>();
+  for (  String objectName : objectNames) {
+    Set<ObjectName> set=mBeanServer.queryNames(new ObjectName(objectName),queryExp);
+    if (set != null) {
+      answer.addAll(set);
+    }
+  }
+  return answer;
+}
