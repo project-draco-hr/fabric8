@@ -1,0 +1,18 @@
+{
+  if (curator.checkExists().forPath(containerPath) != null) {
+    byte[] bytes=ZkPath.loadURL(curator,containerPath);
+    String text=new String(bytes);
+    int idx=text.indexOf("\"http");
+    String answer=text;
+    if (idx > 0) {
+      int endIdx=text.indexOf('\"',idx + 5);
+      if (endIdx > 0) {
+        answer=text.substring(idx + 1,endIdx);
+        if (answer.length() > 0) {
+          return answer;
+        }
+      }
+    }
+  }
+  return null;
+}
