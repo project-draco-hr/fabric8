@@ -1,6 +1,17 @@
 {
   MQService service=new MQServiceImpl(fabricService);
   HashMap<String,String> configuration=new HashMap<String,String>();
+  if (properties != null) {
+    for (    String entry : properties) {
+      String[] parts=entry.split("=",2);
+      if (parts.length == 2) {
+        configuration.put(parts[0],parts[1]);
+      }
+ else {
+        configuration.put(parts[0],"");
+      }
+    }
+  }
   if (data == null) {
     data=System.getProperty("karaf.base") + System.getProperty("file.separator") + "data"+ System.getProperty("file.separator")+ name;
   }
@@ -19,6 +30,9 @@
   }
   if (networksPassword != null) {
     configuration.put("network.password",networksPassword);
+  }
+  if (parentProfile != null) {
+    configuration.put("parent",parentProfile);
   }
   Profile profile=service.createMQProfile(version,name,configuration);
   System.out.println("MQ profile " + profile.getId() + " ready");

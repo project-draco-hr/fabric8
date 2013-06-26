@@ -1,6 +1,10 @@
 {
   Version version=fabricService.getVersion(versionId);
-  Profile parentProfile=version.getProfile(MQ_PROFILE_BASE);
+  String parentProfileName=MQ_PROFILE_BASE;
+  if (configs != null && configs.containsKey("parent")) {
+    parentProfileName=configs.remove("parent");
+  }
+  Profile parentProfile=version.getProfile(parentProfileName);
   String pidName="org.fusesource.mq.fabric.server-" + brokerName;
   Profile result=parentProfile;
   if (brokerName != null) {
