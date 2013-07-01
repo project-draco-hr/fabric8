@@ -17,9 +17,17 @@
           continue;
         }
         Version v=VersionTable.getVersion(vr);
-        Version lower=new Version(v.getMajor(),v.getMinor(),0);
-        if (v.compareTo(lower) > 0) {
-          VersionRange range=new VersionRange(false,lower,v,true);
+        VersionRange range=null;
+        if (patch.getVersionRange(url) == null) {
+          Version lower=new Version(v.getMajor(),v.getMinor(),0);
+          if (v.compareTo(lower) > 0) {
+            range=new VersionRange(false,lower,v,true);
+          }
+        }
+ else {
+          range=new VersionRange(patch.getVersionRange(url));
+        }
+        if (range != null) {
           for (          Bundle bundle : allBundles) {
             Version oldV=bundle.getVersion();
             if (bundle.getBundleId() != 0 && stripSymbolicName(sn).equals(stripSymbolicName(bundle.getSymbolicName())) && range.contains(oldV)) {
@@ -39,6 +47,9 @@
               }
             }
           }
+        }
+ else {
+          System.err.printf("Skipping bundle %s - unable to process bundle without a version range configuration%n",url);
         }
       }
       Result result=new ResultImpl(patch,simulate,System.currentTimeMillis(),updates);
