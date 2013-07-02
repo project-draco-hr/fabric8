@@ -4,12 +4,12 @@
   profiles.add(dummy);
   profiles.add(new ProfileRequirements("mq",1,5));
   profiles.add(new ProfileRequirements("example-camel",1,null,"mq"));
-  assertEquals(false,dummy.isEmpty());
+  assertEquals(false,dummy.checkIsEmpty());
   dummy.setDependentProfiles(null);
   dummy.setMinimumInstances(0);
-  assertEquals(true,dummy.isEmpty());
+  assertEquals(true,dummy.checkIsEmpty());
   dummy.setMinimumInstances(null);
-  assertEquals(true,dummy.isEmpty());
+  assertEquals(true,dummy.checkIsEmpty());
   FabricRequirements requirements=new FabricRequirements(profiles);
   requirements.removeEmptyRequirements();
   String json=RequirementsJson.toJSON(requirements);
