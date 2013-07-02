@@ -53,7 +53,7 @@
   for (  String override : overrides) {
     Resource over=null;
     try {
-      over=createResource(override,downloads,fabs);
+      over=createResource(extractUrl(override),downloads,fabs);
     }
  catch (    Exception e) {
       if (LOGGER.isDebugEnabled()) {
@@ -70,9 +70,17 @@
     boolean dependency=true;
     for (    Resource res : new ArrayList<Resource>(ress)) {
       if (res.getSymbolicName().equals(over.getSymbolicName())) {
-        Version v1=res.getVersion();
-        Version v2=new Version(v1.getMajor(),v1.getMinor() + 1,0);
-        if (compareFuseVersions(v1,over.getVersion()) < 0 && compareFuseVersions(over.getVersion(),v2) < 0) {
+        VersionRange range;
+        String vr=extractVersionRange(override);
+        if (vr == null) {
+          Version v1=res.getVersion();
+          Version v2=new Version(v1.getMajor(),v1.getMinor() + 1,0);
+          range=new VersionRange(v1,true,v2,false);
+        }
+ else {
+          range=VersionRange.parse(vr);
+        }
+        if (range.isInRange(res.getVersion())) {
           ress.remove(res);
           dependency&=infos.remove(res).isDependency();
           add=true;
