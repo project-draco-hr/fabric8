@@ -1,0 +1,13 @@
+{
+  List<Profile> addedProfiles=Arrays.asList(profiles);
+  List<Profile> updatedProfileList=new LinkedList<Profile>();
+  for (  Profile p : getProfiles()) {
+    updatedProfileList.add(p);
+  }
+  for (  Profile addedProfile : addedProfiles) {
+    if (!updatedProfileList.contains(addedProfile)) {
+      updatedProfileList.add(addedProfile);
+    }
+  }
+  setProfiles(updatedProfileList.toArray(new Profile[updatedProfileList.size()]));
+}

@@ -3,16 +3,7 @@
   validateContainersName(container);
   validateProfileName(profiles);
   Container cont=getContainer(container);
-  Profile[] existingProfiles=cont.getProfiles();
-  List<String> updatedProfiles=new LinkedList<String>();
-  if (existingProfiles != null) {
-    for (    Profile existingProfile : existingProfiles) {
-      if (!profiles.contains(existingProfile.getId())) {
-        updatedProfiles.add(existingProfile.getId());
-      }
-    }
-  }
-  Profile[] profs=getProfiles(cont.getVersion(),updatedProfiles);
-  cont.setProfiles(profs);
+  Profile[] profs=getProfiles(cont.getVersion(),profiles);
+  cont.removeProfiles(profs);
   return null;
 }

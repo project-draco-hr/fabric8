@@ -32,9 +32,7 @@
       configs.remove(fileTemplate);
     }
     targetProfile.setFileConfigurations(configs);
-    Set<Profile> localProfiles=Sets.newHashSet(current.getProfiles());
-    localProfiles.add(targetProfile);
-    current.setProfiles(localProfiles.toArray(new Profile[localProfiles.size()]));
+    current.addProfiles(targetProfile);
     assignedPartitons.put(taskDefinition,partition);
   }
 }

@@ -1,13 +1,4 @@
 {
   Container cont=getFabricService().getContainer(container);
-  Profile[] existing=cont.getProfiles();
-  List<String> updated=new ArrayList<String>();
-  if (existing != null) {
-    for (    Profile p : existing) {
-      if (!profiles.contains(p.getId())) {
-        updated.add(p.getId());
-      }
-    }
-  }
-  cont.setProfiles(stringsToProfiles(cont.getVersion(),updated));
+  cont.removeProfiles(stringsToProfiles(cont.getVersion(),profiles));
 }
