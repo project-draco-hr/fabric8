@@ -140,6 +140,8 @@
       git.checkout().setName(version).setForce(true).call();
       String zkNode=ZkPath.CONFIG_VERSION.getPath(version);
       create(zookeeper,zkNode);
+      create(zookeeper,ZkPath.CONFIG_VERSIONS_PROFILES.getPath(version));
+      create(zookeeper,ZkPath.CONFIG_VERSIONS_CONTAINERS.getPath(version));
       syncVersionFromGitToZk(git,zookeeper,zkNode);
       versionsMetadata.put(version,git.getRepository().getRef("HEAD").getObjectId().getName());
     }

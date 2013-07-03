@@ -1,0 +1,16 @@
+{
+  System.err.println("Create test profile:" + profile + " in git.");
+  GitUtils.checkoutBranch(git,"origin",version);
+  File testProfileDir=new File(git.getRepository().getWorkTree(),profile);
+  testProfileDir.mkdirs();
+  File testProfileConfig=new File(testProfileDir,"org.fusesource.fabric.agent.properties");
+  testProfileConfig.createNewFile();
+  Files.writeToFile(testProfileConfig,"",Charset.defaultCharset());
+  git.add().addFilepattern(profile).call();
+  git.commit().setMessage("Create " + profile).call();
+  PullResult pullResult=git.pull().setCredentialsProvider(getCredentialsProvider()).setRebase(true).call();
+  git.push().setCredentialsProvider(getCredentialsProvider()).setRemote("origin").call();
+  GitUtils.waitForBranchUpdate(getCurator(),version);
+  Thread.sleep(5000);
+  assertNotNull(getCurator().checkExists().forPath(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,profile)));
+}
