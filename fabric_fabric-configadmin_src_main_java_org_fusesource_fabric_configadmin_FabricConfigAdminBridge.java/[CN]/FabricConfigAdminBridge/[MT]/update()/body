@@ -1,8 +1,11 @@
 {
   try {
+    if (fabricService == null || configAdmin == null) {
+      return;
+    }
     Profile profile=fabricService.getCurrentContainer().getOverlayProfile();
     final Map<String,Map<String,String>> pidProperties=profile.getConfigurations();
-    List<Configuration> configs=asList(getConfigAdmin().listConfigurations("(" + FABRIC_ZOOKEEPER_PID + "=*)"));
+    List<Configuration> configs=asList(configAdmin.listConfigurations("(" + FABRIC_ZOOKEEPER_PID + "=*)"));
     for (    String pid : pidProperties.keySet()) {
       Hashtable<String,String> c=new Hashtable<String,String>();
       c.putAll(pidProperties.get(pid));
@@ -44,7 +47,7 @@
       config.delete();
     }
   }
- catch (  Exception e) {
+ catch (  Throwable e) {
     LOGGER.warn("Exception when tracking configurations. This exception will be ignored.",e);
   }
 }
