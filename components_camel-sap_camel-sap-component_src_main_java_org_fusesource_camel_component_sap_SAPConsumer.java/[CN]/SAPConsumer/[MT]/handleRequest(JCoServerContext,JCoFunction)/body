@@ -1,0 +1,28 @@
+{
+  SAPEndpoint sapEndpoint=(SAPEndpoint)getEndpoint();
+  Exchange exchange=getEndpoint().createExchange(sapEndpoint.getMep());
+  Structure request=RfcUtil.getRequest(serverContext.getRepository(),jcoFunction.getName());
+  RfcUtil.extractJCoParameterListsIntoRequest(jcoFunction,request);
+  try {
+    Message message=exchange.getIn();
+    message.setHeader("sap.sessionData",sessionData);
+    message.setBody(request);
+    getProcessor().process(exchange);
+    if (exchange.getPattern().isOutCapable()) {
+      if (exchange.hasOut()) {
+        message=exchange.getOut();
+      }
+ else {
+        message=exchange.getIn();
+      }
+      Structure response=message.getBody(Structure.class);
+      RfcUtil.fillJCoParameterListsFromResponse(response,jcoFunction);
+    }
+  }
+ catch (  IOException e) {
+    getExceptionHandler().handleException("Failed to marshal request",e);
+  }
+catch (  Exception e) {
+    getExceptionHandler().handleException("Failed to process request",e);
+  }
+}
