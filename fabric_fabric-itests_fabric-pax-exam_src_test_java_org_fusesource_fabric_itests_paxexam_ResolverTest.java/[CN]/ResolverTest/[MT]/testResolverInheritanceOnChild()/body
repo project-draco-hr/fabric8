@@ -1,5 +1,5 @@
 {
-  System.err.println(executeCommand("fabric:create -n -g localip -r manualip --manual-ip localhost"));
+  System.err.println(executeCommand("fabric:create -n -g localip -r manualip --manual-ip localhost -b localhost"));
   CuratorFramework curator=getCurator();
   Set<Container> containers=ContainerBuilder.create(1,1).withName("child").withProfiles("default").assertProvisioningResult().build();
   Container child=containers.iterator().next();

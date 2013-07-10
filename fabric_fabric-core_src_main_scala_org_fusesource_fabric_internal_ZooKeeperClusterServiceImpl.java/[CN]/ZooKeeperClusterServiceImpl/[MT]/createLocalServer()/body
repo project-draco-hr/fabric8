@@ -1,3 +1,12 @@
 {
-  createLocalServer(Ports.DEFAULT_ZOOKEEPER_SERVER_PORT);
+  org.apache.felix.utils.properties.Properties userProps=null;
+  try {
+    userProps=new org.apache.felix.utils.properties.Properties(new File(System.getProperty("karaf.home") + "/etc/users.properties"));
+  }
+ catch (  IOException e) {
+    LOGGER.warn("Failed to load users from etc/users.properties. No users will be imported.",e);
+  }
+  String zookeeperPassword=System.getProperty(SystemProperties.ZOOKEEPER_PASSWORD);
+  CreateEnsembleOptions createOpts=CreateEnsembleOptions.builder().users(userProps).build();
+  createLocalServer(createOpts);
 }

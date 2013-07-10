@@ -3,9 +3,6 @@
   try {
     options.getCreationStateListener().onStateChange("Looking up for compute service.");
     ComputeService computeService=getOrCreateComputeService(options);
-    if (Strings.isNullOrEmpty(options.getProviderName())) {
-      options.setProviderName(computeService.getContext().unwrap().getProviderMetadata().getId());
-    }
     if (computeService == null) {
       throw new IllegalStateException("Compute service could not be found or created.");
     }

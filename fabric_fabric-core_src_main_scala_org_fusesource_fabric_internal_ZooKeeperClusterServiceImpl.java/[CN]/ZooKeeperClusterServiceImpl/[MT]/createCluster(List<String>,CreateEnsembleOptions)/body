@@ -1,13 +1,5 @@
 {
   try {
-    if (options.getZookeeperPassword() != null) {
-    }
- else     if (System.getProperties().containsKey(SystemProperties.ZOOKEEPER_PASSWORD)) {
-      options.setZookeeperPassword(System.getProperty(SystemProperties.ZOOKEEPER_PASSWORD));
-    }
- else {
-      options.setZookeeperPassword(generatePassword());
-    }
     if (containers == null || containers.size() == 2) {
       throw new IllegalArgumentException("One or at least 3 containers must be used to create a zookeeper ensemble");
     }
@@ -17,7 +9,7 @@
       if (containers.size() != 1 || !containers.get(0).equals(System.getProperty(SystemProperties.KARAF_NAME))) {
         throw new FabricException("The first zookeeper cluster must be configured on this container only.");
       }
-      createLocalServer(2181,options);
+      createLocalServer(options);
       return;
     }
     String version=getDataStore().getDefaultVersion();

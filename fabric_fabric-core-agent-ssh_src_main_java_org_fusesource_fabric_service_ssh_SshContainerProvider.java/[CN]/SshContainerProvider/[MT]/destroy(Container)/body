@@ -7,7 +7,7 @@
     CreateSshContainerMetadata sshContainerMetadata=(CreateSshContainerMetadata)metadata;
     CreateSshContainerOptions options=sshContainerMetadata.getCreateOptions();
     try {
-      String script=buildUninstallScript(options.name(container.getId()));
+      String script=buildUninstallScript(container.getId(),options);
       runScriptOnHost(options,script);
     }
  catch (    Throwable t) {

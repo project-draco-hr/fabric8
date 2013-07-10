@@ -63,7 +63,7 @@ catch (    Throwable t) {
       LOGGER.warn("Failed to setup firewall",t);
     }
     try {
-      String script=buildInstallAndStartScript(options.name(containerName));
+      String script=buildInstallAndStartScript(containerName,options);
       options.getCreationStateListener().onStateChange(String.format("Installing fabric agent on container %s. It may take a while...",containerName));
       ExecResponse response=null;
       try {
@@ -86,7 +86,7 @@ catch (      SshException ex) {
         }
         String overridenResolverValue=ContainerProviderUtils.parseResolverOverride(response.getOutput());
         if (overridenResolverValue != null) {
-          options.setResolver(overridenResolverValue);
+          jCloudsContainerMetadata.setOverridenResolver(overridenResolverValue);
           options.getCreationStateListener().onStateChange("Overriding resolver to " + overridenResolverValue + ".");
         }
       }

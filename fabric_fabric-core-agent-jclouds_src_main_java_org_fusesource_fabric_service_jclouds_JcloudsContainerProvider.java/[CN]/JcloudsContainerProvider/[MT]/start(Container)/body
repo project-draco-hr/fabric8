@@ -26,7 +26,7 @@
           credentials=loginBuilder.user(options.getUser()).build();
         }
       }
-      String script=buildStartScript(options.name(container.getId()));
+      String script=buildStartScript(container.getId(),options);
       ExecResponse response=null;
       if (credentials != null) {
         response=computeService.runScriptOnNode(nodeId,script,RunScriptOptions.Builder.overrideLoginCredentials(credentials).runAsRoot(false));
