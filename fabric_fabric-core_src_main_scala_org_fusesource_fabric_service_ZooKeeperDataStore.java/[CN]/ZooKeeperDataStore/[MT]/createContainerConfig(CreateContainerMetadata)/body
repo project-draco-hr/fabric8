@@ -18,7 +18,7 @@
     setData(curator,ZkPath.CONFIG_CONTAINER.getPath(containerId),versionId);
     setData(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId),sb.toString());
     setData(curator,ZkPath.CONTAINER_PARENT.getPath(containerId),parent);
-    setData(curator,ZkPath.CONTAINER_METADATA.getPath(containerId),Base64Encoder.encode(ObjectUtils.toBytes(metadata)));
+    setContainerMetadata(metadata);
     Map<String,String> configuration=metadata.getContainerConfiguration();
     for (    Map.Entry<String,String> entry : configuration.entrySet()) {
       String key=entry.getKey();
