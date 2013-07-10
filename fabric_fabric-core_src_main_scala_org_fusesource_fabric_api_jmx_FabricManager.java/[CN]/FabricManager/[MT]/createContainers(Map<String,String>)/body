@@ -5,6 +5,7 @@
   }
   CreateContainerBasicOptions.Builder builder=null;
   ObjectMapper mapper=new ObjectMapper();
+  mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES,false);
   if (providerType.equals("child")) {
     builder=mapper.convertValue(options,CreateChildContainerOptions.Builder.class);
     builder.resolver(null);
