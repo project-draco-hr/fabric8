@@ -6,7 +6,6 @@
  catch (  IOException e) {
     LOGGER.warn("Failed to load users from etc/users.properties. No users will be imported.",e);
   }
-  String zookeeperPassword=System.getProperty(SystemProperties.ZOOKEEPER_PASSWORD);
-  CreateEnsembleOptions createOpts=CreateEnsembleOptions.builder().users(userProps).build();
+  CreateEnsembleOptions createOpts=CreateEnsembleOptions.builder().fromSystemProperties().users(userProps).build();
   createLocalServer(createOpts);
 }
