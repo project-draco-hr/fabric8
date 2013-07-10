@@ -4,9 +4,10 @@
     String containerId=metadata.getContainerName();
     String parent=options.getParent();
     String versionId=options.getVersion() != null ? options.getVersion() : getDefaultVersion();
-    List<String> profileIds=options.getProfiles();
+    Set<String> profileIds=options.getProfiles();
     if (profileIds == null || profileIds.isEmpty()) {
-      profileIds=Collections.singletonList(ZkDefs.DEFAULT_PROFILE);
+      profileIds=new LinkedHashSet<String>();
+      profileIds.add("default");
     }
     StringBuilder sb=new StringBuilder();
     for (    String profileId : profileIds) {

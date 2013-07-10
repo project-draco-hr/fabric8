@@ -85,13 +85,13 @@
     agentProps.put("feature.fabric-commands","fabric-commands");
     getDataStore().setFileConfiguration(version,"fabric","org.fusesource.fabric.agent.properties",DataStoreHelpers.toBytes(agentProps));
     createDefault(client,ZkPath.CONFIG_CONTAINER.getPath(karafName),version);
-    String assignedProfile=System.getProperty(SystemProperties.PROFILE);
-    if (assignedProfile != null && !assignedProfile.isEmpty() && !"fabric".equals(assignedProfile)) {
-      createDefault(client,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,karafName),"fabric fabric-ensemble-0000-1 " + assignedProfile);
+    StringBuilder profilesBuilder=new StringBuilder();
+    Set<String> profiles=options.getProfiles();
+    profilesBuilder.append("fabric").append(" ").append("fabric-ensemble-0000-1");
+    for (    String p : profiles) {
+      profilesBuilder.append(" ").append(p);
     }
- else {
-      createDefault(client,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,karafName),"fabric fabric-ensemble-0000-1");
-    }
+    createDefault(client,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,karafName),profilesBuilder.toString());
     Map<String,String> configs=new HashMap<String,String>();
     configs.put("encryption.enabled","${zk:/fabric/authentication/encryption.enabled}");
     getDataStore().setConfiguration(version,defaultProfile,"org.fusesource.fabric.jaas",configs);
