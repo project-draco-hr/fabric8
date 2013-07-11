@@ -1,0 +1,21 @@
+{
+  List<ParsedHeaderClause> clauses=new ArrayList<ParsedHeaderClause>();
+  Clause[] cs=Parser.parseHeader(header);
+  if (cs != null) {
+    for (    Clause c : cs) {
+      ParsedHeaderClause phc=new ParsedHeaderClause();
+      phc.paths.add(c.getName());
+      for (      Directive d : c.getDirectives()) {
+        phc.dirs.put(d.getName(),d.getValue());
+      }
+      for (      Attribute a : c.getAttributes()) {
+        phc.attrs.put(a.getName(),normalize ? a.getNormalizedValue() : a.getValue());
+        if (a.getType() != null) {
+          phc.types.put(a.getName(),a.getType());
+        }
+      }
+      clauses.add(phc);
+    }
+  }
+  return clauses;
+}

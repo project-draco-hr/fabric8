@@ -1,0 +1,9 @@
+{
+  InputStream is=getBundleInputStream(uri,urls,infos);
+  byte[] man=loadEntry(is,JarFile.MANIFEST_NAME);
+  if (man == null) {
+    throw new IllegalArgumentException("The specified url is not a valid jar (can't read manifest): " + uri);
+  }
+  Manifest manifest=new Manifest(new ByteArrayInputStream(man));
+  return manifest.getMainAttributes();
+}

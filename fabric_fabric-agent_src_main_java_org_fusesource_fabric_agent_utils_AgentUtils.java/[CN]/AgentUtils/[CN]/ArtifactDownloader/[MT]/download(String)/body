@@ -1,0 +1,6 @@
+{
+  if (artifacts.putIfAbsent(uri,getDownloadingValue()) == null) {
+    pendings.incrementAndGet();
+    manager.download(uri).addListener(this);
+  }
+}

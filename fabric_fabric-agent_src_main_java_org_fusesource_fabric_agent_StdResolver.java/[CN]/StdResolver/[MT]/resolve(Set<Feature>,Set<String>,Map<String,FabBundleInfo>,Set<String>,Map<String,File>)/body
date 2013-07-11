@@ -1,0 +1,102 @@
+{
+  for (  Feature feature : features) {
+    for (    BundleInfo bundleInfo : feature.getBundles()) {
+      if (bundleInfo.getLocation().startsWith(FAB_PROTOCOL)) {
+        continue;
+      }
+      Attributes attributes=getAttributes(bundleInfo.getLocation(),downloads,fabs);
+      Resource resource=manageResource(bundleInfo.getLocation(),attributes);
+    }
+    Resource resource=FeatureResource.build(feature,resources);
+    resources.put(feature.getName() + "/" + feature.getVersion(),resource);
+    mandatory.add(resource);
+  }
+  for (  String bundle : bundles) {
+    Attributes attributes=getAttributes(bundle,downloads,fabs);
+    Resource resource=manageResource(bundle,attributes);
+    mandatory.add(resource);
+  }
+  for (  FabBundleInfo fab : fabs.values()) {
+    Attributes attributes=fab.getManifest();
+    Resource resource=manageResource(FAB_PROTOCOL + fab.getUrl(),attributes);
+    mandatory.add(resource);
+    for (    DependencyTree dep : fab.getBundles()) {
+      if (dep.isBundle()) {
+        Attributes depAttributes=getAttributes(dep.getUrl(),downloads,fabs);
+        manageResource(dep.getUrl(),depAttributes);
+      }
+    }
+  }
+  for (  String override : overrides) {
+    Resource over=null;
+    try {
+      String url=extractUrl(override);
+      Attributes attributes=getAttributes(url,downloads,fabs);
+      over=createResource(url,attributes);
+    }
+ catch (    Exception e) {
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.info("Ignoring patched resource: {}: {}",new Object[]{override,e.getMessage()},e);
+      }
+ else {
+        LOGGER.info("Ignoring patched resource: {}: {}",override,e.getMessage());
+      }
+    }
+    if (over == null) {
+      continue;
+    }
+    for (    String uri : new ArrayList<String>(resources.keySet())) {
+      Resource res=resources.get(uri);
+      if (getSymbolicName(res).equals(getSymbolicName(over))) {
+        VersionRange range;
+        String vr=extractVersionRange(override);
+        if (vr == null) {
+          Version v1=getVersion(res);
+          Version v2=new Version(v1.getMajor(),v1.getMinor() + 1,0);
+          range=new VersionRange(false,v1,v2,true);
+        }
+ else {
+          range=VersionRange.parseVersionRange(vr);
+        }
+        if (range.contains(getVersion(res))) {
+          resources.remove(uri);
+          resources.put(override,over);
+          if (mandatory.remove(res)) {
+            mandatory.add(over);
+          }
+        }
+      }
+    }
+  }
+  Bundle systemBundle=FrameworkUtil.getBundle(StdResolver.class).getBundleContext().getBundle(0);
+  resources.put("system-bundle",systemBundle.adapt(BundleRevision.class));
+  ResolverImpl resolver=new ResolverImpl(new org.apache.felix.resolver.Logger(org.apache.felix.resolver.Logger.LOG_DEBUG){
+    @Override protected void doLog(    int level,    String msg,    Throwable throwable){
+switch (level) {
+case LOG_ERROR:
+        LOGGER.error(msg,throwable);
+      break;
+case LOG_WARNING:
+    LOGGER.warn(msg,throwable);
+  break;
+case LOG_INFO:
+LOGGER.info(msg,throwable);
+break;
+case LOG_DEBUG:
+LOGGER.debug(msg,throwable);
+break;
+}
+}
+}
+);
+ResolveContext context=new ResolveContextImpl(mandatory,Collections.<Resource>emptySet(),resources.values(),resolveOptionalImports);
+Map<Resource,List<Wire>> wiring=resolver.resolve(context);
+Map<String,Resource> deploy=new TreeMap<String,Resource>();
+for (Resource res : wiring.keySet()) {
+String uri=getUri(res);
+if (uri != null) {
+deploy.put(uri,res);
+}
+}
+return deploy.values();
+}

@@ -1,0 +1,9 @@
+{
+  FeatureValidationUtil.validate(file.toURI());
+  RepositoryImpl repo=new RepositoryImpl(file.toURI());
+  register(uri,repo);
+  repo.load();
+  for (  URI ref : repo.getRepositories()) {
+    download(ref.toString());
+  }
+}

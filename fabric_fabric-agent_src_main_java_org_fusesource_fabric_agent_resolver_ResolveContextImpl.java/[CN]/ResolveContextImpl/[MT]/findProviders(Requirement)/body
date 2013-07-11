@@ -1,0 +1,36 @@
+{
+  List<Capability> caps=providers.get(requirement);
+  if (caps == null) {
+    RequirementImpl br;
+    if (requirement instanceof RequirementImpl) {
+      br=(RequirementImpl)requirement;
+    }
+ else {
+      FilterImpl sf;
+      try {
+        String filter=requirement.getDirectives().get(Constants.FILTER_DIRECTIVE);
+        if (filter == null) {
+          sf=FilterImpl.newInstance("(*)");
+        }
+ else {
+          sf=FilterImpl.newInstance(filter);
+        }
+      }
+ catch (      InvalidSyntaxException e) {
+        throw new IllegalStateException(e);
+      }
+      br=new RequirementImpl(null,requirement.getNamespace(),requirement.getDirectives(),requirement.getAttributes(),sf);
+    }
+    caps=new ArrayList<Capability>();
+    for (    Resource res : resources) {
+      for (      Capability cap : res.getCapabilities(null)) {
+        if (br.matches(cap)) {
+          caps.add(cap);
+        }
+      }
+    }
+    Collections.sort(caps,new CandidateComparator());
+    providers.put(requirement,caps);
+  }
+  return caps;
+}

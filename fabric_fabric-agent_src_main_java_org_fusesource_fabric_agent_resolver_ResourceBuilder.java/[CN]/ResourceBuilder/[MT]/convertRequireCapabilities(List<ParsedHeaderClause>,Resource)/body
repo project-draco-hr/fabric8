@@ -1,0 +1,19 @@
+{
+  List<Requirement> reqList=new ArrayList<Requirement>();
+  for (  ParsedHeaderClause clause : clauses) {
+    try {
+      String filterStr=clause.dirs.get(Constants.FILTER_DIRECTIVE);
+      FilterImpl sf=FilterImpl.newInstance(filterStr != null ? filterStr : "(*)");
+      for (      String path : clause.paths) {
+        if (path.startsWith("osgi.wiring.")) {
+          throw new BundleException("Manifest cannot use Require-Capability for '" + path + "' namespace.");
+        }
+        reqList.add(new RequirementImpl(resource,path,clause.dirs,clause.attrs,sf));
+      }
+    }
+ catch (    Exception ex) {
+      throw new BundleException("Error creating requirement: " + ex,ex);
+    }
+  }
+  return reqList;
+}

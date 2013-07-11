@@ -1,0 +1,11 @@
+{
+  Resource resource=resources.get(location);
+  if (resource == null) {
+    resource=createResource(location,attributes);
+    if (resource == null) {
+      throw new IllegalArgumentException("Unable to build resource for bundle " + location);
+    }
+    resources.put(location,resource);
+  }
+  return resource;
+}

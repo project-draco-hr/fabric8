@@ -1,0 +1,11 @@
+{
+synchronized (pendings) {
+    while (pendings.get() != 0) {
+      pendings.wait();
+    }
+  }
+  if (!errors.isEmpty()) {
+    throw new MultiException("Error while downloading artifacts",errors);
+  }
+  return artifacts;
+}

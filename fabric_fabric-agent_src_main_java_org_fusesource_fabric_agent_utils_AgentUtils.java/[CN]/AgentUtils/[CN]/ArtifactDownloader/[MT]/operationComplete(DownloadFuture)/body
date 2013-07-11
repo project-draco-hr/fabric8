@@ -1,0 +1,14 @@
+{
+  try {
+    handle(future.getUrl(),future.getFile());
+  }
+ catch (  Throwable e) {
+    errors.add(e);
+  }
+ finally {
+synchronized (pendings) {
+      pendings.decrementAndGet();
+      pendings.notifyAll();
+    }
+  }
+}
