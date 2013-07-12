@@ -63,7 +63,8 @@
   updateStatus("downloading",null);
   builder.download(getPrefixedProperties(properties,"feature."),getPrefixedProperties(properties,"bundle."),getPrefixedProperties(properties,"fab."),getPrefixedProperties(properties,"override."));
   updateStatus("resolving",null);
-  Collection<Resource> allResources=builder.resolve(resolveOptionalImports);
+  Resource systemBundle=systemBundleContext.getBundle(0).adapt(BundleRevision.class);
+  Collection<Resource> allResources=builder.resolve(systemBundle,resolveOptionalImports);
   Map<String,StreamProvider> providers=builder.getProviders();
   install(allResources,providers);
   return true;

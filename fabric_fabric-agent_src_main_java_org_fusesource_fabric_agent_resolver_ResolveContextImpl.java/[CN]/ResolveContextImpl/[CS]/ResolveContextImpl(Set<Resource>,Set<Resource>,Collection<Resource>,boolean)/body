@@ -5,4 +5,16 @@
   this.wirings=new HashMap<Resource,Wiring>();
   this.providers=new HashMap<Requirement,List<Capability>>();
   this.resolveOptional=resolveOptional;
+  this.capSets=new HashMap<String,CapabilitySet>();
+  for (  Resource resource : resources) {
+    for (    Capability cap : resource.getCapabilities(null)) {
+      String ns=cap.getNamespace();
+      CapabilitySet set=capSets.get(ns);
+      if (set == null) {
+        set=new CapabilitySet(Collections.singletonList(ns));
+        capSets.put(ns,set);
+      }
+      set.addCapability(cap);
+    }
+  }
 }
