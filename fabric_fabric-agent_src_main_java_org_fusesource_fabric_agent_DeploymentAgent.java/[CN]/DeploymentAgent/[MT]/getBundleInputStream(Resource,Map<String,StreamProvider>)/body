@@ -1,0 +1,8 @@
+{
+  String uri=getUri(resource);
+  StreamProvider provider=uri != null ? providers.get(uri) : null;
+  if (provider == null) {
+    throw new IllegalStateException("Could not find stream provider for " + resource);
+  }
+  return provider.open();
+}

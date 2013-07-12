@@ -50,25 +50,6 @@
     return false;
   }
   final Map<String,Repository> repositories=loadRepositories(manager,getPrefixedProperties(properties,"repository."));
-  Set<Feature> features=new HashSet<Feature>();
-  for (  String name : getPrefixedProperties(properties,"feature.")) {
-    Feature feature=search(name,repositories.values());
-    if (feature == null) {
-      throw new IllegalArgumentException("Unable to find feature " + name);
-    }
-    features.add(feature);
-  }
-  Set<String> fabs=getPrefixedProperties(properties,"fab.");
-  Set<String> bundles=new HashSet<String>();
-  for (  String url : getPrefixedProperties(properties,"bundle.")) {
-    if (url.startsWith(FAB_PROTOCOL)) {
-      fabs.add(url.substring(FAB_PROTOCOL.length()));
-    }
- else {
-      bundles.add(url);
-    }
-  }
-  Set<String> overrides=getPrefixedProperties(properties,"override.");
   FabResolverFactoryImpl fabResolverFactory=new FabResolverFactoryImpl();
   fabResolverFactory.setConfiguration(new FabricFabConfiguration(config,propertyResolver));
   fabResolverFactory.setBundleContext(bundleContext);
@@ -78,6 +59,12 @@
     }
   }
 );
-  updateDeployment(fabResolverFactory,repositories,features,bundles,fabs,overrides);
+  DeploymentBuilder builder=new DeploymentBuilder(manager,fabResolverFactory,repositories.values());
+  updateStatus("downloading",null);
+  builder.download(getPrefixedProperties(properties,"feature."),getPrefixedProperties(properties,"bundle."),getPrefixedProperties(properties,"fab."),getPrefixedProperties(properties,"override."));
+  updateStatus("resolving",null);
+  Collection<Resource> allResources=builder.resolve(resolveOptionalImports);
+  Map<String,StreamProvider> providers=builder.getProviders();
+  install(allResources,providers);
   return true;
 }

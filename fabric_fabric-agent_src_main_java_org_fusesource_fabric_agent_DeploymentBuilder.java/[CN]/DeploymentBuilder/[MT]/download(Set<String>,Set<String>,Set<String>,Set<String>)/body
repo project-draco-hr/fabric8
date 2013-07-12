@@ -1,0 +1,56 @@
+{
+  this.downloader=new AgentUtils.FileDownloader(manager);
+  this.resources=new ConcurrentHashMap<String,Resource>();
+  this.providers=new ConcurrentHashMap<String,StreamProvider>();
+  this.requirements=new ResourceImpl("dummy","dummy",Version.emptyVersion);
+  for (  String feature : features) {
+    registerMatchingFeatures(feature);
+  }
+  for (  String bundle : bundles) {
+    downloadAndBuildResource(bundle);
+  }
+  for (  String fab : fabs) {
+    downloadAndBuildResource(FAB_PROTOCOL + fab);
+  }
+  for (  String override : overrides) {
+    downloadAndBuildResource(extractUrl(override));
+  }
+  downloader.await();
+  for (  String override : overrides) {
+    Resource over=resources.get(extractUrl(override));
+    if (over == null) {
+      continue;
+    }
+    for (    String uri : new ArrayList<String>(resources.keySet())) {
+      Resource res=resources.get(uri);
+      if (getSymbolicName(res).equals(getSymbolicName(over))) {
+        VersionRange range;
+        String vr=extractVersionRange(override);
+        if (vr == null) {
+          Version v1=getVersion(res);
+          Version v2=new Version(v1.getMajor(),v1.getMinor() + 1,0);
+          range=new VersionRange(false,v1,v2,true);
+        }
+ else {
+          range=VersionRange.parseVersionRange(vr);
+        }
+        if (range.contains(getVersion(res))) {
+          resources.put(uri,over);
+        }
+      }
+    }
+  }
+  for (  Feature feature : featuresToRegister) {
+    Resource resource=FeatureResource.build(feature,resources);
+    resources.put("feature:" + feature.getName() + "/"+ feature.getVersion(),resource);
+  }
+  for (  String feature : features) {
+    requireFeature(feature,requirements);
+  }
+  for (  String bundle : bundles) {
+    requireResource(bundle);
+  }
+  for (  String fab : fabs) {
+    requireResource(FAB_PROTOCOL + fab);
+  }
+}

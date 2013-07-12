@@ -1,8 +1,8 @@
 {
-  Set fragments=new HashSet();
+  Set<Bundle> fragments=new HashSet<Bundle>();
   for (  Bundle b : toRefresh) {
     if (b.getState() != Bundle.UNINSTALLED) {
-      String hostHeader=(String)b.getHeaders().get(Constants.FRAGMENT_HOST);
+      String hostHeader=b.getHeaders().get(Constants.FRAGMENT_HOST);
       if (hostHeader != null) {
         Clause[] clauses=Parser.parseHeader(hostHeader);
         if (clauses != null && clauses.length > 0) {

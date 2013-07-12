@@ -6,16 +6,7 @@
     }
     Version bundleVersion=Version.emptyVersion;
     if (headerMap.get(Constants.BUNDLE_VERSION) != null) {
-      try {
-        bundleVersion=Version.parseVersion(headerMap.get(Constants.BUNDLE_VERSION));
-      }
- catch (      RuntimeException ex) {
-        String mv=getManifestVersion(headerMap);
-        if (mv != null) {
-          throw ex;
-        }
-        bundleVersion=Version.emptyVersion;
-      }
+      bundleVersion=Version.parseVersion(headerMap.get(Constants.BUNDLE_VERSION));
     }
     ParsedHeaderClause clause=clauses.get(0);
     String symName=clause.paths.get(0);

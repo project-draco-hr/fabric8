@@ -1,6 +1,17 @@
 {
-  if (artifacts.putIfAbsent(uri,getDownloadingValue()) == null) {
-    pendings.incrementAndGet();
-    manager.download(uri).addListener(this);
+synchronized (lock) {
+    DownloadFuture future=futures.get(uri);
+    if (future == null) {
+      pendings.incrementAndGet();
+      future=manager.download(uri);
+      future.addListener(new FutureListener<DownloadFuture>(){
+        @Override public void operationComplete(        DownloadFuture future){
+          onDownloaded(future,null);
+        }
+      }
+);
+      futures.put(uri,future);
+    }
+    return future;
   }
 }

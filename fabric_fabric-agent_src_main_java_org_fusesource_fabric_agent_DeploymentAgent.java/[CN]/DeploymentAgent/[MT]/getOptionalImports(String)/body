@@ -1,10 +1,10 @@
 {
   Clause[] imports=Parser.parseHeader(importsStr);
   List<Clause> result=new LinkedList<Clause>();
-  for (int i=0; i < imports.length; i++) {
-    String resolution=imports[i].getDirective(Constants.RESOLUTION_DIRECTIVE);
+  for (  Clause anImport : imports) {
+    String resolution=anImport.getDirective(Constants.RESOLUTION_DIRECTIVE);
     if (Constants.RESOLUTION_OPTIONAL.equals(resolution)) {
-      result.add(imports[i]);
+      result.add(anImport);
     }
   }
   return result;

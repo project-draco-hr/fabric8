@@ -1,0 +1,32 @@
+{
+  if (location.startsWith(FAB_PROTOCOL)) {
+    String url=location.substring(FAB_PROTOCOL.length());
+    downloader.download(url,new AgentUtils.DownloadCallback(){
+      @Override public void downloaded(      File file) throws Exception {
+        FabResolver resolver=fabResolverFactory.getResolver(file.toURI().toURL());
+        FabBundleInfo fabInfo=resolver.getInfo();
+        ResourceImpl resource=(ResourceImpl)manageResource(location,fabInfo.getManifest(),new StreamProvider.Fab(fabInfo));
+        for (        String name : fabInfo.getFeatures()) {
+          registerMatchingFeatures(name);
+          requireFeature(name,resource);
+        }
+        for (        DependencyTree dep : fabInfo.getBundles()) {
+          File depFile=dep.getJarFile();
+          Attributes attrs=getAttributes(dep.getJarURL().toString(),depFile);
+          if (attrs.getValue(Constants.BUNDLE_SYMBOLICNAME) != null) {
+            manageResource(getMvnUrl(dep),attrs,new StreamProvider.File(depFile));
+          }
+        }
+      }
+    }
+);
+  }
+ else {
+    downloader.download(location,new AgentUtils.DownloadCallback(){
+      @Override public void downloaded(      File file) throws Exception {
+        manageResource(location,file);
+      }
+    }
+);
+  }
+}
