@@ -1,8 +1,10 @@
 {
   FabricService fabricService=getFabricService();
   assertNotNull(fabricService);
+  Thread.sleep(5000);
   CuratorFramework curator=getCurator();
   curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+  WaitForConfigurationChange.on(fabricService);
   Provision.waitForContainerAlive(Arrays.<Container>asList(new ContainerImpl(null,"root",(FabricServiceImpl)fabricService)),PROVISION_TIMEOUT);
   Container[] containers=fabricService.getContainers();
   assertNotNull(containers);
@@ -12,4 +14,5 @@
   org.osgi.service.cm.Configuration configuration=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
   Dictionary<String,Object> dictionary=configuration.getProperties();
   assertNotNull("Expected a generated zookeeper password",dictionary.get("zookeeper.password"));
+  assertTrue(String.valueOf(dictionary.get("zookeeper.url")).endsWith("2182"));
 }

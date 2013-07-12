@@ -1,11 +1,12 @@
 {
   checkFabricAvailable();
-  validateContainersName(name);
-  if (isPartOfEnsemble(name) && !force) {
+  validateContainersName(container);
+  if (isPartOfEnsemble(container) && !force) {
     System.out.println("Container is part of the ensemble. If you still want to delete it, please use -f option.");
     return null;
   }
-  Container found=getContainer(name);
+  Container found=getContainer(container);
+  applyUpdatedCredentials(found);
   if (recursive) {
     for (    Container child : found.getChildren()) {
       child.stop();

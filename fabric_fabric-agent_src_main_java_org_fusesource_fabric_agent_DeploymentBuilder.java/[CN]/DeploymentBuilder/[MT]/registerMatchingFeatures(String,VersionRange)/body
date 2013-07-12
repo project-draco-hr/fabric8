@@ -1,0 +1,25 @@
+{
+  for (  Repository repo : repositories) {
+    Feature[] features;
+    try {
+      features=repo.getFeatures();
+    }
+ catch (    Exception e) {
+      throw new IllegalStateException(e);
+    }
+    for (    Feature f : features) {
+      if (name.equals(f.getName())) {
+        Version v=VersionTable.getVersion(f.getVersion());
+        if (range.contains(v)) {
+          featuresToRegister.add(f);
+          for (          Feature dep : f.getDependencies()) {
+            registerMatchingFeatures(dep);
+          }
+          for (          BundleInfo bundle : f.getBundles()) {
+            downloadAndBuildResource(bundle.getLocation());
+          }
+        }
+      }
+    }
+  }
+}

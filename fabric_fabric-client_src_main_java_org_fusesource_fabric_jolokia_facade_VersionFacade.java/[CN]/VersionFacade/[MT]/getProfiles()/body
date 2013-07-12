@@ -1,0 +1,11 @@
+{
+  List<Profile> rc=new ArrayList<Profile>();
+  String[] profiles=getFieldValue("profiles");
+  if (profiles == null || profiles.length == 0) {
+    return new Profile[0];
+  }
+  for (  String profile : profiles) {
+    rc.add(new ProfileFacade(j4p,id,profile));
+  }
+  return rc.toArray(new Profile[rc.size()]);
+}

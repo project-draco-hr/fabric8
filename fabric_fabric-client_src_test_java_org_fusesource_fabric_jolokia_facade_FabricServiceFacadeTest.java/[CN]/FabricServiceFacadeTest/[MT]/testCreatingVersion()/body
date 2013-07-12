@@ -1,0 +1,9 @@
+{
+  Assume.assumeTrue(Boolean.valueOf(System.getProperty("hasFabric")));
+  FabricService service=getFabricService();
+  Version version=service.createVersion("1.5");
+  service.setDefaultVersion(version);
+  Version one_dot_oh=service.getVersion("1.0");
+  service.setDefaultVersion(one_dot_oh);
+  version.delete();
+}

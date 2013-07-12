@@ -1,0 +1,11 @@
+{
+  String[] profiles=getFieldValue("parents");
+  if (profiles == null || profiles.length == 0) {
+    return new Profile[0];
+  }
+  List<Profile> answer=new ArrayList<Profile>();
+  for (  String profile : profiles) {
+    answer.add(new ProfileFacade(j4p,versionId,profile));
+  }
+  return answer.toArray(new Profile[answer.size()]);
+}

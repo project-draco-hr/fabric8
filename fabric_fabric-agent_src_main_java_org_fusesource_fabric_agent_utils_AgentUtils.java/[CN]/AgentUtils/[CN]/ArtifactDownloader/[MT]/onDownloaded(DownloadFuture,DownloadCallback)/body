@@ -1,0 +1,20 @@
+{
+synchronized (lock) {
+    try {
+      String url=future.getUrl();
+      File file=future.getFile();
+      T t=getArtifact(url,file);
+      artifacts.put(url,t);
+      if (callback != null) {
+        callback.downloaded(file);
+      }
+    }
+ catch (    Throwable t) {
+      errors.add(t);
+    }
+ finally {
+      pendings.decrementAndGet();
+      lock.notifyAll();
+    }
+  }
+}

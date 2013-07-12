@@ -1,0 +1,23 @@
+{
+  System.setProperty("karaf.data",new File("target/karaf/data").getAbsolutePath());
+  System.setProperty("karaf.home",new File("target/karaf").getAbsolutePath());
+  Properties properties=new Properties();
+  properties.setProperty("mvn.localRepository","/Users/gnodet/.m2/repository/@snapshots");
+  properties.setProperty("mvn.repositories","http://repo1.maven.org/maven2/,http://repo.fusesource.com/nexus/content/repositories/ea");
+  PropertiesPropertyResolver propertyResolver=new PropertiesPropertyResolver(properties);
+  MavenConfigurationImpl mavenConfiguration=new MavenConfigurationImpl(propertyResolver,"mvn");
+  mavenConfiguration.setSettings(new MavenSettingsImpl(new URL("file:/Users/gnodet/.m2/settings.xml")));
+  DownloadManager manager=new DownloadManager(mavenConfiguration,Executors.newFixedThreadPool(2));
+  Map<URI,Repository> repositories=new HashMap<URI,Repository>();
+  AgentUtils.addRepository(manager,repositories,URI.create("mvn:org.apache.karaf.assemblies.features/standard/" + System.getProperty("karaf-version") + "/xml/features"));
+  DeploymentBuilder builder=new DeploymentBuilder(manager,null,repositories.values());
+  builder.download(new HashSet<String>(Arrays.asList("karaf-framework","ssh")),Collections.<String>emptySet(),Collections.<String>emptySet(),Collections.<String>emptySet());
+  properties=new Properties();
+  properties.setProperty("org.osgi.framework.system.packages.extra","org.apache.karaf.jaas.boot;version=\"2.3.0.redhat-610-SNAPSHOT\",org.apache.karaf.jaas.boot.principal;version=\"2.3.0.redhat-610-SNAPSHOT\"");
+  properties.setProperty("org.osgi.framework.system.capabilities.extra","service-reference;effective:=active;objectClass=org.osgi.service.packageadmin.PackageAdmin," + "service-reference;effective:=active;objectClass=org.osgi.service.startlevel.StartLevel," + "service-reference;effective:=active;objectClass=org.osgi.service.url.URLHandlers");
+  Framework felix=new Felix(properties);
+  Collection<Resource> resources=builder.resolve(felix.adapt(BundleRevision.class),false);
+  for (  Resource resource : resources) {
+    System.out.println("Resource: " + getUri(resource));
+  }
+}

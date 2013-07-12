@@ -1,14 +1,8 @@
 {
   agent=new DeploymentAgent();
   agent.setBundleContext(context);
-  ObrResolver obr=new ObrResolver(new RepositoryAdminImpl(context,new Logger(context)));
-  Dictionary config=getConfig(context);
-  if (config != null) {
-    obr.setResolveOptionalImports(getResolveOptionalImports(config));
-  }
-  agent.setObrResolver(obr);
-  agent.setPackageAdmin(getPackageAdmin(context));
-  agent.setStartLevel(getStartLevel(context));
+  Dictionary<String,Object> config=getConfig(context);
+  agent.setResolveOptionalImports(getResolveOptionalImports(config));
   agent.setFabricService(getFabricService(context));
   agent.start();
   Hashtable<String,String> props=new Hashtable<String,String>();

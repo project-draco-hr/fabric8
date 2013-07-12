@@ -1,0 +1,71 @@
+{
+  if (props == null) {
+    return false;
+  }
+  addMavenProxies(props,fabricService.waitForService(0));
+  updateStatus("analyzing",null);
+  DictionaryPropertyResolver propertyResolver=new DictionaryPropertyResolver(props,new PropertiesPropertyResolver(System.getProperties()));
+  final MavenConfigurationImpl config=new MavenConfigurationImpl(new DictionaryPropertyResolver(props,new PropertiesPropertyResolver(System.getProperties())),"org.ops4j.pax.url.mvn");
+  config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
+  manager=new DownloadManager(config,getDownloadExecutor());
+  Map<String,String> properties=new HashMap<String,String>();
+  for (Enumeration e=props.keys(); e.hasMoreElements(); ) {
+    Object key=e.nextElement();
+    Object val=props.get(key);
+    if (!"service.pid".equals(key) && !FABRIC_ZOOKEEPER_PID.equals(key)) {
+      properties.put(key.toString(),val.toString());
+    }
+  }
+  boolean restart=false;
+  Properties configProps=new Properties(new File(System.getProperty("karaf.base") + File.separator + "etc"+ File.separator+ "config.properties"));
+  Properties systemProps=new Properties(new File(System.getProperty("karaf.base") + File.separator + "etc"+ File.separator+ "system.properties"));
+  for (  String key : properties.keySet()) {
+    if (key.equals("framework")) {
+      String url=properties.get(key);
+      restart|=updateFramework(configProps,url);
+    }
+ else     if (key.startsWith("config.")) {
+      String k=key.substring("config.".length());
+      String v=properties.get(key);
+      if (!v.equals(configProps.get(k))) {
+        configProps.put(k,v);
+        restart=true;
+      }
+    }
+ else     if (key.startsWith("system.")) {
+      String k=key.substring("system.".length());
+      String v=properties.get(key);
+      if (!v.equals(systemProps.get(k))) {
+        systemProps.put(k,v);
+        restart=true;
+      }
+    }
+  }
+  if (restart) {
+    updateStatus("restarting",null);
+    configProps.save();
+    systemProps.save();
+    System.setProperty("karaf.restart","true");
+    bundleContext.getBundle(0).stop();
+    return false;
+  }
+  final Map<String,Repository> repositories=loadRepositories(manager,getPrefixedProperties(properties,"repository."));
+  FabResolverFactoryImpl fabResolverFactory=new FabResolverFactoryImpl();
+  fabResolverFactory.setConfiguration(new FabricFabConfiguration(config,propertyResolver));
+  fabResolverFactory.setBundleContext(bundleContext);
+  fabResolverFactory.setFeaturesService(new FeaturesServiceImpl(){
+    @Override public Repository[] listRepositories(){
+      return repositories.values().toArray(new Repository[repositories.size()]);
+    }
+  }
+);
+  DeploymentBuilder builder=new DeploymentBuilder(manager,fabResolverFactory,repositories.values());
+  updateStatus("downloading",null);
+  builder.download(getPrefixedProperties(properties,"feature."),getPrefixedProperties(properties,"bundle."),getPrefixedProperties(properties,"fab."),getPrefixedProperties(properties,"override."));
+  updateStatus("resolving",null);
+  Resource systemBundle=systemBundleContext.getBundle(0).adapt(BundleRevision.class);
+  Collection<Resource> allResources=builder.resolve(systemBundle,resolveOptionalImports);
+  Map<String,StreamProvider> providers=builder.getProviders();
+  install(allResources,providers);
+  return true;
+}

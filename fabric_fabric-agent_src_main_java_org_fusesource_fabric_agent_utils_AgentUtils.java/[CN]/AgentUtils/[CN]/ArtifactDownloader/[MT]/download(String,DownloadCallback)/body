@@ -1,0 +1,16 @@
+{
+synchronized (lock) {
+    DownloadFuture future=futures.get(uri);
+    if (future == null) {
+      pendings.incrementAndGet();
+      future=manager.download(uri);
+      future.addListener(new FutureListener<DownloadFuture>(){
+        @Override public void operationComplete(        DownloadFuture future){
+          onDownloaded(future,callback);
+        }
+      }
+);
+      futures.put(uri,future);
+    }
+  }
+}

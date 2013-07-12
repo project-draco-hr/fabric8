@@ -1,0 +1,8 @@
+{
+  List<Map<String,Object>> results=Helpers.exec(getJ4p(),"versions(java.util.List)",Helpers.toList("id"));
+  List<Version> answer=new ArrayList<Version>();
+  for (  Map<String,Object> result : results) {
+    answer.add(new VersionFacade(getJ4p(),(String)result.get("id")));
+  }
+  return answer.toArray(new Version[answer.size()]);
+}

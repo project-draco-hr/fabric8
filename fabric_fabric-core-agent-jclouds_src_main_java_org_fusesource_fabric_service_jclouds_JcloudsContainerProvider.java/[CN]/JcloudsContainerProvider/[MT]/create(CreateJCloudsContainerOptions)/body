@@ -1,11 +1,9 @@
 {
+  int number=Math.max(options.getNumber(),1);
   final Set<CreateJCloudsContainerMetadata> result=new LinkedHashSet<CreateJCloudsContainerMetadata>();
   try {
     options.getCreationStateListener().onStateChange("Looking up for compute service.");
     ComputeService computeService=getOrCreateComputeService(options);
-    if (Strings.isNullOrEmpty(options.getProviderName())) {
-      options.setProviderName(computeService.getContext().unwrap().getProviderMetadata().getId());
-    }
     if (computeService == null) {
       throw new IllegalStateException("Compute service could not be found or created.");
     }
@@ -33,7 +31,7 @@ builder.fastest();
 }
 }
 StringBuilder overviewBuilder=new StringBuilder();
-overviewBuilder.append(String.format("Creating %s nodes in the cloud. Using",options.getNumber()));
+overviewBuilder.append(String.format("Creating %s nodes in the cloud. Using",number));
 if (!Strings.isNullOrEmpty(options.getImageId())) {
 overviewBuilder.append(" image id: ").append(options.getImageId());
 builder.imageId(options.getImageId());
@@ -77,7 +75,7 @@ builder=builder.options(templateOptions);
 Set<? extends NodeMetadata> metadatas=null;
 overviewBuilder.append(" It may take a while ...");
 options.getCreationStateListener().onStateChange(overviewBuilder.toString());
-metadatas=computeService.createNodesInGroup(options.getGroup(),options.getNumber(),builder.build());
+metadatas=computeService.createNodesInGroup(options.getGroup(),number,builder.build());
 if (metadatas != null) {
 for (NodeMetadata metadata : metadatas) {
 options.getCreationStateListener().onStateChange(String.format("Node %s has been created.",metadata.getName()));
@@ -87,10 +85,10 @@ Thread.sleep(5000);
 int suffix=1;
 if (metadatas != null) {
 String originalName=new String(options.getName());
-CountDownLatch countDownLatch=new CountDownLatch(options.getNumber());
+CountDownLatch countDownLatch=new CountDownLatch(number);
 for (NodeMetadata nodeMetadata : metadatas) {
 String containerName;
-if (options.getNumber() > 1) {
+if (options.getNumber() >= 1) {
 containerName=originalName + (suffix++);
 }
  else {
@@ -103,12 +101,10 @@ countDownLatch.await(10,TimeUnit.MINUTES);
 }
 }
  catch (Throwable t) {
-if (options != null && options.getNumber() > 0) {
-for (int i=result.size(); i < options.getNumber(); i++) {
+for (int i=result.size(); i < number; i++) {
 CreateJCloudsContainerMetadata failureMetdata=new CreateJCloudsContainerMetadata();
 failureMetdata.setFailure(t);
 result.add(failureMetdata);
-}
 }
 }
 return result;

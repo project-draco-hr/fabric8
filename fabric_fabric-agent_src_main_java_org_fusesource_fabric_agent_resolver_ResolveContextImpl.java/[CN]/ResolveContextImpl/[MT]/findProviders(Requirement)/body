@@ -1,0 +1,21 @@
+{
+  List<Capability> caps=providers.get(requirement);
+  if (caps == null) {
+    CapabilitySet set=capSets.get(requirement.getNamespace());
+    if (set == null) {
+      throw new IllegalStateException("Unknown requirement namespace for " + requirement);
+    }
+    SimpleFilter sf;
+    if (requirement instanceof RequirementImpl) {
+      sf=((RequirementImpl)requirement).getFilter();
+    }
+ else {
+      String filter=requirement.getDirectives().get(Constants.FILTER_DIRECTIVE);
+      sf=(filter != null) ? SimpleFilter.parse(filter) : new SimpleFilter(null,null,SimpleFilter.MATCH_ALL);
+    }
+    caps=new ArrayList<Capability>(set.match(sf,true));
+    Collections.sort(caps,new CandidateComparator());
+    providers.put(requirement,caps);
+  }
+  return caps;
+}
