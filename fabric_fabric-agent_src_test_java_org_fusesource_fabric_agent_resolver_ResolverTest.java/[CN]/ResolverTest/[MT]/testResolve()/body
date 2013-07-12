@@ -9,69 +9,15 @@
   mavenConfiguration.setSettings(new MavenSettingsImpl(new URL("file:/Users/gnodet/.m2/settings.xml")));
   DownloadManager manager=new DownloadManager(mavenConfiguration,Executors.newFixedThreadPool(2));
   Map<URI,Repository> repositories=new HashMap<URI,Repository>();
-  AgentUtils.addRepository(manager,repositories,URI.create("mvn:org.apache.karaf.assemblies.features/standard/2.3.0.redhat-610-SNAPSHOT/xml/features"));
-  Set<Feature> allFeatures=new HashSet<Feature>();
-  Repository repo=repositories.values().iterator().next();
-  allFeatures.addAll(Arrays.asList(repo.getFeatures()));
-  Map<String,File> downloads=downloadBundles(manager,allFeatures,Collections.<String>emptySet(),Collections.<String>emptySet());
-  Map<String,Resource> locToRes=new HashMap<String,Resource>();
-  List<Requirement> reqs=new ArrayList<Requirement>();
-  List<Resource> ress=new ArrayList<Resource>();
-  List<Resource> deploy=new ArrayList<Resource>();
-  Map<Object,BundleInfo> infos=new HashMap<Object,BundleInfo>();
-  for (  Feature feature : allFeatures) {
-    for (    BundleInfo bundleInfo : feature.getBundles()) {
-      try {
-        Resource res=createResource(bundleInfo.getLocation(),downloads,Collections.<String,FabBundleInfo>emptyMap());
-        if (res == null) {
-          throw new IllegalArgumentException("Unable to build OBR representation for bundle " + bundleInfo.getLocation());
-        }
-        locToRes.put(bundleInfo.getLocation(),res);
-        ress.add(res);
-        infos.put(res,bundleInfo);
-      }
- catch (      MalformedURLException e) {
-        List<Requirement> reqList=ResourceBuilder.parseRequirement(null,bundleInfo.getLocation());
-        for (        Requirement req : reqList) {
-          reqs.add(req);
-          infos.put(req,bundleInfo);
-        }
-      }
-    }
-  }
+  AgentUtils.addRepository(manager,repositories,URI.create("mvn:org.apache.karaf.assemblies.features/standard/" + System.getProperty("karaf-version") + "/xml/features"));
+  DeploymentBuilder builder=new DeploymentBuilder(manager,null,repositories.values());
+  builder.download(new HashSet<String>(Arrays.asList("karaf-framework","ssh")),Collections.<String>emptySet(),Collections.<String>emptySet(),Collections.<String>emptySet());
   properties=new Properties();
   properties.setProperty("org.osgi.framework.system.packages.extra","org.apache.karaf.jaas.boot;version=\"2.3.0.redhat-610-SNAPSHOT\",org.apache.karaf.jaas.boot.principal;version=\"2.3.0.redhat-610-SNAPSHOT\"");
   properties.setProperty("org.osgi.framework.system.capabilities.extra","service-reference;effective:=active;objectClass=org.osgi.service.packageadmin.PackageAdmin," + "service-reference;effective:=active;objectClass=org.osgi.service.startlevel.StartLevel," + "service-reference;effective:=active;objectClass=org.osgi.service.url.URLHandlers");
   Framework felix=new Felix(properties);
-  ress.add(felix.adapt(BundleRevisions.class).getRevisions().iterator().next());
-  Map<Feature,Resource> featureResourceMap=new HashMap<Feature,Resource>();
-  for (  Feature feature : repo.getFeatures()) {
-    Resource resf=FeatureResource.build(feature,locToRes);
-    ress.add(resf);
-    featureResourceMap.put(feature,resf);
-  }
-  Map<String,String> types=new HashMap<String,String>();
-  types.put("ResourceImpl","bundle ");
-  types.put("FeatureResource","feature");
-  types.put("ExtensionManagerRevision","system ");
-  for (  Feature feature : repo.getFeatures()) {
-    Set<Resource> mandatory=new HashSet<Resource>();
-    Set<Resource> optional=new HashSet<Resource>();
-    mandatory.add(featureResourceMap.get(feature));
-    ResolverImpl resolver=new ResolverImpl(new org.apache.felix.resolver.Logger(org.apache.felix.resolver.Logger.LOG_DEBUG));
-    ResolveContext context=new ResolveContextImpl(mandatory,optional,ress,false);
-    System.out.println("Resolution for feature " + feature.getName());
-    try {
-      Map<Resource,List<Wire>> wires=resolver.resolve(context);
-      for (      Map.Entry<Resource,List<Wire>> entry : wires.entrySet()) {
-        System.out.println("    Resource: " + types.get(entry.getKey().getClass().getSimpleName()) + ": "+ entry.getKey());
-        for (        Wire wire : entry.getValue()) {
-        }
-      }
-    }
- catch (    Throwable t) {
-      t.printStackTrace(System.out);
-    }
-    System.out.println();
+  Collection<Resource> resources=builder.resolve(felix.adapt(BundleRevision.class),false);
+  for (  Resource resource : resources) {
+    System.out.println("Resource: " + getUri(resource));
   }
 }
