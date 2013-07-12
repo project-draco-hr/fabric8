@@ -1,5 +1,11 @@
 {
   try {
+    FabricService fabricService;
+    ConfigurationAdmin configAdmin;
+synchronized (this) {
+      fabricService=this.fabricService;
+      configAdmin=this.configAdmin;
+    }
     if (fabricService == null || configAdmin == null) {
       return;
     }
@@ -10,7 +16,7 @@
       Hashtable<String,String> c=new Hashtable<String,String>();
       c.putAll(pidProperties.get(pid));
       String p[]=parsePid(pid);
-      Configuration config=getConfiguration(pid,p[0],p[1]);
+      Configuration config=getConfiguration(configAdmin,pid,p[0],p[1]);
       configs.remove(config);
       Dictionary props=config.getProperties();
       Hashtable old=props != null ? new Hashtable() : null;
