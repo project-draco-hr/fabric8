@@ -1,6 +1,8 @@
 {
-  if (curator.getZookeeperClient().isConnected()) {
-    service.stateChanged(curator,ConnectionState.LOST);
+  if (listener != null) {
+    if (curator.getZookeeperClient().isConnected()) {
+      listener.stateChanged(curator,ConnectionState.LOST);
+    }
+    curator.getConnectionStateListenable().removeListener(listener);
   }
-  curator.getConnectionStateListenable().removeListener(service);
 }
