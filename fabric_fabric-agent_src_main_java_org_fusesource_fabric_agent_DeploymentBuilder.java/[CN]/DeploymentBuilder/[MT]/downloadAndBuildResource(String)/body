@@ -21,6 +21,18 @@
     }
 );
   }
+ else   if (location.startsWith(REQ_PROTOCOL)) {
+    try {
+      ResourceImpl resource=new ResourceImpl(location,"dummy",Version.emptyVersion);
+      for (      Requirement req : ResourceBuilder.parseRequirement(resource,location.substring(REQ_PROTOCOL.length()))) {
+        resource.addRequirement(req);
+      }
+      resources.put(location,resource);
+    }
+ catch (    BundleException e) {
+      throw new IOException("Error parsing requirement",e);
+    }
+  }
  else {
     downloader.download(location,new AgentUtils.DownloadCallback(){
       @Override public void downloaded(      File file) throws Exception {

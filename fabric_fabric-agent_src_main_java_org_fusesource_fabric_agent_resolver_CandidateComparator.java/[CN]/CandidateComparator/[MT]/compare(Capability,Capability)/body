@@ -11,7 +11,7 @@
     if (c == 0) {
       Version v1=(!cap1.getAttributes().containsKey(BundleNamespace.CAPABILITY_BUNDLE_VERSION_ATTRIBUTE)) ? Version.emptyVersion : (Version)cap1.getAttributes().get(BundleNamespace.CAPABILITY_BUNDLE_VERSION_ATTRIBUTE);
       Version v2=(!cap2.getAttributes().containsKey(BundleNamespace.CAPABILITY_BUNDLE_VERSION_ATTRIBUTE)) ? Version.emptyVersion : (Version)cap2.getAttributes().get(BundleNamespace.CAPABILITY_BUNDLE_VERSION_ATTRIBUTE);
-      c=v2.compareTo(v1);
+      c=compareVersions(v2,v1);
     }
   }
  else   if ((c == 0) && cap1.getNamespace().equals(PackageNamespace.PACKAGE_NAMESPACE)) {
@@ -19,7 +19,12 @@
     if (c == 0) {
       Version v1=(!cap1.getAttributes().containsKey(PackageNamespace.CAPABILITY_VERSION_ATTRIBUTE)) ? Version.emptyVersion : (Version)cap1.getAttributes().get(PackageNamespace.CAPABILITY_VERSION_ATTRIBUTE);
       Version v2=(!cap2.getAttributes().containsKey(PackageNamespace.CAPABILITY_VERSION_ATTRIBUTE)) ? Version.emptyVersion : (Version)cap2.getAttributes().get(PackageNamespace.CAPABILITY_VERSION_ATTRIBUTE);
-      c=v2.compareTo(v1);
+      c=compareVersions(v2,v1);
+      if (c == 0) {
+        v1=(!cap1.getAttributes().containsKey(BundleNamespace.CAPABILITY_BUNDLE_VERSION_ATTRIBUTE)) ? Version.emptyVersion : (Version)cap1.getAttributes().get(BundleNamespace.CAPABILITY_BUNDLE_VERSION_ATTRIBUTE);
+        v2=(!cap2.getAttributes().containsKey(BundleNamespace.CAPABILITY_BUNDLE_VERSION_ATTRIBUTE)) ? Version.emptyVersion : (Version)cap2.getAttributes().get(BundleNamespace.CAPABILITY_BUNDLE_VERSION_ATTRIBUTE);
+        c=compareVersions(v2,v1);
+      }
     }
   }
  else   if ((c == 0) && cap1.getNamespace().equals(FeatureNamespace.FEATURE_NAMESPACE)) {
@@ -27,7 +32,7 @@
     if (c == 0) {
       Version v1=(!cap1.getAttributes().containsKey(FeatureNamespace.CAPABILITY_VERSION_ATTRIBUTE)) ? Version.emptyVersion : (Version)cap1.getAttributes().get(FeatureNamespace.CAPABILITY_VERSION_ATTRIBUTE);
       Version v2=(!cap2.getAttributes().containsKey(FeatureNamespace.CAPABILITY_VERSION_ATTRIBUTE)) ? Version.emptyVersion : (Version)cap2.getAttributes().get(FeatureNamespace.CAPABILITY_VERSION_ATTRIBUTE);
-      c=v2.compareTo(v1);
+      c=compareVersions(v2,v1);
     }
   }
   return c;

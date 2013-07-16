@@ -12,6 +12,9 @@
   for (  String fab : fabs) {
     downloadAndBuildResource(FAB_PROTOCOL + fab);
   }
+  for (  String req : reqs) {
+    downloadAndBuildResource(REQ_PROTOCOL + req);
+  }
   for (  String override : overrides) {
     downloadAndBuildResource(extractUrl(override));
   }
@@ -41,7 +44,7 @@
     }
   }
   for (  Feature feature : featuresToRegister) {
-    Resource resource=FeatureResource.build(feature,resources);
+    Resource resource=FeatureResource.build(feature,featureRange,resources);
     resources.put("feature:" + feature.getName() + "/"+ feature.getVersion(),resource);
   }
   for (  String feature : features) {
@@ -49,6 +52,9 @@
   }
   for (  String bundle : bundles) {
     requireResource(bundle);
+  }
+  for (  String req : reqs) {
+    requireResource(REQ_PROTOCOL + req);
   }
   for (  String fab : fabs) {
     requireResource(FAB_PROTOCOL + fab);

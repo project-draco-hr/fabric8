@@ -1,7 +1,9 @@
 {
-  unbind(curator);
-  String connectionString=curator.getZookeeperClient().getCurrentConnectionString();
-  if (connectionString != null && !connectionString.isEmpty()) {
-    createCacheIfNeeded(curator);
+  destroyCache();
+  if (curator != null) {
+    String connectionString=curator.getZookeeperClient().getCurrentConnectionString();
+    if (connectionString != null && !connectionString.isEmpty()) {
+      createCache();
+    }
   }
 }
