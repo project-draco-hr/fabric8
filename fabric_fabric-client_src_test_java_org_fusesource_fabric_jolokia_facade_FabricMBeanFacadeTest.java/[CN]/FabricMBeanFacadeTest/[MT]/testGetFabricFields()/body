@@ -1,9 +1,9 @@
 {
   Assume.assumeTrue(Boolean.valueOf(System.getProperty("hasFabric")));
   FabricMBean facade=getFabricMBean();
-  JSONObject o=facade.getFabricFields();
+  String json=facade.getFabricFields();
   try {
-    FabricDTO dto=Helpers.getObjectMapper().readValue(o.toJSONString(),FabricDTO.class);
+    FabricDTO dto=Helpers.getObjectMapper().readValue(json,FabricDTO.class);
     Assume.assumeNotNull(dto);
     System.out.println(dto);
   }
