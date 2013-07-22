@@ -1,5 +1,7 @@
 {
   try {
+    String name=servletEvent.getBundle().getSymbolicName();
+    clearJolokiaUrl(container,name);
     String id=container.getId();
     String path="/fabric/registry/clusters/servlets/" + servletEvent.getBundle().getSymbolicName() + "/"+ servletEvent.getBundle().getVersion().toString()+ servletEvent.getAlias()+ "/"+ id;
     delete(curator,path);

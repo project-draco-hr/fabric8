@@ -5,10 +5,7 @@
     url="http://" + url;
   }
   String name=webEvent.getBundle().getSymbolicName();
-  if (name.equals("org.jolokia")) {
-    container.setJolokiaUrl(url);
-    System.setProperty("jolokia.agent",url);
-  }
+  setJolokiaUrl(container,url,name);
   String json="{\"id\":\"" + id + "\", \"services\":[\""+ url+ "\"],\"container\":\""+ id+ "\"}";
   try {
     setData(curator,ZkPath.WEBAPPS_CONTAINER.getPath(name,webEvent.getBundle().getVersion().toString(),id),json,CreateMode.EPHEMERAL);

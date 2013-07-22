@@ -1,10 +1,7 @@
 {
   try {
     String name=webEvent.getBundle().getSymbolicName();
-    if (name.equals("org.jolokia")) {
-      container.setJolokiaUrl(null);
-      System.clearProperty("jolokia.agent");
-    }
+    clearJolokiaUrl(container,name);
     delete(curator,ZkPath.WEBAPPS_CONTAINER.getPath(name,webEvent.getBundle().getVersion().toString(),container.getId()));
   }
  catch (  KeeperException.NoNodeException e) {
