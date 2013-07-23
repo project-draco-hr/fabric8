@@ -1,0 +1,17 @@
+{
+  String url;
+  URL resource=getClass().getClassLoader().getResource("xsds/invoice.xsd");
+  if (resource != null) {
+    url=resource.toString();
+  }
+ else {
+    url=new File("src/test/resources/xsds/invoice.xsd").toURI().toURL().toString();
+  }
+  LOG.info("Using system ID for schema: " + url);
+  xjc.addSchemaUrl(url);
+  CompileResults results=xjc.compileSchemas();
+  JAXBContext jaxbContext=results.getJAXBContext();
+  LOG.info("Got a JAXBContext! " + jaxbContext);
+  ClassLoader classLoader=results.getClassLoader();
+  assertLoadClasses(classLoader,"org.apache.invoice.Invoice","org.apache.invoice.Address");
+}
