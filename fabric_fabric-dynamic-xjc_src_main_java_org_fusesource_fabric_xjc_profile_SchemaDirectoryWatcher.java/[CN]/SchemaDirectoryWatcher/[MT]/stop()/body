@@ -1,4 +1,9 @@
 {
-  Closeables.close(pathCache,true);
+  for (  Map.Entry<String,PathChildrenCache> entry : pathCacheMap.entrySet()) {
+    PathChildrenCache pathCache=entry.getValue();
+    Closeables.close(pathCache,true);
+  }
+  pathCacheMap.clear();
   executorService.shutdown();
+  timer.cancel();
 }

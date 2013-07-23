@@ -1,9 +1,25 @@
 {
-  System.out.println("Recompiling the XSDs!");
-  List<ChildData> childData=pathCache.getCurrentData();
-  int totalItems=childData.size();
-  for (  ChildData data : childData) {
-    String path=data.getPath();
-    System.out.println("Has path: " + path);
+  LOG.debug("Looking for XSDs to recompile");
+  Set<String> urls=new TreeSet<String>();
+  List<PathChildrenCache> pathCaches=new ArrayList<PathChildrenCache>(pathCacheMap.values());
+  for (  PathChildrenCache pathCache : pathCaches) {
+    List<ChildData> childData=pathCache.getCurrentData();
+    int totalItems=childData.size();
+    for (    ChildData data : childData) {
+      String path=data.getPath();
+      urls.add("zk:" + path);
+    }
   }
+  LOG.info("Recompiling XSDs at URLs: " + urls);
+  startedFlag.set(false);
+  ClassLoader classLoader=AriesFrameworkUtil.getClassLoader(bundleContext.getBundle());
+  if (classLoader == null) {
+    System.out.println("No class loader!");
+    classLoader=getClass().getClassLoader();
+  }
+  System.out.println("Class loader : " + classLoader);
+  DynamicXJC xjc=new DynamicXJC(classLoader);
+  xjc.setSchemaUrls(new ArrayList<String>(urls));
+  CompileResults compileResults=xjc.compileSchemas();
+  System.out.println("got results: " + compileResults.getJAXBContext());
 }
