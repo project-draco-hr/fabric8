@@ -1,6 +1,14 @@
 {
+  JSONObject obj=Helpers.exec(getJolokiaClient(),"fabricStatus()");
   FabricStatus status=null;
-  JSONObject o=Helpers.exec(getJolokiaClient(),"fabricstatus()");
-  System.out.println(o.toJSONString());
+  try {
+    Map<String,ProfileStatus> profileStatusMap=Helpers.getObjectMapper().readValue(obj.toJSONString(),Map.class);
+    System.out.println(profileStatusMap.size());
+    status=new FabricStatus(this);
+    status.getProfileStatusMap().putAll(profileStatusMap);
+  }
+ catch (  Exception ex) {
+    ex.printStackTrace();
+  }
   return status;
 }
