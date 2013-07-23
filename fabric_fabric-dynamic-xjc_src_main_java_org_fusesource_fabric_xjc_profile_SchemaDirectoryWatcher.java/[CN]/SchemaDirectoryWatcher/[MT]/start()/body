@@ -1,0 +1,11 @@
+{
+  try {
+    ZooKeeperUtils.createDefault(curator,schemaPath,null);
+    pathCache.getListenable().addListener(this);
+    pathCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
+    pathCache.rebuild();
+  }
+ catch (  Exception e) {
+    throw Throwables.propagate(e);
+  }
+}
