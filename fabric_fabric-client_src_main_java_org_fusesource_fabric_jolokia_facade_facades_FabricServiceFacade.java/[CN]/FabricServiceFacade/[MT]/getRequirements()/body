@@ -1,3 +1,11 @@
 {
-  return Helpers.exec(getJolokiaClient(),"requirements()");
+  JSONObject obj=Helpers.exec(getJolokiaClient(),"requirements()");
+  FabricRequirements requirements=null;
+  try {
+    requirements=Helpers.getObjectMapper().readValue(obj.toJSONString(),FabricRequirements.class);
+  }
+ catch (  Exception ex) {
+    ex.printStackTrace();
+  }
+  return requirements;
 }
