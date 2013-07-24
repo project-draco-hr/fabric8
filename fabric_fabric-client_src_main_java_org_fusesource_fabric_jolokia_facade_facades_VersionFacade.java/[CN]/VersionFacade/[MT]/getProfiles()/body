@@ -1,11 +1,11 @@
 {
   List<Profile> rc=new ArrayList<Profile>();
-  String[] profiles=getFieldValue("profiles");
-  if (profiles == null || profiles.length == 0) {
+  JSONArray array=getFieldValue("profiles");
+  if (array == null || array.size() == 0) {
     return new Profile[0];
   }
-  for (  String profile : profiles) {
-    rc.add(new ProfileFacade(j4p,id,profile));
+  for (  Object profile : array) {
+    rc.add(new ProfileFacade(j4p,id,(String)profile));
   }
   return rc.toArray(new Profile[rc.size()]);
 }
