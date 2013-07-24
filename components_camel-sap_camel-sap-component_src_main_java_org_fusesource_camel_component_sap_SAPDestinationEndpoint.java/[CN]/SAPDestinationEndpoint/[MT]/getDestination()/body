@@ -1,6 +1,11 @@
 {
   if (destination == null) {
-    destination=JCoDestinationManager.getDestination((destinationName));
+    try {
+      destination=JCoDestinationManager.getDestination((destinationName));
+    }
+ catch (    Exception e) {
+      LOG.warn("Failed to get destination object for endpoint. This exception will be ignored.",e);
+    }
   }
   return destination;
 }
