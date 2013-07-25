@@ -7,7 +7,8 @@
   }
   boolean first=true;
   StringBuilder sb=new StringBuilder();
-  for (  String schemaUrl : getSchemaUrls()) {
+  for (  String rawUrl : getSchemaUrls()) {
+    String schemaUrl=resolveUrl(rawUrl);
     InnerErrorListener listener=new InnerErrorListener(schemaUrl);
     Object elForRun=ReflectionInvokationHandler.createProxyWrapper(listener,JAXBUtils.getParamClass(compiler,"setErrorListener"));
     compiler.setErrorListener(elForRun);

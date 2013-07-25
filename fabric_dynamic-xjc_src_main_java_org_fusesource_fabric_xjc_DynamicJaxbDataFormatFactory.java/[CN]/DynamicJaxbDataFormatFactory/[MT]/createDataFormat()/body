@@ -1,0 +1,10 @@
+{
+  notNull(urls,"urls");
+  DynamicJaxbDataFormat dataFormat=new DynamicJaxbDataFormat();
+  DynamicXJC xjc=new DynamicXJC(getClassLoader());
+  for (  String url : urls) {
+    xjc.addSchemaUrl(url);
+  }
+  xjc.compileAndUpdate(dataFormat);
+  return dataFormat;
+}

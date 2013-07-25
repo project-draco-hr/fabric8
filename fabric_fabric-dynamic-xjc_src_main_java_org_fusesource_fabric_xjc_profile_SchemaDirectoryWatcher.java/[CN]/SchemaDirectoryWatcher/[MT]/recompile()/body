@@ -18,6 +18,9 @@
   }
   DynamicXJC xjc=new DynamicXJC(classLoader);
   xjc.setSchemaUrls(new ArrayList<String>(urls));
-  this.compileResults=xjc.compileSchemas();
+  compileResults=xjc.compileSchemas();
   LOG.info("Got XJC JAXBContext: " + compileResults.getJAXBContext());
+  if (dataFormat != null) {
+    dataFormat.updateCompileResults(compileResults);
+  }
 }

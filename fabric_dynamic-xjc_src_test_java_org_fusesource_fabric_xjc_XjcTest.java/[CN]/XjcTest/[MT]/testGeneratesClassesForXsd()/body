@@ -1,13 +1,5 @@
 {
-  String url;
-  URL resource=getClass().getClassLoader().getResource("xsds/invoice.xsd");
-  if (resource != null) {
-    url=resource.toString();
-  }
- else {
-    url=new File("src/test/resources/xsds/invoice.xsd").toURI().toURL().toString();
-  }
-  LOG.info("Using system ID for schema: " + url);
+  String url=getSchemaURL("xsds/invoice.xsd");
   xjc.addSchemaUrl(url);
   CompileResults results=xjc.compileSchemas();
   JAXBContext jaxbContext=results.getJAXBContext();
