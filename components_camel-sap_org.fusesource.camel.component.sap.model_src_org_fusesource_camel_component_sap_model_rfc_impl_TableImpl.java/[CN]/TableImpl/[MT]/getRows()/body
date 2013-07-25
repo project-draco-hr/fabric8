@@ -1,0 +1,10 @@
+{
+  EStructuralFeature feature=eClass().getEStructuralFeature("row");
+  Object value=eGet(feature);
+  if (value == null) {
+    EClass eClass=((EReference)feature).getEReferenceType();
+    value=eClass.getEPackage().getEFactoryInstance().create(eClass);
+    eSet(feature,value);
+  }
+  return (EList<S>)value;
+}

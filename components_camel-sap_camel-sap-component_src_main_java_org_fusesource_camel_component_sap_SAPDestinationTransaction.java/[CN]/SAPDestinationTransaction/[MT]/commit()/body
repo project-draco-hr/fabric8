@@ -1,10 +1,4 @@
 {
-  try {
-    LOG.info("Destination '{}' is stateful: {}",destinationName,JCoContext.isStateful(destination));
-    RfcUtil.commitTransaction(destination);
-    LOG.debug("Committed SAP Transaction for destination '{0}'",destinationName);
-  }
-  finally {
-    JCoContext.end(destination);
-  }
+  RfcUtil.commitTransaction(destination);
+  LOG.debug("Committed SAP Transaction for destination '{0}'",destinationName);
 }
