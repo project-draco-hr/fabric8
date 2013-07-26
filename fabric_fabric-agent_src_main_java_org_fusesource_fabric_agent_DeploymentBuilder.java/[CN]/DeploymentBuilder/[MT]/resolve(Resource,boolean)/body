@@ -1,7 +1,10 @@
 {
   resources.put("system-bundle",systemBundle);
+  List<org.osgi.service.repository.Repository> repos=new ArrayList<org.osgi.service.repository.Repository>();
+  repos.add(new StaticRepository(resources.values()));
+  repos.addAll(resourceRepos);
   ResolverImpl resolver=new ResolverImpl(new Slf4jResolverLog(LOGGER));
-  ResolveContext context=new ResolveContextImpl(Collections.<Resource>singleton(requirements),Collections.<Resource>emptySet(),resources.values(),resolveOptionalImports);
+  ResolveContext context=new ResolveContextImpl(Collections.<Resource>singleton(requirements),Collections.<Resource>emptySet(),new AggregateRepository(repos),resolveOptionalImports);
   Map<Resource,List<Wire>> wiring=resolver.resolve(context);
   Map<String,Resource> deploy=new TreeMap<String,Resource>();
   for (  Resource res : wiring.keySet()) {

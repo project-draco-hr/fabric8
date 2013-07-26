@@ -1,0 +1,12 @@
+{
+  if (Thread.interrupted()) {
+    throw new InterruptedIOException();
+  }
+  if (fileMatcher != null) {
+    Path rel=root.relativize(file);
+    if (fileMatcher.matches(rel)) {
+      scan(file);
+    }
+  }
+  return FileVisitResult.CONTINUE;
+}

@@ -1,0 +1,14 @@
+{
+  try {
+    Manifest man=Manifests.getManifest(path.toFile());
+    Map<String,String> headers=new HashMap<String,String>();
+    for (    Map.Entry attr : man.getMainAttributes().entrySet()) {
+      headers.put(attr.getKey().toString(),attr.getValue().toString());
+    }
+    String uri=getResourceUri(path);
+    metadatas.put(uri,headers);
+  }
+ catch (  Exception e) {
+    LOGGER.info("Unable to scan resource " + path,e);
+  }
+}
