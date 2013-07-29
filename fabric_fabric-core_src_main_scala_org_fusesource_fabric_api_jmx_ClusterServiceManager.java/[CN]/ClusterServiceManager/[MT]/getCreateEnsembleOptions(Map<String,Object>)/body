@@ -1,0 +1,13 @@
+{
+  String username=(String)options.remove("username");
+  String password=(String)options.remove("password");
+  String role=(String)options.remove("role");
+  if (username == null || password == null || role == null) {
+    throw new FabricException("Must specify an administrator username, password and administrative role when creating a fabric");
+  }
+  CreateEnsembleOptions.Builder builder=CreateEnsembleOptions.builder();
+  for (  String key : options.keySet()) {
+    BeanUtils.setValue(builder,key,options.get(key));
+  }
+  return builder.withUser(username,password,role).build();
+}
