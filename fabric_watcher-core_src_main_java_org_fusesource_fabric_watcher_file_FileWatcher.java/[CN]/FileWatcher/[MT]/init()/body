@@ -1,0 +1,26 @@
+{
+  if (root == null) {
+    Iterable<Path> rootDirectories=getFileSystem().getRootDirectories();
+    for (    Path rootDirectory : rootDirectories) {
+      if (rootDirectory != null) {
+        root=rootDirectory;
+        break;
+      }
+    }
+  }
+  if (executor == null) {
+    this.executor=Executors.newFixedThreadPool(4);
+  }
+  if (watcher == null) {
+    watcher=watch ? getFileSystem().newWatchService() : null;
+  }
+  if (watch) {
+    this.executor.execute(new Runnable(){
+      @Override public void run(){
+        processEvents();
+      }
+    }
+);
+  }
+  rescan();
+}
