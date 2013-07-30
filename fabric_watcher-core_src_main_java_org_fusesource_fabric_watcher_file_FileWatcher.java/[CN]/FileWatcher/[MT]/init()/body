@@ -17,7 +17,13 @@
   if (watch) {
     this.executor.execute(new Runnable(){
       @Override public void run(){
-        processEvents();
+        try {
+          processEvents();
+        }
+ catch (        Throwable e) {
+          LOGGER.warn("Caught: " + e,e);
+        }
+        LOGGER.debug("Completed processing file watcher events");
       }
     }
 );

@@ -6,4 +6,20 @@
     }
     lastModified=System.currentTimeMillis();
   }
+ else {
+    List<Path> files=new ArrayList<Path>(processedMap.keySet());
+    for (    Path path : files) {
+      if (!Files.exists(path)) {
+        LOGGER.debug("File has been deleted: " + path);
+        processedMap.remove(path);
+        if (isMatchesFile(path)) {
+          Processor processor=getProcessor();
+          if (processor != null) {
+            processor.onRemove(path);
+          }
+          fireListeners(path,ENTRY_DELETE);
+        }
+      }
+    }
+  }
 }

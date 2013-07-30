@@ -1,16 +1,21 @@
 {
   File file1=assertProcessed("something.txt","this is\nsome text\n");
-  File file2=assertProcessed("one/thing2.txt","1 level deep");
-  File file3=assertProcessed("two/bar/thing3.txt","2 levels deep");
+  File file2=assertProcessed("a1/thing2.txt","1 level deep");
+  File file3=assertProcessed("b1/b2/thing3.txt","2 levels deep");
+  File file4=assertProcessed("c1/c2/thing3.txt","2 levels deep");
   assertNotProcessed("something.ignored","ignored");
-  assertNotProcessed("another/something.ignored","ignored");
-  assertNotProcessed("another/thing/something.ignored","ignored");
+  assertNotProcessed("a1/something.ignored","ignored");
+  assertNotProcessed("b1/b2/something.ignored","ignored");
   assertExpectations();
   expectations.clear();
+  listener.clearEvents();
   file1.delete();
-  file2.getParentFile().delete();
-  file2.getParentFile().getParentFile().delete();
-  processor.expectRemoved(expectations,file1,file2,file3);
-  System.out.println("Processed: " + processor.getProcessPaths());
-  System.out.println("Removed: " + processor.getOnRemovePaths());
+  moveFileToTempDir(file2.getParentFile());
+  moveFileToTempDir(file3.getParentFile());
+  moveFileToTempDir(file4.getParentFile().getParentFile());
+  processor.expectRemoved(expectations,file1,file2,file3,file4);
+  listener.expectCalledWith(expectations,file1,file2,file3,file4);
+  LOG.info("Processed: " + processor.getProcessPaths());
+  LOG.info("Removed: " + processor.getOnRemovePaths());
+  assertExpectations();
 }
