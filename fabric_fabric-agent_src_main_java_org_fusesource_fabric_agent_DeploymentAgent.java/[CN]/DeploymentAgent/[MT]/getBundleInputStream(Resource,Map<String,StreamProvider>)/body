@@ -1,8 +1,16 @@
 {
   String uri=getUri(resource);
-  StreamProvider provider=uri != null ? providers.get(uri) : null;
+  if (uri == null) {
+    throw new IllegalStateException("Resource has no uri");
+  }
+  StreamProvider provider=providers.get(uri);
   if (provider == null) {
-    throw new IllegalStateException("Could not find stream provider for " + resource);
+    try {
+      return new FileInputStream(manager.download(uri).await().getFile());
+    }
+ catch (    InterruptedException e) {
+      throw (IOException)new InterruptedIOException().initCause(e);
+    }
   }
   return provider.open();
 }

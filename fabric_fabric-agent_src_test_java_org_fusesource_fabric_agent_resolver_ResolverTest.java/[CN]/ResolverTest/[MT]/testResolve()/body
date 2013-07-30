@@ -11,10 +11,6 @@
   Map<URI,Repository> repositories=new HashMap<URI,Repository>();
   AgentUtils.addRepository(manager,repositories,URI.create("mvn:org.apache.karaf.assemblies.features/standard/" + System.getProperty("karaf-version") + "/xml/features"));
   DeploymentBuilder builder=new DeploymentBuilder(manager,null,repositories.values());
-  final Path root=Paths.get(System.getProperty("user.home"),".m2/repository");
-  final List<String> groupIds=Arrays.asList("org.fusesource.fabric","org.apache.karaf");
-  Maven2MetadataProvider repo=new Maven2MetadataProvider(root,groupIds);
-  builder.addResourceRepository(new MetadataRepository(repo));
   builder.download(new HashSet<String>(Arrays.asList("karaf-framework","ssh")),Collections.<String>emptySet(),Collections.<String>emptySet(),Collections.<String>emptySet(),Collections.<String>emptySet(),Collections.<String>emptySet());
   properties=new Properties();
   properties.setProperty("org.osgi.framework.system.packages.extra","org.apache.karaf.jaas.boot;version=\"2.3.0.redhat-610-SNAPSHOT\",org.apache.karaf.jaas.boot.principal;version=\"2.3.0.redhat-610-SNAPSHOT\"");
