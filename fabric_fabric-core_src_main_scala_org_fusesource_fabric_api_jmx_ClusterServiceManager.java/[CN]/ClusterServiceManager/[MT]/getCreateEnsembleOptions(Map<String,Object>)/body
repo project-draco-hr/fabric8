@@ -26,5 +26,11 @@
   }
   CreateEnsembleOptions answer=builder.users(userProps).withUser(username,password,role).build();
   LOG.debug("Creating ensemble with options: {}",answer);
+  maybeSetProperty(ZkDefs.GLOBAL_RESOLVER_PROPERTY,answer.getGlobalResolver());
+  maybeSetProperty(ZkDefs.LOCAL_RESOLVER_PROPERTY,answer.getResolver());
+  maybeSetProperty(ZkDefs.MANUAL_IP,answer.getManualIp());
+  maybeSetProperty(ZkDefs.BIND_ADDRESS,answer.getBindAddress());
+  maybeSetProperty(ZkDefs.MINIMUM_PORT,answer.getMinimumPort());
+  maybeSetProperty(ZkDefs.MAXIMUM_PORT,answer.getMaximumPort());
   return answer;
 }
