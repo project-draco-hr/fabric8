@@ -1,3 +1,6 @@
 {
+  if (containers == null || (containers.size() == 1 && containers.get(0).equals(System.getProperty(SystemProperties.KARAF_NAME)))) {
+    bootstrap.create(CreateEnsembleOptions.builder().fromSystemProperties().build());
+  }
   service.createCluster(containers);
 }

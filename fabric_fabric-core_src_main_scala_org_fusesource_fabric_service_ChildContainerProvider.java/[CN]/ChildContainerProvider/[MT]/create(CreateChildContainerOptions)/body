@@ -2,7 +2,7 @@
   final Set<CreateChildContainerMetadata> result=new LinkedHashSet<CreateChildContainerMetadata>();
   final String parentName=options.getParent();
   final Container parent=service.getContainer(parentName);
-  ContainerTemplate containerTemplate=service.getContainerTemplate(parent,options.getJmxUser(),options.getJmxPassword());
+  ContainerTemplate containerTemplate=new ContainerTemplate(parent,options.getJmxUser(),options.getJmxPassword(),false);
   containerTemplate.execute(new ContainerTemplate.AdminServiceCallback<Object>(){
     public Object doWithAdminService(    AdminServiceMBean adminService) throws Exception {
       StringBuilder jvmOptsBuilder=new StringBuilder();
@@ -32,7 +32,7 @@
       String featuresUrls=collectionAsString(defaultProfile.getRepositories());
       Set<String> features=new LinkedHashSet<String>();
       features.add("war");
-      features.addAll(defaultProfile.getFeatures());
+      features.add("fabric-agent");
       String originalName=options.getName();
       PortService portService=service.getPortService();
       Set<Integer> usedPorts=portService.findUsedPortByHost(parent);
@@ -50,9 +50,9 @@
         metadata.setContainerName(containerName);
         int minimumPort=parent.getMinimumPort();
         int maximumPort=parent.getMaximumPort();
-        setData(service.getCurator(),ZkPath.CONTAINER_PORT_MIN.getPath(containerName),String.valueOf(minimumPort));
-        setData(service.getCurator(),ZkPath.CONTAINER_PORT_MAX.getPath(containerName),String.valueOf(maximumPort));
-        inheritAddresses(service.getCurator(),parentName,containerName,options);
+        service.getDataStore().setContainerAttribute(containerName,DataStore.ContainerAttribute.PortMin,String.valueOf(minimumPort));
+        service.getDataStore().setContainerAttribute(containerName,DataStore.ContainerAttribute.PortMax,String.valueOf(maximumPort));
+        inheritAddresses(service,parentName,containerName,options);
         Container child=new ContainerImpl(parent,containerName,service){
           @Override public String getIp(){
             return parent.getIp();

@@ -1,17 +1,3 @@
 {
   this.httpService=httpService;
-  this.port=getPortFromConfig();
-  if (httpService != null && mavenDownloadProxyServlet != null && mavenUploadProxyServlet != null) {
-    try {
-      HttpContext base=httpService.createDefaultHttpContext();
-      HttpContext secure=new MavenSecureHttpContext(base,realm,role);
-      httpService.registerServlet("/maven/download",mavenDownloadProxyServlet,createParams("maven-download"),base);
-      httpService.registerServlet("/maven/upload",mavenUploadProxyServlet,createParams("maven-upload"),secure);
-    }
- catch (    Throwable t) {
-      LOGGER.warn("Failed to register fabric maven proxy servlets, due to:" + t.getMessage());
-    }
-    register(MavenProxy.DOWNLOAD_TYPE);
-    register(MavenProxy.UPLOAD_TYPE);
-  }
 }

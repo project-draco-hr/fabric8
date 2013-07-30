@@ -1,10 +1,11 @@
 {
   CreateEnsembleOptions.Builder builder=CreateEnsembleOptions.builder();
+  String name=System.getProperty(SystemProperties.KARAF_NAME);
   if (containers == null || containers.isEmpty()) {
-    containers=Arrays.asList(System.getProperty(SystemProperties.KARAF_NAME));
+    containers=Arrays.asList(name);
   }
   if (clean) {
-    service.clean();
+    bootstrap.clean();
   }
   if (!noImport && importDir != null) {
     builder.autoImportEnabled(true);
@@ -76,8 +77,14 @@
     zookeeperPassword=System.getProperty(SystemProperties.ZOOKEEPER_PASSWORD,newUserPassword);
     builder.zookeeperPassword(zookeeperPassword);
   }
+ else {
+    builder.zookeeperPassword(zookeeperPassword);
+  }
   CreateEnsembleOptions options=builder.users(userProps).withUser(newUser,newUserPassword,newUserRole).build();
-  if (containers != null && !containers.isEmpty()) {
+  if (containers.size() == 1 && containers.contains(name)) {
+    bootstrap.create(options);
+  }
+ else {
     service.createCluster(containers,options);
   }
   ShellUtils.storeZookeeperPassword(session,options.getZookeeperPassword());

@@ -2,10 +2,12 @@
 switch (newState) {
 case CONNECTED:
 case RECONNECTED:
-    this.curator=client;
-  onConnected();
-break;
-default :
-onDisconnected();
+    try {
+      checkAlive();
+    }
+ catch (    Exception ex) {
+      LOGGER.error("Error while checking/setting container status.");
+    }
+  break;
 }
 }

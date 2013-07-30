@@ -1,0 +1,13 @@
+{
+  String nodeAlive=CONTAINER_ALIVE.getPath(name);
+  Stat stat=exists(curator,nodeAlive);
+  if (stat != null) {
+    if (stat.getEphemeralOwner() != curator.getZookeeperClient().getZooKeeper().getSessionId()) {
+      delete(curator,nodeAlive);
+      create(curator,nodeAlive,CreateMode.EPHEMERAL);
+    }
+  }
+ else {
+    create(curator,nodeAlive,CreateMode.EPHEMERAL);
+  }
+}

@@ -1,0 +1,11 @@
+{
+  partitionListeners.put(partitionListener.getType(),partitionListener);
+  for (  String pid : waitingOnListener.get(partitionListener.getType())) {
+    try {
+      activate(pendingPids.remove(pid));
+    }
+ catch (    ConfigurationException e) {
+      Throwables.propagate(e);
+    }
+  }
+}

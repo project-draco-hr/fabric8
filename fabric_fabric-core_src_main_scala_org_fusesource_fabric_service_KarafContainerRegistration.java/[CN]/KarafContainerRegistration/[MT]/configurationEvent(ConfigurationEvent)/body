@@ -1,39 +1,37 @@
 {
   try {
-    if (isConnected()) {
-      Container current=getContainer();
-      String name=System.getProperty(SystemProperties.KARAF_NAME);
-      if (event.getPid().equals(SSH_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
-        Configuration config=configurationAdmin.getConfiguration(SSH_PID);
-        int sshPort=Integer.parseInt((String)config.getProperties().get(SSH_KEY));
-        String sshUrl=getSshUrl(name,sshPort);
-        setData(curator,CONTAINER_SSH.getPath(name),sshUrl);
-        if (fabricService.getPortService().lookupPort(current,SSH_PID,SSH_KEY) != sshPort) {
-          fabricService.getPortService().unRegisterPort(current,SSH_PID);
-          fabricService.getPortService().registerPort(current,SSH_PID,SSH_KEY,sshPort);
-        }
+    Container current=getContainer();
+    String name=System.getProperty(SystemProperties.KARAF_NAME);
+    if (event.getPid().equals(SSH_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
+      Configuration config=configurationAdmin.getConfiguration(SSH_PID);
+      int sshPort=Integer.parseInt((String)config.getProperties().get(SSH_KEY));
+      String sshUrl=getSshUrl(name,sshPort);
+      setData(curator,CONTAINER_SSH.getPath(name),sshUrl);
+      if (fabricService.getPortService().lookupPort(current,SSH_PID,SSH_KEY) != sshPort) {
+        fabricService.getPortService().unRegisterPort(current,SSH_PID);
+        fabricService.getPortService().registerPort(current,SSH_PID,SSH_KEY,sshPort);
       }
-      if (event.getPid().equals(HTTP_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
-        Configuration config=configurationAdmin.getConfiguration(HTTP_PID);
-        int httpPort=Integer.parseInt((String)config.getProperties().get(HTTP_KEY));
-        String httpUrl=getHttpUrl(name,httpPort);
-        setData(curator,CONTAINER_HTTP.getPath(name),httpUrl);
-        if (fabricService.getPortService().lookupPort(current,HTTP_PID,HTTP_KEY) != httpPort) {
-          fabricService.getPortService().unRegisterPort(current,HTTP_PID);
-          fabricService.getPortService().registerPort(current,HTTP_PID,HTTP_KEY,httpPort);
-        }
+    }
+    if (event.getPid().equals(HTTP_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
+      Configuration config=configurationAdmin.getConfiguration(HTTP_PID);
+      int httpPort=Integer.parseInt((String)config.getProperties().get(HTTP_KEY));
+      String httpUrl=getHttpUrl(name,httpPort);
+      setData(curator,CONTAINER_HTTP.getPath(name),httpUrl);
+      if (fabricService.getPortService().lookupPort(current,HTTP_PID,HTTP_KEY) != httpPort) {
+        fabricService.getPortService().unRegisterPort(current,HTTP_PID);
+        fabricService.getPortService().registerPort(current,HTTP_PID,HTTP_KEY,httpPort);
       }
-      if (event.getPid().equals(MANAGEMENT_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
-        Configuration config=configurationAdmin.getConfiguration(MANAGEMENT_PID);
-        int rmiServerPort=Integer.parseInt((String)config.getProperties().get(RMI_SERVER_KEY));
-        int rmiRegistryPort=Integer.parseInt((String)config.getProperties().get(RMI_REGISTRY_KEY));
-        String jmxUrl=getJmxUrl(name,rmiServerPort,rmiRegistryPort);
-        setData(curator,CONTAINER_JMX.getPath(name),jmxUrl);
-        if (fabricService.getPortService().lookupPort(current,MANAGEMENT_PID,RMI_REGISTRY_KEY) != rmiRegistryPort || fabricService.getPortService().lookupPort(current,MANAGEMENT_PID,RMI_SERVER_KEY) != rmiServerPort) {
-          fabricService.getPortService().unRegisterPort(current,MANAGEMENT_PID);
-          fabricService.getPortService().registerPort(current,MANAGEMENT_PID,RMI_SERVER_KEY,rmiServerPort);
-          fabricService.getPortService().registerPort(current,MANAGEMENT_PID,RMI_REGISTRY_KEY,rmiRegistryPort);
-        }
+    }
+    if (event.getPid().equals(MANAGEMENT_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
+      Configuration config=configurationAdmin.getConfiguration(MANAGEMENT_PID);
+      int rmiServerPort=Integer.parseInt((String)config.getProperties().get(RMI_SERVER_KEY));
+      int rmiRegistryPort=Integer.parseInt((String)config.getProperties().get(RMI_REGISTRY_KEY));
+      String jmxUrl=getJmxUrl(name,rmiServerPort,rmiRegistryPort);
+      setData(curator,CONTAINER_JMX.getPath(name),jmxUrl);
+      if (fabricService.getPortService().lookupPort(current,MANAGEMENT_PID,RMI_REGISTRY_KEY) != rmiRegistryPort || fabricService.getPortService().lookupPort(current,MANAGEMENT_PID,RMI_SERVER_KEY) != rmiServerPort) {
+        fabricService.getPortService().unRegisterPort(current,MANAGEMENT_PID);
+        fabricService.getPortService().registerPort(current,MANAGEMENT_PID,RMI_SERVER_KEY,rmiServerPort);
+        fabricService.getPortService().registerPort(current,MANAGEMENT_PID,RMI_REGISTRY_KEY,rmiRegistryPort);
       }
     }
   }

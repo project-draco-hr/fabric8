@@ -1,0 +1,10 @@
+{
+  ServiceTracker<T,T> tracker=new ServiceTracker<T,T>(bundleContext,createFilter(type,filter),null){
+    @Override public Object addingService(    ServiceReference reference){
+      latch.countDown();
+      return super.addingService(reference);
+    }
+  }
+;
+  return tracker;
+}
