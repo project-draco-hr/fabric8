@@ -8,6 +8,12 @@
       }
     }
   }
+  if (!Files.exists(root)) {
+    fail(LOGGER,"Root path does not exist: " + root);
+  }
+ else   if (!Files.isDirectory(root)) {
+    fail(LOGGER,"Root path is not a directory: " + root);
+  }
   if (executor == null) {
     this.executor=Executors.newFixedThreadPool(4);
   }
