@@ -1,0 +1,39 @@
+{
+  read();
+switch (current) {
+case '"':
+case '/':
+case '\\':
+    recorder.append((char)current);
+  break;
+case 'b':
+recorder.append('\b');
+break;
+case 'f':
+recorder.append('\f');
+break;
+case 'n':
+recorder.append('\n');
+break;
+case 'r':
+recorder.append('\r');
+break;
+case 't':
+recorder.append('\t');
+break;
+case 'u':
+char[] hexChars=new char[4];
+for (int i=0; i < 4; i++) {
+read();
+if (!isHexDigit(current)) {
+throw expected("hexadecimal digit");
+}
+hexChars[i]=(char)current;
+}
+recorder.append((char)Integer.parseInt(String.valueOf(hexChars),16));
+break;
+default :
+throw expected("valid escape sequence");
+}
+read();
+}

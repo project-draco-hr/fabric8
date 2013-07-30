@@ -1,0 +1,23 @@
+{
+  if (value instanceof Map) {
+    writeObject(writer,(Map)value);
+  }
+ else   if (value instanceof Collection) {
+    writeArray(writer,(Collection)value);
+  }
+ else   if (value instanceof Number) {
+    writeNumber(writer,(Number)value);
+  }
+ else   if (value instanceof String) {
+    writeString(writer,(String)value);
+  }
+ else   if (value instanceof Boolean) {
+    writeBoolean(writer,(Boolean)value);
+  }
+ else   if (value == null) {
+    writeNull(writer);
+  }
+ else {
+    throw new IllegalArgumentException("Unsupported value: " + value);
+  }
+}

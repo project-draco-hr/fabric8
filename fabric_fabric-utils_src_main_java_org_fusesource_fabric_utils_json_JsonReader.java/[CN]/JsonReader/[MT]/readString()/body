@@ -1,0 +1,18 @@
+{
+  read();
+  recorder.setLength(0);
+  while (current != '"') {
+    if (current == '\\') {
+      readEscape();
+    }
+ else     if (current < 0x20) {
+      throw expected("valid string character");
+    }
+ else {
+      recorder.append((char)current);
+      read();
+    }
+  }
+  read();
+  return recorder.toString();
+}
