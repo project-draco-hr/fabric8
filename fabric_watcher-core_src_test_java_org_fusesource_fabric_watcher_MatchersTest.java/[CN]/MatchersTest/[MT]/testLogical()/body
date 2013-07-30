@@ -1,0 +1,5 @@
+{
+  PathMatcher matcher=Logical.parse("log:(org/{apache,fuse}/** or **) and(not **example**)");
+  assertTrue(matcher.matches(Paths.get("org/fuse/foo.java")));
+  assertFalse(matcher.matches(Paths.get("org/fuse/example.java")));
+}
