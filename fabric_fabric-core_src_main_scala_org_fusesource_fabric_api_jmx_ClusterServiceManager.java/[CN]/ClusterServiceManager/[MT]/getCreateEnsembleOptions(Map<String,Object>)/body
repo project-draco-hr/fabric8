@@ -9,5 +9,15 @@
   for (  String key : options.keySet()) {
     BeanUtils.setValue(builder,key,options.get(key));
   }
-  return builder.withUser(username,password,role).build();
+  org.apache.felix.utils.properties.Properties userProps=null;
+  try {
+    userProps=new org.apache.felix.utils.properties.Properties(new File(System.getProperty("karaf.home") + "/etc/users.properties"));
+  }
+ catch (  IOException e) {
+    userProps=new org.apache.felix.utils.properties.Properties();
+  }
+  if (userProps.get(username) == null) {
+    userProps.put(username,password + "," + role);
+  }
+  return builder.users(userProps).withUser(username,password,role).build();
 }
