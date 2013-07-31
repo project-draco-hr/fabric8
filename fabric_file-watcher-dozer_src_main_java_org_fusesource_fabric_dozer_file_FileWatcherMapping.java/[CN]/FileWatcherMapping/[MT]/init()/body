@@ -1,0 +1,10 @@
+{
+  super.init();
+  if (camelContext == null) {
+    throw new IllegalArgumentException("CamelContext must be configured on " + this);
+  }
+  loader=new DozerTypeConverterLoader(camelContext);
+  CamelToDozerClassResolverAdapter adapter=new CamelToDozerClassResolverAdapter(camelContext);
+  BeanContainer.getInstance().setClassLoader(adapter);
+  LOG.info("Watching directory " + getRoot() + " for Dozer XML Mapping file changes");
+}

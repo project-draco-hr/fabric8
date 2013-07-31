@@ -1,0 +1,9 @@
+{
+  LOG.info("Adding Dozer Mapping file " + path);
+  List<String> mappingFiles=new ArrayList<String>(1);
+  mappingFiles.add(toUrlString(path));
+  DozerBeanMapper dozer=new DozerBeanMapper();
+  dozer.setMappingFiles(mappingFiles);
+  List<ClassMap> maps=loadMappings(camelContext,dozer);
+  registerClassMaps(camelContext.getTypeConverterRegistry(),dozer,maps);
+}

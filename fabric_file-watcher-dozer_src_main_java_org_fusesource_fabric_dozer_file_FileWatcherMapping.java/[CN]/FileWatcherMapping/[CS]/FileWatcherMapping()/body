@@ -1,0 +1,12 @@
+{
+  setFileMatchPattern("glob:META-INF/services/dozer/*.xml");
+  setProcessor(new Processor(){
+    public void process(    Path path){
+      addOrUpdateMapping(path);
+    }
+    public void onRemove(    Path path){
+      removeMapping(path);
+    }
+  }
+);
+}
