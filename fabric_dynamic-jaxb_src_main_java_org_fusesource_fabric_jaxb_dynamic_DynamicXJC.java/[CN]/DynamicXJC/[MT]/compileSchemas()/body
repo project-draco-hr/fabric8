@@ -79,6 +79,6 @@
  catch (  JAXBException jbe) {
     throw new IllegalStateException("Unable to create JAXBContext for generated packages: " + jbe.getMessage(),jbe);
   }
-  FileUtils.removeDir(classes);
+  classes.deleteOnExit();
   return new CompileResults(cl,context);
 }
