@@ -1,8 +1,9 @@
 {
   int httpPort=getHttpPort(container);
-  String httpUrl=getHttpUrl(container.getId(),httpPort);
+  int httpConnectionPort=getHttpConnectionPort(container);
+  String httpUrl=getHttpUrl(container.getId(),httpConnectionPort);
   setData(curator,CONTAINER_HTTP.getPath(container.getId()),httpUrl);
-  fabricService.getPortService().registerPort(container,HTTP_PID,HTTP_KEY,httpPort);
+  fabricService.getPortService().registerPort(container,HTTP_PID,HTTP_BINDING_PORT_KEY,httpPort);
   Configuration configuration=configurationAdmin.getConfiguration(HTTP_PID);
-  updateIfNeeded(configuration,HTTP_KEY,httpPort);
+  updateIfNeeded(configuration,HTTP_BINDING_PORT_KEY,httpPort);
 }
