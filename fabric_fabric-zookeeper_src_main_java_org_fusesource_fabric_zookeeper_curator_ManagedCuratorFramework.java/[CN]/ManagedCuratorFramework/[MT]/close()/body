@@ -1,5 +1,11 @@
 {
-  registration.unregister();
+  if (registration != null) {
+    try {
+      registration.unregister();
+    }
+ catch (    IllegalStateException e) {
+    }
+  }
   closeQuietly(connectionStateListenerTracker);
   closeQuietly(aclProviderTracker);
   Closeables.close(curatorFramework,true);
