@@ -1,0 +1,11 @@
+{
+  if (closing.compareAndSet(false,true)) {
+    Set<Map.Entry<URL,BlueprintContainer>> entries=containerMap.entrySet();
+    for (    Map.Entry<URL,BlueprintContainer> entry : entries) {
+      URL url=entry.getKey();
+      BlueprintContainer container=entry.getValue();
+      closeContext(url,container);
+    }
+  }
+  super.destroy();
+}

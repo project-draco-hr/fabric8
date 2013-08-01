@@ -1,0 +1,12 @@
+{
+  if (context instanceof BlueprintContainerImpl) {
+    BlueprintContainerImpl impl=(BlueprintContainerImpl)context;
+    try {
+      LOG.info("Closing context at path " + url + " context "+ context);
+      impl.destroy();
+    }
+ catch (    Exception e) {
+      LOG.info("Failed to close at " + url + " context "+ context+ ". "+ e,e);
+    }
+  }
+}
