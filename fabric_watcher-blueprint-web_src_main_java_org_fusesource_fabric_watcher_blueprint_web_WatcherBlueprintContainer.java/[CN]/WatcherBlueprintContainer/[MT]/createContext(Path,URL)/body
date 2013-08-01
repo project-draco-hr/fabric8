@@ -1,4 +1,8 @@
 {
+  if (!XmlHelper.hasNamespace(path,BLUEPRINT_NAMESPACE_URI)) {
+    LOG.info("Ignoring XML file " + path + " which is not a blueprint XML");
+    return null;
+  }
   List<URL> locations=Arrays.asList(url);
   return new BlueprintContainerImpl(classLoader,locations,properties,true);
 }

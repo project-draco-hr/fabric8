@@ -1,4 +1,8 @@
 {
+  if (!XmlHelper.hasNamespace(path,SPRING_BEANS_NAMESPACE_URI)) {
+    LOG.info("Ignoring XML file " + path + " which is not a spring XML");
+    return null;
+  }
   String[] locations={url};
   if (parentApplicationContext != null) {
     return new FileSystemXmlApplicationContext(locations,true,parentApplicationContext);
