@@ -1,0 +1,10 @@
+{
+  try {
+    String url=toUrlString(path);
+    FileSystemXmlApplicationContext context=contextMap.remove(url);
+    closeContext(url,context);
+  }
+ catch (  MalformedURLException e) {
+    LOG.warn("Ignored path " + path + " due to: "+ e,e);
+  }
+}
