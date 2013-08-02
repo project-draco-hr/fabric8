@@ -6,13 +6,13 @@
   String checksumPolicy=readProperty(properties,CHECKSUM_POLICY_PROPERTY,"fail");
   String proxyProtocol=readProperty(properties,PROXY_PROTOCOL_PROPERTY,"");
   String proxyHost=readProperty(properties,PROXY_HOST_PROPERTY,"");
+  int proxyPort=Integer.parseInt(readProperty(properties,PROXY_PORT_PROPERTY,"8080"));
   String proxyUsername=readProperty(properties,PROXY_USERNAME_PROPERTY,"");
   String proxyPassword=readProperty(properties,PROXY_PASSWORD_PROPERTY,"");
   String nonProxyHosts=readProperty(properties,NON_PROXY_HOSTS_PROPERTY,"");
-  this.port=getPortFromConfig();
-  this.mavenDownloadProxyServlet=new MavenDownloadProxyServlet(localRepository,remoteRepositories,appendSystemRepos,updatePolicy,checksumPolicy,proxyProtocol,proxyHost,getPortSafe(),proxyUsername,proxyPassword,nonProxyHosts);
+  this.mavenDownloadProxyServlet=new MavenDownloadProxyServlet(localRepository,remoteRepositories,appendSystemRepos,updatePolicy,checksumPolicy,proxyProtocol,proxyHost,proxyPort,proxyUsername,proxyPassword,nonProxyHosts);
   this.mavenDownloadProxyServlet.start();
-  this.mavenUploadProxyServlet=new MavenUploadProxyServlet(localRepository,remoteRepositories,appendSystemRepos,updatePolicy,checksumPolicy,proxyProtocol,proxyHost,getPortSafe(),proxyUsername,proxyPassword,nonProxyHosts);
+  this.mavenUploadProxyServlet=new MavenUploadProxyServlet(localRepository,remoteRepositories,appendSystemRepos,updatePolicy,checksumPolicy,proxyProtocol,proxyHost,proxyPort,proxyUsername,proxyPassword,nonProxyHosts);
   this.mavenUploadProxyServlet.start();
   try {
     HttpContext base=httpService.createDefaultHttpContext();
