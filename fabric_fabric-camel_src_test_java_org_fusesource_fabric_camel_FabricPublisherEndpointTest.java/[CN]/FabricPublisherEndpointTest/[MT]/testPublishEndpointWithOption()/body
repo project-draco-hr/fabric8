@@ -1,7 +1,7 @@
 {
   SpringRouteBuilder route=new SpringRouteBuilder(){
     @Override public void configure() throws Exception {
-      from("fabric:cheese:seda:bar?size=10").routeId(ROUTE_NAME).to("log:mylog");
+      from("fabric:cheese:seda:bar").routeId(ROUTE_NAME).to("log:mylog");
     }
   }
 ;
@@ -10,5 +10,5 @@
   Assert.assertEquals("number of routes",1,registeredRoutes.size());
   Assert.assertEquals("route name",ROUTE_NAME,registeredRoutes.get(0).getId());
   FabricPublisherEndpoint endpoint=(FabricPublisherEndpoint)registeredRoutes.get(0).getEndpoint();
-  Assert.assertEquals("wrong endpoint uri","seda:bar?size=10",endpoint.getChild());
+  Assert.assertEquals("wrong endpoint uri","seda:bar",endpoint.getChild());
 }
