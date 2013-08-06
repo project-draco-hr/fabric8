@@ -26,8 +26,9 @@ case RfcPackage.LIST_FIELD_META_DATA__EXCEPTION:
 return isException();
 case RfcPackage.LIST_FIELD_META_DATA__OPTIONAL:
 return isOptional();
-case RfcPackage.LIST_FIELD_META_DATA__COMPLEX_FIELD_META_DATA:
-return getComplexFieldMetaData();
+case RfcPackage.LIST_FIELD_META_DATA__RECORD_META_DATA:
+if (resolve) return getRecordMetaData();
+return basicGetRecordMetaData();
 }
 return super.eGet(featureID,resolve,coreType);
 }
