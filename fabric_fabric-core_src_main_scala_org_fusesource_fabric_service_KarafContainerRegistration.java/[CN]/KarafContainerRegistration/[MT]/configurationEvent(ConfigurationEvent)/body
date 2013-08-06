@@ -15,9 +15,12 @@
     }
     if (event.getPid().equals(HTTP_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
       Configuration config=configurationAdmin.getConfiguration(HTTP_PID);
-      int httpPort=Integer.parseInt((String)config.getProperties().get(HTTP_BINDING_PORT_KEY));
-      int httpConnectionPort=getHttpConnectionPort(current);
-      String httpUrl=getHttpUrl(name,httpConnectionPort);
+      boolean httpEnabled=isHttpEnabled();
+      boolean httpsEnabled=isHttpsEnabled();
+      String protocol=httpsEnabled && !httpEnabled ? "https" : "http";
+      int httpPort=httpsEnabled && !httpEnabled ? Integer.parseInt((String)config.getProperties().get(HTTPS_BINDING_PORT_KEY)) : Integer.parseInt((String)config.getProperties().get(HTTP_BINDING_PORT_KEY));
+      int httpConnectionPort=httpsEnabled && !httpEnabled ? getHttpsConnectionPort(current) : getHttpConnectionPort(current);
+      String httpUrl=getHttpUrl(protocol,name,httpConnectionPort);
       setData(curator,CONTAINER_HTTP.getPath(name),httpUrl);
       if (fabricService.getPortService().lookupPort(current,HTTP_PID,HTTP_BINDING_PORT_KEY) != httpPort) {
         fabricService.getPortService().unRegisterPort(current,HTTP_PID);
