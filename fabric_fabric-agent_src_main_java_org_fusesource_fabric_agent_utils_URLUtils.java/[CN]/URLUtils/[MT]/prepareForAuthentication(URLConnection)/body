@@ -1,7 +1,8 @@
 {
   NullArgumentException.validateNotNull(connection,"url connection cannot be null");
   if (connection.getURL().getUserInfo() != null) {
-    String base64Encoded=Base64Encoder.encode(connection.getURL().getUserInfo());
+    String decodedUserInfo=decode(connection.getURL().getUserInfo());
+    String base64Encoded=Base64Encoder.encode(decodedUserInfo);
     base64Encoded=base64Encoded.replaceAll("\n","");
     connection.setRequestProperty("Authorization","Basic " + base64Encoded);
   }
