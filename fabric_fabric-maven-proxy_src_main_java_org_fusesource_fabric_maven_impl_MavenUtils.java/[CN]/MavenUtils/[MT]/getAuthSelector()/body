@@ -2,7 +2,7 @@
   DefaultAuthenticationSelector selector=new DefaultAuthenticationSelector();
   Settings settings=getSettings();
   for (  Server server : settings.getServers()) {
-    String decodedUsername=URLUtils.decode(server.getUsername());
+    String decodedUsername=decode(server.getUsername());
     Authentication auth=new Authentication(decodedUsername,server.getPassword(),server.getPrivateKey(),server.getPassphrase());
     selector.add(server.getId(),auth);
   }

@@ -16,7 +16,7 @@
     }
     Server server=getSettings().getServer(repository.getId());
     if (server != null) {
-      String decodedUsername=URLUtils.decode(server.getUsername());
+      String decodedUsername=decode(server.getUsername());
       Authentication authentication=new Authentication(decodedUsername,server.getPassword(),server.getPrivateKey(),server.getPassphrase());
       remote.setAuthentication(authentication);
     }
