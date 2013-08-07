@@ -64,7 +64,7 @@
       String parent=fabricService.getCurrentContainerName();
       String jmxUser=username != null ? username : ShellUtils.retrieveFabricUser(session);
       String jmxPassword=password != null ? password : ShellUtils.retrieveFabricUserPassword(session);
-      CreateChildContainerOptions.Builder builder=CreateContainerOptionsBuilder.child().name(container).parent(parent).number(1).ensembleServer(false).proxyUri(fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword(fabricService.getZookeeperPassword()).jvmOpts(jvmOpts).jmxUser(jmxUser).jmxPassword(jmxPassword);
+      CreateChildContainerOptions.Builder builder=CreateChildContainerOptions.builder().name(container).parent(parent).number(1).ensembleServer(false).proxyUri(fabricService.getMavenRepoURI()).zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword(fabricService.getZookeeperPassword()).jvmOpts(jvmOpts).jmxUser(jmxUser).jmxPassword(jmxPassword);
       try {
         metadatas=fabricService.createContainers(builder.build());
         ShellUtils.storeFabricCredentials(session,jmxUser,jmxPassword);

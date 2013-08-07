@@ -99,9 +99,7 @@
       }
     }
   }
-  if (options instanceof CreateJCloudsContainerOptions) {
-    sb.append("configure_hostnames").append(" ").append(((CreateJCloudsContainerOptions)options).getProviderName()).append("\n");
-  }
+  sb.append("configure_hostnames").append(" ").append(options.getHostNameContext()).append("\n");
   String jvmOptions=options.getJvmOpts();
   if (jvmOptions == null) {
     jvmOptions="-XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass";

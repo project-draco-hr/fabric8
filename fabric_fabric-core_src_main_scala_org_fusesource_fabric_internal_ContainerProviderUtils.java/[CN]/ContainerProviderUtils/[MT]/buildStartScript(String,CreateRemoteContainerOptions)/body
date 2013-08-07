@@ -12,9 +12,7 @@
   sb.append("run cd ").append(options.getPath()).append("\n");
   sb.append("run cd ").append(name).append("\n");
   sb.append("run cd `").append(FIRST_FABRIC_DIRECTORY).append("`\n");
-  if (options instanceof CreateJCloudsContainerOptions) {
-    sb.append("configure_hostnames").append(" ").append(((CreateJCloudsContainerOptions)options).getProviderName()).append("\n");
-  }
+  sb.append("configure_hostnames").append(" ").append(options.getHostNameContext()).append("\n");
   String jvmOptions=options.getJvmOpts();
   if (jvmOptions == null) {
     jvmOptions="-XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass";

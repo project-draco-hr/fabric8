@@ -1,7 +1,7 @@
 {
   if (isReady()) {
     System.err.println(executeCommand("fabric:create -n"));
-    CreateContainerOptions options=CreateContainerOptionsBuilder.ssh().name("ssh1").host(host).port(Integer.parseInt(port)).username(username).password(password).build();
+    CreateContainerOptions options=CreateSshContainerOptions.builder().name("ssh1").host(host).port(Integer.parseInt(port)).username(username).password(password).build();
     CreateContainerMetadata[] metadata=getFabricService().createContainers(options);
     assertNotNull(metadata);
     assertEquals(1,metadata.length);

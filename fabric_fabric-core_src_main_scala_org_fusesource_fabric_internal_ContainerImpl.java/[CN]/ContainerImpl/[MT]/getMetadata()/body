@@ -1,7 +1,12 @@
 {
   try {
-    if (metadata == null) {
-      metadata=service.getDataStore().getContainerMetadata(id);
+    if (metadata == getMetadata(getClass().getClassLoader())) {
+      for (      Class type : service.getSupportedCreateContainerMetadataTypes()) {
+        metadata=getMetadata(type.getClassLoader());
+        if (metadata != null) {
+          return metadata;
+        }
+      }
     }
     return metadata;
   }
