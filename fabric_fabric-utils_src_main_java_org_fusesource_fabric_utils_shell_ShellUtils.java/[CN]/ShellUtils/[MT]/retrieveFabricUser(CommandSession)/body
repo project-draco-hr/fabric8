@@ -1,9 +1,7 @@
 {
-  Subject subject=Subject.getSubject(AccessController.getContext());
-  if (subject != null && subject.getPrivateCredentials(String.class) != null && !subject.getPrivateCredentials(String.class).isEmpty() && subject.getPrincipals(UserPrincipal.class) != null && !subject.getPrincipals(UserPrincipal.class).isEmpty()) {
-    Set<UserPrincipal> userPrincipals=subject.getPrincipals(UserPrincipal.class);
-    UserPrincipal userPrincipal=userPrincipals.iterator().next();
-    return userPrincipal.getName();
+  String answer=AuthenticationUtils.retrieveJaasUser();
+  if (answer != null) {
+    return answer;
   }
   if (session != null && session.get(FABRIC_USER) != null) {
     return (String)session.get(FABRIC_USER);
