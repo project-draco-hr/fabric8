@@ -1,10 +1,18 @@
 {
-  super.init();
   if (camelContext == null) {
     throw new IllegalArgumentException("CamelContext must be configured on " + this);
   }
-  loader=new DozerTypeConverterLoader(camelContext);
-  CamelToDozerClassResolverAdapter adapter=new CamelToDozerClassResolverAdapter(camelContext);
-  BeanContainer.getInstance().setClassLoader(adapter);
+  mapper=new DozerBeanMapper();
+  setFileMatchPattern("glob:META-INF/services/dozer/*.xml");
+  setProcessor(new Processor(){
+    public void process(    Path path){
+      addOrUpdateMapping(path);
+    }
+    public void onRemove(    Path path){
+      removeMapping(path);
+    }
+  }
+);
+  super.init();
   LOG.info("Watching directory " + getRoot() + " for Dozer XML Mapping file changes");
 }

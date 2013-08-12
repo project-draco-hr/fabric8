@@ -1,9 +1,10 @@
 {
-  LOG.info("Removing Dozer Mapping file " + path);
   try {
     String url=toUrlString(path);
-    Path old=urlMap.remove(url);
-    if (old != null) {
+    WatcherDozerTypeConverterLoader loader=loaders.remove(url);
+    if (url != null) {
+      LOG.info("Removing Dozer Mapping file " + url);
+      loader.remove();
     }
   }
  catch (  Exception e) {
