@@ -1,7 +1,7 @@
 {
   Properties versionProps=loadProps(git,METADATA);
   setData(curator,zkNode,toString(versionProps));
-  List<String> gitProfiles=list(git.getRepository().getWorkTree());
+  List<String> gitProfiles=list(getGitProfilesDirectory(git));
   gitProfiles.remove(".git");
   gitProfiles.remove(METADATA);
   gitProfiles.remove(CONTAINERS_PROPERTIES);
@@ -10,10 +10,10 @@
     Properties profileProps=loadProps(git,profile + "/" + METADATA);
     setData(curator,zkNode + "/profiles/" + profile,toString(profileProps));
     List<String> zkConfigs=getChildren(curator,zkNode + "/profiles/" + profile);
-    List<String> gitConfigs=list(new File(git.getRepository().getWorkTree(),profile));
+    List<String> gitConfigs=list(new File(getGitProfilesDirectory(git),profile));
     gitConfigs.remove(METADATA);
     for (    String file : gitConfigs) {
-      byte[] data=read(new File(git.getRepository().getWorkTree(),profile + "/" + file));
+      byte[] data=read(new File(getGitProfilesDirectory(git),profile + "/" + file));
       setData(curator,zkNode + "/profiles/" + profile+ "/"+ file,data);
       zkConfigs.remove(file);
     }

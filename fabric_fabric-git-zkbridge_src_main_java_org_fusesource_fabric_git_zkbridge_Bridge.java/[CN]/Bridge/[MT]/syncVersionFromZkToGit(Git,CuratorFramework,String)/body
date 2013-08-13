@@ -1,24 +1,24 @@
 {
   Properties versionProps=loadProps(curator,zkNode);
-  versionProps.save(new File(git.getRepository().getWorkTree(),METADATA));
+  versionProps.save(new File(getGitProfilesDirectory(git),METADATA));
   git.add().addFilepattern(METADATA).call();
-  List<String> gitProfiles=list(git.getRepository().getWorkTree());
+  List<String> gitProfiles=list(getGitProfilesDirectory(git));
   gitProfiles.remove(".git");
   gitProfiles.remove(METADATA);
   gitProfiles.remove(CONTAINERS_PROPERTIES);
   List<String> zkProfiles=getChildren(curator,zkNode + "/profiles");
   for (  String profile : zkProfiles) {
-    File profileDir=new File(git.getRepository().getWorkTree(),profile);
+    File profileDir=new File(getGitProfilesDirectory(git),profile);
     profileDir.mkdirs();
     Properties profileProps=loadProps(curator,zkNode + "/profiles/" + profile);
-    profileProps.save(new File(git.getRepository().getWorkTree(),profile + "/" + METADATA));
+    profileProps.save(new File(getGitProfilesDirectory(git),profile + "/" + METADATA));
     git.add().addFilepattern(profile + "/" + METADATA).call();
     List<String> gitConfigs=list(profileDir);
     gitConfigs.remove(METADATA);
     List<String> zkConfigs=getChildren(curator,zkNode + "/profiles/" + profile);
     for (    String file : zkConfigs) {
       byte[] data=curator.getData().forPath(zkNode + "/profiles/" + profile+ "/"+ file);
-      Files.writeToFile(new File(git.getRepository().getWorkTree(),profile + "/" + file),data);
+      Files.writeToFile(new File(getGitProfilesDirectory(git),profile + "/" + file),data);
       gitConfigs.remove(file);
       git.add().addFilepattern(profile + "/" + file).call();
     }
@@ -29,7 +29,7 @@
     gitProfiles.remove(profile);
   }
   for (  String profile : gitProfiles) {
-    delete(new File(git.getRepository().getWorkTree(),profile));
+    delete(new File(getGitProfilesDirectory(git),profile));
     git.rm().addFilepattern(profile).call();
   }
   Properties containerProps=new Properties();
@@ -39,6 +39,6 @@
       containerProps.setProperty(container,str);
     }
   }
-  containerProps.save(new File(git.getRepository().getWorkTree(),CONTAINERS_PROPERTIES));
+  containerProps.save(new File(getGitProfilesDirectory(git),CONTAINERS_PROPERTIES));
   git.add().addFilepattern(CONTAINERS_PROPERTIES).call();
 }
