@@ -1,0 +1,17 @@
+{
+  try {
+    if (getCurator() == null) {
+      throw new IllegalStateException("Zookeeper service not available");
+    }
+    for (    String version : getVersions()) {
+      deleteSafe(getCurator(),ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,containerId));
+    }
+    deleteSafe(getCurator(),ZkPath.CONFIG_CONTAINER.getPath(containerId));
+    deleteSafe(getCurator(),ZkPath.CONTAINER.getPath(containerId));
+    deleteSafe(getCurator(),ZkPath.CONTAINER_DOMAINS.getPath(containerId));
+    deleteSafe(getCurator(),ZkPath.CONTAINER_PROVISION.getPath(containerId));
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

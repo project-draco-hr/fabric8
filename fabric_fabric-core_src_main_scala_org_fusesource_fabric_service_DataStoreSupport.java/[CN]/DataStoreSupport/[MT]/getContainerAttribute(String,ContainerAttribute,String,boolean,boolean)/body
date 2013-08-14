@@ -1,0 +1,38 @@
+{
+  if (attribute == ContainerAttribute.Domains) {
+    try {
+      List<String> list=getCurator().getChildren().forPath(ZkPath.CONTAINER_DOMAINS.getPath(containerId));
+      Collections.sort(list);
+      StringBuilder sb=new StringBuilder();
+      for (      String l : list) {
+        if (sb.length() > 0) {
+          sb.append("\n");
+        }
+        sb.append(l);
+      }
+      return sb.toString();
+    }
+ catch (    Exception e) {
+      return "";
+    }
+  }
+ else {
+    try {
+      if (substituted) {
+        return getSubstitutedPath(getCurator(),getAttributePath(containerId,attribute));
+      }
+ else {
+        return getStringData(getCurator(),getAttributePath(containerId,attribute));
+      }
+    }
+ catch (    KeeperException.NoNodeException e) {
+      if (mandatory) {
+        throw new FabricException(e);
+      }
+      return def;
+    }
+catch (    Exception e) {
+      throw new FabricException(e);
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  try {
+    String parentName=getStringData(getCurator(),ZkPath.CONTAINER_PARENT.getPath(containerId));
+    return parentName != null ? parentName.trim() : "";
+  }
+ catch (  KeeperException.NoNodeException e) {
+    return "";
+  }
+catch (  Throwable e) {
+    throw new FabricException(e);
+  }
+}

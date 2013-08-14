@@ -1,8 +1,8 @@
 {
   try {
     String path=ZkProfiles.getPath(version,profile);
-    create(curator,path);
-    createDefault(curator,ZKPaths.makePath(path,"org.fusesource.fabric.agent.properties"),"#Profile:" + profile);
+    create(getCurator(),path);
+    createDefault(getCurator(),ZKPaths.makePath(path,"org.fusesource.fabric.agent.properties"),"#Profile:" + profile);
   }
  catch (  Exception e) {
     throw new FabricException(e);

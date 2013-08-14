@@ -2,8 +2,8 @@
   try {
     String path=ZkProfiles.getPath(version,profile);
     String configPath=path + "/" + pid;
-    if (exists(curator,configPath) != null && getChildren(curator,configPath).size() > 0) {
-      List<String> kids=getChildren(curator,configPath);
+    if (exists(getCurator(),configPath) != null && getChildren(getCurator(),configPath).size() > 0) {
+      List<String> kids=getChildren(getCurator(),configPath);
       ArrayList<String> saved=new ArrayList<String>();
       for (      String line : new String(configuration).split("\n")) {
         if (line.startsWith("#") || line.length() == 0) {
@@ -14,17 +14,17 @@
           continue;
         }
         String newPath=configPath + "/" + nameValue[0].trim();
-        setData(curator,newPath,nameValue[1].trim());
+        setData(getCurator(),newPath,nameValue[1].trim());
         saved.add(nameValue[0].trim());
       }
       for (      String kid : kids) {
         if (!saved.contains(kid)) {
-          deleteSafe(curator,configPath + "/" + kid);
+          deleteSafe(getCurator(),configPath + "/" + kid);
         }
       }
     }
  else {
-      setData(curator,configPath,configuration);
+      setData(getCurator(),configPath,configuration);
     }
   }
  catch (  Exception e) {

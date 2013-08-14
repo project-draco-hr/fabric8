@@ -1,0 +1,11 @@
+{
+  try {
+    String oldVersionId=getStringData(getCurator(),ZkPath.CONFIG_CONTAINER.getPath(containerId));
+    String oldProfileIds=getStringData(getCurator(),ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(oldVersionId,containerId));
+    setData(getCurator(),ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId),oldProfileIds);
+    setData(getCurator(),ZkPath.CONFIG_CONTAINER.getPath(containerId),versionId);
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}
