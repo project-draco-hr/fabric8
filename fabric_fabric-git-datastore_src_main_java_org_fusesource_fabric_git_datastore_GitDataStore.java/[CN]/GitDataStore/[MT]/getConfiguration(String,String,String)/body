@@ -1,0 +1,17 @@
+{
+  return gitOperation(new GitOperation<Map<String,String>>(){
+    public Map<String,String> call(    Git git) throws Exception {
+      checkoutVersion(git,version);
+      File profileDirectory=getProfileDirectory(git,profile);
+      File file=getPidFile(profileDirectory,pid);
+      if (file.isFile() && file.exists()) {
+        byte[] data=Files.readBytes(file);
+        return DataStoreHelpers.toMap(DataStoreHelpers.toProperties(data));
+      }
+ else {
+        return new HashMap<String,String>();
+      }
+    }
+  }
+);
+}
