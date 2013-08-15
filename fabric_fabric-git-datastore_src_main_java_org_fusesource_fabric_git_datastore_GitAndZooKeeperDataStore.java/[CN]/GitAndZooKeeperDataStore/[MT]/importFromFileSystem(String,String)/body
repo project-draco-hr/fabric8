@@ -1,0 +1,16 @@
+{
+  gitOperation(new GitOperation<Void>(){
+    public Void call(    Git git) throws Exception {
+      String version=getDefaultVersion();
+      createVersion(version);
+      File toDir=getRootGitDirectory(git);
+      if (Strings.isNotBlank(destinationPath)) {
+        toDir=new File(toDir,destinationPath);
+      }
+      recursiveCopyAndAdd(git,new File(from),toDir,destinationPath);
+      git.commit().setMessage("Imported from " + from).call();
+      return null;
+    }
+  }
+);
+}

@@ -1,0 +1,16 @@
+{
+  return gitOperation(new GitOperation<String>(){
+    public String call(    Git git) throws Exception {
+      checkoutVersion(git,version);
+      File profileDirectory=getProfileDirectory(git,profile);
+      if (!profileDirectory.exists()) {
+        if (create) {
+          return doCreateProfile(git,profile);
+        }
+        return null;
+      }
+      return profile;
+    }
+  }
+);
+}

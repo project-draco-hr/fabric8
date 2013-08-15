@@ -1,0 +1,15 @@
+{
+  if (Strings.isNotBlank(branch)) {
+    StoredConfig config=git.getRepository().getConfig();
+    if (isNullOrBlank(config.getString("branch",branch,"remote")) || isNullOrBlank(config.getString("branch",branch,"merge"))) {
+      config.setString("branch",branch,"remote",remote);
+      config.setString("branch",branch,"merge","refs/heads/" + branch);
+      try {
+        config.save();
+      }
+ catch (      IOException e) {
+        LOG.error("Failed to configure the branch configuration to " + getRootGitDirectory(git) + " with branch "+ branch+ " on remote repo: "+ remote+ ". "+ e,e);
+      }
+    }
+  }
+}

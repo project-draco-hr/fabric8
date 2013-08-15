@@ -1,0 +1,12 @@
+{
+  gitOperation(new GitOperation<Void>(){
+    public Void call(    Git git) throws Exception {
+      checkoutVersion(git,version);
+      File profileDirectory=getProfileDirectory(git,profile);
+      doRecursiveDeleteAndRemove(git,profileDirectory);
+      git.commit().setMessage("Removed profile " + profile).call();
+      return null;
+    }
+  }
+);
+}

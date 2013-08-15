@@ -1,0 +1,17 @@
+{
+  todo();
+  try {
+    Map<String,String> props=getVersionAttributes(version);
+    if (value != null) {
+      props.put(key,value);
+    }
+ else {
+      props.remove(key);
+    }
+    String node=ZkPath.CONFIG_VERSION.getPath(version);
+    setPropertiesAsMap(getCurator(),node,props);
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}

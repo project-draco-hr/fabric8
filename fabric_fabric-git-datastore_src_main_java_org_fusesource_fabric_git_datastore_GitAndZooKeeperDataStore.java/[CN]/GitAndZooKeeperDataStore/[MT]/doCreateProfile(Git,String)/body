@@ -1,0 +1,12 @@
+{
+  File profileDirectory=getProfileDirectory(git,profile);
+  File metadataFile=new File(profileDirectory,"org.fusesource.fabric.agent.properties");
+  if (metadataFile.exists()) {
+    return null;
+  }
+  profileDirectory.mkdirs();
+  Files.writeToFile(metadataFile,"#Profile:" + profile + "\n",Charset.defaultCharset());
+  doAddFiles(git,profileDirectory,metadataFile);
+  git.commit().setMessage("Added profile " + profile).call();
+  return profile;
+}

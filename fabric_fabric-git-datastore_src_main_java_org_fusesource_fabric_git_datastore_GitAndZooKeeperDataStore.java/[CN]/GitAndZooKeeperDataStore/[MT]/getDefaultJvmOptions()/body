@@ -1,0 +1,13 @@
+{
+  try {
+    if (getCurator().getZookeeperClient().isConnected() && exists(getCurator(),JVM_OPTIONS_PATH) != null) {
+      return getStringData(treeCache,JVM_OPTIONS_PATH);
+    }
+ else {
+      return "";
+    }
+  }
+ catch (  Exception e) {
+    throw new FabricException(e);
+  }
+}
