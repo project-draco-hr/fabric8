@@ -1,8 +1,22 @@
 {
-  try {
-    return lastModified(getCurator(),ZkProfiles.getPath(version,profile));
+  Long answer=gitOperation(new GitOperation<Long>(){
+    public Long call(    Git git) throws Exception {
+      checkoutVersion(git,version);
+      File profileDirectory=getProfileDirectory(git,profile);
+      File metadataFile=new File(profileDirectory,AGENT_METADATA_FILE);
+      Long answer=null;
+      if (profileDirectory.exists()) {
+        answer=profileDirectory.lastModified();
+        if (metadataFile.exists()) {
+          long modified=metadataFile.lastModified();
+          if (modified > answer) {
+            answer=modified;
+          }
+        }
+      }
+      return answer;
+    }
   }
- catch (  Exception e) {
-    throw new FabricException(e);
-  }
+);
+  return answer != null ? answer.longValue() : 0;
 }

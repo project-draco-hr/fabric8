@@ -1,13 +1,12 @@
 {
-  try {
-    String path=ZkProfiles.getPath(version,profile) + "/" + pid+ ".properties";
-    if (treeCache.getCurrentData(path) == null) {
-      return null;
+  return gitOperation(new GitOperation<Map<String,String>>(){
+    public Map<String,String> call(    Git git) throws Exception {
+      checkoutVersion(git,version);
+      File profileDirectory=getProfileDirectory(git,profile);
+      File file=getPidFile(profileDirectory,pid);
+      byte[] data=Files.readBytes(file);
+      return DataStoreHelpers.toMap(DataStoreHelpers.toProperties(data));
     }
-    byte[] data=getByteData(treeCache,path);
-    return DataStoreHelpers.toMap(DataStoreHelpers.toProperties(data));
   }
- catch (  Exception e) {
-    throw new FabricException(e);
-  }
+);
 }

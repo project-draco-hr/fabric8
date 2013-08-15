@@ -1,0 +1,14 @@
+{
+  Map<String,byte[]> configurations=new HashMap<String,byte[]>();
+  File profileDirectory=getProfileDirectory(git,profile);
+  File[] files=profileDirectory.listFiles();
+  if (files != null) {
+    for (    File file : files) {
+      if (file.isFile()) {
+        String relativePath=getFilePattern(profileDirectory,file);
+        configurations.put(relativePath,doLoadFileConfiguration(file));
+      }
+    }
+  }
+  return configurations;
+}

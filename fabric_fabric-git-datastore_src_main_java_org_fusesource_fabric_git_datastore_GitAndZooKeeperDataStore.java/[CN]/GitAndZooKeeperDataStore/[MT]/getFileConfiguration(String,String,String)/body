@@ -1,23 +1,11 @@
 {
-  try {
-    String path=ZkProfiles.getPath(version,profile) + "/" + pid;
-    if (treeCache.getCurrentData(path) == null) {
-      return null;
-    }
-    if (treeCache.getCurrentData(path).getData() == null) {
-      List<String> children=treeCache.getChildrenNames(path);
-      StringBuilder buf=new StringBuilder();
-      for (      String child : children) {
-        String value=new String(treeCache.getCurrentData(path + "/" + child).getData(),"UTF-8");
-        buf.append(String.format("%s = %s\n",child,value));
-      }
-      return buf.toString().getBytes();
-    }
- else {
-      return getByteData(treeCache,path);
+  return gitOperation(new GitOperation<byte[]>(){
+    public byte[] call(    Git git) throws Exception {
+      checkoutVersion(git,version);
+      File profileDirectory=getProfileDirectory(git,profile);
+      File file=new File(profileDirectory,fileName);
+      return doLoadFileConfiguration(file);
     }
   }
- catch (  Exception e) {
-    throw new FabricException(e);
-  }
+);
 }

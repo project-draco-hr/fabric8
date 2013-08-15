@@ -1,11 +1,10 @@
 {
+  byte[] data;
   try {
-    String path=ZkProfiles.getPath(version,profile);
-    byte[] data=DataStoreHelpers.toBytes(DataStoreHelpers.toProperties(configuration));
-    String p=path + "/" + pid+ ".properties";
-    setData(getCurator(),p,data);
+    data=DataStoreHelpers.toBytes(DataStoreHelpers.toProperties(configuration));
   }
- catch (  Exception e) {
+ catch (  IOException e) {
     throw new FabricException(e);
   }
+  setFileConfiguration(version,profile,pid,data);
 }
