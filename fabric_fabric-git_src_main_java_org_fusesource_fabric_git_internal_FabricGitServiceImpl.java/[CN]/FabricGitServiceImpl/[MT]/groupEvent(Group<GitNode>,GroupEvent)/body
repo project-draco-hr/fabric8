@@ -5,7 +5,8 @@
     masterUrl=master.getUrl();
   }
   try {
-    StoredConfig config=get().getRepository().getConfig();
+    Git git=get();
+    StoredConfig config=git.getRepository().getConfig();
     if (masterUrl != null) {
       config.setString("remote","origin","url",getSubstitutedData(curator,masterUrl));
       config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
@@ -15,6 +16,10 @@
     }
     config.save();
     if (gitService != null) {
+      String login=getContainerLogin();
+      String token=generateContainerToken(curator);
+      CredentialsProvider cp=new UsernamePasswordCredentialsProvider(login,token);
+      gitService.setCredentialsProvider(cp);
       gitService.onRemoteChanged();
     }
   }

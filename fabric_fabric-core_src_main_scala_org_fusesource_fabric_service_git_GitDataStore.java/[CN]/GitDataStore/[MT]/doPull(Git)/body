@@ -21,7 +21,12 @@
       LOG.debug("Performing a pull in git repository " + GitHelpers.getRootGitDirectory(git) + " on remote URL: "+ url);
     }
     RevCommit statusBefore=CommitUtils.getHead(repository);
-    PullResult result=git.pull().setRebase(true).call();
+    PullCommand command=git.pull().setRebase(true);
+    CredentialsProvider credentialsProvider=gitService.getCredentialsProvider();
+    if (credentialsProvider != null) {
+      command=command.setCredentialsProvider(credentialsProvider);
+    }
+    PullResult result=command.call();
     RevCommit statusAfter=CommitUtils.getHead(repository);
     if (hasChanged(statusBefore,statusAfter)) {
       fireChangeNotifications();
