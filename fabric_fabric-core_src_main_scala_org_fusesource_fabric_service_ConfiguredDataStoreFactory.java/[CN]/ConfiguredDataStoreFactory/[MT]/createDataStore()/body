@@ -1,7 +1,10 @@
 {
   DataStoreSupport instance;
-  String kind=System.getProperty(DATASTORE_KIND,"zookeeper").toLowerCase();
-  if (kind.startsWith("z")) {
+  String kind="zookee";
+  if (configuration != null) {
+    kind=configuration.get("kind");
+  }
+  if (kind != null && kind.startsWith("z")) {
     properties.put("kind","org.fusesource.datastore.zookeeper");
     instance=new ZooKeeperDataStore();
   }
@@ -9,7 +12,7 @@
     properties.put("kind","org.fusesource.datastore.git");
     instance=new GitDataStore();
   }
-  LOG.info("Has system property " + DATASTORE_KIND + "="+ kind+ " so created DataStore: "+ instance);
+  LOG.info("Has system property " + DATASTORE_KIND + "="+ kind+ " so created DataStore: "+ instance+ " from configuration "+ configuration);
   Objects.notNull(curator,"curator");
   instance.setCurator(curator);
   instance.setPlaceholderResolvers(placeholderResolvers);
