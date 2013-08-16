@@ -1,0 +1,21 @@
+{
+  DataStoreSupport instance;
+  if (true) {
+    properties.put("kind","org.fusesource.datastore.zookeeper");
+    instance=new ZooKeeperDataStore();
+  }
+ else {
+    properties.put("kind","org.fusesource.datastore.git");
+    instance=new GitDataStore();
+  }
+  Objects.notNull(curator,"curator");
+  instance.setCurator(curator);
+  instance.setPlaceholderResolvers(placeholderResolvers);
+  if (instance instanceof GitDataStore) {
+    GitDataStore gitDataStore=(GitDataStore)instance;
+    Objects.notNull(gitService,"gitService");
+    gitDataStore.setGitService(gitService);
+  }
+  instance.init();
+  return instance;
+}

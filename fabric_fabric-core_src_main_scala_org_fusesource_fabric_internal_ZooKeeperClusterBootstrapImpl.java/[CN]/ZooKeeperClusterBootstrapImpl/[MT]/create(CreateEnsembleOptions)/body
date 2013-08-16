@@ -14,9 +14,9 @@
     CuratorFramework curator=createCuratorFramework(connectionUrl,options);
     curator.start();
     curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
-    ZooKeeperDataStore dataStore=new ZooKeeperDataStore();
-    dataStore.setCurator(curator);
-    dataStore.init();
+    ConfiguredDataStoreFactory dataStoreFactory=new ConfiguredDataStoreFactory();
+    dataStoreFactory.setCurator(curator);
+    DataStore dataStore=dataStoreFactory.createDataStore();
     if (options.isAutoImportEnabled()) {
       ZookeeperImportUtils.importFromFileSystem(curator,options.getImportPath(),"/",null,null,false,false,false);
     }
