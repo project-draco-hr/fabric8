@@ -1,10 +1,15 @@
 {
   DataStoreSupport instance;
-  String kind="zookee";
-  if (configuration != null) {
-    kind=configuration.get("kind");
+  String kind=configuration.get("kind");
+  Properties clusterProperties=new Properties();
+  if (curator.checkExists().forPath(ZkPath.BOOTSTRAP.getPath()) != null) {
+    clusterProperties=getProperties(curator,ZkPath.BOOTSTRAP.getPath());
   }
-  if (kind == null || kind.startsWith("z")) {
+  if (Strings.isNullOrEmpty(kind)) {
+    kind=clusterProperties.getProperty("kind",System.getProperty(DATASTORE_KIND,"zookeeper"));
+  }
+  kind=kind.toLowerCase();
+  if (kind.startsWith("z")) {
     properties.put("kind","org.fusesource.datastore.zookeeper");
     instance=new ZooKeeperDataStore();
   }
@@ -12,7 +17,7 @@
     properties.put("kind","org.fusesource.datastore.git");
     instance=new GitDataStore();
   }
-  LOG.info("Has system property " + DATASTORE_KIND + "="+ kind+ " so created DataStore: "+ instance+ " from configuration "+ configuration);
+  LOG.info("DataStore kind=" + kind + " so created DataStore: "+ instance+ " from clusterProperties "+ clusterProperties+ " and configuration "+ configuration);
   Objects.notNull(curator,"curator");
   instance.setCurator(curator);
   instance.setPlaceholderResolvers(placeholderResolvers);

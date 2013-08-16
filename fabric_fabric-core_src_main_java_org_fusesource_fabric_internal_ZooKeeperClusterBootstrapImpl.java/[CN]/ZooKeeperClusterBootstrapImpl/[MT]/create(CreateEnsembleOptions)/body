@@ -22,6 +22,8 @@
     if (options.isAutoImportEnabled()) {
       dataStore.importFromFileSystem(options.getImportPath());
     }
+    byte[] dataStoreData=DataStoreHelpers.toBytes(DataStoreHelpers.toStringProperties(configuration));
+    ZooKeeperUtils.create(curator,ZkPath.BOOTSTRAP.getPath(),dataStoreData,CreateMode.PERSISTENT);
     createDefault(curator,ZkPath.CONFIG_DEFAULT_VERSION.getPath(),version);
     String defaultProfile=dataStore.getProfile(version,"default",true);
     setData(curator,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),"${zk:" + karafName + "/ip}:"+ zooKeeperServerConnectionPort);
