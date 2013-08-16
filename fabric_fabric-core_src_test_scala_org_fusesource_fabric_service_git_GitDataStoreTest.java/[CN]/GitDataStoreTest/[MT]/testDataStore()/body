@@ -25,6 +25,8 @@
   assertProfileConfiguration(version,importedProfile,"org.fusesource.fabric.agent","parents","camel");
   assertProfileTextFileConfigurationContains(version,"example-camel-fabric","camel.xml","http://camel.apache.org/schema/blueprint");
   Map<String,String> profileAttributes=dataStore.getProfileAttributes(version,importedProfile);
+  String parent=profileAttributes.get("parents");
+  assertEquals(importedProfile + ".profileAttributes[parent]","camel",parent);
   System.out.println("Profile attributes: " + profileAttributes);
   String profileAttributeKey="myKey";
   String expectedProfileAttributeValue="myValue";
