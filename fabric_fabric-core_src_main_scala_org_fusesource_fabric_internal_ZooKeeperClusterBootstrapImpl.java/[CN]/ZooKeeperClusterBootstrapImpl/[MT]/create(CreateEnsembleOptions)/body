@@ -19,7 +19,7 @@
     dataStoreFactory.setCurator(curator);
     DataStore dataStore=dataStoreFactory.createDataStore();
     if (options.isAutoImportEnabled()) {
-      ZookeeperImportUtils.importFromFileSystem(curator,options.getImportPath(),"/",null,null,false,false,false);
+      dataStore.importFromFileSystem(options.getImportPath());
     }
     createDefault(curator,ZkPath.CONFIG_DEFAULT_VERSION.getPath(),version);
     String defaultProfile=dataStore.getProfile(version,"default",true);

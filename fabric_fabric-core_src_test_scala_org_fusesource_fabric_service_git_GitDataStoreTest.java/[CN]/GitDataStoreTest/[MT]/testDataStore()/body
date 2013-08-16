@@ -1,14 +1,22 @@
 {
   String defaultVersion=dataStore.getDefaultVersion();
   assertEquals("defaultVersion","1.0",defaultVersion);
-  String prefix=basedir + "/../fuse-fabric/src/main/resources/distro/fabric/import/fabric";
-  String profileImport=prefix + "/configs/versions/1.0/profiles";
-  String metricsImport=prefix + "/metrics";
-  assertFolderExists(profileImport);
-  assertFolderExists(metricsImport);
-  dataStore.importFromFileSystem(profileImport,"fabric");
-  dataStore.importFromFileSystem(metricsImport,"fabric");
-  assertHasVersion(defaultVersion);
+  String importPath=basedir + "/../fuse-fabric/src/main/resources/distro/fabric/import";
+  if (useOldImportFormat) {
+    assertFolderExists(importPath);
+    dataStore.importFromFileSystem(importPath);
+    assertHasVersion(defaultVersion);
+  }
+ else {
+    String prefix=importPath + "/fabric";
+    String profileImport=prefix + "/configs/versions/1.0/profiles";
+    String metricsImport=prefix + "/metrics";
+    assertFolderExists(profileImport);
+    assertFolderExists(metricsImport);
+    dataStore.importFromFileSystem(new File(profileImport),"fabric","1.0");
+    dataStore.importFromFileSystem(new File(metricsImport),"fabric","1.0");
+    assertHasVersion(defaultVersion);
+  }
   String importedProfile="example-dozer";
   String profile=importedProfile;
   assertProfileExists(defaultVersion,profile);
