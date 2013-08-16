@@ -1,6 +1,7 @@
 {
   DataStoreSupport instance;
-  if (true) {
+  String kind=System.getProperty(DATASTORE_KIND,"zookeeper").toLowerCase();
+  if (kind.startsWith("z")) {
     properties.put("kind","org.fusesource.datastore.zookeeper");
     instance=new ZooKeeperDataStore();
   }
@@ -8,12 +9,19 @@
     properties.put("kind","org.fusesource.datastore.git");
     instance=new GitDataStore();
   }
+  LOG.info("Has system property " + DATASTORE_KIND + "="+ kind+ " so created DataStore: "+ instance);
   Objects.notNull(curator,"curator");
   instance.setCurator(curator);
   instance.setPlaceholderResolvers(placeholderResolvers);
   if (instance instanceof GitDataStore) {
     GitDataStore gitDataStore=(GitDataStore)instance;
-    Objects.notNull(gitService,"gitService");
+    if (gitService == null) {
+      LOG.info("Creating bootstrap GitService");
+      gitService=createBootstrapGitService();
+    }
+ else {
+      LOG.info("Using GitService: " + gitService);
+    }
     gitDataStore.setGitService(gitService);
   }
   instance.init();
