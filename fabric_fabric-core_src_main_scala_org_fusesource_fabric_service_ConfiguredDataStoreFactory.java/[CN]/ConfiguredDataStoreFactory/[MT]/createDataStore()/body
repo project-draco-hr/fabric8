@@ -15,13 +15,16 @@
   instance.setPlaceholderResolvers(placeholderResolvers);
   if (instance instanceof GitDataStore) {
     GitDataStore gitDataStore=(GitDataStore)instance;
-    if (gitService == null) {
-      LOG.info("Creating bootstrap GitService");
-      gitService=createBootstrapGitService();
+    if (isBootstrap()) {
+      if (gitService == null) {
+        LOG.info("Creating bootstrap GitService");
+        gitService=createBootstrapGitService();
+      }
     }
  else {
-      LOG.info("Using GitService: " + gitService);
+      Objects.notNull(gitService,"gitService");
     }
+    LOG.info("Using GitService: " + gitService);
     gitDataStore.setGitService(gitService);
   }
   instance.init();

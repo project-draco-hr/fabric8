@@ -15,6 +15,7 @@
     curator.start();
     curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
     ConfiguredDataStoreFactory dataStoreFactory=new ConfiguredDataStoreFactory();
+    dataStoreFactory.setBootstrap(true);
     dataStoreFactory.setCurator(curator);
     DataStore dataStore=dataStoreFactory.createDataStore();
     if (options.isAutoImportEnabled()) {

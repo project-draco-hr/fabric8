@@ -1,6 +1,6 @@
 {
   gitOperation(new GitOperation<Void>(){
-    public Void call(    Git git) throws Exception {
+    public Void call(    Git git,    GitContext context) throws Exception {
       String version=getDefaultVersion();
       createVersion(version);
       File toDir=GitHelpers.getRootGitDirectory(git);
@@ -8,7 +8,7 @@
         toDir=new File(toDir,destinationPath);
       }
       recursiveCopyAndAdd(git,new File(from),toDir,destinationPath);
-      git.commit().setMessage("Imported from " + from).call();
+      context.commit("Imported from " + from);
       return null;
     }
   }

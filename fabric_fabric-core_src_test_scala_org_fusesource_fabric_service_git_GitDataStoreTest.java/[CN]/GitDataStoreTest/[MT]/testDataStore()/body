@@ -18,7 +18,7 @@
   assertProfileTextFileConfigurationContains(version,"example-camel-fabric","camel.xml","http://camel.apache.org/schema/blueprint");
   Map<String,String> profileAttributes=dataStore.getProfileAttributes(version,importedProfile);
   System.out.println("Profile attributes: " + profileAttributes);
-  String profileAttributeKey="kyKey";
+  String profileAttributeKey="myKey";
   String expectedProfileAttributeValue="myValue";
   dataStore.setProfileAttribute(version,importedProfile,profileAttributeKey,expectedProfileAttributeValue);
   profileAttributes=dataStore.getProfileAttributes(version,importedProfile);
@@ -43,6 +43,7 @@
   remote.checkout().setName("1.1").call();
   assertFolderExists(getRemoteGitFile("fabric/profiles/" + profile));
   assertFolderExists(getRemoteGitFile("fabric/profiles/" + newProfile));
+  assertFolderExists("we should have pushed this file remotely due to the call to dataStore.setProfileAttribute()",getRemoteGitFile("fabric/profiles/" + importedProfile + "/org.fusesource.fabric.datastore.properties"));
   remote.checkout().setName("1.2").call();
   assertFolderExists(getRemoteGitFile("fabric/profiles/" + profile));
   assertFolderNotExists(getRemoteGitFile("fabric/profiles/" + newProfile));
