@@ -24,6 +24,7 @@ synchronized (lock) {
       }
       if (requirePush || hasChanged(statusBefore,CommitUtils.getHead(repository))) {
         doPush(git);
+        fireChangeNotifications();
       }
       return answer;
     }
