@@ -1,0 +1,20 @@
+{
+synchronized (lock) {
+    try {
+      Git git=getGit();
+      if (personIdent == null) {
+        personIdent=new PersonIdent(git.getRepository());
+      }
+      if (GitHelpers.hasGitHead(git)) {
+        git.stashCreate().setPerson(personIdent).setWorkingDirectoryMessage("Stash before a write").setRef("HEAD").call();
+      }
+      doPull(git);
+      T answer=operation.call(git);
+      doPush(git);
+      return answer;
+    }
+ catch (    Exception e) {
+      throw new FabricException(e);
+    }
+  }
+}

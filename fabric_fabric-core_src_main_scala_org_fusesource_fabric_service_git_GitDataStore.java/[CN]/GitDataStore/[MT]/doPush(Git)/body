@@ -1,0 +1,10 @@
+{
+  Repository repository=git.getRepository();
+  StoredConfig config=repository.getConfig();
+  String url=config.getString("remote",remote,"url");
+  if (Strings.isNullOrBlank(url)) {
+    LOG.warn("No remote repository defined for the git repository at " + GitHelpers.getRootGitDirectory(git) + " so not doing a push");
+    return;
+  }
+  git.push().call();
+}
