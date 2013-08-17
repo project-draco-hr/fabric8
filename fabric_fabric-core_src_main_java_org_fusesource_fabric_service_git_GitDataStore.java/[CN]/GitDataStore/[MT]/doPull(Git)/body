@@ -29,6 +29,10 @@
     PullResult result=command.call();
     RevCommit statusAfter=CommitUtils.getHead(repository);
     if (hasChanged(statusBefore,statusAfter)) {
+      if (credentialsProvider != null) {
+        File profilesDirectory=getProfilesDirectory(git);
+        fireOnInitialised();
+      }
       fireChangeNotifications();
     }
   }

@@ -1,5 +1,5 @@
 {
-  DataStoreSupport instance;
+  final DataStoreSupport instance;
   String kind=configuration.get("kind");
   Properties clusterProperties=new Properties();
   if (curator.checkExists().forPath(ZkPath.BOOTSTRAP.getPath()) != null) {
@@ -21,6 +21,19 @@
   Objects.notNull(curator,"curator");
   instance.setCurator(curator);
   instance.setPlaceholderResolvers(placeholderResolvers);
+  Runnable onInitialised=new Runnable(){
+    public void run(){
+      Objects.notNull(bundleContext,"bundleContext");
+      registration=bundleContext.registerService(DataStore.class,instance,properties);
+      LOG.info("Registered DataStore " + instance + " with "+ properties);
+    }
+  }
+;
+  if (isBootstrap()) {
+  }
+ else {
+    instance.setOnInitialised(onInitialised);
+  }
   if (instance instanceof GitDataStore) {
     GitDataStore gitDataStore=(GitDataStore)instance;
     if (isBootstrap()) {

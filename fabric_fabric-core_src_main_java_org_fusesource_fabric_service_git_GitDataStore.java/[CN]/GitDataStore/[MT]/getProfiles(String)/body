@@ -1,15 +1,17 @@
 {
   return gitOperation(new GitOperation<List<String>>(){
     public List<String> call(    Git git,    GitContext context) throws Exception {
-      checkoutVersion(git,version);
-      File profilesDir=getProfilesDirectory(git);
       List<String> answer=new ArrayList<String>();
-      if (profilesDir.exists()) {
-        File[] files=profilesDir.listFiles();
-        if (files != null) {
-          for (          File file : files) {
-            if (file.isDirectory()) {
-              answer.add(file.getName());
+      if (hasVersion(version)) {
+        checkoutVersion(git,version);
+        File profilesDir=getProfilesDirectory(git);
+        if (profilesDir.exists()) {
+          File[] files=profilesDir.listFiles();
+          if (files != null) {
+            for (            File file : files) {
+              if (file.isDirectory()) {
+                answer.add(file.getName());
+              }
             }
           }
         }

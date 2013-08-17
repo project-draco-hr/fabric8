@@ -15,6 +15,7 @@
     curator.start();
     curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
     ConfiguredDataStoreFactory dataStoreFactory=new ConfiguredDataStoreFactory();
+    dataStoreFactory.setBundleContext(bundleContext);
     dataStoreFactory.setConfiguration(configuration);
     dataStoreFactory.setBootstrap(true);
     dataStoreFactory.setCurator(curator);

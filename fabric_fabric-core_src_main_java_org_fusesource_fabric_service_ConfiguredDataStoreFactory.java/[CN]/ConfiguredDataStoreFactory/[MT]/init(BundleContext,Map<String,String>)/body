@@ -1,5 +1,4 @@
 {
-  LOG.info("init() " + bundleContext + " with configuration: "+ configuration);
   setConfiguration(configuration);
   this.bundleContext=bundleContext;
   if (instance == null) {
@@ -7,11 +6,5 @@
     if (dataStore instanceof DataStoreSupport) {
       instance=(DataStoreSupport)dataStore;
     }
-  }
-  LOG.info("created: " + instance);
-  if (instance != null) {
-    Objects.notNull(bundleContext,"bundleContext");
-    registration=bundleContext.registerService(DataStore.class,instance,properties);
-    LOG.info("Registered DataStore " + instance + " with "+ properties);
   }
 }
