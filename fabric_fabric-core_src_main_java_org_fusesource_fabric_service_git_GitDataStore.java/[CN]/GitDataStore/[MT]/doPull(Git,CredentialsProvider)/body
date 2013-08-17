@@ -13,13 +13,8 @@
       LOG.debug("Performing a fetch in git repository " + GitHelpers.getRootGitDirectory(git) + " on remote URL: "+ url);
     }
     RevCommit statusBefore=CommitUtils.getHead(repository);
-    CredentialsProvider credentialsProvider=gitService.getCredentialsProvider();
     try {
-      FetchCommand fetch=git.fetch();
-      if (credentialsProvider != null) {
-        fetch=fetch.setCredentialsProvider(credentialsProvider);
-      }
-      fetch.setRemote(remote).call();
+      git.fetch().setCredentialsProvider(credentialsProvider).setRemote(remote).call();
     }
  catch (    Exception e) {
       LOG.debug("Fetch failed: " + e,e);

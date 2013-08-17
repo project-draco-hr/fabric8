@@ -3,13 +3,14 @@ synchronized (lock) {
     try {
       Git git=getGit();
       Repository repository=git.getRepository();
+      CredentialsProvider credentialsProvider=getcredentialsProvider();
       if (personIdent == null) {
         personIdent=new PersonIdent(repository);
       }
       if (GitHelpers.hasGitHead(git)) {
         git.stashCreate().setPerson(personIdent).setWorkingDirectoryMessage("Stash before a write").setRef("HEAD").call();
       }
-      doPull(git);
+      doPull(git,credentialsProvider);
       RevCommit statusBefore=CommitUtils.getHead(repository);
       GitContext context=new GitContext();
       T answer=operation.call(git,context);
@@ -23,7 +24,7 @@ synchronized (lock) {
         git.commit().setMessage(message).call();
       }
       if (requirePush || hasChanged(statusBefore,CommitUtils.getHead(repository))) {
-        doPush(git);
+        doPush(git,credentialsProvider);
         fireChangeNotifications();
       }
       return answer;

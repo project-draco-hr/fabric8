@@ -16,10 +16,6 @@
     }
     config.save();
     if (gitService != null) {
-      String login=getContainerLogin();
-      String token=generateContainerToken(curator);
-      CredentialsProvider cp=new UsernamePasswordCredentialsProvider(login,token);
-      gitService.setCredentialsProvider(cp);
       gitService.onRemoteChanged();
     }
   }
