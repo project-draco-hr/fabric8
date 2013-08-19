@@ -10,7 +10,9 @@ synchronized (lock) {
       if (GitHelpers.hasGitHead(git)) {
         git.stashCreate().setPerson(personIdent).setWorkingDirectoryMessage("Stash before a write").setRef("HEAD").call();
       }
-      doPull(git,credentialsProvider);
+      if (pullFirst) {
+        doPull(git,credentialsProvider);
+      }
       RevCommit statusBefore=CommitUtils.getHead(repository);
       GitContext context=new GitContext();
       T answer=operation.call(git,context);
