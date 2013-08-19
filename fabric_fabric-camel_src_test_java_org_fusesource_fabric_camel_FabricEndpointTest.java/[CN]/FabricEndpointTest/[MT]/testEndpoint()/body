@@ -5,5 +5,13 @@
   Thread.sleep(5000);
   template.sendBodyAndHeader(expectedBody,"foo","bar");
   MockEndpoint.assertIsSatisfied(camelContext);
+  System.out.println("  ==== testing NoExitFabricEndpoint !");
+  try {
+    template.sendBody("fabric:noExist","Test");
+    Assert.fail("Expect exception here");
+  }
+ catch (  Exception ex) {
+    Assert.assertTrue("Get a wrong exception. ",ex.getCause() instanceof IllegalStateException);
+  }
   System.out.println("===== completed test of Camel Fabric!");
 }
