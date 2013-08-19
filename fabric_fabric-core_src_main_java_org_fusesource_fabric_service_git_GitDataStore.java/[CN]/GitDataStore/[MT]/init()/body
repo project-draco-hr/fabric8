@@ -3,6 +3,21 @@
   if (gitService != null) {
     gitService.addRemoteChangeListener(remoteChangeListener);
   }
+  if (threadPool == null) {
+    this.threadPool=Executors.newSingleThreadScheduledExecutor();
+  }
+  Properties properties=getDataStoreProperties();
+  if (properties != null) {
+    this.pullPeriod=PropertiesHelper.getLongValue(properties,"gitPullPeriod",this.pullPeriod);
+  }
+  LOG.info("starting to pull from remote repository every " + pullPeriod + " millis");
+  threadPool.scheduleWithFixedDelay(new Runnable(){
+    @Override public void run(){
+      LOG.debug("Performing timed pull");
+      pull();
+    }
+  }
+,pullPeriod,pullPeriod,TimeUnit.MILLISECONDS);
   if (getProfiles(getDefaultVersion()).size() > 0) {
     fireOnInitialised();
   }
