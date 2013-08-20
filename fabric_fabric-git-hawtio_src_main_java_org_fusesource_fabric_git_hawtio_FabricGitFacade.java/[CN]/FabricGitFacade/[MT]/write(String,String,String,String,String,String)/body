@@ -1,0 +1,11 @@
+{
+  final PersonIdent personIdent=new PersonIdent(authorName,authorEmail);
+  return gitWriteOperation(personIdent,new GitOperation<CommitInfo>(){
+    public CommitInfo call(    Git git,    GitContext context) throws Exception {
+      checkoutBranch(git,branch);
+      File rootDir=getRootGitDirectory(git);
+      return doWrite(git,rootDir,branch,path,contents,personIdent,commitMessage);
+    }
+  }
+);
+}

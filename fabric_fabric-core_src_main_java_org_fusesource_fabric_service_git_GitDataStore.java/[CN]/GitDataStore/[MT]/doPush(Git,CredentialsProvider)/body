@@ -4,7 +4,7 @@
   String url=config.getString("remote",remote,"url");
   if (Strings.isNullOrBlank(url)) {
     LOG.info("No remote repository defined yet for the git repository at " + GitHelpers.getRootGitDirectory(git) + " so not doing a push");
-    return null;
+    return Collections.EMPTY_LIST;
   }
   return git.push().setCredentialsProvider(credentialsProvider).call();
 }

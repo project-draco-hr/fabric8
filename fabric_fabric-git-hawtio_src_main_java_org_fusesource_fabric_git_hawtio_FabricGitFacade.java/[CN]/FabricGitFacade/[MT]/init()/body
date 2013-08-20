@@ -1,17 +1,10 @@
 {
-  String basePath=System.getProperty("karaf.data","karaf/data") + File.separator + "git"+ File.separator;
-  String fabricGitPath=basePath + "fabric-edit";
-  File fabricRoot=new File(fabricGitPath);
-  if (!fabricRoot.exists() && !fabricRoot.mkdirs()) {
-    throw new FileNotFoundException("Could not found git root:" + basePath);
+  if (gitDataStore == null) {
+    Objects.notNull(dataStore,"dataStore");
+    if (dataStore instanceof GitDataStore) {
+      setGitDataStore((GitDataStore)dataStore);
+    }
   }
-  setConfigDirectory(fabricRoot);
-  setCloneAllBranches(true);
-  setCloneRemoteRepoOnStartup(true);
-  setPullBeforeOperation(true);
-  setPushOnCommit(true);
-  setPullOnStartup(true);
-  initCalled=true;
-  updateConfiguration();
-  initCheck();
+  Objects.notNull(gitDataStore,"gitDataStore");
+  super.init();
 }
