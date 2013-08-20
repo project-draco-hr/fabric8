@@ -1,6 +1,21 @@
 {
   try {
-    FabricDiscoveryAgent rc=new FabricDiscoveryAgent();
+    FabricDiscoveryAgent rc=null;
+    boolean osgi=false;
+    try {
+      if (OsgiUtil.isOsgi()) {
+        LOG.info("OSGi environment detected!");
+        osgi=true;
+      }
+    }
+ catch (    NoClassDefFoundError ignore) {
+    }
+    if (osgi) {
+      rc=OsgiUtil.createOsgiDiscoveryAgent();
+    }
+ else {
+      rc=new FabricDiscoveryAgent();
+    }
     if (uri.getSchemeSpecificPart() != null && uri.getSchemeSpecificPart().length() > 0) {
       String ssp=stripPrefix(uri.getSchemeSpecificPart(),"//");
       Map<String,String> query=parseQuery(ssp);
