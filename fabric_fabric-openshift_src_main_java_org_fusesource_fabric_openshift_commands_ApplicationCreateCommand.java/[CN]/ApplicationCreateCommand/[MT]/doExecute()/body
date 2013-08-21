@@ -1,0 +1,11 @@
+{
+  IOpenShiftConnection connection=getOrCreateConnection();
+  IUser user=connection.getUser();
+  IDomain domain=domainId != null ? user.getDomain(domainId) : user.getDefaultDomain();
+  if (domainId != null && domain == null) {
+    domain=user.createDomain(domainId);
+  }
+  IApplication application=domain.createApplication(applicationName,new Cartridge(cartridge));
+  System.out.println(application.getCreationLog());
+  return null;
+}

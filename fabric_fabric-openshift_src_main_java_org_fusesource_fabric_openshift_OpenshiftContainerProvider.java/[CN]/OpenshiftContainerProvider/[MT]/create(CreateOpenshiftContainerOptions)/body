@@ -1,0 +1,19 @@
+{
+  Set<CreateOpenshiftContainerMetadata> metadata=new HashSet<CreateOpenshiftContainerMetadata>();
+  IUser user=getOrCreateConnection(options).getUser();
+  IDomain domain=getOrCreateDomain(user,options);
+  int number=Math.max(options.getNumber(),1);
+  Cartridge cartridge=options.isEnsembleServer() ? new Cartridge(REGISTRY_CART) : new Cartridge(PLAIN_CART);
+  for (int i=1; i <= number; i++) {
+    IApplication application=domain.createApplication(options.getName(),cartridge,new GearProfile(options.getGearProfile()));
+    String containerName=application.getName() + "-" + application.getUUID();
+    if (!options.isEnsembleServer()) {
+      application.restart();
+    }
+    CreateOpenshiftContainerMetadata meta=new CreateOpenshiftContainerMetadata(domain.getId(),application.getUUID(),application.getCreationLog());
+    meta.setContainerName(containerName);
+    meta.setCreateOptions(options);
+    metadata.add(meta);
+  }
+  return metadata;
+}

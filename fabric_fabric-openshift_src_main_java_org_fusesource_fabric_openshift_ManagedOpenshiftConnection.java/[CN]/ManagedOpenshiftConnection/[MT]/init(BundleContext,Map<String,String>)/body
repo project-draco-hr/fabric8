@@ -1,0 +1,9 @@
+{
+  String serverUrl=properties.get(SERVER_URL);
+  String login=properties.get(LOGIN);
+  String password=properties.get(PASSWORD);
+  if (serverUrl != null && login != null && password != null) {
+    connection=connectionFactory.getConnection(FABRIC_CLIENT_ID,login,password,serverUrl);
+    registration=bundleContext.registerService(IOpenShiftConnection.class,connection,null);
+  }
+}
