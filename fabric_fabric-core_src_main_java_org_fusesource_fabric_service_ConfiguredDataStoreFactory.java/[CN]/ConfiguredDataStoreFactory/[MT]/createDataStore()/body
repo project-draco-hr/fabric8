@@ -16,7 +16,12 @@
   }
  else {
     properties.put("kind","org.fusesource.datastore.git");
-    instance=new GitDataStore();
+    if (clusterProperties.getProperty("gitUseCache","true").equals("false")) {
+      instance=new GitDataStore();
+    }
+ else {
+      instance=new CachingGitDataStore();
+    }
   }
   LOG.info("DataStore kind=" + kind + " so created DataStore: "+ instance+ " from clusterProperties "+ clusterProperties+ " and configuration "+ configuration);
   Objects.notNull(curator,"curator");

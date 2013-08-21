@@ -1,0 +1,9 @@
+{
+  String key="" + version + "/"+ profile;
+  Map<String,Map<String,String>> answer=configurationsCache.get(key);
+  if (answer == null) {
+    answer=super.getConfigurations(version,profile);
+    configurationsCache.put(key,answer);
+  }
+  return answer;
+}
