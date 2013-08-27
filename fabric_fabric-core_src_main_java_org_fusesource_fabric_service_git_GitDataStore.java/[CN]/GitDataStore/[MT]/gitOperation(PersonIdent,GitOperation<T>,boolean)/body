@@ -8,7 +8,7 @@ synchronized (lock) {
         personIdent=new PersonIdent(repository);
       }
       if (GitHelpers.hasGitHead(git)) {
-        git.stashCreate().setPerson(personIdent).setWorkingDirectoryMessage("Stash before a write").setRef("HEAD").call();
+        git.stashCreate().setPerson(personIdent).setWorkingDirectoryMessage("Stash before a write").call();
       }
       if (pullFirst) {
         doPull(git,credentialsProvider);
