@@ -40,7 +40,13 @@
     }
     for (    String version : gitVersions) {
       if (!remoteBranches.containsKey(version)) {
-        git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
+        try {
+          git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
+        }
+ catch (        CannotDeleteCurrentBranchException ex) {
+          git.checkout().setName("master").setForce(true).call();
+          git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
+        }
       }
  else       if (!localBranches.containsKey(version)) {
         git.branchCreate().setName(version).call();
@@ -62,7 +68,6 @@
       LOG.debug("Changed after pull!");
       if (credentialsProvider != null) {
         File profilesDirectory=getProfilesDirectory(git);
-        fireOnInitialised();
       }
       fireChangeNotifications();
     }
