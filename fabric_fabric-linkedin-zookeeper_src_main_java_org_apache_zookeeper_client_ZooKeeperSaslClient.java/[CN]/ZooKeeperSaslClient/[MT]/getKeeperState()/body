@@ -1,0 +1,14 @@
+{
+  if (saslClient != null) {
+    if (saslState == SaslState.FAILED) {
+      return KeeperState.AuthFailed;
+    }
+    if (saslClient.isComplete()) {
+      if (saslState == SaslState.INTERMEDIATE) {
+        saslState=SaslState.COMPLETE;
+        return KeeperState.SaslAuthenticated;
+      }
+    }
+  }
+  return null;
+}

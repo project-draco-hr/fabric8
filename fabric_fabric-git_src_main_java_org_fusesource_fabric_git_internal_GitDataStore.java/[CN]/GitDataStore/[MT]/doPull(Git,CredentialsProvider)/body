@@ -1,0 +1,78 @@
+{
+  try {
+    Repository repository=git.getRepository();
+    StoredConfig config=repository.getConfig();
+    String url=config.getString("remote",remote,"url");
+    if (Strings.isNullOrBlank(url)) {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("No remote repository defined for the git repository at " + GitHelpers.getRootGitDirectory(git) + " so not doing a pull");
+      }
+      return;
+    }
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Performing a fetch in git repository " + GitHelpers.getRootGitDirectory(git) + " on remote URL: "+ url);
+    }
+    RevCommit statusBefore=CommitUtils.getHead(repository);
+    try {
+      git.fetch().setCredentialsProvider(credentialsProvider).setRemote(remote).call();
+    }
+ catch (    Exception e) {
+      LOG.debug("Fetch failed: " + e,e);
+    }
+    Map<String,Ref> localBranches=new HashMap<String,Ref>();
+    Map<String,Ref> remoteBranches=new HashMap<String,Ref>();
+    Set<String> gitVersions=new HashSet<String>();
+    for (    Ref ref : git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call()) {
+      if (ref.getName().startsWith("refs/remotes/" + remote + "/")) {
+        String name=ref.getName().substring(("refs/remotes/" + remote + "/").length());
+        if (!"master".equals(name) && !name.endsWith("-tmp")) {
+          remoteBranches.put(name,ref);
+          gitVersions.add(name);
+        }
+      }
+ else       if (ref.getName().startsWith("refs/heads/")) {
+        String name=ref.getName().substring(("refs/heads/").length());
+        if (!name.equals("master") && !name.endsWith("-tmp")) {
+          localBranches.put(name,ref);
+          gitVersions.add(name);
+        }
+      }
+    }
+    for (    String version : gitVersions) {
+      if (!remoteBranches.containsKey(version)) {
+        try {
+          git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
+        }
+ catch (        CannotDeleteCurrentBranchException ex) {
+          git.checkout().setName("master").setForce(true).call();
+          git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
+        }
+      }
+ else       if (!localBranches.containsKey(version)) {
+        git.branchCreate().setName(version).call();
+        git.reset().setMode(ResetCommand.ResetType.HARD).setRef(remoteBranches.get(version).getName()).call();
+      }
+ else {
+        String localCommit=localBranches.get(version).getObjectId().getName();
+        String remoteCommit=remoteBranches.get(version).getObjectId().getName();
+        if (!localCommit.equals(remoteCommit)) {
+          git.clean().setCleanDirectories(true).call();
+          git.checkout().setName("HEAD").setForce(true).call();
+          git.checkout().setName(version).setForce(true).call();
+          MergeResult result=git.merge().setStrategy(MergeStrategy.THEIRS).include(remoteBranches.get(version).getObjectId()).call();
+        }
+      }
+    }
+    RevCommit statusAfter=CommitUtils.getHead(repository);
+    if (hasChanged(statusBefore,statusAfter)) {
+      LOG.debug("Changed after pull!");
+      if (credentialsProvider != null) {
+        File profilesDirectory=getProfilesDirectory(git);
+      }
+      fireChangeNotifications();
+    }
+  }
+ catch (  Throwable e) {
+    LOG.error("Failed to pull from the remote git repo " + GitHelpers.getRootGitDirectory(git) + ". Reason: "+ e,e);
+  }
+}

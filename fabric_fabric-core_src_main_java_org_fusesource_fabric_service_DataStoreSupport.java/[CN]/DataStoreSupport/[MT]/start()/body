@@ -1,0 +1,12 @@
+{
+  try {
+    if (started.compareAndSet(false,true)) {
+      LOG.info("Starting up DataStore " + this);
+      Objects.notNull(getCurator(),"curator");
+      createCache(getCurator());
+    }
+  }
+ catch (  Exception ex) {
+    throw new FabricException("Failed to start data store.",ex);
+  }
+}

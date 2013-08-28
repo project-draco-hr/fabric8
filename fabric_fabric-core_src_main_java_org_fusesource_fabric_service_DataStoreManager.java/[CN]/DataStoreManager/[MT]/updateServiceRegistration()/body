@@ -1,0 +1,22 @@
+{
+  unregister();
+  if (dataStorePlugins.containsKey(type)) {
+    dataStore=dataStorePlugins.get(type).getDataStore();
+    Properties dataStoreProperties=new Properties();
+    dataStoreProperties.putAll(configuration);
+    dataStore.setDataStoreProperties(dataStoreProperties);
+    dataStore.start();
+    for (    DataStoreTemplate callback : registrationCallbacks) {
+      registrationCallbacks.remove(callback);
+      try {
+        callback.doWith(dataStore);
+      }
+ catch (      Exception e) {
+        throw new FabricException(e);
+      }
+    }
+    properties.put(DATASTORE_TYPE_PROPERTY,type);
+    registration=bundleContext.registerService(DataStore.class,dataStore,properties);
+    LOG.info("Registered DataStore " + dataStore + " with "+ properties);
+  }
+}
