@@ -7,7 +7,6 @@
     doSetFileConfiguration(git,profile,file,newCfg);
   }
   for (  String pid : oldCfgs.keySet()) {
-    doRecursiveDeleteAndRemove(git,getPidFile(profileDirectory,pid));
+    doRecursiveDeleteAndRemove(git,getPidFile(profileDirectory,getPidFromFileName(pid)));
   }
-  git.commit().setMessage("Updated configuration for profile " + profile).call();
 }
