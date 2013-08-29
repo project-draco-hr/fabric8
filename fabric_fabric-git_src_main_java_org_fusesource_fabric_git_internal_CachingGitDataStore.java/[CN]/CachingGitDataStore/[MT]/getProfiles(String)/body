@@ -1,8 +1,4 @@
 {
-  List<String> answer=profilesCache.get(version);
-  if (answer == null) {
-    answer=super.getProfiles(version);
-    profilesCache.put(version,answer);
-  }
-  return answer;
+  ensureVersionLoaded(version);
+  return profilesCache.get(version);
 }

@@ -1,6 +1,10 @@
 {
   if (cachedVersions == null) {
-    cachedVersions=super.getVersions();
+synchronized (this) {
+      if (cachedVersions == null) {
+        cachedVersions=super.getVersions();
+      }
+    }
   }
   return cachedVersions;
 }
