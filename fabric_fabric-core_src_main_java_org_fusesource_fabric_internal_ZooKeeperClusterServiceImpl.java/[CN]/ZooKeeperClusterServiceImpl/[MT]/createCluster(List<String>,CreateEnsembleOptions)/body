@@ -24,7 +24,7 @@
       }
     }
     Map<String,List<Integer>> usedPorts=new HashMap<String,List<Integer>>();
-    String oldClusterId=getStringData(curator,ZkPath.CONFIG_ENSEMBLES.getPath());
+    final String oldClusterId=getStringData(curator,ZkPath.CONFIG_ENSEMBLES.getPath());
     if (oldClusterId != null) {
       String profile="fabric-ensemble-" + oldClusterId;
       String pid="org.fusesource.fabric.zookeeper.server-" + oldClusterId;
@@ -35,7 +35,7 @@
       for (      Object n : p.keySet()) {
         String node=(String)n;
         if (node.startsWith("server.")) {
-          String data=getSubstitutedPath(curator,ZkPath.CONFIG_ENSEMBLE_PROFILE.getPath("fabric-ensemble-" + oldClusterId) + "/org.fusesource.fabric.zookeeper.server-" + oldClusterId+ ".properties#"+ node);
+          String data=getSubstitutedData(curator,dataStore.getConfigurations(version,"fabric-ensemble-" + oldClusterId).get("org.fusesource.fabric.zookeeper.server-" + oldClusterId).get(node));
           addUsedPorts(usedPorts,data);
         }
       }
@@ -81,7 +81,7 @@
       if (exists(curator,ZkPath.CONTAINER_BINDADDRESS.getPath(container)) != null) {
         bindAddress=getSubstitutedPath(curator,ZkPath.CONTAINER_BINDADDRESS.getPath(container));
       }
-      String ensembleMemberPid="org.fusesource.fabric.zookeeper.server-" + newClusterId + ".properties";
+      String ensembleMemberConfigName="org.fusesource.fabric.zookeeper.server-" + newClusterId + ".properties";
       Properties ensembleMemberProperties=new Properties();
       String ensembleMemberProfile=getDataStore().getProfile(version,"fabric-ensemble-" + newClusterId + "-"+ Integer.toString(index),true);
       getDataStore().setProfileAttribute(version,ensembleMemberProfile,"hidden","true");
@@ -95,7 +95,7 @@
       }
       ensembleMemberProperties.put("clientPort",port1);
       ensembleMemberProperties.put("clientPortAddress",bindAddress);
-      getDataStore().setFileConfiguration(version,ensembleMemberProfile,ensembleMemberPid,DataStoreHelpers.toBytes(ensembleMemberProperties));
+      getDataStore().setFileConfiguration(version,ensembleMemberProfile,ensembleMemberConfigName,DataStoreHelpers.toBytes(ensembleMemberProperties));
       if (connectionUrl.length() > 0) {
         connectionUrl+=",";
         realConnectionUrl+=",";
@@ -112,7 +112,9 @@
     getDataStore().setFileConfiguration(version,ensembleProfile,ensembleConfigName,DataStoreHelpers.toBytes(ensembleProperties));
     index=1;
     for (    String container : containers) {
-      add(curator,"/fabric/configs/versions/" + version + "/containers/"+ container,"fabric-ensemble-" + newClusterId + "-"+ Integer.toString(index));
+      List<String> profiles=new LinkedList<String>(dataStore.getContainerProfiles(container));
+      profiles.add("fabric-ensemble-" + newClusterId + "-"+ Integer.toString(index));
+      dataStore.setContainerProfiles(container,profiles);
       index++;
     }
     if (oldClusterId != null) {
@@ -130,14 +132,19 @@
         setData(dst,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
         setData(curator,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl);
         setData(curator,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
-        for (        String v : getChildren(curator,"/fabric/configs/versions")) {
-          for (          String container : getChildren(dst,"/fabric/configs/versions/" + v + "/containers")) {
-            remove(dst,"/fabric/configs/versions/" + v + "/containers/"+ container,"fabric-ensemble-" + oldClusterId + "-.*");
+        dataStoreRegistrationHandler.addRegistrationCallback(new DataStoreTemplate(){
+          @Override public void doWith(          DataStore dataStore) throws Exception {
+            for (            String container : containers) {
+              cleanUpEnsembleProfiles(dataStore,container,oldClusterId);
+            }
           }
-          setConfigProperty(dst,"/fabric/configs/versions/" + v + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.password","${zk:" + ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath() + "}");
-          setConfigProperty(dst,"/fabric/configs/versions/" + v + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.url","${zk:" + ZkPath.CONFIG_ENSEMBLE_URL.getPath() + "}");
-          setConfigProperty(curator,"/fabric/configs/versions/" + v + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.password","${zk:" + ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath() + "}");
-          setConfigProperty(curator,"/fabric/configs/versions/" + v + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.url","${zk:" + ZkPath.CONFIG_ENSEMBLE_URL.getPath() + "}");
+        }
+);
+        for (        String v : dataStore.getVersions()) {
+          Map<String,String> zkConfig=dataStore.getConfiguration(v,"default","org.fusesource.fabric.zookeeper");
+          zkConfig.put("zookeeper.password","${zk:" + ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath() + "}");
+          zkConfig.put("zookeeper.url","${zk:" + ZkPath.CONFIG_ENSEMBLE_URL.getPath() + "}");
+          dataStore.setConfiguration(v,"default","org.fusesource.fabric.zookeeper",zkConfig);
         }
       }
   finally {
@@ -145,8 +152,10 @@
       }
     }
  else {
-      setConfigProperty(curator,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.password","${zk:" + ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath() + "}");
-      setConfigProperty(curator,"/fabric/configs/versions/" + version + "/profiles/default/org.fusesource.fabric.zookeeper.properties","zookeeper.url","${zk:" + ZkPath.CONFIG_ENSEMBLE_URL.getPath() + "}");
+      Map<String,String> zkConfig=dataStore.getConfiguration(version,"default","org.fusesource.fabric.zookeeper");
+      zkConfig.put("zookeeper.password","${zk:" + ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath() + "}");
+      zkConfig.put("zookeeper.url","${zk:" + ZkPath.CONFIG_ENSEMBLE_URL.getPath() + "}");
+      dataStore.setConfiguration(version,"default","org.fusesource.fabric.zookeeper",zkConfig);
     }
   }
  catch (  Exception e) {
