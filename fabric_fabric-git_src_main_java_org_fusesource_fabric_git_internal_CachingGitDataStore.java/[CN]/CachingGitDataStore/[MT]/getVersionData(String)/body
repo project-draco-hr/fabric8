@@ -1,0 +1,14 @@
+{
+  getVersions();
+  VersionData data;
+synchronized (cachedVersions) {
+    data=cachedVersions.get(version);
+  }
+  if (data == NOT_LOADED) {
+    data=loadVersion(version);
+synchronized (cachedVersions) {
+      cachedVersions.put(version,data);
+    }
+  }
+  return data;
+}

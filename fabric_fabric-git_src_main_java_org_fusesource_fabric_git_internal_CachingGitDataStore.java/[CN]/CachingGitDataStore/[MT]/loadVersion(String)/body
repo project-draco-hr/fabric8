@@ -1,7 +1,8 @@
 {
-  gitReadOperation(new GitOperation<Object>(){
-    public Object call(    Git git,    GitContext context) throws Exception {
-      List<String> profiles=new ArrayList<String>();
+  return gitReadOperation(new GitOperation<VersionData>(){
+    public VersionData call(    Git git,    GitContext context) throws Exception {
+      VersionData data=new VersionData();
+      data.profiles=new HashMap<String,ProfileData>();
       checkoutVersion(git,version);
       File profilesDir=getProfilesDirectory(git);
       if (profilesDir.exists()) {
@@ -10,28 +11,21 @@
           for (          File file : files) {
             if (file.isDirectory()) {
               String profile=file.getName();
-              profiles.add(profile);
-              Map<String,byte[]> configs=doGetFileConfigurations(git,profile);
-              configurationsCache.put(version + "/" + profile,configs);
+              ProfileData profileData=new ProfileData();
+              data.profiles.put(profile,profileData);
+              profileData.configurations=doGetFileConfigurations(git,profile);
               File profileDirectory=file;
               File metadataFile=new File(profileDirectory,AGENT_METADATA_FILE);
-              Long answer=null;
-              if (profileDirectory.exists()) {
-                answer=profileDirectory.lastModified();
-                if (metadataFile.exists()) {
-                  long modified=metadataFile.lastModified();
-                  if (modified > answer) {
-                    answer=modified;
-                  }
-                }
+              profileData.lastModified=profileDirectory.lastModified();
+              if (metadataFile.exists()) {
+                long modified=metadataFile.lastModified();
+                profileData.lastModified=Math.max(profileData.lastModified,modified);
               }
-              profileLastModified.put(version + "/" + profile,answer);
             }
           }
         }
       }
-      profilesCache.put(version,profiles);
-      return null;
+      return data;
     }
   }
 );
