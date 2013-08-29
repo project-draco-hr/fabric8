@@ -3,6 +3,7 @@ synchronized (lock) {
     try {
       Git git=getGit();
       Repository repository=git.getRepository();
+      String originalBranch=repository.getBranch();
       CredentialsProvider credentialsProvider=getCredentialsProvider();
       if (personIdent == null) {
         personIdent=new PersonIdent(repository);
@@ -25,6 +26,7 @@ synchronized (lock) {
         }
         git.commit().setMessage(message).call();
       }
+      git.checkout().setName(originalBranch).call();
       if (requirePush || hasChanged(statusBefore,CommitUtils.getHead(repository))) {
         doPush(git,credentialsProvider);
         fireChangeNotifications();

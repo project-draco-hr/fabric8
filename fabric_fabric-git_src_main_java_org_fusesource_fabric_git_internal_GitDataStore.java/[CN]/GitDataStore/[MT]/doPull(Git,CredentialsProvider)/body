@@ -25,14 +25,14 @@
     for (    Ref ref : git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call()) {
       if (ref.getName().startsWith("refs/remotes/" + remote + "/")) {
         String name=ref.getName().substring(("refs/remotes/" + remote + "/").length());
-        if (!"master".equals(name) && !name.endsWith("-tmp")) {
+        if (!name.endsWith("-tmp")) {
           remoteBranches.put(name,ref);
           gitVersions.add(name);
         }
       }
  else       if (ref.getName().startsWith("refs/heads/")) {
         String name=ref.getName().substring(("refs/heads/").length());
-        if (!name.equals("master") && !name.endsWith("-tmp")) {
+        if (!name.endsWith("-tmp")) {
           localBranches.put(name,ref);
           gitVersions.add(name);
         }
