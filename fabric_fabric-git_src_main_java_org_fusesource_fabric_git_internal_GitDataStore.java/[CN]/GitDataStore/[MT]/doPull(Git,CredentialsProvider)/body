@@ -39,12 +39,12 @@
       }
     }
     for (    String version : gitVersions) {
-      if (!remoteBranches.containsKey(version)) {
+      if (!version.equals(MASTER_BRANCH) && !remoteBranches.containsKey(version)) {
         try {
           git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
         }
  catch (        CannotDeleteCurrentBranchException ex) {
-          git.checkout().setName("master").setForce(true).call();
+          git.checkout().setName(MASTER_BRANCH).setForce(true).call();
           git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
         }
       }
