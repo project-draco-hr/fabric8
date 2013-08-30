@@ -1,9 +1,19 @@
 {
-  if (threadPool != null) {
-    threadPool.shutdown();
+  try {
+    if (gitService != null) {
+      gitService.removeRemoteChangeListener(remoteChangeListener);
+    }
+    if (threadPool != null) {
+      threadPool.shutdown();
+      try {
+        threadPool.awaitTermination(5,TimeUnit.SECONDS);
+      }
+ catch (      Exception ex) {
+        throw new FabricException(ex);
+      }
+    }
   }
-  if (gitService != null) {
-    gitService.removeRemoteChangeListener(remoteChangeListener);
+  finally {
+    super.stop();
   }
-  super.stop();
 }

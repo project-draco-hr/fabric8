@@ -5,20 +5,12 @@
     masterUrl=master.getUrl();
   }
   try {
-    Git git=get();
-    StoredConfig config=git.getRepository().getConfig();
     if (masterUrl != null) {
-      String currentMasterUrl=config.getString("remote","origin","url");
-      if (!masterUrl.equals(currentMasterUrl)) {
-        config.setString("remote","origin","url",getSubstitutedData(curator,masterUrl));
-        config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
-        fireRemoteChangedEvent();
-      }
+      fireRemoteChangedEvent(getSubstitutedData(curator,masterUrl));
     }
  else {
-      config.unsetSection("remote","origin");
+      fireRemoteChangedEvent(null);
     }
-    config.save();
   }
  catch (  Exception e) {
     LOGGER.error("Failed to point origin to the new master.",e);
