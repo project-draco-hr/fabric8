@@ -2,11 +2,13 @@
   gitOperation(new GitOperation<Void>(){
     public Void call(    Git git,    GitContext context) throws Exception {
       createVersion(version);
+      checkoutVersion(git,version);
       File toDir=GitHelpers.getRootGitDirectory(git);
       if (Strings.isNotBlank(destinationPath)) {
         toDir=new File(toDir,destinationPath);
       }
       recursiveCopyAndAdd(git,from,toDir,destinationPath);
+      context.setPushBranch(version);
       context.commit("Imported from " + from);
       return null;
     }

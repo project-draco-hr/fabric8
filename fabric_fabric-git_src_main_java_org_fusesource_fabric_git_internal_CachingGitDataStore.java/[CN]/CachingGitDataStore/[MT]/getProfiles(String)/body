@@ -1,8 +1,4 @@
 {
-  List<String> answer=profilesCache.get(version);
-  if (answer == null) {
-    answer=super.getProfiles(version);
-    profilesCache.put(version,answer);
-  }
-  return answer;
+  VersionData data=getVersionData(version);
+  return data != null && data.profiles != null ? new ArrayList<String>(data.profiles.keySet()) : new ArrayList<String>();
 }

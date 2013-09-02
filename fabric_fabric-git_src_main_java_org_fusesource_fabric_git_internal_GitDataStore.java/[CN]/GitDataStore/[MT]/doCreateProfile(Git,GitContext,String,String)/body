@@ -1,0 +1,13 @@
+{
+  File profileDirectory=getProfileDirectory(git,profile);
+  File metadataFile=new File(profileDirectory,AGENT_METADATA_FILE);
+  if (metadataFile.exists()) {
+    return null;
+  }
+  profileDirectory.mkdirs();
+  Files.writeToFile(metadataFile,"#Profile:" + profile + "\n",Charset.defaultCharset());
+  doAddFiles(git,profileDirectory,metadataFile);
+  context.setPushBranch(version);
+  context.commit("Added profile " + profile);
+  return profile;
+}

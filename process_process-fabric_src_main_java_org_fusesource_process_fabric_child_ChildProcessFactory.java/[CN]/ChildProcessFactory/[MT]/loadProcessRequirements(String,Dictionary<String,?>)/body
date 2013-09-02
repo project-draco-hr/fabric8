@@ -9,7 +9,9 @@
   processRequirements.setUrl(url);
   processRequirements.setLayout(layout);
   for (  String profile : profiles) {
-    processRequirements.addProfile(profile);
+    if (profile != null && !profile.isEmpty()) {
+      processRequirements.addProfile(profile);
+    }
   }
   for (Enumeration<String> e=properties.keys(); e.hasMoreElements(); ) {
     String key=e.nextElement();

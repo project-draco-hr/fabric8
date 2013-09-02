@@ -1,7 +1,7 @@
 {
   Long answer=gitReadOperation(new GitOperation<Long>(){
     public Long call(    Git git,    GitContext context) throws Exception {
-      checkoutVersion(git,version);
+      checkoutVersion(git,GitProfiles.getBranch(version,profile));
       File profileDirectory=getProfileDirectory(git,profile);
       File metadataFile=new File(profileDirectory,AGENT_METADATA_FILE);
       Long answer=null;

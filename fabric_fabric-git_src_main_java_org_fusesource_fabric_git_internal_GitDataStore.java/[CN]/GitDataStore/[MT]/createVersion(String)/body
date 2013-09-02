@@ -2,6 +2,7 @@
   gitOperation(new GitOperation<Void>(){
     public Void call(    Git git,    GitContext context) throws Exception {
       checkoutVersion(git,version);
+      context.setPushBranch(version);
       context.requirePush();
       return null;
     }

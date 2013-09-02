@@ -1,7 +1,7 @@
 {
   return gitReadOperation(new GitOperation<Map<String,byte[]>>(){
     public Map<String,byte[]> call(    Git git,    GitContext context) throws Exception {
-      checkoutVersion(git,version);
+      checkoutVersion(git,GitProfiles.getBranch(version,profile));
       return doGetFileConfigurations(git,profile);
     }
   }

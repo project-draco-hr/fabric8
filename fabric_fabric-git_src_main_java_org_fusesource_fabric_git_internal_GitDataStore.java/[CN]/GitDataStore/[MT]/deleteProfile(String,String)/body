@@ -1,9 +1,10 @@
 {
   gitOperation(new GitOperation<Void>(){
     public Void call(    Git git,    GitContext context) throws Exception {
-      checkoutVersion(git,version);
+      checkoutVersion(git,GitProfiles.getBranch(version,profile));
       File profileDirectory=getProfileDirectory(git,profile);
       doRecursiveDeleteAndRemove(git,profileDirectory);
+      context.setPushBranch(version);
       context.commit("Removed profile " + profile);
       return null;
     }
