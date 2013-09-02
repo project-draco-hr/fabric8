@@ -28,7 +28,7 @@ synchronized (lock) {
       }
       git.checkout().setName(originalBranch).call();
       if (requirePush || hasChanged(statusBefore,CommitUtils.getHead(repository))) {
-        doPush(git,credentialsProvider);
+        doPush(git,context,credentialsProvider);
         fireChangeNotifications();
       }
       return answer;
