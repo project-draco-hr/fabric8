@@ -32,6 +32,8 @@
   profileAttributes=dataStore.getProfileAttributes(version,importedProfile);
   System.out.println("Profile attributes: " + profileAttributes);
   assertMapContains("Profile attribute[" + profileAttributeKey + "]",profileAttributes,profileAttributeKey,expectedProfileAttributeValue);
+  Map<String,byte[]> tomcatFileConfigurations=dataStore.getFileConfigurations("1.0","controller-tomcat");
+  assertHasFileConfiguration(tomcatFileConfigurations,"tomcat/conf/server.xml.mvel");
   String profileNotCreated="shouldNotBeCreated";
   assertEquals("Should not create profile: " + profileNotCreated,null,dataStore.getProfile(version,profileNotCreated,false));
   assertProfileNotExists(defaultVersion,profileNotCreated);

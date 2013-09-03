@@ -1,0 +1,14 @@
+{
+  File[] files=directory.listFiles();
+  if (files != null) {
+    for (    File file : files) {
+      if (file.isFile()) {
+        String relativePath=getFilePattern(profileDirectory,file);
+        configurations.put(relativePath,doLoadFileConfiguration(file));
+      }
+ else       if (file.isDirectory()) {
+        doPutFileConfigurations(configurations,profileDirectory,file);
+      }
+    }
+  }
+}
