@@ -1,15 +1,22 @@
 {
   try {
     super.start();
-    if (gitService != null) {
+    Properties properties=getDataStoreProperties();
+    if (properties != null) {
+      this.pullPeriod=PropertiesHelper.getLongValue(properties,GIT_PULL_PERIOD,this.pullPeriod);
+      this.gitRemoteUrl=properties.getProperty(GIT_REMOTE_URL);
+    }
+    if (gitRemoteUrl != null) {
+      remoteChangeListener.onRemoteUrlChanged(gitRemoteUrl);
+    }
+ else     if (gitService != null) {
       gitService.addRemoteChangeListener(remoteChangeListener);
+      gitRemoteUrl=gitService.getRemoteUrl();
+      remoteChangeListener.onRemoteUrlChanged(gitRemoteUrl);
+      pull();
     }
     if (threadPool == null) {
       this.threadPool=Executors.newSingleThreadScheduledExecutor();
-    }
-    Properties properties=getDataStoreProperties();
-    if (properties != null) {
-      this.pullPeriod=PropertiesHelper.getLongValue(properties,"gitPullPeriod",this.pullPeriod);
     }
     LOG.info("starting to pull from remote repository every " + pullPeriod + " millis");
     threadPool.scheduleWithFixedDelay(new Runnable(){

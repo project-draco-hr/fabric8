@@ -1,5 +1,14 @@
 {
-  String login=getContainerLogin();
-  String token=generateContainerToken(getCurator());
-  return new UsernamePasswordCredentialsProvider(login,token);
+  Properties properties=getDataStoreProperties();
+  String username=null;
+  String password=null;
+  if (isExternalGitConfigured(properties)) {
+    username=getExternalUser(properties);
+    password=getExternalCredential(properties);
+  }
+ else {
+    username=getContainerLogin();
+    password=generateContainerToken(getCurator());
+  }
+  return new UsernamePasswordCredentialsProvider(username,password);
 }
