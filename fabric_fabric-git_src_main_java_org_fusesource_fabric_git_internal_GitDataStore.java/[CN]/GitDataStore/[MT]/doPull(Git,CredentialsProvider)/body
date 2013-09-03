@@ -12,7 +12,7 @@
     if (LOG.isDebugEnabled()) {
       LOG.debug("Performing a fetch in git repository " + GitHelpers.getRootGitDirectory(git) + " on remote URL: "+ url);
     }
-    RevCommit statusBefore=CommitUtils.getHead(repository);
+    boolean hasChanged=false;
     try {
       git.fetch().setCredentialsProvider(credentialsProvider).setRemote(remote).call();
     }
@@ -47,10 +47,12 @@
           git.checkout().setName(MASTER_BRANCH).setForce(true).call();
           git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
         }
+        hasChanged=true;
       }
  else       if (!localBranches.containsKey(version)) {
         git.branchCreate().setName(version).call();
         git.reset().setMode(ResetCommand.ResetType.HARD).setRef(remoteBranches.get(version).getName()).call();
+        hasChanged=true;
       }
  else {
         String localCommit=localBranches.get(version).getObjectId().getName();
@@ -60,11 +62,13 @@
           git.checkout().setName("HEAD").setForce(true).call();
           git.checkout().setName(version).setForce(true).call();
           MergeResult result=git.merge().setStrategy(MergeStrategy.THEIRS).include(remoteBranches.get(version).getObjectId()).call();
+          if (result.getMergeStatus() != MergeResult.MergeStatus.ALREADY_UP_TO_DATE) {
+            hasChanged=true;
+          }
         }
       }
     }
-    RevCommit statusAfter=CommitUtils.getHead(repository);
-    if (hasChanged(statusBefore,statusAfter)) {
+    if (hasChanged) {
       LOG.debug("Changed after pull!");
       if (credentialsProvider != null) {
         File profilesDirectory=getProfilesDirectory(git);

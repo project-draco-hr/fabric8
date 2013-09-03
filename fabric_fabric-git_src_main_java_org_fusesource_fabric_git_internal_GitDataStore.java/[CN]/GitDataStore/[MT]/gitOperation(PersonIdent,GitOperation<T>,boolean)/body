@@ -3,7 +3,6 @@ synchronized (lock) {
     try {
       Git git=getGit();
       Repository repository=git.getRepository();
-      String originalBranch=repository.getBranch();
       CredentialsProvider credentialsProvider=getCredentialsProvider();
       if (personIdent == null) {
         personIdent=new PersonIdent(repository);
@@ -14,6 +13,7 @@ synchronized (lock) {
       if (pullFirst) {
         doPull(git,credentialsProvider);
       }
+      String originalBranch=repository.getBranch();
       RevCommit statusBefore=CommitUtils.getHead(repository);
       GitContext context=new GitContext();
       T answer=operation.call(git,context);
@@ -28,7 +28,6 @@ synchronized (lock) {
       }
       git.checkout().setName(originalBranch).call();
       if (requirePush || hasChanged(statusBefore,CommitUtils.getHead(repository))) {
-        doPush(git,context,credentialsProvider);
         fireChangeNotifications();
       }
       return answer;
