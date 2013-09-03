@@ -28,6 +28,13 @@
       if (options.getManualIp() != null && !options.getManualIp().isEmpty()) {
         jvmOptsBuilder.append(" -D" + ZkDefs.MANUAL_IP + "="+ options.getManualIp());
       }
+      Map<String,String> dataStoreProperties=new HashMap<String,String>(options.getDataStoreProperties());
+      dataStoreProperties.put(DataStore.DATASTORE_TYPE_PROPERTY,service.getDataStore().getType());
+      for (      Map.Entry<String,String> dataStoreEntries : options.getDataStoreProperties().entrySet()) {
+        String key=dataStoreEntries.getKey();
+        String value=dataStoreEntries.getValue();
+        jvmOptsBuilder.append(" -D" + DataStore.DATASTORE_TYPE_PID + "."+ key+ "="+ value);
+      }
       Profile defaultProfile=parent.getVersion().getProfile("default");
       String featuresUrls=collectionAsString(defaultProfile.getRepositories());
       Set<String> features=new LinkedHashSet<String>();

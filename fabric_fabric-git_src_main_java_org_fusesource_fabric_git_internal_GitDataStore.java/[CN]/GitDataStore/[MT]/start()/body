@@ -1,10 +1,10 @@
 {
   try {
     super.start();
-    Properties properties=getDataStoreProperties();
+    Map<String,String> properties=getDataStoreProperties();
     if (properties != null) {
       this.pullPeriod=PropertiesHelper.getLongValue(properties,GIT_PULL_PERIOD,this.pullPeriod);
-      this.gitRemoteUrl=properties.getProperty(GIT_REMOTE_URL);
+      this.gitRemoteUrl=properties.get(GIT_REMOTE_URL);
     }
     if (gitRemoteUrl != null) {
       remoteChangeListener.onRemoteUrlChanged(gitRemoteUrl);
@@ -15,11 +15,8 @@
       remoteChangeListener.onRemoteUrlChanged(gitRemoteUrl);
       pull();
     }
-    if (threadPool == null) {
-      this.threadPool=Executors.newSingleThreadScheduledExecutor();
-    }
     LOG.info("starting to pull from remote repository every " + pullPeriod + " millis");
-    threadPool.scheduleWithFixedDelay(new Runnable(){
+    getThreadPool().scheduleWithFixedDelay(new Runnable(){
       @Override public void run(){
         LOG.debug("Performing timed pull");
         pull();

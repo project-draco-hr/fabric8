@@ -19,6 +19,7 @@
   sb.append(COPY_NODE_METADATA).append("\n");
   sb.append(KARAF_CHECK).append("\n");
   sb.append(REPLACE_IN_FILE).append("\n");
+  sb.append(REPLACE_PROPERTY_VALUE).append("\n");
   sb.append(CONFIGURE_HOSTNAMES).append("\n");
   sb.append(FIND_FREE_PORT).append("\n");
   sb.append(WAIT_FOR_PORT).append("\n");
@@ -49,6 +50,11 @@
   }
   appendFile(sb,"etc/system.properties",lines);
   replaceLineInFile(sb,"etc/system.properties","karaf.name=root","karaf.name=" + name);
+  for (  Map.Entry<String,String> entry : options.getDataStoreProperties().entrySet()) {
+    String key=entry.getKey();
+    String value=entry.getKey();
+    replacePropertyValue(sb,"etc/" + DATASTORE_TYPE_PID + ".cfg",key,value);
+  }
   sb.append("SSH_PORT=").append("`find_free_port ").append(Ports.mapPortToRange(DEFAULT_SSH_PORT,options.getMinimumPort(),options.getMaximumPort())).append(" ").append(options.getMaximumPort()).append("`\n");
   sb.append("RMI_REGISTRY_PORT=").append("`find_free_port ").append(Ports.mapPortToRange(DEFAULT_RMI_REGISTRY_PORT,options.getMinimumPort(),options.getMaximumPort())).append(" ").append(options.getMaximumPort()).append("`\n");
   sb.append("RMI_SERVER_PORT=").append("`find_free_port ").append(Ports.mapPortToRange(DEFAULT_RMI_SERVER_PORT,options.getMinimumPort(),options.getMaximumPort())).append(" ").append(options.getMaximumPort()).append("`\n");
