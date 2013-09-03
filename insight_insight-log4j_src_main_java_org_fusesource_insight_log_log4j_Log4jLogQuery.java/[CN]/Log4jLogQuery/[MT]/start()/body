@@ -1,29 +1,4 @@
 {
   super.start();
-  ILoggerFactory loggerFactory=LoggerFactory.getILoggerFactory();
-  AppenderAttachable appenderAttachable=null;
-  if (loggerFactory instanceof AppenderAttachable) {
-    appenderAttachable=(AppenderAttachable)loggerFactory;
-  }
-  if (appenderAttachable == null) {
-    appenderAttachable=LogManager.getRootLogger();
-  }
-  if (appenderAttachable != null) {
-    Appender appender=new AppenderSkeleton(){
-      protected void append(      LoggingEvent loggingEvent){
-        logMessage(loggingEvent);
-      }
-      public void close(){
-      }
-      public boolean requiresLayout(){
-        return true;
-      }
-    }
-;
-    appender.setName("LogQuery");
-    appenderAttachable.addAppender(appender);
-  }
- else {
-    LOG.error("No ILoggerFactory found so cannot attach appender!");
-  }
+  reconnectAppender();
 }
