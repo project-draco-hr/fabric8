@@ -39,19 +39,20 @@
       }
     }
     for (    String version : gitVersions) {
-      if (!version.equals(MASTER_BRANCH) && !remoteBranches.containsKey(version)) {
-        try {
-          git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
+      if (!remoteBranches.containsKey(version)) {
+        if (!version.equals(MASTER_BRANCH)) {
+          try {
+            git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
+          }
+ catch (          CannotDeleteCurrentBranchException ex) {
+            git.checkout().setName(MASTER_BRANCH).setForce(true).call();
+            git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
+          }
+          hasChanged=true;
         }
- catch (        CannotDeleteCurrentBranchException ex) {
-          git.checkout().setName(MASTER_BRANCH).setForce(true).call();
-          git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
-        }
-        hasChanged=true;
       }
  else       if (!localBranches.containsKey(version)) {
-        git.branchCreate().setName(version).call();
-        git.reset().setMode(ResetCommand.ResetType.HARD).setRef(remoteBranches.get(version).getName()).call();
+        git.checkout().setCreateBranch(true).setName(version).setStartPoint(remote + "/" + version).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).setForce(true).call();
         hasChanged=true;
       }
  else {
