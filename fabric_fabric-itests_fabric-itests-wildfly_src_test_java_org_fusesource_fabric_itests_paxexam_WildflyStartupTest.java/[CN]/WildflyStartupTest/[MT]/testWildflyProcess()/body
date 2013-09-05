@@ -1,0 +1,10 @@
+{
+  executeCommand("fabric:create");
+  Container container=getFabricService().getContainers()[0];
+  assertEquals("Expected to find the root container","root",container.getId());
+  waitForProvisionSuccess(container);
+  executeCommand("container-add-profile root controller-wildfly");
+  waitForProvisionSuccess(container);
+  Profile profile=getProfile(container,"controller-wildfly");
+  Assert.assertNotNull("Profile not null",profile);
+}

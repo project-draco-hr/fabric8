@@ -5,7 +5,7 @@
     J4pExecResponse response=getJolokiaClient().execute(request);
     List<Map<String,Object>> values=response.getValue();
     for (    Map<String,Object> value : values) {
-      containers.add(new ContainerFacade(getJolokiaClient(),(String)value.get("id")));
+      containers.add(new ContainerFacade(this,getJolokiaClient(),(String)value.get("id")));
     }
   }
  catch (  Exception e) {
