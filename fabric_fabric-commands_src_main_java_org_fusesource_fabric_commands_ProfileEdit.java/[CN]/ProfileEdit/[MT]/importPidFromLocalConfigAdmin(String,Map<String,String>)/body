@@ -6,8 +6,10 @@
       Enumeration keyEnumeration=dictionary.keys();
       while (keyEnumeration.hasMoreElements()) {
         String key=String.valueOf(keyEnumeration.nextElement());
-        String value=String.valueOf(dictionary.get(key));
-        target.put(key,value);
+        if (!key.equals(FILE_INSTALL_FILENAME_PROPERTY)) {
+          String value=String.valueOf(dictionary.get(key));
+          target.put(key,value);
+        }
       }
     }
   }
