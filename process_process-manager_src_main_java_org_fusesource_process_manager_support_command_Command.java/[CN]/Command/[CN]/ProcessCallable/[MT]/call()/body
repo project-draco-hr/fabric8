@@ -2,18 +2,17 @@
   ProcessBuilder processBuilder=new ProcessBuilder(command.getCommand());
   processBuilder.directory(command.getDirectory());
   processBuilder.redirectErrorStream(true);
+  Map<String,String> processenv=processBuilder.environment();
   Set<Map.Entry<String,String>> entries=command.getEnvironment().entrySet();
   for (  Map.Entry<String,String> entry : entries) {
     String name=entry.getKey();
     String value=entry.getValue();
-    if (value != null && value.startsWith("$")) {
-      String envVar=value.substring(1);
-      value=System.getenv(envVar);
-      if (value == null && name.equals("USER")) {
-        value=System.getProperty("user.name","");
-      }
+    if ("__unset".equals(value)) {
+      processenv.remove(name);
     }
-    processBuilder.environment().put(name,value);
+ else {
+      processenv.put(name,value);
+    }
   }
   final Process process;
   try {

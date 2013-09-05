@@ -1,0 +1,29 @@
+{
+  executeCommand("fabric:create -n");
+  Container container=getFabricService().getContainers()[0];
+  Assert.assertEquals("Expected to find the root container","root",container.getId());
+  container=ContainerBuilder.child(1).withName("child").assertProvisioningResult().build().iterator().next();
+  try {
+    Assert.assertEquals("Expected to find the child container","child1",container.getId());
+    executeCommand("container-add-profile child1 controller-wildfly");
+    waitForProvisionSuccess(container);
+    File childHome=new File(System.getProperty("karaf.home") + "/instances/" + container.getId());
+    File pidFile=new File(childHome + "/processes/1/wildfly-8.0.0.Alpha4/standalone/data/wildfly.pid");
+    System.out.println("Waiting for: " + pidFile);
+    for (int i=0; !pidFile.exists() && i < 10; i++) {
+      Thread.sleep(1000);
+    }
+    Assert.assertTrue("PID file exists",pidFile.exists());
+    BufferedReader pidr=new BufferedReader(new FileReader(pidFile));
+    Long pid=new Long(pidr.readLine());
+    Assert.assertNotNull("PID not null",pid);
+    pidr.close();
+    System.out.println("WildFly PID: " + pid);
+    Runtime runtime=Runtime.getRuntime();
+    runtime.exec("kill -9 " + pid);
+    pidFile.delete();
+  }
+  finally {
+    container.destroy();
+  }
+}

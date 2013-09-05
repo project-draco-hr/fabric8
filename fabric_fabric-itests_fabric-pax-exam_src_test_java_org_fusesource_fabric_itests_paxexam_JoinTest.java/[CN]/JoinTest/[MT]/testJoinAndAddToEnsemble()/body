@@ -10,8 +10,8 @@
     System.err.println(executeCommand("admin:start child2"));
     Container child1=fabricService.getContainer("child1");
     Container child2=fabricService.getContainer("child2");
-    waitForProvisionSuccess(child1,PROVISION_TIMEOUT);
-    waitForProvisionSuccess(child2,PROVISION_TIMEOUT);
+    waitForProvisionSuccess(child1,PROVISION_TIMEOUT,TimeUnit.MILLISECONDS);
+    waitForProvisionSuccess(child2,PROVISION_TIMEOUT,TimeUnit.MILLISECONDS);
     System.err.println(executeCommand("fabric:ensemble-add --force child1 child2"));
     Thread.sleep(5000);
     curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
