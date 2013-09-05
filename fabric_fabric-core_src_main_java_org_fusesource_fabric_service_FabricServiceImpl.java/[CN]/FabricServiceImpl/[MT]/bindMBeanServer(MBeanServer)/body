@@ -1,10 +1,9 @@
 {
-  unbindMBeanServer(this.mbeanServer);
-  this.mbeanServer=mbeanServer;
+  this.mbeanServer.bind(mbeanServer);
   if (mbeanServer != null) {
-    healthCheck.registerMBeanServer(this.mbeanServer);
-    managerMBean.registerMBeanServer(this.mbeanServer);
-    fileSystemMBean.registerMBeanServer(this.mbeanServer);
-    zooKeeperMBean.registerMBeanServer(this.mbeanServer);
+    healthCheck.registerMBeanServer(mbeanServer);
+    managerMBean.registerMBeanServer(mbeanServer);
+    fileSystemMBean.registerMBeanServer(mbeanServer);
+    zooKeeperMBean.registerMBeanServer(mbeanServer);
   }
 }

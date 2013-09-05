@@ -1,0 +1,19 @@
+{
+  T value=ref.get();
+  long startAt=System.currentTimeMillis();
+  long remaining=timeout;
+  while (value == null && remaining > 0) {
+    try {
+      semaphore.tryAcquire(remaining,timeUnit);
+      value=ref.get();
+    }
+ catch (    Exception ex) {
+      value=null;
+    }
+    remaining=timeout + startAt - System.currentTimeMillis();
+  }
+  if (value == null) {
+    throw new DynamicReferenceException("Gave up waiting for dynamic reference.");
+  }
+  return value;
+}

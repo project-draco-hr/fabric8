@@ -1,12 +1,12 @@
 {
   URI uri=URI.create(defaultRepo);
   try {
-    if (curator != null && exists(curator,ZkPath.MAVEN_PROXY.getPath("download")) != null) {
-      List<String> children=getChildren(curator,ZkPath.MAVEN_PROXY.getPath("download"));
+    if (curator != null && exists(curator.get(),ZkPath.MAVEN_PROXY.getPath("download")) != null) {
+      List<String> children=getChildren(curator.get(),ZkPath.MAVEN_PROXY.getPath("download"));
       if (children != null && !children.isEmpty()) {
         Collections.sort(children);
       }
-      String mavenRepo=getSubstitutedPath(curator,ZkPath.MAVEN_PROXY.getPath("download") + "/" + children.get(0));
+      String mavenRepo=getSubstitutedPath(curator.get(),ZkPath.MAVEN_PROXY.getPath("download") + "/" + children.get(0));
       if (mavenRepo != null && !mavenRepo.endsWith("/")) {
         mavenRepo+="/";
       }

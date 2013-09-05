@@ -1,14 +1,14 @@
 {
   try {
     List<URI> uris=new ArrayList<URI>();
-    if (curator != null && exists(curator,ZkPath.MAVEN_PROXY.getPath("download")) != null) {
-      List<String> children=getChildren(curator,ZkPath.MAVEN_PROXY.getPath("download"));
+    if (curator != null && exists(curator.get(),ZkPath.MAVEN_PROXY.getPath("download")) != null) {
+      List<String> children=getChildren(curator.get(),ZkPath.MAVEN_PROXY.getPath("download"));
       if (children != null && !children.isEmpty()) {
         Collections.sort(children);
       }
       if (children != null) {
         for (        String child : children) {
-          String mavenRepo=getSubstitutedPath(curator,ZkPath.MAVEN_PROXY.getPath("download") + "/" + child);
+          String mavenRepo=getSubstitutedPath(curator.get(),ZkPath.MAVEN_PROXY.getPath("download") + "/" + child);
           if (mavenRepo != null && !mavenRepo.endsWith("/")) {
             mavenRepo+="/";
           }

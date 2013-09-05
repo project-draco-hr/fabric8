@@ -1,6 +1,6 @@
 {
-  if (curator.checkExists().forPath(containerPath) != null) {
-    byte[] bytes=ZkPath.loadURL(curator,containerPath);
+  if (curator.get().checkExists().forPath(containerPath) != null) {
+    byte[] bytes=ZkPath.loadURL(curator.get(),containerPath);
     String text=new String(bytes);
     int idx=text.indexOf("\"http");
     String answer=text;
