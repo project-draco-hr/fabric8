@@ -3,10 +3,10 @@
   executeCommand("mq-create --create-container broker1,broker2 --jmx-user admin --jmx-password admin ms-broker");
   Container container1=getFabricService().getContainer("broker1");
   containers.add(container1);
-  waitForProvisionSuccess(container1,PROVISION_TIMEOUT);
+  waitForProvisionSuccess(container1,PROVISION_TIMEOUT,TimeUnit.MILLISECONDS);
   Container container2=getFabricService().getContainer("broker2");
   containers.add(container2);
-  waitForProvisionSuccess(container2,PROVISION_TIMEOUT);
+  waitForProvisionSuccess(container2,PROVISION_TIMEOUT,TimeUnit.MILLISECONDS);
   installAndCheckFeature("activemq");
   BrokerViewMBean broker1=(BrokerViewMBean)getMBean(container1,new ObjectName("org.apache.activemq:type=Broker,brokerName=ms-broker"),BrokerViewMBean.class);
   assertEquals("ms-broker",broker1.getBrokerName());
