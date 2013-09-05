@@ -1,12 +1,14 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
+  Thread.sleep(3000);
   System.err.println(executeCommand("fabric:profile-create --parents default child-profile"));
+  Assert.assertTrue(Provision.profileAvailable("child-profile","1.0",DEFAULT_TIMEOUT));
   Set<Container> containers=ContainerBuilder.create(1,1).withName("cnt").withProfiles("child-profile").assertProvisioningResult().build();
   Container child1=containers.iterator().next();
-  System.err.println(executeCommand("fabric:profile-edit --i org.apache.karaf.shell child-profile"));
+  System.err.println(executeCommand("fabric:profile-edit --import-pid --pid org.apache.karaf.shell child-profile"));
   System.err.println(executeCommand("fabric:profile-edit --pid org.apache.karaf.shell/sshPort=8105 child-profile"));
   Thread.sleep(DEFAULT_TIMEOUT);
-  System.err.println(executeCommand("fabric:container-connect " + child1.getId() + " config:proplist --pid org.apache.karaf.shell"));
+  System.err.println(executeCommand("fabric:container-connect " + child1.getId() + " config:proplist --pid org.apache.karaf.shell | grep sshPort"));
   String sshUrl=child1.getSshUrl();
   Assert.assertTrue(sshUrl.endsWith("8105"));
 }

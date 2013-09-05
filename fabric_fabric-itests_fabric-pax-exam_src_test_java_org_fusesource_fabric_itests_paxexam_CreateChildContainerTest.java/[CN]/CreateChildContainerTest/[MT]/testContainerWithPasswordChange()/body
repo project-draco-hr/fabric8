@@ -5,5 +5,5 @@
   Container container=containers.iterator().next();
   System.err.println(executeCommands("jaas:manage --realm karaf --module org.fusesource.fabric.jaas.ZookeeperLoginModule","jaas:userdel admin","jaas:useradd admin newpassword","jaas:roleadd admin admin","jaas:update"));
   System.err.println(executeCommand("fabric:container-stop --user admin --password newpassword " + container.getId()));
-  Provision.waitForContainerAlive(containers,false,6 * DEFAULT_TIMEOUT);
+  Provision.containersAlive(containers,false,6 * DEFAULT_TIMEOUT);
 }

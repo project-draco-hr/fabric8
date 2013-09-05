@@ -13,7 +13,7 @@
   for (  Container container : containers) {
     container.setProfiles(new Profile[]{defaultProfile});
   }
-  Provision.waitForContainerStatus(containers,PROVISION_TIMEOUT);
+  Provision.containerStatus(containers,PROVISION_TIMEOUT);
   for (  String featureName : featureNames.split(" ")) {
     System.out.println(executeCommand("fabric:profile-edit --features " + featureName + " "+ targetProfile.getId()));
   }
@@ -23,7 +23,7 @@
     }
     container.setProfiles(new Profile[]{targetProfile});
   }
-  Provision.waitForContainerStatus(containers,PROVISION_TIMEOUT);
+  Provision.containerStatus(containers,PROVISION_TIMEOUT);
   System.out.println(executeCommand("fabric:profile-display " + profileName));
   System.out.println(executeCommand("fabric:container-list"));
   for (  Container container : containers) {
@@ -42,7 +42,7 @@
     }
     container.setProfiles(new Profile[]{defaultProfile});
   }
-  Provision.waitForContainerStatus(containers,PROVISION_TIMEOUT);
+  Provision.containerStatus(containers,PROVISION_TIMEOUT);
   for (  String featureName : featureNames.split(" ")) {
     System.out.println(executeCommand("fabric:profile-edit --delete --features " + featureName + " "+ targetProfile.getId()));
   }

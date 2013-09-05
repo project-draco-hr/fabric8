@@ -20,8 +20,8 @@
     Profile p=c.getVersion().getProfile("dosgi-camel");
     c.setProfiles(new Profile[]{p});
   }
-  Provision.assertSuccess(dosgiProviderContainers,PROVISION_TIMEOUT);
-  Provision.assertSuccess(dosgiCamelContainers,PROVISION_TIMEOUT);
+  Provision.provisioningSuccess(dosgiProviderContainers,PROVISION_TIMEOUT);
+  Provision.provisioningSuccess(dosgiCamelContainers,PROVISION_TIMEOUT);
   Thread.sleep(10000L);
   for (  Container c : dosgiCamelContainers) {
     String response=executeCommand("fabric:container-connect -u admin -p admin " + c.getId() + " log:display | grep \"Message from distributed service to\"");
