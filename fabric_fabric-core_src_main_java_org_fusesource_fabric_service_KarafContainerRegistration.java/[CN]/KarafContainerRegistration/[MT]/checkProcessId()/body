@@ -1,4 +1,6 @@
 {
+  String processName=(String)mbeanServer.getAttribute(new ObjectName("java.lang:type=Runtime"),"Name");
+  Long processId=Long.parseLong(processName.split("@")[0]);
   String path=ZkPath.CONTAINER_PROCESS_ID.getPath(name);
   Stat stat=exists(curator,path);
   if (stat != null) {
