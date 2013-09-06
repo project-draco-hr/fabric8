@@ -10,6 +10,8 @@
   String proxyUsername=readProperty(properties,PROXY_USERNAME_PROPERTY,"");
   String proxyPassword=readProperty(properties,PROXY_PASSWORD_PROPERTY,"");
   String nonProxyHosts=readProperty(properties,NON_PROXY_HOSTS_PROPERTY,"");
+  this.role=readProperty(properties,REQUIRED_ROLE,DEFAULT_ROLE);
+  this.realm=readProperty(properties,REQUIRED_REALM,DEFAULT_REALM);
   this.mavenDownloadProxyServlet=new MavenDownloadProxyServlet(localRepository,remoteRepositories,appendSystemRepos,updatePolicy,checksumPolicy,proxyProtocol,proxyHost,proxyPort,proxyUsername,proxyPassword,nonProxyHosts);
   this.mavenDownloadProxyServlet.start();
   this.mavenUploadProxyServlet=new MavenUploadProxyServlet(localRepository,remoteRepositories,appendSystemRepos,updatePolicy,checksumPolicy,proxyProtocol,proxyHost,proxyPort,proxyUsername,proxyPassword,nonProxyHosts);
