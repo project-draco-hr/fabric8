@@ -8,7 +8,7 @@
   System.err.println(executeCommand("fabric:profile-edit --import-pid --pid org.apache.karaf.shell child-profile"));
   System.err.println(executeCommand("fabric:profile-edit --pid org.apache.karaf.shell/sshPort=8105 child-profile"));
   Thread.sleep(DEFAULT_TIMEOUT);
-  System.err.println(executeCommand("fabric:container-connect " + child1.getId() + " config:proplist --pid org.apache.karaf.shell | grep sshPort"));
+  System.err.println(executeCommand("fabric:container-connect -u admin -p admin " + child1.getId() + " config:proplist --pid org.apache.karaf.shell | grep sshPort"));
   String sshUrl=child1.getSshUrl();
   Assert.assertTrue(sshUrl.endsWith("8105"));
 }

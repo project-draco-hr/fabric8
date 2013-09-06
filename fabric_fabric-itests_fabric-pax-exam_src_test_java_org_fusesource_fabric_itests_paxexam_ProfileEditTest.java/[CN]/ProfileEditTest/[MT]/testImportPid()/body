@@ -1,8 +1,8 @@
 {
-  FabricService fabricService=getFabricService();
-  assertNotNull(fabricService);
   System.err.println(executeCommands("config:edit my.pid","config:propset key1 value1","config:propset key2 value2","config:update"));
   System.err.println(executeCommand("fabric:create -n"));
+  FabricService fabricService=getFabricService();
+  assertNotNull(fabricService);
   waitForFabricCommands();
   System.err.println(executeCommand("fabric:profile-edit --pid my.pid --import-pid default"));
   Thread.sleep(DEFAULT_WAIT);
