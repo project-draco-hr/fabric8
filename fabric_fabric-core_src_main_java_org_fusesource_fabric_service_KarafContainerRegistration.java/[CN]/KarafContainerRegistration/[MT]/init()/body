@@ -2,6 +2,14 @@
   LOGGER.trace("init");
   String version=System.getProperty("fabric.version",ZkDefs.DEFAULT_VERSION);
   String profiles=System.getProperty("fabric.profiles");
+  String name=null;
+  try {
+    MBeanServer mbean_server=ManagementFactory.getPlatformMBeanServer();
+    name=(String)mbean_server.getAttribute(new ObjectName("java.lang:type=Runtime"),"Name");
+    processId=Long.parseLong(name.split("@")[0]);
+  }
+ catch (  Throwable e) {
+  }
   try {
     if (profiles != null) {
       String versionNode=CONFIG_CONTAINER.getPath(name);

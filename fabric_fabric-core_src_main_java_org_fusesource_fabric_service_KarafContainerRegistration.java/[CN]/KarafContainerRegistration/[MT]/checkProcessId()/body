@@ -1,0 +1,17 @@
+{
+  String path=ZkPath.CONTAINER_PROCESS_ID.getPath(name);
+  Stat stat=exists(curator,path);
+  if (stat != null) {
+    if (stat.getEphemeralOwner() != curator.getZookeeperClient().getZooKeeper().getSessionId()) {
+      delete(curator,path);
+      if (processId != null) {
+        create(curator,path,processId.toString(),CreateMode.EPHEMERAL);
+      }
+    }
+  }
+ else {
+    if (processId != null) {
+      create(curator,path,processId.toString(),CreateMode.EPHEMERAL);
+    }
+  }
+}
