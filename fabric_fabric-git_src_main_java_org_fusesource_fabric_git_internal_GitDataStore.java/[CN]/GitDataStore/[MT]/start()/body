@@ -1,6 +1,7 @@
 {
   try {
     super.start();
+    this.threadPool=Executors.newSingleThreadScheduledExecutor();
     Map<String,String> properties=getDataStoreProperties();
     if (properties != null) {
       this.pullPeriod=PropertiesHelper.getLongValue(properties,GIT_PULL_PERIOD,this.pullPeriod);

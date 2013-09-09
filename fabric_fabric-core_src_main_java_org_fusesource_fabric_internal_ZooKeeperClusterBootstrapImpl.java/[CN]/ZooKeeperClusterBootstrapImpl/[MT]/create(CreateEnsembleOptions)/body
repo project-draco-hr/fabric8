@@ -7,6 +7,7 @@
     int zooKeeperServerConnectionPort=options.getZooKeeperServerConnectionPort();
     int mappedPort=mapPortToRange(zooKeeperServerPort,minimumPort,maximumPort);
     String connectionUrl=getConnectionAddress() + ":" + zooKeeperServerConnectionPort;
+    updateDataStoreConfig(options.getDataStoreProperties());
     createZooKeeeperServerConfig(zooKeeperServerHost,mappedPort,options);
     dataStoreRegistrationHandler.addRegistrationCallback(new DataStoreBootstrapTemplate(connectionUrl,configuration,options));
     createZooKeeeperConfig(connectionUrl,options);
