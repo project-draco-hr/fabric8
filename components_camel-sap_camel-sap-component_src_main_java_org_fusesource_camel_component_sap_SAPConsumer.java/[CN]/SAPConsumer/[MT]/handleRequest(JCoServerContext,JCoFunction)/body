@@ -1,8 +1,19 @@
 {
+  if (LOG.isDebugEnabled()) {
+    LOG.debug("Handling request for RFC '{}'",jcoFunction.getName());
+  }
   SAPServerEndpoint sapEndpoint=(SAPServerEndpoint)getEndpoint();
   Exchange exchange=getEndpoint().createExchange(sapEndpoint.getMep());
   Structure request=RfcUtil.getRequest(serverContext.getRepository(),jcoFunction.getName());
   RfcUtil.extractJCoParameterListsIntoRequest(jcoFunction,request);
+  if (LOG.isDebugEnabled()) {
+    try {
+      LOG.debug("Request: " + (request == null ? request : RfcUtil.marshal(request)));
+    }
+ catch (    IOException e) {
+      LOG.warn("Failed to log request",e);
+    }
+  }
   try {
     Message message=exchange.getIn();
     message.setHeader("sap.sessionData",sessionData);
@@ -16,6 +27,14 @@
         message=exchange.getIn();
       }
       Structure response=message.getBody(Structure.class);
+      if (LOG.isDebugEnabled()) {
+        try {
+          LOG.debug("Response: " + (response == null ? response : RfcUtil.marshal(response)));
+        }
+ catch (        Exception e) {
+          LOG.warn("Failed to log response",e);
+        }
+      }
       RfcUtil.fillJCoParameterListsFromResponse(response,jcoFunction);
     }
   }
