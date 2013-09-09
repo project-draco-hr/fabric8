@@ -25,7 +25,7 @@
   assertThat("structure.get(DATE_PARAM) returned '" + structure.get(DATE_PARAM) + "' instead of expected value '"+ DATE_PARAM_OUT_VAL+ "'",(Date)structure.get(DATE_PARAM),is(DATE_PARAM_OUT_VAL));
   assertThat("structure.get(TIME_PARAM) returned '" + structure.get(TIME_PARAM) + "' instead of expected value '"+ TIME_PARAM_OUT_VAL+ "'",(Date)structure.get(TIME_PARAM),is(TIME_PARAM_OUT_VAL));
   assertThat("structure.get(STRING_PARAM) returned '" + structure.get(STRING_PARAM) + "' instead of expected value '"+ STRING_PARAM_OUT_VAL+ "'",(String)structure.get(STRING_PARAM),is(STRING_PARAM_OUT_VAL));
-  @SuppressWarnings("unchecked") Table<? extends Structure> table=(Table<? extends Structure>)response.get(PARAM_LIST_TABLE_PARAM);
+  @SuppressWarnings("unchecked") Table<? extends Structure> table=response.get(PARAM_LIST_TABLE_PARAM,Table.class);
   assertThat("response.get(PARAM_LIST_TABLE_PARAM) returned unexpected null value",table,notNullValue());
   List<? extends Structure> rows=table.getRows();
   assertThat("rows.size() returned '" + rows.size() + "' instead of expected value of '1'",rows.size(),is(1));
