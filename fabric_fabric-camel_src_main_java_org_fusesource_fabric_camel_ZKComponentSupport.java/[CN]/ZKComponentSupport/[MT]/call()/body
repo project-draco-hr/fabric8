@@ -12,8 +12,8 @@
   if (password != null && !password.isEmpty()) {
     builder.authorization("digest",("fabric:" + password).getBytes());
   }
-  CuratorFramework client=builder.build();
+  curator=builder.build();
   LOG.debug("Starting curator " + curator);
-  client.start();
+  curator.start();
   return curator;
 }
