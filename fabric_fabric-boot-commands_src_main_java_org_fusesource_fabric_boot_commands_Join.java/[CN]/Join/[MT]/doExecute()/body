@@ -23,6 +23,7 @@
       }
       System.setProperty(SystemProperties.KARAF_NAME,containerName);
       System.setProperty("zookeeper.url",zookeeperUrl);
+      System.setProperty("zookeeper.password",zookeeperPassword);
       File file=new File(System.getProperty("karaf.base") + "/etc/system.properties");
       org.apache.felix.utils.properties.Properties props=new org.apache.felix.utils.properties.Properties(file);
       props.put(SystemProperties.KARAF_NAME,containerName);
@@ -32,12 +33,6 @@
       if (!nonManaged) {
         installBundles();
       }
-      org.osgi.service.cm.Configuration config=configurationAdmin.getConfiguration("org.fusesource.fabric.zookeeper");
-      Hashtable<String,Object> properties=new Hashtable<String,Object>();
-      properties.put("zookeeper.url",zookeeperUrl);
-      properties.put("zookeeper.password",zookeeperPassword);
-      config.setBundleLocation(null);
-      config.update(properties);
       System.setProperty("karaf.restart","true");
       System.setProperty("karaf.restart.clean","false");
       bundleContext.getBundle(0).stop();
@@ -58,7 +53,9 @@
     properties.put("zookeeper.password",zookeeperPassword);
     config.setBundleLocation(null);
     config.update(properties);
-    installBundles();
+    if (!nonManaged) {
+      installBundles();
+    }
     return null;
   }
 }
