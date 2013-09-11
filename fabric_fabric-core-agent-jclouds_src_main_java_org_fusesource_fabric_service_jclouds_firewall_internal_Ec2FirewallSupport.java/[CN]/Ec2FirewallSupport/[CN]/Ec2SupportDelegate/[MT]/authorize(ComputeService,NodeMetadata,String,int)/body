@@ -1,6 +1,6 @@
 {
   String region=AWSUtils.parseHandle(node.getId())[0];
-  EC2Client ec2Client=EC2Client.class.cast(service.getContext().unwrap().getProviderMetadata().getApiMetadata());
+  EC2Client ec2Client=service.getContext().unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi();
   String groupName="jclouds#" + node.getGroup();
   for (  int port : ports) {
     try {
