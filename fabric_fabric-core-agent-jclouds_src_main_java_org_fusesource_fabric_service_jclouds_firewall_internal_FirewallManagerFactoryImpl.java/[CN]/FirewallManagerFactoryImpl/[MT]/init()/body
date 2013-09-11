@@ -1,21 +1,2 @@
 {
-  firewallSupportModuleTracker=new ServiceTracker(bundleContext,ApiFirewallSupport.class.getName(),null){
-    @Override public Object addingService(    ServiceReference reference){
-      ApiFirewallSupport support=(ApiFirewallSupport)bundleContext.getService(reference);
-      bind(support);
-      return support;
-    }
-    @Override public void removedService(    ServiceReference reference,    Object service){
-      ApiFirewallSupport support=(ApiFirewallSupport)service;
-      unbind(support);
-      super.removedService(reference,service);
-    }
-    @Override public void modifiedService(    ServiceReference reference,    Object service){
-      ApiFirewallSupport support=(ApiFirewallSupport)service;
-      bind(support);
-      super.modifiedService(reference,service);
-    }
-  }
-;
-  firewallSupportModuleTracker.open();
 }
