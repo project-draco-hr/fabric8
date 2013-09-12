@@ -1,0 +1,29 @@
+{
+  String profile=file.getName();
+  if (useDirectoriesForProfiles) {
+    if (profile.endsWith(PROFILE_FOLDER_SUFFIX)) {
+      profile=prefix + profile.substring(0,profile.length() - PROFILE_FOLDER_SUFFIX.length());
+    }
+ else {
+      File[] files=file.listFiles();
+      if (files != null) {
+        for (        File child : files) {
+          if (child.isDirectory()) {
+            addProfileData(git,data,child,prefix + file.getName() + "-");
+          }
+        }
+      }
+      return;
+    }
+  }
+  ProfileData profileData=new ProfileData();
+  data.profiles.put(profile,profileData);
+  profileData.configurations=doGetFileConfigurations(git,profile);
+  File profileDirectory=file;
+  File metadataFile=new File(profileDirectory,AGENT_METADATA_FILE);
+  profileData.lastModified=profileDirectory.lastModified();
+  if (metadataFile.exists()) {
+    long modified=metadataFile.lastModified();
+    profileData.lastModified=Math.max(profileData.lastModified,modified);
+  }
+}

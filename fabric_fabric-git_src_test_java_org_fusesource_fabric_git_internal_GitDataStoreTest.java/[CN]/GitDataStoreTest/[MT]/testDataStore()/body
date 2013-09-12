@@ -11,7 +11,7 @@
     String prefix=importPath + "/fabric";
     String profileImport=prefix + "/configs/versions/1.0/profiles";
     assertFolderExists(profileImport);
-    dataStore.importFromFileSystem(new File(profileImport),"fabric","1.0");
+    dataStore.importFromFileSystem(new File(profileImport),"fabric","1.0",true);
     assertHasVersion(defaultVersion);
   }
   remote.checkout().setName("1.0").call();
@@ -32,12 +32,13 @@
   profileAttributes=dataStore.getProfileAttributes(version,importedProfile);
   System.out.println("Profile attributes: " + profileAttributes);
   assertMapContains("Profile attribute[" + profileAttributeKey + "]",profileAttributes,profileAttributeKey,expectedProfileAttributeValue);
+  doSleep();
   Map<String,byte[]> tomcatFileConfigurations=dataStore.getFileConfigurations("1.0","controller-tomcat");
   assertHasFileConfiguration(tomcatFileConfigurations,"tomcat/conf/server.xml.mvel");
   String profileNotCreated="shouldNotBeCreated";
   assertEquals("Should not create profile: " + profileNotCreated,null,dataStore.getProfile(version,profileNotCreated,false));
   assertProfileNotExists(defaultVersion,profileNotCreated);
-  assertFolderNotExists(getLocalGitFile("fabric/profiles/" + profileNotCreated));
+  assertFolderNotExists(getLocalGitFile("fabric/profiles/" + dataStore.convertProfileIdToDirectory(profileNotCreated)));
   String newProfile="myNewProfile";
   dataStore.createProfile(version,newProfile);
   assertProfileExists(version,newProfile);
@@ -51,17 +52,19 @@
   dataStore.deleteProfile(version,newProfile);
   assertProfileNotExists(version,newProfile);
   remote.checkout().setName("1.1").call();
+  doSleep();
   assertProfileExists("1.1",profile);
   assertProfileExists("1.1",newProfile);
-  assertFolderExists(getRemoteGitFile("fabric/profiles/" + profile));
-  assertFolderExists(getRemoteGitFile("fabric/profiles/" + newProfile));
-  assertFolderExists("we should have pushed this file remotely due to the call to dataStore.setProfileAttribute()",getRemoteGitFile("fabric/profiles/" + importedProfile + "/org.fusesource.fabric.profile.attributes.properties"));
+  assertFolderExists(getRemoteGitFile("fabric/profiles/" + dataStore.convertProfileIdToDirectory(profile)));
+  assertFolderExists(getRemoteGitFile("fabric/profiles/" + dataStore.convertProfileIdToDirectory(newProfile)));
+  assertFolderExists("we should have pushed this file remotely due to the call to dataStore.setProfileAttribute()",getRemoteGitFile("fabric/profiles/" + dataStore.convertProfileIdToDirectory(importedProfile) + "/org.fusesource.fabric.profile.attributes.properties"));
   remote.checkout().setName("1.2").call();
+  doSleep();
   assertProfileExists("1.2",profile);
   assertProfileNotExists("1.2",newProfile);
-  assertFolderExists(getRemoteGitFile("fabric/profiles/" + profile));
-  assertFolderNotExists(getRemoteGitFile("fabric/profiles/" + newProfile));
+  assertFolderExists(getRemoteGitFile("fabric/profiles/" + dataStore.convertProfileIdToDirectory(profile)));
+  assertFolderNotExists(getRemoteGitFile("fabric/profiles/" + dataStore.convertProfileIdToDirectory(newProfile)));
   remote.checkout().setName("1.0").call();
-  assertFolderExists(getRemoteGitFile("fabric/profiles/" + profile));
-  assertFolderNotExists(getRemoteGitFile("fabric/profiles/" + newProfile));
+  assertFolderExists(getRemoteGitFile("fabric/profiles/" + dataStore.convertProfileIdToDirectory(profile)));
+  assertFolderNotExists(getRemoteGitFile("fabric/profiles/" + dataStore.convertProfileIdToDirectory(newProfile)));
 }

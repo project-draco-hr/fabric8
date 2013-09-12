@@ -6,17 +6,7 @@
     if (files != null) {
       for (      File file : files) {
         if (file.isDirectory()) {
-          String profile=file.getName();
-          ProfileData profileData=new ProfileData();
-          data.profiles.put(profile,profileData);
-          profileData.configurations=doGetFileConfigurations(git,profile);
-          File profileDirectory=file;
-          File metadataFile=new File(profileDirectory,AGENT_METADATA_FILE);
-          profileData.lastModified=profileDirectory.lastModified();
-          if (metadataFile.exists()) {
-            long modified=metadataFile.lastModified();
-            profileData.lastModified=Math.max(profileData.lastModified,modified);
-          }
+          addProfileData(git,data,file,"");
         }
       }
     }

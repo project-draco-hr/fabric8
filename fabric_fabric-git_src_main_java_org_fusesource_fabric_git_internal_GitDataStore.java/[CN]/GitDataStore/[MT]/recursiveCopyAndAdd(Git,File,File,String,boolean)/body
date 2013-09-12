@@ -3,14 +3,14 @@
   String pattern=path + (path.length() > 0 ? "/" : "") + name;
   File toFile=new File(toDir,name);
   if (from.isDirectory()) {
-    if (path.length() == 0) {
+    if (useToDirAsDestination) {
       toFile=toDir;
     }
     toFile.mkdirs();
     File[] files=from.listFiles();
     if (files != null) {
       for (      File file : files) {
-        recursiveCopyAndAdd(git,file,toFile,pattern);
+        recursiveCopyAndAdd(git,file,toFile,pattern,false);
       }
     }
   }

@@ -1,0 +1,24 @@
+{
+  if (profilesDir.exists()) {
+    File[] files=profilesDir.listFiles();
+    if (files != null) {
+      for (      File file : files) {
+        if (file.isDirectory()) {
+          String name=file.getName();
+          if (useDirectoriesForProfiles) {
+            if (name.endsWith(PROFILE_FOLDER_SUFFIX)) {
+              name=name.substring(0,name.length() - PROFILE_FOLDER_SUFFIX.length());
+              answer.add(prefix + name);
+            }
+ else {
+              doAddProfileNames(answer,file,prefix + name + "-");
+            }
+          }
+ else {
+            answer.add(name);
+          }
+        }
+      }
+    }
+  }
+}

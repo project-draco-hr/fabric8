@@ -16,7 +16,7 @@
             if (versionFiles != null) {
               for (              File versionFile : versionFiles) {
                 LOG.info("Importing version configuration " + versionFile + " to branch "+ version);
-                importFromFileSystem(versionFile,CONFIG_ROOT_DIR,version);
+                importFromFileSystem(versionFile,CONFIG_ROOT_DIR,version,true);
               }
             }
           }
@@ -26,11 +26,11 @@
     File metrics=new File(fabricsDir,"metrics");
     if (metrics.exists()) {
       LOG.info("Importing metrics from " + metrics + " to branch "+ defaultVersion);
-      importFromFileSystem(metrics,CONFIG_ROOT_DIR,defaultVersion);
+      importFromFileSystem(metrics,CONFIG_ROOT_DIR,defaultVersion,false);
     }
   }
  else {
     LOG.info("Importing " + file + " as version "+ defaultVersion);
-    importFromFileSystem(file,"",defaultVersion);
+    importFromFileSystem(file,"",defaultVersion,false);
   }
 }

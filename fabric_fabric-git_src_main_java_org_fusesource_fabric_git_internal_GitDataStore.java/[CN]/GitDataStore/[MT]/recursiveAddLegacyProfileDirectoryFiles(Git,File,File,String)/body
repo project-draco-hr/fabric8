@@ -1,0 +1,24 @@
+{
+  if (!from.isDirectory()) {
+    throw new IllegalStateException("Should only be invoked on the profiles directory but was given file " + from);
+  }
+  String name=from.getName();
+  String pattern=path + (path.length() > 0 ? "/" : "") + name;
+  File[] profiles=from.listFiles();
+  File toFile=new File(toDir,name);
+  if (profiles != null) {
+    for (    File profileDir : profiles) {
+      if (profileDir.isDirectory()) {
+        String profileId=profileDir.getName();
+        String toProfileDirName=convertProfileIdToDirectory(profileId);
+        File toProfileDir=new File(toFile,toProfileDirName);
+        toProfileDir.mkdirs();
+        recursiveCopyAndAdd(git,profileDir,toProfileDir,pattern,true);
+      }
+ else {
+        recursiveCopyAndAdd(git,profileDir,toFile,pattern,true);
+      }
+    }
+  }
+  git.add().addFilepattern(pattern).call();
+}
