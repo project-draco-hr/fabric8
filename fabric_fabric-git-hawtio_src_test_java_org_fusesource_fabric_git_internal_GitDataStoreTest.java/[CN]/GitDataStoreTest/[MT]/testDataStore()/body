@@ -20,7 +20,8 @@
   assertProfileExists(defaultVersion,profile);
   String version="1.1";
   assertCreateVersion("1.0",version);
-  assertProfileConfiguration(version,importedProfile,"org.fusesource.fabric.agent","parents","camel");
+  String agentPID="org.fusesource.fabric.agent";
+  assertProfileConfiguration(version,importedProfile,agentPID,"parents","camel");
   assertProfileTextFileConfigurationContains(version,"example-camel-fabric","camel.xml","http://camel.apache.org/schema/blueprint");
   Map<String,String> profileAttributes=dataStore.getProfileAttributes(version,importedProfile);
   String parent=profileAttributes.get("parents");
@@ -32,6 +33,18 @@
   profileAttributes=dataStore.getProfileAttributes(version,importedProfile);
   System.out.println("Profile attributes: " + profileAttributes);
   assertMapContains("Profile attribute[" + profileAttributeKey + "]",profileAttributes,profileAttributeKey,expectedProfileAttributeValue);
+  String hawtioRepoKey="repository.hawtio";
+  Map<String,String> hawtioAttrbutes=dataStore.getConfiguration(version,"hawtio",agentPID);
+  String currentHawtRepo=hawtioAttrbutes.get(hawtioRepoKey);
+  System.out.println("Current repository.hawtio: " + currentHawtRepo);
+  FabricGitFacade hawtio=new FabricGitFacade();
+  hawtio.setGitDataStore(dataStore);
+  hawtio.init();
+  String hawtioPropertyFile="/fabric/profiles/" + dataStore.convertProfileIdToDirectory("hawtio") + "/"+ agentPID+ ".properties";
+  hawtio.write(version,hawtioPropertyFile,"My commit message","me","me@apache.org","# new file\n" + hawtioRepoKey + " = "+ "mvn\\:io.hawt/hawtio-karaf/myNewVersion/xml/features"+ "\n");
+  hawtioAttrbutes=dataStore.getConfiguration(version,"hawtio",agentPID);
+  String actual=hawtioAttrbutes.get(hawtioRepoKey);
+  assertEquals("should have found the updated hawtio repo key","mvn:io.hawt/hawtio-karaf/myNewVersion/xml/features",actual);
   Map<String,byte[]> tomcatFileConfigurations=dataStore.getFileConfigurations("1.0","controller-tomcat");
   assertHasFileConfiguration(tomcatFileConfigurations,"tomcat/conf/server.xml.mvel");
   String profileNotCreated="shouldNotBeCreated";
