@@ -1,111 +1,50 @@
 {
+  CreateJCloudsContainerOptions options=input.updateComputeService(getOrCreateComputeService(input));
   int number=Math.max(options.getNumber(),1);
   final Set<CreateJCloudsContainerMetadata> result=new LinkedHashSet<CreateJCloudsContainerMetadata>();
+  StringBuilder overview=new StringBuilder();
   try {
     options.getCreationStateListener().onStateChange("Looking up for compute service.");
     ComputeService computeService=getOrCreateComputeService(options);
     if (computeService == null) {
       throw new IllegalStateException("Compute service could not be found or created.");
     }
-    TemplateBuilder builder=computeService.templateBuilder();
-    builder.any();
-    if (options.getInstanceType() == null && Strings.isNullOrEmpty(options.getHardwareId())) {
-      builder.minRam(1024);
+    overview.append(String.format("Creating %s nodes in the cloud.",number));
+    Template template=ToTemplate.apply(options);
+    Set<? extends NodeMetadata> metadatas=null;
+    overview.append(" It may take a while ...");
+    options.getCreationStateListener().onStateChange(overview.toString());
+    metadatas=computeService.createNodesInGroup(options.getGroup(),number,template);
+    if (metadatas != null) {
+      for (      NodeMetadata metadata : metadatas) {
+        options.getCreationStateListener().onStateChange(String.format("Node %s has been created.",metadata.getName()));
+      }
     }
- else     if (!Strings.isNullOrEmpty(options.getHardwareId())) {
-      builder.hardwareId(options.getHardwareId());
+    Thread.sleep(5000);
+    int suffix=1;
+    if (metadatas != null) {
+      String originalName=new String(options.getName());
+      CountDownLatch countDownLatch=new CountDownLatch(number);
+      for (      NodeMetadata nodeMetadata : metadatas) {
+        String containerName;
+        if (options.getNumber() >= 1) {
+          containerName=originalName + (suffix++);
+        }
+ else {
+          containerName=originalName;
+        }
+        CloudContainerInstallationTask installationTask=new CloudContainerInstallationTask(containerName,nodeMetadata,options,computeService,firewallManagerFactory,template.getOptions(),result,countDownLatch);
+        executorService.execute(installationTask);
+      }
+      countDownLatch.await(10,TimeUnit.MINUTES);
     }
- else     if (options.getInstanceType() != null) {
-switch (options.getInstanceType()) {
-case Smallest:
-        builder.smallest();
-      break;
-case Biggest:
-    builder.biggest();
-  break;
-case Fastest:
-builder.fastest();
-break;
-default :
-builder.fastest();
-}
-}
-StringBuilder overviewBuilder=new StringBuilder();
-overviewBuilder.append(String.format("Creating %s nodes in the cloud. Using",number));
-if (!Strings.isNullOrEmpty(options.getImageId())) {
-overviewBuilder.append(" image id: ").append(options.getImageId());
-builder.imageId(options.getImageId());
-}
- else if (!Strings.isNullOrEmpty(options.getOsFamily())) {
-overviewBuilder.append(" operating system: ").append(options.getOsFamily());
-builder.osFamily(OsFamily.fromValue(options.getOsFamily()));
-if (!Strings.isNullOrEmpty(options.getOsVersion())) {
-overviewBuilder.append(" and version: ").append(options.getOsVersion());
-builder.osVersionMatches(options.getOsVersion());
-}
-}
- else {
-throw new IllegalArgumentException("Required Image id or Operation System and version predicates.");
-}
-overviewBuilder.append(".");
-if (!Strings.isNullOrEmpty(options.getLocationId())) {
-overviewBuilder.append(" On location: ").append(options.getLocationId()).append(".");
-builder.locationId(options.getLocationId());
-}
-AdminAccess.Builder adminAccess=AdminAccess.builder();
-TemplateOptions templateOptions=computeService.templateOptions();
-applyProviderSpecificOptions(templateOptions,options);
-if (options.isAdminAccess()) {
-if (!Strings.isNullOrEmpty(options.getPublicKeyFile())) {
-File publicKey=new File(options.getPublicKeyFile());
-if (publicKey.exists()) {
-adminAccess.adminPublicKey(publicKey);
-}
- else {
-templateOptions.runScript(AdminAccess.standard());
-LOGGER.warn("Public key has been specified file: {} files cannot be found. Ignoring.",publicKey.getAbsolutePath());
-}
-}
-if (!Strings.isNullOrEmpty(options.getUser())) {
-adminAccess.adminUsername(options.getUser());
-}
-templateOptions.runScript(adminAccess.build());
-}
-builder=builder.options(templateOptions);
-Set<? extends NodeMetadata> metadatas=null;
-overviewBuilder.append(" It may take a while ...");
-options.getCreationStateListener().onStateChange(overviewBuilder.toString());
-metadatas=computeService.createNodesInGroup(options.getGroup(),number,builder.build());
-if (metadatas != null) {
-for (NodeMetadata metadata : metadatas) {
-options.getCreationStateListener().onStateChange(String.format("Node %s has been created.",metadata.getName()));
-}
-}
-Thread.sleep(5000);
-int suffix=1;
-if (metadatas != null) {
-String originalName=new String(options.getName());
-CountDownLatch countDownLatch=new CountDownLatch(number);
-for (NodeMetadata nodeMetadata : metadatas) {
-String containerName;
-if (options.getNumber() >= 1) {
-containerName=originalName + (suffix++);
-}
- else {
-containerName=originalName;
-}
-CloudContainerInstallationTask installationTask=new CloudContainerInstallationTask(containerName,nodeMetadata,options,computeService,firewallManagerFactory,templateOptions,result,countDownLatch);
-executorService.execute(installationTask);
-}
-countDownLatch.await(10,TimeUnit.MINUTES);
-}
-}
- catch (Throwable t) {
-for (int i=result.size(); i < number; i++) {
-CreateJCloudsContainerMetadata failureMetdata=new CreateJCloudsContainerMetadata();
-failureMetdata.setFailure(t);
-result.add(failureMetdata);
-}
-}
-return result;
+  }
+ catch (  Throwable t) {
+    for (int i=result.size(); i < number; i++) {
+      CreateJCloudsContainerMetadata failureMetdata=new CreateJCloudsContainerMetadata();
+      failureMetdata.setFailure(t);
+      result.add(failureMetdata);
+    }
+  }
+  return result;
 }
