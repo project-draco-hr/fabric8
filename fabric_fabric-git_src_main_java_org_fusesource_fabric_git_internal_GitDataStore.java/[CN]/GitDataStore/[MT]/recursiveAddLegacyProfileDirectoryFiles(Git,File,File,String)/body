@@ -8,7 +8,7 @@
   File toFile=new File(toDir,name);
   if (profiles != null) {
     for (    File profileDir : profiles) {
-      if (profileDir.isDirectory()) {
+      if (isProfileDirectory(profileDir)) {
         String profileId=profileDir.getName();
         String toProfileDirName=convertProfileIdToDirectory(profileId);
         File toProfileDir=new File(toFile,toProfileDirName);
@@ -16,7 +16,7 @@
         recursiveCopyAndAdd(git,profileDir,toProfileDir,pattern,true);
       }
  else {
-        recursiveCopyAndAdd(git,profileDir,toFile,pattern,true);
+        recursiveCopyAndAdd(git,profileDir,toFile,pattern,false);
       }
     }
   }

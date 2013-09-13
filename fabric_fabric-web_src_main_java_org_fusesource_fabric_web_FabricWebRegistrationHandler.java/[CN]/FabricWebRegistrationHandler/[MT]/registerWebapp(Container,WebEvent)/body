@@ -1,9 +1,6 @@
 {
   String id=container.getId();
-  String url=container.getHttpUrl() + webEvent.getContextPath();
-  if (!url.startsWith("http")) {
-    url="http://" + url;
-  }
+  String url="${zk:" + id + "/http}"+ webEvent.getContextPath();
   String name=webEvent.getBundle().getSymbolicName();
   setJolokiaUrl(container,url,name);
   String json="{\"id\":\"" + id + "\", \"services\":[\""+ url+ "\"],\"container\":\""+ id+ "\"}";

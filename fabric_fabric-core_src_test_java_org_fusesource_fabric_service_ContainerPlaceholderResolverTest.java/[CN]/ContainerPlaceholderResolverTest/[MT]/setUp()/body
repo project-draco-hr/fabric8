@@ -1,0 +1,18 @@
+{
+  fabricService=createMock(FabricService.class);
+  dataStore=createMock(DataStore.class);
+  expect(fabricService.getCurrentContainerName()).andReturn("root").anyTimes();
+  expect(fabricService.getDataStore()).andReturn(dataStore).anyTimes();
+  expect(fabricService.getContainer(EasyMock.<String>anyObject())).andStubAnswer(new IAnswer<Container>(){
+    @Override public Container answer() throws Throwable {
+      return new ContainerImpl(null,(String)EasyMock.getCurrentArguments()[0],fabricService);
+    }
+  }
+);
+  expect(dataStore.getContainerAttribute(eq("root"),eq(DataStore.ContainerAttribute.Ip),eq(""),eq(false),eq(true))).andReturn(ip).anyTimes();
+  expect(dataStore.getContainerAttribute(eq("root"),eq(DataStore.ContainerAttribute.LocalHostName),eq(""),eq(false),eq(true))).andReturn(localhostname).anyTimes();
+  expect(dataStore.getContainerAttribute(eq("root"),eq(DataStore.ContainerAttribute.BindAddress),eq(""),eq(false),eq(true))).andReturn(bindaddress).anyTimes();
+  expect(dataStore.getContainerAttribute(eq("root"),eq(DataStore.ContainerAttribute.Resolver),eq(""),eq(false),eq(true))).andReturn(containerResolver).anyTimes();
+  replay(fabricService);
+  replay(dataStore);
+}

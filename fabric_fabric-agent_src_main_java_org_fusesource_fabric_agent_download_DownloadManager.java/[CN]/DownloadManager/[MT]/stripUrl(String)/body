@@ -1,0 +1,16 @@
+{
+  String strippedUrl=url;
+  Matcher matcher=IGNORED_PROTOCOL_PATTERN.matcher(strippedUrl);
+  while (matcher.matches()) {
+    String protocol=matcher.group(1);
+    strippedUrl=strippedUrl.substring(protocol.length() + 1);
+    matcher=IGNORED_PROTOCOL_PATTERN.matcher(strippedUrl);
+  }
+  if (strippedUrl.contains("?")) {
+    strippedUrl=strippedUrl.substring(0,strippedUrl.lastIndexOf('?'));
+  }
+  if (strippedUrl.contains("#")) {
+    strippedUrl=strippedUrl.substring(0,strippedUrl.lastIndexOf('#'));
+  }
+  return strippedUrl;
+}
