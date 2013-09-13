@@ -5,7 +5,7 @@
   setJolokiaUrl(container,url,name);
   String json="{\"id\":\"" + id + "\", \"services\":[\""+ url+ "\"],\"container\":\""+ id+ "\"}";
   try {
-    String path="/fabric/registry/clusters/servlets/" + servletEvent.getBundle().getSymbolicName() + "/"+ servletEvent.getBundle().getVersion().toString()+ servletEvent.getAlias()+ "/"+ id;
+    String path=createServletPath(servletEvent,id);
     setData(curator,path,json,CreateMode.EPHEMERAL);
   }
  catch (  Exception e) {

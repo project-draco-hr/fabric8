@@ -3,7 +3,7 @@
     String name=servletEvent.getBundle().getSymbolicName();
     clearJolokiaUrl(container,name);
     String id=container.getId();
-    String path="/fabric/registry/clusters/servlets/" + servletEvent.getBundle().getSymbolicName() + "/"+ servletEvent.getBundle().getVersion().toString()+ servletEvent.getAlias()+ "/"+ id;
+    String path=createServletPath(servletEvent,id);
     delete(curator,path);
   }
  catch (  KeeperException.NoNodeException e) {
