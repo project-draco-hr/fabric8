@@ -1,18 +1,12 @@
 {
   ZookeeperBackingEngine engine=null;
-  this.bundleContext=(BundleContext)options.get(BundleContext.class.getName());
   EncryptionSupport encryptionSupport=new BasicEncryptionSupport(options);
-  if (bundleContext != null) {
-    ServiceReference ref=bundleContext.getServiceReference(FabricService.class.getName());
-    service=(FabricServiceImpl)bundleContext.getService(ref);
-    encryptionSupport=new EncryptionSupport(options);
-  }
   String path=(String)options.get("path");
   if (path == null) {
     path=ZookeeperBackingEngine.USERS_NODE;
   }
   try {
-    ZookeeperProperties users=new ZookeeperProperties(((FabricServiceImpl)service).getCurator(),path);
+    ZookeeperProperties users=new ZookeeperProperties(curator,path);
     users.load();
     engine=new ZookeeperBackingEngine(users,encryptionSupport);
   }
