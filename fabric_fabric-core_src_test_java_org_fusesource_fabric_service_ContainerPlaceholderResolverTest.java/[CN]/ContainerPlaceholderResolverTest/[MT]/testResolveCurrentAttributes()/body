@@ -1,0 +1,10 @@
+{
+  ContainerPlaceholderResolver resolver=new ContainerPlaceholderResolver();
+  resolver.setFabricService(fabricService);
+  assertEquals(ip,resolver.resolve(null,null,"container:ip"));
+  assertEquals(localhostname,resolver.resolve(null,null,"container:localhostname"));
+  assertEquals(bindaddress,resolver.resolve(null,null,"container:bindaddress"));
+  assertEquals(containerResolver,resolver.resolve(null,null,"container:resolver"));
+  verify(fabricService);
+  verify(dataStore);
+}
