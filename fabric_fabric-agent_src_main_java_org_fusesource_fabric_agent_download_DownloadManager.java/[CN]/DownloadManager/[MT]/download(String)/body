@@ -1,20 +1,5 @@
 {
-  String mvnUrl=url;
-  if (mvnUrl.startsWith("wrap:")) {
-    mvnUrl=mvnUrl.substring("wrap:".length());
-    if (mvnUrl.contains("$")) {
-      mvnUrl=mvnUrl.substring(0,mvnUrl.lastIndexOf('$'));
-    }
-  }
-  if (mvnUrl.startsWith("war:")) {
-    mvnUrl=mvnUrl.substring("war:".length());
-    if (mvnUrl.contains("?")) {
-      mvnUrl=mvnUrl.substring(0,mvnUrl.lastIndexOf('?'));
-    }
-  }
-  if (mvnUrl.startsWith("blueprint:") || mvnUrl.startsWith("spring:")) {
-    mvnUrl=mvnUrl.substring(mvnUrl.indexOf(':') + 1);
-  }
+  String mvnUrl=stripUrl(url);
   if (mvnUrl.startsWith("mvn:")) {
     MavenDownloadTask task=new MavenDownloadTask(mvnUrl,cache,system,configuration,executor);
     executor.submit(task);
