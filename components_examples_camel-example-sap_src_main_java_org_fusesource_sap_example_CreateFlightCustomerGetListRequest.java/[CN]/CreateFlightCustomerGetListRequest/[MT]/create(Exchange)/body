@@ -1,0 +1,15 @@
+{
+  SAPEndpoint endpoint=exchange.getContext().getEndpoint("sap:destination:nplDest:BAPI_FLCUST_GETLIST",SAPEndpoint.class);
+  BookFlightRequest bookFlightRequest=exchange.getIn().getBody(BookFlightRequest.class);
+  Structure request=endpoint.getRequest();
+  if (bookFlightRequest.getCustomerName() != null && bookFlightRequest.getCustomerName().length() > 0) {
+    request.put("CUSTOMER_NAME",bookFlightRequest.getCustomerName());
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Added CUSTOMER_NAME = '{}' to request",bookFlightRequest.getCustomerName());
+    }
+  }
+ else {
+    throw new Exception("No Customer Name");
+  }
+  exchange.getIn().setBody(request);
+}

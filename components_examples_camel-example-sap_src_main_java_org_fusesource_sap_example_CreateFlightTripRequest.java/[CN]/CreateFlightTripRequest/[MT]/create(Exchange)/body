@@ -1,0 +1,67 @@
+{
+  FlightConnectionInfo flightConnectionInfo=exchange.getIn().getHeader("flightConnectionInfo",FlightConnectionInfo.class);
+  FlightCustomerInfo flightCustomerInfo=exchange.getIn().getHeader("flightCustomerInfo",FlightCustomerInfo.class);
+  PassengerInfo passengerInfo=(PassengerInfo)exchange.getIn().getHeader("passengerInfo");
+  SAPEndpoint endpoint=exchange.getContext().getEndpoint("sap:destination:nplDest:BAPI_FLTRIP_CREATE",SAPEndpoint.class);
+  Structure request=endpoint.getRequest();
+  Structure flightTripData=request.get("FLIGHT_TRIP_DATA",Structure.class);
+  String travelAgencyNumber=flightConnectionInfo.getTravelAgencyNumber();
+  if (travelAgencyNumber != null && travelAgencyNumber.length() != 0) {
+    flightTripData.put("AGENCYNUM",travelAgencyNumber);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Added AGENCYNUM = '{}' to FLIGHT_TRIP_DATA",travelAgencyNumber);
+    }
+  }
+  String flightCustomerNumber=flightCustomerInfo.getCustomerNumber();
+  if (flightCustomerNumber != null && flightCustomerNumber.length() != 0) {
+    flightTripData.put("CUSTOMERID",flightCustomerNumber);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Added CUSTOMERID = '{}' to FLIGHT_TRIP_DATA",flightCustomerNumber);
+    }
+  }
+  String flightConnectionNumber=flightConnectionInfo.getFlightConnectionNumber();
+  if (flightConnectionNumber != null && flightConnectionNumber.length() != 0) {
+    flightTripData.put("FLCONN1",flightConnectionNumber);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Added FLCONN1 = '{}' to FLIGHT_TRIP_DATA",flightConnectionNumber);
+    }
+  }
+  Date flightConnectionDepartureData=flightConnectionInfo.getDepartureDate();
+  if (flightConnectionDepartureData != null) {
+    flightTripData.put("FLDATE1",flightConnectionDepartureData);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Added FLDATE1 = '{}' to FLIGHT_TRIP_DATA",flightConnectionDepartureData);
+    }
+  }
+  String flightConnectionClass="Y";
+  if (flightConnectionClass != null && flightConnectionClass.length() != 0) {
+    flightTripData.put("CLASS",flightConnectionClass);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Added CLASS = '{}' to FLIGHT_TRIP_DATA",flightConnectionClass);
+    }
+  }
+  @SuppressWarnings("unchecked") Table<Structure> passengerList=request.get("PASSENGER_LIST",Table.class);
+  Structure passengerListEntry=passengerList.add();
+  String passengerFormOfAddress=passengerInfo.getFormOfAddress();
+  if (passengerFormOfAddress != null && passengerFormOfAddress.length() != 0) {
+    passengerListEntry.put("PASSFORM",passengerFormOfAddress);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Added PASSFORM = '{}' to PASSENGER_LIST",passengerFormOfAddress);
+    }
+  }
+  String passengerName=passengerInfo.getName();
+  if (passengerName != null && passengerName.length() != 0) {
+    passengerListEntry.put("PASSNAME",passengerName);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Added PASSNAME = '{}' to PASSENGER_LIST",passengerName);
+    }
+  }
+  Date passengerDateOfBirth=passengerInfo.getDateOfBirth();
+  if (passengerDateOfBirth != null) {
+    passengerListEntry.put("PASSBIRTH",passengerDateOfBirth);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Added PASSBIRTH = '{}' to PASSENGER_LIST",passengerDateOfBirth);
+    }
+  }
+  exchange.getIn().setBody(request);
+}

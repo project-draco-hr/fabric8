@@ -1,0 +1,26 @@
+{
+  BookFlightRequest bookFlightRequest=exchange.getIn().getBody(BookFlightRequest.class);
+  PassengerInfo passengerInfo=new PassengerInfo();
+  String passengerFormOfAddress=bookFlightRequest.getPassengerFormOfAddress();
+  if (passengerFormOfAddress != null) {
+    passengerInfo.setFormOfAddress(passengerFormOfAddress);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Set passenger form of address = '{}' in passenger info",passengerFormOfAddress);
+    }
+  }
+  String passengerName=bookFlightRequest.getPassengerName();
+  if (passengerName != null) {
+    passengerInfo.setName(passengerName);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Set passenger name = '{}' in passenger info",passengerName);
+    }
+  }
+  Date passengerDateOfBirth=bookFlightRequest.getPassengerDateOfBirth();
+  if (passengerDateOfBirth != null) {
+    passengerInfo.setDateOfBirth(passengerDateOfBirth);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Set passenger date of birth = '{}' in passenger info",passengerDateOfBirth);
+    }
+  }
+  exchange.getIn().setHeader("passengerInfo",passengerInfo);
+}

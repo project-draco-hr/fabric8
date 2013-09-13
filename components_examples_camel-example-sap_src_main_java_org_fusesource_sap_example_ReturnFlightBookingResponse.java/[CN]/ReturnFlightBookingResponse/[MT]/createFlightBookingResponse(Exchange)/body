@@ -1,0 +1,66 @@
+{
+  FlightConnectionInfo flightConnectionInfo=exchange.getIn().getHeader("flightConnectionInfo",FlightConnectionInfo.class);
+  PassengerInfo passengerInfo=exchange.getIn().getHeader("passengerInfo",PassengerInfo.class);
+  Structure flightTripCreateResponse=exchange.getIn().getBody(Structure.class);
+  if (flightTripCreateResponse == null) {
+    throw new Exception("No Flight Trip Create Response");
+  }
+  SAPEndpoint endpoint=exchange.getContext().getEndpoint("sap:server:nplServer:BOOK_FLIGHT",SAPEndpoint.class);
+  Structure response=endpoint.getResponse();
+  String tripNumber=flightTripCreateResponse.get("TRIPNUMBER",String.class);
+  if (tripNumber != null) {
+    response.put("TRIPNUMBER",tripNumber);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Added TRIPNUMBER = '{}' to request",tripNumber);
+    }
+  }
+ else {
+    throw new Exception("No Flight Booking Trip Number");
+  }
+  Structure ticketPrice=flightTripCreateResponse.get("TICKET_PRICE",Structure.class);
+  if (ticketPrice != null) {
+    BigDecimal tripPrice=ticketPrice.get("TRIPPRICE",BigDecimal.class);
+    response.put("TICKET_PRICE",tripPrice);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Added TICKET_PRICE = '{}' to request",tripPrice);
+    }
+    BigDecimal tripTax=ticketPrice.get("TRIPTAX",BigDecimal.class);
+    response.put("TICKET_TAX",tripTax);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Added TICKET_TAX = '{}' to request",tripTax);
+    }
+    String currency=ticketPrice.get("CURR",String.class);
+    response.put("CURRENCY",currency);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Added CURRENCY = '{}' to request",currency);
+    }
+  }
+ else {
+    throw new Exception("No Flight Booking Ticket Price");
+  }
+  response.put("PASSFORM",passengerInfo.getFormOfAddress());
+  response.put("PASSNAME",passengerInfo.getName());
+  response.put("PASSBIRTH",passengerInfo.getDateOfBirth());
+  Structure flightInfo=(Structure)response.get("FLTINFO");
+  flightInfo.put("FLIGHTTIME",flightConnectionInfo.getFlightTime());
+  flightInfo.put("CITYFROM",flightConnectionInfo.getDepartureCity());
+  flightInfo.put("DEPDATE",flightConnectionInfo.getDepartureDate());
+  flightInfo.put("DEPTIME",flightConnectionInfo.getDepartureTime());
+  flightInfo.put("CITYTO",flightConnectionInfo.getArrivalCity());
+  flightInfo.put("ARRDATE",flightConnectionInfo.getArrivalDate());
+  flightInfo.put("ARRTIME",flightConnectionInfo.getArrivalTime());
+  @SuppressWarnings("unchecked") Table<Structure> connectionInfo=response.get("CONNINFO",Table.class);
+  for (  FlightHop flightHop : flightConnectionInfo.getFlightHopList()) {
+    Structure connection=connectionInfo.add();
+    connection.put("CONNID",flightHop.getHopNumber());
+    connection.put("AIRLINE",flightHop.getAirlineName());
+    connection.put("PLANETYPE",flightHop.getAircraftType());
+    connection.put("CITYFROM",flightHop.getDepatureCity());
+    connection.put("DEPDATE",flightHop.getDepatureDate());
+    connection.put("DEPTIME",flightHop.getDepatureTime());
+    connection.put("CITYTO",flightHop.getArrivalCity());
+    connection.put("ARRDATE",flightHop.getArrivalDate());
+    connection.put("ARRTIME",flightHop.getArrivalTime());
+  }
+  exchange.getIn().setBody(response);
+}

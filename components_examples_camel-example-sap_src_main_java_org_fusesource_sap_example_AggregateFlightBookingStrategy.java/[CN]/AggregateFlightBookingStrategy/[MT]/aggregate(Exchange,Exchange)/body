@@ -1,0 +1,24 @@
+{
+  String to=newExchange.getProperty(Exchange.TO_ENDPOINT,String.class);
+  if (LOG.isDebugEnabled()) {
+    LOG.debug("To endpoint = {}",to);
+  }
+  if (to.contains("FlightConnectionInfo")) {
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Adding Flight Connection Info to exchange.");
+    }
+    return aggregate("flightConnectionInfo",oldExchange,newExchange);
+  }
+ else   if (to.contains("FlightCustomerInfo")) {
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Adding Flight Customer Info to exchange.");
+    }
+    return aggregate("flightCustomerInfo",oldExchange,newExchange);
+  }
+ else {
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Adding Passenger Info to exchange.");
+    }
+    return aggregate("passengerInfo",oldExchange,newExchange);
+  }
+}
