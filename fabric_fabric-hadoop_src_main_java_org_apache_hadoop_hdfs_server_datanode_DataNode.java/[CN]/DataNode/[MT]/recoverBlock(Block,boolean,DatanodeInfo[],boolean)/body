@@ -1,10 +1,7 @@
 {
-  DatanodeID[] datanodeids=(DatanodeID[])targets;
 synchronized (ongoingRecovery) {
-    Block tmp=new Block();
-    tmp.set(block.getBlockId(),block.getNumBytes(),GenerationStamp.WILDCARD_STAMP);
-    if (ongoingRecovery.get(tmp) != null) {
-      String msg="Block " + block + " is already being recovered, "+ " ignoring this request to recover it.";
+    if (ongoingRecovery.get(block.getWithWildcardGS()) != null) {
+      String msg=block + " is already being recovered, " + " ignoring this request to recover it.";
       LOG.info(msg);
       throw new IOException(msg);
     }
@@ -15,12 +12,12 @@ synchronized (ongoingRecovery) {
     int rbwCount=0;
     int rwrCount=0;
     List<BlockRecord> blockRecords=new ArrayList<BlockRecord>();
-    for (    DatanodeID id : datanodeids) {
+    for (    DatanodeInfo id : targets) {
       try {
-        InterDatanodeProtocol datanode=dnRegistration.equals(id) ? this : DataNode.createInterDataNodeProtocolProxy(id,getConf(),socketTimeout);
+        InterDatanodeProtocol datanode=dnRegistration.equals(id) ? this : DataNode.createInterDataNodeProtocolProxy(id,getConf(),socketTimeout,connectToDnViaHostname);
         BlockRecoveryInfo info=datanode.startBlockRecovery(block);
         if (info == null) {
-          LOG.info("No block metadata found for block " + block + " on datanode "+ id);
+          LOG.info("No block metadata found for " + block + " on datanode "+ id);
           continue;
         }
         if (info.getBlock().getGenerationStamp() < block.getGenerationStamp()) {
@@ -63,7 +60,7 @@ synchronized (ongoingRecovery) {
       }
     }
     if (syncList.isEmpty() && errorCount > 0) {
-      throw new IOException("All datanodes failed: block=" + block + ", datanodeids="+ Arrays.asList(datanodeids));
+      throw new IOException("All datanodes failed: block=" + block + ", datanodeids="+ Arrays.asList(targets));
     }
     if (!keepLength) {
       block.setNumBytes(minlength);

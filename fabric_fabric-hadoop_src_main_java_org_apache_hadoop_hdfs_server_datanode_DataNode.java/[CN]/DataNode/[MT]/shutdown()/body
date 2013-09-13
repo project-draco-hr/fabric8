@@ -1,8 +1,15 @@
 {
-  if (!this.shouldRun) {
-    return;
+  if (plugins != null) {
+    for (    ServicePlugin p : plugins) {
+      try {
+        p.stop();
+        LOG.info("Stopped plug-in " + p);
+      }
+ catch (      Throwable t) {
+        LOG.warn("ServicePlugin " + p + " could not be stopped",t);
+      }
+    }
   }
-  this.shouldRun=false;
   this.unRegisterMXBean();
   if (infoServer != null) {
     try {
@@ -15,6 +22,10 @@
   if (ipcServer != null) {
     ipcServer.stop();
   }
+  if (!this.shouldRun) {
+    return;
+  }
+  this.shouldRun=false;
   if (dataXceiverServer != null) {
     ((DataXceiverServer)this.dataXceiverServer.getRunnable()).kill();
     this.dataXceiverServer.interrupt();

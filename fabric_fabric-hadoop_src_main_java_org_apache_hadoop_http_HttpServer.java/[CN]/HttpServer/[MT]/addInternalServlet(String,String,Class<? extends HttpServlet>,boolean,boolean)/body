@@ -5,11 +5,17 @@
   }
   webAppContext.addServlet(holder,pathSpec);
   if (requireAuth && UserGroupInformation.isSecurityEnabled()) {
-    LOG.info("Adding Kerberos filter to " + name);
     ServletHandler handler=webAppContext.getServletHandler();
     FilterMapping fmap=new FilterMapping();
     fmap.setPathSpec(pathSpec);
-    fmap.setFilterName("krb5Filter");
+    if (useKsslForAuth) {
+      LOG.info("Adding Kerberos (KSSL) filter to " + name);
+      fmap.setFilterName(KRB5_FILTER);
+    }
+ else {
+      LOG.info("Adding Kerberos (SPNEGO) filter to " + name);
+      fmap.setFilterName(SPNEGO_FILTER);
+    }
     fmap.setDispatches(Handler.ALL);
     handler.addFilterMapping(fmap);
   }

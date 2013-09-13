@@ -1,6 +1,6 @@
 {
   if (!data.isValidBlock(block)) {
-    String errStr="Can't send invalid block " + block;
+    String errStr="Can't send invalid " + block;
     LOG.info(errStr);
     notifyNamenode(DatanodeProtocol.INVALID_BLOCK,errStr);
     return;
@@ -8,7 +8,7 @@
   long onDiskLength=data.getLength(block);
   if (block.getNumBytes() > onDiskLength) {
     namenode.reportBadBlocks(new LocatedBlock[]{new LocatedBlock(block,new DatanodeInfo[]{new DatanodeInfo(dnRegistration)})});
-    LOG.info("Can't replicate block " + block + " because on-disk length "+ onDiskLength+ " is shorter than NameNode recorded length "+ block.getNumBytes());
+    LOG.info("Can't replicate " + block + " because on-disk length "+ onDiskLength+ " is shorter than NameNode recorded length "+ block.getNumBytes());
     return;
   }
   int numTargets=xferTargets.length;
@@ -19,7 +19,7 @@
         xfersBuilder.append(xferTargets[i].getName());
         xfersBuilder.append(" ");
       }
-      LOG.info(dnRegistration + " Starting thread to transfer block " + block+ " to "+ xfersBuilder);
+      LOG.info(dnRegistration + " Starting thread to transfer " + block+ " to "+ xfersBuilder);
     }
     new Daemon(new DataTransfer(xferTargets,block,this)).start();
   }

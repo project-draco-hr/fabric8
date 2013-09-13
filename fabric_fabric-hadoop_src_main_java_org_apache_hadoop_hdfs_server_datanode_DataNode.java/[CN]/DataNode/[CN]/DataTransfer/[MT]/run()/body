@@ -4,8 +4,10 @@
   DataOutputStream out=null;
   BlockSender blockSender=null;
   try {
-    InetSocketAddress curTarget=NetUtils.createSocketAddr(targets[0].getName());
+    final String dnName=targets[0].getName(connectToDnViaHostname);
+    InetSocketAddress curTarget=NetUtils.createSocketAddr(dnName);
     sock=newSocket();
+    LOG.debug("Connecting to " + dnName);
     NetUtils.connect(sock,curTarget,socketTimeout);
     sock.setSoTimeout(targets.length * socketTimeout);
     long writeTimeout=socketWriteTimeout + HdfsConstants.WRITE_TIMEOUT_EXTENSION * (targets.length - 1);
@@ -32,11 +34,16 @@
     }
     accessToken.write(out);
     blockSender.sendBlock(out,baseStream,null);
-    LOG.info(dnRegistration + ":Transmitted block " + b+ " to "+ curTarget);
+    LOG.info(dnRegistration + ":Transmitted " + b+ " to "+ curTarget);
   }
  catch (  IOException ie) {
     LOG.warn(dnRegistration + ":Failed to transfer " + b+ " to "+ targets[0].getName()+ " got "+ StringUtils.stringifyException(ie));
-    datanode.checkDiskError();
+    try {
+      checkDiskError(ie);
+    }
+ catch (    IOException e) {
+      LOG.warn("DataNode.checkDiskError failed in run() with: ",e);
+    }
   }
  finally {
     xmitsInProgress.getAndDecrement();

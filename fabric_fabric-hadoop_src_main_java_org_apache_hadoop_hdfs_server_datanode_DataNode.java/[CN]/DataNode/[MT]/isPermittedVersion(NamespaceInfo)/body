@@ -1,0 +1,22 @@
+{
+  boolean versionMatch=nsInfo.getVersion().equals(VersionInfo.getVersion());
+  boolean revisionMatch=nsInfo.getRevision().equals(VersionInfo.getRevision());
+  if (revisionMatch && !versionMatch) {
+    throw new AssertionError("Invalid build. The revisions match" + " but the NN version is " + nsInfo.getVersion() + " and the DN version is "+ VersionInfo.getVersion());
+  }
+  if (noVersionCheck) {
+    LOG.info("Permitting datanode version '" + VersionInfo.getVersion() + "' and revision '"+ VersionInfo.getRevision()+ "' to connect to namenode version '"+ nsInfo.getVersion()+ "' and revision '"+ nsInfo.getRevision()+ "' because "+ CommonConfigurationKeys.HADOOP_SKIP_VERSION_CHECK_KEY+ " is enabled");
+    return true;
+  }
+ else {
+    if (relaxedVersionCheck) {
+      if (versionMatch && !revisionMatch) {
+        LOG.info("Permitting datanode revision " + VersionInfo.getRevision() + " to connect to namenode revision "+ nsInfo.getRevision()+ " because "+ CommonConfigurationKeys.HADOOP_RELAXED_VERSION_CHECK_KEY+ " is enabled");
+      }
+      return versionMatch;
+    }
+ else {
+      return revisionMatch;
+    }
+  }
+}
