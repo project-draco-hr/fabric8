@@ -5,8 +5,10 @@
   setJolokiaUrl(container,url,name);
   String json="{\"id\":\"" + id + "\", \"services\":[\""+ url+ "\"],\"container\":\""+ id+ "\"}";
   try {
-    String path=createServletPath(servletEvent,id);
-    setData(curator,path,json,CreateMode.EPHEMERAL);
+    if (!servletEvent.getAlias().equals("/")) {
+      String path=createServletPath(servletEvent,id);
+      setData(curator,path,json,CreateMode.EPHEMERAL);
+    }
   }
  catch (  Exception e) {
     LOGGER.error("Failed to register servlet {}.",servletEvent.getAlias(),e);
