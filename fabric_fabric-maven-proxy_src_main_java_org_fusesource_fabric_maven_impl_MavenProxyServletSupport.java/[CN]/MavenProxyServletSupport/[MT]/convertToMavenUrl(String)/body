@@ -15,7 +15,13 @@
     String filePerfix=artifactId + "-" + version;
     String stripedFileName=null;
     if (version.endsWith("SNAPSHOT")) {
-      stripedFileName=filename.replaceAll("\\d{8}.\\d+-\\d+","SNAPSHOT");
+      String baseVersion=version.replaceAll("-SNAPSHOT","");
+      String timestampedFileName=filename.substring(artifactId.length() + baseVersion.length() + 2);
+      Matcher ts=SNAPSHOT_TIMESTAMP_PATTENR.matcher(timestampedFileName);
+      if (ts.matches()) {
+        version=baseVersion + "-" + ts.group(1);
+      }
+      stripedFileName=filename.replaceAll(SNAPSHOT_TIMESTAMP_REGEX,"SNAPSHOT");
       stripedFileName=stripedFileName.substring(filePerfix.length());
     }
  else {
