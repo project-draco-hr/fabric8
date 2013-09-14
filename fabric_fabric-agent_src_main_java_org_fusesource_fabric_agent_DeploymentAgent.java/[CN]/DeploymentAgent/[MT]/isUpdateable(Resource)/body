@@ -1,3 +1,3 @@
 {
-  return (getVersion(resource).getQualifier().endsWith(SNAPSHOT) || getUri(resource).startsWith(BLUEPRINT_PREFIX) || getUri(resource).startsWith(SPRING_PREFIX));
+  return (getVersion(resource).getQualifier().endsWith(SNAPSHOT) || SNAPSHOT_PATTERN.matcher(getUri(resource)).matches() || getUri(resource).startsWith(BLUEPRINT_PREFIX)|| getUri(resource).startsWith(SPRING_PREFIX));
 }
