@@ -2,9 +2,9 @@
   System.out.println(executeCommand("fabric:create -n"));
   Thread.sleep(5000);
   System.out.println(executeCommand("fabric:version-create --parent 1.0 1.1"));
-  Set<Container> containers=ContainerBuilder.create().withName("camel").withProfiles("camel").assertProvisioningResult().build();
+  Set<Container> containers=ContainerBuilder.create().withName("camel").withProfiles("feature-camel").assertProvisioningResult().build();
   CountDownLatch latch=WaitForConfigurationChange.on(getFabricService());
-  System.out.println(executeCommand("fabric:profile-edit --features camel-hazelcast camel 1.1"));
+  System.out.println(executeCommand("fabric:profile-edit --features camel-hazelcast feature-camel 1.1"));
   latch.await(5,TimeUnit.SECONDS);
   System.out.println(executeCommand("fabric:container-upgrade --all 1.1"));
   Provision.provisioningSuccess(containers,PROVISION_TIMEOUT);

@@ -2,7 +2,7 @@
   System.out.println(executeCommand("fabric:create -n"));
   System.out.println(executeCommand("fabric:version-create --parent 1.0 1.1"));
   System.out.println(executeCommand("fabric:container-upgrade --all 1.1"));
-  Set<Container> containers=ContainerBuilder.create().withName("camel").withProfiles("camel").assertProvisioningResult().build();
+  Set<Container> containers=ContainerBuilder.create().withName("camel").withProfiles("feature-camel").assertProvisioningResult().build();
   System.out.println(executeCommand("fabric:container-rollback --all 1.0"));
   Provision.provisioningSuccess(containers,PROVISION_TIMEOUT);
   for (  Container container : containers) {
