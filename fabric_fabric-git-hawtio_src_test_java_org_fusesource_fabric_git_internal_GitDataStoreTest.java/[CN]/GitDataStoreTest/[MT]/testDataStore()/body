@@ -22,11 +22,11 @@
   String version="1.1";
   assertCreateVersion("1.0",version);
   String agentPID="org.fusesource.fabric.agent";
-  assertProfileConfiguration(version,importedProfile,agentPID,"parents","camel");
+  assertProfileConfiguration(version,importedProfile,agentPID,"parents","feature-camel");
   assertProfileTextFileConfigurationContains(version,"example-camel-fabric","camel.xml","http://camel.apache.org/schema/blueprint");
   Map<String,String> profileAttributes=dataStore.getProfileAttributes(version,importedProfile);
   String parent=profileAttributes.get("parents");
-  assertEquals(importedProfile + ".profileAttributes[parent]","camel",parent);
+  assertEquals(importedProfile + ".profileAttributes[parent]","feature-camel",parent);
   System.out.println("Profile attributes: " + profileAttributes);
   String profileAttributeKey="myKey";
   String expectedProfileAttributeValue="myValue";
