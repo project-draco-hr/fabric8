@@ -1,3 +1,10 @@
 {
   activateComponent(context);
+  try {
+    JMXUtils.registerMBean(this,mbeanServer.get(),getObjectName());
+  }
+ catch (  Exception ex) {
+    deactivateComponent();
+    throw ex;
+  }
 }
