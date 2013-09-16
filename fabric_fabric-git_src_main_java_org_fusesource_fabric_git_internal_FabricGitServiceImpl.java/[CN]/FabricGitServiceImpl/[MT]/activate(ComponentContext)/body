@@ -1,0 +1,12 @@
+{
+  activateComponent(context);
+  try {
+    group=new ZooKeeperGroup<GitNode>(curator,ZkPath.GIT.getPath(),GitNode.class);
+    group.add(this);
+    group.start();
+  }
+ catch (  RuntimeException rte) {
+    deactivateComponent();
+    throw rte;
+  }
+}

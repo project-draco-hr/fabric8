@@ -1,0 +1,16 @@
+{
+  activateComponent(context);
+  try {
+    this.configuration=configuration;
+    new Thread(new Runnable(){
+      @Override public void run(){
+        create();
+      }
+    }
+).start();
+  }
+ catch (  RuntimeException rte) {
+    deactivateComponent();
+    throw rte;
+  }
+}

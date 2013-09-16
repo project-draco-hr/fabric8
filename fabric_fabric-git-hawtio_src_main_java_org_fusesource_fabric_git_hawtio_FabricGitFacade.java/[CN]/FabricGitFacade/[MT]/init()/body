@@ -1,10 +1,17 @@
 {
-  if (gitDataStore == null) {
-    Objects.notNull(dataStore,"dataStore");
-    if (dataStore instanceof GitDataStore) {
-      setGitDataStore((GitDataStore)dataStore);
+  active.set(true);
+  try {
+    if (gitDataStore == null) {
+      Objects.notNull(dataStore,"dataStore");
+      if (dataStore instanceof GitDataStore) {
+        setGitDataStore((GitDataStore)dataStore);
+      }
     }
+    Objects.notNull(gitDataStore,"gitDataStore");
+    super.init();
   }
-  Objects.notNull(gitDataStore,"gitDataStore");
-  super.init();
+ catch (  Exception ex) {
+    active.set(false);
+    throw ex;
+  }
 }
