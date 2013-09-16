@@ -1,0 +1,15 @@
+{
+  try {
+    fabricService.unTrackConfiguration(this);
+    executor.shutdown();
+    try {
+      executor.awaitTermination(1,TimeUnit.MINUTES);
+    }
+ catch (    InterruptedException e) {
+    }
+    executor.shutdownNow();
+  }
+  finally {
+    deactivateComponent();
+  }
+}

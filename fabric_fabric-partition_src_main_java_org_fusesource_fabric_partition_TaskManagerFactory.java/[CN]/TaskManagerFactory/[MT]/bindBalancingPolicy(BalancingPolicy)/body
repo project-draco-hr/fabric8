@@ -2,7 +2,7 @@
   balancingPolicies.put(balancingPolicy.getType(),balancingPolicy);
   for (  String pid : waitingOnBalancing.get(balancingPolicy.getType())) {
     try {
-      activate(pendingPids.remove(pid));
+      activateInternal(pendingPids.remove(pid));
     }
  catch (    ConfigurationException e) {
       Throwables.propagate(e);
