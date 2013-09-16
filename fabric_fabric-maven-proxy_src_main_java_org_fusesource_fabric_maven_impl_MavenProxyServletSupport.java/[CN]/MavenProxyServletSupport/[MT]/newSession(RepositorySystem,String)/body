@@ -5,6 +5,8 @@
   session.setMirrorSelector(MavenUtils.getMirrorSelector());
   session.setAuthenticationSelector(MavenUtils.getAuthSelector());
   session.setCache(new DefaultRepositoryCache());
+  session.setUpdatePolicy(updatePolicy);
+  session.setChecksumPolicy(checksumPolicy);
   LocalRepository localRepo=new LocalRepository(localRepository);
   session.setLocalRepositoryManager(system.newLocalRepositoryManager(localRepo));
   return session;

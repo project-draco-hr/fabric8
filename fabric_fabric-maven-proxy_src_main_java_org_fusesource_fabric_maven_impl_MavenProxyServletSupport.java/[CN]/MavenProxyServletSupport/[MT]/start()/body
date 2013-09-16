@@ -28,9 +28,15 @@
     remoteRepository.setProxy(session.getProxySelector().getProxy(remoteRepository));
     repositories.put(id,remoteRepository);
   }
-  repositories.put("local",new RemoteRepository("local",DEFAULT_REPO_ID,"file://" + localRepository));
-  repositories.put("karaf",new RemoteRepository("karaf",DEFAULT_REPO_ID,"file://" + System.getProperty("karaf.home") + File.separator+ System.getProperty("karaf.default.repository")));
-  repositories.put("user",new RemoteRepository("user",DEFAULT_REPO_ID,"file://" + System.getProperty("user.home") + File.separator+ ".m2"+ File.separator+ "repository"));
+  RemoteRepository local=new RemoteRepository("local",DEFAULT_REPO_ID,"file://" + localRepository);
+  local.setPolicy(true,new RepositoryPolicy(true,updatePolicy,checksumPolicy));
+  repositories.put("local",local);
+  RemoteRepository karaf=new RemoteRepository("karaf",DEFAULT_REPO_ID,"file://" + System.getProperty("karaf.home") + File.separator+ System.getProperty("karaf.default.repository"));
+  karaf.setPolicy(true,new RepositoryPolicy(true,updatePolicy,checksumPolicy));
+  repositories.put("karaf",karaf);
+  RemoteRepository user=new RemoteRepository("user",DEFAULT_REPO_ID,"file://" + System.getProperty("user.home") + File.separator+ ".m2"+ File.separator+ "repository");
+  user.setPolicy(true,new RepositoryPolicy(true,updatePolicy,checksumPolicy));
+  repositories.put("user",user);
   if (appendSystemRepos) {
     for (    RemoteRepository sysRepo : MavenUtils.getRemoteRepositories()) {
       sysRepo.setProxy(session.getProxySelector().getProxy(sysRepo));
