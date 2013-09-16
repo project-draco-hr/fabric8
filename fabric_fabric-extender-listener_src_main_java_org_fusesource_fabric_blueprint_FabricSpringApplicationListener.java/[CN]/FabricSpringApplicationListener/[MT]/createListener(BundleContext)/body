@@ -1,0 +1,9 @@
+{
+  try {
+    Class cl=getClass().getClassLoader().loadClass("org.fusesource.fabric.blueprint.FabricSpringApplicationListener$SpringApplicationListener");
+    return (BundleListener)cl.getConstructor(CuratorFramework.class).newInstance(curator);
+  }
+ catch (  Throwable t) {
+    return null;
+  }
+}

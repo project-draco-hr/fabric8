@@ -1,3 +1,9 @@
 {
-  return getOptionalAttribute(DataStore.ContainerAttribute.ProvisionStatus,"");
+  String status=getOptionalAttribute(DataStore.ContainerAttribute.ProvisionStatus,"");
+  if (status.equals("success")) {
+    return getExtenderStatus();
+  }
+ else {
+    return status;
+  }
 }

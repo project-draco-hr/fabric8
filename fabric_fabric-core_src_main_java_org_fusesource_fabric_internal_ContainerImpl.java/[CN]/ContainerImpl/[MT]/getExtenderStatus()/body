@@ -1,0 +1,13 @@
+{
+  ModuleStatus blueprintStatus=Enum.valueOf(ModuleStatus.class,getOptionalAttribute(DataStore.ContainerAttribute.BlueprintStatus,ModuleStatus.STARTED.name()));
+  ModuleStatus springStatus=Enum.valueOf(ModuleStatus.class,getOptionalAttribute(DataStore.ContainerAttribute.SpringStatus,ModuleStatus.STARTED.name()));
+  if (blueprintStatus != ModuleStatus.STARTED) {
+    return blueprintStatus.name().toLowerCase();
+  }
+ else   if (springStatus != ModuleStatus.STARTED) {
+    return springStatus.name().toLowerCase();
+  }
+ else {
+    return "success";
+  }
+}
