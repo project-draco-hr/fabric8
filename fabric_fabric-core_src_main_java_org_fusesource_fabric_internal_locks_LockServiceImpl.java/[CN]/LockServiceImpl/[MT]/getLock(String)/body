@@ -1,9 +1,10 @@
 {
+  assertValid();
   if (locks.containsKey(path)) {
     return locks.get(path);
   }
  else {
-    locks.put(path,new InterProcessMutex(curator,path));
+    locks.put(path,new InterProcessMutex(curator.get(),path));
     return locks.get(path);
   }
 }

@@ -21,17 +21,18 @@
   config.setString("remote","origin","url",remoteUrl);
   config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
   config.save();
-  GitService gitService=new LocalGitService(){
+  LocalGitService gitService=new LocalGitService(){
     public Git get() throws IOException {
       return git;
     }
   }
 ;
+  gitService.activate(EasyMock.createMock(ComponentContext.class));
   dataStore=createDataStore();
+  dataStore.bindCurator(curator);
+  dataStore.bindGitService(gitService);
   Map<String,String> datastoreProperties=new HashMap<String,String>();
   datastoreProperties.put(GitDataStore.GIT_REMOTE_URL,remoteUrl);
   dataStore.setDataStoreProperties(datastoreProperties);
-  dataStore.setCurator(curator);
-  dataStore.setGitService(gitService);
   dataStore.start();
 }
