@@ -2,13 +2,16 @@
   if (curator.checkExists().forPath(containerPath) != null) {
     byte[] bytes=ZkPath.loadURL(curator,containerPath);
     String text=new String(bytes);
-    int idx=text.indexOf("\"http");
+    String prefix="\"services\":[\"";
+    int idx=text.indexOf(prefix);
     String answer=text;
     if (idx > 0) {
-      int endIdx=text.indexOf('\"',idx + 5);
+      int startIndex=idx + prefix.length();
+      int endIdx=text.indexOf("\"]",startIndex);
       if (endIdx > 0) {
-        answer=text.substring(idx + 1,endIdx);
+        answer=text.substring(startIndex,endIdx);
         if (answer.length() > 0) {
+          answer=ZooKeeperUtils.getSubstitutedData(curator,answer);
           return answer;
         }
       }
