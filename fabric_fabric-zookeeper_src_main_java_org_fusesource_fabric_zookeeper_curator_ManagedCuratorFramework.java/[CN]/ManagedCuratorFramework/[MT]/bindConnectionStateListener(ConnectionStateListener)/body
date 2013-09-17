@@ -1,0 +1,9 @@
+{
+  connectionStateListeners.add(connectionStateListener);
+  if (curatorFramework != null) {
+    curatorFramework.getConnectionStateListenable().addListener(connectionStateListener);
+    if (curatorFramework.getZookeeperClient().isConnected()) {
+      connectionStateListener.stateChanged(curatorFramework,ConnectionState.CONNECTED);
+    }
+  }
+}

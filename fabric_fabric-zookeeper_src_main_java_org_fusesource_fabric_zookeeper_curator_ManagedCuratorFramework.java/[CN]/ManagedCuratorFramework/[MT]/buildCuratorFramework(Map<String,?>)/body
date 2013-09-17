@@ -1,0 +1,19 @@
+{
+  String connectionString=readString(properties,ZOOKEEPER_URL,System.getProperty(ZOOKEEPER_URL,""));
+  ensembleProvider.update(connectionString);
+  int sessionTimeoutMs=readInt(properties,SESSION_TIMEOUT,DEFAULT_SESSION_TIMEOUT_MS);
+  int connectionTimeoutMs=readInt(properties,CONNECTION_TIMEOUT,DEFAULT_CONNECTION_TIMEOUT_MS);
+  CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().ensembleProvider(ensembleProvider).connectionTimeoutMs(connectionTimeoutMs).sessionTimeoutMs(sessionTimeoutMs).retryPolicy(buildRetryPolicy(properties));
+  if (isAuthorizationConfigured(properties)) {
+    String scheme="digest";
+    String password=readString(properties,ZOOKEEPER_PASSWORD,System.getProperty(ZOOKEEPER_PASSWORD,""));
+    byte[] auth=("fabric:" + password).getBytes();
+    builder=builder.authorization(scheme,auth).aclProvider(aclProvider);
+  }
+  CuratorFramework framework=builder.build();
+  for (  ConnectionStateListener listener : connectionStateListeners) {
+    framework.getConnectionStateListenable().addListener(listener);
+  }
+  framework.start();
+  return framework;
+}

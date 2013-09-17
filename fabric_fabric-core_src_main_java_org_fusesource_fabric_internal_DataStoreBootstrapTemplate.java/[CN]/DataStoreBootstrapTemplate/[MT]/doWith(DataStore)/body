@@ -62,6 +62,7 @@
     addUsersToZookeeper(curator,options.getUsers());
     createDefault(curator,ZkPath.AUTHENTICATION_CRYPT_ALGORITHM.getPath(),"PBEWithMD5AndDES");
     createDefault(curator,ZkPath.AUTHENTICATION_CRYPT_PASSWORD.getPath(),options.getZookeeperPassword());
+    aclManager.fixAcl(curator,"/fabric",true);
   }
  catch (  Exception ex) {
     throw new FabricException("Unable to create bootstrap configuration",ex);

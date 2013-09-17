@@ -128,7 +128,7 @@
       Properties properties=DataStoreHelpers.toProperties(getDataStore().getConfiguration(version,"default","org.fusesource.fabric.zookeeper"));
       properties.put("zookeeper.url",getSubstitutedData(curator,realConnectionUrl));
       properties.put("zookeeper.password",options.getZookeeperPassword());
-      CuratorFramework dst=CuratorFrameworkFactory.builder().connectString(realConnectionUrl).retryPolicy(new RetryOneTime(500)).sessionTimeoutMs(30000).connectionTimeoutMs(30000).build();
+      CuratorFramework dst=CuratorFrameworkFactory.builder().connectString(realConnectionUrl).retryPolicy(new RetryOneTime(500)).aclProvider(aclProvider).authorization("digest",("fabric:" + options.getZookeeperPassword()).getBytes()).sessionTimeoutMs(30000).connectionTimeoutMs(30000).build();
       dst.start();
       try {
         dst.getZookeeperClient().blockUntilConnectedOrTimedOut();

@@ -1,3 +1,3 @@
 {
-  return CuratorFrameworkFactory.builder().connectString(connectionUrl).connectionTimeoutMs(15000).sessionTimeoutMs(60000).authorization("digest",("fabric:" + options.getZookeeperPassword()).getBytes()).retryPolicy(new RetryNTimes(3,500)).build();
+  return CuratorFrameworkFactory.builder().connectString(connectionUrl).connectionTimeoutMs(15000).sessionTimeoutMs(60000).aclProvider(aclManager).authorization("digest",("fabric:" + options.getZookeeperPassword()).getBytes()).retryPolicy(new RetryNTimes(3,500)).build();
 }

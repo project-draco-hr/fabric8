@@ -1,0 +1,20 @@
+{
+  if ((properties == null || !properties.containsKey(ZOOKEEPER_URL)) && Strings.isNullOrEmpty(System.getProperty(ZOOKEEPER_URL))) {
+    return;
+  }
+ else   if (isRestartRequired(oldProperties,properties)) {
+    updateService(buildCuratorFramework(properties));
+  }
+ else {
+    updateEnsemble(properties);
+    if (!propertyEquals(oldProperties,properties,ZOOKEEPER_URL)) {
+      try {
+        reset((CuratorFrameworkImpl)curatorFramework);
+      }
+ catch (      Exception e) {
+        LOGGER.error("Failed to update the ensemble url.",e);
+      }
+    }
+  }
+  this.oldProperties=properties;
+}

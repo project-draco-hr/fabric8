@@ -1,6 +1,5 @@
 {
   if (registration != null) {
-    closeQuietly(connectionStateListenerTracker);
     registration.unregister();
     try {
       Closeables.close(curatorFramework,true);
@@ -10,5 +9,4 @@
   }
   this.registration=bundleContext.registerService(CuratorFramework.class.getName(),framework,new Hashtable<String,Object>());
   this.curatorFramework=framework;
-  registerConnectionStateListenerTracker();
 }
