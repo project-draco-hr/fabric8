@@ -19,10 +19,10 @@
     this.mavenUploadProxyServlet=new MavenUploadProxyServlet(localRepository,remoteRepositories,appendSystemRepos,updatePolicy,checksumPolicy,proxyProtocol,proxyHost,proxyPort,proxyUsername,proxyPassword,nonProxyHosts);
     this.mavenUploadProxyServlet.start();
     try {
-      HttpContext base=httpService.createDefaultHttpContext();
+      HttpContext base=httpService.get().createDefaultHttpContext();
       HttpContext secure=new MavenSecureHttpContext(base,realm,role);
-      httpService.registerServlet("/maven/download",mavenDownloadProxyServlet,createParams("maven-download"),base);
-      httpService.registerServlet("/maven/upload",mavenUploadProxyServlet,createParams("maven-upload"),secure);
+      httpService.get().registerServlet("/maven/download",mavenDownloadProxyServlet,createParams("maven-download"),base);
+      httpService.get().registerServlet("/maven/upload",mavenUploadProxyServlet,createParams("maven-upload"),secure);
     }
  catch (    Throwable t) {
       LOGGER.warn("Failed to register fabric maven proxy servlets, due to:" + t.getMessage());

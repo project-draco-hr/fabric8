@@ -8,7 +8,7 @@
     group.update(createState());
     group.start();
     try {
-      HttpContext base=httpService.createDefaultHttpContext();
+      HttpContext base=httpService.get().createDefaultHttpContext();
       HttpContext secure=new SecureHttpContext(base,realm,role);
       String basePath=System.getProperty("karaf.data") + File.separator + "git"+ File.separator;
       String fabricGitPath=basePath + "fabric";
@@ -20,7 +20,7 @@
       initParams.put("base-path",basePath);
       initParams.put("repository-root",basePath);
       initParams.put("export-all","true");
-      httpService.registerServlet("/git",gitServlet,initParams,secure);
+      httpService.get().registerServlet("/git",gitServlet,initParams,secure);
     }
  catch (    Exception e) {
       LOGGER.error("Error while registering git servlet",e);

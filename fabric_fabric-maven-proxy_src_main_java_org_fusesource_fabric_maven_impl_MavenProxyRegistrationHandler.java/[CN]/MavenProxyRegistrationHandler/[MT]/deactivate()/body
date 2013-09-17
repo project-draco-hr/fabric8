@@ -9,10 +9,8 @@
     unregister(MavenProxy.DOWNLOAD_TYPE);
     unregister(MavenProxy.UPLOAD_TYPE);
     try {
-      if (httpService != null) {
-        httpService.unregister("/maven/download");
-        httpService.unregister("/maven/upload");
-      }
+      httpService.get().unregister("/maven/download");
+      httpService.get().unregister("/maven/upload");
     }
  catch (    Exception ex) {
       LOGGER.warn("Http service returned error on servlet unregister. Possibly the service has already been stopped");
