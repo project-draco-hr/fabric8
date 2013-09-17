@@ -14,10 +14,10 @@
           String token=generateContainerToken(curator.get());
           CredentialsProvider cp=new UsernamePasswordCredentialsProvider(login,token);
           if (group.isMaster()) {
-            update(gitService.get(),curator.get(),cp);
+            update(gitService.get().get(),curator.get(),cp);
           }
  else {
-            updateLocal(gitService.get(),curator.get(),cp);
+            updateLocal(gitService.get().get(),curator.get(),cp);
           }
         }
  catch (        Exception e) {
