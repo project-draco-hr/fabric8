@@ -7,12 +7,13 @@
       this.pullPeriod=PropertiesHelper.getLongValue(properties,GIT_PULL_PERIOD,this.pullPeriod);
       this.gitRemoteUrl=properties.get(GIT_REMOTE_URL);
     }
+    GitService optionalService=gitService.getOptional();
     if (gitRemoteUrl != null) {
       remoteChangeListener.onRemoteUrlChanged(gitRemoteUrl);
     }
- else     if (gitService != null) {
-      gitService.addRemoteChangeListener(remoteChangeListener);
-      gitRemoteUrl=gitService.getRemoteUrl();
+ else     if (optionalService != null) {
+      optionalService.addRemoteChangeListener(remoteChangeListener);
+      gitRemoteUrl=optionalService.getRemoteUrl();
       remoteChangeListener.onRemoteUrlChanged(gitRemoteUrl);
       pull();
     }
