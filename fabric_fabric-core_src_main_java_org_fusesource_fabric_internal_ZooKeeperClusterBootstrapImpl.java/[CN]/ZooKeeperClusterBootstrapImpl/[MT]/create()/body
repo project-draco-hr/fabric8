@@ -7,5 +7,7 @@
     LOGGER.warn("Failed to load users from etc/users.properties. No users will be imported.",e);
   }
   CreateEnsembleOptions createOpts=CreateEnsembleOptions.builder().fromSystemProperties().users(userProps).build();
-  create(createOpts);
+  if (createOpts.isEnsembleStart()) {
+    create(createOpts);
+  }
 }
