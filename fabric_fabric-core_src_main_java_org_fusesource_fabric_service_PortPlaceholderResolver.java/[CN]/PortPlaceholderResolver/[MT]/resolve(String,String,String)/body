@@ -8,6 +8,6 @@
   int fromPort=Integer.parseInt(fromPortValue);
   int toPort=Integer.parseInt(toPortValue);
   Set<Integer> locallyAllocatedPorts=Ports.findUsedPorts(fromPort,toPort);
-  int port=fabricService.getPortService().registerPort(fabricService.getCurrentContainer(),pid,key,fromPort,toPort,locallyAllocatedPorts);
+  int port=fabricService.get().getPortService().registerPort(fabricService.get().getCurrentContainer(),pid,key,fromPort,toPort,locallyAllocatedPorts);
   return String.valueOf(port);
 }

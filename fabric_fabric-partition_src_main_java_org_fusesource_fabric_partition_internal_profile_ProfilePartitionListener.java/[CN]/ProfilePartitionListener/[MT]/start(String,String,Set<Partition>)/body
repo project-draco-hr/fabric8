@@ -2,7 +2,7 @@
   if (fabricService == null) {
     LOGGER.warn("Cannot start {}. Fabric Service is unavailable.",taskDefinition);
   }
-  Container current=fabricService.getCurrentContainer();
+  Container current=fabricService.get().getCurrentContainer();
   Version version=current.getVersion();
   Profile templateProfile=version.getProfile(taskDefinition);
   Iterable<String> fileTemplates=Iterables.filter(templateProfile.getFileConfigurations().keySet(),new MvelPredicate());

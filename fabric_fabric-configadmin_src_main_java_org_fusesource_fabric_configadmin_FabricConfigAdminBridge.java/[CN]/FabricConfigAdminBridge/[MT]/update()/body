@@ -2,7 +2,7 @@
   FabricService fabricService;
   ConfigurationAdmin configAdmin;
 synchronized (this) {
-    fabricService=this.fabricService;
+    fabricService=this.fabricService.get();
     configAdmin=this.configAdmin.get();
   }
   if (fabricService == null || configAdmin == null) {

@@ -2,11 +2,11 @@
   if (fabricService == null) {
     LOGGER.warn("Cannot stop {}. Fabric Service is unavailable.",taskDefinition);
   }
-  Container current=fabricService.getCurrentContainer();
+  Container current=fabricService.get().getCurrentContainer();
   Version version=current.getVersion();
   for (  Partition partition : partitions) {
     String profileId=taskDefinition + "-" + ZKPaths.getNodeFromPath(partition.getId());
-    Profile toBeRemoved=fabricService.getVersion(version.getId()).getProfile(profileId);
+    Profile toBeRemoved=fabricService.get().getVersion(version.getId()).getProfile(profileId);
     current.removeProfiles(toBeRemoved);
     assignedPartitons.remove(taskDefinition,partition);
     toBeRemoved.delete();

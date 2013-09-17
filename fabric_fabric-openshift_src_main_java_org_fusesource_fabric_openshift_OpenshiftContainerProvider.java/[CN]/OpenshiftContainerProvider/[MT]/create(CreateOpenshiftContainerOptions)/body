@@ -8,7 +8,7 @@
   String versionId=options.getVersion();
   Map<String,String> openshiftConfigOverlay=new HashMap<String,String>();
   if (profiles != null && versionId != null) {
-    Version version=fabricService.getVersion(versionId);
+    Version version=fabricService.get().getVersion(versionId);
     if (version != null) {
       for (      String profileId : profiles) {
         Profile profile=version.getProfile(profileId);
@@ -35,8 +35,8 @@
   LOG.info("Creating cartridges: " + cartridgeUrl);
   String standAloneCartridgeUrl=cartridgeUrls[0];
   StandaloneCartridge cartridge=new StandaloneCartridge(standAloneCartridgeUrl);
-  String zookeeperUrl=fabricService.getZookeeperUrl();
-  String zookeeperPassword=fabricService.getZookeeperPassword();
+  String zookeeperUrl=fabricService.get().getZookeeperUrl();
+  String zookeeperPassword=fabricService.get().getZookeeperPassword();
   Map<String,String> userEnvVars=new HashMap<String,String>();
   if (fuseCart) {
     userEnvVars.put("OPENSHIFT_FUSE_ZOOKEEPER_URL",zookeeperUrl);

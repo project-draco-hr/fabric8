@@ -13,7 +13,7 @@
       bootstrap.get().create(options);
       return;
     }
-    Container[] allContainers=fabricService.getContainers();
+    Container[] allContainers=fabricService.get().getContainers();
     for (    Container container : allContainers) {
       if (!container.isAliveAndOK()) {
         throw new FabricException("Can not modify the zookeeper ensemble if all containers are not running");
@@ -21,7 +21,7 @@
     }
     String version=dataStore.get().getDefaultVersion();
     for (    String container : containers) {
-      Container c=fabricService.getContainer(container);
+      Container c=fabricService.get().getContainer(container);
       if (exists(curator.get(),ZkPath.CONTAINER_ALIVE.getPath(container)) == null) {
         throw new FabricException("The container " + container + " is not alive");
       }
