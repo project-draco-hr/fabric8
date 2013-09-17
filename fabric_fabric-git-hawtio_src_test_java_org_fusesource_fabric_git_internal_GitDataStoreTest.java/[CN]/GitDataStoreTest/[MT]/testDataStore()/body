@@ -39,7 +39,7 @@
   String currentHawtRepo=hawtioAttrbutes.get(hawtioRepoKey);
   System.out.println("Current repository.hawtio: " + currentHawtRepo);
   FabricGitFacade hawtio=new FabricGitFacade();
-  hawtio.setGitDataStore(dataStore);
+  hawtio.bindGitDataStoreForTesting(dataStore);
   hawtio.init();
   String hawtioPropertyFile="/fabric/profiles/" + dataStore.convertProfileIdToDirectory("hawtio") + "/"+ agentPID+ ".properties";
   hawtio.write(version,hawtioPropertyFile,"My commit message","me","me@apache.org","# new file\n" + hawtioRepoKey + " = "+ "mvn\\:io.hawt/hawtio-karaf/myNewVersion/xml/features"+ "\n");
