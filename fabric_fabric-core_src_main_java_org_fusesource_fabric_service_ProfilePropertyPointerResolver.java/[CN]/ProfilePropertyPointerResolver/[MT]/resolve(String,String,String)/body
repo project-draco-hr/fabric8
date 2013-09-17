@@ -7,7 +7,7 @@
         String targetPid=overlayMatcher.group(1);
         String targetProperty=overlayMatcher.group(2);
         Profile profile=fabricService.getCurrentContainer().getOverlayProfile();
-        return substituteFromProfile(new ProfileOverlayImpl(profile,false,dataStore),targetPid,targetProperty);
+        return substituteFromProfile(new ProfileOverlayImpl(profile,false,dataStore.get()),targetPid,targetProperty);
       }
  else       if (explicitMatcher.matches()) {
         String profileId=explicitMatcher.group(1);

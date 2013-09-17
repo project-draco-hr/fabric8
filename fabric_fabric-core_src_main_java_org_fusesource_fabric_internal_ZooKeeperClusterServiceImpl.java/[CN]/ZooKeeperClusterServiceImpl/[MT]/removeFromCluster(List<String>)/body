@@ -1,4 +1,6 @@
 {
-  CreateEnsembleOptions options=CreateEnsembleOptions.builder().zookeeperPassword(fabricService.getZookeeperPassword()).build();
+  Builder<? extends Builder> builder=CreateEnsembleOptions.builder();
+  String password=fabricService.getZookeeperPassword();
+  CreateEnsembleOptions options=builder.zookeeperPassword(password).build();
   removeFromCluster(containers,options);
 }
