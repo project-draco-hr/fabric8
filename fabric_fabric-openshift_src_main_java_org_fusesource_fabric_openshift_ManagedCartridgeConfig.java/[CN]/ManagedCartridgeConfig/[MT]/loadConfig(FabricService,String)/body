@@ -1,0 +1,11 @@
+{
+  String propertiesText=fabricService.getDataStore().getContainerAttribute(containerId,DataStore.ContainerAttribute.OpenShift,"",false,substitutedStringValue);
+  if (propertiesText == null) {
+    return null;
+  }
+  Properties properties=new Properties();
+  properties.load(new StringReader(propertiesText));
+  ManagedCartridgeConfig answer=new ManagedCartridgeConfig(properties);
+  LOG.info("Loaded managed cartridge configuration " + answer);
+  return answer;
+}

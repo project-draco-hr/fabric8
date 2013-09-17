@@ -1,0 +1,32 @@
+{
+  if (group.isMaster()) {
+    LOGGER.info("OpenShiftController repo is the master");
+  }
+ else {
+    LOGGER.info("OpenShiftController repo is not the master");
+  }
+  try {
+    DataStore dataStore=null;
+    if (fabricService != null) {
+      dataStore=fabricService.getDataStore();
+    }
+ else {
+      LOGGER.warn("No fabricService yet!");
+    }
+    if (group.isMaster()) {
+      ControllerNode state=createState();
+      group.update(state);
+    }
+    if (dataStore != null) {
+      if (group.isMaster()) {
+        dataStore.trackConfiguration(runnable);
+        onConfigurationChanged();
+      }
+ else {
+        dataStore.unTrackConfiguration(runnable);
+      }
+    }
+  }
+ catch (  IllegalStateException e) {
+  }
+}

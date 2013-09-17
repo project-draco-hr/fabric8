@@ -6,6 +6,7 @@
   String cartridgeUrl=null;
   Set<String> profiles=options.getProfiles();
   String versionId=options.getVersion();
+  Map<String,String> openshiftConfigOverlay=new HashMap<String,String>();
   if (profiles != null && versionId != null) {
     Version version=fabricService.getVersion(versionId);
     if (version != null) {
@@ -15,17 +16,15 @@
           Profile overlay=profile.getOverlay();
           Map<String,Map<String,String>> configurations=overlay.getConfigurations();
           if (configurations != null) {
-            Map<String,String> openshiftConfig=configurations.get("org.fusesource.openshift");
+            Map<String,String> openshiftConfig=configurations.get(OpenShiftConstants.OPENSHIFT_PID);
             if (openshiftConfig != null) {
-              cartridgeUrl=openshiftConfig.get("cartridge");
-              if (cartridgeUrl != null) {
-                break;
-              }
+              openshiftConfigOverlay.putAll(openshiftConfig);
             }
           }
         }
       }
     }
+    cartridgeUrl=openshiftConfigOverlay.get("cartridge");
   }
   boolean fuseCart=false;
   if (cartridgeUrl == null) {
@@ -60,8 +59,9 @@
     if (!list.isEmpty()) {
       application.addEmbeddableCartridges(list);
     }
+    String gitUrl=application.getGitUrl();
     String containerName=application.getName() + "-" + application.getUUID();
-    CreateOpenshiftContainerMetadata meta=new CreateOpenshiftContainerMetadata(domain.getId(),application.getUUID(),application.getCreationLog());
+    CreateOpenshiftContainerMetadata meta=new CreateOpenshiftContainerMetadata(domain.getId(),application.getUUID(),application.getCreationLog(),gitUrl);
     meta.setContainerName(containerName);
     meta.setCreateOptions(options);
     metadata.add(meta);

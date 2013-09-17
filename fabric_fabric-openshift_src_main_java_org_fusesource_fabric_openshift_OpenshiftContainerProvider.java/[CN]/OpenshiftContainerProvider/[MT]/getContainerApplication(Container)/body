@@ -1,8 +1,5 @@
 {
   CreateOpenshiftContainerMetadata metadata=(CreateOpenshiftContainerMetadata)container.getMetadata();
-  String containerName=container.getId();
-  String applicationName=containerName.substring(0,containerName.lastIndexOf("-"));
   IOpenShiftConnection connection=getOrCreateConnection(metadata.getCreateOptions());
-  IDomain domain=connection.getUser().getDomain(metadata.getDomainId());
-  return domain.getApplicationByName(applicationName);
+  return OpenShiftUtils.getApplication(container,metadata,connection);
 }

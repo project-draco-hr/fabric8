@@ -1,0 +1,12 @@
+{
+  ManagedCartridgeConfig config=new ManagedCartridgeConfig();
+  config.setServerUrl(options.getServerUrl());
+  config.setLogin(options.getLogin());
+  config.setPassword(options.getPassword());
+  StringWriter writer=new StringWriter();
+  config.getProperties().store(writer,"Saved by " + config.getClass() + " at "+ new Date());
+  String propertiesText=writer.toString();
+  LOG.info("Saved managed cartridge configuration: " + propertiesText);
+  fabricService.getDataStore().setContainerAttribute(containerId,DataStore.ContainerAttribute.OpenShift,propertiesText);
+  return config;
+}
