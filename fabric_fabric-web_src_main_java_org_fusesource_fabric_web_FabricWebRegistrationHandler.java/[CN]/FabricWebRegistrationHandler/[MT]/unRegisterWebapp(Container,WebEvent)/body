@@ -2,7 +2,7 @@
   try {
     String name=webEvent.getBundle().getSymbolicName();
     clearJolokiaUrl(container,name);
-    delete(curator,ZkPath.WEBAPPS_CONTAINER.getPath(name,webEvent.getBundle().getVersion().toString(),container.getId()));
+    delete(curator.get(),ZkPath.WEBAPPS_CONTAINER.getPath(name,webEvent.getBundle().getVersion().toString(),container.getId()));
   }
  catch (  KeeperException.NoNodeException e) {
   }

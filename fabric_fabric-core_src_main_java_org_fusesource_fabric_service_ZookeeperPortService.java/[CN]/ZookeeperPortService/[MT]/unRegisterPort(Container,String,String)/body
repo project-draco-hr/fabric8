@@ -3,9 +3,9 @@
   String ipPortsPath=ZkPath.PORTS_IP.getPath(container.getIp());
   try {
     if (lock.acquire(60,TimeUnit.SECONDS)) {
-      if (exists(curator,containerPortsPidKeyPath) != null) {
+      if (exists(curator.get(),containerPortsPidKeyPath) != null) {
         int port=lookupPort(container,pid,key);
-        deleteSafe(curator,containerPortsPidKeyPath);
+        deleteSafe(curator.get(),containerPortsPidKeyPath);
         Set<Integer> allPorts=findUsedPortByHost(container);
         allPorts.remove(port);
         StringBuilder sb=new StringBuilder();
@@ -19,7 +19,7 @@
             sb.append(" ").append(p);
           }
         }
-        setData(curator,ipPortsPath,sb.toString());
+        setData(curator.get(),ipPortsPath,sb.toString());
       }
     }
  else {

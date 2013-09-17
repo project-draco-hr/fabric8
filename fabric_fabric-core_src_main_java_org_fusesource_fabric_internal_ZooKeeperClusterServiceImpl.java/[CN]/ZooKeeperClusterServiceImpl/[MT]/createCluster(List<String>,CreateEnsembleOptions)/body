@@ -22,16 +22,16 @@
     String version=getDataStore().getDefaultVersion();
     for (    String container : containers) {
       Container c=fabricService.getContainer(container);
-      if (exists(curator,ZkPath.CONTAINER_ALIVE.getPath(container)) == null) {
+      if (exists(curator.get(),ZkPath.CONTAINER_ALIVE.getPath(container)) == null) {
         throw new FabricException("The container " + container + " is not alive");
       }
-      String containerVersion=getStringData(curator,ZkPath.CONFIG_CONTAINER.getPath(container));
+      String containerVersion=getStringData(curator.get(),ZkPath.CONFIG_CONTAINER.getPath(container));
       if (!version.equals(containerVersion)) {
         throw new FabricException("The container " + container + " is not using the default-version:"+ version);
       }
     }
     Map<String,List<Integer>> usedPorts=new HashMap<String,List<Integer>>();
-    final String oldClusterId=getStringData(curator,ZkPath.CONFIG_ENSEMBLES.getPath());
+    final String oldClusterId=getStringData(curator.get(),ZkPath.CONFIG_ENSEMBLES.getPath());
     if (oldClusterId != null) {
       String profile="fabric-ensemble-" + oldClusterId;
       String pid="org.fusesource.fabric.zookeeper.server-" + oldClusterId;
@@ -42,7 +42,7 @@
       for (      Object n : p.keySet()) {
         String node=(String)n;
         if (node.startsWith("server.")) {
-          String data=getSubstitutedData(curator,dataStore.getConfigurations(version,"fabric-ensemble-" + oldClusterId).get("org.fusesource.fabric.zookeeper.server-" + oldClusterId).get(node));
+          String data=getSubstitutedData(curator.get(),dataStore.getConfigurations(version,"fabric-ensemble-" + oldClusterId).get("org.fusesource.fabric.zookeeper.server-" + oldClusterId).get(node));
           addUsedPorts(usedPorts,data);
         }
       }
@@ -50,7 +50,7 @@
       if (zkConfig == null) {
         throw new FabricException("Failed to find old zookeeper configuration in default profile");
       }
-      String datas=getSubstitutedData(curator,zkConfig.get("zookeeper.url"));
+      String datas=getSubstitutedData(curator.get(),zkConfig.get("zookeeper.url"));
       for (      String data : datas.split(",")) {
         addUsedPorts(usedPorts,data);
       }
@@ -75,18 +75,18 @@
     String realConnectionUrl="";
     String containerList="";
     for (    String container : containers) {
-      String ip=getSubstitutedPath(curator,ZkPath.CONTAINER_IP.getPath(container));
+      String ip=getSubstitutedPath(curator.get(),ZkPath.CONTAINER_IP.getPath(container));
       String minimumPort=String.valueOf(Ports.MIN_PORT_NUMBER);
       String maximumPort=String.valueOf(Ports.MAX_PORT_NUMBER);
       String bindAddress="0.0.0.0";
-      if (exists(curator,ZkPath.CONTAINER_PORT_MIN.getPath(container)) != null) {
-        minimumPort=getSubstitutedPath(curator,ZkPath.CONTAINER_PORT_MIN.getPath(container));
+      if (exists(curator.get(),ZkPath.CONTAINER_PORT_MIN.getPath(container)) != null) {
+        minimumPort=getSubstitutedPath(curator.get(),ZkPath.CONTAINER_PORT_MIN.getPath(container));
       }
-      if (exists(curator,ZkPath.CONTAINER_PORT_MAX.getPath(container)) != null) {
-        maximumPort=getSubstitutedPath(curator,ZkPath.CONTAINER_PORT_MAX.getPath(container));
+      if (exists(curator.get(),ZkPath.CONTAINER_PORT_MAX.getPath(container)) != null) {
+        maximumPort=getSubstitutedPath(curator.get(),ZkPath.CONTAINER_PORT_MAX.getPath(container));
       }
-      if (exists(curator,ZkPath.CONTAINER_BINDADDRESS.getPath(container)) != null) {
-        bindAddress=getSubstitutedPath(curator,ZkPath.CONTAINER_BINDADDRESS.getPath(container));
+      if (exists(curator.get(),ZkPath.CONTAINER_BINDADDRESS.getPath(container)) != null) {
+        bindAddress=getSubstitutedPath(curator.get(),ZkPath.CONTAINER_BINDADDRESS.getPath(container));
       }
       String ensembleMemberConfigName="org.fusesource.fabric.zookeeper.server-" + newClusterId + ".properties";
       Properties ensembleMemberProperties=new Properties();
@@ -126,13 +126,13 @@
     }
     if (oldClusterId != null) {
       Properties properties=DataStoreHelpers.toProperties(getDataStore().getConfiguration(version,"default","org.fusesource.fabric.zookeeper"));
-      properties.put("zookeeper.url",getSubstitutedData(curator,realConnectionUrl));
+      properties.put("zookeeper.url",getSubstitutedData(curator.get(),realConnectionUrl));
       properties.put("zookeeper.password",options.getZookeeperPassword());
-      CuratorFramework dst=CuratorFrameworkFactory.builder().connectString(realConnectionUrl).retryPolicy(new RetryOneTime(500)).aclProvider(aclProvider).authorization("digest",("fabric:" + options.getZookeeperPassword()).getBytes()).sessionTimeoutMs(30000).connectionTimeoutMs(30000).build();
+      CuratorFramework dst=CuratorFrameworkFactory.builder().connectString(realConnectionUrl).retryPolicy(new RetryOneTime(500)).aclProvider(aclProvider.get()).authorization("digest",("fabric:" + options.getZookeeperPassword()).getBytes()).sessionTimeoutMs(30000).connectionTimeoutMs(30000).build();
       dst.start();
       try {
         dst.getZookeeperClient().blockUntilConnectedOrTimedOut();
-        copy(curator,dst,"/fabric");
+        copy(curator.get(),dst,"/fabric");
         setData(dst,ZkPath.CONFIG_ENSEMBLES.getPath(),newClusterId);
         setData(dst,ZkPath.CONFIG_ENSEMBLE.getPath(newClusterId),containerList);
         final AtomicReference<DataStore> result=new AtomicReference<DataStore>();
@@ -147,8 +147,8 @@ synchronized (result) {
 );
         setData(dst,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
         setData(dst,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl);
-        setData(curator,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
-        setData(curator,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl);
+        setData(curator.get(),ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
+        setData(curator.get(),ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl);
         long t0=System.currentTimeMillis();
         boolean allStarted=false;
         while (!allStarted && System.currentTimeMillis() - t0 < 60 * 1000) {

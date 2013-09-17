@@ -2,13 +2,13 @@
   String answer=null;
   try {
     String versionsPath=ZkPath.WEBAPPS_CLUSTER.getPath(webAppId);
-    if (curator != null && exists(curator,versionsPath) != null) {
-      List<String> children=getChildren(curator,versionsPath);
+    if (curator != null && exists(curator.get(),versionsPath) != null) {
+      List<String> children=getChildren(curator.get(),versionsPath);
       if (children != null && !children.isEmpty()) {
         for (        String child : children) {
           if (Strings.isNullOrEmpty(name)) {
             String parentPath=versionsPath + "/" + child;
-            List<String> grandChildren=getChildren(curator,parentPath);
+            List<String> grandChildren=getChildren(curator.get(),parentPath);
             if (!grandChildren.isEmpty()) {
               String containerPath=parentPath + "/" + grandChildren.get(0);
               answer=getWebUrl(containerPath);

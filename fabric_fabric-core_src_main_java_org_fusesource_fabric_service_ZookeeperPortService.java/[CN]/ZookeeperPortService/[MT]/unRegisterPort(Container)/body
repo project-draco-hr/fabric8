@@ -2,11 +2,11 @@
   String containerPortsPath=ZkPath.PORTS_CONTAINER.getPath(container.getId());
   try {
     if (lock.acquire(60,TimeUnit.SECONDS)) {
-      if (exists(curator,containerPortsPath) != null) {
-        for (        String pid : getChildren(curator,containerPortsPath)) {
+      if (exists(curator.get(),containerPortsPath) != null) {
+        for (        String pid : getChildren(curator.get(),containerPortsPath)) {
           unRegisterPort(container,pid);
         }
-        deleteSafe(curator,containerPortsPath);
+        deleteSafe(curator.get(),containerPortsPath);
       }
     }
  else {

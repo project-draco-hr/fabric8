@@ -4,8 +4,8 @@
   String path=ZkPath.PORTS_IP.getPath(ip);
   try {
     if (lock.acquire(60,TimeUnit.SECONDS)) {
-      createDefault(curator,path,"");
-      String boundPorts=getStringData(curator,path);
+      createDefault(curator.get(),path,"");
+      String boundPorts=getStringData(curator.get(),path);
       if (boundPorts != null && !boundPorts.isEmpty()) {
         for (        String port : boundPorts.split(" ")) {
           try {

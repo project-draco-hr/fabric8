@@ -4,12 +4,12 @@
   String ipPortsPath=ZkPath.PORTS_IP.getPath(container.getIp());
   try {
     if (lock.acquire(60,TimeUnit.SECONDS)) {
-      createDefault(curator,containerPortsPath,portAsString);
-      createDefault(curator,ipPortsPath,portAsString);
-      setData(curator,containerPortsPath,portAsString);
-      String existingPorts=getStringData(curator,ipPortsPath);
+      createDefault(curator.get(),containerPortsPath,portAsString);
+      createDefault(curator.get(),ipPortsPath,portAsString);
+      setData(curator.get(),containerPortsPath,portAsString);
+      String existingPorts=getStringData(curator.get(),ipPortsPath);
       if (!existingPorts.contains(portAsString)) {
-        setData(curator,ipPortsPath,existingPorts + " " + portAsString);
+        setData(curator.get(),ipPortsPath,existingPorts + " " + portAsString);
       }
     }
  else {

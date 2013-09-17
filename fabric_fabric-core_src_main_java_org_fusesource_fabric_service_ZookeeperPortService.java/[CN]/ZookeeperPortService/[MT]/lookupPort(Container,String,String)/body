@@ -2,8 +2,8 @@
   int port=0;
   String path=ZkPath.PORTS_CONTAINER_PID_KEY.getPath(container.getId(),pid,key);
   try {
-    if (exists(curator,path) != null) {
-      port=Integer.parseInt(getStringData(curator,path));
+    if (exists(curator.get(),path) != null) {
+      port=Integer.parseInt(getStringData(curator.get(),path));
     }
   }
  catch (  Exception ex) {

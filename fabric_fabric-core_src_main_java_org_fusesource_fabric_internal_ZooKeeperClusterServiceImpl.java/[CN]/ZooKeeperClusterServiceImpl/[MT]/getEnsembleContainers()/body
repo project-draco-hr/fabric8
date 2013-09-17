@@ -5,9 +5,9 @@
       return Collections.emptyList();
     }
     List<String> list=new ArrayList<String>();
-    if (exists(curator,ZkPath.CONFIG_ENSEMBLES.getPath()) != null) {
-      String clusterId=getStringData(curator,ZkPath.CONFIG_ENSEMBLES.getPath());
-      String containers=getStringData(curator,ZkPath.CONFIG_ENSEMBLE.getPath(clusterId));
+    if (exists(curator.get(),ZkPath.CONFIG_ENSEMBLES.getPath()) != null) {
+      String clusterId=getStringData(curator.get(),ZkPath.CONFIG_ENSEMBLES.getPath());
+      String containers=getStringData(curator.get(),ZkPath.CONFIG_ENSEMBLE.getPath(clusterId));
       Collections.addAll(list,containers.split(","));
     }
     return list;

@@ -16,10 +16,10 @@
       Map<String,String> serviceOptions=options.getServiceOptions();
       try {
         if (options.getProviderName() != null) {
-          CloudUtils.registerProvider(curator,configAdmin.get(),options.getContextName(),options.getProviderName(),options.getIdentity(),options.getCredential(),serviceOptions);
+          CloudUtils.registerProvider(curator.get(),configAdmin.get(),options.getContextName(),options.getProviderName(),options.getIdentity(),options.getCredential(),serviceOptions);
         }
  else         if (options.getApiName() != null) {
-          CloudUtils.registerApi(curator,configAdmin.get(),options.getContextName(),options.getApiName(),options.getEndpoint(),options.getIdentity(),options.getCredential(),serviceOptions);
+          CloudUtils.registerApi(curator.get(),configAdmin.get(),options.getContextName(),options.getApiName(),options.getEndpoint(),options.getIdentity(),options.getCredential(),serviceOptions);
         }
         BundleContext bundleContext=getComponentContext().getBundleContext();
         computeService=CloudUtils.waitForComputeService(bundleContext,options.getContextName());

@@ -10,7 +10,7 @@
     group.update(state);
     String url=state.getUrl();
     try {
-      String actualUrl=getSubstitutedData(curator,url);
+      String actualUrl=getSubstitutedData(curator.get(),url);
       if (actualUrl != null && (this.gitRemoteUrl == null || !this.gitRemoteUrl.equals(actualUrl))) {
         this.gitRemoteUrl=actualUrl;
         fireGitRemoteUrlChanged(actualUrl);

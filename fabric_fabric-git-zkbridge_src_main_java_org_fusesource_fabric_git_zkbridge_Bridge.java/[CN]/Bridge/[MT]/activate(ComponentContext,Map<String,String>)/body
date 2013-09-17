@@ -3,7 +3,7 @@
   try {
     this.period=Integer.parseInt(properties != null && properties.containsKey("period") ? properties.get("period") : "1000");
     this.executors=Executors.newSingleThreadScheduledExecutor();
-    group=new ZooKeeperGroup<GitZkBridgeNode>(curator,"/fabric/registry/clusters/gitzkbridge",GitZkBridgeNode.class);
+    group=new ZooKeeperGroup<GitZkBridgeNode>(curator.get(),"/fabric/registry/clusters/gitzkbridge",GitZkBridgeNode.class);
     group.add(this);
     group.update(createState());
     group.start();
@@ -11,13 +11,13 @@
       @Override public void run(){
         try {
           String login=getContainerLogin();
-          String token=generateContainerToken(curator);
+          String token=generateContainerToken(curator.get());
           CredentialsProvider cp=new UsernamePasswordCredentialsProvider(login,token);
           if (group.isMaster()) {
-            update(gitService.get(),curator,cp);
+            update(gitService.get(),curator.get(),cp);
           }
  else {
-            updateLocal(gitService.get(),curator,cp);
+            updateLocal(gitService.get(),curator.get(),cp);
           }
         }
  catch (        Exception e) {

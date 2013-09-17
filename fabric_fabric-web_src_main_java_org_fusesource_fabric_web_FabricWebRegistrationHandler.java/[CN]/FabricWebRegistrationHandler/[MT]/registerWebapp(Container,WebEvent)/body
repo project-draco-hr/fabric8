@@ -5,7 +5,7 @@
   setJolokiaUrl(container,url,name);
   String json="{\"id\":\"" + id + "\", \"services\":[\""+ url+ "\"],\"container\":\""+ id+ "\"}";
   try {
-    setData(curator,ZkPath.WEBAPPS_CONTAINER.getPath(name,webEvent.getBundle().getVersion().toString(),id),json,CreateMode.EPHEMERAL);
+    setData(curator.get(),ZkPath.WEBAPPS_CONTAINER.getPath(name,webEvent.getBundle().getVersion().toString(),id),json,CreateMode.EPHEMERAL);
   }
  catch (  Exception e) {
     LOGGER.error("Failed to register webapp {}.",webEvent.getContextPath(),e);
