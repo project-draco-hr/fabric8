@@ -6,7 +6,7 @@
   System.err.println(executeCommand("admin:create --featureURL mvn:org.fusesource.fabric/fuse-fabric/" + version + "/xml/features --feature fabric-boot-commands child1"));
   try {
     System.err.println(executeCommand("admin:start child1"));
-    Thread.sleep(DEFAULT_TIMEOUT);
+    Provision.instanceStarted(Arrays.asList("child1"),PROVISION_TIMEOUT);
     System.err.println(executeCommand("admin:list"));
     String joinCommand="fabric:join -f --zookeeper-password " + fabricService.getZookeeperPassword() + " "+ fabricService.getZookeeperUrl();
     System.err.println(executeCommand("ssh -l karaf -P karaf -p " + adminService.getInstance("child1").getSshPort() + " localhost "+ WAIT_FOR_JOIN_SERVICE));
