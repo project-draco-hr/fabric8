@@ -1,0 +1,9 @@
+{
+  String webappDir=relativePath(container,openshiftConfiguration,OpenShiftConstants.PROPERTY_DEPLOY_WEBAPPS);
+  String deployDir=relativePath(container,openshiftConfiguration,OpenShiftConstants.PROPERTY_DEPLOY_JARS);
+  if (webappDir != null || deployDir != null) {
+    DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabricService,container.getOverlayProfile(),executorService);
+    return new DeploymentTask(downloadManager,container,webappDir,deployDir);
+  }
+  return null;
+}

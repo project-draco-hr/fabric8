@@ -6,7 +6,14 @@
     Map<String,Map<String,String>> configurations=profile.getConfigurations();
     Map<String,String> openshiftConfiguration=configurations.get(OpenShiftConstants.OPENSHIFT_PID);
     if (openshiftConfiguration != null) {
-      if (OpenShiftUtils.isFabricManaged(openshiftConfiguration)) {
+      DeploymentTask deployTask=null;
+      try {
+        deployTask=createDeployTask(container,openshiftConfiguration);
+      }
+ catch (      MalformedURLException e) {
+        LOGGER.error("Failed to create DeploymentTask. " + e,e);
+      }
+      if (deployTask != null && OpenShiftUtils.isFabricManaged(openshiftConfiguration)) {
         String containerId=container.getId();
         IOpenShiftConnection connection=OpenShiftUtils.createConnection(container);
         CreateOpenshiftContainerOptions options=OpenShiftUtils.getCreateOptions(container);
@@ -17,12 +24,12 @@
           try {
             IApplication application=OpenShiftUtils.getApplication(container,connection);
             if (application != null) {
-              String gitUrl=application.getGitUrl();
+              final String gitUrl=application.getGitUrl();
               if (gitUrl != null) {
                 LOGGER.info("Git URL is " + gitUrl);
-                CartridgeGitRepository repo=new CartridgeGitRepository(containerId);
+                final CartridgeGitRepository repo=new CartridgeGitRepository(containerId);
                 final List<IOpenShiftSSHKey> sshkeys=application.getDomain().getUser().getSSHKeys();
-                CredentialsProvider credentials=new CredentialsProvider(){
+                final CredentialsProvider credentials=new CredentialsProvider(){
                   @Override public boolean supports(                  CredentialItem... items){
                     return true;
                   }
@@ -30,24 +37,40 @@
                     return true;
                   }
                   @Override public boolean get(                  URIish uri,                  CredentialItem... items) throws UnsupportedCredentialItem {
+                    LOGGER.info("Credential request " + uri + " items "+ Arrays.asList(items));
+                    int i=-1;
                     for (                    CredentialItem item : items) {
                       if (item instanceof CredentialItem.StringType) {
                         CredentialItem.StringType stringType=(CredentialItem.StringType)item;
-                        if (sshkeys.size() > 0) {
-                          IOpenShiftSSHKey sshKey=sshkeys.get(0);
+                        int idx=++i < sshkeys.size() ? i : 0;
+                        if (idx < sshkeys.size()) {
+                          IOpenShiftSSHKey sshKey=sshkeys.get(idx);
                           String passphrase=sshKey.getPublicKey();
+                          LOGGER.info("For item " + item + " index "+ i+ " using passphrase: "+ passphrase);
                           stringType.setValue(passphrase);
                         }
+ else {
+                          LOGGER.warn("No ssh keys we can pass into git!");
+                        }
                         continue;
+                      }
+ else {
+                        LOGGER.warn("Unknown CredentialItem " + item);
                       }
                     }
                     return true;
                   }
                 }
 ;
-                repo.cloneOrPull(gitUrl,credentials);
-                File localRepo=repo.getLocalRepo();
-                updateDeployment(container,openshiftConfiguration,localRepo);
+                final DeploymentTask finalDeployTask=deployTask;
+                SshSessionFactoryUtils.useOpenShiftSessionFactory(new Callable<Object>(){
+                  @Override public Object call() throws Exception {
+                    repo.cloneOrPull(gitUrl,credentials);
+                    finalDeployTask.updateDeployment(repo.getGit(),repo.getLocalRepo(),credentials);
+                    return null;
+                  }
+                }
+);
               }
             }
           }

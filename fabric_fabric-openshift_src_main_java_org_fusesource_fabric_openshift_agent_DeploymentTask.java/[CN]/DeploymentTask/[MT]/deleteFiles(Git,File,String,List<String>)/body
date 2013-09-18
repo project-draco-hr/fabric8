@@ -1,0 +1,12 @@
+{
+  if (path != null) {
+    for (    String fileName : fileNames) {
+      File file=new File(baseDir,path + "/" + fileName);
+      if (file.exists()) {
+        LOG.debug("Removing " + file + " for container "+ container.getId());
+        git.rm().addFilepattern(path + "/" + fileName).call();
+        file.delete();
+      }
+    }
+  }
+}

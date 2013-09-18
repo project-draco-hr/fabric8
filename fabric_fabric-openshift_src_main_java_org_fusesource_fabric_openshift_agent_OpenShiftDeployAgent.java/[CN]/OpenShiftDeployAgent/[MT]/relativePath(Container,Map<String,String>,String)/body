@@ -1,0 +1,12 @@
+{
+  String value=Maps.stringValue(configuration,propertyName);
+  if (Strings.isNotBlank(value)) {
+    if (value.startsWith("..") || value.startsWith("/") || value.startsWith(File.separator)) {
+      throw new IllegalStateException("Invalid relative path '" + value + "' for property "+ propertyName+ " for container "+ container.getId());
+    }
+ else {
+      return value;
+    }
+  }
+  return null;
+}

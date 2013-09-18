@@ -1,3 +1,9 @@
 {
-  return (CreateOpenshiftContainerMetadata)container.getMetadata();
+  CreateContainerMetadata<?> value=container.getMetadata();
+  if (value instanceof CreateOpenshiftContainerMetadata) {
+    return (CreateOpenshiftContainerMetadata)value;
+  }
+ else {
+    return null;
+  }
 }

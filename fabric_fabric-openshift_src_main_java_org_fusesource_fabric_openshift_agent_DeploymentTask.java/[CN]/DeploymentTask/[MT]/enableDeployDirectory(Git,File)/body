@@ -1,0 +1,40 @@
+{
+  File catalinaProperties=new File(baseDir,OPENSHIFT_CONFIG_CATALINA_PROPERTIES);
+  if (catalinaProperties.exists()) {
+    String propertyName="shared.loader";
+    Properties properties=new Properties();
+    String value=properties.getProperty(propertyName);
+    if (Strings.isNotBlank(value) && (value.startsWith(deployDir + "/") || value.contains(":" + deployDir + "/"))) {
+      LOG.info("Already has valid " + propertyName + " in "+ catalinaProperties+ " with value: "+ value);
+    }
+ else {
+      String newValue=deployDir + "/*.jar";
+      if (Strings.isNotBlank(value)) {
+        newValue=newValue + ":" + value;
+      }
+      LOG.info("Updating " + propertyName + " to "+ newValue+ " in "+ catalinaProperties+ " to enable the use of the shared deploy directory: "+ deployDir);
+      try {
+        int propertyNameLength=propertyName.length();
+        List<String> lines=Files.readLines(catalinaProperties);
+        for (int i=0, size=lines.size(); i < size; i++) {
+          String line=lines.get(i);
+          if (line.startsWith(propertyName) && line.length() > propertyNameLength) {
+            char ch=line.charAt(propertyNameLength);
+            if (Character.isWhitespace(ch) || ch == '=') {
+              String newLine=propertyName + "=" + newValue;
+              lines.set(i,newLine);
+            }
+          }
+        }
+        Files.writeLines(catalinaProperties,lines);
+        git.add().addFilepattern(OPENSHIFT_CONFIG_CATALINA_PROPERTIES).call();
+        String message="enabled the deploy directory '" + deployDir + "' to be on the shared class loader";
+        git.commit().setMessage(message).call();
+        LOG.info("Committed changes to: " + catalinaProperties);
+      }
+ catch (      IOException e) {
+        LOG.warn("Failed to update " + catalinaProperties + " for container "+ container.getId()+ ". "+ e,e);
+      }
+    }
+  }
+}

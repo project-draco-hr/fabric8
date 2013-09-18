@@ -2,41 +2,29 @@
   if (!localRepo.exists() && !localRepo.mkdirs()) {
     throw new IOException("Failed to create local repository");
   }
-  SshSessionFactory oldFactory=SshSessionFactory.getInstance();
-  try {
-    SshSessionFactory.setInstance(new JschConfigSessionFactory(){
-      @Override protected void configure(      OpenSshConfig.Host hc,      Session session){
-        session.setConfig("StrictHostKeyChecking","no");
-      }
-    }
-);
-    File gitDir=new File(localRepo,".git");
-    if (!gitDir.exists()) {
-      LOG.info("Cloning remote repo " + repo);
-      CloneCommand command=Git.cloneRepository().setCredentialsProvider(credentials).setURI(repo).setDirectory(localRepo).setRemote(remoteName);
-      git=command.call();
-    }
- else {
-      FileRepositoryBuilder builder=new FileRepositoryBuilder();
-      Repository repository=builder.setGitDir(gitDir).readEnvironment().findGitDir().build();
-      git=new Git(repository);
-      StoredConfig config=repository.getConfig();
-      config.setString("remote",remoteName,"url",repo);
-      config.setString("remote",remoteName,"fetch","+refs/heads/*:refs/remotes/" + remoteName + "/*");
-      String branch="master";
-      config.setString("branch",branch,"remote",remoteName);
-      config.setString("branch",branch,"merge","refs/heads/" + branch);
-      try {
-        config.save();
-      }
- catch (      IOException e) {
-        LOG.error("Failed to save the git configuration to " + localRepo + " with remote repo: "+ repo+ ". "+ e,e);
-      }
-      LOG.info("Pulling from remote repo " + repo);
-      git.pull().setCredentialsProvider(credentials).setRebase(true).call();
-    }
+  File gitDir=new File(localRepo,".git");
+  if (!gitDir.exists()) {
+    LOG.info("Cloning remote repo " + repo);
+    CloneCommand command=Git.cloneRepository().setCredentialsProvider(credentials).setURI(repo).setDirectory(localRepo).setRemote(remoteName);
+    git=command.call();
   }
-  finally {
-    SshSessionFactory.setInstance(oldFactory);
+ else {
+    FileRepositoryBuilder builder=new FileRepositoryBuilder();
+    Repository repository=builder.setGitDir(gitDir).readEnvironment().findGitDir().build();
+    git=new Git(repository);
+    StoredConfig config=repository.getConfig();
+    config.setString("remote",remoteName,"url",repo);
+    config.setString("remote",remoteName,"fetch","+refs/heads/*:refs/remotes/" + remoteName + "/*");
+    String branch="master";
+    config.setString("branch",branch,"remote",remoteName);
+    config.setString("branch",branch,"merge","refs/heads/" + branch);
+    try {
+      config.save();
+    }
+ catch (    IOException e) {
+      LOG.error("Failed to save the git configuration to " + localRepo + " with remote repo: "+ repo+ ". "+ e,e);
+    }
+    LOG.info("Pulling from remote repo " + repo);
+    git.pull().setCredentialsProvider(credentials).setRebase(true).call();
   }
 }
