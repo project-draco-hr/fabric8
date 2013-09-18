@@ -41,7 +41,7 @@ if (options.getNumber() >= 1) {
  else {
   containerName=originalName;
 }
-CloudContainerInstallationTask installationTask=new CloudContainerInstallationTask(containerName,nodeMetadata,options,computeService,firewallManagerFactory,template.getOptions(),result,countDownLatch);
+CloudContainerInstallationTask installationTask=new CloudContainerInstallationTask(containerName,nodeMetadata,options,computeService,firewallManagerFactory.get(),template.getOptions(),result,countDownLatch);
 executorService.execute(installationTask);
 }
 if (!countDownLatch.await(15,TimeUnit.MINUTES)) {
