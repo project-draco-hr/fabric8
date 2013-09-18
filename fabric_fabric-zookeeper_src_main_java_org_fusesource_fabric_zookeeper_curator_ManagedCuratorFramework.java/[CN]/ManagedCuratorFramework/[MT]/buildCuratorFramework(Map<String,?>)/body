@@ -8,7 +8,7 @@
     String scheme="digest";
     String password=readString(properties,ZOOKEEPER_PASSWORD,System.getProperty(ZOOKEEPER_PASSWORD,""));
     byte[] auth=("fabric:" + password).getBytes();
-    builder=builder.authorization(scheme,auth).aclProvider(aclProvider);
+    builder=builder.authorization(scheme,auth).aclProvider(aclProvider.get());
   }
   CuratorFramework framework=builder.build();
   for (  ConnectionStateListener listener : connectionStateListeners) {

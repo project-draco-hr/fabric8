@@ -4,11 +4,11 @@
   if (namedMatcher.matches()) {
     String name=namedMatcher.group(1);
     String attribute=namedMatcher.group(2);
-    return getContainerAttribute(fabricService,name,attribute);
+    return getContainerAttribute(fabricService.get(),name,attribute);
   }
  else   if (currentMatcher.matches()) {
     String attribute=currentMatcher.group(1);
-    return getContainerAttribute(fabricService,fabricService.getCurrentContainerName(),attribute);
+    return getContainerAttribute(fabricService.get(),fabricService.get().getCurrentContainerName(),attribute);
   }
   return "";
 }
