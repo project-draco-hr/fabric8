@@ -11,18 +11,8 @@
   Element artifactItems=createAndAppendChild(configuration,"artifactItems",10);
   for (  Parser parser : list) {
     Element artifactItem=createAndAppendChild(artifactItems,"artifactItem",11);
-    String group=parser.getGroup();
-    int idx=group.indexOf(':');
-    if (idx > 0) {
-      group=group.substring(idx + 1);
-    }
-    createAndAppendChild(artifactItem,"groupId",12,group);
-    createAndAppendChild(artifactItem,"artifactId",12,parser.getArtifact());
-    createAndAppendChild(artifactItem,"version",12,parser.getVersion());
-    String type=parser.getType();
-    if (type != null && !Objects.equal("jar",type)) {
-      createAndAppendChild(artifactItem,"type",12,type);
-    }
+    addMavenCoordinates(artifactItem,parser,12);
+    addOrUpdateDependency(dependencies,parser);
     createAndAppendChild(artifactItem,"overWrite",12,"true");
     createAndAppendChild(artifactItem,"outputDirectory",12,"${basedir}/" + outputDir);
     if (isWar) {

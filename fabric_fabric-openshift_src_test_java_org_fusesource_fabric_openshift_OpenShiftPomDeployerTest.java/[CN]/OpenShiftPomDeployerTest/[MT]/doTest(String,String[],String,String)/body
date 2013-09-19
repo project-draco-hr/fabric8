@@ -33,4 +33,15 @@
     System.out.println("WarName is now:  " + warName);
     assertTrue("Should not have ROOT war name",!"ROOT".equals(warName));
   }
+  Element dependencies=assertXPathElement(xml,"project/dependencies");
+  for (  Parser artifact : artifacts) {
+    String group=groupId(artifact);
+    String artifactId=artifact.getArtifact();
+    Element dependency=assertSingleDependencyForGroupAndArtifact(dependencies,group,artifactId);
+    Element version=assertXPathElement(dependency,"version");
+    assertEquals("Version",artifact.getVersion(),version.getTextContent());
+  }
+  assertDependencyScope(dependencies,"org.apache.camel","camel-core",expectedCamelDependencyScope);
+  assertDependencyScope(dependencies,"org.drools","drools-wb-distribution-wars","provided");
+  assertDependencyScope(dependencies,"io.hawt","hawtio-web",expectedHawtioDependencyScope);
 }

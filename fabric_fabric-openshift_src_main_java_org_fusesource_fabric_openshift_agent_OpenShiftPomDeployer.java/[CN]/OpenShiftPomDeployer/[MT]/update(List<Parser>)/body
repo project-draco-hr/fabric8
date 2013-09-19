@@ -5,10 +5,11 @@
   Objects.notNull(doc,"xml document");
   Element project=doc.getDocumentElement();
   Objects.notNull(doc,"project element");
+  Element dependencies=getOrCreateChild(project,"dependencies",1,true);
   Element openshiftPlugins=getOrCreateOpenShiftProfilePlugins(project);
   updateWarPlugin(openshiftPlugins);
   updateCleanPlugin(openshiftPlugins);
-  updateDependencyPlugin(openshiftPlugins,artifacts);
+  updateDependencyPlugin(openshiftPlugins,dependencies,artifacts);
   DomHelper.save(doc,pom);
   git.add().addFilepattern("pom.xml").call();
 }
