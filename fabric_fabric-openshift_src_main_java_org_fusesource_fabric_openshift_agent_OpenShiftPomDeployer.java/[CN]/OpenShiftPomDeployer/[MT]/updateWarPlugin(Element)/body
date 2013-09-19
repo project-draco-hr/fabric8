@@ -1,0 +1,12 @@
+{
+  Element plugin=getPlugin(plugins,"maven-war-plugin");
+  if (plugin != null) {
+    Element warName=xpath("configuration/warName").element(plugin);
+    if (warName != null) {
+      String textContent=warName.getTextContent();
+      if (Objects.equal("ROOT",textContent)) {
+        warName.setTextContent(buildWarName);
+      }
+    }
+  }
+}

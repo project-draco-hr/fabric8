@@ -1,0 +1,27 @@
+{
+  Element plugin=getOrCreatePlugin(plugins,"maven-clean-plugin","2.5");
+  Element executions=getOrCreateChild(plugin,"executions",6);
+  String executionId="fuse-fabric-clean";
+  Element execution=xpath("execution[id = '" + executionId + "']").element(executions);
+  if (execution == null) {
+    execution=getOrCreateChild(executions,"execution",7);
+    createAndAppendChild(execution,"id",8,executionId);
+    createAndAppendChild(execution,"phase",9,"initialise");
+    Element goals=createAndAppendChild(execution,"goals",9);
+    createAndAppendChild(goals,"goal",10,"clean");
+  }
+  Element configuration=recreateChild(execution,"configuration",9);
+  Element filesets=createAndAppendChild(configuration,"filesets",10);
+  if (Strings.isNotBlank(webAppDir)) {
+    Element fileset=createAndAppendChild(filesets,"fileset",11);
+    createAndAppendChild(fileset,"directory",12,"${basedir}/" + webAppDir);
+    Element includes=createAndAppendChild(fileset,"includes",12);
+    createAndAppendChild(includes,"include",13,"**/*.war");
+  }
+  if (Strings.isNotBlank(deployDir)) {
+    Element fileset=createAndAppendChild(filesets,"fileset",11);
+    createAndAppendChild(fileset,"directory",12,"${basedir}/" + deployDir);
+    Element includes=createAndAppendChild(fileset,"includes",12);
+    createAndAppendChild(includes,"include",13,"**/*.jar");
+  }
+}

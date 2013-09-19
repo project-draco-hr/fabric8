@@ -1,0 +1,11 @@
+{
+  Element profile=xpath("profiles/profile[id = 'openshift']").element(project);
+  if (profile == null) {
+    Element profiles=getOrCreateChild(project,"profiles",1,true);
+    profile=createAndAppendChild(profiles,"profile",2);
+    createAndAppendChild(profile,"id",3,"openshift");
+  }
+  Element build=getOrCreateChild(profile,"build",3);
+  Element plugins=getOrCreateChild(build,"plugins",4);
+  return plugins;
+}

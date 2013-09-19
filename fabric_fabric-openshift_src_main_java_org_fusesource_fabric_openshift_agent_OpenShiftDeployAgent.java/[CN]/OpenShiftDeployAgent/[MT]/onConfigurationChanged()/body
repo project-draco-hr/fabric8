@@ -6,12 +6,12 @@
     Map<String,Map<String,String>> configurations=profile.getConfigurations();
     Map<String,String> openshiftConfiguration=configurations.get(OpenShiftConstants.OPENSHIFT_PID);
     if (openshiftConfiguration != null) {
-      DeploymentTask deployTask=null;
+      DeploymentUpdater deployTask=null;
       try {
         deployTask=createDeployTask(container,openshiftConfiguration);
       }
  catch (      MalformedURLException e) {
-        LOGGER.error("Failed to create DeploymentTask. " + e,e);
+        LOGGER.error("Failed to create DeploymentUpdater. " + e,e);
       }
       if (deployTask != null && OpenShiftUtils.isFabricManaged(openshiftConfiguration)) {
         String containerId=container.getId();
@@ -62,7 +62,7 @@
                   }
                 }
 ;
-                final DeploymentTask finalDeployTask=deployTask;
+                final DeploymentUpdater finalDeployTask=deployTask;
                 SshSessionFactoryUtils.useOpenShiftSessionFactory(new Callable<Object>(){
                   @Override public Object call() throws Exception {
                     repo.cloneOrPull(gitUrl,credentials);

@@ -1,0 +1,25 @@
+{
+  Set<String> locations=new HashSet<String>();
+  for (  Feature feature : features) {
+    for (    BundleInfo bundle : feature.getBundles()) {
+      locations.add(bundle.getLocation());
+    }
+  }
+  for (  String bundle : bundles) {
+    locations.add(bundle);
+  }
+  List<Parser> artifacts=new ArrayList<Parser>();
+  for (  String location : locations) {
+    try {
+      Parser parser=new Parser(location);
+      artifacts.add(parser);
+    }
+ catch (    MalformedURLException e) {
+      LOG.error("Failed to parse bundle URL: " + location + ". "+ e,e);
+    }
+  }
+  if (artifacts.size() > 0) {
+    OpenShiftPomDeployer pomDeployer=new OpenShiftPomDeployer(git,baseDir,deployDir,webAppDir);
+    pomDeployer.update(artifacts);
+  }
+}

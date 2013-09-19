@@ -1,0 +1,13 @@
+{
+  File pom=new File(baseDir,"pom.xml");
+  Files.assertFileExists(pom);
+  Document doc=XmlUtils.parseDoc(pom);
+  Objects.notNull(doc,"xml document");
+  Element project=doc.getDocumentElement();
+  Objects.notNull(doc,"project element");
+  Element openshiftPlugins=getOrCreateOpenShiftProfilePlugins(project);
+  updateWarPlugin(openshiftPlugins);
+  updateCleanPlugin(openshiftPlugins);
+  updateDependencyPlugin(openshiftPlugins,artifacts);
+  DomHelper.save(doc,pom);
+}
