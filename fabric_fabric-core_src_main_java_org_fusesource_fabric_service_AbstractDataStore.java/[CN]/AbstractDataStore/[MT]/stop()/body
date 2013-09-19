@@ -1,6 +1,9 @@
 {
-  if (started.compareAndSet(true,false)) {
-    destroyCache();
+  if (active.compareAndSet(true,false)) {
+    treeCache.getListenable().removeListener(this);
+    Closeables.closeQuitely(treeCache);
+    treeCache=null;
+    cacheExecutor.shutdownNow();
     placeholderExecutor.shutdownNow();
   }
 }

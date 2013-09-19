@@ -1,20 +1,21 @@
 {
+  assertValid();
   try {
     String path=ZkProfiles.getPath(version,profile) + "/" + fileName;
-    if (treeCache.getCurrentData(path) == null) {
+    if (getTreeCache().getCurrentData(path) == null) {
       return null;
     }
-    if (treeCache.getCurrentData(path).getData() == null) {
-      List<String> children=treeCache.getChildrenNames(path);
+    if (getTreeCache().getCurrentData(path).getData() == null) {
+      List<String> children=getTreeCache().getChildrenNames(path);
       StringBuilder buf=new StringBuilder();
       for (      String child : children) {
-        String value=new String(treeCache.getCurrentData(path + "/" + child).getData(),"UTF-8");
+        String value=new String(getTreeCache().getCurrentData(path + "/" + child).getData(),"UTF-8");
         buf.append(String.format("%s = %s\n",child,value));
       }
       return buf.toString().getBytes();
     }
  else {
-      return getByteData(treeCache,path);
+      return getByteData(getTreeCache(),path);
     }
   }
  catch (  Exception e) {

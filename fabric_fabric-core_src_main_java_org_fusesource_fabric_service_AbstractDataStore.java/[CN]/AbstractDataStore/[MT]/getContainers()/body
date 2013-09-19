@@ -1,8 +1,9 @@
 {
+  assertValid();
   try {
     return getChildren(getCurator(),ZkPath.CONFIGS_CONTAINERS.getPath());
   }
  catch (  Exception e) {
-    throw new FabricException(e);
+    throw FabricException.rethrow(e);
   }
 }

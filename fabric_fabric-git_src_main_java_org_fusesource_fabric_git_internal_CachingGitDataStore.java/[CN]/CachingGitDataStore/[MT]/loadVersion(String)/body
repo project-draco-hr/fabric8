@@ -1,8 +1,8 @@
 {
+  assertValid();
   return gitReadOperation(new GitOperation<VersionData>(){
     public VersionData call(    Git git,    GitContext context) throws Exception {
       VersionData data=new VersionData();
-      data.profiles=new HashMap<String,ProfileData>();
       pouplateVersionData(git,version,data);
       pouplateVersionData(git,"master",data);
       return data;

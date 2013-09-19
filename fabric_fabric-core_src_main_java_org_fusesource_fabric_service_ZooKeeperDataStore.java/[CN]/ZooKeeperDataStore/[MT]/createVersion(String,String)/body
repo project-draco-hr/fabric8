@@ -1,9 +1,10 @@
 {
+  assertValid();
   try {
     String sourcePath=ZkPath.CONFIG_VERSION.getPath(parentVersionId);
     String targetPath=ZkPath.CONFIG_VERSION.getPath(toVersion);
     copy(getCurator(),sourcePath,targetPath);
-    treeCache.rebuildNode(targetPath);
+    getTreeCache().rebuildNode(targetPath);
   }
  catch (  Exception e) {
     throw new FabricException(e);

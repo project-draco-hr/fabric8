@@ -16,14 +16,13 @@
       return;
     }
   }
-  ProfileData profileData=new ProfileData();
-  data.profiles.put(profile,profileData);
-  profileData.configurations=doGetFileConfigurations(git,profile);
-  File profileDirectory=file;
-  File metadataFile=new File(profileDirectory,AGENT_METADATA_FILE);
-  profileData.lastModified=profileDirectory.lastModified();
+  long lastModified=file.lastModified();
+  File metadataFile=new File(file,AGENT_METADATA_FILE);
   if (metadataFile.exists()) {
     long modified=metadataFile.lastModified();
-    profileData.lastModified=Math.max(profileData.lastModified,modified);
+    lastModified=Math.max(lastModified,modified);
   }
+  Map<String,byte[]> configurations=doGetFileConfigurations(git,profile);
+  ProfileData profileData=new ProfileData(lastModified,configurations);
+  data.profiles.put(profile,profileData);
 }

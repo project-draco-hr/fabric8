@@ -1,8 +1,9 @@
 {
+  assertValid();
   try {
     setData(getCurator(),ZkPath.CONFIG_DEFAULT_VERSION.getPath(),versionId);
   }
  catch (  Exception e) {
-    throw new FabricException(e);
+    throw FabricException.rethrow(e);
   }
 }

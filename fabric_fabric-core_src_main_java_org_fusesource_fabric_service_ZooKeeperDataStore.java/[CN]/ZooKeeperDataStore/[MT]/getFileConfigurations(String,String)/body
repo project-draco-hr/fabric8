@@ -1,10 +1,11 @@
 {
+  assertValid();
   try {
     Map<String,byte[]> configurations=new HashMap<String,byte[]>();
     String path=ZkProfiles.getPath(version,profile);
-    List<String> children=getAllChildren(treeCache,path);
+    List<String> children=getAllChildren(getTreeCache(),path);
     for (    String child : children) {
-      TreeData data=treeCache.getCurrentData(child);
+      TreeData data=getTreeCache().getCurrentData(child);
       if (data.getData() != null && data.getData().length != 0) {
         String relativePath=child.substring(path.length() + 1);
         configurations.put(relativePath,getFileConfiguration(version,profile,relativePath));

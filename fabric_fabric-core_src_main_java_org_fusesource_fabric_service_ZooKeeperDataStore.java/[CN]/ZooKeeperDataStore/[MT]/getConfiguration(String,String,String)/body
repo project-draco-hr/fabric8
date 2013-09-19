@@ -1,10 +1,11 @@
 {
+  assertValid();
   try {
     String path=ZkProfiles.getPath(version,profile) + "/" + pid+ ".properties";
-    if (treeCache.getCurrentData(path) == null) {
+    if (getTreeCache().getCurrentData(path) == null) {
       return null;
     }
-    byte[] data=getByteData(treeCache,path);
+    byte[] data=getByteData(getTreeCache(),path);
     return DataStoreHelpers.toMap(DataStoreHelpers.toProperties(data));
   }
  catch (  Exception e) {

@@ -1,9 +1,8 @@
 {
-  final Map<String,PlaceholderResolver> available=new HashMap<String,PlaceholderResolver>();
+  final Map<String,PlaceholderResolver> result=new HashMap<String,PlaceholderResolver>();
   final Set<String> notFound=new HashSet<String>(schemes);
   CompletionService<PlaceholderResolver> completionService=new ExecutorCompletionService<PlaceholderResolver>(executor);
   for (  String scheme : schemes) {
-    resolvers.putIfAbsent(scheme,new DynamicReference<PlaceholderResolver>());
     completionService.submit(resolvers.get(scheme));
   }
   try {
@@ -11,7 +10,7 @@
       try {
         PlaceholderResolver resolver=completionService.take().get();
         if (resolver != null) {
-          available.put(resolver.getScheme(),resolver);
+          result.put(resolver.getScheme(),resolver);
           notFound.remove(resolver.getScheme());
         }
       }
@@ -30,5 +29,5 @@
     }
     throw new FabricException(sb.toString());
   }
-  return available;
+  return result;
 }

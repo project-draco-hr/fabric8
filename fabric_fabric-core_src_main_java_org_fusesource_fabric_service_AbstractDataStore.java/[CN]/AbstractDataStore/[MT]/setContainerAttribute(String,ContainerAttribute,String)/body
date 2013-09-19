@@ -1,11 +1,12 @@
 {
+  assertValid();
   if (attribute == ContainerAttribute.Resolver) {
     try {
       setData(getCurator(),ZkPath.CONTAINER_IP.getPath(containerId),"${zk:" + containerId + "/"+ value+ "}");
       setData(getCurator(),ZkPath.CONTAINER_RESOLVER.getPath(containerId),value);
     }
  catch (    Exception e) {
-      throw new FabricException(e);
+      throw FabricException.rethrow(e);
     }
   }
  else {
@@ -15,7 +16,7 @@
  catch (    KeeperException.NoNodeException e) {
     }
 catch (    Exception e) {
-      throw new FabricException(e);
+      throw FabricException.rethrow(e);
     }
   }
 }

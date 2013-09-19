@@ -1,10 +1,11 @@
 {
+  assertValid();
   try {
-    String versionId=getStringData(treeCache,ZkPath.CONFIG_CONTAINER.getPath(containerId));
-    String str=getStringData(treeCache,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId));
+    String versionId=getStringData(getTreeCache(),ZkPath.CONFIG_CONTAINER.getPath(containerId));
+    String str=getStringData(getTreeCache(),ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId));
     return str == null || str.isEmpty() ? Collections.<String>emptyList() : Arrays.asList(str.trim().split(" +"));
   }
  catch (  Exception e) {
-    throw new FabricException(e);
+    throw FabricException.rethrow(e);
   }
 }

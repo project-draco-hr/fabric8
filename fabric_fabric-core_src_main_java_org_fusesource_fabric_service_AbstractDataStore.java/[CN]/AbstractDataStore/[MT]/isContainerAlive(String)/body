@@ -1,4 +1,5 @@
 {
+  assertValid();
   try {
     return exists(getCurator(),ZkPath.CONTAINER_ALIVE.getPath(id)) != null;
   }
@@ -6,6 +7,6 @@
     return false;
   }
 catch (  Exception e) {
-    throw new FabricException(e);
+    throw FabricException.rethrow(e);
   }
 }

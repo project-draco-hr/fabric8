@@ -1,6 +1,10 @@
 {
+  assertValid();
   Set<String> requiredSchemes=getSchemesForProfileConfigurations(configs);
-  final Map<String,PlaceholderResolver> availablePlaceholderResolvers=waitForPlaceHolderResolvers(placeholderExecutor,requiredSchemes,placeholderResolvers);
+  for (  String scheme : requiredSchemes) {
+    placeholderResolvers.putIfAbsent(scheme,new DynamicReference<PlaceholderResolver>());
+  }
+  final Map<String,PlaceholderResolver> availableResolvers=waitForPlaceHolderResolvers(placeholderExecutor,requiredSchemes,getPlaceholderResolvers());
   for (  Map.Entry<String,Map<String,String>> entry : configs.entrySet()) {
     final String pid=entry.getKey();
     Map<String,String> props=entry.getValue();
@@ -11,8 +15,8 @@
         public String getValue(        String toSubstitute){
           if (toSubstitute != null && toSubstitute.contains(":")) {
             String scheme=toSubstitute.substring(0,toSubstitute.indexOf(":"));
-            if (availablePlaceholderResolvers.containsKey(scheme)) {
-              return availablePlaceholderResolvers.get(scheme).resolve(pid,key,toSubstitute);
+            if (availableResolvers.containsKey(scheme)) {
+              return availableResolvers.get(scheme).resolve(pid,key,toSubstitute);
             }
           }
           return substituteBundleProperty(toSubstitute,getBundleContext());

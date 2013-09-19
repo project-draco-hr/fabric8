@@ -1,8 +1,9 @@
 {
+  assertValid();
   try {
     String version=null;
-    if (treeCache.getCurrentData(ZkPath.CONFIG_DEFAULT_VERSION.getPath()) != null) {
-      version=getStringData(treeCache,ZkPath.CONFIG_DEFAULT_VERSION.getPath());
+    if (getTreeCache().getCurrentData(ZkPath.CONFIG_DEFAULT_VERSION.getPath()) != null) {
+      version=getStringData(getTreeCache(),ZkPath.CONFIG_DEFAULT_VERSION.getPath());
     }
     if (version == null || version.isEmpty()) {
       version=ZkDefs.DEFAULT_VERSION;
@@ -12,6 +13,6 @@
     return version;
   }
  catch (  Exception e) {
-    throw new FabricException(e);
+    throw FabricException.rethrow(e);
   }
 }
