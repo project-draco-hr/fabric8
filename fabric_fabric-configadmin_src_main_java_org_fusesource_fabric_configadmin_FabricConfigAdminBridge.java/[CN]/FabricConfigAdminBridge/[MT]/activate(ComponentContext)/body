@@ -1,11 +1,5 @@
 {
+  fabricService.get().trackConfiguration(this);
   activateComponent();
-  try {
-    fabricService.get().trackConfiguration(this);
-    run();
-  }
- catch (  RuntimeException rte) {
-    deactivateComponent();
-    throw rte;
-  }
+  submitUpdateJob();
 }
