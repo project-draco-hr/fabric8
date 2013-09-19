@@ -1,17 +1,10 @@
 {
-  this.bundleContext=bundleContext;
-  activateComponent();
-  try {
-    this.configuration=configuration;
-    new Thread(new Runnable(){
-      @Override public void run(){
-        create();
-      }
+  componentState=new ComponentState(bundleContext,configuration);
+  new Thread(new Runnable(){
+    @Override public void run(){
+      createOnActivate();
+      activateComponent();
     }
+  }
 ).start();
-  }
- catch (  RuntimeException rte) {
-    deactivateComponent();
-    throw rte;
-  }
 }
