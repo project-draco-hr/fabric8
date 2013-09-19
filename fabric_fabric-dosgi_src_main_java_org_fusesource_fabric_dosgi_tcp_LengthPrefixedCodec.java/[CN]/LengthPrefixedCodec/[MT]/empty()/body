@@ -1,3 +1,13 @@
 {
-  return write_buffer.remaining() == 0 && next_write_size == 0;
+  if (next_write_size > 0) {
+    return false;
+  }
+  if (!next_write_buffers.isEmpty()) {
+    for (    ByteBuffer b : next_write_buffers) {
+      if (b.remaining() > 0) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
