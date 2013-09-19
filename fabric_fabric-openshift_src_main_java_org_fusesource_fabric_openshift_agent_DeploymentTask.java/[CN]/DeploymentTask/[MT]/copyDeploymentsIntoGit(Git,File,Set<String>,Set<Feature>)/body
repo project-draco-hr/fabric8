@@ -1,0 +1,31 @@
+{
+  List<String> webAppFilesToDelete=filesToDelete(baseDir,webAppDir);
+  List<String> deployDirFilesToDelete=filesToDelete(baseDir,deployDir);
+  LOG.debug("Deploying into container " + container.getId() + " features "+ features+ " and bundles "+ bundles);
+  Map<String,File> files=AgentUtils.downloadBundles(downloadManager,features,bundles,Collections.<String>emptySet());
+  Set<Map.Entry<String,File>> entries=files.entrySet();
+  for (  Map.Entry<String,File> entry : entries) {
+    String name=entry.getKey();
+    File file=entry.getValue();
+    String destPath;
+    String fileName=file.getName();
+    if (name.startsWith("war:") || name.contains("/war/") || fileName.toLowerCase().endsWith(".war")) {
+      destPath=webAppDir;
+      webAppFilesToDelete.remove(fileName);
+    }
+ else {
+      destPath=deployDir;
+      deployDirFilesToDelete.remove(fileName);
+    }
+    if (destPath != null) {
+      File destDir=new File(baseDir,destPath);
+      destDir.mkdirs();
+      File destFile=new File(destDir,fileName);
+      LOG.info("Copying file " + fileName + " to :  "+ destFile.getCanonicalPath()+ " for container "+ container.getId());
+      Files.copy(file,destFile);
+      git.add().addFilepattern(destPath + "/" + fileName).call();
+    }
+    deleteFiles(git,baseDir,webAppDir,webAppFilesToDelete);
+    deleteFiles(git,baseDir,deployDir,deployDirFilesToDelete);
+  }
+}
