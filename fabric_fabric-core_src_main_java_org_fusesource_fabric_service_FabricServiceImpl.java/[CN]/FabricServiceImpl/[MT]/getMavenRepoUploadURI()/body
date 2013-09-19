@@ -1,7 +1,8 @@
 {
-  URI uri=URI.create(defaultRepo);
+  assertValid();
+  URI uri=URI.create(getDefaultRepo());
   try {
-    if (curator != null && exists(curator.get(),ZkPath.MAVEN_PROXY.getPath("upload")) != null) {
+    if (exists(curator.get(),ZkPath.MAVEN_PROXY.getPath("upload")) != null) {
       List<String> children=getChildren(curator.get(),ZkPath.MAVEN_PROXY.getPath("upload"));
       if (children != null && !children.isEmpty()) {
         Collections.sort(children);

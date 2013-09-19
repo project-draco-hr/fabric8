@@ -1,8 +1,9 @@
 {
+  assertValid();
   String answer=null;
   try {
     String versionsPath=ZkPath.WEBAPPS_CLUSTER.getPath(webAppId);
-    if (curator != null && exists(curator.get(),versionsPath) != null) {
+    if (exists(curator.get(),versionsPath) != null) {
       List<String> children=getChildren(curator.get(),versionsPath);
       if (children != null && !children.isEmpty()) {
         for (        String child : children) {

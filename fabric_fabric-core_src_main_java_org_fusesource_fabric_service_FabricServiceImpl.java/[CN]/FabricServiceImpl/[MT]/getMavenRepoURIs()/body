@@ -1,7 +1,8 @@
 {
+  assertValid();
   try {
     List<URI> uris=new ArrayList<URI>();
-    if (curator != null && exists(curator.get(),ZkPath.MAVEN_PROXY.getPath("download")) != null) {
+    if (exists(curator.get(),ZkPath.MAVEN_PROXY.getPath("download")) != null) {
       List<String> children=getChildren(curator.get(),ZkPath.MAVEN_PROXY.getPath("download"));
       if (children != null && !children.isEmpty()) {
         Collections.sort(children);
