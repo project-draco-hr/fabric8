@@ -1,11 +1,7 @@
 {
   this.bundleContext=bundleContext;
+  this.configuration=Collections.unmodifiableMap(configuration);
+  this.type=readType(this.configuration);
+  updateServiceRegistration();
   activateComponent();
-  try {
-    update(configuration);
-  }
- catch (  RuntimeException rte) {
-    deactivateComponent();
-    throw rte;
-  }
 }

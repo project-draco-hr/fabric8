@@ -1,7 +1,8 @@
 {
-  unregister();
-  if (dataStorePlugins.containsKey(type)) {
-    dataStore=dataStorePlugins.get(type).getDataStore();
+  unregisterDataStore();
+  DataStorePlugin pluginDataStore=dataStorePlugins.get(type);
+  if (pluginDataStore != null) {
+    dataStore=pluginDataStore.getDataStore();
     Map<String,String> dataStoreProperties=new HashMap<String,String>();
     dataStoreProperties.putAll(configuration);
     dataStore.setDataStoreProperties(dataStoreProperties);
@@ -15,6 +16,7 @@
         throw new FabricException(e);
       }
     }
+    Dictionary<String,String> properties=new Hashtable<String,String>();
     properties.put(DATASTORE_TYPE_PROPERTY,type);
     registration=bundleContext.registerService(DataStore.class,dataStore,properties);
     LOG.info("Registered DataStore " + dataStore + " with "+ properties);
