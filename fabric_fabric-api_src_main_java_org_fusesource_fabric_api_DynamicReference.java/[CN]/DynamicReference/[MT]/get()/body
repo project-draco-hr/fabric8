@@ -8,12 +8,12 @@
       value=ref.get();
     }
  catch (    InterruptedException ex) {
-      throw new DynamicReferenceException("Interrupted while waiting for dynamic reference.",ex);
+      throw new DynamicReferenceException(String.format(INTERRUPTED_MESSAGE_FORMAT,name),ex);
     }
     remaining=timeout + startAt - System.currentTimeMillis();
   }
   if (value == null) {
-    throw new DynamicReferenceException("Gave up waiting for dynamic reference.");
+    throw new DynamicReferenceException(String.format(TIMEOUT_MESSAGE_FORMAT,name));
   }
   return value;
 }
