@@ -1,0 +1,15 @@
+{
+  for (  MavenRepositoryURL repo : repos) {
+    String url=repo.getURL().toString();
+    String id=repo.getId();
+    if (Strings.isNotBlank(url)) {
+      Element repository=recreateChild(repositories,"repository[url='" + url + "']","repository",2);
+      if (Strings.isNotBlank(id)) {
+        createAndAppendChild(repository,"id",3,id);
+      }
+      createAndAppendChild(repository,"url",3,url);
+      addRepositoryFlag(repository,"releases",repo.isReleasesEnabled());
+      addRepositoryFlag(repository,"snapshots",repo.isSnapshotsEnabled());
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  List<MavenRepositoryURL> repositories=new ArrayList<MavenRepositoryURL>();
+  String text=getRepositories();
+  if (Strings.isNotBlank(text)) {
+    StringTokenizer iter=new StringTokenizer(text);
+    while (iter.hasMoreTokens()) {
+      String url=iter.nextToken();
+      if (url.endsWith(",")) {
+        url=url.substring(0,url.length() - 1);
+      }
+      MavenRepositoryURL mavenUrl=new MavenRepositoryURL(url);
+      repositories.add(mavenUrl);
+    }
+  }
+  return repositories;
+}

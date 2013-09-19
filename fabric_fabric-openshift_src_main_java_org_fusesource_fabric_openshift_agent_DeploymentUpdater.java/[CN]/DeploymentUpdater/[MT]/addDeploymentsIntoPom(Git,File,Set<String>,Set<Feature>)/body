@@ -20,6 +20,7 @@
   }
   if (artifacts.size() > 0) {
     OpenShiftPomDeployer pomDeployer=new OpenShiftPomDeployer(git,baseDir,deployDir,webAppDir);
-    pomDeployer.update(artifacts);
+    List<MavenRepositoryURL> repositories=parseMavenRepositoryURLs();
+    pomDeployer.update(artifacts,repositories);
   }
 }

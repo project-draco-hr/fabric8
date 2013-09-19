@@ -19,7 +19,11 @@
   for (  String artifactUrl : artifactUrls) {
     artifacts.add(new Parser(artifactUrl));
   }
-  deployer.update(artifacts);
+  List<MavenRepositoryURL> repos=new ArrayList<MavenRepositoryURL>();
+  for (  String repoUrl : repoUrls) {
+    repos.add(new MavenRepositoryURL(repoUrl));
+  }
+  deployer.update(artifacts,repos);
   System.out.println("Completed the new pom is: ");
   System.out.println(Files.toString(pom));
   Document xml=XmlUtils.parseDoc(pom);
@@ -34,6 +38,7 @@
     assertTrue("Should not have ROOT war name",!"ROOT".equals(warName));
   }
   Element dependencies=assertXPathElement(xml,"project/dependencies");
+  Element repositories=assertXPathElement(xml,"project/repositories");
   for (  Parser artifact : artifacts) {
     String group=groupId(artifact);
     String artifactId=artifact.getArtifact();
@@ -44,4 +49,6 @@
   assertDependencyScope(dependencies,"org.apache.camel","camel-core",expectedCamelDependencyScope);
   assertDependencyScope(dependencies,"org.drools","drools-wb-distribution-wars","provided");
   assertDependencyScope(dependencies,"io.hawt","hawtio-web",expectedHawtioDependencyScope);
+  assertRepositoryUrl(repositories,"http://repository.jboss.org/nexus/content/groups/public/");
+  assertRepositoryUrl(repositories,"http://repo.fusesource.com/nexus/content/groups/ea/");
 }
