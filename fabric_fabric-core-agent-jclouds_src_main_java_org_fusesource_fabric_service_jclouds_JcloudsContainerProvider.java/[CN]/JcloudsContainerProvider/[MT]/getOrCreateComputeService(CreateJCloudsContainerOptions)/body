@@ -6,7 +6,7 @@
       computeService=(ComputeService)object;
     }
     if (computeService == null && options.getContextName() != null) {
-      computeService=computeServiceMap.get(options.getContextName());
+      computeService=computeRegistry.getIfPresent(options.getContextName());
     }
     if (computeService == null) {
       options.getCreationStateListener().onStateChange("Compute Service not found. Creating ...");

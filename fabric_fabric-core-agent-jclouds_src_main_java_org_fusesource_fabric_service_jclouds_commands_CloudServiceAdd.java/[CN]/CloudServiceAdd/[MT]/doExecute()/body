@@ -35,23 +35,27 @@
   }
  else   if (!Strings.isNullOrEmpty(providerValue) && (Strings.isNullOrEmpty(apiValue) || Strings.isNullOrEmpty(endpointValue))) {
     serviceName=providerValue;
+    computeRegistry.remove(serviceName);
     CloudUtils.registerProvider(getCurator(),configurationAdmin,contextName,providerValue,identityValue,credentialValue,props);
   }
  else   if (Strings.isNullOrEmpty(providerValue) && (!Strings.isNullOrEmpty(apiValue) && !Strings.isNullOrEmpty(endpointValue))) {
     serviceName=apiValue;
+    computeRegistry.remove(serviceName);
     CloudUtils.registerApi(getCurator(),configurationAdmin,contextName,apiValue,endpointValue,identityValue,credentialValue,props);
   }
  else   if (Strings.isNullOrEmpty(api)) {
     serviceName=apiValue;
+    computeRegistry.remove(serviceName);
     CloudUtils.registerApi(getCurator(),configurationAdmin,contextName,apiValue,endpointValue,identityValue,credentialValue,props);
   }
  else {
     serviceName=providerValue;
+    computeRegistry.remove(serviceName);
     CloudUtils.registerProvider(getCurator(),configurationAdmin,contextName,providerValue,identityValue,credentialValue,props);
   }
   if (!registerAsync) {
     System.out.println("Waiting for " + serviceName + " service to initialize.");
-    CloudUtils.waitForComputeService(bundleContext,contextName);
+    computeRegistry.getOrWait(serviceName);
   }
   return null;
 }

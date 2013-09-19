@@ -1,0 +1,7 @@
+{
+  String name=computeService.getContext().unwrap().getName();
+  if (!Strings.isEmpty(name)) {
+    map.putIfAbsent(name,new DynamicReference<ComputeService>(COMPUTE_SERVICE_WAIT,TimeUnit.MILLISECONDS));
+    map.get(name).bind(computeService);
+  }
+}
