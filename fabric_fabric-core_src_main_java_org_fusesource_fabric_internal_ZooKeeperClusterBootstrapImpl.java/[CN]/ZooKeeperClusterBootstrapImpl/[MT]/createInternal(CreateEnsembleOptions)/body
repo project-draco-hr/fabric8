@@ -9,7 +9,7 @@
     String connectionUrl=getConnectionAddress() + ":" + zooKeeperServerConnectionPort;
     updateDataStoreConfig(options.getDataStoreProperties());
     createZooKeeeperServerConfig(zooKeeperServerHost,mappedPort,options);
-    Map<String,String> configuration=getComponentState().getConfiguration();
+    Map<String,String> configuration=getConfiguration();
     registrationHandler.get().addRegistrationCallback(new DataStoreBootstrapTemplate(connectionUrl,configuration,options));
     createZooKeeeperConfig(connectionUrl,options);
     if (options.isEnsembleStart()) {
