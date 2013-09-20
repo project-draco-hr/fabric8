@@ -20,7 +20,7 @@
     BalancingPolicy balancingPolicy=balancingPolicies.get(policyType);
     PartitionListener partitionListener=partitionListeners.get(workerType);
     TaskManager taskManager=new DefaultTaskManager(curator.get(),taskId,taskDefinition,partitionsPath,partitionListener,balancingPolicy);
-    TaskManager oldTaskManager=taksManagers.put(s,taskManager);
+    TaskManager oldTaskManager=taskManagers.put(s,taskManager);
     if (oldTaskManager != null) {
       oldTaskManager.stop();
     }
