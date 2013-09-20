@@ -1,7 +1,5 @@
 {
   try {
-    String name=System.getProperty(SystemProperties.KARAF_NAME);
-    mbeanServer=(MBeanServer)bundleContext.getService(ref);
     if (mbeanServer != null) {
       mbeanServer.addNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this,null,name);
       registerDomains();
