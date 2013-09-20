@@ -1,22 +1,18 @@
 {
-  try {
-    if (mavenDownloadProxyServlet != null) {
-      this.mavenDownloadProxyServlet.stop();
-    }
-    if (mavenUploadProxyServlet != null) {
-      this.mavenUploadProxyServlet.stop();
-    }
-    unregister(MavenProxy.DOWNLOAD_TYPE);
-    unregister(MavenProxy.UPLOAD_TYPE);
-    try {
-      httpService.get().unregister("/maven/download");
-      httpService.get().unregister("/maven/upload");
-    }
- catch (    Exception ex) {
-      LOGGER.warn("Http service returned error on servlet unregister. Possibly the service has already been stopped");
-    }
+  deactivateComponent();
+  if (mavenDownloadProxyServlet != null) {
+    mavenDownloadProxyServlet.stop();
   }
-  finally {
-    deactivateComponent();
+  if (mavenUploadProxyServlet != null) {
+    mavenUploadProxyServlet.stop();
+  }
+  unregister(MavenProxy.DOWNLOAD_TYPE);
+  unregister(MavenProxy.UPLOAD_TYPE);
+  try {
+    httpService.get().unregister("/maven/download");
+    httpService.get().unregister("/maven/upload");
+  }
+ catch (  Exception ex) {
+    LOGGER.warn("Http service returned error on servlet unregister. Possibly the service has already been stopped");
   }
 }
