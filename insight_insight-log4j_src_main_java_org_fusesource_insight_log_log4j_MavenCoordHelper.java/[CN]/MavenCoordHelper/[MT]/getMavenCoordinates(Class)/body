@@ -9,7 +9,7 @@
           String path=locationURL.getPath();
           if (path != null) {
             File file=new File(path);
-            if (file.exists()) {
+            if (file.exists() && !file.isDirectory()) {
               String coordinates=MavenCoordinates.mavenCoordinatesFromJarFile(file);
               if (!Strings.isEmpty(coordinates)) {
                 return coordinates;
