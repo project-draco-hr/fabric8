@@ -1,0 +1,10 @@
+{
+  this.healthCheck=new HealthCheck(fabricService);
+  this.managerMBean=new FabricManager((FabricServiceImpl)fabricService);
+  this.zooKeeperMBean=new ZooKeeperFacade((FabricServiceImpl)fabricService);
+  this.fileSystemMBean=new FileSystem();
+  healthCheck.registerMBeanServer(mbeanServer);
+  managerMBean.registerMBeanServer(mbeanServer);
+  fileSystemMBean.registerMBeanServer(mbeanServer);
+  zooKeeperMBean.registerMBeanServer(mbeanServer);
+}
