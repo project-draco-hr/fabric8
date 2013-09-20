@@ -16,7 +16,7 @@
   String branch=GitHelpers.currentBranch(git);
   LOG.info("Pushing deployment changes to branch " + branch + " credentials "+ credentials+ " for container "+ container.getId());
   try {
-    git.push().setCredentialsProvider(credentials).setRefSpecs(new RefSpec(branch)).setProgressMonitor(new LoggingProgressMonitor(LOG)).call();
+    Iterable<PushResult> results=git.push().setCredentialsProvider(credentials).setRefSpecs(new RefSpec(branch)).setOutputStream(new LoggingOutputStream(LOG)).call();
     LOG.info("Pushed deployment changes to branch " + branch + " for container "+ container.getId());
   }
  catch (  GitAPIException e) {
