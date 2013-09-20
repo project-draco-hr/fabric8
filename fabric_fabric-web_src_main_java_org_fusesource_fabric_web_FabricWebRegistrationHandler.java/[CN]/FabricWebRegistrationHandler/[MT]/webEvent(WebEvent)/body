@@ -1,12 +1,14 @@
 {
-  webEvents.put(webEvent.getBundle(),webEvent);
+  if (isValid()) {
+    webEvents.put(webEvent.getBundle(),webEvent);
 switch (webEvent.getType()) {
 case WebEvent.DEPLOYING:
-    break;
+      break;
 case WebEvent.DEPLOYED:
-  registerWebapp(fabricService.get().getCurrentContainer(),webEvent);
-break;
+    registerWebapp(fabricService.get().getCurrentContainer(),webEvent);
+  break;
 default :
 unRegisterWebapp(fabricService.get().getCurrentContainer(),webEvent);
+}
 }
 }
