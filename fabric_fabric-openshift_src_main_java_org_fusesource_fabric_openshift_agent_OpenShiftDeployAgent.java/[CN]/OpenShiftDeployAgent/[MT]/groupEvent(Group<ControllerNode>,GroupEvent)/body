@@ -1,32 +1,34 @@
 {
-  if (group.isMaster()) {
-    LOGGER.info("OpenShiftDeployAgent is the master");
-  }
- else {
-    LOGGER.info("OpenShiftDeployAgent is not the master");
-  }
-  try {
-    DataStore dataStore=null;
-    if (fabricService != null) {
-      dataStore=fabricService.get().getDataStore();
-    }
- else {
-      LOGGER.warn("No fabricService yet!");
-    }
+  if (isValid()) {
     if (group.isMaster()) {
-      ControllerNode state=createState();
-      group.update(state);
+      LOGGER.info("OpenShiftDeployAgent is the master");
     }
-    if (dataStore != null) {
-      if (group.isMaster()) {
-        dataStore.trackConfiguration(runnable);
-        onConfigurationChanged();
+ else {
+      LOGGER.info("OpenShiftDeployAgent is not the master");
+    }
+    try {
+      DataStore dataStore=null;
+      if (fabricService != null) {
+        dataStore=fabricService.get().getDataStore();
       }
  else {
-        dataStore.untrackConfiguration(runnable);
+        LOGGER.warn("No fabricService yet!");
+      }
+      if (group.isMaster()) {
+        ControllerNode state=createState();
+        group.update(state);
+      }
+      if (dataStore != null) {
+        if (group.isMaster()) {
+          dataStore.trackConfiguration(runnable);
+          onConfigurationChanged();
+        }
+ else {
+          dataStore.untrackConfiguration(runnable);
+        }
       }
     }
-  }
- catch (  IllegalStateException e) {
+ catch (    IllegalStateException e) {
+    }
   }
 }

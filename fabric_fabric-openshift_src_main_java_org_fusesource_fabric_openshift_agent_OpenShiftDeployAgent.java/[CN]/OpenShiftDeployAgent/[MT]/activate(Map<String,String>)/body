@@ -1,13 +1,7 @@
 {
+  group=new ZooKeeperGroup(curator.get(),ZkPath.OPENSHIFT.getPath(),ControllerNode.class);
+  group.add(this);
+  group.update(createState());
+  group.start();
   activateComponent();
-  try {
-    group=new ZooKeeperGroup(curator.get(),ZkPath.OPENSHIFT.getPath(),ControllerNode.class);
-    group.add(this);
-    group.update(createState());
-    group.start();
-  }
- catch (  RuntimeException rte) {
-    deactivateComponent();
-    throw rte;
-  }
 }
