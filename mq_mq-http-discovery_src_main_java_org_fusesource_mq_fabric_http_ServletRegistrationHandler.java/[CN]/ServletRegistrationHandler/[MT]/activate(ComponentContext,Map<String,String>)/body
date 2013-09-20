@@ -1,5 +1,4 @@
 {
-  activateComponent();
   try {
     FabricDiscoveryServlet discoveryServlet=new FabricDiscoveryServlet();
     discoveryServlet.setCurator(curator.get());
@@ -7,7 +6,7 @@
     httpService.get().registerServlet("/mq-discovery",discoveryServlet,createParams("mq-discovery"),base);
   }
  catch (  Throwable t) {
-    deactivateComponent();
     LOGGER.warn("Failed to register fabric maven proxy servlets, due to:" + t.getMessage());
   }
+  activateComponent();
 }

@@ -1,13 +1,9 @@
 {
+  deactivateComponent();
   try {
-    try {
-      httpService.get().unregister("/mq-discovery");
-    }
- catch (    Exception ex) {
-      LOGGER.warn("Http service returned error on servlet unregister. Possibly the service has already been stopped");
-    }
+    httpService.get().unregister("/mq-discovery");
   }
-  finally {
-    deactivateComponent();
+ catch (  Exception ex) {
+    LOGGER.warn("Http service returned error on servlet unregister.");
   }
 }
