@@ -1,6 +1,7 @@
 {
+  assertValid();
   try {
-    if (lock.acquire(60,TimeUnit.SECONDS)) {
+    if (interProcessLock.acquire(60,TimeUnit.SECONDS)) {
       int port=lookupPort(container,pid,key);
       if (port > 0) {
         return port;
@@ -23,6 +24,6 @@
     throw new FabricException(ex);
   }
  finally {
-    release();
+    releaseLock();
   }
 }

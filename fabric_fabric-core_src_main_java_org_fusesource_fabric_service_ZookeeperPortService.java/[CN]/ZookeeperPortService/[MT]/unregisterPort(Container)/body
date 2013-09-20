@@ -1,10 +1,11 @@
 {
+  assertValid();
   String containerPortsPath=ZkPath.PORTS_CONTAINER.getPath(container.getId());
   try {
-    if (lock.acquire(60,TimeUnit.SECONDS)) {
+    if (interProcessLock.acquire(60,TimeUnit.SECONDS)) {
       if (exists(curator.get(),containerPortsPath) != null) {
         for (        String pid : getChildren(curator.get(),containerPortsPath)) {
-          unRegisterPort(container,pid);
+          unregisterPort(container,pid);
         }
         deleteSafe(curator.get(),containerPortsPath);
       }
@@ -17,6 +18,6 @@
     throw new FabricException(ex);
   }
  finally {
-    release();
+    releaseLock();
   }
 }

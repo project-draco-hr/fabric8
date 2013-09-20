@@ -1,9 +1,10 @@
 {
+  assertValid();
   String ip=container.getIp();
   HashSet<Integer> ports=new HashSet<Integer>();
   String path=ZkPath.PORTS_IP.getPath(ip);
   try {
-    if (lock.acquire(60,TimeUnit.SECONDS)) {
+    if (interProcessLock.acquire(60,TimeUnit.SECONDS)) {
       createDefault(curator.get(),path,"");
       String boundPorts=getStringData(curator.get(),path);
       if (boundPorts != null && !boundPorts.isEmpty()) {
@@ -24,7 +25,7 @@
     throw new FabricException(ex);
   }
  finally {
-    release();
+    releaseLock();
   }
   return ports;
 }

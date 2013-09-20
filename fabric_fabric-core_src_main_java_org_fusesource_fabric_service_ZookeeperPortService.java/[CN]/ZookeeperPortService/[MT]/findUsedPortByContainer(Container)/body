@@ -1,8 +1,9 @@
 {
+  assertValid();
   HashSet<Integer> ports=new HashSet<Integer>();
   String path=ZkPath.PORTS_CONTAINER.getPath(container.getId());
   try {
-    if (lock.acquire(60,TimeUnit.SECONDS)) {
+    if (interProcessLock.acquire(60,TimeUnit.SECONDS)) {
       if (exists(curator.get(),path) != null) {
         for (        String pid : getChildren(curator.get(),path)) {
           for (          String key : getChildren(curator.get(),ZkPath.PORTS_CONTAINER_PID.getPath(container.getId(),pid))) {
@@ -24,7 +25,7 @@
     throw new FabricException(ex);
   }
  finally {
-    release();
+    releaseLock();
   }
   return ports;
 }

@@ -1,9 +1,4 @@
 {
+  interProcessLock=new InterProcessMultiLock(curator.get(),Arrays.asList(ZkPath.PORTS_LOCK.getPath()));
   activateComponent();
-  try {
-    lock=new InterProcessMultiLock(curator.get(),Arrays.asList(ZkPath.PORTS_LOCK.getPath()));
-  }
- catch (  RuntimeException rte) {
-    deactivateComponent();
-  }
 }

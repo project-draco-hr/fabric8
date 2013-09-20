@@ -1,8 +1,9 @@
 {
+  assertValid();
   String containerPortsPidKeyPath=ZkPath.PORTS_CONTAINER_PID_KEY.getPath(container.getId(),pid,key);
   String ipPortsPath=ZkPath.PORTS_IP.getPath(container.getIp());
   try {
-    if (lock.acquire(60,TimeUnit.SECONDS)) {
+    if (interProcessLock.acquire(60,TimeUnit.SECONDS)) {
       if (exists(curator.get(),containerPortsPidKeyPath) != null) {
         int port=lookupPort(container,pid,key);
         deleteSafe(curator.get(),containerPortsPidKeyPath);
@@ -30,6 +31,6 @@
     throw new FabricException(ex);
   }
  finally {
-    release();
+    releaseLock();
   }
 }
