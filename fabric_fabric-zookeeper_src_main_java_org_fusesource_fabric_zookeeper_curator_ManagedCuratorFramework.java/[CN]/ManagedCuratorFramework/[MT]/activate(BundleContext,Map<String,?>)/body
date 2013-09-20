@@ -1,15 +1,9 @@
 {
   this.bundleContext=bundleContext;
+  if ((properties == null || !properties.containsKey(ZOOKEEPER_URL)) && Strings.isNullOrEmpty(System.getProperty(ZOOKEEPER_URL))) {
+    return;
+  }
+  updateService(buildCuratorFramework(properties));
+  this.oldProperties=properties;
   activateComponent();
-  try {
-    if ((properties == null || !properties.containsKey(ZOOKEEPER_URL)) && Strings.isNullOrEmpty(System.getProperty(ZOOKEEPER_URL))) {
-      return;
-    }
-    updateService(buildCuratorFramework(properties));
-    this.oldProperties=properties;
-  }
- catch (  RuntimeException rte) {
-    deactivateComponent();
-    throw rte;
-  }
 }

@@ -1,8 +1,12 @@
 {
-  try {
-    Closeables.closeQuietly(this);
+  deactivateComponent();
+  if (registration != null) {
+    try {
+      registration.unregister();
+    }
+ catch (    IllegalStateException e) {
+    }
   }
-  finally {
-    deactivateComponent();
-  }
+  Closeables.close(curatorFramework,true);
+  executor.shutdownNow();
 }
