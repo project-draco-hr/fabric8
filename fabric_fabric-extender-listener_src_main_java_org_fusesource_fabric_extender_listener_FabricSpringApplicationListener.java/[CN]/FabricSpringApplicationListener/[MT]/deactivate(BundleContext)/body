@@ -1,13 +1,9 @@
 {
-  try {
-    if (listener != null) {
-      bundleContext.removeBundleListener(listener);
-    }
-    if (registration != null) {
-      registration.unregister();
-    }
+  deactivateComponent();
+  if (listener != null) {
+    bundleContext.removeBundleListener(listener);
   }
-  finally {
-    deactivateComponent();
+  if (registration != null) {
+    registration.unregister();
   }
 }
