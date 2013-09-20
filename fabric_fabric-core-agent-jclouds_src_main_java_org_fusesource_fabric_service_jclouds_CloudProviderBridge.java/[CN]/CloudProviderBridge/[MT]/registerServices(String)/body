@@ -8,15 +8,15 @@
           String name=properties.get(Constants.NAME) != null ? String.valueOf(properties.get(Constants.NAME)) : null;
           String identity=properties.get(Constants.IDENTITY) != null ? String.valueOf(properties.get(Constants.IDENTITY)) : null;
           String credential=properties.get(Constants.CREDENTIAL) != null ? String.valueOf(properties.get(Constants.CREDENTIAL)) : null;
-          if (name != null && identity != null && credential != null && getCurator().getZookeeperClient().isConnected()) {
-            if (exists(getCurator(),ZkPath.CLOUD_SERVICE.getPath(name)) == null) {
-              create(getCurator(),ZkPath.CLOUD_SERVICE.getPath(name));
+          if (name != null && identity != null && credential != null && curator.get().getZookeeperClient().isConnected()) {
+            if (exists(curator.get(),ZkPath.CLOUD_SERVICE.getPath(name)) == null) {
+              create(curator.get(),ZkPath.CLOUD_SERVICE.getPath(name));
               Enumeration keys=properties.keys();
               while (keys.hasMoreElements()) {
                 String key=String.valueOf(keys.nextElement());
                 String value=String.valueOf(properties.get(key));
                 if (!key.equals("service.pid") && !key.equals("service.factoryPid")) {
-                  setData(getCurator(),ZkPath.CLOUD_SERVICE_PROPERTY.getPath(name,key),value);
+                  setData(curator.get(),ZkPath.CLOUD_SERVICE_PROPERTY.getPath(name,key),value);
                 }
               }
             }
