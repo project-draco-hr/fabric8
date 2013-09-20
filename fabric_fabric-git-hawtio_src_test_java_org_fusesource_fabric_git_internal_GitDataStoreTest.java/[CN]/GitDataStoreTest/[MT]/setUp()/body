@@ -21,13 +21,9 @@
   config.setString("remote","origin","url",remoteUrl);
   config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
   config.save();
-  LocalGitService gitService=new LocalGitService(){
-    public Git get() throws IOException {
-      return git;
-    }
-  }
-;
+  LocalGitService gitService=new LocalGitService();
   gitService.activate(EasyMock.createMock(ComponentContext.class));
+  gitService.setGitForTesting(git);
   dataStore=createDataStore();
   dataStore.bindCuratorForTesting(curator);
   dataStore.bindGitService(gitService);
