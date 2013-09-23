@@ -1,7 +1,7 @@
 {
   String processName=(String)mbeanServer.get().getAttribute(new ObjectName("java.lang:type=Runtime"),"Name");
   Long processId=Long.parseLong(processName.split("@")[0]);
-  String path=ZkPath.CONTAINER_PROCESS_ID.getPath(name);
+  String path=ZkPath.CONTAINER_PROCESS_ID.getPath(KARAF_NAME);
   Stat stat=exists(curator.get(),path);
   if (stat != null) {
     if (stat.getEphemeralOwner() != curator.get().getZookeeperClient().getZooKeeper().getSessionId()) {

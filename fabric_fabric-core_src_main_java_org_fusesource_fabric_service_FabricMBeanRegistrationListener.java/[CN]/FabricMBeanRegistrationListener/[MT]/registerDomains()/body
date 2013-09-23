@@ -1,6 +1,8 @@
 {
   String name=System.getProperty(SystemProperties.KARAF_NAME);
-  domains.addAll(Arrays.asList(mbeanServer.get().getDomains()));
+synchronized (this) {
+    domains.addAll(Arrays.asList(mbeanServer.get().getDomains()));
+  }
   for (  String domain : mbeanServer.get().getDomains()) {
     setData(curator.get(),CONTAINER_DOMAIN.getPath(name,domain),(byte[])null);
   }
