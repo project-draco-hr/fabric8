@@ -7,8 +7,8 @@
   }
   Container found=getContainer(container);
   applyUpdatedCredentials(found);
-  if (found.isAlive()) {
-    found.stop();
+  if (force || found.isAlive()) {
+    found.stop(force);
   }
  else {
     System.err.println("Container " + container + " is already stopped");

@@ -3,8 +3,8 @@
   validateContainersName(container);
   Container found=getContainer(container);
   applyUpdatedCredentials(found);
-  if (!found.isAlive()) {
-    found.start();
+  if (force || !found.isAlive()) {
+    found.start(force);
   }
  else {
     System.err.println("Container " + container + " is already started");

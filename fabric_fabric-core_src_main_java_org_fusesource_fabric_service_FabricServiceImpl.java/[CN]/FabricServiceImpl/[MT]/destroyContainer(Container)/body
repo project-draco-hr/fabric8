@@ -1,14 +1,3 @@
 {
-  assertValid();
-  String containerId=container.getId();
-  LOGGER.info("Destroying container {}",containerId);
-  ContainerProvider provider=getProvider(container);
-  provider.destroy(container);
-  try {
-    portService.get().unregisterPort(container);
-    getDataStore().deleteContainer(container.getId());
-  }
- catch (  Exception e) {
-    LOGGER.warn("Failed to cleanup container {} entries due to: {}. This will be ignored.",containerId,e.getMessage());
-  }
+  destroyContainer(container,false);
 }
