@@ -1,0 +1,17 @@
+{
+  if (numberOfInstances == 0) {
+    throw new IllegalArgumentException("numberOfInstances should be greater or less than zero");
+  }
+  FabricRequirements requirements=getRequirements();
+  ProfileRequirements profileRequirements=requirements.getOrCreateProfileRequirement(profile);
+  Integer minimumInstances=profileRequirements.getMinimumInstances();
+  List<Container> containers=containersForProfile(profile);
+  int containerCount=containers.size();
+  int newCount=containerCount + numberOfInstances;
+  boolean update=minimumInstances == null || ((numberOfInstances > 0 && newCount > minimumInstances) || (numberOfInstances < 0 && newCount < minimumInstances));
+  if (update) {
+    profileRequirements.setMinimumInstances(newCount);
+    setRequirements(requirements);
+  }
+  return update;
+}
