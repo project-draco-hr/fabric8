@@ -3,6 +3,19 @@
   group.add(this);
   group.update(createState());
   group.start();
+  gitServlet.addReceivePackFilter(new Filter(){
+    @Override public void init(    FilterConfig filterConfig) throws ServletException {
+    }
+    @Override public void doFilter(    ServletRequest request,    ServletResponse response,    FilterChain chain) throws IOException, ServletException {
+      chain.doFilter(request,response);
+      if (gitService.getOptional() != null) {
+        gitService.get().notifyReceivePacket();
+      }
+    }
+    @Override public void destroy(){
+    }
+  }
+);
   String realm=properties != null && properties.containsKey(REALM_PROPERTY_NAME) ? properties.get(REALM_PROPERTY_NAME) : DEFAULT_REALM;
   String role=properties != null && properties.containsKey(ROLE_PROPERTY_NAME) ? properties.get(ROLE_PROPERTY_NAME) : DEFAULT_ROLE;
   try {

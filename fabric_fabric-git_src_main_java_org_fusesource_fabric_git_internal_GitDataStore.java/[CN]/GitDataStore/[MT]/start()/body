@@ -8,12 +8,12 @@
     }
     GitService optionalService=gitService.getOptional();
     if (remoteUrl != null) {
-      remoteChangeListener.onRemoteUrlChanged(remoteUrl);
+      gitListener.onRemoteUrlChanged(remoteUrl);
     }
  else     if (optionalService != null) {
-      optionalService.addRemoteChangeListener(remoteChangeListener);
+      optionalService.addGitListener(gitListener);
       remoteUrl=optionalService.getRemoteUrl();
-      remoteChangeListener.onRemoteUrlChanged(remoteUrl);
+      gitListener.onRemoteUrlChanged(remoteUrl);
       pull();
     }
     LOG.info("starting to pull from remote repository every " + pullPeriod + " millis");
