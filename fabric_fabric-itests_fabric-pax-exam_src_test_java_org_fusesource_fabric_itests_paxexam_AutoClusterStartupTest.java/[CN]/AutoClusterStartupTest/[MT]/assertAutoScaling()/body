@@ -1,9 +1,13 @@
 {
   String profile="mq-amq";
   Integer expected=1;
-  boolean changed=fabricService.scaleProfile(expected,profile);
+  boolean changed=fabricService.scaleProfile(profile,expected);
   assertProfileMinimumSize(profile,expected);
-  changed=fabricService.scaleProfile(expected,profile);
+  changed=fabricService.scaleProfile(profile,expected);
   assertProfileMinimumSize(profile,expected);
   Assert.assertEquals("should not have changed!",false,changed);
+  changed=fabricService.scaleProfile(profile,2);
+  assertProfileMinimumSize(profile,2);
+  changed=fabricService.scaleProfile(profile,-1);
+  assertProfileMinimumSize(profile,null);
 }

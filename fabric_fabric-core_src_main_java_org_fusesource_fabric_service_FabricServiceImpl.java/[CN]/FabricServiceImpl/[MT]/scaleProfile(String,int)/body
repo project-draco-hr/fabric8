@@ -8,7 +8,10 @@
   List<Container> containers=containersForProfile(profile);
   int containerCount=containers.size();
   int newCount=containerCount + numberOfInstances;
-  boolean update=minimumInstances == null || ((numberOfInstances > 0 && newCount > minimumInstances) || (numberOfInstances < 0 && newCount < minimumInstances));
+  if (newCount < 0) {
+    newCount=0;
+  }
+  boolean update=minimumInstances == null || newCount != minimumInstances;
   if (update) {
     profileRequirements.setMinimumInstances(newCount);
     setRequirements(requirements);
