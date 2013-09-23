@@ -1,13 +1,12 @@
 {
   try {
-    return fabricService.getCurrentContainer();
+    return fabricService.get().getCurrentContainer();
   }
  catch (  Exception e) {
-    final String name=System.getProperty(SystemProperties.KARAF_NAME);
-    return new ContainerImpl(null,name,null){
+    return new ContainerImpl(null,KARAF_NAME,null){
       @Override public String getIp(){
         try {
-          return getSubstitutedPath(curator,CONTAINER_IP.getPath(name));
+          return getSubstitutedPath(curator.get(),CONTAINER_IP.getPath(KARAF_NAME));
         }
  catch (        Exception e) {
           throw new FabricException(e);

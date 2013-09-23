@@ -4,11 +4,11 @@
   int rmiServerPort=getRmiServerPort(container);
   int rmiServerConenctionPort=getRmiServerConnectionPort(container);
   String jmxUrl=getJmxUrl(container.getId(),rmiServerConenctionPort,rmiRegistryConnectionPort);
-  setData(curator,CONTAINER_JMX.getPath(container.getId()),jmxUrl);
-  fabricService.getPortService().registerPort(container,MANAGEMENT_PID,RMI_REGISTRY_BINDING_PORT_KEY,rmiRegistryPort);
-  fabricService.getPortService().registerPort(container,MANAGEMENT_PID,RMI_SERVER_BINDING_PORT_KEY,rmiServerPort);
-  Configuration configuration=configurationAdmin.getConfiguration(MANAGEMENT_PID);
+  setData(curator.get(),CONTAINER_JMX.getPath(container.getId()),jmxUrl);
+  fabricService.get().getPortService().registerPort(container,MANAGEMENT_PID,RMI_REGISTRY_BINDING_PORT_KEY,rmiRegistryPort);
+  fabricService.get().getPortService().registerPort(container,MANAGEMENT_PID,RMI_SERVER_BINDING_PORT_KEY,rmiServerPort);
+  Configuration configuration=configAdmin.get().getConfiguration(MANAGEMENT_PID);
   updateIfNeeded(configuration,RMI_REGISTRY_BINDING_PORT_KEY,rmiRegistryPort);
   updateIfNeeded(configuration,RMI_SERVER_BINDING_PORT_KEY,rmiServerPort);
-  updateIfNeeded(configuration,JMX_SERVICE_URL,getSubstitutedData(curator,jmxUrl));
+  updateIfNeeded(configuration,JMX_SERVICE_URL,getSubstitutedData(curator.get(),jmxUrl));
 }

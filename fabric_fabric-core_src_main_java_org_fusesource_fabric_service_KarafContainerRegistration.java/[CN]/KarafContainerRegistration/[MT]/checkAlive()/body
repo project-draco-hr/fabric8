@@ -1,13 +1,13 @@
 {
-  String nodeAlive=CONTAINER_ALIVE.getPath(name);
-  Stat stat=exists(curator,nodeAlive);
+  String nodeAlive=CONTAINER_ALIVE.getPath(KARAF_NAME);
+  Stat stat=exists(curator.get(),nodeAlive);
   if (stat != null) {
-    if (stat.getEphemeralOwner() != curator.getZookeeperClient().getZooKeeper().getSessionId()) {
-      delete(curator,nodeAlive);
-      create(curator,nodeAlive,CreateMode.EPHEMERAL);
+    if (stat.getEphemeralOwner() != curator.get().getZookeeperClient().getZooKeeper().getSessionId()) {
+      delete(curator.get(),nodeAlive);
+      create(curator.get(),nodeAlive,CreateMode.EPHEMERAL);
     }
   }
  else {
-    create(curator,nodeAlive,CreateMode.EPHEMERAL);
+    create(curator.get(),nodeAlive,CreateMode.EPHEMERAL);
   }
 }
