@@ -50,6 +50,8 @@
       userEnvVars=null;
     }
     IApplication application=domain.createApplication(options.getName(),cartridge,scale,new GearProfile(options.getGearProfile()),initGitUrl,timeout,userEnvVars);
+    String containerName=application.getName() + "-" + application.getUUID();
+    LOG.info("Created application " + containerName);
     List<IEmbeddableCartridge> list=new ArrayList<IEmbeddableCartridge>();
     for (int idx=1, size=cartridgeUrls.length; idx < size; idx++) {
       String embeddedUrl=cartridgeUrls[idx];
@@ -60,7 +62,6 @@
       application.addEmbeddableCartridges(list);
     }
     String gitUrl=application.getGitUrl();
-    String containerName=application.getName() + "-" + application.getUUID();
     CreateOpenshiftContainerMetadata meta=new CreateOpenshiftContainerMetadata(domain.getId(),application.getUUID(),application.getCreationLog(),gitUrl);
     meta.setContainerName(containerName);
     meta.setCreateOptions(options);
