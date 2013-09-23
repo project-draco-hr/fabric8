@@ -5,6 +5,19 @@
   group.add(this);
   group.update(createState());
   group.start();
+  gitServlet.addReceivePackFilter(new Filter(){
+    @Override public void init(    FilterConfig filterConfig) throws ServletException {
+    }
+    @Override public void doFilter(    ServletRequest request,    ServletResponse response,    FilterChain chain) throws IOException, ServletException {
+      chain.doFilter(request,response);
+      if (gitService != null) {
+        gitService.notifyReceivePacket();
+      }
+    }
+    @Override public void destroy(){
+    }
+  }
+);
   try {
     HttpContext base=httpService.createDefaultHttpContext();
     HttpContext secure=new SecureHttpContext(base,realm,role);

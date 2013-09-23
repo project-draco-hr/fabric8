@@ -8,12 +8,12 @@
       this.gitRemoteUrl=properties.get(GIT_REMOTE_URL);
     }
     if (gitRemoteUrl != null) {
-      remoteChangeListener.onRemoteUrlChanged(gitRemoteUrl);
+      gitListener.onRemoteUrlChanged(gitRemoteUrl);
     }
  else     if (gitService != null) {
-      gitService.addRemoteChangeListener(remoteChangeListener);
+      gitService.addGitListener(gitListener);
       gitRemoteUrl=gitService.getRemoteUrl();
-      remoteChangeListener.onRemoteUrlChanged(gitRemoteUrl);
+      gitListener.onRemoteUrlChanged(gitRemoteUrl);
       pull();
     }
     LOG.info("starting to pull from remote repository every " + pullPeriod + " millis");
