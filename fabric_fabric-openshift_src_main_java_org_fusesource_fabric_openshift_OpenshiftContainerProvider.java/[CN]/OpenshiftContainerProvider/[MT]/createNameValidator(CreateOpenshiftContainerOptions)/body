@@ -1,0 +1,11 @@
+{
+  IUser user=getOrCreateConnection(options).getUser();
+  final IDomain domain=getOrCreateDomain(user,options);
+  return new NameValidator(){
+    @Override public boolean isValid(    String name){
+      IApplication application=domain.getApplicationByName(name);
+      return application == null;
+    }
+  }
+;
+}
