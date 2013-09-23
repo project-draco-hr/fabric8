@@ -1,10 +1,10 @@
 {
-  this.healthCheck=new HealthCheck(fabricService);
-  this.managerMBean=new FabricManager((FabricServiceImpl)fabricService);
-  this.zooKeeperMBean=new ZooKeeperFacade((FabricServiceImpl)fabricService);
+  this.healthCheck=new HealthCheck(fabricService.get());
+  this.managerMBean=new FabricManager((FabricServiceImpl)fabricService.get());
+  this.zooKeeperMBean=new ZooKeeperFacade((FabricServiceImpl)fabricService.get());
   this.fileSystemMBean=new FileSystem();
-  healthCheck.registerMBeanServer(mbeanServer);
-  managerMBean.registerMBeanServer(mbeanServer);
-  fileSystemMBean.registerMBeanServer(mbeanServer);
-  zooKeeperMBean.registerMBeanServer(mbeanServer);
+  healthCheck.registerMBeanServer(mbeanServer.get());
+  managerMBean.registerMBeanServer(mbeanServer.get());
+  fileSystemMBean.registerMBeanServer(mbeanServer.get());
+  zooKeeperMBean.registerMBeanServer(mbeanServer.get());
 }

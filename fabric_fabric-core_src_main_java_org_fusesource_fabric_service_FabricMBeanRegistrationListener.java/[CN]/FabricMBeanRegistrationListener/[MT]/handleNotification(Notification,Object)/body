@@ -6,15 +6,15 @@
     String path=CONTAINER_DOMAIN.getPath((String)o,domain);
     try {
       if (MBeanServerNotification.REGISTRATION_NOTIFICATION.equals(notification.getType())) {
-        if (domains.add(domain) && exists(curator,path) == null) {
-          setData(curator,path,"");
+        if (domains.add(domain) && exists(curator.get(),path) == null) {
+          setData(curator.get(),path,"");
         }
       }
  else       if (MBeanServerNotification.UNREGISTRATION_NOTIFICATION.equals(notification.getType())) {
         domains.clear();
-        domains.addAll(Arrays.asList(mbeanServer.getDomains()));
+        domains.addAll(Arrays.asList(mbeanServer.get().getDomains()));
         if (!domains.contains(domain)) {
-          deleteSafe(curator,path);
+          deleteSafe(curator.get(),path);
         }
       }
     }

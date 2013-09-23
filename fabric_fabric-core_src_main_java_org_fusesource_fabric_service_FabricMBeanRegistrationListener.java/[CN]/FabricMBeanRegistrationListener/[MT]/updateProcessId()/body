@@ -1,19 +1,19 @@
 {
-  String processName=(String)mbeanServer.getAttribute(new ObjectName("java.lang:type=Runtime"),"Name");
+  String processName=(String)mbeanServer.get().getAttribute(new ObjectName("java.lang:type=Runtime"),"Name");
   Long processId=Long.parseLong(processName.split("@")[0]);
   String path=ZkPath.CONTAINER_PROCESS_ID.getPath(name);
-  Stat stat=exists(curator,path);
+  Stat stat=exists(curator.get(),path);
   if (stat != null) {
-    if (stat.getEphemeralOwner() != curator.getZookeeperClient().getZooKeeper().getSessionId()) {
-      delete(curator,path);
+    if (stat.getEphemeralOwner() != curator.get().getZookeeperClient().getZooKeeper().getSessionId()) {
+      delete(curator.get(),path);
       if (processId != null) {
-        create(curator,path,processId.toString(),CreateMode.EPHEMERAL);
+        create(curator.get(),path,processId.toString(),CreateMode.EPHEMERAL);
       }
     }
   }
  else {
     if (processId != null) {
-      create(curator,path,processId.toString(),CreateMode.EPHEMERAL);
+      create(curator.get(),path,processId.toString(),CreateMode.EPHEMERAL);
     }
   }
 }

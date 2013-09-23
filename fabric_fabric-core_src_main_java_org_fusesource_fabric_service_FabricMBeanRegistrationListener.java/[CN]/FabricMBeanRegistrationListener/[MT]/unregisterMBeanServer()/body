@@ -1,13 +1,10 @@
 {
-  if (mbeanServer != null) {
-    try {
-      mbeanServer.removeNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this);
-      unregisterDomains();
-      unregisterFabricMBeans();
-    }
- catch (    Exception e) {
-      LOGGER.warn("An error occurred during mbean server unregistration. This exception will be ignored.",e);
-    }
+  try {
+    mbeanServer.get().removeNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this);
+    unregisterDomains();
+    unregisterFabricMBeans();
   }
-  mbeanServer=null;
+ catch (  Exception e) {
+    LOGGER.warn("An error occurred during mbean server unregistration. This exception will be ignored.",e);
+  }
 }

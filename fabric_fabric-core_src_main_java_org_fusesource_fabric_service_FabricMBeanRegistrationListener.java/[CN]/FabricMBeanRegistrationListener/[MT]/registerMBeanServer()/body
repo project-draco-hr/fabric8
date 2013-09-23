@@ -1,10 +1,8 @@
 {
   try {
-    if (mbeanServer != null) {
-      mbeanServer.addNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this,null,name);
-      registerDomains();
-      registerFabricMBeans();
-    }
+    mbeanServer.get().addNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this,null,name);
+    registerDomains();
+    registerFabricMBeans();
   }
  catch (  Exception e) {
     LOGGER.warn("An error occurred during mbean server registration. This exception will be ignored.",e);
