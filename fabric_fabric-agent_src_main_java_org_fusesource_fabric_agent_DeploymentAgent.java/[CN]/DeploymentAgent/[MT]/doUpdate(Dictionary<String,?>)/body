@@ -2,7 +2,7 @@
   if (props == null) {
     return false;
   }
-  addMavenProxies(props,fabricService.waitForService(0));
+  addMavenProxies(props,fabricService.getService());
   updateStatus("analyzing",null);
   DictionaryPropertyResolver propertyResolver=new DictionaryPropertyResolver(props,new PropertiesPropertyResolver(System.getProperties()));
   final MavenConfigurationImpl config=new MavenConfigurationImpl(new DictionaryPropertyResolver(props,new PropertiesPropertyResolver(System.getProperties())),"org.ops4j.pax.url.mvn");
