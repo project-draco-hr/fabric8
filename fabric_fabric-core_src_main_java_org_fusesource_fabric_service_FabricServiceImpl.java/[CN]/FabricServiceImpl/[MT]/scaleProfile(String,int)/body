@@ -5,7 +5,7 @@
   FabricRequirements requirements=getRequirements();
   ProfileRequirements profileRequirements=requirements.getOrCreateProfileRequirement(profile);
   Integer minimumInstances=profileRequirements.getMinimumInstances();
-  List<Container> containers=containersForProfile(profile);
+  List<Container> containers=Containers.containersForProfile(getContainers(),profile);
   int containerCount=containers.size();
   int newCount=containerCount + numberOfInstances;
   if (newCount < 0) {
