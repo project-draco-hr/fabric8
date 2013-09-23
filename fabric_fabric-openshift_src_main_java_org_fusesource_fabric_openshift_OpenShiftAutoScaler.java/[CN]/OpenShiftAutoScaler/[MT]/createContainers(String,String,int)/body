@@ -2,11 +2,12 @@
   CreateOpenshiftContainerOptions.Builder builder=createAuthoScaleOptions();
   if (builder != null) {
     for (int i=0; i < count; i++) {
-      Container[] containers=containerProvider.getFabricService().getContainers();
+      FabricService fabricService=containerProvider.getFabricService();
+      Container[] containers=fabricService.getContainers();
       String name=Containers.createContainerName(containers,profile,containerProvider.getScheme());
       CreateOpenshiftContainerOptions options=builder.number(1).version(version).profiles(profile).name(name).build();
       LOG.info("Creating container name " + name + " version "+ version+ " profile "+ profile+ " "+ count+ " container(s)");
-      containerProvider.create(options);
+      fabricService.createContainers(options);
     }
   }
  else {
