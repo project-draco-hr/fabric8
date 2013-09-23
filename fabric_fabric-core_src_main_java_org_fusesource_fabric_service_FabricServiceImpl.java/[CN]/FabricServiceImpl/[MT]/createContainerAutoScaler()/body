@@ -1,0 +1,13 @@
+{
+  Collection<ContainerProvider> providerCollection=getProviders().values();
+  for (  ContainerProvider containerProvider : providerCollection) {
+    if (containerProvider instanceof ContainerAutoScalerFactory) {
+      ContainerAutoScalerFactory provider=(ContainerAutoScalerFactory)containerProvider;
+      ContainerAutoScaler answer=provider.createAutoScaler();
+      if (answer != null) {
+        return answer;
+      }
+    }
+  }
+  return null;
+}

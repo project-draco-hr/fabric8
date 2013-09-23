@@ -1,7 +1,10 @@
 {
-  FabricRequirements requirements=fabricService.getRequirements();
-  List<ProfileRequirements> profileRequirements=requirements.getProfileRequirements();
-  for (  ProfileRequirements profileRequirement : profileRequirements) {
-    autoScaleProfile(requirements,profileRequirement);
+  ContainerAutoScaler autoScaler=getContainerAutoScaler();
+  if (autoScaler != null) {
+    FabricRequirements requirements=fabricService.getRequirements();
+    List<ProfileRequirements> profileRequirements=requirements.getProfileRequirements();
+    for (    ProfileRequirements profileRequirement : profileRequirements) {
+      autoScaleProfile(autoScaler,requirements,profileRequirement);
+    }
   }
 }

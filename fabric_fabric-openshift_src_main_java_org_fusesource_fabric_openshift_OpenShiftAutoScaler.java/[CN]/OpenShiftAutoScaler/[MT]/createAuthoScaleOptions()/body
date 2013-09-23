@@ -1,0 +1,15 @@
+{
+  CreateOpenshiftContainerOptions.Builder builder=CreateOpenshiftContainerOptions.builder();
+  Map<String,String> properties=containerProvider.getProperties();
+  String serverUrl=validateProperty(properties,"serverUrl",OpenshiftContainerProvider.PROPERTY_AUTOSCALE_SERVER_URL,"OPENSHIFT_BROKER_HOST",OpenShiftConstants.DEFAULT_SERVER_URL);
+  String domain=validateProperty(properties,"domain",OpenshiftContainerProvider.PROPERTY_AUTOSCALE_DOMAIN,"OPENSHIFT_NAMESPACE","");
+  String login=validateProperty(properties,"login",OpenshiftContainerProvider.PROPERTY_AUTOSCALE_LOGIN,"OPENSHIFT_LOGIN","");
+  String password=validateProperty(properties,"login",OpenshiftContainerProvider.PROPERTY_AUTOSCALE_PASSWORD,"OPENSHIFT_PASSWORD","");
+  if (Strings.isNotBlank(domain) && Strings.isNotBlank(login) && Strings.isNotBlank(password)) {
+    LOG.info("Using serverUrl: " + serverUrl + " domain: "+ domain+ " login: "+ login+ " password: "+ password);
+    return builder.serverUrl(serverUrl).domain(domain).login(login).password(password);
+  }
+ else {
+    return null;
+  }
+}

@@ -1,9 +1,9 @@
 {
   if (group.isMaster()) {
-    LOGGER.info("OpenShiftController repo is the master");
+    LOGGER.info("AutoScaleController is the master");
   }
  else {
-    LOGGER.info("OpenShiftController repo is not the master");
+    LOGGER.info("AutoScaleController is not the master");
   }
   try {
     DataStore dataStore=null;
@@ -19,10 +19,12 @@
     }
     if (dataStore != null) {
       if (group.isMaster()) {
+        LOGGER.info("tracking configuration");
         dataStore.trackConfiguration(runnable);
         onConfigurationChanged();
       }
  else {
+        LOGGER.info("untracking configuration");
         dataStore.unTrackConfiguration(runnable);
       }
     }

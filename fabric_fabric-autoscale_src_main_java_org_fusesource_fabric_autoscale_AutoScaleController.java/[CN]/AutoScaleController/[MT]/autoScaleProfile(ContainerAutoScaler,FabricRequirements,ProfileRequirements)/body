@@ -1,0 +1,23 @@
+{
+  String profile=profileRequirement.getProfile();
+  Integer minimumInstances=profileRequirement.getMinimumInstances();
+  if (minimumInstances != null) {
+    List<Container> containers=containersForProfile(profile);
+    int count=containers.size();
+    int delta=minimumInstances - count;
+    try {
+      if (delta < 0) {
+        autoScaler.destroyContainers(profile,-delta,containers);
+      }
+ else       if (delta > 0) {
+        if (requirementsSatisfied(requirements,profileRequirement)) {
+          String version=fabricService.getDefaultVersion().getId();
+          autoScaler.createContainers(version,profile,delta);
+        }
+      }
+    }
+ catch (    Exception e) {
+      LOGGER.error("Failed to auto-scale " + profile + ". Caught: "+ e,e);
+    }
+  }
+}
