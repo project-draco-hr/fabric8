@@ -1,7 +1,7 @@
 {
   if (containerAutoScaler == null) {
-    containerAutoScaler=fabricService.createContainerAutoScaler();
+    containerAutoScaler.set(fabricService.get().createContainerAutoScaler());
     LOGGER.info("Creating auto scaler " + containerAutoScaler);
   }
-  return containerAutoScaler;
+  return containerAutoScaler.get();
 }

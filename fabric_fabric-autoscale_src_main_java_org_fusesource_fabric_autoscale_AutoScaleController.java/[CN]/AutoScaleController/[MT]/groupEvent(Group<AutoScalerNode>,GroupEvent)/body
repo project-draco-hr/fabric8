@@ -1,34 +1,25 @@
 {
-  if (group.isMaster()) {
-    LOGGER.info("AutoScaleController is the master");
-  }
- else {
-    LOGGER.info("AutoScaleController is not the master");
-  }
-  try {
-    DataStore dataStore=null;
-    if (fabricService != null) {
-      dataStore=fabricService.getDataStore();
-    }
- else {
-      LOGGER.warn("No fabricService yet!");
-    }
+  if (isValid()) {
     if (group.isMaster()) {
-      AutoScalerNode state=createState();
-      group.update(state);
+      LOGGER.info("AutoScaleController is the master");
     }
-    if (dataStore != null) {
+ else {
+      LOGGER.info("AutoScaleController is not the master");
+    }
+    try {
+      DataStore dataStore=fabricService.get().getDataStore();
       if (group.isMaster()) {
         LOGGER.info("tracking configuration");
+        group.update(createState());
         dataStore.trackConfiguration(runnable);
         onConfigurationChanged();
       }
  else {
         LOGGER.info("untracking configuration");
-        dataStore.unTrackConfiguration(runnable);
+        dataStore.untrackConfiguration(runnable);
       }
     }
-  }
- catch (  IllegalStateException e) {
+ catch (    IllegalStateException e) {
+    }
   }
 }
