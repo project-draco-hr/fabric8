@@ -1,0 +1,28 @@
+{
+  this.bundleContext=bundleContext;
+  this.httpServiceTracker=new ServiceTracker<HttpService,HttpService>(bundleContext,HttpService.class,new ServiceTrackerCustomizer<HttpService,HttpService>(){
+    @Override public HttpService addingService(    ServiceReference<HttpService> reference){
+      HttpService service=ExtendedInternalNode.this.bundleContext.getService(reference);
+      try {
+        service.registerServlet("/elasticsearch",ExtendedInternalNode.this.servlet,null,null);
+      }
+ catch (      ServletException e) {
+        e.printStackTrace();
+      }
+catch (      NamespaceException e) {
+        e.printStackTrace();
+      }
+      return service;
+    }
+    @Override public void modifiedService(    ServiceReference<HttpService> reference,    HttpService service){
+    }
+    @Override public void removedService(    ServiceReference<HttpService> reference,    HttpService service){
+      service.unregister("/elasticsearch");
+    }
+  }
+);
+  this.node=node;
+  this.rest=new ElasticRestImpl(node);
+  this.storage=new ElasticStorageImpl(node);
+  this.servlet=new ElasticSearchServlet(this.rest);
+}
