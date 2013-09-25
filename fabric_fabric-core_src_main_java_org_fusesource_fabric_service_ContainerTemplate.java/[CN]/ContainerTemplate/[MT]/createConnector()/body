@@ -8,7 +8,7 @@
     connector=JMXConnectorFactory.connect(new JMXServiceURL(rootUrl),getEnvironmentCredentials());
   }
  catch (  IOException e) {
-    throw new FabricException(e);
+    throw FabricException.launderThrowable(e);
   }
 catch (  SecurityException ex) {
     throw new FabricAuthenticationException(ex);

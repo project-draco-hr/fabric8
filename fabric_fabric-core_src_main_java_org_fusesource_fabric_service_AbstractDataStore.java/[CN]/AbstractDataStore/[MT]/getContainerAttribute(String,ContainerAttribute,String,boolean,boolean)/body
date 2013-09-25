@@ -28,12 +28,12 @@
     }
  catch (    KeeperException.NoNodeException e) {
       if (mandatory) {
-        throw FabricException.rethrow(e);
+        throw FabricException.launderThrowable(e);
       }
       return def;
     }
 catch (    Exception e) {
-      throw FabricException.rethrow(e);
+      throw FabricException.launderThrowable(e);
     }
   }
 }

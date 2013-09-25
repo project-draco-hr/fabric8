@@ -21,7 +21,7 @@
     throw new FabricException("Could not find port within range [" + fromPort + ","+ toPort+ "]");
   }
  catch (  Exception ex) {
-    throw new FabricException(ex);
+    throw FabricException.launderThrowable(ex);
   }
  finally {
     releaseLock();

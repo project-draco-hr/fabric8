@@ -5,7 +5,7 @@
     data=DataStoreHelpers.toBytes(DataStoreHelpers.toProperties(configuration));
   }
  catch (  IOException e) {
-    throw new FabricException(e);
+    throw FabricException.launderThrowable(e);
   }
   setFileConfiguration(version,profile,pid + ".properties",data);
 }
