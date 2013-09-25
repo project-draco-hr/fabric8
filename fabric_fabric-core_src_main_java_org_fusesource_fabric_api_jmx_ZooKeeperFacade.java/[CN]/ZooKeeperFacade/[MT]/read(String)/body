@@ -1,18 +1,3 @@
 {
-  CuratorFramework curator=getCurator();
-  Stat exists=exists(curator,path);
-  if (exists == null) {
-    return null;
-  }
-  int numChildren=exists.getNumChildren();
-  int dataLength=exists.getDataLength();
-  List<String> children=null;
-  String data=null;
-  if (numChildren > 0) {
-    children=getChildren(curator,path);
-  }
- else {
-    data=getStringData(curator,path);
-  }
-  return new ZkContents(dataLength,children,data);
+  return read(path,true);
 }
