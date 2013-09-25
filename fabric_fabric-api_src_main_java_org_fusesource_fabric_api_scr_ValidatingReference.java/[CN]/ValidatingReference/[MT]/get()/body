@@ -1,8 +1,5 @@
 {
-  if (reference == null) {
-    RuntimeException rte=new InvalidComponentException();
-    rte.printStackTrace();
-    throw rte;
-  }
-  return reference;
+  T ref=reference.get();
+  if (ref == null)   throw new InvalidComponentException();
+  return ref;
 }
