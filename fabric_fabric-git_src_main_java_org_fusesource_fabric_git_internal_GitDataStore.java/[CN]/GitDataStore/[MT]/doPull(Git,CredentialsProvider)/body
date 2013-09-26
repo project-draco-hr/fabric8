@@ -18,7 +18,8 @@
       git.fetch().setCredentialsProvider(credentialsProvider).setRemote(remote).call();
     }
  catch (    Exception e) {
-      LOG.debug("Fetch failed: " + e,e);
+      LOG.debug("Fetch failed. Ignoring");
+      return;
     }
     Map<String,Ref> localBranches=new HashMap<String,Ref>();
     Map<String,Ref> remoteBranches=new HashMap<String,Ref>();

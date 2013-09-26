@@ -1,15 +1,9 @@
 {
-  String masterUrl=null;
   GitNode master=group.master();
-  if (master != null && !master.getContainer().equals(System.getProperty(SystemProperties.KARAF_NAME))) {
-    masterUrl=master.getUrl();
-  }
+  String masterUrl=master != null ? master.getUrl() : null;
   try {
     if (masterUrl != null) {
       gitService.notifyRemoteChanged(getSubstitutedData(curator,masterUrl));
-    }
- else {
-      gitService.notifyRemoteChanged(null);
     }
   }
  catch (  Exception e) {
