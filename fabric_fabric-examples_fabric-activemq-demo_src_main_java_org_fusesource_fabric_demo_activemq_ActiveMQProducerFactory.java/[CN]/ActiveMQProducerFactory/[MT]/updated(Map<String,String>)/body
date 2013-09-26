@@ -4,16 +4,20 @@
     if (brokerUrl == null) {
       brokerUrl="discover:(fabric:default)";
     }
-    producerService=new ActiveMQService((String)properties.get("username"),(String)properties.get("password"),brokerUrl);
+    String password=(String)properties.get("password");
+    if (password == null) {
+      password=fabricService.get().getZookeeperPassword();
+    }
+    producerService=new ActiveMQService((String)properties.get("username"),password,brokerUrl);
     producerService.setMaxAttempts(10);
     producerService.start();
     String destination=(String)properties.get("destination");
     producer=new ProducerThread(producerService,destination);
     producer.setSleep(500);
     producer.start();
-    LOG.info("Producer started " + pid + " started");
+    LOG.info("Producer started");
   }
  catch (  JMSException e) {
-    throw new ConfigurationException(null,"Cannot start producer",e);
+    throw new Exception("Cannot start producer",e);
   }
 }
