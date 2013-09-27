@@ -1,0 +1,18 @@
+{
+  assertValid();
+  SortedSet<String> answer=new TreeSet<String>();
+  for (  String profile : profiles) {
+    String profilePath=ZkProfiles.getPath(version,profile);
+    String configPath=Strings.isNotBlank(path) ? profilePath + "/" + path : path;
+    try {
+      List<String> children=getChildrenSafe(getCurator(),configPath);
+      if (children != null) {
+        answer.addAll(children);
+      }
+    }
+ catch (    Exception e) {
+      throw FabricException.launderThrowable(e);
+    }
+  }
+  return answer;
+}

@@ -48,6 +48,9 @@
   assertEquals("should have found the updated hawtio repo key","mvn:io.hawt/hawtio-karaf/myNewVersion/xml/features",actual);
   Map<String,byte[]> tomcatFileConfigurations=dataStore.getFileConfigurations("1.0","controller-tomcat");
   assertHasFileConfiguration(tomcatFileConfigurations,"tomcat/conf/server.xml.mvel");
+  Collection<String> schemas=dataStore.listFiles("1.0",Arrays.asList("example-dozer"),"schemas");
+  assertNotNull(schemas);
+  assertContainerEquals("schemas for example-dozer",Arrays.asList("invoice.xsd"),new ArrayList<String>(schemas));
   String profileNotCreated="shouldNotBeCreated";
   assertEquals("Should not create profile: " + profileNotCreated,null,dataStore.getProfile(version,profileNotCreated,false));
   assertProfileNotExists(defaultVersion,profileNotCreated);

@@ -1,0 +1,23 @@
+{
+  assertValid();
+  return gitReadOperation(new GitOperation<Collection<String>>(){
+    public Collection<String> call(    Git git,    GitContext context) throws Exception {
+      SortedSet<String> answer=new TreeSet<String>();
+      for (      String profile : profiles) {
+        checkoutVersion(git,GitProfiles.getBranch(version,profile));
+        File profileDirectory=getProfileDirectory(git,profile);
+        File file=Strings.isNotBlank(path) ? new File(profileDirectory,path) : profileDirectory;
+        if (file.exists()) {
+          String[] values=file.list();
+          if (values != null) {
+            for (            String value : values) {
+              answer.add(value);
+            }
+          }
+        }
+      }
+      return answer;
+    }
+  }
+);
+}
