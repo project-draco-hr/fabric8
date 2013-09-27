@@ -1,7 +1,9 @@
 {
   try {
+    this.bundleContext=bundleContext;
     this.schemaPath=Maps.stringValue(configuration,PROPERTY_SCHEMA_PATH,"schemas");
-    watchSchemaFolders();
+    getDataStore().trackConfiguration(changeRunnable);
+    asyncRecompile();
   }
  catch (  Exception e) {
     throw Throwables.propagate(e);
