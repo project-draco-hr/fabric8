@@ -1,0 +1,24 @@
+{
+  if (saslConfigured) {
+    return false;
+  }
+  try {
+    if ((System.getProperty(Environment.JAAS_CONF_KEY) != null) || ((Configuration.getConfiguration() != null) && (Configuration.getConfiguration().getAppConfigurationEntry(System.getProperty(ZooKeeperSaslClient.LOGIN_CONTEXT_NAME_KEY,"Client")) != null))) {
+      if ((isComplete() == false) && (isFailed() == false)) {
+        return true;
+      }
+      if (isComplete() || isFailed()) {
+        if (gotLastPacket == false) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+ catch (  SecurityException e) {
+    if (LOG.isDebugEnabled() == true) {
+      LOG.debug("Could not retrieve login configuration: " + e);
+    }
+    return false;
+  }
+}
