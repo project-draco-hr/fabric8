@@ -22,7 +22,7 @@
   String version="1.1";
   assertCreateVersion("1.0",version);
   String agentPID="org.fusesource.fabric.agent";
-  assertProfileConfiguration(version,importedProfile,agentPID,"parents","feature-camel");
+  assertProfileConfiguration(version,importedProfile,agentPID,"attribute.parents","feature-camel");
   assertProfileTextFileConfigurationContains(version,"example-camel-fabric","camel.xml","http://camel.apache.org/schema/blueprint");
   Map<String,String> profileAttributes=dataStore.getProfileAttributes(version,importedProfile);
   String parent=profileAttributes.get("parents");
@@ -72,7 +72,6 @@
   assertProfileExists("1.1",newProfile);
   assertFolderExists(getRemoteGitFile("fabric/profiles/" + dataStore.convertProfileIdToDirectory(profile)));
   assertFolderExists(getRemoteGitFile("fabric/profiles/" + dataStore.convertProfileIdToDirectory(newProfile)));
-  assertFolderExists("we should have pushed this file remotely due to the call to dataStore.setProfileAttribute()",getRemoteGitFile("fabric/profiles/" + dataStore.convertProfileIdToDirectory(importedProfile) + "/org.fusesource.fabric.profile.attributes.properties"));
   remote.checkout().setName("1.2").call();
   assertProfileExists("1.2",profile);
   assertProfileNotExists("1.2",newProfile);
