@@ -41,7 +41,7 @@
       }
     }
     for (    String version : gitVersions) {
-      if (!remoteBranches.containsKey(version)) {
+      if (!remoteBranches.containsKey(version) && !remoteBranches.isEmpty()) {
         if (!version.equals(MASTER_BRANCH)) {
           try {
             git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
