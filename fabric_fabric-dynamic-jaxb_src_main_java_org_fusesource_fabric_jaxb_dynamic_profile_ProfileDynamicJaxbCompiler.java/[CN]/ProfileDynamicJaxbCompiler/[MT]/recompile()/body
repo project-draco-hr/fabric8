@@ -28,4 +28,12 @@
   if (handler != null) {
     handler.onCompileResults(compileResults);
   }
+  if (introspector != null) {
+    introspector.setClassLoaderProvider("dynamic.jaxb",new ClassLoaderProvider(){
+      @Override public ClassLoader getClassLoader(){
+        return compileResults.getClassLoader();
+      }
+    }
+);
+  }
 }

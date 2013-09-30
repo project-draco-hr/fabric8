@@ -3,6 +3,11 @@
     this.bundleContext=bundleContext;
     this.schemaPath=Maps.stringValue(configuration,PROPERTY_SCHEMA_PATH,"schemas");
     getDataStore().trackConfiguration(changeRunnable);
+    if (introspector == null) {
+      localIntrospector=new Introspector();
+      localIntrospector.init();
+      introspector=localIntrospector;
+    }
     asyncRecompile();
   }
  catch (  Exception e) {
