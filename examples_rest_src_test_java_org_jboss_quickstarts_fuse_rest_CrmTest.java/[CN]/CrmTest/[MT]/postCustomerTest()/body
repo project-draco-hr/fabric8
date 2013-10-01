@@ -1,0 +1,28 @@
+{
+  LOG.info("Sent HTTP POST request to add customer");
+  String inputFile=this.getClass().getResource("/add_customer.xml").getFile();
+  File input=new File(inputFile);
+  PostMethod post=new PostMethod(CUSTOMER_SERVICE_URL);
+  post.addRequestHeader("Accept","text/xml");
+  RequestEntity entity=new FileRequestEntity(input,"text/xml; charset=ISO-8859-1");
+  post.setRequestEntity(entity);
+  HttpClient httpclient=new HttpClient();
+  String res="";
+  try {
+    int result=httpclient.executeMethod(post);
+    LOG.info("Response status code: " + result);
+    LOG.info("Response body: ");
+    res=post.getResponseBodyAsString();
+    LOG.info(res);
+  }
+ catch (  IOException e) {
+    LOG.error("Error connecting to {}",CUSTOMER_SERVICE_URL);
+    LOG.error("You should build the 'rest' quick start and deploy it to a local Fuse before running this test");
+    LOG.error("Please read the README.md file in 'rest' quick start root");
+    Assert.fail("Connection error");
+  }
+ finally {
+    post.releaseConnection();
+  }
+  Assert.assertTrue(res.contains("Jack"));
+}

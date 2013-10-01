@@ -1,0 +1,22 @@
+{
+  String res="";
+  LOG.info("============================================");
+  LOG.info("Sent HTTP GET request to query customer info");
+  GetMethod get=new GetMethod(CUSTOMER_TEST_URL);
+  get.getHostAuthState().setAuthScheme(scheme);
+  try {
+    httpClient.executeMethod(get);
+    res=get.getResponseBodyAsString();
+    LOG.info(res);
+  }
+ catch (  IOException e) {
+    LOG.error("Error connecting to {}",CUSTOMER_SERVICE_URL);
+    LOG.error("You should build the 'rest' quick start and deploy it to a local Fuse before running this test");
+    LOG.error("Please read the README.md file in 'rest' quick start root");
+    Assert.fail("Connection error");
+  }
+ finally {
+    get.releaseConnection();
+  }
+  Assert.assertTrue(res.contains("123"));
+}

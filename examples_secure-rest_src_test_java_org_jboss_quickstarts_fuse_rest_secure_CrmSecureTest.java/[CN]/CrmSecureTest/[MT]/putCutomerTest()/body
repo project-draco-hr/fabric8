@@ -1,0 +1,27 @@
+{
+  LOG.info("============================================");
+  LOG.info("Sent HTTP PUT request to update customer info");
+  String inputFile=this.getClass().getResource("/update_customer.xml").getFile();
+  File input=new File(inputFile);
+  PutMethod put=new PutMethod(CUSTOMER_SERVICE_URL);
+  put.getHostAuthState().setAuthScheme(scheme);
+  RequestEntity entity=new FileRequestEntity(input,"text/xml; charset=ISO-8859-1");
+  put.setRequestEntity(entity);
+  int result=0;
+  try {
+    result=httpClient.executeMethod(put);
+    LOG.info("Response status code: " + result);
+    LOG.info("Response body: ");
+    LOG.info(put.getResponseBodyAsString());
+  }
+ catch (  IOException e) {
+    LOG.error("Error connecting to {}",CUSTOMER_SERVICE_URL);
+    LOG.error("You should build the 'rest' quick start and deploy it to a local Fuse before running this test");
+    LOG.error("Please read the README.md file in 'rest' quick start root");
+    Assert.fail("Connection error");
+  }
+ finally {
+    put.releaseConnection();
+  }
+  Assert.assertEquals(result,200);
+}

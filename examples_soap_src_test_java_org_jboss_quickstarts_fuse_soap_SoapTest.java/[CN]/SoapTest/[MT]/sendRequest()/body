@@ -1,0 +1,14 @@
+{
+  String res;
+  URLConnection connection=new URL("http://localhost:8181/cxf/HelloWorld").openConnection();
+  connection.setDoInput(true);
+  connection.setDoOutput(true);
+  OutputStream os=connection.getOutputStream();
+  InputStream fis=SoapTest.class.getResourceAsStream("/request.xml");
+  copyInputStream(fis,os);
+  InputStream is=connection.getInputStream();
+  LOG.info("the response is ====> ");
+  res=getStringFromInputStream(is);
+  LOG.info(res);
+  Assert.assertTrue(res.contains("Hello"));
+}

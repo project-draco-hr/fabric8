@@ -1,0 +1,13 @@
+{
+  JaxWsProxyFactoryBean factory=new JaxWsProxyFactoryBean();
+  factory.setServiceClass(HelloWorld.class);
+  factory.setAddress("http://localhost:8181/cxf/HelloWorldSecurity");
+  HelloWorld client=(HelloWorld)factory.create();
+  Map<String,Object> outProps=new HashMap<String,Object>();
+  outProps.put("action","UsernameToken");
+  ClientProxy.getClient(client).getOutInterceptors().add(new CustomSecurityInterceptor());
+  ClientProxy.getClient(client).getOutInterceptors().add(new WSS4JOutInterceptor());
+  String ret=client.sayHi("World");
+  LOG.info("result: " + ret);
+  Assert.assertEquals("Hello World",ret);
+}
