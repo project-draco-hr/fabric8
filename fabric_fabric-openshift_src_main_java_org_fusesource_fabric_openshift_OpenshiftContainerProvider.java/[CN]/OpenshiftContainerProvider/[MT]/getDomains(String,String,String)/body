@@ -1,0 +1,13 @@
+{
+  List<String> answer=new ArrayList<String>();
+  IOpenShiftConnection connection=OpenShiftUtils.createConnection(serverUrl,login,password);
+  if (connection != null) {
+    List<IDomain> domains=connection.getDomains();
+    if (domains != null) {
+      for (      IDomain domain : domains) {
+        answer.add(domain.getId());
+      }
+    }
+  }
+  return answer;
+}

@@ -2,5 +2,8 @@
   if (options == null) {
     return null;
   }
-  return new OpenShiftConnectionFactory().getConnection("fabric",options.getLogin(),options.getPassword(),options.getServerUrl());
+  String serverUrl=options.getServerUrl();
+  String login=options.getLogin();
+  String password=options.getPassword();
+  return createConnection(serverUrl,login,password);
 }

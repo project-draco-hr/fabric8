@@ -1,0 +1,19 @@
+{
+  List<String> answer=new ArrayList<String>();
+  IOpenShiftConnection connection=OpenShiftUtils.createConnection(serverUrl,login,password);
+  if (connection != null) {
+    List<IDomain> domains=connection.getDomains();
+    if (domains != null) {
+      for (      IDomain domain : domains) {
+        List<IGearProfile> gearProfiles=domain.getAvailableGearProfiles();
+        for (        IGearProfile gearProfile : gearProfiles) {
+          answer.add(gearProfile.getName());
+        }
+        if (!answer.isEmpty()) {
+          break;
+        }
+      }
+    }
+  }
+  return answer;
+}
