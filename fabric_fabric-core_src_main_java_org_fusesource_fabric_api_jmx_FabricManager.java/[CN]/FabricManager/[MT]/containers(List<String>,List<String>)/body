@@ -1,0 +1,13 @@
+{
+  List<Map<String,Object>> answer=new ArrayList<Map<String,Object>>();
+  for (  Container c : getFabricService().getContainers()) {
+    Map<String,Object> map=BeanUtils.convertContainerToMap(getFabricService(),c,fields);
+    List<Map<String,Object>> profiles=new ArrayList<Map<String,Object>>();
+    for (    Profile p : c.getProfiles()) {
+      profiles.add(BeanUtils.convertProfileToMap(getFabricService(),p,profileFields));
+    }
+    map.put("profiles",profiles);
+    answer.add(map);
+  }
+  return answer;
+}
