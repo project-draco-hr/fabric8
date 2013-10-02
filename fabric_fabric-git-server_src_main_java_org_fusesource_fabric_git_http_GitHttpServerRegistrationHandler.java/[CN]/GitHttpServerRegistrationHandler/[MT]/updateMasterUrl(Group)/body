@@ -1,0 +1,19 @@
+{
+  if (group.isMaster()) {
+    LOGGER.debug("Git repo is the master");
+  }
+ else {
+    LOGGER.debug("Git repo is not the master");
+  }
+  try {
+    GitNode state=createState();
+    group.update(state);
+    String url=state.getUrl();
+    gitRemoteUrl=getSubstitutedData(curator.get(),url);
+    if (group.isMaster()) {
+      updateConfigAdmin();
+    }
+  }
+ catch (  Exception e) {
+  }
+}
