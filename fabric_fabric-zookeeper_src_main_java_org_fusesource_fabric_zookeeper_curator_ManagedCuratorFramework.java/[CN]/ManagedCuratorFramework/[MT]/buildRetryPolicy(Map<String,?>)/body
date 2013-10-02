@@ -1,6 +1,5 @@
 {
   int maxRetries=readInt(properties,RETRY_POLICY_MAX_RETRIES,MAX_RETRIES_LIMIT);
-  int baseSleepTimeMS=readInt(properties,RETRY_POLICY_BASE_SLEEP_TIME_MS,DEFAULT_BASE_SLEEP_MS);
-  int maxSleepTimeMS=readInt(properties,RETRY_POLICY_MAX_SLEEP_TIME_MS,DEFAULT_MAX_SLEEP_MS);
-  return new ExponentialBackoffRetry(baseSleepTimeMS,maxRetries,maxSleepTimeMS);
+  int intervalMs=readInt(properties,RETRY_POLICY_INTERVAL_MS,DEFAULT_RETRY_INTERVAL);
+  return new RetryNTimes(maxRetries,intervalMs);
 }
