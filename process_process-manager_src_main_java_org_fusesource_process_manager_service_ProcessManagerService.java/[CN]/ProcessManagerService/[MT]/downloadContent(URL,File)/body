@@ -1,10 +1,9 @@
 {
-  File tarball=new File(installDir,"install.tar.gz");
+  File archive=new File(installDir,INSTALLED_BINARY);
   Files.copy(new InputSupplier<InputStream>(){
     @Override public InputStream getInput() throws IOException {
       return url.openStream();
     }
   }
-,tarball);
-  FileUtils.extractTar(tarball,installDir,untarTimeout,executor);
+,archive);
 }

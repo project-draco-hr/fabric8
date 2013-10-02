@@ -2,11 +2,13 @@
   String id=pid.substring(pid.indexOf("-") + 1);
   String kind=String.valueOf(properties.get(KIND));
   String url=String.valueOf(properties.get(URL));
+  String extractCmd=getOptionalProperty(properties.get(EXTRACT_CMD));
   String layout=String.valueOf(properties.get(LAYOUT));
   String[] profiles=String.valueOf(properties.get(PROFILES)).split(" ");
   ProcessRequirements processRequirements=new ProcessRequirements(id);
   processRequirements.setKind(kind);
   processRequirements.setUrl(url);
+  processRequirements.setExtractCmd(extractCmd);
   processRequirements.setLayout(layout);
   for (  String profile : profiles) {
     if (profile != null && !profile.isEmpty()) {

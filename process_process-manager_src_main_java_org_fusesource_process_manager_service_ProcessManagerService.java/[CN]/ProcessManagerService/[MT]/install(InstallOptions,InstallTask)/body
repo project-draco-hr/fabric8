@@ -2,7 +2,11 @@
   @SuppressWarnings("serial") InstallTask installTask=new InstallTask(){
     @Override public void install(    ProcessConfig config,    int id,    File installDir) throws Exception {
       config.setName(options.getName());
-      untarTarball(options.getUrl(),installDir);
+      downloadContent(options.getUrl(),installDir);
+      if (options.getExtractCmd() != null) {
+        File archive=new File(installDir,INSTALLED_BINARY);
+        FileUtils.extractArchive(archive,installDir,options.getExtractCmd(),untarTimeout,executor);
+      }
       if (postInstall != null) {
         postInstall.install(config,id,installDir);
       }
