@@ -1,0 +1,17 @@
+{
+  boolean enabled=defaultEnable;
+  Map<String,Boolean> perDest=new HashMap<String,Boolean>();
+  if (properties != null) {
+    for (    String key : properties.keySet()) {
+      String val=properties.get(key);
+      if ("enabled".equals(key)) {
+        enabled=Boolean.parseBoolean(val);
+      }
+ else       if (key.startsWith("dest.")) {
+        perDest.put(key.substring("dest.".length()),Boolean.parseBoolean(val));
+      }
+    }
+  }
+  this.enabled.set(enabled);
+  updateMap(this.perDest,perDest);
+}

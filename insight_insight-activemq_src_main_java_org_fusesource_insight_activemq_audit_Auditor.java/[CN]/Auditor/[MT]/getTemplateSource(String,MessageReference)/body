@@ -1,0 +1,21 @@
+{
+  String source=null;
+  URL url=getTemplateUrl(event,message);
+  if (url != null) {
+    try {
+      source=loadSource(url);
+    }
+ catch (    IOException e) {
+      LOGGER.warn("Unable to load mvel template " + url,e);
+    }
+  }
+  if (source == null) {
+    try {
+      source=loadSource(defaultTemplateUrl);
+    }
+ catch (    IOException e) {
+      throw new IllegalStateException("Default template could not be loaded",e);
+    }
+  }
+  return source;
+}
