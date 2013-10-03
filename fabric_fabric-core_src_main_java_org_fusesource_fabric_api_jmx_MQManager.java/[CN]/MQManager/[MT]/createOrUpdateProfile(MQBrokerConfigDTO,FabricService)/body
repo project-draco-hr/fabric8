@@ -50,9 +50,9 @@
   if (replicas != null) {
     configuration.put(REPLICAS,replicas.toString());
   }
-  Integer slaves=dto.getSlaves();
-  if (slaves != null) {
-    configuration.put(SLAVES,slaves.toString());
+  Integer minInstances=dto.getMinimumInstances();
+  if (minInstances != null) {
+    configuration.put(MINIMUM_INSTANCES,minInstances.toString());
   }
   Profile profile=mqService.createMQProfile(version,profileName,brokerName,configuration);
   String profileId=profile.getId();
