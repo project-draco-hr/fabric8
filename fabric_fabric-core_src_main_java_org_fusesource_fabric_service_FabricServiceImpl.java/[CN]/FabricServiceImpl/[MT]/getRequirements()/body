@@ -1,4 +1,9 @@
 {
   assertValid();
-  return getDataStore().getRequirements();
+  FabricRequirements requirements=getDataStore().getRequirements();
+  Version defaultVersion=getDefaultVersion();
+  if (defaultVersion != null) {
+    requirements.setVersion(defaultVersion.getId());
+  }
+  return requirements;
 }
