@@ -2,10 +2,8 @@
   List<Container> answer=new ArrayList<Container>();
   if (profileId != null) {
     for (    Container c : containers) {
-      for (      Profile p : c.getProfiles()) {
-        if (profileId.equals(p.getId())) {
-          answer.add(c);
-        }
+      if (containerHasProfile(c,profileId)) {
+        answer.add(c);
       }
     }
   }

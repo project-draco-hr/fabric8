@@ -1,0 +1,14 @@
+{
+  MQBrokerStatusDTO answer=new MQBrokerStatusDTO(configDTO);
+  if (container != null) {
+    answer.setContainer(container.getId());
+    answer.setProvisionStatus(container.getProvisionStatus());
+  }
+  if (profileRequirements != null) {
+    Integer minimumInstances=profileRequirements.getMinimumInstances();
+    if (minimumInstances != null) {
+      answer.setMinimumInstances(minimumInstances);
+    }
+  }
+  return answer;
+}
