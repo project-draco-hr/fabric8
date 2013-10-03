@@ -15,18 +15,16 @@
     }
  else {
       result=version.getProfile(brokerName);
-      config=result.getConfigurations().get(pidName);
+      config=result.getConfiguration(pidName);
     }
     if (config == null) {
-      config=parentProfile.getConfigurations().get(MQ_PID_TEMPLATE);
+      config=parentProfile.getConfiguration(MQ_PID_TEMPLATE);
     }
     config.put("broker-name",brokerName);
     if (configs != null) {
       config.putAll(configs);
     }
-    Map<String,Map<String,String>> newConfigs=result.getConfigurations();
-    newConfigs.put(pidName,config);
-    result.setConfigurations(newConfigs);
+    result.setConfiguration(pidName,config);
   }
   return result;
 }
