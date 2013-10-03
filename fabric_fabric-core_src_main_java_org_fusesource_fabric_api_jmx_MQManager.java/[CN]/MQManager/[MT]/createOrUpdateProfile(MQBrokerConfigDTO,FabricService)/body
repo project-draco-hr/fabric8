@@ -16,9 +16,10 @@
     }
   }
   String data=dto.getData();
-  String name=dto.getName();
+  String profileName=dto.profileName();
+  String brokerName=dto.getBrokerName();
   if (data == null) {
-    data="${karaf.base}/data/" + name;
+    data="${karaf.base}/data/" + brokerName;
   }
   configuration.put(DATA,data);
   String config=dto.getConfigUrl();
@@ -53,12 +54,19 @@
   if (slaves != null) {
     configuration.put(SLAVES,slaves.toString());
   }
-  Profile profile=mqService.createMQProfile(version,name,configuration);
+  Profile profile=mqService.createMQProfile(version,profileName,brokerName,configuration);
   String profileId=profile.getId();
   ProfileRequirements profileRequirement=requirements.getOrCreateProfileRequirement(profileId);
   Integer minimumInstances=profileRequirement.getMinimumInstances();
-  MQBrokerConfigDTO loadedDTO=createConfigDTO(mqService,profile);
-  int requiredInstances=loadedDTO.requiredInstances();
+  List<MQBrokerConfigDTO> list=createConfigDTOs(mqService,profile);
+  int requiredInstances=1;
+  if (list.size() == 1) {
+    MQBrokerConfigDTO loadedDTO=list.get(0);
+    requiredInstances=loadedDTO.requiredInstances();
+  }
+ else {
+    requiredInstances=list.size() + 1;
+  }
   if (minimumInstances == null || minimumInstances.intValue() < requiredInstances) {
     profileRequirement.setMinimumInstances(requiredInstances);
     fabricService.setRequirements(requirements);

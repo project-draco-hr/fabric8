@@ -9,8 +9,8 @@
       Set<Map.Entry<String,Map<String,String>>> entries=configurations.entrySet();
       for (      Map.Entry<String,Map<String,String>> entry : entries) {
         String key=entry.getKey();
-        if (key.startsWith(MQService.MQ_FABRIC_SERVER_PID_PREFIX)) {
-          String brokerName=key.substring(MQService.MQ_FABRIC_SERVER_PID_PREFIX.length());
+        if (isBrokerConfigPid(key)) {
+          String brokerName=getBrokerNameFromPID(key);
           String profileId=profile.getId();
           if (requirements.hasMinimumInstances(profileId) || profile.getAssociatedContainers().length > 0) {
             System.out.println("Broker name: " + brokerName + " profile "+ profileId);

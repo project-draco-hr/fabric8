@@ -1,0 +1,35 @@
+{
+  List<MQBrokerConfigDTO> answer=new ArrayList<MQBrokerConfigDTO>();
+  Map<String,Map<String,String>> configurations=profile.getConfigurations();
+  Set<Map.Entry<String,Map<String,String>>> entries=configurations.entrySet();
+  for (  Map.Entry<String,Map<String,String>> entry : entries) {
+    String key=entry.getKey();
+    Map<String,String> configuration=entry.getValue();
+    if (isBrokerConfigPid(key)) {
+      String brokerName=getBrokerNameFromPID(key);
+      String profileId=profile.getId();
+      MQBrokerConfigDTO dto=new MQBrokerConfigDTO();
+      dto.setProfile(profileId);
+      dto.setBrokerName(brokerName);
+      String version=profile.getVersion();
+      dto.setVersion(version);
+      Profile[] parents=profile.getParents();
+      if (parents != null && parents.length > 0) {
+        dto.setParentProfile(parents[0].getId());
+      }
+      if (configuration != null) {
+        dto.setConfigUrl(configuration.get(CONFIG_URL));
+        dto.setData(configuration.get(DATA));
+        dto.setGroup(configuration.get(GROUP));
+        dto.setNetworks(configuration.get(NETWORKS));
+        dto.setNetworksPassword(configuration.get(NETWORK_USER_NAME));
+        dto.setNetworksPassword(configuration.get(NETWORK_PASSWORD));
+        dto.setNetworks(configuration.get(NETWORKS));
+        dto.setNetworks(configuration.get(NETWORKS));
+        dto.setReplicas(Maps.integerValue(configuration,REPLICAS));
+        dto.setSlaves(Maps.integerValue(configuration,SLAVES));
+      }
+    }
+  }
+  return answer;
+}

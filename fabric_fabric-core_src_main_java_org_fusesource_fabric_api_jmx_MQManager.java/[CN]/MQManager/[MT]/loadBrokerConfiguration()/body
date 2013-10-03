@@ -3,10 +3,8 @@
   Map<String,Profile> profileMap=getActiveOrRequiredBrokerProfileMap();
   Collection<Profile> values=profileMap.values();
   for (  Profile profile : values) {
-    MQBrokerConfigDTO dto=createConfigDTO(mqService,profile);
-    if (dto != null) {
-      answer.add(dto);
-    }
+    List<MQBrokerConfigDTO> list=createConfigDTOs(mqService,profile);
+    answer.addAll(list);
   }
   return answer;
 }
