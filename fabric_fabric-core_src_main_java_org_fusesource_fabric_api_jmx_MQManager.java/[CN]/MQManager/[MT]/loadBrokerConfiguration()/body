@@ -1,0 +1,12 @@
+{
+  List<MQBrokerConfigDTO> answer=new ArrayList<MQBrokerConfigDTO>();
+  Map<String,Profile> profileMap=getActiveOrRequiredBrokerProfileMap();
+  Collection<Profile> values=profileMap.values();
+  for (  Profile profile : values) {
+    MQBrokerConfigDTO dto=createConfigDTO(profile);
+    if (dto != null) {
+      answer.add(dto);
+    }
+  }
+  return answer;
+}

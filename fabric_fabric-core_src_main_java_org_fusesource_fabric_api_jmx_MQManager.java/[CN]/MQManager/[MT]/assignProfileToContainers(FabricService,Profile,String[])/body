@@ -1,0 +1,19 @@
+{
+  for (  String containerName : assignContainers) {
+    try {
+      Container container=fabricService.getContainer(containerName);
+      if (container == null) {
+        System.out.println("Failed to assign profile to " + containerName + ": profile doesn't exists");
+      }
+ else {
+        HashSet<Profile> profiles=new HashSet<Profile>(Arrays.asList(container.getProfiles()));
+        profiles.add(profile);
+        container.setProfiles(profiles.toArray(new Profile[profiles.size()]));
+        System.out.println("Profile successfully assigned to " + containerName);
+      }
+    }
+ catch (    Exception e) {
+      System.out.println("Failed to assign profile to " + containerName + ": "+ e.getMessage());
+    }
+  }
+}

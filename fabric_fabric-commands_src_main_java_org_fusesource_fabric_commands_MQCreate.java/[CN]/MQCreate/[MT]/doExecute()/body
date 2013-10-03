@@ -1,18 +1,28 @@
 {
-  MQTopologyDTO dto=createDTO();
-  List<CreateContainerBasicOptions.Builder> builderList=MQManager.createProfilesAndContainerBuilders(dto,fabricService,"child");
-  for (  CreateContainerBasicOptions.Builder builder : builderList) {
-    CreateContainerMetadata[] metadatas=null;
-    try {
-      metadatas=fabricService.createContainers(builder.build());
-      ShellUtils.storeFabricCredentials(session,username,password);
-    }
- catch (    FabricAuthenticationException fae) {
-      if (builder instanceof CreateChildContainerOptions.Builder) {
-        CreateChildContainerOptions.Builder childBuilder=(CreateChildContainerOptions.Builder)builder;
-        promptForJmxCredentialsIfNeeded();
-        metadatas=fabricService.createContainers(childBuilder.jmxUser(username).jmxPassword(password).build());
+  MQBrokerConfigDTO dto=createDTO();
+  Profile profile=MQManager.createOrUpdateProfile(dto,fabricService);
+  String profileId=profile.getId();
+  System.out.println("MQ profile " + profileId + " ready");
+  if (assign != null) {
+    String[] assignContainers=assign.split(",");
+    MQManager.assignProfileToContainers(fabricService,profile,assignContainers);
+  }
+  if (create != null) {
+    String[] createContainers=create.split(",");
+    List<CreateContainerBasicOptions.Builder> builderList=MQManager.createContainerBuilders(dto,fabricService,"child",profileId,dto.version(),createContainers);
+    for (    CreateContainerBasicOptions.Builder builder : builderList) {
+      CreateContainerMetadata[] metadatas=null;
+      try {
+        metadatas=fabricService.createContainers(builder.build());
         ShellUtils.storeFabricCredentials(session,username,password);
+      }
+ catch (      FabricAuthenticationException fae) {
+        if (builder instanceof CreateChildContainerOptions.Builder) {
+          CreateChildContainerOptions.Builder childBuilder=(CreateChildContainerOptions.Builder)builder;
+          promptForJmxCredentialsIfNeeded();
+          metadatas=fabricService.createContainers(childBuilder.jmxUser(username).jmxPassword(password).build());
+          ShellUtils.storeFabricCredentials(session,username,password);
+        }
       }
     }
   }

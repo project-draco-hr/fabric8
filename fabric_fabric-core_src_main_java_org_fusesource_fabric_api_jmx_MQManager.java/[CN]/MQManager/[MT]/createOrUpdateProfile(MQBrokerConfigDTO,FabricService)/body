@@ -1,0 +1,57 @@
+{
+  FabricRequirements requirements=fabricService.getRequirements();
+  MQService mqService=createMQService(fabricService);
+  HashMap<String,String> configuration=new HashMap<String,String>();
+  List<String> properties=dto.getProperties();
+  String version=dto.version();
+  if (properties != null) {
+    for (    String entry : properties) {
+      String[] parts=entry.split("=",2);
+      if (parts.length == 2) {
+        configuration.put(parts[0],parts[1]);
+      }
+ else {
+        configuration.put(parts[0],"");
+      }
+    }
+  }
+  String data=dto.getData();
+  String name=dto.getName();
+  if (data == null) {
+    data="${karaf.base}/data/" + name;
+  }
+  configuration.put(DATA,data);
+  String config=dto.getConfigUrl();
+  if (config != null) {
+    configuration.put(CONFIG_URL,mqService.getConfig(version,config));
+  }
+  String group=dto.getGroup();
+  if (group != null) {
+    configuration.put(GROUP,group);
+  }
+  String networks=dto.getNetworks();
+  if (networks != null) {
+    configuration.put(NETWORKS,networks);
+  }
+  String networksUserName=dto.getNetworksUserName();
+  if (networksUserName != null) {
+    configuration.put(NETWORK_USER_NAME,networksUserName);
+  }
+  String networksPassword=dto.getNetworksPassword();
+  if (networksPassword != null) {
+    configuration.put(NETWORK_PASSWORD,networksPassword);
+  }
+  String parentProfile=dto.getParentProfile();
+  if (parentProfile != null) {
+    configuration.put(PARENT,parentProfile);
+  }
+  Profile profile=mqService.createMQProfile(version,name,configuration);
+  String profileId=profile.getId();
+  ProfileRequirements profileRequirement=requirements.getOrCreateProfileRequirement(profileId);
+  Integer minimumInstances=profileRequirement.getMinimumInstances();
+  if (minimumInstances == null || minimumInstances.intValue() < dto.requiredInstances()) {
+    profileRequirement.setMinimumInstances(dto.requiredInstances());
+    fabricService.setRequirements(requirements);
+  }
+  return profile;
+}

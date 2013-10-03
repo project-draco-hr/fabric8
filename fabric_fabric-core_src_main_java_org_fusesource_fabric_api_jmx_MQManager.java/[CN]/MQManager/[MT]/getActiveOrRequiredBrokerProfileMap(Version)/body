@@ -1,0 +1,24 @@
+{
+  Objects.notNull(fabricService,"fabricService");
+  Map<String,Profile> profileMap=new HashMap<String,Profile>();
+  if (version != null) {
+    FabricRequirements requirements=fabricService.getRequirements();
+    Profile[] profiles=version.getProfiles();
+    for (    Profile profile : profiles) {
+      Map<String,Map<String,String>> configurations=profile.getConfigurations();
+      Set<Map.Entry<String,Map<String,String>>> entries=configurations.entrySet();
+      for (      Map.Entry<String,Map<String,String>> entry : entries) {
+        String key=entry.getKey();
+        if (key.startsWith(MQService.MQ_FABRIC_SERVER_PID_PREFIX)) {
+          String brokerName=key.substring(MQService.MQ_FABRIC_SERVER_PID_PREFIX.length());
+          String profileId=profile.getId();
+          if (requirements.hasMinimumInstances(profileId) || profile.getAssociatedContainers().length > 0) {
+            System.out.println("Broker name: " + brokerName + " profile "+ profileId);
+            profileMap.put(brokerName,profile);
+          }
+        }
+      }
+    }
+  }
+  return profileMap;
+}
