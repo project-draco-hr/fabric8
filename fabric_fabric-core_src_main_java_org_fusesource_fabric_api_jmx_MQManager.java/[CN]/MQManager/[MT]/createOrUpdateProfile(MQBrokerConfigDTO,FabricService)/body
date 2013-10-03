@@ -45,12 +45,22 @@
   if (parentProfile != null) {
     configuration.put(PARENT,parentProfile);
   }
+  Integer replicas=dto.getReplicas();
+  if (replicas != null) {
+    configuration.put(REPLICAS,replicas.toString());
+  }
+  Integer slaves=dto.getSlaves();
+  if (slaves != null) {
+    configuration.put(SLAVES,slaves.toString());
+  }
   Profile profile=mqService.createMQProfile(version,name,configuration);
   String profileId=profile.getId();
   ProfileRequirements profileRequirement=requirements.getOrCreateProfileRequirement(profileId);
   Integer minimumInstances=profileRequirement.getMinimumInstances();
-  if (minimumInstances == null || minimumInstances.intValue() < dto.requiredInstances()) {
-    profileRequirement.setMinimumInstances(dto.requiredInstances());
+  MQBrokerConfigDTO loadedDTO=createConfigDTO(mqService,profile);
+  int requiredInstances=loadedDTO.requiredInstances();
+  if (minimumInstances == null || minimumInstances.intValue() < requiredInstances) {
+    profileRequirement.setMinimumInstances(requiredInstances);
     fabricService.setRequirements(requirements);
   }
   return profile;
