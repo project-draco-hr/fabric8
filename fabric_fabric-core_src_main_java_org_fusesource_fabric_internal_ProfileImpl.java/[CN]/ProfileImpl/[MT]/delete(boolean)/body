@@ -19,4 +19,13 @@
     sb.append(". Use force option to also remove the profile from the containers.");
     throw new FabricException(sb.toString());
   }
+  FabricRequirements requirements=service.getRequirements();
+  if (requirements.removeProfileRequirements(id)) {
+    try {
+      service.setRequirements(requirements);
+    }
+ catch (    IOException e) {
+      throw new FabricException("Failed to update requirements after deleting profile " + id + ". "+ e,e);
+    }
+  }
 }
