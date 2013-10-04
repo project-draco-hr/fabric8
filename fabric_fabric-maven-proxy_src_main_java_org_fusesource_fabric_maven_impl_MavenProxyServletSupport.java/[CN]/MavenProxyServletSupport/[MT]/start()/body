@@ -10,23 +10,10 @@
   }
   repositories=new HashMap<String,RemoteRepository>();
   for (  String rep : remoteRepositories.split(",")) {
-    String id;
-    RemoteRepository remoteRepository=null;
-    rep=rep.trim();
-    Matcher idMatcher=REPOSITORY_ID_REGEX.matcher(rep);
-    if (idMatcher.matches()) {
-      id=idMatcher.group(2);
-      rep=cleanUpRepositorySpec(rep);
-      remoteRepository=new RemoteRepository(id + Math.abs(rep.hashCode()),DEFAULT_REPO_ID,rep);
-    }
- else {
-      id="rep-" + rep.hashCode();
-      rep=cleanUpRepositorySpec(rep);
-      remoteRepository=new RemoteRepository("repo-" + Math.abs(rep.hashCode()),DEFAULT_REPO_ID,rep);
-    }
+    RemoteRepository remoteRepository=createRemoteRepository(rep);
     remoteRepository.setPolicy(true,new RepositoryPolicy(true,updatePolicy,checksumPolicy));
     remoteRepository.setProxy(session.getProxySelector().getProxy(remoteRepository));
-    repositories.put(id,remoteRepository);
+    repositories.put(remoteRepository.getId(),remoteRepository);
   }
   RemoteRepository local=new RemoteRepository("local",DEFAULT_REPO_ID,"file://" + localRepository);
   local.setPolicy(true,new RepositoryPolicy(true,updatePolicy,checksumPolicy));
