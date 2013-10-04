@@ -10,7 +10,8 @@
     profiles.add(profile);
   }
   for (  Profile profile : profiles) {
-    byte[] bytes=profile.getFileConfigurations().get(bridgeDestinationsXml);
+    Map<String,byte[]> configs=profile.getFileConfigurations();
+    byte[] bytes=configs.get(bridgeDestinationsXml);
     if (bytes != null) {
       Object object=jaxbContext.createUnmarshaller().unmarshal(new ByteArrayInputStream(bytes));
       if (object instanceof BridgeDestinationsConfig) {
