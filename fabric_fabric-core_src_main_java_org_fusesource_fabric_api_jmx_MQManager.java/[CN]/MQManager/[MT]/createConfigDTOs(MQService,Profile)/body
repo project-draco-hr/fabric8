@@ -18,16 +18,15 @@
         dto.setParentProfile(parents[0].getId());
       }
       if (configuration != null) {
-        dto.setConfigUrl(configuration.get(CONFIG_URL));
         dto.setData(configuration.get(DATA));
+        dto.setConfigUrl(configuration.get(CONFIG_URL));
         dto.setGroup(configuration.get(GROUP));
-        dto.setNetworks(configuration.get(NETWORKS));
-        dto.setNetworksPassword(configuration.get(NETWORK_USER_NAME));
-        dto.setNetworksPassword(configuration.get(NETWORK_PASSWORD));
-        dto.setNetworks(configuration.get(NETWORKS));
-        dto.setNetworks(configuration.get(NETWORKS));
-        dto.setReplicas(Maps.integerValue(configuration,REPLICAS));
+        dto.setKind(BrokerKind.fromValue(configuration.get(KIND)));
         dto.setMinimumInstances(Maps.integerValue(configuration,MINIMUM_INSTANCES));
+        dto.setNetworks(configuration.get(NETWORKS));
+        dto.setNetworksUserName(configuration.get(NETWORK_USER_NAME));
+        dto.setNetworksPassword(configuration.get(NETWORK_PASSWORD));
+        dto.setReplicas(Maps.integerValue(configuration,REPLICAS));
       }
       answer.add(dto);
     }
