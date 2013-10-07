@@ -13,6 +13,10 @@
     for (    CreateContainerBasicOptions.Builder builder : builderList) {
       CreateContainerMetadata[] metadatas=null;
       try {
+        if (builder instanceof CreateChildContainerOptions.Builder) {
+          CreateChildContainerOptions.Builder childBuilder=(CreateChildContainerOptions.Builder)builder;
+          builder=childBuilder.jmxUser(username).jmxPassword(password);
+        }
         metadatas=fabricService.createContainers(builder.build());
         ShellUtils.storeFabricCredentials(session,username,password);
       }
