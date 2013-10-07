@@ -1,0 +1,11 @@
+{
+  Map map=new HashMap();
+  map.put("foo","a,b,c");
+  assertArrayEquals(null,Maps.stringValues(map,"doesNotExist"));
+  assertArrayEquals(new String[]{"a","b","c"},Maps.stringValues(map,"foo"));
+  Maps.setStringValues(map,"doesNotExist",null);
+  assertArrayEquals(null,Maps.stringValues(map,"doesNotExist"));
+  Maps.setStringValues(map,"foo",new String[]{"d","e"});
+  assertEquals("d,e",Maps.stringValue(map,"foo"));
+  assertArrayEquals(new String[]{"d","e"},Maps.stringValues(map,"foo"));
+}
