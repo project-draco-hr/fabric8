@@ -7,11 +7,5 @@
     LOG.info("No remote repository defined yet for the git repository at " + GitHelpers.getRootGitDirectory(git) + " so not doing a push");
     return Collections.EMPTY_LIST;
   }
-  String branch=gitContext != null && gitContext.getPushBranch() != null ? gitContext.getPushBranch() : GitHelpers.currentBranch(git);
-  if (!branch.equals(MASTER_BRANCH)) {
-    return git.push().setCredentialsProvider(credentialsProvider).setRefSpecs(new RefSpec(MASTER_BRANCH),new RefSpec(branch)).call();
-  }
- else {
-    return git.push().setCredentialsProvider(credentialsProvider).setRefSpecs(new RefSpec(branch)).call();
-  }
+  return git.push().setCredentialsProvider(credentialsProvider).setPushAll().call();
 }

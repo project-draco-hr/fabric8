@@ -1,15 +1,11 @@
 {
   assertValid();
-  getVersions();
-  VersionData data;
-synchronized (cachedVersions) {
+  VersionData data=null;
+  try {
     data=cachedVersions.get(version);
   }
-  if (data == NOT_LOADED) {
-    data=loadVersion(version);
-synchronized (cachedVersions) {
-      cachedVersions.put(version,data);
-    }
+ catch (  ExecutionException e) {
+    FabricException.launderThrowable(e);
   }
   return data;
 }

@@ -14,8 +14,8 @@
       optionalService.addGitListener(gitListener);
       remoteUrl=optionalService.getRemoteUrl();
       gitListener.onRemoteUrlChanged(remoteUrl);
-      pull();
     }
+    getVersions();
     LOG.info("starting to pull from remote repository every " + pullPeriod + " millis");
     threadPool.scheduleWithFixedDelay(new Runnable(){
       @Override public void run(){

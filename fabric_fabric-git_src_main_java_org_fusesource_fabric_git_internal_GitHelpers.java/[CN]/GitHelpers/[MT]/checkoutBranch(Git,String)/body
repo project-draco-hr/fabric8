@@ -1,0 +1,15 @@
+{
+  String current=currentBranch(git);
+  if (equals(current,branch)) {
+    return;
+  }
+ else   if (localBranchExists(git,branch)) {
+    Ref ref=git.checkout().setName(branch).setForce(true).call();
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Checked out branch " + branch + " with results "+ ref.getName());
+    }
+  }
+ else {
+    LOG.debug("Branch " + branch + "not found!");
+  }
+}

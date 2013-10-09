@@ -1,10 +1,10 @@
 {
   assertValid();
-  return gitReadOperation(new GitOperation<Map<String,byte[]>>(){
+  return gitOperation(new GitOperation<Map<String,byte[]>>(){
     public Map<String,byte[]> call(    Git git,    GitContext context) throws Exception {
       checkoutVersion(git,GitProfiles.getBranch(version,profile));
       return doGetFileConfigurations(git,profile);
     }
   }
-);
+,!hasVersion(version));
 }

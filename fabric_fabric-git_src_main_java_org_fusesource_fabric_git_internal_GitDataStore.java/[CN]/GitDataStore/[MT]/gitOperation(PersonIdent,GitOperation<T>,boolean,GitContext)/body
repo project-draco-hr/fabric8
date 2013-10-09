@@ -14,7 +14,7 @@ synchronized (gitOperationMonitor) {
       String originalBranch=repository.getBranch();
       RevCommit statusBefore=CommitUtils.getHead(repository);
       if (pullFirst) {
-        doPull(git,credentialsProvider);
+        doPull(git,credentialsProvider,false);
       }
       T answer=operation.call(git,context);
       boolean requirePush=context.isRequirePush();

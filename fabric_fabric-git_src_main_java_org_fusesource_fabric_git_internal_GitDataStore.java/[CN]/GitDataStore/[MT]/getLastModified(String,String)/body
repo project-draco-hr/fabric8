@@ -1,6 +1,6 @@
 {
   assertValid();
-  Long answer=gitReadOperation(new GitOperation<Long>(){
+  Long answer=gitOperation(new GitOperation<Long>(){
     public Long call(    Git git,    GitContext context) throws Exception {
       checkoutVersion(git,GitProfiles.getBranch(version,profile));
       File profileDirectory=getProfileDirectory(git,profile);
@@ -18,6 +18,6 @@
       return answer;
     }
   }
-);
+,!hasVersion(version));
   return answer != null ? answer.longValue() : 0;
 }

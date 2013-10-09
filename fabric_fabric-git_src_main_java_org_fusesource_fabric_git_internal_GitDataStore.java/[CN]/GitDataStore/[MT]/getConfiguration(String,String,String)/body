@@ -1,6 +1,6 @@
 {
   assertValid();
-  return gitReadOperation(new GitOperation<Map<String,String>>(){
+  return gitOperation(new GitOperation<Map<String,String>>(){
     public Map<String,String> call(    Git git,    GitContext context) throws Exception {
       checkoutVersion(git,GitProfiles.getBranch(version,profile));
       File profileDirectory=getProfileDirectory(git,profile);
@@ -14,5 +14,5 @@
       }
     }
   }
-);
+,!hasVersion(version));
 }

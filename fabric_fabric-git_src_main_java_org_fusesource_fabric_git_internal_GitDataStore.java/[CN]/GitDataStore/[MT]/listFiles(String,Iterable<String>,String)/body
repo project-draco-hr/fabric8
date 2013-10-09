@@ -1,6 +1,6 @@
 {
   assertValid();
-  return gitReadOperation(new GitOperation<Collection<String>>(){
+  return gitOperation(new GitOperation<Collection<String>>(){
     public Collection<String> call(    Git git,    GitContext context) throws Exception {
       SortedSet<String> answer=new TreeSet<String>();
       for (      String profile : profiles) {
@@ -19,5 +19,5 @@
       return answer;
     }
   }
-);
+,!hasVersion(version));
 }
