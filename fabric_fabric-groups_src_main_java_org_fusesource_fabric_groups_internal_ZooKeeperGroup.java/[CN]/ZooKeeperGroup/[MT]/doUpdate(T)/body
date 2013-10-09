@@ -12,15 +12,27 @@
         }
       }
     }
- else     if (id == null) {
-      id=client.create().creatingParentsIfNeeded().withProtection().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(path + "/0",encode(state));
-    }
  else {
-      try {
-        client.setData().forPath(id,encode(state));
+      if (id == null) {
+        Map<String,T> members=members();
+        for (        Map.Entry<String,T> entry : members.entrySet()) {
+          T v=entry.getValue();
+          if (session.equals(v.getSession()) && state.getContainer().equals(v.getContainer())) {
+            id=entry.getKey();
+            return;
+          }
+        }
       }
- catch (      KeeperException.NoNodeException e) {
-        id=client.create().creatingParentsIfNeeded().withProtection().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(path + "/0",encode(state));
+      if (id == null) {
+        id=client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(path + "/0",encode(state));
+      }
+ else {
+        try {
+          client.setData().forPath(id,encode(state));
+        }
+ catch (        KeeperException.NoNodeException e) {
+          id=client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(path + "/0",encode(state));
+        }
       }
     }
   }
