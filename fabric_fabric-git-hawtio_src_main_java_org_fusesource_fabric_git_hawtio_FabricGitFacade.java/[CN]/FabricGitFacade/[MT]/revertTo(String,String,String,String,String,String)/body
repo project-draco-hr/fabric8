@@ -3,6 +3,7 @@
   final PersonIdent personIdent=new PersonIdent(authorName,authorEmail);
   gitWriteOperation(personIdent,new GitOperation<Void>(){
     public Void call(    Git git,    GitContext context) throws Exception {
+      checkoutBranch(git,branch);
       File rootDir=getRootGitDirectory(git);
       return doRevert(git,rootDir,branch,objectId,blobPath,commitMessage,personIdent);
     }
