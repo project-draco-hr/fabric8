@@ -1,7 +1,7 @@
 {
   if (started.compareAndSet(true,false)) {
     client.getConnectionStateListenable().removeListener(connectionStateListener);
-    executorService.shutdownNow();
+    executorService.shutdown();
     try {
       executorService.awaitTermination(5,TimeUnit.SECONDS);
     }
