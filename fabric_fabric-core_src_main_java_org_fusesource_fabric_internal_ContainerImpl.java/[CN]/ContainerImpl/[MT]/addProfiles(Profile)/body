@@ -5,7 +5,10 @@
     updatedProfileList.add(p);
   }
   for (  Profile addedProfile : addedProfiles) {
-    if (!updatedProfileList.contains(addedProfile)) {
+    if (!addedProfile.exists()) {
+      throw new IllegalArgumentException("Profile " + addedProfile.getId() + " doesn't exist.");
+    }
+ else     if (!updatedProfileList.contains(addedProfile)) {
       updatedProfileList.add(addedProfile);
     }
   }

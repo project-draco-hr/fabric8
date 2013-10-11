@@ -1,0 +1,11 @@
+{
+  Set<String> missingProfiles=new HashSet<String>();
+  for (  Container container : containers) {
+    for (    Profile p : container.getProfiles()) {
+      if (!p.exists()) {
+        missingProfiles.add(p.getId());
+      }
+    }
+  }
+  return missingProfiles;
+}
