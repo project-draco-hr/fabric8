@@ -24,10 +24,9 @@
     }
     cartridgeUrl=openshiftConfigOverlay.get("cartridge");
   }
-  boolean fuseCart=false;
+  boolean fuseCart=options.isEnsembleServer();
   if (cartridgeUrl == null) {
-    cartridgeUrl=options.isEnsembleServer() ? REGISTRY_CART : PLAIN_CART;
-    fuseCart=true;
+    cartridgeUrl=PLAIN_CART;
   }
   String[] cartridgeUrls=cartridgeUrl.split(" ");
   LOG.info("Creating cartridges: " + cartridgeUrl);
@@ -47,8 +46,30 @@
     if (userEnvVars.isEmpty()) {
       userEnvVars=null;
     }
-    IApplication application=domain.createApplication(options.getName(),cartridge,scale,new GearProfile(options.getGearProfile()),initGitUrl,timeout,userEnvVars);
-    String containerName=application.getName() + "-" + application.getUUID();
+    String containerName;
+    if (options.getNumber() >= 1) {
+      containerName=options.getName() + i;
+    }
+ else {
+      containerName=options.getName();
+    }
+    long t0=System.currentTimeMillis();
+    IApplication application;
+    try {
+      application=domain.createApplication(containerName,cartridge,scale,new GearProfile(options.getGearProfile()),initGitUrl,timeout,userEnvVars);
+    }
+ catch (    OpenShiftTimeoutException e) {
+      long t1;
+      do {
+        Thread.sleep(5000);
+        application=domain.getApplicationByName(containerName);
+        if (application != null) {
+          break;
+        }
+        t1=System.currentTimeMillis();
+      }
+ while (t1 - t0 < TimeUnit.MILLISECONDS.convert(15,TimeUnit.MINUTES));
+    }
     LOG.info("Created application " + containerName);
     List<IEmbeddableCartridge> list=new ArrayList<IEmbeddableCartridge>();
     for (int idx=1, size=cartridgeUrls.length; idx < size; idx++) {
