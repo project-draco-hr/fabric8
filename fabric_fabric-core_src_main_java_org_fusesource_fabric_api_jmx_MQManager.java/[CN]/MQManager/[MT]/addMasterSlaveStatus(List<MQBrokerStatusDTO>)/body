@@ -7,7 +7,8 @@
       list=new HashMap<String,MQBrokerStatusDTO>();
       groupMap.put(key,list);
     }
-    list.put(status.getContainer(),status);
+    String statusPath=String.format("%s/%s",status.getContainer(),status.getBrokerName());
+    list.put(statusPath,status);
   }
   Set<Map.Entry<String,Map<String,MQBrokerStatusDTO>>> entries=groupMap.entrySet();
   for (  Map.Entry<String,Map<String,MQBrokerStatusDTO>> entry : entries) {
@@ -26,7 +27,8 @@
           String id=stringValue(map,"id","container");
           if (id != null) {
             String container=stringValue(map,"container","agent");
-            MQBrokerStatusDTO containerStatus=containerMap.get(container);
+            String statusPath=String.format("%s/%s",container,id);
+            MQBrokerStatusDTO containerStatus=containerMap.get(statusPath);
             if (containerStatus != null) {
               Boolean master=null;
               List services=listValue(map,"services");
