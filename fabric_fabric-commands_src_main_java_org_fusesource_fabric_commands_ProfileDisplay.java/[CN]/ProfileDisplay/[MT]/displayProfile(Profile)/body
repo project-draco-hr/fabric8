@@ -10,10 +10,12 @@
   output.printf("Containers: %s\n",toString(p.getAssociatedContainers()));
   Profile profile=overlay ? p.getOverlay() : p;
   Map<String,Map<String,String>> configuration=profile.getConfigurations();
+  Map<String,byte[]> resources=profile.getFileConfigurations();
   Map<String,String> agentConfiguration=profile.getContainerConfiguration();
   List<String> agentProperties=new ArrayList<String>();
   List<String> systemProperties=new ArrayList<String>();
   List<String> configProperties=new ArrayList<String>();
+  List<String> otherResources=new ArrayList<String>();
   for (  Map.Entry<String,String> entry : agentConfiguration.entrySet()) {
     String key=entry.getKey();
     String value=entry.getValue();
@@ -67,5 +69,17 @@
       output.println("  " + values.getKey() + " "+ values.getValue());
     }
     output.println("\n");
+  }
+  output.println("\nOther resources");
+  output.println("----------------------------");
+  for (  Map.Entry<String,byte[]> resource : resources.entrySet()) {
+    String name=resource.getKey();
+    if (!name.endsWith(".properties")) {
+      output.println("Resource: " + resource.getKey());
+      if (displayResources) {
+        output.println(new String(resource.getValue(),Charsets.UTF_8));
+        output.println("\n");
+      }
+    }
   }
 }
