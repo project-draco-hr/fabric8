@@ -1,0 +1,23 @@
+{
+  String prefix="${version:";
+  String postfix="}";
+  boolean replaced;
+  do {
+    replaced=false;
+    int startIdx=value.indexOf(prefix);
+    if (startIdx >= 0) {
+      int keyIdx=startIdx + prefix.length();
+      int endIdx=value.indexOf(postfix,keyIdx);
+      if (endIdx > 0) {
+        String newKey=value.substring(keyIdx,endIdx);
+        String newValue=substituteFromProfile(profileOverlay,targetPid,newKey);
+        if (newValue != null) {
+          value=value.substring(0,startIdx) + newValue + value.substring(endIdx + 1);
+        }
+        replaced=true;
+      }
+    }
+  }
+ while (replaced);
+  return value;
+}

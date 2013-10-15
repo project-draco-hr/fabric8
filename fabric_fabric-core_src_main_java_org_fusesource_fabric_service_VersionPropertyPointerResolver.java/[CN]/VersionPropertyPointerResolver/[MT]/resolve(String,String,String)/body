@@ -1,0 +1,22 @@
+{
+  assertValid();
+  try {
+    if (Strings.isNotBlank(value)) {
+      Profile profile=fabricService.get().getCurrentContainer().getOverlayProfile();
+      String pidPey=value.substring(SCHEME.length() + 1);
+      ProfileOverlayImpl profileOverlay=new ProfileOverlayImpl(profile,false,dataStore.get());
+      String answer=substituteFromProfile(profileOverlay,targetPid,pidPey);
+      if (answer != null) {
+        answer=replaceVersions(answer,profileOverlay);
+      }
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("Replaced value " + value + " with answer: "+ answer);
+      }
+      return answer;
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.debug("Could not load property value: {} in version pid. Returning empty String.",value,e);
+  }
+  return EMPTY;
+}
