@@ -1,0 +1,19 @@
+{
+  Pattern pattern=Pattern.compile(filename);
+  Map<String,Object> answer=new HashMap<String,Object>();
+  Version version=getFabricService().getVersion(versionId);
+  for (  String profileId : profileIds) {
+    Profile profile=version.getProfile(profileId);
+    if (profile != null) {
+      Map<String,String> files=new HashMap<String,String>();
+      Map<String,byte[]> configs=profile.getFileConfigurations();
+      for (      String key : configs.keySet()) {
+        if (pattern.matcher(key).matches()) {
+          files.put(key,Base64.encodeBase64String(configs.get(key)));
+        }
+      }
+      answer.put(profileId,files);
+    }
+  }
+  return answer;
+}
