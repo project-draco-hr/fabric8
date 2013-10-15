@@ -1,0 +1,86 @@
+{
+  assertValid();
+  try {
+    final ContainerProvider provider=getProvider(options.getProviderType());
+    if (provider == null) {
+      throw new FabricException("Unable to find a container provider supporting '" + options.getProviderType() + "'");
+    }
+    String originalName=options.getName();
+    if (originalName == null || originalName.length() == 0) {
+      throw new FabricException("A name must be specified when creating containers");
+    }
+    if (listener == null) {
+      listener=new NullCreationStateListener();
+    }
+    ObjectMapper mapper=new ObjectMapper();
+    mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES,false);
+    Map optionsMap=mapper.readValue(mapper.writeValueAsString(options),Map.class);
+    String versionId=options.getVersion() != null ? options.getVersion() : getDataStore().getDefaultVersion();
+    Set<String> profileIds=options.getProfiles();
+    if (profileIds == null || profileIds.isEmpty()) {
+      profileIds=new LinkedHashSet<String>();
+      profileIds.add("default");
+    }
+    optionsMap.put("version",versionId);
+    optionsMap.put("profiles",profileIds);
+    optionsMap.put("number",0);
+    final List<CreateContainerMetadata> metadatas=new CopyOnWriteArrayList<CreateContainerMetadata>();
+    int orgNumber=options.getNumber();
+    int number=Math.max(orgNumber,1);
+    final CountDownLatch latch=new CountDownLatch(number);
+    for (int i=1; i <= number; i++) {
+      String containerName;
+      if (orgNumber >= 1) {
+        containerName=originalName + i;
+      }
+ else {
+        containerName=originalName;
+      }
+      optionsMap.put("name",containerName);
+      Class cl=options.getClass().getClassLoader().loadClass(options.getClass().getName() + "$Builder");
+      CreateContainerBasicOptions.Builder builder=(CreateContainerBasicOptions.Builder)mapper.readValue(mapper.writeValueAsString(optionsMap),cl);
+      final CreateContainerOptions containerOptions=builder.build();
+      final CreationStateListener containerListener=listener;
+      new Thread("Creating container " + containerName){
+        public void run(){
+          try {
+            getDataStore().createContainerConfig(containerOptions);
+            CreateContainerMetadata metadata=provider.create(containerOptions,containerListener);
+            if (metadata.isSuccess()) {
+              Container parent=containerOptions.getParent() != null ? getContainer(containerOptions.getParent()) : null;
+              if (!containerOptions.isEnsembleServer()) {
+                getDataStore().createContainerConfig(metadata);
+              }
+              ContainerImpl container=new ContainerImpl(parent,metadata.getContainerName(),FabricServiceImpl.this);
+              metadata.setContainer(container);
+              container.setMetadata(metadata);
+              LOGGER.info("The container " + metadata.getContainerName() + " has been successfully created");
+            }
+ else {
+              LOGGER.info("The creation of the container " + metadata.getContainerName() + " has failed",metadata.getFailure());
+            }
+            metadatas.add(metadata);
+          }
+ catch (          Throwable t) {
+            CreateContainerBasicMetadata metadata=new CreateContainerBasicMetadata();
+            metadata.setCreateOptions(containerOptions);
+            metadata.setFailure(t);
+            metadatas.add(metadata);
+          }
+ finally {
+            latch.countDown();
+          }
+        }
+      }
+.start();
+    }
+    if (!latch.await(15,TimeUnit.MINUTES)) {
+      throw new FabricException("Timeout waiting for container creation");
+    }
+    return metadatas.toArray(new CreateContainerMetadata[metadatas.size()]);
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to create containers " + e,e);
+    throw FabricException.launderThrowable(e);
+  }
+}

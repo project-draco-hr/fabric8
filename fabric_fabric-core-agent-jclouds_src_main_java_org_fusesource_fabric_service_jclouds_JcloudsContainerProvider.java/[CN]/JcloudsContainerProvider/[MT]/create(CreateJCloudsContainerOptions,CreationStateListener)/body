@@ -1,0 +1,33 @@
+{
+  assertValid();
+  CreateJCloudsContainerOptions options=input.updateComputeService(getOrCreateComputeService(input));
+  listener.onStateChange("Looking up for compute service.");
+  ComputeService computeService=getOrCreateComputeService(options);
+  if (computeService == null) {
+    throw new IllegalStateException("Compute service could not be found or created.");
+  }
+  Template template=ToTemplate.apply(options);
+  listener.onStateChange(String.format(OVERVIEW_FORMAT,1,options.getContextName()));
+  try {
+    Set<? extends NodeMetadata> metadata=computeService.createNodesInGroup(options.getGroup(),1,template);
+    if (metadata == null || metadata.size() != 1) {
+      throw new IllegalStateException("JClouds created " + metadata.size() + " containers instead of 1");
+    }
+    NodeMetadata nodeMetadata=metadata.iterator().next();
+switch (nodeMetadata.getStatus()) {
+case RUNNING:
+      listener.onStateChange(String.format(NODE_CREATED_FORMAT,nodeMetadata.getName()));
+    break;
+default :
+  listener.onStateChange(String.format(NODE_ERROR_FORMAT,nodeMetadata.getStatus()));
+}
+CloudContainerInstallationTask installationTask=new CloudContainerInstallationTask(options.getName(),nodeMetadata,options,computeService,firewallManagerFactory.get(),template.getOptions(),listener);
+return installationTask.install();
+}
+ catch (Throwable ex) {
+CreateJCloudsContainerMetadata failureMetadata=new CreateJCloudsContainerMetadata();
+failureMetadata.setCreateOptions(options);
+failureMetadata.setFailure(ex);
+return failureMetadata;
+}
+}

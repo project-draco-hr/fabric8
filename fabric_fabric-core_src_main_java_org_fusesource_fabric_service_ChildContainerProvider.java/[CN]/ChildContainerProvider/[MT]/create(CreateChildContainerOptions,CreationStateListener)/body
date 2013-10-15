@@ -1,0 +1,11 @@
+{
+  assertValid();
+  final Container parent=fabricService.get().getContainer(options.getParent());
+  ContainerTemplate containerTemplate=new ContainerTemplate(parent,options.getJmxUser(),options.getJmxPassword(),false);
+  return containerTemplate.execute(new ContainerTemplate.AdminServiceCallback<CreateChildContainerMetadata>(){
+    public CreateChildContainerMetadata doWithAdminService(    AdminServiceMBean adminService) throws Exception {
+      return doCreate(adminService,options,listener,parent);
+    }
+  }
+);
+}

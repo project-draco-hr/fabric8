@@ -1,0 +1,77 @@
+{
+  assertValid();
+  IUser user=getOrCreateConnection(options).getUser();
+  IDomain domain=getOrCreateDomain(user,options);
+  String cartridgeUrl=null;
+  Set<String> profiles=options.getProfiles();
+  String versionId=options.getVersion();
+  Map<String,String> openshiftConfigOverlay=new HashMap<String,String>();
+  if (profiles != null && versionId != null) {
+    Version version=fabricService.get().getVersion(versionId);
+    if (version != null) {
+      for (      String profileId : profiles) {
+        Profile profile=version.getProfile(profileId);
+        if (profile != null) {
+          Profile overlay=profile.getOverlay();
+          Map<String,String> openshiftConfig=overlay.getConfiguration(OpenShiftConstants.OPENSHIFT_PID);
+          if (openshiftConfig != null) {
+            openshiftConfigOverlay.putAll(openshiftConfig);
+          }
+        }
+      }
+    }
+    cartridgeUrl=openshiftConfigOverlay.get("cartridge");
+  }
+  boolean fuseCart=options.isEnsembleServer();
+  if (cartridgeUrl == null) {
+    cartridgeUrl=CART;
+  }
+  String[] cartridgeUrls=cartridgeUrl.split(" ");
+  LOG.info("Creating cartridges: " + cartridgeUrl);
+  String standAloneCartridgeUrl=cartridgeUrls[0];
+  StandaloneCartridge cartridge=new StandaloneCartridge(standAloneCartridgeUrl);
+  String zookeeperUrl=fabricService.get().getZookeeperUrl();
+  String zookeeperPassword=fabricService.get().getZookeeperPassword();
+  Map<String,String> userEnvVars=null;
+  if (fuseCart) {
+    userEnvVars=new HashMap<String,String>();
+    userEnvVars.put("OPENSHIFT_FUSE_ZOOKEEPER_URL",zookeeperUrl);
+    userEnvVars.put("OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD",zookeeperPassword);
+  }
+  String initGitUrl=null;
+  int timeout=IHttpClient.NO_TIMEOUT;
+  ApplicationScale scale=null;
+  String containerName=options.getName();
+  long t0=System.currentTimeMillis();
+  IApplication application;
+  try {
+    application=domain.createApplication(containerName,cartridge,scale,new GearProfile(options.getGearProfile()),initGitUrl,timeout,userEnvVars);
+  }
+ catch (  OpenShiftTimeoutException e) {
+    long t1;
+    do {
+      Thread.sleep(5000);
+      application=domain.getApplicationByName(containerName);
+      if (application != null) {
+        break;
+      }
+      t1=System.currentTimeMillis();
+    }
+ while (t1 - t0 < TimeUnit.MILLISECONDS.convert(15,TimeUnit.MINUTES));
+  }
+  LOG.info("Created application " + containerName);
+  List<IEmbeddableCartridge> list=new ArrayList<IEmbeddableCartridge>();
+  for (int idx=1, size=cartridgeUrls.length; idx < size; idx++) {
+    String embeddedUrl=cartridgeUrls[idx];
+    LOG.info("Adding embedded cartridge: " + embeddedUrl);
+    list.add(new EmbeddableCartridge(embeddedUrl));
+  }
+  if (!list.isEmpty()) {
+    application.addEmbeddableCartridges(list);
+  }
+  String gitUrl=application.getGitUrl();
+  CreateOpenshiftContainerMetadata metadata=new CreateOpenshiftContainerMetadata(domain.getId(),application.getUUID(),application.getCreationLog(),gitUrl);
+  metadata.setContainerName(containerName);
+  metadata.setCreateOptions(options);
+  return metadata;
+}

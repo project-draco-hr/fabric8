@@ -1,0 +1,101 @@
+{
+  LoginCredentials credentials=nodeMetadata.getCredentials();
+  if (!Strings.isNullOrEmpty(options.getUser()) && credentials != null) {
+    credentials=credentials.toBuilder().user(options.getUser()).build();
+  }
+ else {
+    credentials=nodeMetadata.getCredentials();
+  }
+  String id=nodeMetadata.getId();
+  Set<String> publicAddresses=nodeMetadata.getPublicAddresses();
+  Set<String> copyOfPublicAddresses=new HashSet<String>();
+  for (  String publicAddress : publicAddresses) {
+    copyOfPublicAddresses.add(publicAddress);
+  }
+  CreateJCloudsContainerMetadata jCloudsContainerMetadata=new CreateJCloudsContainerMetadata();
+  jCloudsContainerMetadata.setCreateOptions(options);
+  jCloudsContainerMetadata.setNodeId(nodeMetadata.getId());
+  jCloudsContainerMetadata.setContainerName(containerName);
+  jCloudsContainerMetadata.setPublicAddresses(copyOfPublicAddresses);
+  jCloudsContainerMetadata.setHostname(nodeMetadata.getHostname());
+  if (credentials != null) {
+    jCloudsContainerMetadata.setIdentity(credentials.identity);
+    jCloudsContainerMetadata.setCredential(credentials.credential);
+  }
+  String publicAddress="";
+  Properties addresses=new Properties();
+  if (publicAddresses != null && !publicAddresses.isEmpty()) {
+    publicAddress=publicAddresses.iterator().next();
+    addresses.put(ZkDefs.PUBLIC_IP,publicAddress);
+  }
+  options.getSystemProperties().put(ContainerProviderUtils.ADDRESSES_PROPERTY_KEY,addresses);
+  options.getMetadataMap().put(containerName,jCloudsContainerMetadata);
+  try {
+    FirewallManager firewallManager=firewallManagerFactory.getFirewallManager(computeService);
+    if (firewallManager.isSupported()) {
+      listener.onStateChange("Configuring firewall.");
+      String source=getOriginatingIp();
+      Rule httpRule=Rule.create().source("0.0.0.0/0").destination(nodeMetadata).port(8181);
+      firewallManager.addRules(httpRule);
+      if (source != null) {
+        Rule jmxRule=Rule.create().source(source).destination(nodeMetadata).ports(44444,1099);
+        Rule sshRule=Rule.create().source(source).destination(nodeMetadata).port(8101);
+        Rule zookeeperRule=Rule.create().source(source).destination(nodeMetadata).port(2181);
+        firewallManager.addRules(jmxRule,sshRule,zookeeperRule);
+      }
+      if (!Strings.isNullOrEmpty(publicAddress)) {
+        Rule zookeeperFromTargetRule=Rule.create().source(publicAddress + "/32").destination(nodeMetadata).port(2181);
+        firewallManager.addRule(zookeeperFromTargetRule);
+      }
+    }
+ else {
+      listener.onStateChange(String.format("Skipping firewall configuration. Not supported for provider %s",options.getProviderName()));
+    }
+  }
+ catch (  FirewallNotSupportedOnProviderException e) {
+    LOGGER.warn("Firewall manager not supported. Firewall will have to be manually configured.");
+  }
+catch (  IOException e) {
+    LOGGER.warn("Could not lookup originating ip. Firewall will have to be manually configured.",e);
+  }
+catch (  Throwable t) {
+    LOGGER.warn("Failed to setup firewall",t);
+  }
+  try {
+    String script=buildInstallAndStartScript(containerName,options);
+    listener.onStateChange(String.format("Installing fabric agent on container %s. It may take a while...",containerName));
+    ExecResponse response=null;
+    try {
+      if (credentials != null) {
+        response=computeService.runScriptOnNode(id,script,templateOptions.overrideLoginCredentials(credentials).runAsRoot(false));
+      }
+ else {
+        response=computeService.runScriptOnNode(id,script,templateOptions);
+      }
+    }
+ catch (    AuthorizationException ex) {
+      throw new Exception("Failed to connect to the container via ssh.");
+    }
+catch (    SshException ex) {
+      throw new Exception("Failed to connect to the container via ssh.");
+    }
+    if (response != null && response.getOutput() != null) {
+      if (response.getOutput().contains(ContainerProviderUtils.FAILURE_PREFIX)) {
+        jCloudsContainerMetadata.setFailure(new Exception(ContainerProviderUtils.parseScriptFailure(response.getOutput())));
+      }
+      String overridenResolverValue=ContainerProviderUtils.parseResolverOverride(response.getOutput());
+      if (overridenResolverValue != null) {
+        jCloudsContainerMetadata.setOverridenResolver(overridenResolverValue);
+        listener.onStateChange("Overriding resolver to " + overridenResolverValue + ".");
+      }
+    }
+ else {
+      jCloudsContainerMetadata.setFailure(new Exception("No response received for fabric install script."));
+    }
+  }
+ catch (  Throwable t) {
+    jCloudsContainerMetadata.setFailure(t);
+  }
+  options.getSystemProperties().clear();
+  return jCloudsContainerMetadata;
+}

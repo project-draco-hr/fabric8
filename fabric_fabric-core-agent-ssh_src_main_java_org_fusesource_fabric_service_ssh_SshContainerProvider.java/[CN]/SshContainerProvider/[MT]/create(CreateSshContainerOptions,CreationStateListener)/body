@@ -1,0 +1,30 @@
+{
+  try {
+    String path=options.getPath();
+    String host=options.getHost();
+    String ip=InetAddress.getByName(host).getHostAddress();
+    if (host == null) {
+      throw new IllegalArgumentException("Host name not specified.");
+    }
+    int port=options.getPort();
+    if (port == -1) {
+      port=22;
+    }
+    String containerName=options.getName();
+    CreateSshContainerMetadata metadata=new CreateSshContainerMetadata();
+    metadata.setCreateOptions(options);
+    metadata.setContainerName(containerName);
+    String script=buildInstallAndStartScript(containerName,options);
+    logger.debug("Running script on host {}:\n{}",host,script);
+    try {
+      runScriptOnHost(options,script);
+    }
+ catch (    Throwable ex) {
+      metadata.setFailure(ex);
+    }
+    return metadata;
+  }
+ catch (  Exception e) {
+    throw FabricException.launderThrowable(e);
+  }
+}

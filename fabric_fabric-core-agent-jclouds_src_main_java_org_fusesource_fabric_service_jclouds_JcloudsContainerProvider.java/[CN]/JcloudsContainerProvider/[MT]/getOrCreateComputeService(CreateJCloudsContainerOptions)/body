@@ -1,15 +1,11 @@
 {
   ComputeService computeService=null;
   if (options != null) {
-    Object object=options.getComputeService();
-    if (object instanceof ComputeService) {
-      computeService=(ComputeService)object;
-    }
+    computeService=options.getComputeService();
     if (computeService == null && options.getContextName() != null) {
       computeService=computeRegistry.get().getIfPresent(options.getContextName());
     }
     if (computeService == null) {
-      options.getCreationStateListener().onStateChange("Compute Service not found. Creating ...");
       if (Strings.isNullOrEmpty(options.getProviderName()) || Strings.isNullOrEmpty(options.getIdentity()) || Strings.isNullOrEmpty(options.getCredential())) {
         throw new IllegalArgumentException("Cannot create compute service. A registered cloud provider or the provider name, identity and credential options are required");
       }
