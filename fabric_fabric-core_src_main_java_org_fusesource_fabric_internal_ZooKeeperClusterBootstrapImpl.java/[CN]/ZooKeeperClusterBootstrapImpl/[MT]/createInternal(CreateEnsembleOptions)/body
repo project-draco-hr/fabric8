@@ -5,11 +5,10 @@
     String zooKeeperServerHost=options.getBindAddress();
     int zooKeeperServerPort=options.getZooKeeperServerPort();
     int zooKeeperServerConnectionPort=options.getZooKeeperServerConnectionPort();
-    int mappedPort=mapPortToRange(zooKeeperServerPort,minimumPort,maximumPort);
+    int mappedPort=Ports.mapPortToRange(zooKeeperServerPort,minimumPort,maximumPort);
     String connectionUrl=getConnectionAddress() + ":" + zooKeeperServerConnectionPort;
     updateDataStoreConfig(options.getDataStoreProperties());
     createZooKeeeperServerConfig(zooKeeperServerHost,mappedPort,options);
-    Map<String,String> configuration=getConfiguration();
     registrationHandler.get().addRegistrationCallback(new DataStoreBootstrapTemplate(connectionUrl,configuration,options));
     createZooKeeeperConfig(connectionUrl,options);
     if (options.isEnsembleStart()) {

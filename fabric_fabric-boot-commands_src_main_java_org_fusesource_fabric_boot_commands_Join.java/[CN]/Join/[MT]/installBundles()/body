@@ -1,9 +1,10 @@
 {
-  Bundle bundleFabricCommands=BundleUtils.findOrInstallBundle(bundleContext,"org.fusesource.fabric.fabric-commands","mvn:org.fusesource.fabric/fabric-commands/" + FabricConstants.FABRIC_VERSION);
+  BundleUtils bundleUtils=new BundleUtils(bundleContext);
+  Bundle bundleFabricCommands=bundleUtils.findBundle("org.fusesource.fabric.fabric-commands");
   bundleFabricCommands.start();
   if (!nonManaged) {
-    Bundle bundleFabricConfigAdmin=BundleUtils.findOrInstallBundle(bundleContext,"org.fusesource.fabric.fabric-configadmin","mvn:org.fusesource.fabric/fabric-configadmin/" + FabricConstants.FABRIC_VERSION);
-    Bundle bundleFabricAgent=BundleUtils.findOrInstallBundle(bundleContext,"org.fusesource.fabric.fabric-agent","mvn:org.fusesource.fabric/fabric-agent/" + FabricConstants.FABRIC_VERSION);
+    Bundle bundleFabricConfigAdmin=bundleUtils.findBundle("org.fusesource.fabric.fabric-configadmin");
+    Bundle bundleFabricAgent=bundleUtils.findBundle("org.fusesource.fabric.fabric-agent");
     bundleFabricConfigAdmin.start();
     bundleFabricAgent.start();
   }

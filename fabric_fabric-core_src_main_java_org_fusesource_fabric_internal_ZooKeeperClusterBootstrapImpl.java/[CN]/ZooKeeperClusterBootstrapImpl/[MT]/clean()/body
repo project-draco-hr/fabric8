@@ -1,8 +1,7 @@
 {
   assertValid();
   try {
-    BundleContext bundleContext=getBundleContext();
-    Bundle bundleFabricZooKeeper=installOrStopBundle(bundleContext,"org.fusesource.fabric.fabric-zookeeper","mvn:org.fusesource.fabric/fabric-zookeeper/" + FabricConstants.FABRIC_VERSION);
+    Bundle bundleFabricZooKeeper=bundleUtils.findAndStopBundle("org.fusesource.fabric.fabric-zookeeper");
     for (; ; ) {
       Configuration[] configs=configAdmin.get().listConfigurations("(|(service.factoryPid=org.fusesource.fabric.zookeeper.server)(service.pid=org.fusesource.fabric.zookeeper))");
       if (configs != null && configs.length > 0) {
