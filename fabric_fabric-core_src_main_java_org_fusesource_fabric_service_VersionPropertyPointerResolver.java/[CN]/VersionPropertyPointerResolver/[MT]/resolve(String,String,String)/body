@@ -5,9 +5,9 @@
       Profile profile=fabricService.get().getCurrentContainer().getOverlayProfile();
       String pidPey=value.substring(SCHEME.length() + 1);
       ProfileOverlayImpl profileOverlay=new ProfileOverlayImpl(profile,false,dataStore.get());
-      String answer=substituteFromProfile(profileOverlay,targetPid,pidPey);
+      String answer=substituteFromProfile(profileOverlay,VERSIONS_PID,pidPey);
       if (answer != null) {
-        answer=replaceVersions(answer,profileOverlay);
+        answer=replaceVersions(profileOverlay,answer);
       }
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Replaced value " + value + " with answer: "+ answer);
