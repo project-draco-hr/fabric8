@@ -1,0 +1,13 @@
+{
+  String group=Maps.stringValue(properties,"group","default");
+  String brokerUrl=Maps.stringValue(properties,"brokerUrl");
+  if (brokerUrl == null) {
+    brokerUrl="discover:(fabric:" + group + ")";
+  }
+  setBrokerURL(brokerUrl);
+  String user=Maps.stringValue(properties,"user","admin");
+  String password=Maps.stringValue(properties,"password",fabricService.getZookeeperPassword());
+  setUserName(user);
+  setPassword(password);
+  LOG.info("Configuring " + this + " with brokerUrl: "+ brokerUrl+ " and user: "+ user);
+}
