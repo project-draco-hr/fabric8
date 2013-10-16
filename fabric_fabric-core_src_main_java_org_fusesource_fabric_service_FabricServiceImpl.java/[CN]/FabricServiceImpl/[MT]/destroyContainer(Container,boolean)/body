@@ -2,8 +2,14 @@
   assertValid();
   String containerId=container.getId();
   LOGGER.info("Destroying container {}",containerId);
-  ContainerProvider provider=getProvider(container);
-  provider.destroy(container);
+  ContainerProvider provider=getProvider(container,true);
+  if (provider == null && !force) {
+    getProvider(container);
+  }
+  if (provider != null) {
+    provider.stop(container);
+    provider.destroy(container);
+  }
   try {
     portService.get().unregisterPort(container);
     getDataStore().deleteContainer(container.getId());
