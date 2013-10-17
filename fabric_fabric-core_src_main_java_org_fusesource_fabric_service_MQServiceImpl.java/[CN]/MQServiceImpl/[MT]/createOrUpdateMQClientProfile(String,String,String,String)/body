@@ -1,0 +1,27 @@
+{
+  Version version=fabricService.getVersion(versionId);
+  Profile parentProfile=null;
+  if (Strings.isNotBlank(parentProfileName)) {
+    parentProfile=version.getProfile(parentProfileName);
+  }
+  Profile result=parentProfile;
+  if (group != null && profile != null) {
+    Map config=null;
+    if (!version.hasProfile(profile)) {
+      result=version.createProfile(profile);
+    }
+ else {
+      result=version.getProfile(profile);
+    }
+    if (parentProfile != null) {
+      result.setParents(new Profile[]{parentProfile});
+    }
+    Map<String,String> parentProfileConfig=result.getConfiguration(MQ_CONNECTION_FACTORY_PID);
+    if (config == null) {
+      config=parentProfileConfig;
+    }
+    config.put(GROUP,group);
+    result.setConfiguration(MQ_CONNECTION_FACTORY_PID,config);
+  }
+  return result;
+}

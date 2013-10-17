@@ -53,7 +53,7 @@
   if (minInstances != null) {
     configuration.put(MINIMUM_INSTANCES,minInstances.toString());
   }
-  Profile profile=mqService.createMQProfile(version,profileName,brokerName,configuration,dto.kind().equals(BrokerKind.Replicated));
+  Profile profile=mqService.createOrUpdateMQProfile(version,profileName,brokerName,configuration,dto.kind().equals(BrokerKind.Replicated));
   String profileId=profile.getId();
   ProfileRequirements profileRequirement=requirements.getOrCreateProfileRequirement(profileId);
   Integer minimumInstances=profileRequirement.getMinimumInstances();
@@ -69,6 +69,10 @@
   if (minimumInstances == null || minimumInstances.intValue() < requiredInstances) {
     profileRequirement.setMinimumInstances(requiredInstances);
     fabricService.setRequirements(requirements);
+  }
+  String clientProfile=dto.clientProfile();
+  if (Strings.isNotBlank(clientProfile)) {
+    mqService.createOrUpdateMQClientProfile(version,clientProfile,group,dto.getClientParentProfile());
   }
   return profile;
 }

@@ -1,8 +1,11 @@
 {
   Version version=fabricService.getVersion(versionId);
-  String parentProfileName=replicated ? MQ_PROFILE_REPLICATED : MQ_PROFILE_BASE;
+  String parentProfileName=null;
   if (configs != null && configs.containsKey("parent")) {
     parentProfileName=configs.remove("parent");
+  }
+  if (Strings.isNullOrBlank(parentProfileName)) {
+    parentProfileName=replicated ? MQ_PROFILE_REPLICATED : MQ_PROFILE_BASE;
   }
   Profile parentProfile=version.getProfile(parentProfileName);
   String pidName=getBrokerPID(brokerName);
