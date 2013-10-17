@@ -1,10 +1,11 @@
 {
   ensurePath.ensure(client.getZookeeperClient());
-  final BackgroundCallback callback=new BackgroundCallback(){
-    @Override public void processResult(    CuratorFramework client,    CuratorEvent event) throws Exception {
-      processChildren(event.getChildren(),mode);
+  List<String> children=client.getChildren().usingWatcher(childrenWatcher).forPath(path);
+  Collections.sort(children,new Comparator<String>(){
+    @Override public int compare(    String left,    String right){
+      return left.compareTo(right);
     }
   }
-;
-  client.getChildren().usingWatcher(childrenWatcher).inBackground(callback).forPath(path);
+);
+  processChildren(children,mode);
 }
