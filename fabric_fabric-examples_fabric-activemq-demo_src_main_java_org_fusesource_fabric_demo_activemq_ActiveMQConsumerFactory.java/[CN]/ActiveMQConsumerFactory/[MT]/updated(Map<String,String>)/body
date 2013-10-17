@@ -1,14 +1,6 @@
 {
   try {
-    String brokerUrl=(String)properties.get("brokerUrl");
-    if (brokerUrl == null) {
-      brokerUrl="discover:(fabric:default)";
-    }
-    String password=(String)properties.get("password");
-    if (password == null) {
-      password=fabricService.get().getZookeeperPassword();
-    }
-    consumerService=new ActiveMQService((String)properties.get("username"),password,brokerUrl);
+    consumerService=new ActiveMQService(connectionFactory);
     consumerService.setMaxAttempts(10);
     consumerService.start();
     String destination=(String)properties.get("destination");
