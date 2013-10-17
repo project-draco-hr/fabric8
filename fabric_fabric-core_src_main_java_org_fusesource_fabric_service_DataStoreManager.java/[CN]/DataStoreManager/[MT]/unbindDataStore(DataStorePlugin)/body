@@ -1,6 +1,10 @@
 {
-  dataStorePlugins.remove(dataStorePlugin.getType());
-  if (dataStorePlugin.getType().equals(type)) {
+  boolean update;
+synchronized (this) {
+    dataStorePlugins.remove(dataStorePlugin.getType());
+    update=dataStorePlugin.getType().equals(type);
+  }
+  if (update) {
     updateServiceRegistration();
   }
 }

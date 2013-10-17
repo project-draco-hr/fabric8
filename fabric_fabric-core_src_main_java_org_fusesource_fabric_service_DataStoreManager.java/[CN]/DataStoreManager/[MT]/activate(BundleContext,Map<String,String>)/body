@@ -1,7 +1,9 @@
 {
-  this.bundleContext=bundleContext;
-  this.configuration=Collections.unmodifiableMap(configuration);
-  this.type=readType(this.configuration);
+synchronized (this) {
+    this.bundleContext=bundleContext;
+    this.configuration=Collections.unmodifiableMap(configuration);
+    this.type=readType(this.configuration);
+  }
   updateServiceRegistration();
   activateComponent();
 }

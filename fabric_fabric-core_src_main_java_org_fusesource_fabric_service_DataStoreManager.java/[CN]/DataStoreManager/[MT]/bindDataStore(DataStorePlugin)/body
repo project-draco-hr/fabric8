@@ -1,6 +1,10 @@
 {
-  dataStorePlugins.put(dataStorePlugin.getType(),dataStorePlugin);
-  if (dataStorePlugin.getType().equals(type)) {
+  boolean update;
+synchronized (this) {
+    dataStorePlugins.put(dataStorePlugin.getType(),dataStorePlugin);
+    update=dataStorePlugin.getType().equals(type);
+  }
+  if (update) {
     updateServiceRegistration();
   }
 }

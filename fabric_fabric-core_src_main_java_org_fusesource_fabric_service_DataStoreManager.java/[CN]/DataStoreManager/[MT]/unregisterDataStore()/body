@@ -1,10 +1,16 @@
 {
-  if (registration != null) {
-    registration.unregister();
+  ServiceRegistration<DataStore> reg;
+  DataStore ds;
+synchronized (this) {
+    reg=registration;
     registration=null;
-  }
-  if (dataStore != null) {
-    dataStore.stop();
+    ds=dataStore;
     dataStore=null;
+  }
+  if (reg != null) {
+    reg.unregister();
+  }
+  if (ds != null) {
+    ds.stop();
   }
 }
