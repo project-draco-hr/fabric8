@@ -1,0 +1,16 @@
+{
+  Profile[] profiles=version.getProfiles();
+  for (  Profile profile : profiles) {
+    if (stopOnFailure) {
+      downloadProfile(profile);
+    }
+ else {
+      try {
+        downloadProfile(profile);
+      }
+ catch (      Exception e) {
+        LOG.error("Failed to download profile " + profile.getId() + " "+ e,e);
+      }
+    }
+  }
+}

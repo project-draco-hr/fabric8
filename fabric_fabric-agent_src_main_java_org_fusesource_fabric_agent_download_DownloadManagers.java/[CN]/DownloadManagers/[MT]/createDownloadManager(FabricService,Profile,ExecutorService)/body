@@ -1,0 +1,8 @@
+{
+  Map<String,String> configuration=profile.getConfiguration("org.fusesource.fabric.agent");
+  if (configuration == null) {
+    configuration=new HashMap<String,String>();
+  }
+  MavenConfiguration mavenConfiguration=createMavenConfiguration(fabricService,mapToProperties(configuration));
+  return new DownloadManager(mavenConfiguration,downloadExecutor);
+}

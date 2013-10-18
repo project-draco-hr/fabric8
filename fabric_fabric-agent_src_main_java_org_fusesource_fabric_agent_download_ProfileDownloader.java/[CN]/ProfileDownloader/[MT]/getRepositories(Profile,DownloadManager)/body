@@ -1,0 +1,15 @@
+{
+  Map<URI,Repository> repositories=new HashMap<URI,Repository>();
+  for (  String repositoryUrl : profile.getRepositories()) {
+    if (Strings.isNotBlank(repositoryUrl)) {
+      URI repoUri=new URI(repositoryUrl);
+      try {
+        AgentUtils.addRepository(downloadManager,repositories,repoUri);
+      }
+ catch (      Exception e) {
+        LOG.warn("Failed to add repository " + repositoryUrl + ". "+ e);
+      }
+    }
+  }
+  return repositories;
+}

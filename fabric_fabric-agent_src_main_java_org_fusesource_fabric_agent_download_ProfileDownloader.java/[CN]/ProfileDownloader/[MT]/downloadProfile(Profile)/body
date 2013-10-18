@@ -1,0 +1,39 @@
+{
+  if (!profile.isOverlay()) {
+    profile=profile.getOverlay();
+  }
+  DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabricService,profile,executorService);
+  Set<String> bundles=new LinkedHashSet<String>();
+  Set<Feature> features=new LinkedHashSet<Feature>();
+  List<String> bundleList=profile.getBundles();
+  for (  String bundle : bundleList) {
+    String mvnCoords=getMavenCoords(bundle);
+    if (mvnCoords != null) {
+      bundles.add(mvnCoords);
+    }
+  }
+  bundles.addAll(bundleList);
+  addFeatures(features,profile,downloadManager);
+  Map<String,File> files=AgentUtils.downloadBundles(downloadManager,features,bundles,Collections.<String>emptySet());
+  Set<Map.Entry<String,File>> entries=files.entrySet();
+  for (  Map.Entry<String,File> entry : entries) {
+    String name=entry.getKey();
+    File file=entry.getValue();
+    if (processedFiles.add(file)) {
+      String fileName=file.getName();
+      String mvnCoords=getMavenCoords(name);
+      File destFile;
+      if (mvnCoords != null) {
+        Parser parser=new Parser(mvnCoords);
+        destFile=new File(target,parser.getArtifactPath());
+      }
+ else {
+        destFile=new File(target,fileName);
+      }
+      if (force || !destFile.exists()) {
+        LOG.info("Copying file " + name + " to :  "+ destFile.getCanonicalPath());
+        Files.copy(file,destFile);
+      }
+    }
+  }
+}

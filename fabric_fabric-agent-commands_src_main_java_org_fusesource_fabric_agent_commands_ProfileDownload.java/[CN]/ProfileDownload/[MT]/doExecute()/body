@@ -1,0 +1,51 @@
+{
+  checkFabricAvailable();
+  Version ver=version != null ? fabricService.getVersion(version) : fabricService.getDefaultVersion();
+  if (ver == null) {
+    if (version != null) {
+      System.out.println("version " + version + " does not exist!");
+    }
+ else {
+      System.out.println("No default version available!");
+    }
+    return null;
+  }
+  if (target == null) {
+    String karafBase=System.getProperty("karaf.base",".");
+    target=new File(karafBase + "/system");
+  }
+  target.mkdirs();
+  if (!target.exists()) {
+    System.out.println("Could not create the target directory " + target);
+    return null;
+  }
+  if (!target.isDirectory()) {
+    System.out.println("Target is not a directory " + target);
+    return null;
+  }
+  if (executorService == null) {
+    if (threadPoolSize > 1) {
+      executorService=Executors.newFixedThreadPool(threadPoolSize);
+    }
+ else {
+      executorService=Executors.newSingleThreadExecutor();
+    }
+  }
+  ProfileDownloader downloader=new ProfileDownloader(getFabricService(),target,force,executorService);
+  if (profile != null) {
+    Profile profileObject=null;
+    if (ver.hasProfile(profile)) {
+      profileObject=ver.getProfile(profile);
+    }
+    if (profileObject == null) {
+      System.out.println("Source profile " + profile + " not found.");
+      return null;
+    }
+    downloader.downloadProfile(profileObject);
+  }
+ else {
+    downloader.downloadVersion(ver);
+  }
+  System.out.println("Downloaded " + downloader.getProcessedFileCount() + " to "+ target);
+  return null;
+}
