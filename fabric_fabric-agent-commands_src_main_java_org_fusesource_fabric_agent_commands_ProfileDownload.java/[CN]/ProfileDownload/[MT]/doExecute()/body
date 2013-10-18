@@ -46,6 +46,10 @@
  else {
     downloader.downloadVersion(ver);
   }
-  System.out.println("Downloaded " + downloader.getProcessedFileCount() + " to "+ target);
+  List<String> failedProfileIDs=downloader.getFailedProfileIDs();
+  System.out.println("Downloaded " + downloader.getProcessedFileCount() + " file(s) to "+ target);
+  if (failedProfileIDs.size() > 0) {
+    System.out.println("Failed to download these profiles: " + failedProfileIDs + ". Check the logs for details");
+  }
   return null;
 }
