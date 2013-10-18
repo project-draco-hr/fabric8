@@ -7,6 +7,6 @@
   String httpUrl=getHttpUrl(protocol,container.getId(),httpConnectionPort);
   setData(curator.get(),CONTAINER_HTTP.getPath(container.getId()),httpUrl);
   fabricService.get().getPortService().registerPort(container,HTTP_PID,HTTP_BINDING_PORT_KEY,httpPort);
-  Configuration configuration=configAdmin.get().getConfiguration(HTTP_PID);
+  Configuration configuration=configAdmin.get().getConfiguration(HTTP_PID,null);
   updateIfNeeded(configuration,HTTP_BINDING_PORT_KEY,httpPort);
 }

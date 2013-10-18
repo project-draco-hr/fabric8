@@ -4,7 +4,7 @@
       Container current=getContainer();
       String name=System.getProperty(SystemProperties.KARAF_NAME);
       if (event.getPid().equals(SSH_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
-        Configuration config=configAdmin.get().getConfiguration(SSH_PID);
+        Configuration config=configAdmin.get().getConfiguration(SSH_PID,null);
         int sshPort=Integer.parseInt((String)config.getProperties().get(SSH_BINDING_PORT_KEY));
         int sshConnectionPort=getSshConnectionPort(current,sshPort);
         String sshUrl=getSshUrl(name,sshConnectionPort);
@@ -15,7 +15,7 @@
         }
       }
       if (event.getPid().equals(HTTP_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
-        Configuration config=configAdmin.get().getConfiguration(HTTP_PID);
+        Configuration config=configAdmin.get().getConfiguration(HTTP_PID,null);
         boolean httpEnabled=isHttpEnabled();
         boolean httpsEnabled=isHttpsEnabled();
         String protocol=httpsEnabled && !httpEnabled ? "https" : "http";
@@ -29,7 +29,7 @@
         }
       }
       if (event.getPid().equals(MANAGEMENT_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
-        Configuration config=configAdmin.get().getConfiguration(MANAGEMENT_PID);
+        Configuration config=configAdmin.get().getConfiguration(MANAGEMENT_PID,null);
         int rmiServerPort=Integer.parseInt((String)config.getProperties().get(RMI_SERVER_BINDING_PORT_KEY));
         int rmiServerConnectionPort=getRmiServerConnectionPort(current,rmiServerPort);
         int rmiRegistryPort=Integer.parseInt((String)config.getProperties().get(RMI_REGISTRY_BINDING_PORT_KEY));

@@ -4,6 +4,6 @@
   String sshUrl=getSshUrl(container.getId(),sshConnectionPort);
   setData(curator.get(),CONTAINER_SSH.getPath(container.getId()),sshUrl);
   fabricService.get().getPortService().registerPort(container,SSH_PID,SSH_BINDING_PORT_KEY,sshPort);
-  Configuration configuration=configAdmin.get().getConfiguration(SSH_PID);
+  Configuration configuration=configAdmin.get().getConfiguration(SSH_PID,null);
   updateIfNeeded(configuration,SSH_BINDING_PORT_KEY,sshPort);
 }
