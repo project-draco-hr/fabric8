@@ -1,0 +1,29 @@
+{
+  while (true) {
+    ServiceTracker tracker=null;
+    try {
+      Filter osgiFilter=FrameworkUtil.createFilter("(" + org.osgi.framework.Constants.OBJECTCLASS + "="+ FabricService.class.getName()+ ")");
+      tracker=new ServiceTracker(bundleContext,osgiFilter,null);
+      tracker.open(true);
+      tracker.waitForService(1000);
+      FabricService fs=(FabricService)tracker.getService();
+      if (fs != null) {
+        Container container=fs.getContainer(containerName);
+        if (container.isAlive() && contains(container.getProfiles(),profileName) && "success".equals(container.getProvisionStatus())) {
+          return;
+        }
+        System.out.println(String.format("Waiting for container %s to deploy profile %s",containerName,profileName));
+        Thread.sleep(1000);
+      }
+ else {
+        System.out.println(String.format("Waiting for fabric service to come online"));
+      }
+    }
+ catch (    Exception e) {
+      System.out.println(String.format("Waiting for fabric service to come online"));
+    }
+ finally {
+      tracker.close();
+    }
+  }
+}
