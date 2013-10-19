@@ -1,0 +1,24 @@
+{
+  final String brokerName="root";
+  final String groupName="default";
+  final AtomicBoolean master=new AtomicBoolean();
+  System.out.println(executeCommand("fabric:create -n --clean root"));
+  CuratorFramework curatorFramework=getCurator();
+  final CountDownLatch serviceLatch=new CountDownLatch(1);
+  final FabricDiscoveryAgent discoveryAgent=new FabricDiscoveryAgent();
+  discoveryAgent.setCurator(curatorFramework);
+  discoveryAgent.setGroupName(groupName);
+  discoveryAgent.setDiscoveryListener(new DiscoveryListener(){
+    @Override public void onServiceAdd(    DiscoveryEvent discoveryEvent){
+      System.out.println("Service added:" + discoveryEvent.getServiceName());
+      serviceLatch.countDown();
+    }
+    @Override public void onServiceRemove(    DiscoveryEvent discoveryEvent){
+      System.out.println("Service removed:" + discoveryEvent.getServiceName());
+    }
+  }
+);
+  discoveryAgent.start();
+  assertTrue(serviceLatch.await(20,TimeUnit.SECONDS));
+  System.out.println(executeCommand("fabric:cluster-list"));
+}
