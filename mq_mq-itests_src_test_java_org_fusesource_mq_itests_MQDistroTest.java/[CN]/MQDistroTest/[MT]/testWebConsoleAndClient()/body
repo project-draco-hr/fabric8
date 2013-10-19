@@ -52,4 +52,5 @@
   process=Runtime.getRuntime().exec("java -jar extras" + File.separator + "mq-client.jar consumer --count 1 --user "+ USER_NAME_ND_PASSWORD+ " --password "+ USER_NAME_ND_PASSWORD,null,new File(System.getProperty("user.dir")));
   process.waitFor();
   assertEquals("consumer worked, exit(0)?",0,process.exitValue());
+  System.out.println(executeCommand("activemq:bstat"));
 }
