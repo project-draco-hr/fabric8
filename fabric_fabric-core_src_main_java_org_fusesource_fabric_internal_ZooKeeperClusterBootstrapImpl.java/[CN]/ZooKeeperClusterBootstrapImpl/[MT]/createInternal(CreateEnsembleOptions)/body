@@ -19,8 +19,10 @@
       props.save();
     }
     startBundles(options);
-    OsgiUtils.waitForSerice(FabricService.class,null,FABRIC_SERVICE_TIMEOUT);
-    waitForSuccessfulDeploymentOf(System.getProperty("karaf.name"),"fabric-ensemble-0000-1");
+    FabricService fs=fabricService.get();
+    if (options.isAgentEnabled()) {
+      waitForSuccessfulDeploymentOf(fs,NAME);
+    }
   }
  catch (  Exception e) {
     throw new FabricException("Unable to create zookeeper server configuration",e);

@@ -1,0 +1,12 @@
+{
+  System.out.println(String.format("Waiting for container %s to provision.",containerName));
+  while (true) {
+    if (fabricService != null) {
+      Container container=fabricService.getContainer(containerName);
+      if (container.isAlive() && "success".equals(container.getProvisionStatus())) {
+        return;
+      }
+      Thread.sleep(1000);
+    }
+  }
+}
