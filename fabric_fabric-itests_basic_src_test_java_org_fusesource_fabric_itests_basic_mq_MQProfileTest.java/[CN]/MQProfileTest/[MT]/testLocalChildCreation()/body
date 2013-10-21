@@ -1,6 +1,6 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Set<Container> containers=ContainerBuilder.create().withName("mq1").withProfiles("mq").assertProvisioningResult().build();
+  Set<Container> containers=ContainerBuilder.create().withName("mq").withProfiles("mq-default").assertProvisioningResult().build();
   installAndCheckFeature("activemq");
   Container container=getFabricService().getContainer("mq1");
   Thread.sleep(5000);

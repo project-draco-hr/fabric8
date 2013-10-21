@@ -1,6 +1,7 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  executeCommand("mq-create --create-container broker1,broker2 --jmx-user admin --jmx-password admin ms-broker");
+  Thread.sleep(10000);
+  executeCommand("mq-create --create-container broker --jmx-user admin --jmx-password admin ms-broker");
   Container container1=getFabricService().getContainer("broker1");
   containers.add(container1);
   waitForProvisionSuccess(container1,PROVISION_TIMEOUT,TimeUnit.MILLISECONDS);

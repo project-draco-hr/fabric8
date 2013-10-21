@@ -1,15 +1,16 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
   addStagingRepoToDefaultProfile();
-  executeCommand("mq-create --group us-east --networks us-west --create-container us-east --jmx-user admin --jmx-password admin --networks-username admin --networks-password admin us-east");
-  Container container1=getFabricService().getContainer("us-east");
+  Thread.sleep(10000);
+  executeCommand("mq-create --group us-east --networks us-west --create-container us-east --jmx-user admin --jmx-password admin --networks-username admin --networks-password admin --minimumInstances 1 us-east");
+  Container container1=getFabricService().getContainer("us-east1");
   containers.add(container1);
   waitForProvisionSuccess(container1,PROVISION_TIMEOUT,TimeUnit.MILLISECONDS);
-  executeCommand("mq-create --group us-west --networks us-east --create-container us-west --jmx-user admin --jmx-password admin --networks-username admin --networks-password admin us-west");
-  Container container2=getFabricService().getContainer("us-west");
+  executeCommand("mq-create --group us-west --networks us-east --create-container us-west --jmx-user admin --jmx-password admin --networks-username admin --networks-password admin --minimumInstances 1 us-west");
+  Container container2=getFabricService().getContainer("us-west1");
   containers.add(container2);
   waitForProvisionSuccess(container2,PROVISION_TIMEOUT,TimeUnit.MILLISECONDS);
-  containers.add(createAndAssertChildContainer("example","root","example-mq-cluster"));
+  containers.addAll(ContainerBuilder.create().withName("example").withProfiles("example-mq-cluster").assertProvisioningResult().build());
   Thread.sleep(10000);
   installAndCheckFeature("activemq");
   BrokerViewMBean brokerEast=(BrokerViewMBean)getMBean(container1,new ObjectName("org.apache.activemq:type=Broker,brokerName=us-east"),BrokerViewMBean.class);
