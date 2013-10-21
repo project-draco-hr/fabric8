@@ -19,9 +19,11 @@
       props.save();
     }
     startBundles(options);
-    FabricService fs=fabricService.get();
-    if (options.isAgentEnabled()) {
-      waitForSuccessfulDeploymentOf(fs,NAME);
+    if (options.isWaitForProvision()) {
+      FabricService fs=fabricService.get();
+      if (options.isAgentEnabled()) {
+        waitForSuccessfulDeploymentOf(NAME,options.getProvisionTimeout());
+      }
     }
   }
  catch (  Exception e) {

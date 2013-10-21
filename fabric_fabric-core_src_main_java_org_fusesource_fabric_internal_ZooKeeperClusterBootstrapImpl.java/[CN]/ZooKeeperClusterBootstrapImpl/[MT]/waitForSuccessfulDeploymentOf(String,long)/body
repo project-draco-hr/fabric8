@@ -1,0 +1,23 @@
+{
+  System.out.println(String.format("Waiting for container %s to provision.",containerName));
+  long startedAt=System.currentTimeMillis();
+  while (!Thread.interrupted() && startedAt + timeout > System.currentTimeMillis()) {
+    try {
+      Container container=fabricService.get().getContainer(containerName);
+      if (container.isAlive() && "success".equals(container.getProvisionStatus())) {
+        return;
+      }
+      Thread.sleep(1000);
+    }
+ catch (    InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
+catch (    DynamicReferenceException e) {
+    }
+catch (    InvalidComponentException e) {
+    }
+catch (    Throwable t) {
+      FabricException.launderThrowable(t);
+    }
+  }
+}
