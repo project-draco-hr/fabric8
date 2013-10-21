@@ -1,0 +1,5 @@
+{
+  System.out.println(executeCommand("fabric:mq-create --group " + groupName + " "+ brokerName));
+  String profileName="mq-broker-" + groupName + "."+ brokerName;
+  Set<Container> containers=ContainerBuilder.child(2).withName("child").withProfiles(profileName).assertProvisioningResult().build();
+}
