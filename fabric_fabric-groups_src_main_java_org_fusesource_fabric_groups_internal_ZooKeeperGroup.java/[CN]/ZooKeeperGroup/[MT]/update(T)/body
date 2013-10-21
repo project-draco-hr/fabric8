@@ -1,7 +1,9 @@
 {
   T oldState=this.state;
   this.state=state;
-  this.state.setSession(session);
+  if (state != null) {
+    this.state.setSession(session);
+  }
   if (started.get()) {
     boolean update=state == null && oldState != null || state != null && oldState == null || !Arrays.equals(encode(state),encode(oldState));
     if (update) {
