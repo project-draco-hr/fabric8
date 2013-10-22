@@ -6,8 +6,9 @@
     }
     str=str.trim();
     List<Profile> profiles=new ArrayList<Profile>();
+    Version v=service.getVersion(version);
     for (    String p : str.split(" ")) {
-      profiles.add(new ProfileImpl(p,version,service));
+      profiles.add(v.getProfile(p));
     }
     return profiles.toArray(new Profile[profiles.size()]);
   }
