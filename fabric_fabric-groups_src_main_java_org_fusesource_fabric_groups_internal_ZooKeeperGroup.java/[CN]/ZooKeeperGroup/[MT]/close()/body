@@ -3,7 +3,9 @@
     client.getConnectionStateListenable().removeListener(connectionStateListener);
     executorService.shutdown();
     try {
-      executorService.awaitTermination(5,TimeUnit.SECONDS);
+      if (!executorService.awaitTermination(5,TimeUnit.SECONDS)) {
+        executorService.shutdownNow();
+      }
     }
  catch (    InterruptedException e) {
       throw (IOException)new InterruptedIOException().initCause(e);

@@ -1,5 +1,5 @@
 {
-  while (!Thread.currentThread().isInterrupted()) {
+  while (started.get() && !Thread.currentThread().isInterrupted()) {
     try {
       operations.take().invoke();
     }
