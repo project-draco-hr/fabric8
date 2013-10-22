@@ -9,7 +9,6 @@
   containers.add(container2);
   waitForProvisionSuccess(container2,PROVISION_TIMEOUT,TimeUnit.MILLISECONDS);
   installAndCheckFeature("activemq");
-  Thread.sleep(10000);
   BrokerViewMBean broker1=(BrokerViewMBean)getMBean(container1,new ObjectName("org.apache.activemq:type=Broker,brokerName=ms-broker"),BrokerViewMBean.class);
   assertEquals("ms-broker",broker1.getBrokerName());
   destroyChildContainer("broker1");

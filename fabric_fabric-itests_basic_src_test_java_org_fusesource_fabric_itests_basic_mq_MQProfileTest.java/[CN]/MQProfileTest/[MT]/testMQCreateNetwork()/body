@@ -10,8 +10,7 @@
   Container container2=getFabricService().getContainer("us-west1");
   containers.add(container2);
   waitForProvisionSuccess(container2,PROVISION_TIMEOUT,TimeUnit.MILLISECONDS);
-  containers.addAll(ContainerBuilder.create().withName("example-producer").withProfiles("example-mq-producer").withProfiles("mq-client-us-east").assertProvisioningResult().build());
-  containers.addAll(ContainerBuilder.create().withName("example-consumer").withProfiles("example-mq-consumer").withProfiles("mq-client-us-west").assertProvisioningResult().build());
+  containers.addAll(ContainerBuilder.create().withName("example").withProfiles("example-mq-cluster").assertProvisioningResult().build());
   Thread.sleep(10000);
   installAndCheckFeature("activemq");
   BrokerViewMBean brokerEast=(BrokerViewMBean)getMBean(container1,new ObjectName("org.apache.activemq:type=Broker,brokerName=us-east"),BrokerViewMBean.class);

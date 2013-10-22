@@ -10,7 +10,7 @@
   BrokerViewMBean bean=(BrokerViewMBean)getMBean(container,new ObjectName("org.apache.activemq:type=Broker,brokerName=mq"),BrokerViewMBean.class);
   System.out.println(executeCommand("container-list"));
   containers.addAll(ContainerBuilder.create().withName("example").withProfiles("example-mq").assertProvisioningResult().build());
-  Thread.sleep(10000);
+  Thread.sleep(5000);
   installAndCheckFeature("activemq");
   assertEquals("Producer not present",1,bean.getTotalProducerCount());
   assertEquals("Consumer not present",1,bean.getTotalConsumerCount());
