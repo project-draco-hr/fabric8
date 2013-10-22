@@ -1,12 +1,11 @@
 {
   try {
-    Properties containerProps=getContainerProperties(p);
+    Map<String,String> containerProps=p.getContainerConfiguration();
     ArrayList<String> rc=new ArrayList<String>();
     String prefix=type + ".";
-    for (    Map.Entry<Object,Object> e : containerProps.entrySet()) {
-      if (((String)e.getKey()).startsWith(prefix)) {
-        String value=replaceVersionResolver(p,(String)e.getValue());
-        rc.add(value);
+    for (    Map.Entry<String,String> e : containerProps.entrySet()) {
+      if ((e.getKey()).startsWith(prefix)) {
+        rc.add(e.getValue());
       }
     }
     return rc;
