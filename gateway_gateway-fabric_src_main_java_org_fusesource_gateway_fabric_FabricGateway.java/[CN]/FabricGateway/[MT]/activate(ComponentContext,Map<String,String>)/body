@@ -1,0 +1,19 @@
+{
+  System.out.println("Activating the gateway " + this);
+  Bundle bundle=context.getBundleContext().getBundle();
+  final ClassLoader classLoader=AriesFrameworkUtil.getClassLoader(bundle);
+  ClassLoaders.withContextClassLoader(classLoader,new Callable<Object>(){
+    @Override public Object call() throws Exception {
+      if (vertx == null) {
+        vertx=VertxFactory.newVertx();
+      }
+      GatewayGroup webGroup=createWebGroup(80);
+      addGroup(webGroup);
+      GatewayGroup messagingGroup=createMessagingGroup("tcp",61616);
+      addGroup(messagingGroup);
+      updated(properties);
+      return null;
+    }
+  }
+);
+}

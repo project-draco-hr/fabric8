@@ -1,0 +1,9 @@
+{
+  if (active.compareAndSet(true,false)) {
+    gateway.destroy();
+    treeCache.getListenable().removeListener(treeListener);
+    Closeables.closeQuitely(treeCache);
+    treeCache=null;
+    treeCacheExecutor.shutdownNow();
+  }
+}

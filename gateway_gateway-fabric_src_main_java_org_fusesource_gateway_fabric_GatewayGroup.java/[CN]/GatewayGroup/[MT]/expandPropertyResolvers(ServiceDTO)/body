@@ -1,0 +1,9 @@
+{
+  List<String> services=dto.getServices();
+  List<String> newList=new ArrayList<String>(services.size());
+  for (  String service : services) {
+    String expanded=ZooKeeperUtils.getSubstitutedData(curator,service);
+    newList.add(expanded);
+  }
+  dto.setServices(newList);
+}

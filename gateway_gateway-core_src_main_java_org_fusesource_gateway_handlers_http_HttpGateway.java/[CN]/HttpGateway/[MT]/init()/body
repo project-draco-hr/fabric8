@@ -1,0 +1,12 @@
+{
+  if (handler == null) {
+    handler=new HttpGatewayHandler(vertx,serviceMap);
+  }
+  server=vertx.createHttpServer().requestHandler(handler);
+  if (host != null) {
+    server=server.listen(port,host);
+  }
+ else {
+    server=server.listen(port);
+  }
+}

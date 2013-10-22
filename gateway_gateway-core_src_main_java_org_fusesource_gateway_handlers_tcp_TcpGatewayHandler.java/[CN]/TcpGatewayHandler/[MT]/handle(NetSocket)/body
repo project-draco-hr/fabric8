@@ -1,0 +1,38 @@
+{
+  LOG.info("Proxying socket from: " + socket);
+  NetClient client=null;
+  List<String> paths=serviceMap.getPaths();
+  String path=pathChooser.choose(paths);
+  if (path != null) {
+    List<ServiceDetails> services=serviceMap.getServices(path);
+    if (!services.isEmpty()) {
+      ServiceDetails serviceDetails=serviceChooser.chooseService(socket,services);
+      if (serviceDetails != null) {
+        List<String> urlStrings=serviceDetails.getServices();
+        if (urlStrings.size() > 0) {
+          String urlText=urlStrings.get(0);
+          if (Strings.notEmpty(urlText)) {
+            try {
+              URL url=new URL(urlText);
+              Handler<AsyncResult<NetSocket>> handler=new Handler<AsyncResult<NetSocket>>(){
+                public void handle(                final AsyncResult<NetSocket> asyncSocket){
+                  NetSocket clientSocket=asyncSocket.result();
+                  Pump.createPump(clientSocket,socket).start();
+                  Pump.createPump(socket,clientSocket).start();
+                }
+              }
+;
+              client=createClient(url,handler);
+            }
+ catch (            MalformedURLException e) {
+              LOG.warn("Failed to parse URL: " + urlText + ". "+ e,e);
+            }
+          }
+        }
+      }
+    }
+  }
+  if (client == null) {
+    socket.close();
+  }
+}
