@@ -1,0 +1,11 @@
+{
+  if (runnable == null)   throw new NullPointerException("runnable cannot be null");
+  if (shutdown.get())   throw new RejectedExecutionException("shutdown");
+  if (isDraining()) {
+    localQueue.add(runnable);
+  }
+ else {
+    externalQueue.add(runnable);
+    triggerDrain();
+  }
+}

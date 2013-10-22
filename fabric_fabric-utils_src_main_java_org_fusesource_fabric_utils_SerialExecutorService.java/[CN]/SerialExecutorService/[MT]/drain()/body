@@ -1,0 +1,31 @@
+{
+  draining.set(Boolean.TRUE);
+  try {
+    boolean drained=false;
+    while (!drained) {
+      Runnable runnable=localQueue.poll();
+      if (runnable == null) {
+        runnable=externalQueue.poll();
+      }
+      if (runnable == null) {
+        drained=true;
+      }
+ else {
+        try {
+          runnable.run();
+        }
+ catch (        Throwable e) {
+          Thread thread=Thread.currentThread();
+          thread.getUncaughtExceptionHandler().uncaughtException(thread,e);
+        }
+      }
+    }
+  }
+  finally {
+    draining.remove();
+    triggered.set(false);
+    if (!externalQueue.isEmpty()) {
+      triggerDrain();
+    }
+  }
+}

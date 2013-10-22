@@ -1,0 +1,17 @@
+{
+  SerialExecutorService executor=new SerialExecutorService();
+  final long data[]=new long[]{0};
+  for (int i=0; i < 10000; i++) {
+    final int id=i;
+    executor.execute(new Runnable(){
+      @Override public void run(){
+        data[0]++;
+      }
+    }
+);
+  }
+  executor.shutdown();
+  executor.awaitTermination(5,TimeUnit.SECONDS);
+  assertTrue(executor.isTerminated());
+  assertEquals(10000,data[0]);
+}

@@ -1,0 +1,12 @@
+{
+  if (shutdown.compareAndSet(false,true)) {
+    externalQueue.add(new Runnable(){
+      @Override public void run(){
+        terminated.set(true);
+        terminatedLatch.countDown();
+      }
+    }
+);
+    triggerDrain();
+  }
+}
