@@ -4,9 +4,11 @@
   }
   server=vertx.createHttpServer().requestHandler(handler);
   if (host != null) {
+    LOG.info("Listening on port " + port + " and host "+ host);
     server=server.listen(port,host);
   }
  else {
+    LOG.info("Listening on port " + port);
     server=server.listen(port);
   }
 }
