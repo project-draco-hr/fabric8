@@ -2,12 +2,10 @@
   assertValid();
   try {
     if (Strings.isNotBlank(value)) {
-      Profile profile=fabricService.get().getCurrentContainer().getOverlayProfile();
       String pidPey=value.substring(SCHEME.length() + 1);
-      ProfileOverlayImpl profileOverlay=new ProfileOverlayImpl(profile,false,dataStore.get());
-      String answer=substituteFromProfile(profileOverlay,VERSIONS_PID,pidPey);
+      String answer=substituteFromProfile(configs,VERSIONS_PID,pidPey);
       if (answer != null) {
-        answer=replaceVersions(profileOverlay,answer);
+        answer=replaceVersions(configs,answer);
       }
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Replaced value " + value + " with answer: "+ answer);

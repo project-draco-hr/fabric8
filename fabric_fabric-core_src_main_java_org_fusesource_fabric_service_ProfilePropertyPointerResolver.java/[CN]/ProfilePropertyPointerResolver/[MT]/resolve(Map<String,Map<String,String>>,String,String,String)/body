@@ -1,0 +1,17 @@
+{
+  assertValid();
+  try {
+    if (value != null) {
+      Matcher overlayMatcher=OVERLAY_PROFILE_PROPERTY_URL_PATTERN.matcher(value);
+      if (overlayMatcher.matches()) {
+        String targetPid=overlayMatcher.group(1);
+        String targetProperty=overlayMatcher.group(2);
+        return substituteFromProfile(configs,targetPid,targetProperty);
+      }
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.debug("Could not load property value: {}. Returning empty String.",value,e);
+  }
+  return EMPTY;
+}
