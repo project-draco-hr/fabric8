@@ -8,6 +8,7 @@
   CreateChildContainerOptions.Builder builder=CreateChildContainerOptions.builder().name(name).parent(parent).bindAddress(bindAddress).resolver(resolver).manualIp(manualIp).ensembleServer(isEnsembleServer).number(number).zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword(fabricService.getZookeeperPassword()).jvmOpts(jvmOpts).jmxUser(jmxUser).jmxPassword(jmxPassword).version(version).profiles(getProfileNames()).dataStoreProperties(getDataStoreProperties()).dataStoreType(fabricService.getDataStore().getType());
   try {
     metadatas=fabricService.createContainers(builder.build());
+    rethrowAuthenticationErrors(metadatas);
     ShellUtils.storeFabricCredentials(session,jmxUser,jmxPassword);
   }
  catch (  FabricAuthenticationException ex) {

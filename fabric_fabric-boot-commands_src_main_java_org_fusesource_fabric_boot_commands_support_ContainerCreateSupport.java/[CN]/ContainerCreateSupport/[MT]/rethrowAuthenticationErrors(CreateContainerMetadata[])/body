@@ -1,0 +1,14 @@
+{
+  FabricAuthenticationException rethrow=null;
+  for (  CreateContainerMetadata md : metadata) {
+    if (md.getFailure() instanceof FabricAuthenticationException) {
+      rethrow=(FabricAuthenticationException)md.getFailure();
+    }
+ else {
+      return;
+    }
+  }
+  if (rethrow != null) {
+    throw rethrow;
+  }
+}
