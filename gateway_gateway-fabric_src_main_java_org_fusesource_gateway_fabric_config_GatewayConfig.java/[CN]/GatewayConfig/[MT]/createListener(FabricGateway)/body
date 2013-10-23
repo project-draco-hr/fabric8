@@ -1,0 +1,15 @@
+{
+  String zkPath=getZooKeeperPath();
+  if (zkPath == null) {
+    LOG.warn("No ZooKeeperPath for listener so ignoring " + this);
+    return null;
+  }
+  ServiceMap serviceMap=new ServiceMap();
+  List<Gateway> gateways=new ArrayList<Gateway>();
+  addGateways(gateways,owner,serviceMap);
+  if (gateways.isEmpty()) {
+    return null;
+  }
+  CuratorFramework curator=owner.getCurator();
+  return new GatewayListener(curator,zkPath,serviceMap,gateways);
+}
