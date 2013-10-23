@@ -1,0 +1,13 @@
+{
+  assertValid();
+  Map<String,Map<String,String>> oldCfgs=doGetConfigurations(git,profile);
+  for (  Map.Entry<String,Map<String,String>> entry : configurations.entrySet()) {
+    String pid=entry.getKey();
+    oldCfgs.remove(pid);
+    Map<String,String> newCfg=entry.getValue();
+    doSetConfiguration(git,profile,pid,newCfg);
+  }
+  for (  String pid : oldCfgs.keySet()) {
+    doRecursiveDeleteAndRemove(git,getPidFile(profileDirectory,pid));
+  }
+}

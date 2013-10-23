@@ -1,0 +1,11 @@
+{
+  File[] files=directory.listFiles();
+  if (files != null) {
+    for (    File file : files) {
+      if (file.isFile() && file.getPath().endsWith(PROPERTIES_SUFFIX)) {
+        String relativePath=getFilePattern(profileDirectory,file);
+        configurations.put(DataStoreHelpers.stripSuffix(relativePath,PROPERTIES_SUFFIX),doLoadConfiguration(file));
+      }
+    }
+  }
+}

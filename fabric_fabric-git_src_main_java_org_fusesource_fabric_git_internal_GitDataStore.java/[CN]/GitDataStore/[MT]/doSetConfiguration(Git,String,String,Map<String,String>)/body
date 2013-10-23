@@ -1,0 +1,12 @@
+{
+  assertValid();
+  File profileDirectory=getProfileDirectory(git,profile);
+  File file=new File(profileDirectory,pid + PROPERTIES_SUFFIX);
+  if (configuration == null) {
+    doRecursiveDeleteAndRemove(git,file);
+  }
+ else {
+    Files.writeToFile(file,DataStoreHelpers.toBytes(configuration));
+    doAddFiles(git,file);
+  }
+}

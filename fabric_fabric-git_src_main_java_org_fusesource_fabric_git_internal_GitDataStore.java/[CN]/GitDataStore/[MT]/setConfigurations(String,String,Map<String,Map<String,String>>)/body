@@ -1,16 +1,14 @@
 {
   assertValid();
-  Map<String,byte[]> fileConfigs=new HashMap<String,byte[]>();
-  try {
-    for (    Map.Entry<String,Map<String,String>> entry : configurations.entrySet()) {
-      String pid=entry.getKey();
-      Map<String,String> map=entry.getValue();
-      byte[] data=DataStoreHelpers.toBytes(DataStoreHelpers.toProperties(map));
-      fileConfigs.put(pid + ".properties",data);
+  gitOperation(new GitOperation<Void>(){
+    public Void call(    Git git,    GitContext context) throws Exception {
+      checkoutVersion(git,GitProfiles.getBranch(version,profile));
+      File profileDirectory=getProfileDirectory(git,profile);
+      doSetConfigurations(git,profileDirectory,profile,configurations);
+      context.setPushBranch(version);
+      context.commit("Updated configuration for profile " + profile);
+      return null;
     }
   }
- catch (  IOException e) {
-    throw FabricException.launderThrowable(e);
-  }
-  setFileConfigurations(version,profile,fileConfigs);
+);
 }
