@@ -1,5 +1,5 @@
 {
-  FabricService fabricService=getOsgiService(FabricService.class);
+  FabricService fabricService=getOsgiServiceProxy(FabricService.class);
   CompletionService<Set<Container>> completionService=new ExecutorCompletionService<Set<Container>>(executorService);
   return completionService.submit(new CreateContainerTask(fabricService,builder));
 }
