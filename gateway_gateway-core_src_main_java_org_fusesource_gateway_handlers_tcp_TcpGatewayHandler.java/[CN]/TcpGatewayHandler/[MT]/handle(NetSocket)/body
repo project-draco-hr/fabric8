@@ -9,24 +9,27 @@
       ServiceDetails serviceDetails=serviceChooser.chooseService(socket,services);
       if (serviceDetails != null) {
         List<String> urlStrings=serviceDetails.getServices();
-        if (urlStrings.size() > 0) {
-          String urlText=urlStrings.get(0);
-          if (Strings.notEmpty(urlText)) {
+        for (        String urlString : urlStrings) {
+          if (Strings.notEmpty(urlString)) {
             try {
-              URL url=new URL(urlText);
-              Handler<AsyncResult<NetSocket>> handler=new Handler<AsyncResult<NetSocket>>(){
-                public void handle(                final AsyncResult<NetSocket> asyncSocket){
-                  NetSocket clientSocket=asyncSocket.result();
-                  Pump.createPump(clientSocket,socket).start();
-                  Pump.createPump(socket,clientSocket).start();
+              URL url=new URL(urlString);
+              String urlProtocol=url.getProtocol();
+              if (Objects.equal(protocol,urlProtocol)) {
+                Handler<AsyncResult<NetSocket>> handler=new Handler<AsyncResult<NetSocket>>(){
+                  public void handle(                  final AsyncResult<NetSocket> asyncSocket){
+                    NetSocket clientSocket=asyncSocket.result();
+                    Pump.createPump(clientSocket,socket).start();
+                    Pump.createPump(socket,clientSocket).start();
+                  }
                 }
-              }
 ;
-              client=createClient(url,handler);
-              System.out.println("Created client " + client);
+                client=createClient(url,handler);
+                System.out.println("Created client " + client);
+                break;
+              }
             }
  catch (            MalformedURLException e) {
-              LOG.warn("Failed to parse URL: " + urlText + ". "+ e,e);
+              LOG.warn("Failed to parse URL: " + urlString + ". "+ e,e);
             }
           }
         }
@@ -34,7 +37,7 @@
     }
   }
   if (client == null) {
-    System.out.println("No connection available so closing");
+    LOG.info("No service available for protocol " + protocol + " for paths "+ paths);
     socket.close();
   }
 }
