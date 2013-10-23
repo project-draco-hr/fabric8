@@ -1,0 +1,15 @@
+{
+  ServiceMap serviceMap=new ServiceMap();
+  Vertx vertx=owner.getVertx();
+  Gateway answer;
+  if (isWebProtocol()) {
+    answer=new HttpGateway(vertx,serviceMap,port);
+  }
+ else {
+    answer=new TcpGateway(vertx,serviceMap,port,protocol);
+  }
+  if (Strings.isNotBlank(host)) {
+    answer.setHost(host);
+  }
+  return answer;
+}

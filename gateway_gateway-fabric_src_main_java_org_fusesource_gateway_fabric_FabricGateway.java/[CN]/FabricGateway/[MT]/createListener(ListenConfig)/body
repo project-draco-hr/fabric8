@@ -1,0 +1,13 @@
+{
+  try {
+    GatewayListener listener=listenerConfig.createListener(this);
+    if (listener != null) {
+      listener.init();
+      LOG.info("Started " + listener + " from "+ listenerConfig);
+      listeners.add(listener);
+    }
+  }
+ catch (  Exception e) {
+    LOG.info("Failed to create listener " + listenerConfig + ". Reason: "+ e);
+  }
+}
