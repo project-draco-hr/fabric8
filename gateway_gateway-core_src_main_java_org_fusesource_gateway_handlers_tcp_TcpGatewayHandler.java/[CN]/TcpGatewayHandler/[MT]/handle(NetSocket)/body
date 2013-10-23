@@ -12,8 +12,8 @@
         for (        String urlString : urlStrings) {
           if (Strings.notEmpty(urlString)) {
             try {
-              URL url=new URL(urlString);
-              String urlProtocol=url.getProtocol();
+              URI uri=new URI(urlString);
+              String urlProtocol=uri.getScheme();
               if (Objects.equal(protocol,urlProtocol)) {
                 Handler<AsyncResult<NetSocket>> handler=new Handler<AsyncResult<NetSocket>>(){
                   public void handle(                  final AsyncResult<NetSocket> asyncSocket){
@@ -23,13 +23,16 @@
                   }
                 }
 ;
-                client=createClient(url,handler);
+                client=createClient(uri,handler);
                 System.out.println("Created client " + client);
                 break;
               }
             }
  catch (            MalformedURLException e) {
               LOG.warn("Failed to parse URL: " + urlString + ". "+ e,e);
+            }
+catch (            URISyntaxException e) {
+              LOG.warn("Failed to parse URI: " + urlString + ". "+ e,e);
             }
           }
         }
