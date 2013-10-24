@@ -7,9 +7,15 @@
     if (threadPool != null) {
       threadPool.shutdown();
       try {
-        threadPool.awaitTermination(5,TimeUnit.SECONDS);
+        if (!threadPool.awaitTermination(5,TimeUnit.SECONDS)) {
+          threadPool.shutdownNow();
+        }
       }
- catch (      Exception ex) {
+ catch (      InterruptedException ex) {
+        threadPool.shutdownNow();
+        Thread.currentThread().interrupt();
+      }
+catch (      Exception ex) {
         throw FabricException.launderThrowable(ex);
       }
     }
