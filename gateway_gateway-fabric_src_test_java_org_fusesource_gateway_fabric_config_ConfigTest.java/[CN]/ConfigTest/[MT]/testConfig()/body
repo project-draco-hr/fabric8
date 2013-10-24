@@ -1,0 +1,18 @@
+{
+  ConfigParser parser=new ConfigParser();
+  GatewaysConfig config=parser.load(getBaseDirUrl() + "/src/test/resources/config.json");
+  List<GatewayConfig> gateways=config.getGateways();
+  assertEquals("size",2,gateways.size());
+  GatewayConfig gateway1=gateways.get(0);
+  ListenConfig listener=gateway1.getListeners().get(0);
+  assertEquals("listener.getPort()",9000,listener.getPort());
+  assertEquals("listener.getProtocol()","http",listener.getProtocol());
+  List<RuleConfig> rules=listener.getRules();
+  assertEquals("rules.size()",2,rules.size());
+  RuleConfig rule1=rules.get(0);
+  assertEquals("rule1.getFrom().getRegex()","/(.*)",rule1.getFrom().getRegex());
+  assertEquals("rule1.getTo().getRegex()","/hawto/$latest/$1",rule1.getTo().getRegex());
+  RuleConfig rule2=rules.get(1);
+  assertEquals("rule2.getFrom().getPrefix()","/",rule2.getFrom().getPrefix());
+  assertEquals("rule2.getTo().getPrefix()","/hawto/$latest/",rule2.getTo().getPrefix());
+}

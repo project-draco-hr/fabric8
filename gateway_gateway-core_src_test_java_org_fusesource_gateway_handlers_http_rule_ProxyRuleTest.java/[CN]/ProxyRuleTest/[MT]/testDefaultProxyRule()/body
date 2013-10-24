@@ -1,0 +1,8 @@
+{
+  ProxyRule rule=new DefaultProxyRule("/foo/(.*)","/bar/");
+  ProxyCommand command=rule.apply(request);
+  LOG.info("Created command: " + command);
+  assertNotNull("Should have found a command",command);
+  assertEquals("command.getOperation()",ProxyOperation.Proxy,command.getOperation());
+  assertEquals("command.getUrl()","/bar/something/else",command.getUrl());
+}
