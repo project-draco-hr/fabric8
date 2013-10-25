@@ -19,11 +19,9 @@
       props.save();
     }
     startBundles(options);
-    if (options.isWaitForProvision()) {
-      FabricService fs=fabricService.get();
-      if (options.isAgentEnabled()) {
-        waitForSuccessfulDeploymentOf(NAME,options.getProvisionTimeout());
-      }
+    FabricService fs=fabricService.get();
+    if (options.isWaitForProvision() && options.isAgentEnabled()) {
+      waitForSuccessfulDeploymentOf(NAME,options.getProvisionTimeout());
     }
   }
  catch (  Exception e) {
