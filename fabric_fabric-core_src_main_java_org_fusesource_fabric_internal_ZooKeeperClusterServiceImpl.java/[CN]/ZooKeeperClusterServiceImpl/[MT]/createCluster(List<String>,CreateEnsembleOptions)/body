@@ -152,7 +152,7 @@ synchronized (result) {
         setData(curator.get(),ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl);
         long t0=System.currentTimeMillis();
         boolean allStarted=false;
-        while (!allStarted && System.currentTimeMillis() - t0 < 60 * 1000) {
+        while (!allStarted && System.currentTimeMillis() - t0 < options.getMigrationTimeout()) {
           allStarted=true;
           for (          Container container : allContainers) {
             allStarted&=exists(dst,ZkPath.CONTAINER_ALIVE.getPath(container.getId())) != null;
