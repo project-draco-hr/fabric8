@@ -20,7 +20,7 @@
     Profile profile=version.getProfile(profileName);
     assertNotNull("Expected to find profile with name:" + profileName,profile);
     container.setProfiles(new Profile[]{profile});
-    waitForProvisionSuccess(container,PROVISION_TIMEOUT,TimeUnit.MILLISECONDS);
+    Provision.containersStatus(Arrays.asList(container),"success",PROVISION_TIMEOUT);
     return container;
   }
   throw new Exception("Could container not created");

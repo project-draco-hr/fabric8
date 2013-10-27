@@ -1,6 +1,6 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Thread.sleep(5000);
+  waitForFabricCommands();
   Deque<Container> containerQueue=new LinkedList<Container>(ContainerBuilder.create(2).withName("ens").assertProvisioningResult().build());
   Deque<Container> addedContainers=new LinkedList<Container>();
   for (int e=0; e < 3 && containerQueue.size() >= 2 && containerQueue.size() % 2 == 0; e++) {

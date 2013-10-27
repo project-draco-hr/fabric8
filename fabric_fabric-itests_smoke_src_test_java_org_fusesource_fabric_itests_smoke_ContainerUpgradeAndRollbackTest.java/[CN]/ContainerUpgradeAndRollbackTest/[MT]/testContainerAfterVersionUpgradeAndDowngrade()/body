@@ -1,6 +1,6 @@
 {
   System.out.println(executeCommand("fabric:create -n"));
-  Thread.sleep(5000);
+  waitForFabricCommands();
   System.out.println(executeCommand("fabric:version-create --parent 1.0 1.1"));
   Set<Container> containers=ContainerBuilder.create().withName("camel").withProfiles("feature-camel").assertProvisioningResult().build();
   CountDownLatch latch=WaitForConfigurationChange.on(getFabricService());

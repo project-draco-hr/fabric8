@@ -1,6 +1,6 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Thread.sleep(5000);
+  waitForFabricCommands();
   System.err.println(executeCommand("fabric:version-create"));
   System.err.println(executeCommand("fabric:container-upgrade --all 1.1"));
   LinkedList<Container> containerQueue=new LinkedList<Container>(ContainerBuilder.create(2).withName("ens").withProfiles("fabric").assertProvisioningResult().build());

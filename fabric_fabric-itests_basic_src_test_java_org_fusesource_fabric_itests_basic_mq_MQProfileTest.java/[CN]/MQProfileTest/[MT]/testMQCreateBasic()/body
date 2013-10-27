@@ -6,7 +6,7 @@
   installAndCheckFeature("activemq");
   Container container=getFabricService().getContainer("mq1");
   containers.add(container);
-  waitForProvisionSuccess(container,PROVISION_TIMEOUT,TimeUnit.MILLISECONDS);
+  Provision.containersStatus(Arrays.asList(container),"success",PROVISION_TIMEOUT);
   BrokerViewMBean bean=(BrokerViewMBean)getMBean(container,new ObjectName("org.apache.activemq:type=Broker,brokerName=mq"),BrokerViewMBean.class);
   System.out.println(executeCommand("container-list"));
   containers.addAll(ContainerBuilder.create().withName("example").withProfiles("example-mq").assertProvisioningResult().build());

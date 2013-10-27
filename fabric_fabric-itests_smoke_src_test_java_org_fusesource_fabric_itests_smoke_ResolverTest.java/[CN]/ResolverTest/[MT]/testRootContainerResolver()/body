@@ -4,7 +4,7 @@
   getOsgiService(ContainerRegistration.class);
   Assert.assertEquals("localhostname",current.getResolver());
   String sshUrlWithLocalhostResolver=current.getSshUrl();
-  getOsgiService(BlueprintContainer.class,"(osgi.blueprint.container.symbolicname=org.fusesource.fabric.fabric-commands)",DEFAULT_TIMEOUT);
+  waitForFabricCommands();
   System.err.println(executeCommand("fabric:container-resolver-set --container root localip"));
   Assert.assertEquals("localip",current.getResolver());
   String sshUrlWithLocalIpResolver=current.getSshUrl();

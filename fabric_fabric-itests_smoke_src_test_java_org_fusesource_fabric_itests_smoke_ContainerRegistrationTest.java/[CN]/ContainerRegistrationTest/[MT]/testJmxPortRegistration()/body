@@ -1,6 +1,6 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Thread.sleep(3000);
+  waitForFabricCommands();
   System.err.println(executeCommand("fabric:profile-create --parents default child-profile"));
   Set<Container> containers=ContainerBuilder.create(1,1).withName("cnt").withProfiles("child-profile").assertProvisioningResult().build();
   Container child1=containers.iterator().next();
