@@ -1,4 +1,8 @@
 {
+  System.err.println(executeCommand("fabric:create -n"));
+  FabricService fabricService=getFabricService();
+  assertNotNull(fabricService);
+  waitForFabricCommands();
   String profile="mq-amq";
   Integer expected=1;
   boolean changed=fabricService.scaleProfile(profile,expected);
