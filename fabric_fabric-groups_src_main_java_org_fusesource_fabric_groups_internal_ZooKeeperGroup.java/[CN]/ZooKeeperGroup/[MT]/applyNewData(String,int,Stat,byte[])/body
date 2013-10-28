@@ -1,7 +1,7 @@
 {
   if (resultCode == KeeperException.Code.OK.intValue()) {
-    ChildData data=new ChildData(fullPath,stat,bytes,decode(bytes));
-    ChildData previousData=currentData.put(fullPath,data);
+    ChildData<T> data=new ChildData<T>(fullPath,stat,bytes,decode(bytes));
+    ChildData<T> previousData=currentData.put(fullPath,data);
     if (previousData == null || previousData.getStat().getVersion() != stat.getVersion()) {
       offerOperation(new EventOperation(this,GroupListener.GroupEvent.CHANGED));
     }

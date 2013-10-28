@@ -2,7 +2,7 @@
   try {
     Stat stat=new Stat();
     byte[] bytes=client.getData().storingStatIn(stat).forPath(fullPath);
-    currentData.put(fullPath,new ChildData(fullPath,stat,bytes,decode(bytes)));
+    currentData.put(fullPath,new ChildData<T>(fullPath,stat,bytes,decode(bytes)));
   }
  catch (  KeeperException.NoNodeException ignore) {
     currentData.remove(fullPath);
