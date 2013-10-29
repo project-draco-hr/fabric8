@@ -4,7 +4,6 @@ synchronized (gitOperationMonitor) {
     try {
       Git git=getGit();
       Repository repository=git.getRepository();
-      CredentialsProvider credentialsProvider=getCredentialsProvider();
       if (personIdent == null) {
         personIdent=new PersonIdent(repository);
       }
@@ -14,7 +13,7 @@ synchronized (gitOperationMonitor) {
       String originalBranch=repository.getBranch();
       RevCommit statusBefore=CommitUtils.getHead(repository);
       if (pullFirst) {
-        doPull(git,credentialsProvider,false);
+        doPull(git,getCredentialsProvider(),false);
       }
       T answer=operation.call(git,context);
       boolean requirePush=context.isRequirePush();
@@ -29,7 +28,7 @@ synchronized (gitOperationMonitor) {
       git.checkout().setName(originalBranch).call();
       if (requirePush || hasChanged(statusBefore,CommitUtils.getHead(repository))) {
         clearCaches();
-        doPush(git,context,credentialsProvider);
+        doPush(git,context,getCredentialsProvider());
         fireChangeNotifications();
       }
       return answer;
