@@ -1,0 +1,11 @@
+{
+  for (  String repositoryURI : repositories) {
+    if (set) {
+      System.out.println("Adding feature repository:" + repositoryURI + " to profile:"+ profile+ " version:"+ versionName);
+    }
+ else     if (delete) {
+      System.out.println("Deleting feature repository:" + repositoryURI + " from profile:"+ profile+ " version:"+ versionName);
+    }
+    updateConfig(profile.getConfiguration(AGENT_PID),REPOSITORY_PREFIX + repositoryURI.replace('/','_'),repositoryURI,set,delete);
+  }
+}

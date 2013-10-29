@@ -6,94 +6,39 @@
   if (pidConfig == null) {
     pidConfig=new HashMap<String,String>();
   }
-  if (featuresList != null && !featuresList.isEmpty()) {
+  if (delete || remove) {
     editInLine=true;
-    List<String> features=Strings.parseDelimitedString(featuresList,DELIMETER);
-    for (    String feature : features) {
-      updateConfig(pidConfig,FEATURE_PREFIX + feature.replace('/','_'),feature,set,delete);
-    }
   }
-  if (repositoryUriList != null && !repositoryUriList.isEmpty()) {
+  if (features != null && features.length > 0) {
     editInLine=true;
-    List<String> repositoryURIs=Strings.parseDelimitedString(repositoryUriList,DELIMETER);
-    for (    String repopsitoryURI : repositoryURIs) {
-      updateConfig(pidConfig,REPOSITORY_PREFIX + repopsitoryURI.replace('/','_'),repopsitoryURI,set,delete);
-    }
+    handleFeatures(features,profile);
   }
-  if (bundlesList != null && !bundlesList.isEmpty()) {
+  if (repositories != null && repositories.length > 0) {
     editInLine=true;
-    List<String> bundles=Strings.parseDelimitedString(bundlesList,DELIMETER);
-    for (    String bundlesLocation : bundles) {
-      updateConfig(pidConfig,BUNDLE_PREFIX + bundlesLocation.replace('/','_'),bundlesLocation,set,delete);
-    }
+    handleFeatureRepositories(repositories,profile);
   }
-  if (fabsList != null && !fabsList.isEmpty()) {
+  if (bundles != null && bundles.length > 0) {
     editInLine=true;
-    List<String> fabs=Strings.parseDelimitedString(fabsList,DELIMETER);
-    for (    String fabsLocation : fabs) {
-      updateConfig(pidConfig,FAB_PREFIX + fabsLocation.replace('/','_'),fabsLocation,set,delete);
-    }
+    handleBundles(bundles,profile);
   }
-  if (overridesList != null && !overridesList.isEmpty()) {
+  if (fabs != null && fabs.length > 0) {
     editInLine=true;
-    List<String> overrides=Strings.parseDelimitedString(overridesList,DELIMETER);
-    for (    String overridesLocation : overrides) {
-      updateConfig(pidConfig,OVERRIDE_PREFIX + overridesLocation.replace('/','_'),overridesLocation,set,delete);
-    }
+    handleFabs(fabs,profile);
   }
-  if (configAdminProperties != null && configAdminProperties.length > 0) {
-    for (    String configAdminProperty : configAdminProperties) {
-      String currentPid=null;
-      Map<String,String> existingConfig=null;
-      if (configAdminProperty != null) {
-        String keyValue="";
-        if (configAdminProperty.contains(PID_KEY_SEPARATOR)) {
-          currentPid=configAdminProperty.substring(0,configAdminProperty.indexOf(PID_KEY_SEPARATOR));
-          keyValue=configAdminProperty.substring(configAdminProperty.indexOf(PID_KEY_SEPARATOR) + 1);
-          editInLine=true;
-        }
- else {
-          currentPid=configAdminProperty;
-        }
-        existingConfig=config.get(currentPid);
-        if (existingConfig == null) {
-          existingConfig=new HashMap<String,String>();
-        }
-        if (configAdminProperties.length == 1 && importPid) {
-          editInLine=true;
-          importPidFromLocalConfigAdmin(currentPid,existingConfig);
-        }
-        Map<String,String> configMap=extractConfigs(keyValue);
-        for (        Map.Entry<String,String> configEntries : configMap.entrySet()) {
-          String key=configEntries.getKey();
-          String value=configEntries.getValue();
-          updatedDelimitedList(existingConfig,key,value,delimiter,set,delete,append,remove);
-        }
-        config.put(currentPid,existingConfig);
-      }
-    }
+  if (overrides != null && overrides.length > 0) {
+    editInLine=true;
+    handleOverrides(overrides,profile);
+  }
+  if (pidProperties != null && pidProperties.length > 0) {
+    handlePid(pidProperties,profile);
   }
   if (systemProperties != null && systemProperties.length > 0) {
     editInLine=true;
-    for (    String systemProperty : systemProperties) {
-      Map<String,String> configMap=extractConfigs(systemProperty);
-      for (      Map.Entry<String,String> configEntries : configMap.entrySet()) {
-        String key=configEntries.getKey();
-        String value=configEntries.getValue();
-        updatedDelimitedList(pidConfig,SYSTEM_PREFIX + key,value,delimiter,set,delete,append,remove);
-      }
-    }
+    handleSystemProperties(systemProperties,profile);
   }
   if (configProperties != null && configProperties.length > 0) {
     editInLine=true;
-    for (    String configProperty : configProperties) {
-      Map<String,String> configMap=extractConfigs(configProperty);
-      for (      Map.Entry<String,String> configEntries : configMap.entrySet()) {
-        String key=configEntries.getKey();
-        String value=configEntries.getValue();
-        updatedDelimitedList(pidConfig,CONFIG_PREFIX + key,value,delimiter,set,delete,append,remove);
-      }
-    }
+    handleConfigProperties(configProperties,profile);
   }
   if (editInLine) {
     config.put(pid,pidConfig);
@@ -101,8 +46,8 @@
   }
  else {
     resource=resource != null ? resource : "org.fusesource.fabric.agent.properties";
-    if (configAdminProperties != null && configAdminProperties.length == 1) {
-      resource=configAdminProperties[0] + ".properties";
+    if (pidProperties != null && pidProperties.length == 1) {
+      resource=pidProperties[0] + ".properties";
     }
     openInEditor(profile,resource);
   }

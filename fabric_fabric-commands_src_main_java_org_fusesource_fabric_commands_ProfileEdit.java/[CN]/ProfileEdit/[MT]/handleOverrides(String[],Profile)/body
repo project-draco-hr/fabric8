@@ -1,0 +1,11 @@
+{
+  for (  String overrie : overrides) {
+    if (set) {
+      System.out.println("Adding override:" + overrie + " to profile:"+ profile+ " version:"+ versionName);
+    }
+ else     if (delete) {
+      System.out.println("Deleting override:" + overrie + " from profile:"+ profile+ " version:"+ versionName);
+    }
+    updateConfig(profile.getConfiguration(AGENT_PID),OVERRIDE_PREFIX + overrie.replace('/','_'),overrie,set,delete);
+  }
+}

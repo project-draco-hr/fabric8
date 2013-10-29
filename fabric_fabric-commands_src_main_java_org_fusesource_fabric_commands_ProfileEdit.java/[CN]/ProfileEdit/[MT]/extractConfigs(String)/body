@@ -1,8 +1,16 @@
 {
   Map<String,String> configMap=new HashMap<String,String>();
+  String key=null;
+  String value=null;
   if (configs.contains("=")) {
-    String key=configs.substring(0,configs.indexOf("="));
-    String value=configs.substring(configs.indexOf("=") + 1);
+    key=configs.substring(0,configs.indexOf("="));
+    value=configs.substring(configs.indexOf("=") + 1);
+  }
+ else {
+    key=configs;
+    value=null;
+  }
+  if (key != null && !key.isEmpty()) {
     configMap.put(key,value);
   }
   return configMap;

@@ -1,0 +1,22 @@
+{
+  for (  String systemProperty : systemProperties) {
+    Map<String,String> configMap=extractConfigs(systemProperty);
+    for (    Map.Entry<String,String> configEntries : configMap.entrySet()) {
+      String key=configEntries.getKey();
+      String value=configEntries.getValue();
+      if (append) {
+        System.out.println("Appending value:" + value + " key:"+ key+ " from system properties and profile:"+ profile+ " version:"+ versionName);
+      }
+ else       if (delete) {
+        System.out.println("Deleting key:" + key + " from system properties and profile:"+ profile+ " version:"+ versionName);
+      }
+ else       if (set) {
+        System.out.println("Setting value:" + value + " key:"+ key+ " from system properties and profile:"+ profile+ " version:"+ versionName);
+      }
+ else {
+        System.out.println("Removing value:" + value + " key:"+ key+ " from system properties and profile:"+ profile+ " version:"+ versionName);
+      }
+      updatedDelimitedList(profile.getConfiguration(AGENT_PID),SYSTEM_PREFIX + key,value,delimiter,set,delete,append,remove);
+    }
+  }
+}
