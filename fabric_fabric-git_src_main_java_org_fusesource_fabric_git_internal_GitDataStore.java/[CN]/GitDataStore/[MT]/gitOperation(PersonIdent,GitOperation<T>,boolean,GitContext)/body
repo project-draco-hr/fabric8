@@ -10,8 +10,6 @@ synchronized (gitOperationMonitor) {
       if (GitHelpers.hasGitHead(git)) {
         git.stashCreate().setPerson(personIdent).setWorkingDirectoryMessage("Stash before a write").call();
       }
-      String originalBranch=repository.getBranch();
-      RevCommit statusBefore=CommitUtils.getHead(repository);
       if (pullFirst) {
         doPull(git,getCredentialsProvider(),false);
       }
@@ -25,10 +23,11 @@ synchronized (gitOperationMonitor) {
         }
         git.commit().setMessage(message).call();
       }
-      git.checkout().setName(originalBranch).call();
-      if (requirePush || hasChanged(git,statusBefore.getName(),CommitUtils.getHead(repository).getName())) {
-        clearCaches();
+      if (requirePush) {
         doPush(git,context,getCredentialsProvider());
+      }
+      if (context.isRequireCommit()) {
+        clearCaches();
         fireChangeNotifications();
       }
       return answer;
