@@ -67,7 +67,7 @@
           git.checkout().setName("HEAD").setForce(true).call();
           git.checkout().setName(version).setForce(true).call();
           MergeResult result=git.merge().setStrategy(MergeStrategy.THEIRS).include(remoteBranches.get(version).getObjectId()).call();
-          if (result.getMergeStatus() != MergeResult.MergeStatus.ALREADY_UP_TO_DATE) {
+          if (result.getMergeStatus() != MergeResult.MergeStatus.ALREADY_UP_TO_DATE && hasChanged(git,localCommit,remoteCommit)) {
             hasChanged=true;
           }
         }

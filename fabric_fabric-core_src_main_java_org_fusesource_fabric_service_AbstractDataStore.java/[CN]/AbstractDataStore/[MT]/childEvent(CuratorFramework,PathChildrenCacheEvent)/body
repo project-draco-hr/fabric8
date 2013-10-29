@@ -5,7 +5,9 @@ case CHILD_ADDED:
 case CHILD_REMOVED:
 case CHILD_UPDATED:
 case INITIALIZED:
-      runCallbacks();
+      if (shouldRunCallbacks(event.getData().getPath())) {
+        runCallbacks();
+      }
     break;
 }
 }
