@@ -1,11 +1,13 @@
 {
+  Map<String,String> conf=profile.getConfiguration(AGENT_PID);
   for (  String repositoryURI : repositories) {
     if (set) {
-      System.out.println("Adding feature repository:" + repositoryURI + " to profile:"+ profile+ " version:"+ versionName);
+      System.out.println("Adding feature repository:" + repositoryURI + " to profile:"+ profile.getId()+ " version:"+ profile.getVersion());
     }
  else     if (delete) {
-      System.out.println("Deleting feature repository:" + repositoryURI + " from profile:"+ profile+ " version:"+ versionName);
+      System.out.println("Deleting feature repository:" + repositoryURI + " from profile:"+ profile.getId()+ " version:"+ profile.getVersion());
     }
-    updateConfig(profile.getConfiguration(AGENT_PID),REPOSITORY_PREFIX + repositoryURI.replace('/','_'),repositoryURI,set,delete);
+    updateConfig(conf,REPOSITORY_PREFIX + repositoryURI.replace('/','_'),repositoryURI,set,delete);
   }
+  profile.setConfiguration(AGENT_PID,conf);
 }

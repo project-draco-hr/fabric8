@@ -1,11 +1,6 @@
 {
   String pid=AGENT_PID;
   boolean editInLine=false;
-  Map<String,Map<String,String>> config=profile.getConfigurations();
-  Map<String,String> pidConfig=config.get(pid);
-  if (pidConfig == null) {
-    pidConfig=new HashMap<String,String>();
-  }
   if (delete || remove) {
     editInLine=true;
   }
@@ -30,7 +25,7 @@
     handleOverrides(overrides,profile);
   }
   if (pidProperties != null && pidProperties.length > 0) {
-    handlePid(pidProperties,profile);
+    editInLine=handlePid(pidProperties,profile);
   }
   if (systemProperties != null && systemProperties.length > 0) {
     editInLine=true;
@@ -40,11 +35,7 @@
     editInLine=true;
     handleConfigProperties(configProperties,profile);
   }
-  if (editInLine) {
-    config.put(pid,pidConfig);
-    profile.setConfigurations(config);
-  }
- else {
+  if (!editInLine) {
     resource=resource != null ? resource : "org.fusesource.fabric.agent.properties";
     if (pidProperties != null && pidProperties.length == 1) {
       resource=pidProperties[0] + ".properties";

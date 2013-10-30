@@ -1,11 +1,13 @@
 {
+  Map<String,String> conf=profile.getConfiguration(AGENT_PID);
   for (  String fab : fabs) {
     if (set) {
-      System.out.println("Adding FAB:" + fab + " to profile:"+ profile+ " version:"+ versionName);
+      System.out.println("Adding FAB:" + fab + " to profile:"+ profile.getId()+ " version:"+ profile.getVersion());
     }
  else     if (delete) {
-      System.out.println("Deleting FAB:" + fab + " from profile:"+ profile+ " version:"+ versionName);
+      System.out.println("Deleting FAB:" + fab + " from profile:"+ profile.getId()+ " version:"+ profile.getVersion());
     }
-    updateConfig(profile.getConfiguration(AGENT_PID),FAB_PREFIX + fab.replace('/','_'),fab,set,delete);
+    updateConfig(conf,FAB_PREFIX + fab.replace('/','_'),fab,set,delete);
   }
+  profile.setConfiguration(AGENT_PID,conf);
 }
