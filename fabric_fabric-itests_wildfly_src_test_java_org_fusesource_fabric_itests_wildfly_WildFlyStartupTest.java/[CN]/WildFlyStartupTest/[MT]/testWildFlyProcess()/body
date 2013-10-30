@@ -6,7 +6,7 @@
   try {
     Assert.assertEquals("Expected to find the child container","child1",container.getId());
     executeCommand("container-add-profile child1 controller-wildfly");
-    waitForProvisionSuccess(container);
+    Provision.containersStatus(Arrays.asList(container),"success",PROVISION_TIMEOUT);
     SimpleDateFormat df=new SimpleDateFormat("HH:mm:ss:SSS");
     File childHome=new File(System.getProperty("karaf.home") + "/instances/" + container.getId());
     Assert.assertTrue("[" + df.format(new Date()) + "] Child home exists: "+ childHome,childHome.exists());
