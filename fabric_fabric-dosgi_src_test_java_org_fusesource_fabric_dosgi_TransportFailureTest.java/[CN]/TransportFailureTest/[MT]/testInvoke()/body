@@ -21,13 +21,13 @@
     hello.hello("Guillaume",future1);
     long t0=System.currentTimeMillis();
     try {
-      assertEquals("Hello Guillaume!",future1.get(2,TimeUnit.SECONDS));
+      assertEquals("Hello Guillaume!",future1.get(MAX_DELAY,TimeUnit.MILLISECONDS));
       fail("Should have thrown an exception");
     }
  catch (    Exception e) {
       long t1=System.currentTimeMillis();
-      assertTrue(t1 - t0 > 50);
-      assertTrue(t1 - t0 < 150);
+      assertTrue(t1 - t0 > SLEEP_TIME / 2);
+      assertTrue(t1 - t0 < MAX_DELAY / 2);
     }
   }
   finally {
