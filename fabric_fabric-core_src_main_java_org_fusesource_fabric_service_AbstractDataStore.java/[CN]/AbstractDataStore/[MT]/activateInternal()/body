@@ -1,0 +1,9 @@
+{
+  LOG.info("Starting up DataStore " + this);
+  treeCache=new TreeCache(getCurator(),ZkPath.CONFIGS.getPath(),true,false,true,cacheExecutor);
+  treeCache.start(TreeCache.StartMode.NORMAL);
+  treeCache.getListenable().addListener(this);
+  DataStoreRegistrationHandler templateRegistry=registrationHandler.get();
+  DataStoreTemplate template=templateRegistry.removeRegistrationCallback();
+  template.doWith(this);
+}

@@ -2,11 +2,6 @@
   this.bundleContext=bundleContext;
   this.configuration=Collections.unmodifiableMap(new HashMap<String,Object>(configuration));
   this.bundleUtils=new BundleUtils(bundleContext);
-  new Thread(new Runnable(){
-    @Override public void run(){
-      createOnActivate();
-      activateComponent();
-    }
-  }
-).start();
+  createOnActivate();
+  activateComponent();
 }

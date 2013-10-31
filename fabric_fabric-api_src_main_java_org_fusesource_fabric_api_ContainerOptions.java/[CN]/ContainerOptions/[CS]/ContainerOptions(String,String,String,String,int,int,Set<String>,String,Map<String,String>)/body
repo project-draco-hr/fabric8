@@ -5,7 +5,8 @@
   this.manualIp=manualIp;
   this.minimumPort=minimumPort;
   this.maximumPort=maximumPort;
-  this.profiles=profiles;
   this.version=version;
-  this.dataStoreProperties=dataStoreProperties != null ? dataStoreProperties : new HashMap<String,String>();
+  this.profiles=Collections.unmodifiableSet(new HashSet<String>(profiles));
+  ;
+  this.dataStoreProperties=Collections.unmodifiableMap(new HashMap<String,String>(dataStoreProperties != null ? dataStoreProperties : Collections.<String,String>emptyMap()));
 }
