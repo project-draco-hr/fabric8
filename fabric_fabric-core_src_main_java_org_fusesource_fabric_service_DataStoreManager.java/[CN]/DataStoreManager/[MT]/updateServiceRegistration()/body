@@ -9,7 +9,13 @@ synchronized (this) {
     Map<String,String> dataStoreProperties;
 synchronized (this) {
       dataStoreProperties=new HashMap<String,String>();
-      dataStoreProperties.putAll(configuration);
+      for (      Map.Entry<String,?> entry : configuration.entrySet()) {
+        String key=entry.getKey();
+        Object value=entry.getValue();
+        if (value instanceof String) {
+          dataStoreProperties.put(key,(String)value);
+        }
+      }
     }
     auxStore=pluginDataStore.getDataStore();
     auxStore.setDataStoreProperties(dataStoreProperties);
