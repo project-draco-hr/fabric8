@@ -5,5 +5,7 @@
   treeCache.getListenable().addListener(this);
   DataStoreRegistrationHandler templateRegistry=registrationHandler.get();
   DataStoreTemplate template=templateRegistry.removeRegistrationCallback();
-  template.doWith(this);
+  if (template != null) {
+    template.doWith(this);
+  }
 }
