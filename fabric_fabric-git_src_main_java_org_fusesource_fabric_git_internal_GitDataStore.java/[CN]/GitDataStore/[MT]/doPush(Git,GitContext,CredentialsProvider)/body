@@ -8,7 +8,7 @@
       LOG.info("No remote repository defined yet for the git repository at " + GitHelpers.getRootGitDirectory(git) + " so not doing a push");
       return Collections.EMPTY_LIST;
     }
-    return git.push().setCredentialsProvider(credentialsProvider).setPushAll().call();
+    return git.push().setTimeout(10).setCredentialsProvider(credentialsProvider).setPushAll().call();
   }
  catch (  Exception ex) {
     LOG.debug("Push failed. This will be ignored.",ex);
