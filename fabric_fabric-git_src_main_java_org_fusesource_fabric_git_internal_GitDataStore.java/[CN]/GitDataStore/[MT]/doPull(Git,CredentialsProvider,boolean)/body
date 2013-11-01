@@ -27,21 +27,19 @@
     for (    Ref ref : git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call()) {
       if (ref.getName().startsWith("refs/remotes/" + remote + "/")) {
         String name=ref.getName().substring(("refs/remotes/" + remote + "/").length());
-        if (!name.endsWith("-tmp")) {
-          remoteBranches.put(name,ref);
-          gitVersions.add(name);
-        }
+        remoteBranches.put(name,ref);
+        gitVersions.add(name);
       }
  else       if (ref.getName().startsWith("refs/heads/")) {
         String name=ref.getName().substring(("refs/heads/").length());
-        if (!name.endsWith("-tmp")) {
-          localBranches.put(name,ref);
-          gitVersions.add(name);
-        }
+        localBranches.put(name,ref);
+        gitVersions.add(name);
       }
     }
     for (    String version : gitVersions) {
-      if (!remoteBranches.containsKey(version) && !remoteBranches.isEmpty()) {
+      if (remoteBranches.isEmpty()) {
+      }
+ else       if (!remoteBranches.containsKey(version)) {
         if (doDeleteBranches && !version.equals(MASTER_BRANCH)) {
           try {
             git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
