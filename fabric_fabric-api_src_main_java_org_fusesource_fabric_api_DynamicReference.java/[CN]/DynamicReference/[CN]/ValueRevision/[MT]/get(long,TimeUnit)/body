@@ -11,5 +11,9 @@
  finally {
     usageCount.decrementAndGet();
   }
-  return ref.get();
+  T value=ref.get();
+  if (value == null) {
+    throw new DynamicReferenceException(String.format(UNBOUND_MESSAGE_FORMAT,name));
+  }
+  return value;
 }

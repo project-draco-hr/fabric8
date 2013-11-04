@@ -1,16 +1,3 @@
 {
-  this.tracker=new ServiceTracker<T,T>(bundleContext,type,null){
-    @Override public T addingService(    ServiceReference<T> reference){
-      T service=super.addingService(reference);
-      return service;
-    }
-    @Override public void modifiedService(    ServiceReference<T> reference,    T service){
-      super.modifiedService(reference,service);
-    }
-    @Override public void removedService(    ServiceReference<T> reference,    T service){
-      super.removedService(reference,service);
-    }
-  }
-;
-  tracker.open();
+  this(context,type,DEFAULT_TIMEOUT,TimeUnit.MILLISECONDS);
 }
