@@ -1,7 +1,7 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
   Container current=getFabricService().getCurrentContainer();
-  getOsgiService(ContainerRegistration.class);
+  ServiceLocator.getOsgiService(ContainerRegistration.class);
   Assert.assertEquals("localhostname",current.getResolver());
   String sshUrlWithLocalhostResolver=current.getSshUrl();
   waitForFabricCommands();

@@ -1,6 +1,6 @@
 {
   dynamicReference=new DynamicReference<T>(type.getSimpleName(),timeout,unit);
-  ServiceTracker<T,T> tracker=new ServiceTracker<T,T>(context,type,null){
+  tracker=new ServiceTracker<T,T>(context,type,null){
     @Override public T addingService(    ServiceReference<T> reference){
       T service=super.addingService(reference);
       dynamicReference.bind(service);
