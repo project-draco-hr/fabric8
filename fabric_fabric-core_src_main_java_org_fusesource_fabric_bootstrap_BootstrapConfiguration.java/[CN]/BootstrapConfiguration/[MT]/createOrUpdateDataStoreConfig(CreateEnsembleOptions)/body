@@ -1,0 +1,18 @@
+{
+  Configuration config=configAdmin.get().getConfiguration(DataStore.DATASTORE_TYPE_PID,null);
+  Dictionary<String,Object> properties=config.getProperties();
+  if (properties == null || properties.isEmpty()) {
+    boolean updateConfig=false;
+    properties=new Hashtable<String,Object>();
+    Map<String,String> dataStoreProperties=options.getDataStoreProperties();
+    for (    Map.Entry<String,String> entry : dataStoreProperties.entrySet()) {
+      String key=entry.getKey();
+      String value=entry.getValue();
+      Object oldval=properties.put(key,value);
+      updateConfig=updateConfig || !value.equals(oldval);
+    }
+    if (updateConfig) {
+      config.update(properties);
+    }
+  }
+}

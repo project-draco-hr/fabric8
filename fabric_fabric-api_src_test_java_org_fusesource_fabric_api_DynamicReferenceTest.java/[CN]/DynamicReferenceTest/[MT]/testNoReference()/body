@@ -1,4 +1,10 @@
 {
-  DynamicReference<String> dynamic=new DynamicReference<String>();
-  dynamic.get();
+  DynamicReference<String> dynamic=new DynamicReference<String>("noref",100,TimeUnit.MILLISECONDS);
+  try {
+    dynamic.get();
+    Assert.fail("DynamicReferenceException expected");
+  }
+ catch (  DynamicReferenceException ex) {
+    Assert.assertEquals("Gave up waiting for: noref",ex.getMessage());
+  }
 }

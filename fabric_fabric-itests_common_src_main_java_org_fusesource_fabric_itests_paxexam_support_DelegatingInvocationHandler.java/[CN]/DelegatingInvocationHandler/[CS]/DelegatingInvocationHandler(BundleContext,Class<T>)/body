@@ -1,19 +1,14 @@
 {
-  this.bundleContext=bundleContext;
-  this.type=type;
   this.tracker=new ServiceTracker<T,T>(bundleContext,type,null){
     @Override public T addingService(    ServiceReference<T> reference){
       T service=super.addingService(reference);
-      ref.bind(service);
       return service;
     }
     @Override public void modifiedService(    ServiceReference<T> reference,    T service){
       super.modifiedService(reference,service);
-      ref.bind(service);
     }
     @Override public void removedService(    ServiceReference<T> reference,    T service){
       super.removedService(reference,service);
-      ref.unbind();
     }
   }
 ;

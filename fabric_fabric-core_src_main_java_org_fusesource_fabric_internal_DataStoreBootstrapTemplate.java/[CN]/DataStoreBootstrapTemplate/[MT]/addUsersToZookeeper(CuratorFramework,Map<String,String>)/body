@@ -7,17 +7,24 @@
   options.put("encryption.enabled","true");
   options.put("encryption.algorithm","MD5");
   options.put("encryption.encoding","hexadecimal");
-  options.put(BundleContext.class.getName(),FrameworkUtil.getBundle(getClass()).getBundleContext());
-  EncryptionSupport encryptionSupport=new EncryptionSupport(options);
-  Encryption encryption=encryptionSupport.getEncryption();
+  Encryption encryption=null;
+  EncryptionSupport encryptionSupport=null;
+  Bundle bundle=FrameworkUtil.getBundle(getClass());
+  if (bundle != null) {
+    options.put(BundleContext.class.getName(),bundle.getBundleContext());
+    encryptionSupport=new EncryptionSupport(options);
+    encryption=encryptionSupport.getEncryption();
+  }
   StringBuilder sb=new StringBuilder();
   for (  Map.Entry<String,String> entry : users.entrySet()) {
     String user=entry.getKey();
     Matcher m=p.matcher(entry.getValue());
     if (m.matches() && m.groupCount() >= 2) {
       String password=m.group(1).trim();
-      if (!password.startsWith(encryptionSupport.getEncryptionPrefix()) || !password.endsWith(encryptionSupport.getEncryptionSuffix())) {
-        password=encryptionSupport.getEncryptionPrefix() + encryption.encryptPassword(m.group(1)).trim() + encryptionSupport.getEncryptionSuffix();
+      if (encryptionSupport != null && encryption != null) {
+        if (!password.startsWith(encryptionSupport.getEncryptionPrefix()) || !password.endsWith(encryptionSupport.getEncryptionSuffix())) {
+          password=encryptionSupport.getEncryptionPrefix() + encryption.encryptPassword(m.group(1)).trim() + encryptionSupport.getEncryptionSuffix();
+        }
       }
       String role=m.group(2).trim();
       sb.append(user).append("=").append(password).append(",").append(role).append("\n");
@@ -25,4 +32,5 @@
   }
   String allUsers=sb.toString();
   createDefault(curator,"/fabric/authentication/users",allUsers);
+  return encryptionSupport;
 }

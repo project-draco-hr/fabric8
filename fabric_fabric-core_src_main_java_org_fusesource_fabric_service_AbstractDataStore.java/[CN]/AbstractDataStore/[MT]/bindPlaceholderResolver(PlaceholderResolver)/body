@@ -1,4 +1,5 @@
 {
-  placeholderResolvers.putIfAbsent(resolver.getScheme(),new DynamicReference<PlaceholderResolver>());
-  placeholderResolvers.get(resolver.getScheme()).bind(resolver);
+  String resolverScheme=resolver.getScheme();
+  placeholderResolvers.putIfAbsent(resolverScheme,new DynamicReference<PlaceholderResolver>(resolverScheme));
+  placeholderResolvers.get(resolverScheme).bind(resolver);
 }

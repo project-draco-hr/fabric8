@@ -1,4 +1,13 @@
 {
-  this.semaphore.drainPermits();
-  this.ref.set(null);
+synchronized (revisionMap) {
+    currentRevision().unbind();
+    Iterator<ValueRevision> itrev=revisionMap.values().iterator();
+    while (itrev.hasNext()) {
+      ValueRevision auxrev=itrev.next();
+      if (auxrev.usageCount.get() == 0) {
+        itrev.remove();
+      }
+    }
+    revisionMap.put(revisionIndex.incrementAndGet(),new ValueRevision());
+  }
 }

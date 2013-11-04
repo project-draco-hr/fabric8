@@ -1,0 +1,23 @@
+{
+  org.apache.felix.utils.properties.Properties userProps=null;
+  try {
+    userProps=new org.apache.felix.utils.properties.Properties(new File(System.getProperty("karaf.home") + "/etc/users.properties"));
+  }
+ catch (  IOException e) {
+    LOGGER.warn("Failed to load users from etc/users.properties. No users will be imported.",e);
+  }
+  options=CreateEnsembleOptions.builder().fromSystemProperties().users(userProps).build();
+  if (options.isEnsembleStart()) {
+    String connectionUrl=getConnectionUrl(options);
+    registrationHandler.get().setRegistrationCallback(new DataStoreBootstrapTemplate(connectionUrl,options));
+    createOrUpdateDataStoreConfig(options);
+    createZooKeeeperServerConfig(options);
+    createZooKeeeperClientConfig(connectionUrl,options);
+    System.setProperty(CreateEnsembleOptions.ENSEMBLE_AUTOSTART,Boolean.FALSE.toString());
+    File file=new File(System.getProperty("karaf.home") + "/etc/system.properties");
+    org.apache.felix.utils.properties.Properties props=new org.apache.felix.utils.properties.Properties(file);
+    props.put(CreateEnsembleOptions.ENSEMBLE_AUTOSTART,Boolean.FALSE.toString());
+    props.save();
+  }
+  activateComponent();
+}

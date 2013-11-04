@@ -1,6 +1,7 @@
 {
   try {
-    return method.invoke(ref.get(),args);
+    T service=tracker.waitForService(10000);
+    return method.invoke(service,args);
   }
  catch (  IllegalAccessException e) {
     throw new RuntimeException(e);

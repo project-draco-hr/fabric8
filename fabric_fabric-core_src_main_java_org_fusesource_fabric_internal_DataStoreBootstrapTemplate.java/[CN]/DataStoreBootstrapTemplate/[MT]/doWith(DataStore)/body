@@ -55,9 +55,9 @@
     Map<String,String> configs=new HashMap<String,String>();
     configs.put("encryption.enabled","${zk:/fabric/authentication/encryption.enabled}");
     dataStore.setConfiguration(version,defaultProfile,"org.fusesource.fabric.jaas",configs);
-    createDefault(curator,"/fabric/authentication/encryption.enabled","true");
+    EncryptionSupport encryption=addUsersToZookeeper(curator,options.getUsers());
+    createDefault(curator,"/fabric/authentication/encryption.enabled",Boolean.valueOf(encryption != null).toString());
     createDefault(curator,"/fabric/authentication/domain","karaf");
-    addUsersToZookeeper(curator,options.getUsers());
     createDefault(curator,ZkPath.AUTHENTICATION_CRYPT_ALGORITHM.getPath(),"PBEWithMD5AndDES");
     createDefault(curator,ZkPath.AUTHENTICATION_CRYPT_PASSWORD.getPath(),options.getZookeeperPassword());
     aclManager.fixAcl(curator,"/fabric",true);

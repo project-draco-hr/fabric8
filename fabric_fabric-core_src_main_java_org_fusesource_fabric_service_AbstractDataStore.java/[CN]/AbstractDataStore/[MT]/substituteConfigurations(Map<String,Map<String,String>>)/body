@@ -2,7 +2,7 @@
   assertValid();
   Set<String> requiredSchemes=getSchemesForProfileConfigurations(configs);
   for (  String scheme : requiredSchemes) {
-    placeholderResolvers.putIfAbsent(scheme,new DynamicReference<PlaceholderResolver>());
+    placeholderResolvers.putIfAbsent(scheme,new DynamicReference<PlaceholderResolver>(scheme));
   }
   final Map<String,PlaceholderResolver> availableResolvers=waitForPlaceHolderResolvers(placeholderExecutor,requiredSchemes,getPlaceholderResolvers());
   for (  Map.Entry<String,Map<String,String>> entry : configs.entrySet()) {

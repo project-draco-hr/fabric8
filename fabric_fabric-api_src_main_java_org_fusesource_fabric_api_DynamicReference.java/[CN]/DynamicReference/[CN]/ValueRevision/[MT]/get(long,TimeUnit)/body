@@ -1,0 +1,15 @@
+{
+  usageCount.incrementAndGet();
+  try {
+    if (!latch.await(timeout,unit)) {
+      throw new DynamicReferenceException(String.format(TIMEOUT_MESSAGE_FORMAT,name));
+    }
+  }
+ catch (  InterruptedException ex) {
+    throw new DynamicReferenceException(String.format(INTERRUPTED_MESSAGE_FORMAT,name),ex);
+  }
+ finally {
+    usageCount.decrementAndGet();
+  }
+  return ref.get();
+}

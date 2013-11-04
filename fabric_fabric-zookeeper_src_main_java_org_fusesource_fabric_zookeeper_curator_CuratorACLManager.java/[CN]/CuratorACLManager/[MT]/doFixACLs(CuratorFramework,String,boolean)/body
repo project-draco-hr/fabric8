@@ -1,9 +1,0 @@
-{
-  List<ACL> aclList=getAclForPath(path);
-  curator.setACL().withACL(aclList).forPath(path);
-  if (recursive) {
-    for (    String child : curator.getChildren().forPath(path)) {
-      doFixACLs(curator,path.equals("/") ? "/" + child : path + "/" + child,recursive);
-    }
-  }
-}
