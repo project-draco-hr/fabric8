@@ -7,6 +7,7 @@
   if (started.get()) {
     boolean update=state == null && oldState != null || state != null && oldState == null || !Arrays.equals(encode(state),encode(oldState));
     if (update) {
+      offerOperation(new RefreshOperation(this,RefreshMode.FORCE_GET_DATA_AND_STAT));
       offerOperation(new UpdateOperation<T>(this,state));
     }
   }

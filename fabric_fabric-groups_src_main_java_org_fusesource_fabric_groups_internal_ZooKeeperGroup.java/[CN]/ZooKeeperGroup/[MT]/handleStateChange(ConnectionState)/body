@@ -10,8 +10,8 @@ case LOST:
 case CONNECTED:
 case RECONNECTED:
 {
-    offerOperation(new UpdateOperation<T>(this,state));
     offerOperation(new RefreshOperation(this,RefreshMode.FORCE_GET_DATA_AND_STAT));
+    offerOperation(new UpdateOperation<T>(this,state));
     offerOperation(new EventOperation(this,GroupListener.GroupEvent.CONNECTED));
     break;
   }

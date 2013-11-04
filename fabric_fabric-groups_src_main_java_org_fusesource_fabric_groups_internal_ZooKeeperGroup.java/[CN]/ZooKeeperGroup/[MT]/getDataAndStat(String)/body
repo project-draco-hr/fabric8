@@ -1,9 +1,5 @@
 {
-  BackgroundCallback getDataCallback=new BackgroundCallback(){
-    @Override public void processResult(    CuratorFramework client,    CuratorEvent event) throws Exception {
-      applyNewData(fullPath,event.getResultCode(),event.getStat(),event.getData());
-    }
-  }
-;
-  client.getData().usingWatcher(dataWatcher).inBackground(getDataCallback).forPath(fullPath);
+  Stat stat=new Stat();
+  byte[] data=client.getData().storingStatIn(stat).usingWatcher(dataWatcher).forPath(fullPath);
+  applyNewData(fullPath,KeeperException.Code.OK.intValue(),stat,data);
 }
