@@ -1,0 +1,10 @@
+{
+  String containerName=getCurrentContainerName();
+  FabricServiceImpl service=getFabricService();
+  Container container=service.getContainer(containerName);
+  if (container != null) {
+    Profile[] profiles=container.getProfiles();
+    return Profiles.getConfigurationFileNameMap(profiles);
+  }
+  return new HashMap<String,String>();
+}

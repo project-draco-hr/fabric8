@@ -24,6 +24,11 @@
   String agentPID="org.fusesource.fabric.agent";
   assertProfileConfiguration(version,importedProfile,agentPID,"attribute.parents","feature-camel");
   assertProfileTextFileConfigurationContains(version,"example-camel-fabric","camel.xml","http://camel.apache.org/schema/blueprint");
+  List<String> fileNames=dataStore.getConfigurationFileNames(version,"example-camel-fabric");
+  assertNotNull("Should have some file names",fileNames);
+  assertTrue("Should have some file names",fileNames.size() > 0);
+  assertTrue("Should contain 'came",fileNames.size() > 0);
+  assertCollectionContains("configurationFileNames",fileNames,"camel.xml");
   Map<String,String> profileAttributes=dataStore.getProfileAttributes(version,importedProfile);
   String parent=profileAttributes.get("parents");
   assertEquals(importedProfile + ".profileAttributes[parent]","feature-camel",parent);
