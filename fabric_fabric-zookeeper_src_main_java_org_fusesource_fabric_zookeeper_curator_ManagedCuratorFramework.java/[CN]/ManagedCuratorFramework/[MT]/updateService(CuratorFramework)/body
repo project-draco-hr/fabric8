@@ -6,7 +6,24 @@
     }
  catch (    IOException ex) {
     }
+    registration=null;
   }
-  this.registration=bundleContext.registerService(CuratorFramework.class.getName(),framework,new Hashtable<String,Object>());
+  ConnectionStateListener listener=new ConnectionStateListener(){
+    @Override public void stateChanged(    CuratorFramework client,    ConnectionState newState){
+      if (newState == ConnectionState.CONNECTED) {
+synchronized (ManagedCuratorFramework.this) {
+          if (registration == null) {
+            registration=bundleContext.registerService(CuratorFramework.class.getName(),curatorFramework,new Hashtable<String,Object>());
+            client.getConnectionStateListenable().removeListener(this);
+          }
+        }
+      }
+    }
+  }
+;
+  framework.getConnectionStateListenable().addListener(listener);
   this.curatorFramework=framework;
+  if (framework.getZookeeperClient().isConnected()) {
+    listener.stateChanged(framework,ConnectionState.CONNECTED);
+  }
 }
