@@ -1,3 +1,8 @@
 {
-  return currentRevision().get(timeout,unit);
+  T value=currentRevision().get(timeout,unit);
+  while (value == null) {
+    LOG.warn("Unbound while waiting for: {}",name);
+    value=currentRevision().get(timeout,unit);
+  }
+  return value;
 }

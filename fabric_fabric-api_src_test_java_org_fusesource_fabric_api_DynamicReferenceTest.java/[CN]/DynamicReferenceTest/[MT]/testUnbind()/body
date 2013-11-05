@@ -1,8 +1,9 @@
 {
   DynamicReference<String> dynamic=new DynamicReference<String>("unbind",100,TimeUnit.MILLISECONDS);
-  dynamic.bind("foo");
-  Assert.assertEquals("foo",dynamic.get());
-  dynamic.unbind();
+  String value="foo";
+  dynamic.bind(value);
+  Assert.assertEquals(value,dynamic.get());
+  dynamic.unbind(value);
   try {
     dynamic.get();
     Assert.fail("DynamicReferenceException expected");
