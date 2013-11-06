@@ -5,8 +5,8 @@
     Map<String,byte[]> configs=getFileConfigurations(version,profile);
     for (    Map.Entry<String,byte[]> entry : configs.entrySet()) {
       if (entry.getKey().endsWith(".properties")) {
-        String pid=DataStoreUtils.stripSuffix(entry.getKey(),".properties");
-        configurations.put(pid,DataStoreUtils.toMap(DataStoreUtils.toProperties(entry.getValue())));
+        String pid=DataStoreHelpers.stripSuffix(entry.getKey(),".properties");
+        configurations.put(pid,DataStoreHelpers.toMap(DataStoreHelpers.toProperties(entry.getValue())));
       }
     }
     return configurations;

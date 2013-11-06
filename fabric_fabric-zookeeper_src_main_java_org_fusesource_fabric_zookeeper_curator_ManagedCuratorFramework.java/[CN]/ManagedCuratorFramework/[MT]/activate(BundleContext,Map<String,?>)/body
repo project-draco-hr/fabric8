@@ -1,9 +1,9 @@
 {
   this.bundleContext=bundleContext;
-  if ((configuration == null || !configuration.containsKey(ZOOKEEPER_URL)) && Strings.isNullOrEmpty(System.getProperty(ZOOKEEPER_URL))) {
+  if ((properties == null || !properties.containsKey(ZOOKEEPER_URL)) && Strings.isNullOrEmpty(System.getProperty(ZOOKEEPER_URL))) {
     return;
   }
-  updateService(buildCuratorFramework(configuration));
-  this.oldProperties=configuration;
+  updateService(buildCuratorFramework(properties));
+  this.oldProperties=properties;
   activateComponent();
 }

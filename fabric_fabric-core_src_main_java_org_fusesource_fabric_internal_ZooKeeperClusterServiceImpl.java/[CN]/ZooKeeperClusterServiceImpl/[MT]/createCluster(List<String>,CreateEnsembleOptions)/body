@@ -103,7 +103,7 @@
       }
       ensembleMemberProperties.put("clientPort",port1);
       ensembleMemberProperties.put("clientPortAddress",bindAddress);
-      dataStore.get().setFileConfiguration(version,ensembleMemberProfile,ensembleMemberConfigName,DataStoreUtils.toBytes(ensembleMemberProperties));
+      dataStore.get().setFileConfiguration(version,ensembleMemberProfile,ensembleMemberConfigName,DataStoreHelpers.toBytes(ensembleMemberProperties));
       if (connectionUrl.length() > 0) {
         connectionUrl+=",";
         realConnectionUrl+=",";
@@ -117,7 +117,7 @@
       index++;
     }
     String ensembleConfigName="org.fusesource.fabric.zookeeper.server-" + newClusterId + ".properties";
-    dataStore.get().setFileConfiguration(version,ensembleProfile,ensembleConfigName,DataStoreUtils.toBytes(ensembleProperties));
+    dataStore.get().setFileConfiguration(version,ensembleProfile,ensembleConfigName,DataStoreHelpers.toBytes(ensembleProperties));
     index=1;
     for (    String container : containers) {
       List<String> profiles=new LinkedList<String>(dataStore.get().getContainerProfiles(container));
@@ -126,7 +126,7 @@
       index++;
     }
     if (oldClusterId != null) {
-      Properties properties=DataStoreUtils.toProperties(dataStore.get().getConfiguration(version,"default","org.fusesource.fabric.zookeeper"));
+      Properties properties=DataStoreHelpers.toProperties(dataStore.get().getConfiguration(version,"default","org.fusesource.fabric.zookeeper"));
       properties.put("zookeeper.url",getSubstitutedData(curator.get(),realConnectionUrl));
       properties.put("zookeeper.password",options.getZookeeperPassword());
       CuratorFramework dst=CuratorFrameworkFactory.builder().connectString(realConnectionUrl).retryPolicy(new RetryOneTime(500)).aclProvider(aclProvider.get()).authorization("digest",("fabric:" + options.getZookeeperPassword()).getBytes()).sessionTimeoutMs(30000).connectionTimeoutMs(30000).build();

@@ -1,7 +1,11 @@
 {
   deactivateComponent();
   if (registration != null) {
-    registration.unregister();
+    try {
+      registration.unregister();
+    }
+ catch (    IllegalStateException e) {
+    }
   }
   Closeables.close(curatorFramework,true);
 }

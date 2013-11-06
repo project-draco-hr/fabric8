@@ -13,7 +13,7 @@
       if (newState == ConnectionState.CONNECTED) {
 synchronized (ManagedCuratorFramework.this) {
           if (registration == null) {
-            registration=bundleContext.registerService(CuratorFramework.class,curatorFramework,null);
+            registration=bundleContext.registerService(CuratorFramework.class.getName(),curatorFramework,new Hashtable<String,Object>());
             client.getConnectionStateListenable().removeListener(this);
           }
         }

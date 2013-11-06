@@ -26,8 +26,8 @@
   Map<String,Map<String,String>> substituted=new HashMap<String,Map<String,String>>();
   for (  Map.Entry<String,byte[]> entry : configurations.entrySet()) {
     if (entry.getKey().endsWith(".properties")) {
-      String pid=DataStoreUtils.stripSuffix(entry.getKey(),".properties");
-      substituted.put(pid,DataStoreUtils.toMap(DataStoreUtils.toProperties(entry.getValue())));
+      String pid=DataStoreHelpers.stripSuffix(entry.getKey(),".properties");
+      substituted.put(pid,DataStoreHelpers.toMap(DataStoreHelpers.toProperties(entry.getValue())));
     }
   }
   ProfileData profileData=new ProfileData(lastModified,configurations,substituted);
