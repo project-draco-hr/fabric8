@@ -1,0 +1,77 @@
+{
+  LOGGER.info("Creating zookeeper server with properties: {}",configuration);
+  Properties properties=toProperties(configuration);
+  String serverId=properties.getProperty("server.id");
+  if (serverId != null) {
+    properties.remove("server.id");
+    File myId=new File(properties.getProperty("dataDir"),"myid");
+    if (myId.exists() && !myId.delete()) {
+      throw new IOException("Failed to delete " + myId);
+    }
+    if (myId.getParentFile() == null || (!myId.getParentFile().exists() && !myId.getParentFile().mkdirs())) {
+      throw new IOException("Failed to create " + myId.getParent());
+    }
+    FileOutputStream fos=new FileOutputStream(myId);
+    try {
+      fos.write((serverId + "\n").getBytes());
+    }
+  finally {
+      fos.close();
+    }
+  }
+  QuorumPeerConfig config=new QuorumPeerConfig();
+  config.parseProperties(properties);
+  if (!config.getServers().isEmpty()) {
+    NIOServerCnxnFactory cnxnFactory=new NIOServerCnxnFactory();
+    cnxnFactory.configure(config.getClientPortAddress(),config.getMaxClientCnxns());
+    QuorumPeer quorumPeer=new QuorumPeer();
+    quorumPeer.setClientPortAddress(config.getClientPortAddress());
+    quorumPeer.setTxnFactory(new FileTxnSnapLog(new File(config.getDataLogDir()),new File(config.getDataDir())));
+    quorumPeer.setQuorumPeers(config.getServers());
+    quorumPeer.setElectionType(config.getElectionAlg());
+    quorumPeer.setMyid(config.getServerId());
+    quorumPeer.setTickTime(config.getTickTime());
+    quorumPeer.setMinSessionTimeout(config.getMinSessionTimeout());
+    quorumPeer.setMaxSessionTimeout(config.getMaxSessionTimeout());
+    quorumPeer.setInitLimit(config.getInitLimit());
+    quorumPeer.setSyncLimit(config.getSyncLimit());
+    quorumPeer.setQuorumVerifier(config.getQuorumVerifier());
+    quorumPeer.setCnxnFactory(cnxnFactory);
+    quorumPeer.setZKDatabase(new ZKDatabase(quorumPeer.getTxnFactory()));
+    quorumPeer.setLearnerType(config.getPeerType());
+    try {
+      LOGGER.debug("Starting quorum peer \"%s\" on address %s",quorumPeer.getMyid(),config.getClientPortAddress());
+      quorumPeer.start();
+      LOGGER.debug("Started quorum peer \"%s\"",quorumPeer.getMyid());
+    }
+ catch (    Exception e) {
+      LOGGER.warn(String.format("Failed to start quorum peer \"%s\", reason : %s ",quorumPeer.getMyid(),e.getMessage()));
+      quorumPeer.shutdown();
+      throw e;
+    }
+    return new ClusteredServer(quorumPeer);
+  }
+ else {
+    ServerConfig cfg=new ServerConfig();
+    cfg.readFrom(config);
+    ZooKeeperServer zkServer=new ZooKeeperServer();
+    FileTxnSnapLog ftxn=new FileTxnSnapLog(new File(cfg.getDataLogDir()),new File(cfg.getDataDir()));
+    zkServer.setTxnLogFactory(ftxn);
+    zkServer.setTickTime(cfg.getTickTime());
+    zkServer.setMinSessionTimeout(cfg.getMinSessionTimeout());
+    zkServer.setMaxSessionTimeout(cfg.getMaxSessionTimeout());
+    NIOServerCnxnFactory cnxnFactory=new NIOServerCnxnFactory();
+    cnxnFactory.configure(cfg.getClientPortAddress(),cfg.getMaxClientCnxns());
+    try {
+      LOGGER.debug("Starting ZooKeeper server on address %s",config.getClientPortAddress());
+      cnxnFactory.startup(zkServer);
+      LOGGER.debug("Started ZooKeeper server");
+    }
+ catch (    Exception e) {
+      LOGGER.warn(String.format("Failed to start ZooKeeper server, reason : %s",e));
+      cnxnFactory.shutdown();
+      throw e;
+    }
+    return new SimpleServer(zkServer,cnxnFactory);
+  }
+}
