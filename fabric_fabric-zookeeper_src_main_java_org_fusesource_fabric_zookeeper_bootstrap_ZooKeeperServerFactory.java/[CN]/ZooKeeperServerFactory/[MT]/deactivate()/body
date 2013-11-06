@@ -1,25 +1,9 @@
 {
   deactivateComponent();
-  if (destroyed.compareAndSet(false,true)) {
-    executor.shutdown();
-    try {
-      executor.awaitTermination(TIMEOUT_BEFORE_INTERRUPT,TimeUnit.MILLISECONDS);
-    }
- catch (    InterruptedException e) {
-      throw new RuntimeException("Shutdown interrupted");
-    }
-    if (!executor.isTerminated()) {
-      executor.shutdownNow();
-      try {
-        executor.awaitTermination(Long.MAX_VALUE,TimeUnit.NANOSECONDS);
-      }
- catch (      InterruptedException e) {
-        throw new RuntimeException("Shutdown interrupted");
-      }
-    }
-    while (!services.isEmpty()) {
-      String pid=services.keySet().iterator().next();
-      internalDelete(pid);
-    }
+  if (registration != null) {
+    registration.unregister();
+  }
+  if (destroyable != null) {
+    destroyable.destroy();
   }
 }
