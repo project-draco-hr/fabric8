@@ -1,13 +1,13 @@
 {
-  if ((properties == null || !properties.containsKey(ZOOKEEPER_URL)) && Strings.isNullOrEmpty(System.getProperty(ZOOKEEPER_URL))) {
+  if ((configuration == null || !configuration.containsKey(ZOOKEEPER_URL)) && Strings.isNullOrEmpty(System.getProperty(ZOOKEEPER_URL))) {
     return;
   }
- else   if (isRestartRequired(oldProperties,properties)) {
-    updateService(buildCuratorFramework(properties));
+ else   if (isRestartRequired(oldProperties,configuration)) {
+    updateService(buildCuratorFramework(configuration));
   }
  else {
-    updateEnsemble(properties);
-    if (!propertyEquals(oldProperties,properties,ZOOKEEPER_URL)) {
+    updateEnsemble(configuration);
+    if (!propertyEquals(oldProperties,configuration,ZOOKEEPER_URL)) {
       try {
         reset((CuratorFrameworkImpl)curatorFramework);
       }
@@ -16,5 +16,5 @@
       }
     }
   }
-  this.oldProperties=properties;
+  this.oldProperties=configuration;
 }

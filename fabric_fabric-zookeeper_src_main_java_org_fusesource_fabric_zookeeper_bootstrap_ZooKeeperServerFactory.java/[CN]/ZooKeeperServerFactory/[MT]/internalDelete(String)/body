@@ -1,0 +1,17 @@
+{
+  Pair<Object,ServiceRegistration<?>> pair=services.remove(pid);
+  if (pair != null) {
+    try {
+      pair.getSecond().unregister();
+    }
+ catch (    Throwable t) {
+      LOGGER.info("Error unregistering service",t);
+    }
+    try {
+      doDestroy(pair.getFirst());
+    }
+ catch (    Throwable t) {
+      LOGGER.info("Error destroying service",t);
+    }
+  }
+}

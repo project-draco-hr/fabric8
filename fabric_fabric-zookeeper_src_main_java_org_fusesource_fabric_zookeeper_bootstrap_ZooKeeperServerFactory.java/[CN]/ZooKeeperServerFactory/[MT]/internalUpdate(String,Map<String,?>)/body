@@ -1,0 +1,43 @@
+{
+  Dictionary<String,?> dictionary=toDictionary(configuration);
+  Pair<Object,ServiceRegistration<?>> pair=services.get(pid);
+  if (pair != null) {
+    try {
+      Object t=doUpdate(pair.getFirst(),configuration);
+      pair.setFirst(t);
+      pair.getSecond().setProperties(dictionary);
+    }
+ catch (    Throwable throwable) {
+      internalDelete(pid);
+      LOGGER.warn("Error updating service for ManagedServiceFactory " + this,throwable);
+    }
+  }
+ else {
+    if (destroyed.get()) {
+      return;
+    }
+    try {
+      Object t=activateInternal(configuration);
+      try {
+        if (destroyed.get()) {
+          throw new IllegalStateException("ManagedServiceFactory has been destroyed");
+        }
+        ServiceRegistration<?> registration=context.registerService(getExposedClasses(t),t,dictionary);
+        services.put(pid,new Pair<Object,ServiceRegistration<?>>(t,registration));
+      }
+ catch (      Throwable throwable1) {
+        try {
+          doDestroy(t);
+        }
+ catch (        Throwable throwable2) {
+        }
+        throw throwable1;
+      }
+    }
+ catch (    Throwable throwable) {
+      if (!destroyed.get()) {
+        LOGGER.warn("Error creating service for ManagedServiceFactory " + this,throwable);
+      }
+    }
+  }
+}
