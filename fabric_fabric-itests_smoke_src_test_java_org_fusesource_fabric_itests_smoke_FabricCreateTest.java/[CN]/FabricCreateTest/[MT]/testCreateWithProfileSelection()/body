@@ -2,6 +2,12 @@
   System.err.println(executeCommand("fabric:create -n --profile feature-camel"));
   FabricService fabricService=getFabricService();
   assertNotNull(fabricService);
+  Profile karafProfile=fabricService.getDefaultVersion().getProfile("karaf");
+  assertNotNull(karafProfile);
+  Profile camelProfile=fabricService.getDefaultVersion().getProfile("feature-camel");
+  assertNotNull(camelProfile);
+  Profile activeMq=fabricService.getDefaultVersion().getProfile("mq-default");
+  assertNotNull(activeMq);
   Profile[] profiles=fabricService.getCurrentContainer().getProfiles();
   List<String> profileNames=new LinkedList<String>();
   for (  Profile profile : profiles) {
