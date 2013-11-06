@@ -1,11 +1,12 @@
 {
-  if (props == null) {
+  if (props == null || Boolean.parseBoolean((String)props.get("disabled"))) {
     return false;
   }
   addMavenProxies(props,fabricService.getService());
   updateStatus("analyzing",null);
-  DictionaryPropertyResolver propertyResolver=new DictionaryPropertyResolver(props,new PropertiesPropertyResolver(System.getProperties()));
-  final MavenConfigurationImpl config=new MavenConfigurationImpl(new DictionaryPropertyResolver(props,new PropertiesPropertyResolver(System.getProperties())),"org.ops4j.pax.url.mvn");
+  PropertiesPropertyResolver syspropsResolver=new PropertiesPropertyResolver(System.getProperties());
+  DictionaryPropertyResolver propertyResolver=new DictionaryPropertyResolver(props,syspropsResolver);
+  final MavenConfigurationImpl config=new MavenConfigurationImpl(new DictionaryPropertyResolver(props,syspropsResolver),"org.ops4j.pax.url.mvn");
   config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
   manager=new DownloadManager(config,getDownloadExecutor());
   Map<String,String> properties=new HashMap<String,String>();
