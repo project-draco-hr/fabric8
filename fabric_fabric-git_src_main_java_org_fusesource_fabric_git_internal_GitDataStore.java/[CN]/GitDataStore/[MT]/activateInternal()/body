@@ -17,9 +17,11 @@
     LOG.info("starting to pull from remote repository every " + pullPeriod + " millis");
     threadPool.scheduleWithFixedDelay(new Runnable(){
       @Override public void run(){
-        LOG.debug("Performing timed pull");
-        pull();
-        push();
+        if (isValid()) {
+          LOG.debug("Performing timed pull");
+          pull();
+          push();
+        }
       }
     }
 ,pullPeriod,pullPeriod,TimeUnit.MILLISECONDS);
