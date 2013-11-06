@@ -1,0 +1,17 @@
+{
+  LOGGER.info("Configuration {} delete",pid);
+  if (destroyed.get()) {
+    return;
+  }
+  executor.submit(new Runnable(){
+    @Override public void run(){
+      try {
+        internalDelete(pid);
+      }
+ catch (      Throwable throwable) {
+        LOGGER.warn("Error destroying service for ManagedServiceFactory " + this,throwable);
+      }
+    }
+  }
+);
+}

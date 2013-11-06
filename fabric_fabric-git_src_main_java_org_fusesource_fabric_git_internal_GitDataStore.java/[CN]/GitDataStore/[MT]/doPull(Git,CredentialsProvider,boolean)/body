@@ -3,7 +3,7 @@
   try {
     Repository repository=git.getRepository();
     StoredConfig config=repository.getConfig();
-    String url=config.getString("remote",remote,"url");
+    String url=config.getString("remote",remoteRef.get(),"url");
     if (Strings.isNullOrBlank(url)) {
       if (LOG.isDebugEnabled()) {
         LOG.debug("No remote repository defined for the git repository at " + GitHelpers.getRootGitDirectory(git) + " so not doing a pull");
@@ -15,7 +15,7 @@
     }
     boolean hasChanged=false;
     try {
-      git.fetch().setTimeout(10).setCredentialsProvider(credentialsProvider).setRemote(remote).call();
+      git.fetch().setTimeout(10).setCredentialsProvider(credentialsProvider).setRemote(remoteRef.get()).call();
     }
  catch (    Exception e) {
       LOG.debug("Fetch failed. Ignoring");
@@ -25,8 +25,8 @@
     Map<String,Ref> remoteBranches=new HashMap<String,Ref>();
     Set<String> gitVersions=new HashSet<String>();
     for (    Ref ref : git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call()) {
-      if (ref.getName().startsWith("refs/remotes/" + remote + "/")) {
-        String name=ref.getName().substring(("refs/remotes/" + remote + "/").length());
+      if (ref.getName().startsWith("refs/remotes/" + remoteRef.get() + "/")) {
+        String name=ref.getName().substring(("refs/remotes/" + remoteRef.get() + "/").length());
         remoteBranches.put(name,ref);
         gitVersions.add(name);
       }
@@ -54,7 +54,7 @@
       }
  else       if (!localBranches.containsKey(version)) {
         addVersion(version);
-        git.checkout().setCreateBranch(true).setName(version).setStartPoint(remote + "/" + version).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).setForce(true).call();
+        git.checkout().setCreateBranch(true).setName(version).setStartPoint(remoteRef.get() + "/" + version).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).setForce(true).call();
         hasChanged=true;
       }
  else {

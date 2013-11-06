@@ -17,7 +17,7 @@
     if (fileName.endsWith(".properties")) {
       SupplementControl ctrl=aggregate.get(fileName);
       if (ctrl != null) {
-        Properties childMap=DataStoreHelpers.toProperties(value);
+        Properties childMap=DataStoreUtils.toProperties(value);
         if (childMap.remove(DELETED) != null) {
           ctrl.props.clear();
         }
@@ -32,7 +32,7 @@
       }
  else {
         ctrl=new SupplementControl();
-        ctrl.props=DataStoreHelpers.toProperties(value);
+        ctrl.props=DataStoreUtils.toProperties(value);
         aggregate.put(fileName,ctrl);
       }
     }

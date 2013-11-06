@@ -1,7 +1,8 @@
 {
 synchronized (revision) {
-    currentRevision().unbind(value);
-    if (currentRevision().getIfPresent() == null) {
+    ValueRevision currev=revision.get();
+    currev.unbind(value);
+    if (currev.getIfPresent() == null) {
       revision.set(new ValueRevision());
     }
   }
