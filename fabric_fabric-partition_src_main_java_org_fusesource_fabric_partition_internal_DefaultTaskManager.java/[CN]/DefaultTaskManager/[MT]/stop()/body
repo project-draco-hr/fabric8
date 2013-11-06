@@ -1,9 +1,9 @@
 {
   Closeables.closeQuitely(partitionCache);
   Closeables.closeQuitely(workerCache);
-  executorService.shutdown();
   Closeables.closeQuitely(group);
-  partitionListener.destroy();
+  executorService.shutdown();
+  partitionListener.stop(taskId,taskDefinition,assignedPartitions);
   assignedPartitions.clear();
   node=null;
 }

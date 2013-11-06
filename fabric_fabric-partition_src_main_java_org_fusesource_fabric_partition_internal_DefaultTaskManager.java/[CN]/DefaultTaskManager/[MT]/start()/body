@@ -5,14 +5,10 @@
     workerCache.getListenable().addListener(this);
     workerCache.start(true);
     ZooKeeperUtils.createDefault(curator,partitionPath,null);
-    partitionCache.getListenable().addListener(this);
-    partitionCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
-    partitionCache.rebuild();
-    workerCache.rebuild();
   }
  catch (  Exception e) {
     throw Throwables.propagate(e);
   }
-  group.update(node);
+  group.update(createNode());
   group.start();
 }

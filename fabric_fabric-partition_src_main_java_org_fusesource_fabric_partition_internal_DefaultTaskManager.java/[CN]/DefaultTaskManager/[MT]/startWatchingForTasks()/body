@@ -1,0 +1,14 @@
+{
+  try {
+    if (partitionCache == null) {
+      partitionCache=new PathChildrenCache(curator,partitionPath,true,false,executorService);
+      partitionCache.getListenable().addListener(this);
+      partitionCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
+      partitionCache.rebuild();
+      workerCache.rebuild();
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to start partition cache.",e);
+  }
+}
