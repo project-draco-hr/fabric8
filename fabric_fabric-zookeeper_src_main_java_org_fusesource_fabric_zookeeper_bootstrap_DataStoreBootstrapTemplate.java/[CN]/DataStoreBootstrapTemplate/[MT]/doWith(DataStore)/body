@@ -51,6 +51,9 @@
     for (    String p : profiles) {
       profilesBuilder.append(" ").append(p);
     }
+    if (!options.isAgentEnabled()) {
+      profilesBuilder.append(" ").append("unmanaged");
+    }
     createDefault(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,karafName),profilesBuilder.toString());
     Map<String,String> configs=new HashMap<String,String>();
     configs.put("encryption.enabled","${zk:/fabric/authentication/encryption.enabled}");
