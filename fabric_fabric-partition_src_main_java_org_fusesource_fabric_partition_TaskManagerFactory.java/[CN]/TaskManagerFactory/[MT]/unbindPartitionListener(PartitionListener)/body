@@ -1,4 +1,7 @@
 {
-  partitionListeners.remove(partitionListener.getType());
-  stopWorkManagerWithListener(taskManagers.values(),partitionListener.getType());
+  String type=partitionListener.getType();
+  partitionListeners.remove(type);
+  if (type.equals(workerType)) {
+    stopTaskManager();
+  }
 }
