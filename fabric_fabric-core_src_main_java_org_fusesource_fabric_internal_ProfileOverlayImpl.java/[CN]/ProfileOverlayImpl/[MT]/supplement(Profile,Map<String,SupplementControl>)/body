@@ -5,12 +5,19 @@
     }
   }
   Map<String,byte[]> configs=profile.getFileConfigurations();
-  for (  Map.Entry<String,byte[]> entry : configs.entrySet()) {
-    String fileName=entry.getKey();
+  for (  String key : configs.keySet()) {
+    if (key.contains("#")) {
+      continue;
+    }
+    byte[] value=configs.get(key);
+    if (environment != null && configs.containsKey(key + "#" + environment)) {
+      value=configs.get(key + "#" + environment);
+    }
+    String fileName=key;
     if (fileName.endsWith(".properties")) {
       SupplementControl ctrl=aggregate.get(fileName);
       if (ctrl != null) {
-        Properties childMap=DataStoreUtils.toProperties(entry.getValue());
+        Properties childMap=DataStoreUtils.toProperties(value);
         if (childMap.remove(DELETED) != null) {
           ctrl.props.clear();
         }
@@ -25,13 +32,13 @@
       }
  else {
         ctrl=new SupplementControl();
-        ctrl.props=DataStoreUtils.toProperties(entry.getValue());
+        ctrl.props=DataStoreUtils.toProperties(value);
         aggregate.put(fileName,ctrl);
       }
     }
  else {
       SupplementControl ctrl=new SupplementControl();
-      ctrl.data=entry.getValue();
+      ctrl.data=value;
       aggregate.put(fileName,ctrl);
     }
   }
