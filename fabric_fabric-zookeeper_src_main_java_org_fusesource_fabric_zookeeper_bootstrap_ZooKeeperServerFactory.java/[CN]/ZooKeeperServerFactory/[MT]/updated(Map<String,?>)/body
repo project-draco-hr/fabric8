@@ -1,0 +1,18 @@
+{
+  final String pid=(String)configuration.get("service.pid");
+  LOGGER.info("Configuration {} updated: {}",pid,configuration);
+  if (destroyed.get()) {
+    return;
+  }
+  executor.submit(new Runnable(){
+    @Override public void run(){
+      try {
+        internalUpdate(pid,configuration);
+      }
+ catch (      Throwable t) {
+        LOGGER.warn("Error destroying service for ManagedServiceFactory " + this,t);
+      }
+    }
+  }
+);
+}
