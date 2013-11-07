@@ -1,5 +1,5 @@
 {
-  Map<String,String> conf=profile.getConfiguration(AGENT_PID);
+  Map<String,String> conf=profile.getConfiguration(Constants.AGENT_PID);
   for (  String feature : features) {
     if (delete) {
       System.out.println("Deleting feature:" + feature + " from profile:"+ profile.getId()+ " version:"+ profile.getVersion());
@@ -8,6 +8,6 @@
       System.out.println("Adding feature:" + feature + " to profile:"+ profile.getId()+ " version:"+ profile.getVersion());
     }
     updateConfig(conf,FEATURE_PREFIX + feature.replace('/','_'),feature,set,delete);
-    profile.setConfiguration(AGENT_PID,conf);
+    profile.setConfiguration(Constants.AGENT_PID,conf);
   }
 }

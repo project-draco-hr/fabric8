@@ -21,8 +21,7 @@
   assertFolderExists("Should have imported an mq/ReadMe.md file!",getLocalGitFile("fabric/profiles/mq/ReadMe.md"));
   String version="1.1";
   assertCreateVersion("1.0",version);
-  String agentPID="org.fusesource.fabric.agent";
-  assertProfileConfiguration(version,importedProfile,agentPID,"attribute.parents","feature-camel");
+  assertProfileConfiguration(version,importedProfile,Constants.AGENT_PID,"attribute.parents","feature-camel");
   assertProfileTextFileConfigurationContains(version,"example-camel-fabric","camel.xml","http://camel.apache.org/schema/blueprint");
   List<String> fileNames=dataStore.getConfigurationFileNames(version,"example-camel-fabric");
   assertNotNull("Should have some file names",fileNames);
@@ -40,15 +39,15 @@
   System.out.println("Profile attributes: " + profileAttributes);
   assertMapContains("Profile attribute[" + profileAttributeKey + "]",profileAttributes,profileAttributeKey,expectedProfileAttributeValue);
   String hawtioRepoKey="repository.hawtio";
-  Map<String,String> hawtioAttrbutes=dataStore.getConfiguration(version,"hawtio",agentPID);
+  Map<String,String> hawtioAttrbutes=dataStore.getConfiguration(version,"hawtio",Constants.AGENT_PID);
   String currentHawtRepo=hawtioAttrbutes.get(hawtioRepoKey);
   System.out.println("Current repository.hawtio: " + currentHawtRepo);
   FabricGitFacade hawtio=new FabricGitFacade();
   hawtio.bindGitDataStoreForTesting(dataStore);
   hawtio.activateForTesting();
-  String hawtioPropertyFile="/fabric/profiles/" + dataStore.convertProfileIdToDirectory("hawtio") + "/"+ agentPID+ ".properties";
+  String hawtioPropertyFile="/fabric/profiles/" + dataStore.convertProfileIdToDirectory("hawtio") + "/"+ Constants.AGENT_PID+ ".properties";
   hawtio.write(version,hawtioPropertyFile,"My commit message","me","me@apache.org","# new file\n" + hawtioRepoKey + " = "+ "mvn\\:io.hawt/hawtio-karaf/myNewVersion/xml/features"+ "\n");
-  hawtioAttrbutes=dataStore.getConfiguration(version,"hawtio",agentPID);
+  hawtioAttrbutes=dataStore.getConfiguration(version,"hawtio",Constants.AGENT_PID);
   String actual=hawtioAttrbutes.get(hawtioRepoKey);
   assertEquals("should have found the updated hawtio repo key","mvn:io.hawt/hawtio-karaf/myNewVersion/xml/features",actual);
   Map<String,byte[]> tomcatFileConfigurations=dataStore.getFileConfigurations("1.0","controller-tomcat");

@@ -7,7 +7,7 @@
       if (defaultVersion != null) {
         Profile profile=defaultVersion.getProfile("default");
         if (profile != null) {
-          Map<String,String> zookeeperConfig=profile.getConfiguration("org.fusesource.fabric.zookeeper");
+          Map<String,String> zookeeperConfig=profile.getConfiguration(Constants.ZOOKEEPER_CLIENT_PID);
           if (zookeeperConfig != null) {
             zooKeeperUrl=getSubstitutedData(curator.get(),zookeeperConfig.get(name));
           }
@@ -19,7 +19,7 @@
   }
   if (zooKeeperUrl == null) {
     try {
-      Configuration config=configAdmin.get().getConfiguration("org.fusesource.fabric.zookeeper",null);
+      Configuration config=configAdmin.get().getConfiguration(Constants.ZOOKEEPER_CLIENT_PID,null);
       zooKeeperUrl=(String)config.getProperties().get(name);
     }
  catch (    Exception e) {

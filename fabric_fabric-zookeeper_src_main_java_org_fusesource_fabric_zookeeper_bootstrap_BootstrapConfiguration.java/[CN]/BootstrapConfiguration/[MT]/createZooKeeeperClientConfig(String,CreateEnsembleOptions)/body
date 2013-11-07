@@ -5,8 +5,8 @@
   }
   properties.put("zookeeper.url",connectionUrl);
   properties.put("zookeeper.timeout",System.getProperties().containsKey("zookeeper.timeout") ? System.getProperties().getProperty("zookeeper.timeout") : "30000");
-  properties.put("fabric.zookeeper.pid","org.fusesource.fabric.zookeeper");
+  properties.put("fabric.zookeeper.pid",Constants.ZOOKEEPER_CLIENT_PID);
   properties.put("zookeeper.password",options.getZookeeperPassword());
-  Configuration config=configAdmin.get().getConfiguration("org.fusesource.fabric.zookeeper",null);
+  Configuration config=configAdmin.get().getConfiguration(Constants.ZOOKEEPER_CLIENT_PID,null);
   config.update(properties);
 }

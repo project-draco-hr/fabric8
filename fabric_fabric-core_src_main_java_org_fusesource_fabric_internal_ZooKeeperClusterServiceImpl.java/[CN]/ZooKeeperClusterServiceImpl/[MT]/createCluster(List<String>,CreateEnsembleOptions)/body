@@ -5,7 +5,7 @@
     if (containers == null || containers.size() == 2) {
       throw new IllegalArgumentException("One or at least 3 containers must be used to create a zookeeper ensemble");
     }
-    Configuration config=configAdmin.get().getConfiguration("org.fusesource.fabric.zookeeper",null);
+    Configuration config=configAdmin.get().getConfiguration(Constants.ZOOKEEPER_CLIENT_PID,null);
     String zooKeeperUrl=config != null && config.getProperties() != null ? (String)config.getProperties().get("zookeeper.url") : null;
     if (zooKeeperUrl == null) {
       if (containers.size() != 1 || !containers.get(0).equals(System.getProperty(SystemProperties.KARAF_NAME))) {
@@ -47,7 +47,7 @@
           addUsedPorts(usedPorts,data);
         }
       }
-      Map<String,String> zkConfig=dataStore.get().getConfiguration(version,"default","org.fusesource.fabric.zookeeper");
+      Map<String,String> zkConfig=dataStore.get().getConfiguration(version,"default",Constants.ZOOKEEPER_CLIENT_PID);
       if (zkConfig == null) {
         throw new FabricException("Failed to find old zookeeper configuration in default profile");
       }
@@ -126,7 +126,7 @@
       index++;
     }
     if (oldClusterId != null) {
-      Properties properties=DataStoreUtils.toProperties(dataStore.get().getConfiguration(version,"default","org.fusesource.fabric.zookeeper"));
+      Properties properties=DataStoreUtils.toProperties(dataStore.get().getConfiguration(version,"default",Constants.ZOOKEEPER_CLIENT_PID));
       properties.put("zookeeper.url",getSubstitutedData(curator.get(),realConnectionUrl));
       properties.put("zookeeper.password",options.getZookeeperPassword());
       CuratorFramework dst=CuratorFrameworkFactory.builder().connectString(realConnectionUrl).retryPolicy(new RetryOneTime(500)).aclProvider(aclProvider.get()).authorization("digest",("fabric:" + options.getZookeeperPassword()).getBytes()).sessionTimeoutMs(30000).connectionTimeoutMs(30000).build();
@@ -178,10 +178,10 @@ synchronized (result) {
       }
     }
  else {
-      Map<String,String> zkConfig=dataStore.get().getConfiguration(version,"default","org.fusesource.fabric.zookeeper");
+      Map<String,String> zkConfig=dataStore.get().getConfiguration(version,"default",Constants.ZOOKEEPER_CLIENT_PID);
       zkConfig.put("zookeeper.password","${zk:" + ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath() + "}");
       zkConfig.put("zookeeper.url","${zk:" + ZkPath.CONFIG_ENSEMBLE_URL.getPath() + "}");
-      dataStore.get().setConfiguration(version,"default","org.fusesource.fabric.zookeeper",zkConfig);
+      dataStore.get().setConfiguration(version,"default",Constants.ZOOKEEPER_CLIENT_PID,zkConfig);
     }
   }
  catch (  Exception e) {

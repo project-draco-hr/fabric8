@@ -53,7 +53,7 @@
   for (  Map.Entry<String,String> entry : options.getDataStoreProperties().entrySet()) {
     String key=entry.getKey();
     String value=entry.getValue();
-    replacePropertyValue(sb,"etc/" + DATASTORE_TYPE_PID + ".cfg",key,value);
+    replacePropertyValue(sb,"etc/" + Constants.DATASTORE_TYPE_PID + ".cfg",key,value);
   }
   sb.append("SSH_PORT=").append("`find_free_port ").append(Ports.mapPortToRange(DEFAULT_SSH_PORT,options.getMinimumPort(),options.getMaximumPort())).append(" ").append(options.getMaximumPort()).append("`\n");
   sb.append("RMI_REGISTRY_PORT=").append("`find_free_port ").append(Ports.mapPortToRange(DEFAULT_RMI_REGISTRY_PORT,options.getMinimumPort(),options.getMaximumPort())).append(" ").append(options.getMaximumPort()).append("`\n");
