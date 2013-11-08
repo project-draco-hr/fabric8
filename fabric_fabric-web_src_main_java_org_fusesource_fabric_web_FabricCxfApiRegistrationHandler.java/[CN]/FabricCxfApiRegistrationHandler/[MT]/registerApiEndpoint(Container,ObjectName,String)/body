@@ -17,6 +17,9 @@
       LOGGER.info("Registered at " + path + " JSON: "+ json);
       setData(curator.get(),path,json,CreateMode.EPHEMERAL);
     }
+ else {
+      LOGGER.info("Ignoring endpoint with no swagger API docs at " + path + " at "+ physicalUrl);
+    }
   }
  catch (  Exception e) {
     LOGGER.error("Failed to register API endpoint at {}.",path,e);
