@@ -3,12 +3,12 @@
 switch (newState) {
 case CONNECTED:
 case RECONNECTED:
-      try {
-        updateProcessId();
+      executor.submit(new Runnable(){
+        public void run(){
+          updateProcessId();
+        }
       }
- catch (      Exception ex) {
-        LOGGER.error("Error while updating the process id.");
-      }
+);
     break;
 }
 }
