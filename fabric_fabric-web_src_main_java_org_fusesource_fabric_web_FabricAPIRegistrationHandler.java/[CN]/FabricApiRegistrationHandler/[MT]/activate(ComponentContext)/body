@@ -1,0 +1,12 @@
+{
+  activateComponent();
+  if (mBeanServer == null) {
+    mBeanServer=ManagementFactory.getPlatformMBeanServer();
+  }
+  if (mBeanServer != null) {
+    Object handback=null;
+    mBeanServer.addNotificationListener(MBeanServerDelegate.DELEGATE_NAME,listener,filter,handback);
+    this.registeredListener=true;
+  }
+  replay();
+}
