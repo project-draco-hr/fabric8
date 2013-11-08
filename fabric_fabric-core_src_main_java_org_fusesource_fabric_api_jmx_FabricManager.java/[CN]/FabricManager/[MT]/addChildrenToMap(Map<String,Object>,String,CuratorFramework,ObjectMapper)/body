@@ -1,0 +1,36 @@
+{
+  List<String> children=getChildrenSafe(curator,path);
+  for (  String child : children) {
+    String childPath=path + "/" + child;
+    byte[] data=curator.getData().forPath(childPath);
+    if (data != null && data.length > 0) {
+      String text=new String(data).trim();
+      if (!text.isEmpty()) {
+        Map map=mapper.readValue(data,HashMap.class);
+        if (map != null) {
+          List services=listValue(map,"services");
+          if (services != null) {
+            if (!services.isEmpty()) {
+              List<String> substitutedValues=new ArrayList<String>();
+              for (              Object service : services) {
+                String serviceText=getSubstitutedData(curator,service.toString());
+                if (org.fusesource.fabric.utils.Strings.isNotBlank(serviceText)) {
+                  substitutedValues.add(serviceText);
+                }
+              }
+              map.put("services",substitutedValues);
+            }
+          }
+          answer.put(child,map);
+        }
+      }
+    }
+ else {
+      Map<String,Object> map=new HashMap<String,Object>();
+      addChildrenToMap(map,childPath,curator,mapper);
+      if (map.size() > 0) {
+        answer.put(child,map);
+      }
+    }
+  }
+}
