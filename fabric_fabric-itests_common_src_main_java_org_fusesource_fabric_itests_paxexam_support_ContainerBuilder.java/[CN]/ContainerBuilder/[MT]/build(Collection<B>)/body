@@ -4,6 +4,7 @@
   CompletionService<Set<Container>> completionService=new ExecutorCompletionService<Set<Container>>(executorService);
   int tasks=0;
   for (  B options : buildersList) {
+    options.profiles(profileNames);
     if (!options.isEnsembleServer()) {
       options.zookeeperUrl(fabricService.getZookeeperUrl());
       completionService.submit(new CreateContainerTask(fabricService,options));
@@ -16,16 +17,6 @@
       Set<Container> containerSet=futureContainerSet.get();
       CONTAINERS.addAll(containerSet);
       containers.addAll(containerSet);
-    }
-    for (    Container container : containers) {
-      Version version=fabricService.getDefaultVersion();
-      container.setVersion(version);
-      Set<Profile> profiles=new HashSet(Arrays.asList(container.getProfiles()));
-      for (      String profileName : profileNames) {
-        Profile profile=container.getVersion().getProfile(profileName);
-        profiles.add(profile);
-      }
-      container.setProfiles(profiles.toArray(new Profile[profiles.size()]));
     }
     try {
       if (waitForProvisioning) {
