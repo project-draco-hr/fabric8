@@ -6,7 +6,7 @@
   }
   setBrokerURL(brokerUrl);
   String user=Maps.stringValue(properties,"user","admin");
-  String password=Maps.stringValue(properties,"password",fabricService.getZookeeperPassword());
+  String password=Maps.stringValue(properties,"password",(fabricService != null ? fabricService.getZookeeperPassword() : "admin"));
   setUserName(user);
   setPassword(password);
   LOG.info("Configuring " + this + " with brokerUrl: "+ brokerUrl+ " and user: "+ user);
