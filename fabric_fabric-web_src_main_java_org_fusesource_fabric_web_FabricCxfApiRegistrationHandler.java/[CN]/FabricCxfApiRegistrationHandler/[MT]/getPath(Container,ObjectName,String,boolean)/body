@@ -24,5 +24,10 @@
       endpointPath=address.substring(idx);
     }
   }
-  return ZkPath.API_REST_ENDPOINTS.getPath(name,version,id,endpointPath);
+  if (restApi) {
+    return ZkPath.API_REST_ENDPOINTS.getPath(name,version,id,endpointPath);
+  }
+ else {
+    return ZkPath.API_WS_ENDPOINTS.getPath(name,version,id,endpointPath);
+  }
 }

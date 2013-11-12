@@ -1,9 +1,18 @@
 {
   String address="";
-  String path=getPath(container,oName,address);
+  String path=null;
   try {
-    LOGGER.info("Unregister API at " + path);
-    deleteSafe(curator.get(),path);
+    CuratorFramework curator=this.curator.get();
+    path=getPath(container,oName,address,true);
+    if (exists(curator,path) != null) {
+      LOGGER.info("Unregister API at " + path);
+      deleteSafe(curator,path);
+    }
+    path=getPath(container,oName,address,false);
+    if (exists(curator,path) != null) {
+      LOGGER.info("Unregister API at " + path);
+      deleteSafe(curator,path);
+    }
   }
  catch (  Exception e) {
     LOGGER.error("Failed to unregister API endpoint at {}.",path,e);

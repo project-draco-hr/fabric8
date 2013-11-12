@@ -1,0 +1,41 @@
+{
+  String actualEndpointUrl=null;
+  try {
+    String url;
+    String id=container.getId();
+    if (isFullAddress(address)) {
+      url=address;
+    }
+ else {
+      String cxfBus=getCxfServletPath();
+      url="${zk:" + id + "/http}"+ cxfBus+ address;
+    }
+    actualEndpointUrl=ZooKeeperUtils.getSubstitutedData(curator.get(),url);
+    String apiDocPath="/api-docs";
+    String wsdlPath="?wsdl";
+    String wadlPath="?wadl";
+    String json="{\"id\":\"" + id + "\", \"container\":\""+ id+ "\", \"services\":[\""+ url+ "\"]";
+    boolean rest=false;
+    if (validEndpointUrl(actualEndpointUrl + wadlPath)) {
+      rest=true;
+      json+=", \"wadl\": \"" + wadlPath + "\"";
+    }
+    if (validEndpointUrl(actualEndpointUrl + apiDocPath)) {
+      rest=true;
+      json+=", \"apidocs\": \"" + apiDocPath + "\"";
+    }
+    if (!rest) {
+      json+=", \"wsdl\": \"" + wsdlPath + "\"";
+    }
+    json+="}";
+    String path=getPath(container,oName,address,rest);
+    LOGGER.info("Registered CXF API at " + path + " JSON: "+ json);
+    if (!started && !rest) {
+      LOGGER.warn("Since the CXF service isn't started, this could really be a REST endpoint rather than WSDL at " + path);
+    }
+    setData(curator.get(),path,json,CreateMode.EPHEMERAL);
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to register API endpoint for {}.",actualEndpointUrl,e);
+  }
+}
