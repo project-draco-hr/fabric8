@@ -5,7 +5,7 @@
   List<CamelEndpointMBean> answer=new ArrayList<CamelEndpointMBean>();
   for (  ObjectInstance on : names) {
     CamelEndpointMBean endpoint;
-    if (ManagedBrowsableEndpoint.class.getName().equals(on.getClassName())) {
+    if (ManagedBrowsableEndpoint.class.getName().equals(on.getClassName()) || SedaEndpoint.class.getName().equals(on.getClassName())) {
       endpoint=(CamelEndpointMBean)newProxyInstance(on.getObjectName(),CamelBrowsableEndpointMBean.class,true);
     }
  else     if (on.getClassName().startsWith("org.apache.camel.component.jms")) {

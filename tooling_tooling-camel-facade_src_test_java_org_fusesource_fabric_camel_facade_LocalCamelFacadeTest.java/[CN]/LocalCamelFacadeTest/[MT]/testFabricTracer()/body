@@ -5,4 +5,26 @@
   tracer.setEnabled(true);
   template.sendBody("seda:in","Hello World");
   template.sendBody("seda:in","Bye World");
+  Thread.sleep(2000);
+  List<FabricTracerEventMessage> node1=tracer.dumpTracedMessages("toLog");
+  List<FabricTracerEventMessage> node2=tracer.dumpTracedMessages("toOut");
+  assertNotNull(node1);
+  assertNotNull(node2);
+  assertEquals(2,node1.size());
+  assertEquals(2,node2.size());
+  assertEquals(node1.get(0).getExchangeId(),node2.get(0).getExchangeId());
+  assertEquals(node1.get(1).getExchangeId(),node2.get(1).getExchangeId());
+  FabricTracerEventMessage event1=node2.get(0);
+  assertEquals("toOut",event1.getToNode());
+  assertNotNull(event1.getTimestamp());
+  assertNotNull(event1.getExchangeId());
+  String s="<body type=\"java.lang.String\">Hello World</body>\n</message>";
+  assertTrue(event1.getMessageAsXml().endsWith(s));
+  FabricTracerEventMessage event2=node2.get(1);
+  assertEquals("toOut",event2.getToNode());
+  assertNotNull(event2.getTimestamp());
+  assertNotNull(event2.getExchangeId());
+  String s2="<body type=\"java.lang.String\">Bye World</body>\n</message>";
+  assertTrue(event2.getMessageAsXml().endsWith(s2));
+  assertNotSame(event1.getExchangeId(),event2.getExchangeId());
 }
