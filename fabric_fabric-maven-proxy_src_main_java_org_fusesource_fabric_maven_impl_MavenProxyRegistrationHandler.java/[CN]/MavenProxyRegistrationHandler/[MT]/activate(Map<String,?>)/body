@@ -1,0 +1,29 @@
+{
+  String localRepository=readProperty(configuration,LOCAL_REPOSITORY_PROPERTY,DEFAULT_LOCAL_REPOSITORY);
+  String remoteRepositories=readProperty(configuration,REMOTE_REPOSITORIES_PROPERTY,"");
+  boolean appendSystemRepos=Boolean.parseBoolean(readProperty(configuration,APPEND_SYSTEM_REPOS_PROPERTY,"false"));
+  String updatePolicy=readProperty(configuration,UPDATE_POLICY_PROPERTY,RepositoryPolicy.UPDATE_POLICY_ALWAYS);
+  String checksumPolicy=readProperty(configuration,CHECKSUM_POLICY_PROPERTY,RepositoryPolicy.CHECKSUM_POLICY_WARN);
+  String proxyProtocol=readProperty(configuration,PROXY_PROTOCOL_PROPERTY,"");
+  String proxyHost=readProperty(configuration,PROXY_HOST_PROPERTY,"");
+  int proxyPort=Integer.parseInt(readProperty(configuration,PROXY_PORT_PROPERTY,"8080"));
+  String proxyUsername=readProperty(configuration,PROXY_USERNAME_PROPERTY,"");
+  String proxyPassword=readProperty(configuration,PROXY_PASSWORD_PROPERTY,"");
+  String nonProxyHosts=readProperty(configuration,NON_PROXY_HOSTS_PROPERTY,"");
+  this.role=readProperty(configuration,REQUIRED_ROLE,DEFAULT_ROLE);
+  this.realm=readProperty(configuration,REQUIRED_REALM,DEFAULT_REALM);
+  this.mavenDownloadProxyServlet=new MavenDownloadProxyServlet(localRepository,remoteRepositories,appendSystemRepos,updatePolicy,checksumPolicy,proxyProtocol,proxyHost,proxyPort,proxyUsername,proxyPassword,nonProxyHosts);
+  this.mavenDownloadProxyServlet.start();
+  this.mavenUploadProxyServlet=new MavenUploadProxyServlet(localRepository,remoteRepositories,appendSystemRepos,updatePolicy,checksumPolicy,proxyProtocol,proxyHost,proxyPort,proxyUsername,proxyPassword,nonProxyHosts);
+  this.mavenUploadProxyServlet.start();
+  try {
+    HttpContext base=httpService.get().createDefaultHttpContext();
+    HttpContext secure=new MavenSecureHttpContext(base,realm,role);
+    httpService.get().registerServlet("/maven/download",mavenDownloadProxyServlet,createParams("maven-download"),base);
+    httpService.get().registerServlet("/maven/upload",mavenUploadProxyServlet,createParams("maven-upload"),secure);
+  }
+ catch (  Throwable t) {
+    LOGGER.warn("Failed to register fabric maven proxy servlets, due to:" + t.getMessage());
+  }
+  activateComponent();
+}
