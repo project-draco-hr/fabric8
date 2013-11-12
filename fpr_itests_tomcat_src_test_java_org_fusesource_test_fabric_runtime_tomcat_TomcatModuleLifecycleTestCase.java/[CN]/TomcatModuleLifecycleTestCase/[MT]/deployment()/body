@@ -1,0 +1,13 @@
+{
+  final WebArchive archive=ShrinkWrap.create(WebArchive.class,identity.getSymbolicName() + ".war");
+  archive.addClasses(ApplicationActivator.class,ModuleLifecycleTest.class);
+  archive.setManifest(new Asset(){
+    @Override public InputStream openStream(){
+      ManifestBuilder builder=new ManifestBuilder();
+      builder.addIdentityCapability(identity);
+      return builder.openStream();
+    }
+  }
+);
+  return archive;
+}

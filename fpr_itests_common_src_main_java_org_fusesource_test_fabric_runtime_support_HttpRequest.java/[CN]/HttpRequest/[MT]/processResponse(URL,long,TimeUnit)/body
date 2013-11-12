@@ -1,0 +1,45 @@
+{
+  int responseCode=0;
+  String lastError="No Error";
+  String lastResult="No Result";
+  long now=System.currentTimeMillis();
+  long start=System.currentTimeMillis();
+  while (responseCode != HttpURLConnection.HTTP_OK && now < start + unit.toMillis(timeout)) {
+    HttpURLConnection con=(HttpURLConnection)url.openConnection();
+    con.setDoInput(true);
+    try {
+      responseCode=con.getResponseCode();
+      if (responseCode != HttpURLConnection.HTTP_OK) {
+        InputStream err=con.getErrorStream();
+        try {
+          lastError=read(err);
+        }
+  finally {
+          err.close();
+        }
+      }
+ else {
+        InputStream in=con.getInputStream();
+        try {
+          lastResult=read(in);
+        }
+  finally {
+          in.close();
+        }
+      }
+    }
+  finally {
+      con.disconnect();
+    }
+    try {
+      Thread.sleep(500);
+    }
+ catch (    InterruptedException ex) {
+      lastError=ex.toString();
+      break;
+    }
+    now=System.currentTimeMillis();
+  }
+  if (responseCode != HttpURLConnection.HTTP_OK)   throw new IOException(lastError);
+  return lastResult;
+}

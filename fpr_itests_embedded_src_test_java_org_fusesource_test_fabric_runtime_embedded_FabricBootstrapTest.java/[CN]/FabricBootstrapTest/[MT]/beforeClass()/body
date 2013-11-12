@@ -1,0 +1,16 @@
+{
+  syscontext=EmbeddedUtils.getSystemContext();
+  final CountDownLatch latch=new CountDownLatch(1);
+  ServiceListener listener=new ServiceListener(){
+    @Override public void serviceChanged(    ServiceEvent event){
+      if (event.getType() == ServiceEvent.REGISTERED)       latch.countDown();
+    }
+  }
+;
+  syscontext.addServiceListener(listener,"(objectClass=" + ContainerProvider.class.getName() + ")");
+  for (  String name : moduleNames) {
+    ClassLoader classLoader=FabricBootstrapTest.class.getClassLoader();
+    EmbeddedUtils.installAndStartModule(classLoader,name);
+  }
+  Assert.assertTrue("ContainerProvider registered",latch.await(20,TimeUnit.SECONDS));
+}

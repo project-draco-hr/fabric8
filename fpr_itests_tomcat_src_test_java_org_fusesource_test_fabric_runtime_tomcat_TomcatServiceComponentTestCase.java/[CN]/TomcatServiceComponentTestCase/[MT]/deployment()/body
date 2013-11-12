@@ -1,0 +1,17 @@
+{
+  final WebArchive archive=ShrinkWrap.create(WebArchive.class,identity.getSymbolicName() + ".war");
+  archive.addClasses(ApplicationActivator.class,ServiceComponentTest.class);
+  archive.addClasses(ServiceA.class,ServiceA1.class);
+  archive.addAsResource("OSGI-INF/org.fusesource.test.fabric.runtime.sub.a.ServiceA.xml");
+  archive.addAsResource("OSGI-INF/org.fusesource.test.fabric.runtime.sub.a1.ServiceA1.xml");
+  archive.setManifest(new Asset(){
+    @Override public InputStream openStream(){
+      ManifestBuilder builder=new ManifestBuilder();
+      builder.addIdentityCapability(identity);
+      builder.addManifestHeader("Service-Component","OSGI-INF/org.fusesource.test.fabric.runtime.sub.a.ServiceA.xml,OSGI-INF/org.fusesource.test.fabric.runtime.sub.a1.ServiceA1.xml");
+      return builder.openStream();
+    }
+  }
+);
+  return archive;
+}
