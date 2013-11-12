@@ -7,24 +7,24 @@
       url=address;
     }
  else {
-      String cxfBus=getCxfServletPath();
+      String cxfBus=getCxfServletPath(oName);
       url="${zk:" + id + "/http}"+ cxfBus+ address;
     }
     actualEndpointUrl=ZooKeeperUtils.getSubstitutedData(curator.get(),url);
     String apiDocPath="/api-docs";
     String wsdlPath="?wsdl";
-    String wadlPath="?wadl";
+    String wadlPath="?_wadl";
     String json="{\"id\":\"" + id + "\", \"container\":\""+ id+ "\", \"services\":[\""+ url+ "\"]";
     boolean rest=false;
-    if (validEndpointUrl(actualEndpointUrl + wadlPath)) {
+    if (booleanAttribute(oName,"isWADL")) {
       rest=true;
       json+=", \"wadl\": \"" + wadlPath + "\"";
     }
-    if (validEndpointUrl(actualEndpointUrl + apiDocPath)) {
+    if (booleanAttribute(oName,"isSwagger")) {
       rest=true;
       json+=", \"apidocs\": \"" + apiDocPath + "\"";
     }
-    if (!rest) {
+    if (booleanAttribute(oName,"isWSDL")) {
       json+=", \"wsdl\": \"" + wsdlPath + "\"";
     }
     json+="}";
