@@ -1,6 +1,6 @@
 {
   String id=managementName != null ? managementName : camelContextManagementName;
-  ObjectName query=ObjectName.getInstance("org.apache.camel:context=*/" + id + ",type=tracer,*");
+  ObjectName query=ObjectName.getInstance("org.apache.camel:context=" + id + ",type=tracer,*");
   Set<ObjectInstance> names=queryNames(query,null);
   for (  ObjectInstance on : names) {
     if (on.getClassName().equals("org.apache.camel.management.mbean.ManagedBacklogTracer")) {

@@ -1,6 +1,6 @@
 {
   String id=managementName != null ? managementName : camelContextManagementName;
-  ObjectName query=ObjectName.getInstance("org.apache.camel:context=*/" + id + ",type=endpoints,*");
+  ObjectName query=ObjectName.getInstance("org.apache.camel:context=" + id + ",type=endpoints,*");
   Set<ObjectInstance> names=queryNames(query,null);
   List<CamelEndpointMBean> answer=new ArrayList<CamelEndpointMBean>();
   for (  ObjectInstance on : names) {

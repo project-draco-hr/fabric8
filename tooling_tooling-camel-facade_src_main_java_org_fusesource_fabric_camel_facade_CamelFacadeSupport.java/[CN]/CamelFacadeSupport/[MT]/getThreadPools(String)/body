@@ -1,6 +1,6 @@
 {
   String id=managementName != null ? managementName : camelContextManagementName;
-  ObjectName query=ObjectName.getInstance("org.apache.camel:context=*/" + id + ",type=threadpools,*");
+  ObjectName query=ObjectName.getInstance("org.apache.camel:context=" + id + ",type=threadpools,*");
   Set<ObjectInstance> names=queryNames(query,null);
   List<CamelThreadPoolMBean> answer=new ArrayList<CamelThreadPoolMBean>();
   for (  ObjectInstance on : names) {
