@@ -2,11 +2,12 @@
   try {
     super.activateInternal();
     Map<String,String> configuration=getDataStoreProperties();
-    this.pullPeriod=PropertiesHelper.getLongValue(configuration,GIT_PULL_PERIOD,this.pullPeriod);
-    this.remoteUrl=configuration.get(GIT_REMOTE_URL);
+    pullPeriod=PropertiesHelper.getLongValue(configuration,GIT_PULL_PERIOD,this.pullPeriod);
+    configuredUrl=configuration.get(GIT_REMOTE_URL);
     GitService optionalService=gitService.getOptional();
-    if (remoteUrl != null) {
-      gitListener.onRemoteUrlChanged(remoteUrl);
+    if (configuredUrl != null) {
+      gitListener.onRemoteUrlChanged(configuredUrl);
+      remoteUrl=configuredUrl;
     }
  else     if (optionalService != null) {
       optionalService.addGitListener(gitListener);
