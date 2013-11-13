@@ -9,7 +9,7 @@
  catch (  Exception e) {
     LOGGER.warn("Failed to get CxfServlet attribute on " + oName + ". "+ e,e);
   }
-  if (Strings.isEmpty(cxfBus)) {
+  if (Strings.isNullOrBlank(cxfBus)) {
     try {
       ConfigurationAdmin admin=getConfigAdmin();
       if (admin != null) {
@@ -29,7 +29,7 @@
       LOGGER.warn("Failed to lookup the cxf servlet path. " + e,e);
     }
   }
-  if (Strings.isEmpty(cxfBus)) {
+  if (Strings.isNullOrBlank(cxfBus)) {
     cxfBus="/cxf";
     LOGGER.warn("Could not find the CXF servlet path in config admin so using a default value: " + cxfBus);
   }

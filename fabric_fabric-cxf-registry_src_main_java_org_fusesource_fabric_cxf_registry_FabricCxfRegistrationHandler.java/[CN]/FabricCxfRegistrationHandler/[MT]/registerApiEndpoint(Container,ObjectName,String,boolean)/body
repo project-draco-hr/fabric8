@@ -33,7 +33,7 @@
     if (!started && !rest) {
       LOGGER.warn("Since the CXF service isn't started, this could really be a REST endpoint rather than WSDL at " + path);
     }
-    setData(curator.get(),path,json,CreateMode.EPHEMERAL);
+    ZooKeeperUtils.setData(curator.get(),path,json,CreateMode.EPHEMERAL);
   }
  catch (  Exception e) {
     LOGGER.error("Failed to register API endpoint for {}.",actualEndpointUrl,e);

@@ -4,14 +4,14 @@
   try {
     CuratorFramework curator=this.curator.get();
     path=getPath(container,oName,address,true);
-    if (exists(curator,path) != null) {
+    if (ZooKeeperUtils.exists(curator,path) != null) {
       LOGGER.info("Unregister API at " + path);
-      deleteSafe(curator,path);
+      ZooKeeperUtils.deleteSafe(curator,path);
     }
     path=getPath(container,oName,address,false);
-    if (exists(curator,path) != null) {
+    if (ZooKeeperUtils.exists(curator,path) != null) {
       LOGGER.info("Unregister API at " + path);
-      deleteSafe(curator,path);
+      ZooKeeperUtils.deleteSafe(curator,path);
     }
   }
  catch (  Exception e) {
