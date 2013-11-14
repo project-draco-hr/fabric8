@@ -15,10 +15,12 @@
     }
     boolean hasChanged=false;
     try {
-      git.fetch().setTimeout(10).setCredentialsProvider(credentialsProvider).setRemote(remoteRef.get()).call();
+      FetchResult result=git.fetch().setTimeout(10).setCredentialsProvider(credentialsProvider).setRemote(remoteRef.get()).call();
+      if (Strings.isNullOrBlank(result.getMessages()))       ;
+      LOG.debug(result.getMessages());
     }
  catch (    Exception e) {
-      LOG.debug("Fetch failed. Ignoring");
+      LOG.warn("Fetch failed. The error will be ignored.",e);
       return;
     }
     Map<String,Ref> localBranches=new HashMap<String,Ref>();
