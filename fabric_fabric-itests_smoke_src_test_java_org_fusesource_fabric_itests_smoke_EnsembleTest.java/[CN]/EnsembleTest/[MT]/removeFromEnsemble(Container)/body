@@ -1,0 +1,20 @@
+{
+  StringBuilder sb=new StringBuilder();
+  sb.append("fabric:ensemble-remove --force --migration-timeout 240000 ");
+  for (  Container c : containers) {
+    sb.append(c.getId()).append(" ");
+  }
+  try {
+    System.err.println(executeCommand(sb.toString(),240000L,false));
+  }
+ catch (  CommandExecutionException e) {
+    if (isRetriable(e)) {
+      System.err.println("Retrying...");
+      Provision.containerAlive(Arrays.asList(getFabricService().getContainers()),PROVISION_TIMEOUT);
+      System.err.println(executeCommand(sb.toString(),240000L,false));
+    }
+ else {
+      throw e;
+    }
+  }
+}
