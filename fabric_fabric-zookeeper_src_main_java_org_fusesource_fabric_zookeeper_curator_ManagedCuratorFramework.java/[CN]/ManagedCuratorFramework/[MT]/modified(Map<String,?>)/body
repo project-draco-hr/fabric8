@@ -1,20 +1,20 @@
 {
-  if ((configuration == null || !configuration.containsKey(ZOOKEEPER_URL)) && Strings.isNullOrEmpty(System.getProperty(ZOOKEEPER_URL))) {
-    return;
-  }
- else   if (isRestartRequired(oldProperties,configuration)) {
-    updateService(buildCuratorFramework(configuration));
-  }
+  String zookeeperURL=getZookeeperURL(configuration);
+  if (!Strings.isNullOrEmpty(zookeeperURL)) {
+    if (isRestartRequired(oldConfiguration,configuration)) {
+      updateService(buildCuratorFramework(configuration));
+    }
  else {
-    updateEnsemble(configuration);
-    if (!propertyEquals(oldProperties,configuration,ZOOKEEPER_URL)) {
-      try {
-        reset((CuratorFrameworkImpl)curatorFramework);
-      }
- catch (      Exception e) {
-        LOGGER.error("Failed to update the ensemble url.",e);
+      updateEnsemble(configuration);
+      if (!propertyEquals(oldConfiguration,configuration,ZOOKEEPER_URL)) {
+        try {
+          reset((CuratorFrameworkImpl)curatorFramework);
+        }
+ catch (        Exception e) {
+          LOGGER.error("Failed to update the ensemble url.",e);
+        }
       }
     }
+    oldConfiguration=configuration;
   }
-  this.oldProperties=configuration;
 }
