@@ -1,15 +1,13 @@
 {
-  if (isValid()) {
-    GitNode master=group.master();
-    String masterUrl=master != null ? master.getUrl() : null;
-    try {
-      if (masterUrl != null) {
-        GitService gitservice=gitService.get();
-        gitservice.notifyRemoteChanged(getSubstitutedData(curator.get(),masterUrl));
-      }
+  GitNode master=group.master();
+  String masterUrl=master != null ? master.getUrl() : null;
+  try {
+    if (masterUrl != null) {
+      GitService gitservice=gitService.get();
+      gitservice.notifyRemoteChanged(getSubstitutedData(curator.get(),masterUrl));
     }
- catch (    Exception e) {
-      LOGGER.error("Failed to point origin to the new master.",e);
-    }
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to point origin to the new master.",e);
   }
 }
