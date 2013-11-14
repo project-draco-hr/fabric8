@@ -1,16 +1,24 @@
 {
   System.err.println("Create test profile:" + profile + " in git.");
   GitUtils.checkoutBranch(git,"origin",version);
-  File testProfileDir=new File(git.getRepository().getWorkTree(),profile);
+  String relativeProfileDir="fabric/profiles/" + profile + ".profile";
+  File testProfileDir=new File(git.getRepository().getWorkTree(),relativeProfileDir);
   testProfileDir.mkdirs();
   File testProfileConfig=new File(testProfileDir,"org.fusesource.fabric.agent.properties");
   testProfileConfig.createNewFile();
   Files.writeToFile(testProfileConfig,"",Charset.defaultCharset());
-  git.add().addFilepattern(profile).call();
-  git.commit().setMessage("Create " + profile).call();
+  git.add().addFilepattern(relativeProfileDir).call();
+  git.commit().setAll(true).setMessage("Create " + profile).call();
   PullResult pullResult=git.pull().setCredentialsProvider(getCredentialsProvider()).setRebase(true).call();
-  git.push().setCredentialsProvider(getCredentialsProvider()).setRemote("origin").call();
+  git.push().setCredentialsProvider(getCredentialsProvider()).setPushAll().setRemote("origin").call();
   GitUtils.waitForBranchUpdate(getCurator(),version);
-  Thread.sleep(5000);
-  assertNotNull(getCurator().checkExists().forPath(ZkPath.CONFIG_VERSIONS_PROFILE.getPath(version,profile)));
+  for (int i=0; i < 5; i++) {
+    if (getFabricService().getDataStore().hasProfile(version,profile)) {
+      return;
+    }
+ else {
+      Thread.sleep(1000);
+    }
+  }
+  fail("Expected to find profile " + profile + " in version "+ version);
 }

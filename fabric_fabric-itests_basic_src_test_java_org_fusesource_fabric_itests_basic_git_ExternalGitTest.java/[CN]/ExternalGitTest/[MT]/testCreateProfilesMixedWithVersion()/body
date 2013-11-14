@@ -1,8 +1,7 @@
 {
-  String testZkProfilebase="zkprofile-";
-  String testGitProfilebase="gitprofile-";
+  String testZkProfilebase="zkprofile";
+  String testGitProfilebase="gitprofile";
   System.err.println(executeCommand("fabric:create -n"));
-  System.err.println(executeCommand("features:install fabric-git"));
   String gitRepoUrl=GitUtils.getMasterUrl(getCurator());
   assertNotNull(gitRepoUrl);
   GitUtils.waitForBranchUpdate(getCurator(),"1.0");
@@ -11,14 +10,14 @@
   GitUtils.configureBranch(git,"origin",gitRepoUrl,"1.0");
   git.fetch().setCredentialsProvider(getCredentialsProvider());
   GitUtils.checkoutBranch(git,"origin","1.0");
-  assertTrue(new File(testrepo,"default").exists());
+  assertTrue(new File(testrepo,"fabric/profiles/default.profile").exists());
   FabricService fabricService=getFabricService();
-  for (int v=0; v < 3; v++) {
-    for (int i=1; i <= 3; i++) {
-      String gitProfile=testGitProfilebase + v + "-"+ i;
-      String zkProfile=testZkProfilebase + v + "-"+ i;
+  for (int v=0; v < 2; v++) {
+    for (int i=1; i < 2; i++) {
+      String gitProfile=testGitProfilebase + v + "p"+ i;
+      String zkProfile=testZkProfilebase + v + "p"+ i;
       createAndTestProfileInGit(git,"1." + v,gitProfile);
-      createAndTestProfileInZooKeeper(git,"1." + v,zkProfile);
+      createAndTestProfileInDataStore(git,"1." + v,zkProfile);
     }
   }
 }

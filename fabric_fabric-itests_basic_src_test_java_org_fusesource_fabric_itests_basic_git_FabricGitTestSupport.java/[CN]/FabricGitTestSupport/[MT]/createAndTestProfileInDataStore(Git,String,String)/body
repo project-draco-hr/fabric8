@@ -1,5 +1,5 @@
 {
-  System.err.println("Create test profile:" + profile + " in zookeeper.");
+  System.err.println("Create test profile:" + profile + " in datastore.");
   List<String> versions=Lists.transform(Arrays.<Version>asList(getFabricService().getVersions()),new Function<Version,String>(){
     @Override public String apply(    Version version){
       return version.getId();
@@ -9,13 +9,13 @@
   if (!versions.contains(version)) {
     getFabricService().createVersion(version);
   }
-  getFabricService().getVersion(version).createProfile(profile);
+  getFabricService().getDataStore().createProfile(version,profile);
   GitUtils.waitForBranchUpdate(getCurator(),version);
-  Thread.sleep(5000);
   GitUtils.checkoutBranch(git,"origin",version);
   PullResult pullResult=git.pull().setCredentialsProvider(getCredentialsProvider()).setRebase(true).call();
   assertTrue(pullResult.isSuccessful());
-  File testProfileDir=new File(git.getRepository().getWorkTree(),profile);
+  String relativeProfileDir="fabric/profiles/" + profile + ".profile";
+  File testProfileDir=new File(git.getRepository().getWorkTree(),relativeProfileDir);
   assertTrue(testProfileDir.exists());
   File testProfileConfig=new File(testProfileDir,"org.fusesource.fabric.agent.properties");
   assertTrue(testProfileConfig.exists());
