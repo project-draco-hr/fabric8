@@ -24,9 +24,13 @@
   FabricGitServiceImpl gitService=new FabricGitServiceImpl();
   gitService.activate();
   gitService.setGitForTesting(git);
-  dataStore=createDataStore();
-  dataStore.bindCuratorForTesting(curator);
+  DataStoreTemplateRegistry registrationHandler=new DataStoreTemplateRegistry();
+  registrationHandler.activateComponent();
+  dataStore=new CachingGitDataStore();
+  dataStore.bindCurator(curator);
   dataStore.bindGitService(gitService);
+  dataStore.bindRegistrationHandler(registrationHandler);
   Map<String,String> datastoreProperties=new HashMap<String,String>();
   datastoreProperties.put(GitDataStore.GIT_REMOTE_URL,remoteUrl);
+  dataStore.activate(datastoreProperties);
 }
