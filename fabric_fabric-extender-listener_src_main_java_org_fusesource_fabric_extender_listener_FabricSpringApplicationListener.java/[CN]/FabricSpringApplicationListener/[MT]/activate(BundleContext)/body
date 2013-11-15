@@ -1,8 +1,7 @@
 {
-  listener=createListener(bundleContext);
+  Object listener=createListener(bundleContext);
   if (listener != null) {
     registration=bundleContext.registerService(OsgiBundleApplicationContextListener.class.getName(),listener,null);
-    bundleContext.addBundleListener(listener);
   }
-  activateComponent();
+  super.activate(bundleContext);
 }

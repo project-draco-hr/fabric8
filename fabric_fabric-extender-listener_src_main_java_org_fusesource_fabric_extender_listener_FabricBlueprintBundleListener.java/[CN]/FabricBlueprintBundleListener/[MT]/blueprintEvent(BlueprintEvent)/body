@@ -1,14 +1,5 @@
 {
-  if (isValid()) {
-    long bundleId=event.getBundle().getBundleId();
-    try {
-      ModuleStatus moduleStatus=toModuleStatus(event.getType());
-      putModuleStatus(bundleId,moduleStatus);
-      setData(getCurator(),ZkPath.CONTAINER_EXTENDER_BUNDLE.getPath(getKarafName(),EXTENDER_TYPE,String.valueOf(bundleId)),moduleStatus.name(),CreateMode.EPHEMERAL);
-      update();
-    }
- catch (    Exception e) {
-      LOGGER.debug("Failed to write blueprint status of bundle {}.",bundleId,e);
-    }
-  }
+  long bundleId=event.getBundle().getBundleId();
+  ModuleStatus moduleStatus=toModuleStatus(event.getType());
+  updateBundle(bundleId,moduleStatus);
 }

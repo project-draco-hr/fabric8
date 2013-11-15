@@ -1,0 +1,36 @@
+{
+  int starting=0;
+  int failed=0;
+  int waiting=0;
+  int stopping=0;
+  for (  Map.Entry<Long,ModuleStatus> entry : statusMap.entrySet()) {
+    ModuleStatus moduleStatus=entry.getValue();
+    if (moduleStatus == ModuleStatus.FAILED) {
+      failed++;
+    }
+ else     if (moduleStatus == ModuleStatus.WAITING) {
+      waiting++;
+    }
+ else     if (moduleStatus == ModuleStatus.STOPPING) {
+      stopping++;
+    }
+ else     if (moduleStatus == ModuleStatus.STARTING) {
+      starting++;
+    }
+  }
+  if (failed > 0) {
+    return ModuleStatus.FAILED;
+  }
+ else   if (waiting > 0) {
+    return ModuleStatus.WAITING;
+  }
+ else   if (stopping > 0) {
+    return ModuleStatus.STOPPING;
+  }
+ else   if (starting > 0) {
+    return ModuleStatus.STARTING;
+  }
+ else {
+    return ModuleStatus.STARTED;
+  }
+}
