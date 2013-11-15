@@ -1,0 +1,10 @@
+{
+  if (sessionTimeoutMs < connectionTimeoutMs) {
+    log.warn(String.format("session timeout [%d] is less than connection timeout [%d]",sessionTimeoutMs,connectionTimeoutMs));
+  }
+  retryPolicy=Preconditions.checkNotNull(retryPolicy,"retryPolicy cannot be null");
+  ensembleProvider=Preconditions.checkNotNull(ensembleProvider,"ensembleProvider cannot be null");
+  this.connectionTimeoutMs=connectionTimeoutMs;
+  state=new ConnectionState(zookeeperFactory,ensembleProvider,sessionTimeoutMs,connectionTimeoutMs,watcher,tracer,canBeReadOnly);
+  setRetryPolicy(retryPolicy);
+}

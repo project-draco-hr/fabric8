@@ -1,0 +1,9 @@
+{
+  log.debug("Starting");
+  if (!started.compareAndSet(false,true)) {
+    IllegalStateException error=new IllegalStateException();
+    log.error("Already started",error);
+    throw error;
+  }
+  state.start();
+}

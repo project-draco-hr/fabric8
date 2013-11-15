@@ -1,0 +1,23 @@
+{
+  long waitTimeMs=connectionTimeoutMs;
+  while (!state.isConnected() && (waitTimeMs > 0)) {
+    Preconditions.checkState(started.get(),"Client has been stopped");
+    final CountDownLatch latch=new CountDownLatch(1);
+    Watcher tempWatcher=new Watcher(){
+      @Override public void process(      WatchedEvent event){
+        latch.countDown();
+      }
+    }
+;
+    state.addParentWatcher(tempWatcher);
+    long startTimeMs=System.currentTimeMillis();
+    try {
+      latch.await(1,TimeUnit.SECONDS);
+    }
+  finally {
+      state.removeParentWatcher(tempWatcher);
+    }
+    long elapsed=Math.max(1,System.currentTimeMillis() - startTimeMs);
+    waitTimeMs-=elapsed;
+  }
+}
