@@ -1,5 +1,6 @@
 {
   if (started.compareAndSet(false,true)) {
+    connected.set(client.getZookeeperClient().isConnected());
     client.getConnectionStateListenable().addListener(connectionStateListener);
     executorService.execute(new Runnable(){
       @Override public void run(){
