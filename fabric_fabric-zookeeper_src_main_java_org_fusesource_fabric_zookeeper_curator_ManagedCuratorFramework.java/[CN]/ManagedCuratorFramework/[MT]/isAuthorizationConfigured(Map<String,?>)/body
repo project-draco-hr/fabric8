@@ -1,3 +1,7 @@
 {
-  return ((properties != null && !Strings.isNullOrEmpty((String)properties.get(ZOOKEEPER_PASSWORD)) || (!Strings.isNullOrEmpty(System.getProperty(ZOOKEEPER_PASSWORD)))));
+  String zkpass=properties != null ? (String)properties.get(ZOOKEEPER_PASSWORD) : null;
+  if (zkpass == null) {
+    zkpass=runtimeProperties.get().getProperty(ZOOKEEPER_PASSWORD);
+  }
+  return !Strings.isNullOrEmpty(zkpass);
 }

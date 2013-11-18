@@ -5,7 +5,8 @@
   String artifactId=mvn[2];
   String version=mvn[3];
   URL url=new URL(repo + "/" + groupId.replace('.','/')+ "/"+ artifactId+ "/"+ version+ "/"+ artifactId+ "-"+ version+ (qualifier != null ? "-" + qualifier : "")+ "."+ type);
-  File file=new File(System.getProperty("karaf.home") + "/" + System.getProperty("karaf.default.repository")+ "/"+ groupId.replace('.','/')+ "/"+ artifactId+ "/"+ version+ "/"+ artifactId+ "-"+ version+ (qualifier != null ? "-" + qualifier : "")+ "."+ type);
+  String karafHom=runtimeProperties.getProperty(SystemProperties.KARAF_HOME);
+  File file=new File(karafHom + "/" + runtimeProperties.getProperty("karaf.default.repository")+ "/"+ groupId.replace('.','/')+ "/"+ artifactId+ "/"+ version+ "/"+ artifactId+ "-"+ version+ (qualifier != null ? "-" + qualifier : "")+ "."+ type);
   download(file,url);
   return file;
 }

@@ -1,0 +1,8 @@
+{
+  String result=systemProperties.get(key);
+  if (result == null) {
+    BundleContext syscontext=componentContext.getBundleContext();
+    result=syscontext.getProperty(key);
+  }
+  return result != null ? result : defaultValue;
+}

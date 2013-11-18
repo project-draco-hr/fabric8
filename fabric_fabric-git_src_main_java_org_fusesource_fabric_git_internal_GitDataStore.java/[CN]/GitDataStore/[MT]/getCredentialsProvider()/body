@@ -8,8 +8,9 @@
     password=getExternalCredential(properties);
   }
  else {
-    username=getContainerLogin();
-    password=generateContainerToken(getCurator());
+    RuntimeProperties sysprops=getRuntimeProperties();
+    username=getContainerLogin(sysprops);
+    password=generateContainerToken(sysprops,getCurator());
   }
   return new UsernamePasswordCredentialsProvider(username,password);
 }

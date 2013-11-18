@@ -4,13 +4,14 @@
     stopBundles();
     BootstrapConfiguration bootConfig=bootstrapConfiguration.get();
     String connectionUrl=bootConfig.getConnectionUrl(options);
-    registrationHandler.get().setRegistrationCallback(new DataStoreBootstrapTemplate(connectionUrl,options));
+    registrationHandler.get().setRegistrationCallback(new DataStoreBootstrapTemplate(bootConfig,connectionUrl,options));
     bootConfig.createOrUpdateDataStoreConfig(options);
     bootConfig.createZooKeeeperServerConfig(options);
     bootConfig.createZooKeeeperClientConfig(connectionUrl,options);
     startBundles(options);
     if (options.isWaitForProvision() && options.isAgentEnabled()) {
-      waitForSuccessfulDeploymentOf(NAME,options.getProvisionTimeout());
+      String karafName=bootConfig.getProperty(SystemProperties.KARAF_NAME);
+      waitForSuccessfulDeploymentOf(karafName,options.getProvisionTimeout());
     }
   }
  catch (  RuntimeException rte) {

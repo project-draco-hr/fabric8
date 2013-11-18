@@ -1,11 +1,12 @@
 {
-  String connectionString=readString(properties,ZOOKEEPER_URL,System.getProperty(ZOOKEEPER_URL,""));
+  RuntimeProperties sysprops=runtimeProperties.get();
+  String connectionString=readString(properties,ZOOKEEPER_URL,sysprops.getProperty(ZOOKEEPER_URL,""));
   int sessionTimeoutMs=readInt(properties,SESSION_TIMEOUT,DEFAULT_SESSION_TIMEOUT_MS);
   int connectionTimeoutMs=readInt(properties,CONNECTION_TIMEOUT,DEFAULT_CONNECTION_TIMEOUT_MS);
   CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().ensembleProvider(new FixedEnsembleProvider(connectionString)).connectionTimeoutMs(connectionTimeoutMs).sessionTimeoutMs(sessionTimeoutMs).retryPolicy(buildRetryPolicy(properties));
   if (isAuthorizationConfigured(properties)) {
     String scheme="digest";
-    String password=readString(properties,ZOOKEEPER_PASSWORD,System.getProperty(ZOOKEEPER_PASSWORD,""));
+    String password=readString(properties,ZOOKEEPER_PASSWORD,sysprops.getProperty(ZOOKEEPER_PASSWORD,""));
     byte[] auth=("fabric:" + password).getBytes();
     builder=builder.authorization(scheme,auth).aclProvider(aclProvider.get());
   }

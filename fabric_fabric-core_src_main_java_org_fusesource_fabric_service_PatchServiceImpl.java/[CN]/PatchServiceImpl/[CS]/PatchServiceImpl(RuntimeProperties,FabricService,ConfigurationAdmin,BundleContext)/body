@@ -1,0 +1,11 @@
+{
+  this.runtimeProperties=runtimeProperties;
+  String patchLocation=runtimeProperties.getProperty("fuse.patch.location");
+  patchDir=patchLocation != null ? new File(patchLocation) : bundleContext.getDataFile("patches");
+  if (patchDir == null) {
+    throw new IllegalArgumentException("Unable to retrieve patch directory");
+  }
+  createDir(patchDir);
+  this.fabric=fabric;
+  this.configAdmin=configAdmin;
+}

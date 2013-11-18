@@ -3,10 +3,12 @@
     return fabricService.get().getCurrentContainer();
   }
  catch (  Exception e) {
-    return new ContainerImpl(null,KARAF_NAME,null){
+    final RuntimeProperties sysprops=runtimeProperties.get();
+    final String karafName=sysprops.getProperty(SystemProperties.KARAF_NAME);
+    return new ContainerImpl(null,karafName,null){
       @Override public String getIp(){
         try {
-          return getSubstitutedPath(curator.get(),CONTAINER_IP.getPath(KARAF_NAME));
+          return getSubstitutedPath(curator.get(),CONTAINER_IP.getPath(karafName));
         }
  catch (        Exception e) {
           throw FabricException.launderThrowable(e);

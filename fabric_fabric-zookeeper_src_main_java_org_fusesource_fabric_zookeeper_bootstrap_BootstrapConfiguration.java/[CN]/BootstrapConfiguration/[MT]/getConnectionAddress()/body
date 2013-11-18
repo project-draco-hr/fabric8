@@ -1,13 +1,13 @@
 {
-  String resolver=System.getProperty(ZkDefs.LOCAL_RESOLVER_PROPERTY,System.getProperty(ZkDefs.GLOBAL_RESOLVER_PROPERTY,ZkDefs.LOCAL_HOSTNAME));
+  String resolver=getPropertyInternal(ZkDefs.LOCAL_RESOLVER_PROPERTY,getPropertyInternal(ZkDefs.GLOBAL_RESOLVER_PROPERTY,ZkDefs.LOCAL_HOSTNAME));
   if (resolver.equals(ZkDefs.LOCAL_HOSTNAME)) {
     return HostUtils.getLocalHostName();
   }
  else   if (resolver.equals(ZkDefs.LOCAL_IP)) {
     return HostUtils.getLocalIp();
   }
- else   if (resolver.equals(ZkDefs.MANUAL_IP) && System.getProperty(ZkDefs.MANUAL_IP) != null) {
-    return System.getProperty(ZkDefs.MANUAL_IP);
+ else   if (resolver.equals(ZkDefs.MANUAL_IP) && getPropertyInternal(ZkDefs.MANUAL_IP,null) != null) {
+    return getPropertyInternal(ZkDefs.MANUAL_IP,null);
   }
  else   return HostUtils.getLocalHostName();
 }

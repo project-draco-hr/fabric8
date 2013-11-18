@@ -2,7 +2,7 @@
   this.healthCheck=new HealthCheck(fabricService.get());
   this.managerMBean=new FabricManager((FabricServiceImpl)fabricService.get());
   this.zooKeeperMBean=new ZooKeeperFacade((FabricServiceImpl)fabricService.get());
-  this.fileSystemMBean=new FileSystem();
+  this.fileSystemMBean=new FileSystem(runtimeProperties.get());
   healthCheck.registerMBeanServer(mbeanServer.get());
   managerMBean.registerMBeanServer(mbeanServer.get());
   fileSystemMBean.registerMBeanServer(mbeanServer.get());

@@ -2,13 +2,14 @@
   if (isValid()) {
     try {
       Container current=getContainer();
-      String name=System.getProperty(SystemProperties.KARAF_NAME);
+      RuntimeProperties sysprops=runtimeProperties.get();
+      String karafName=sysprops.getProperty(SystemProperties.KARAF_NAME);
       if (event.getPid().equals(SSH_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
         Configuration config=configAdmin.get().getConfiguration(SSH_PID,null);
         int sshPort=Integer.parseInt((String)config.getProperties().get(SSH_BINDING_PORT_KEY));
         int sshConnectionPort=getSshConnectionPort(current,sshPort);
-        String sshUrl=getSshUrl(name,sshConnectionPort);
-        setData(curator.get(),CONTAINER_SSH.getPath(name),sshUrl);
+        String sshUrl=getSshUrl(karafName,sshConnectionPort);
+        setData(curator.get(),CONTAINER_SSH.getPath(karafName),sshUrl);
         if (fabricService.get().getPortService().lookupPort(current,SSH_PID,SSH_BINDING_PORT_KEY) != sshPort) {
           fabricService.get().getPortService().unregisterPort(current,SSH_PID);
           fabricService.get().getPortService().registerPort(current,SSH_PID,SSH_BINDING_PORT_KEY,sshPort);
@@ -21,8 +22,8 @@
         String protocol=httpsEnabled && !httpEnabled ? "https" : "http";
         int httpPort=httpsEnabled && !httpEnabled ? Integer.parseInt((String)config.getProperties().get(HTTPS_BINDING_PORT_KEY)) : Integer.parseInt((String)config.getProperties().get(HTTP_BINDING_PORT_KEY));
         int httpConnectionPort=httpsEnabled && !httpEnabled ? getHttpsConnectionPort(current) : getHttpConnectionPort(current,httpPort);
-        String httpUrl=getHttpUrl(protocol,name,httpConnectionPort);
-        setData(curator.get(),CONTAINER_HTTP.getPath(name),httpUrl);
+        String httpUrl=getHttpUrl(protocol,karafName,httpConnectionPort);
+        setData(curator.get(),CONTAINER_HTTP.getPath(karafName),httpUrl);
         if (fabricService.get().getPortService().lookupPort(current,HTTP_PID,HTTP_BINDING_PORT_KEY) != httpPort) {
           fabricService.get().getPortService().unregisterPort(current,HTTP_PID);
           fabricService.get().getPortService().registerPort(current,HTTP_PID,HTTP_BINDING_PORT_KEY,httpPort);
@@ -34,9 +35,9 @@
         int rmiServerConnectionPort=getRmiServerConnectionPort(current,rmiServerPort);
         int rmiRegistryPort=Integer.parseInt((String)config.getProperties().get(RMI_REGISTRY_BINDING_PORT_KEY));
         int rmiRegistryConnectionPort=getRmiRegistryConnectionPort(current,rmiRegistryPort);
-        String jmxUrl=getJmxUrl(name,rmiServerConnectionPort,rmiRegistryConnectionPort);
-        setData(curator.get(),CONTAINER_JMX.getPath(name),jmxUrl);
-        System.setProperty(SystemProperties.JAVA_RMI_SERVER_HOSTNAME,current.getIp());
+        String jmxUrl=getJmxUrl(karafName,rmiServerConnectionPort,rmiRegistryConnectionPort);
+        setData(curator.get(),CONTAINER_JMX.getPath(karafName),jmxUrl);
+        sysprops.setProperty(SystemProperties.JAVA_RMI_SERVER_HOSTNAME,current.getIp());
         if (fabricService.get().getPortService().lookupPort(current,MANAGEMENT_PID,RMI_REGISTRY_BINDING_PORT_KEY) != rmiRegistryPort || fabricService.get().getPortService().lookupPort(current,MANAGEMENT_PID,RMI_SERVER_BINDING_PORT_KEY) != rmiServerPort) {
           fabricService.get().getPortService().unregisterPort(current,MANAGEMENT_PID);
           fabricService.get().getPortService().registerPort(current,MANAGEMENT_PID,RMI_SERVER_BINDING_PORT_KEY,rmiServerPort);

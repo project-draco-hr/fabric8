@@ -1,41 +1,42 @@
 {
-  LOGGER.trace("init");
-  String version=System.getProperty("fabric.version",ZkDefs.DEFAULT_VERSION);
-  String profiles=System.getProperty("fabric.profiles");
+  RuntimeProperties sysprops=runtimeProperties.get();
+  String karafName=sysprops.getProperty(SystemProperties.KARAF_NAME);
+  String version=sysprops.getProperty("fabric.version",ZkDefs.DEFAULT_VERSION);
+  String profiles=sysprops.getProperty("fabric.profiles");
   try {
     if (profiles != null) {
-      String versionNode=CONFIG_CONTAINER.getPath(KARAF_NAME);
-      String profileNode=CONFIG_VERSIONS_CONTAINER.getPath(version,KARAF_NAME);
+      String versionNode=CONFIG_CONTAINER.getPath(karafName);
+      String profileNode=CONFIG_VERSIONS_CONTAINER.getPath(version,karafName);
       createDefault(curator.get(),versionNode,version);
       createDefault(curator.get(),profileNode,profiles);
     }
     checkAlive();
-    String domainsNode=CONTAINER_DOMAINS.getPath(KARAF_NAME);
+    String domainsNode=CONTAINER_DOMAINS.getPath(karafName);
     Stat stat=exists(curator.get(),domainsNode);
     if (stat != null) {
       deleteSafe(curator.get(),domainsNode);
     }
-    createDefault(curator.get(),CONTAINER_BINDADDRESS.getPath(KARAF_NAME),System.getProperty(ZkDefs.BIND_ADDRESS,"0.0.0.0"));
-    createDefault(curator.get(),CONTAINER_RESOLVER.getPath(KARAF_NAME),getContainerResolutionPolicy(curator.get(),KARAF_NAME));
-    setData(curator.get(),CONTAINER_LOCAL_HOSTNAME.getPath(KARAF_NAME),HostUtils.getLocalHostName());
-    setData(curator.get(),CONTAINER_LOCAL_IP.getPath(KARAF_NAME),HostUtils.getLocalIp());
-    setData(curator.get(),CONTAINER_IP.getPath(KARAF_NAME),getContainerPointer(curator.get(),KARAF_NAME));
-    createDefault(curator.get(),CONTAINER_GEOLOCATION.getPath(KARAF_NAME),GeoUtils.getGeoLocation());
+    createDefault(curator.get(),CONTAINER_BINDADDRESS.getPath(karafName),sysprops.getProperty(ZkDefs.BIND_ADDRESS,"0.0.0.0"));
+    createDefault(curator.get(),CONTAINER_RESOLVER.getPath(karafName),getContainerResolutionPolicy(sysprops,curator.get(),karafName));
+    setData(curator.get(),CONTAINER_LOCAL_HOSTNAME.getPath(karafName),HostUtils.getLocalHostName());
+    setData(curator.get(),CONTAINER_LOCAL_IP.getPath(karafName),HostUtils.getLocalIp());
+    setData(curator.get(),CONTAINER_IP.getPath(karafName),getContainerPointer(curator.get(),karafName));
+    createDefault(curator.get(),CONTAINER_GEOLOCATION.getPath(karafName),GeoUtils.getGeoLocation());
     for (    String resolver : ZkDefs.VALID_RESOLVERS) {
-      String address=System.getProperty(resolver);
-      if (address != null && !address.isEmpty() && exists(curator.get(),CONTAINER_ADDRESS.getPath(KARAF_NAME,resolver)) == null) {
-        setData(curator.get(),CONTAINER_ADDRESS.getPath(KARAF_NAME,resolver),address);
+      String address=sysprops.getProperty(resolver);
+      if (address != null && !address.isEmpty() && exists(curator.get(),CONTAINER_ADDRESS.getPath(karafName,resolver)) == null) {
+        setData(curator.get(),CONTAINER_ADDRESS.getPath(karafName,resolver),address);
       }
     }
     Container current=getContainer();
-    System.setProperty(SystemProperties.JAVA_RMI_SERVER_HOSTNAME,current.getIp());
+    sysprops.setProperty(SystemProperties.JAVA_RMI_SERVER_HOSTNAME,current.getIp());
     registerJmx(current);
     registerSsh(current);
     registerHttp(current);
-    String minimumPort=System.getProperty(ZkDefs.MINIMUM_PORT);
-    String maximumPort=System.getProperty(ZkDefs.MAXIMUM_PORT);
-    createDefault(curator.get(),CONTAINER_PORT_MIN.getPath(KARAF_NAME),minimumPort);
-    createDefault(curator.get(),CONTAINER_PORT_MAX.getPath(KARAF_NAME),maximumPort);
+    String minimumPort=sysprops.getProperty(ZkDefs.MINIMUM_PORT);
+    String maximumPort=sysprops.getProperty(ZkDefs.MAXIMUM_PORT);
+    createDefault(curator.get(),CONTAINER_PORT_MIN.getPath(karafName),minimumPort);
+    createDefault(curator.get(),CONTAINER_PORT_MAX.getPath(karafName),maximumPort);
   }
  catch (  Exception e) {
     LOGGER.warn("Error updating Fabric Container information. This exception will be ignored.",e);

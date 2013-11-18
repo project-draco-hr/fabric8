@@ -1,5 +1,7 @@
 {
-  String nodeAlive=CONTAINER_ALIVE.getPath(KARAF_NAME);
+  RuntimeProperties sysprops=runtimeProperties.get();
+  String karafName=sysprops.getProperty(SystemProperties.KARAF_NAME);
+  String nodeAlive=CONTAINER_ALIVE.getPath(karafName);
   Stat stat=exists(curator.get(),nodeAlive);
   if (stat != null) {
     if (stat.getEphemeralOwner() != curator.get().getZookeeperClient().getZooKeeper().getSessionId()) {

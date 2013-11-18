@@ -15,6 +15,7 @@
     }
     setData(curator,ZkPath.CONFIG_DEFAULT_VERSION.getPath(),version);
     String defaultProfile=dataStore.getProfile(version,"default",true);
+    String karafName=runtimeProperties.getProperty(SystemProperties.KARAF_NAME);
     setData(curator,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),"${zk:" + karafName + "/ip}:"+ zooKeeperServerConnectionPort);
     setData(curator,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
     Properties zkProps=new Properties();
