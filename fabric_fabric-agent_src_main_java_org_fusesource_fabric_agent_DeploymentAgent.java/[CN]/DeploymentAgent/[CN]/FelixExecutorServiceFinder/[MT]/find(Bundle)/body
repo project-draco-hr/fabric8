@@ -1,3 +1,9 @@
 {
-  return ((MonitoringService)bundleContext.getService(sr)).getExecutor(bundle);
+  MonitoringService ms=bundleContext.getService(sr);
+  try {
+    return ms.getExecutor(bundle);
+  }
+  finally {
+    bundleContext.ungetService(sr);
+  }
 }
