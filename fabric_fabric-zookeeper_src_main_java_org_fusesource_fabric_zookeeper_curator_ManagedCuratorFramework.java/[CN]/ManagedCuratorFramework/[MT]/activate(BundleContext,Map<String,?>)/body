@@ -2,8 +2,10 @@
   this.bundleContext=bundleContext;
   String zookeeperURL=getZookeeperURL(configuration);
   if (!Strings.isNullOrEmpty(zookeeperURL)) {
-    updateService(buildCuratorFramework(configuration));
-    oldConfiguration=configuration;
+    State next=new State(configuration);
+    if (state.compareAndSet(null,next)) {
+      executor.submit(next);
+    }
   }
   activateComponent();
 }

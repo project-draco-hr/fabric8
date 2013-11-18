@@ -1,0 +1,13 @@
+{
+  if (newState == ConnectionState.CONNECTED) {
+    if (registration == null) {
+      registration=bundleContext.registerService(CuratorFramework.class,curator,null);
+    }
+  }
+  for (  ConnectionStateListener listener : connectionStateListeners) {
+    listener.stateChanged(client,newState);
+  }
+  if (newState == ConnectionState.LOST) {
+    run();
+  }
+}

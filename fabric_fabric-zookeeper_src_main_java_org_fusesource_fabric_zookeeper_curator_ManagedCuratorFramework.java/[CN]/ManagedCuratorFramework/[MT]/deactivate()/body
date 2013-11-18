@@ -1,8 +1,8 @@
 {
   deactivateComponent();
-  curatorFramework.getZookeeperClient().stop();
-  if (registration != null) {
-    registration.unregister();
+  State prev=state.getAndSet(null);
+  if (prev != null) {
+    prev.close();
   }
-  Closeables.close(curatorFramework,true);
+  executor.shutdownNow();
 }

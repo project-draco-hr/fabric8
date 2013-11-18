@@ -1,20 +1,19 @@
 {
   String zookeeperURL=getZookeeperURL(configuration);
   if (!Strings.isNullOrEmpty(zookeeperURL)) {
+    State prev=state.get();
+    Map<String,?> oldConfiguration=prev != null ? prev.configuration : null;
     if (isRestartRequired(oldConfiguration,configuration)) {
-      updateService(buildCuratorFramework(configuration));
-    }
- else {
-      updateEnsemble(configuration);
-      if (!propertyEquals(oldConfiguration,configuration,ZOOKEEPER_URL)) {
-        try {
-          reset((CuratorFrameworkImpl)curatorFramework);
-        }
- catch (        Exception e) {
-          LOGGER.error("Failed to update the ensemble url.",e);
+      State next=new State(configuration);
+      if (state.compareAndSet(prev,next)) {
+        executor.submit(next);
+        if (prev != null) {
+          prev.close();
         }
       }
+ else {
+        next.close();
+      }
     }
-    oldConfiguration=configuration;
   }
 }
