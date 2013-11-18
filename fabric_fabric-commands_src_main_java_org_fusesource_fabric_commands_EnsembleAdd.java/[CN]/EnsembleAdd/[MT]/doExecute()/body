@@ -3,26 +3,26 @@
   validateContainersName(containers);
   if (checkIfShouldModify(session,force)) {
     if (containers != null && !containers.isEmpty()) {
-      StringBuilder builder=new StringBuilder();
-      builder.append("Adding containers:");
+      StringBuilder sb=new StringBuilder();
+      sb.append("Adding containers:");
       for (      String container : containers) {
-        builder.append(" ").append(container);
+        sb.append(" ").append(container);
       }
-      builder.append(" to the ensemble. This may take a while.");
-      System.out.println(builder.toString());
+      sb.append(" to the ensemble. This may take a while.");
+      CreateEnsembleOptions.Builder builder=CreateEnsembleOptions.builder();
+      applyEnsembleConfiguration();
+      builder=builder.zooKeeperServerTickTime(zooKeeperTickTime).zooKeeperServerInitLimit(zooKeeperInitLimit).zooKeeperServerSyncLimit(zooKeeperSyncLimit).zooKeeperServerDataDir(zooKeeperDataDir).migrationTimeout(migrationTimeout);
       if (generateZookeeperPassword) {
-        CreateEnsembleOptions options=CreateEnsembleOptions.builder().build();
-        service.addToCluster(containers,options);
       }
  else       if (zookeeperPassword == null || zookeeperPassword.isEmpty()) {
-        service.addToCluster(containers);
+        builder=builder.zookeeperPassword(service.getZookeeperPassword());
       }
  else {
-        CreateEnsembleOptions options=CreateEnsembleOptions.builder().zookeeperPassword(zookeeperPassword).migrationTimeout(migrationTimeout).build();
-        service.addToCluster(containers,options);
+        builder=builder.zookeeperPassword(zookeeperPassword);
       }
+      service.addToCluster(containers,builder.build());
+      System.out.println("Updated Zookeeper connection string: " + service.getZooKeeperUrl());
     }
-    System.out.println("Updated Zookeeper connection string: " + service.getZooKeeperUrl());
   }
   return null;
 }

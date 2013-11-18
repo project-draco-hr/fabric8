@@ -2,25 +2,27 @@
   checkFabricAvailable();
   validateContainersName(containers);
   if (checkIfShouldModify(session,force)) {
-    StringBuilder builder=new StringBuilder();
-    builder.append("Removing containers:");
-    for (    String container : containers) {
-      builder.append(" ").append(container);
-    }
-    builder.append(" from the ensemble. This may take a while.");
-    System.out.println(builder.toString());
-    if (generateZookeeperPassword) {
-      CreateEnsembleOptions options=CreateEnsembleOptions.builder().build();
-      service.removeFromCluster(containers,options);
-    }
- else     if (zookeeperPassword == null || zookeeperPassword.isEmpty()) {
-      service.removeFromCluster(containers);
-    }
+    if (containers != null && !containers.isEmpty()) {
+      StringBuilder sb=new StringBuilder();
+      sb.append("Removing containers:");
+      for (      String container : containers) {
+        sb.append(" ").append(container);
+      }
+      sb.append(" to the ensemble. This may take a while.");
+      CreateEnsembleOptions.Builder builder=CreateEnsembleOptions.builder();
+      applyEnsembleConfiguration();
+      builder=builder.zooKeeperServerTickTime(zooKeeperTickTime).zooKeeperServerInitLimit(zooKeeperInitLimit).zooKeeperServerSyncLimit(zooKeeperSyncLimit).zooKeeperServerDataDir(zooKeeperDataDir).migrationTimeout(migrationTimeout);
+      if (generateZookeeperPassword) {
+      }
+ else       if (zookeeperPassword == null || zookeeperPassword.isEmpty()) {
+        builder=builder.zookeeperPassword(service.getZookeeperPassword());
+      }
  else {
-      CreateEnsembleOptions options=CreateEnsembleOptions.builder().zookeeperPassword(zookeeperPassword).migrationTimeout(migrationTimeout).build();
-      service.removeFromCluster(containers,options);
+        builder=builder.zookeeperPassword(zookeeperPassword);
+      }
+      service.removeFromCluster(containers,builder.build());
+      System.out.println("Updated Zookeeper connection string: " + service.getZooKeeperUrl());
     }
-    System.out.println("Updated Zookeeper connection string: " + service.getZooKeeperUrl());
   }
   return null;
 }
