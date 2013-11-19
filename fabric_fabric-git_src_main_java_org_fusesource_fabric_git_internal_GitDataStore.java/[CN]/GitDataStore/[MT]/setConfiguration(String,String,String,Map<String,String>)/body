@@ -1,11 +1,13 @@
 {
   assertValid();
-  byte[] data;
-  try {
-    data=DataStoreUtils.toBytes(DataStoreUtils.toProperties(configuration));
+  gitOperation(new GitOperation<Void>(){
+    public Void call(    Git git,    GitContext context) throws Exception {
+      checkoutVersion(git,GitProfiles.getBranch(version,profile));
+      doSetConfiguration(git,profile,pid,configuration);
+      context.setPushBranch(version);
+      context.commit("Updated configuration for profile " + profile);
+      return null;
+    }
   }
- catch (  IOException e) {
-    throw FabricException.launderThrowable(e);
-  }
-  setFileConfiguration(version,profile,pid + PROPERTIES_SUFFIX,data);
+);
 }
