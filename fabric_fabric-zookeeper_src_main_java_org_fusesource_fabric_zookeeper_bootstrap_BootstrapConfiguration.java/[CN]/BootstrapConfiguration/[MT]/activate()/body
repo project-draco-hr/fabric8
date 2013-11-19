@@ -1,6 +1,6 @@
 {
-  this.componentContext=componentContext;
-  String karafHome=getPropertyInternal(SystemProperties.KARAF_HOME,null);
+  RuntimeProperties sysprops=runtimeProperties.get();
+  String karafHome=sysprops.getProperty(SystemProperties.KARAF_HOME);
   org.apache.felix.utils.properties.Properties userProps=null;
   try {
     userProps=new org.apache.felix.utils.properties.Properties(new File(karafHome + "/etc/users.properties"));
@@ -8,14 +8,14 @@
  catch (  IOException e) {
     LOGGER.warn("Failed to load users from etc/users.properties. No users will be imported.",e);
   }
-  options=CreateEnsembleOptions.builder().fromSystemProperties().users(userProps).build();
+  options=CreateEnsembleOptions.builder().fromRuntimeProperties(sysprops).users(userProps).build();
   if (options.isEnsembleStart()) {
     String connectionUrl=getConnectionUrl(options);
-    registrationHandler.get().setRegistrationCallback(new DataStoreBootstrapTemplate(this,connectionUrl,options));
+    registrationHandler.get().setRegistrationCallback(new DataStoreBootstrapTemplate(sysprops,connectionUrl,options));
     createOrUpdateDataStoreConfig(options);
     createZooKeeeperServerConfig(options);
     createZooKeeeperClientConfig(connectionUrl,options);
-    setPropertyInternal(CreateEnsembleOptions.ENSEMBLE_AUTOSTART,Boolean.FALSE.toString());
+    sysprops.setProperty(CreateEnsembleOptions.ENSEMBLE_AUTOSTART,Boolean.FALSE.toString());
     File file=new File(karafHome + "/etc/system.properties");
     org.apache.felix.utils.properties.Properties props=new org.apache.felix.utils.properties.Properties(file);
     props.put(CreateEnsembleOptions.ENSEMBLE_AUTOSTART,Boolean.FALSE.toString());
