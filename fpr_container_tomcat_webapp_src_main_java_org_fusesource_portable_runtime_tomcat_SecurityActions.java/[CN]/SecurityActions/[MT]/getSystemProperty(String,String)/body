@@ -1,0 +1,15 @@
+{
+  if (System.getSecurityManager() == null) {
+    String value=System.getProperty(key);
+    return value != null ? value : defaultValue;
+  }
+ else {
+    return AccessController.doPrivileged(new PrivilegedAction<String>(){
+      public String run(){
+        String value=System.getProperty(key);
+        return value != null ? value : defaultValue;
+      }
+    }
+);
+  }
+}
