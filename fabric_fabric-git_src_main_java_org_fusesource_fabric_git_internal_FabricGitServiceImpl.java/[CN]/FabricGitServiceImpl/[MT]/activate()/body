@@ -1,4 +1,6 @@
 {
+  RuntimeProperties sysprops=runtimeProperties.get();
+  localRepo=new File(sysprops.getProperty(SystemProperties.KARAF_DATA) + DEFAULT_GIT_PATH);
   if (!localRepo.exists() && !localRepo.mkdirs()) {
     throw new IOException("Failed to create local repository");
   }

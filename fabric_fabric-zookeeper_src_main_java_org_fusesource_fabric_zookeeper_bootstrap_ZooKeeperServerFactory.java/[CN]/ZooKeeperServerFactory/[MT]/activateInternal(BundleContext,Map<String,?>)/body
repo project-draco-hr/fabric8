@@ -4,10 +4,17 @@
   for (  Entry<String,?> entry : configuration.entrySet()) {
     props.put(entry.getKey(),entry.getValue());
   }
+  String dataDir=props.getProperty("dataDir");
+  if (dataDir != null && dataDir.startsWith(CreateEnsembleOptions.DEFAULT_DATA_DIR)) {
+    RuntimeProperties sysprops=runtimeProperties.get();
+    dataDir=dataDir.substring(dataDir.indexOf('/'));
+    dataDir=sysprops.getProperty(SystemProperties.KARAF_DATA) + dataDir;
+    props.setProperty("dataDir",dataDir);
+  }
   String serverId=(String)props.get("server.id");
   if (serverId != null) {
     props.remove("server.id");
-    File myId=new File((String)props.get("dataDir"),"myid");
+    File myId=new File(dataDir,"myid");
     if (myId.exists() && !myId.delete()) {
       throw new IOException("Failed to delete " + myId);
     }
@@ -63,7 +70,15 @@
     zkServer.setTickTime(serverConfig.getTickTime());
     zkServer.setMinSessionTimeout(serverConfig.getMinSessionTimeout());
     zkServer.setMaxSessionTimeout(serverConfig.getMaxSessionTimeout());
-    NIOServerCnxnFactory cnxnFactory=new NIOServerCnxnFactory();
+    NIOServerCnxnFactory cnxnFactory=new NIOServerCnxnFactory(){
+      protected void configureSaslLogin() throws IOException {
+        RuntimeProperties sysprops=runtimeProperties.get();
+        if (!Boolean.parseBoolean(sysprops.getProperty("hack.skip.zookeeper.jaas.auth"))) {
+          super.configureSaslLogin();
+        }
+      }
+    }
+;
     cnxnFactory.configure(serverConfig.getClientPortAddress(),serverConfig.getMaxClientCnxns());
     try {
       LOGGER.debug("Starting ZooKeeper server on address %s",peerConfig.getClientPortAddress());
