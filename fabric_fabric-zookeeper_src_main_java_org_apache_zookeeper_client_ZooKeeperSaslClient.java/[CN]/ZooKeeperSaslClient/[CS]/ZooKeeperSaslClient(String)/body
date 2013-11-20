@@ -1,46 +1,5 @@
 {
-  String clientSection=System.getProperty(ZooKeeperSaslClient.LOGIN_CONTEXT_NAME_KEY,"Client");
-  AppConfigurationEntry entries[]=null;
-  RuntimeException securityException=null;
-  try {
-    entries=Configuration.getConfiguration().getAppConfigurationEntry(clientSection);
-  }
- catch (  RuntimeException e) {
-    securityException=e;
-  }
-  if (entries != null) {
-    this.configStatus="Will attempt to SASL-authenticate using Login Context section '" + clientSection + "'";
-    this.saslClient=createSaslClient(serverPrincipal,clientSection);
-  }
- else {
-    saslState=SaslState.FAILED;
-    String explicitClientSection=System.getProperty(ZooKeeperSaslClient.LOGIN_CONTEXT_NAME_KEY);
-    if (explicitClientSection != null) {
-      if (securityException != null) {
-        throw new LoginException("Zookeeper client cannot authenticate using the " + explicitClientSection + " section of the supplied JAAS configuration: '"+ System.getProperty(Environment.JAAS_CONF_KEY)+ "' because of a "+ "SecurityException: "+ securityException);
-      }
- else {
-        throw new LoginException("Client cannot SASL-authenticate because the specified JAAS configuration " + "section '" + explicitClientSection + "' could not be found.");
-      }
-    }
- else {
-      String msg="Will not attempt to authenticate using SASL ";
-      if (securityException != null) {
-        msg+="(" + securityException.getLocalizedMessage() + ")";
-      }
- else {
-        msg+="(unknown error)";
-      }
-      this.configStatus=msg;
-      this.saslConfigured=false;
-    }
-    if (System.getProperty(Environment.JAAS_CONF_KEY) != null) {
-      if (securityException != null) {
-        throw new LoginException("Zookeeper client cannot authenticate using the '" + System.getProperty(ZooKeeperSaslClient.LOGIN_CONTEXT_NAME_KEY,"Client") + "' section of the supplied JAAS configuration: '"+ System.getProperty(Environment.JAAS_CONF_KEY)+ "' because of a "+ "SecurityException: "+ securityException);
-      }
- else {
-        throw new LoginException("No JAAS configuration section named '" + System.getProperty(ZooKeeperSaslClient.LOGIN_CONTEXT_NAME_KEY,"Client") + "' was found in specified JAAS configuration file: '"+ System.getProperty(Environment.JAAS_CONF_KEY)+ "'.");
-      }
-    }
-  }
+  this.saslState=SaslState.FAILED;
+  this.configStatus="Will not attempt to authenticate using SASL (unknown error)";
+  this.saslConfigured=false;
 }
