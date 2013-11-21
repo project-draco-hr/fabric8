@@ -1,0 +1,37 @@
+{
+  try {
+    if (exists(curator.get(),versionsPath) != null) {
+      List<String> children=getChildren(curator.get(),versionsPath);
+      if (children != null && !children.isEmpty()) {
+        for (        String child : children) {
+          if (Strings.isNullOrEmpty(name)) {
+            String parentPath=versionsPath + "/" + child;
+            List<String> grandChildren=getChildren(curator.get(),parentPath);
+            if (!grandChildren.isEmpty()) {
+              String containerPath=parentPath + "/" + grandChildren.get(0);
+              String answer=getWebUrl(containerPath);
+              if (!Strings.isNullOrEmpty(answer)) {
+                return answer;
+              }
+            }
+          }
+ else {
+            String childPath=versionsPath + "/" + child;
+            String containerPath=childPath + "/" + name;
+            String answer=getWebUrl(containerPath);
+            if (Strings.isNullOrEmpty(answer)) {
+              answer=containerWebAppUrl(childPath,name);
+            }
+            if (!Strings.isNullOrEmpty(answer)) {
+              return answer;
+            }
+          }
+        }
+      }
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to find container Jolokia URL " + e,e);
+  }
+  return null;
+}
