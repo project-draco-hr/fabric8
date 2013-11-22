@@ -1,0 +1,19 @@
+{
+  if (exists(getCurator(),ZkPath.AUTHENTICATION_CRYPT_ALGORITHM.getPath()) == null) {
+    System.out.println("No encryption algorithm found in the registry.");
+    return null;
+  }
+ else   if (exists(getCurator(),ZkPath.AUTHENTICATION_CRYPT_PASSWORD.getPath()) == null) {
+    System.out.println("No encryption master password found in the registry.");
+    return null;
+  }
+ else {
+    algorithm=!Strings.isNullOrBlank(algorithm) ? algorithm : getStringData(getCurator(),ZkPath.AUTHENTICATION_CRYPT_ALGORITHM.getPath());
+    password=password != null ? password : getStringData(getCurator(),ZkPath.AUTHENTICATION_CRYPT_PASSWORD.getPath());
+    StandardPBEStringEncryptor encryptor=new StandardPBEStringEncryptor();
+    encryptor.setAlgorithm(algorithm);
+    encryptor.setPassword(password);
+    System.out.println(String.format(FORMAT,message,algorithm,password,encryptor.encrypt(message)));
+  }
+  return null;
+}
