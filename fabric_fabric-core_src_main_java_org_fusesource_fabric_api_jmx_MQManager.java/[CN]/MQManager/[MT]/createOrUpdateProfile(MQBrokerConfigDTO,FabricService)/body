@@ -22,6 +22,10 @@
     data="${karaf.base}/data/" + brokerName;
   }
   configuration.put(DATA,data);
+  Integer port=dto.getPort();
+  if (port != null) {
+    configuration.put(PORT,port.toString());
+  }
   BrokerKind kind=dto.kind();
   configuration.put(KIND,kind.toString());
   String config=dto.getConfigUrl();
