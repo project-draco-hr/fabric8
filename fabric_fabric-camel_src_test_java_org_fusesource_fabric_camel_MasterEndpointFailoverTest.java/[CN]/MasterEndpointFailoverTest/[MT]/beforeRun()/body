@@ -1,6 +1,5 @@
 {
   System.out.println("Starting ZK server!");
-  serverFactoryBean.setPurge(true);
   serverFactoryBean.setPort(9004);
   serverFactoryBean.afterPropertiesSet();
   zkClientBean.setConnectString("localhost:9004");
@@ -8,6 +7,12 @@
   SimpleRegistry registry=new SimpleRegistry();
   registry.put("curator",client);
   producerContext=new DefaultCamelContext(registry);
+  producerContext.addRoutes(new RouteBuilder(){
+    @Override public void configure() throws Exception {
+      from("direct:start").to("vm:start");
+    }
+  }
+);
   template=producerContext.createProducerTemplate();
   consumerContext1=new DefaultCamelContext(registry);
   consumerContext1.addRoutes(new RouteBuilder(){
@@ -23,7 +28,8 @@
     }
   }
 );
-  ServiceHelper.startServices(consumerContext1,producerContext);
+  ServiceHelper.startServices(consumerContext1);
+  ServiceHelper.startServices(producerContext);
   result1Endpoint=consumerContext1.getEndpoint("mock:result1",MockEndpoint.class);
   result2Endpoint=consumerContext2.getEndpoint("mock:result2",MockEndpoint.class);
 }

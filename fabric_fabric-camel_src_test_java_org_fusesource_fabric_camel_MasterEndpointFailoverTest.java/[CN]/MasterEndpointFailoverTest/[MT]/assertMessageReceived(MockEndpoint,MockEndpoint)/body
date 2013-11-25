@@ -4,7 +4,7 @@
   String expectedBody=createNextExpectedBody();
   masterEndpoint.expectedBodiesReceived(expectedBody);
   standbyEndpoint.expectedMessageCount(0);
-  template.sendBody("vm:start",expectedBody);
+  template.sendBody("direct:start",expectedBody);
   LOG.info("Expecting master: " + masterEndpoint + " and standby: "+ standbyEndpoint);
   MockEndpoint.assertIsSatisfied(masterEndpoint,standbyEndpoint);
 }
