@@ -16,10 +16,14 @@
       return;
     }
     Container[] allContainers=fabricService.get().getContainers();
+    Set<Container> notAliveOrOk=new HashSet<Container>();
     for (    Container container : allContainers) {
       if (!container.isAliveAndOK()) {
-        throw new EnsembleModificationFailed("Can not modify the zookeeper ensemble if all containers are not running",EnsembleModificationFailed.Reason.CONTAINERS_NOT_ALIVE);
+        notAliveOrOk.add(container);
       }
+    }
+    if (!notAliveOrOk.isEmpty()) {
+      throw new EnsembleModificationFailed("Can not modify the zookeeper ensemble if all containers are not running. Containers not ready:" + notAliveOrOk,EnsembleModificationFailed.Reason.CONTAINERS_NOT_ALIVE);
     }
     String version=dataStore.get().getDefaultVersion();
     for (    String container : containers) {
