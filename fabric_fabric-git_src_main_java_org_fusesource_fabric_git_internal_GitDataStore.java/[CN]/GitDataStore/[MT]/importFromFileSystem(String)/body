@@ -1,7 +1,8 @@
 {
   assertValid();
-  File file=new File(from);
-  File fabricsDir=new File(file,"fabric");
+  File sourceDir=new File(from);
+  if (!sourceDir.isDirectory())   throw new IllegalArgumentException("Not a valid source dir: " + sourceDir.getAbsolutePath());
+  File fabricsDir=new File(sourceDir,"fabric");
   File configs=new File(fabricsDir,"configs");
   String defaultVersion=getDefaultVersion();
   if (configs.exists()) {
@@ -31,7 +32,7 @@
     }
   }
  else {
-    LOG.info("Importing " + file + " as version "+ defaultVersion);
-    importFromFileSystem(file,"",defaultVersion,false);
+    LOG.info("Importing " + sourceDir + " as version "+ defaultVersion);
+    importFromFileSystem(sourceDir,"",defaultVersion,false);
   }
 }

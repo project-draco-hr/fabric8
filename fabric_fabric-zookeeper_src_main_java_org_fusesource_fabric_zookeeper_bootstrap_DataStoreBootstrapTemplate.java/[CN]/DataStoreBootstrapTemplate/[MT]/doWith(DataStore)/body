@@ -10,8 +10,13 @@
     curator=createCuratorFramework(connectionUrl,options);
     curator.start();
     curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+    File importPath=new File(options.getImportPath());
+    if (!importPath.isAbsolute()) {
+      String karafHome=runtimeProperties.getProperty(SystemProperties.KARAF_HOME);
+      importPath=new File(karafHome,options.getImportPath());
+    }
     if (options.isAutoImportEnabled()) {
-      dataStore.importFromFileSystem(options.getImportPath());
+      dataStore.importFromFileSystem(importPath.getAbsolutePath());
     }
     setData(curator,ZkPath.CONFIG_DEFAULT_VERSION.getPath(),version);
     String defaultProfile=dataStore.getProfile(version,"default",true);
@@ -30,7 +35,7 @@
     ensembleProps.put("initLimit",String.valueOf(options.getZooKeeperServerInitLimit()));
     ensembleProps.put("syncLimit",String.valueOf(options.getZooKeeperServerSyncLimit()));
     ensembleProps.put("dataDir",options.getZooKeeperServerDataDir() + "/" + "0000");
-    loadPropertiesFrom(ensembleProps,options.getImportPath() + "/fabric/configs/versions/1.0/profiles/default/org.fusesource.fabric.zookeeper.server.properties");
+    loadPropertiesFrom(ensembleProps,importPath + "/fabric/configs/versions/1.0/profiles/default/org.fusesource.fabric.zookeeper.server.properties");
     dataStore.setFileConfiguration(version,ensembleProfile,"org.fusesource.fabric.zookeeper.server-0000.properties",DataStoreUtils.toBytes(ensembleProps));
     String ensembleServerProfile=dataStore.getProfile(version,"fabric-ensemble-0000-1",true);
     dataStore.setProfileAttribute(version,ensembleServerProfile,"hidden","true");
