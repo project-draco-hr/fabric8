@@ -8,7 +8,11 @@
   MQBrokerConfigDTO dto=new MQBrokerConfigDTO();
   dto.setConfigUrl(config);
   dto.setData(data);
-  dto.setPort(port);
+  if (ports != null && ports.length > 0) {
+    for (    String port : ports) {
+      addConfig(port,dto.getPorts());
+    }
+  }
   dto.setGroup(group);
   dto.setJvmOpts(jvmOpts);
   dto.setBrokerName(name);

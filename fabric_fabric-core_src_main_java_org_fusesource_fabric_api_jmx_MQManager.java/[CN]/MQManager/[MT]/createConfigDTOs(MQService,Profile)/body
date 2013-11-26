@@ -28,6 +28,11 @@
         dto.setNetworksPassword(configuration.get(NETWORK_PASSWORD));
         dto.setReplicas(Maps.integerValue(configuration,REPLICAS));
       }
+      for (      String configurationKey : configuration.keySet()) {
+        if (configurationKey.endsWith("-port")) {
+          dto.getPorts().put(configurationKey.substring(0,configurationKey.indexOf("-port")),configuration.get(configurationKey));
+        }
+      }
       answer.add(dto);
     }
   }
