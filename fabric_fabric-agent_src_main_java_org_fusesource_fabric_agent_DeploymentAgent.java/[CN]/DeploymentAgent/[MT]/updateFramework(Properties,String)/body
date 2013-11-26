@@ -4,8 +4,8 @@
   }
   File file=manager.download(url).await().getFile();
   String path=file.getPath();
-  if (path.startsWith(System.getProperty("karaf.home"))) {
-    path=path.substring(System.getProperty("karaf.home").length() + 1);
+  if (path.startsWith(KARAF_HOME)) {
+    path=path.substring(KARAF_HOME.length() + 1);
   }
   if (!path.equals(properties.get("karaf.framework.felix"))) {
     properties.put("karaf.framework","felix");

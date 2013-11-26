@@ -12,10 +12,8 @@
   List<Resource> toInstall=new ArrayList<Resource>();
   List<Bundle> toDelete=new ArrayList<Bundle>();
   Map<Bundle,Resource> toUpdate=new HashMap<Bundle,Resource>();
-  if (checksums == null) {
-    File file=bundleContext.getDataFile("checksums.properties");
-    checksums=new Properties(file);
-  }
+  File file=bundleContext.getDataFile("bundle-checksums.properties");
+  bundleChecksums.load(file);
   for (  Bundle bundle : systemBundleContext.getBundles()) {
     if (bundle.getSymbolicName() != null && bundle.getBundleId() != 0) {
       Resource resource=null;
@@ -28,7 +26,7 @@
               try {
                 is=getBundleInputStream(res,providers);
                 long newCrc=ChecksumUtils.checksum(is);
-                long oldCrc=checksums.containsKey(bundle.getLocation()) ? Long.parseLong(checksums.get(bundle.getLocation())) : 0l;
+                long oldCrc=bundleChecksums.containsKey(bundle.getLocation()) ? Long.parseLong(bundleChecksums.get(bundle.getLocation())) : 0l;
                 if (newCrc != oldCrc) {
                   LOGGER.debug("New snapshot available for " + bundle.getLocation());
                   update=true;
@@ -83,9 +81,9 @@
     InputStream is=getBundleInputStream(agentResource,providers);
     Bundle bundle=bundleContext.getBundle();
     if (newCheckums.containsKey(bundle.getLocation())) {
-      checksums.put(bundle.getLocation(),newCheckums.get(bundle.getLocation()));
+      bundleChecksums.put(bundle.getLocation(),newCheckums.get(bundle.getLocation()));
     }
-    checksums.save();
+    bundleChecksums.save();
     bundle.update(is);
     return;
   }
@@ -146,9 +144,9 @@
   }
   if (!newCheckums.isEmpty()) {
     for (    String key : newCheckums.keySet()) {
-      checksums.put(key,newCheckums.get(key));
+      bundleChecksums.put(key,newCheckums.get(key));
     }
-    checksums.save();
+    bundleChecksums.save();
   }
   findBundlesWithOptionalPackagesToRefresh(toRefresh);
   findBundlesWithFragmentsToRefresh(toRefresh);

@@ -21,8 +21,13 @@
     }
   }
   boolean restart=false;
-  Properties configProps=new Properties(new File(System.getProperty("karaf.base") + File.separator + "etc"+ File.separator+ "config.properties"));
-  Properties systemProps=new Properties(new File(System.getProperty("karaf.base") + File.separator + "etc"+ File.separator+ "system.properties"));
+  Set<String> libsToRemove=new HashSet<String>(managedLibs.keySet());
+  Set<String> endorsedLibsToRemove=new HashSet<String>(managedEndorsedLibs.keySet());
+  Set<String> extensionLibsToRemove=new HashSet<String>(managedExtensionLibs.keySet());
+  Set<String> sysPropsToRemove=new HashSet<String>(managedSysProps.keySet());
+  Set<String> configPropsToRemove=new HashSet<String>(managedConfigProps.keySet());
+  Properties configProps=new Properties(new File(KARAF_BASE + File.separator + "etc"+ File.separator+ "config.properties"));
+  Properties systemProps=new Properties(new File(KARAF_BASE + File.separator + "etc"+ File.separator+ "system.properties"));
   for (  String key : properties.keySet()) {
     if (key.equals("framework")) {
       String url=properties.get(key);
@@ -31,6 +36,8 @@
  else     if (key.startsWith("config.")) {
       String k=key.substring("config.".length());
       String v=properties.get(key);
+      managedConfigProps.put(k,v);
+      configPropsToRemove.remove(k);
       if (!v.equals(configProps.get(k))) {
         configProps.put(k,v);
         restart=true;
@@ -39,12 +46,90 @@
  else     if (key.startsWith("system.")) {
       String k=key.substring("system.".length());
       String v=properties.get(key);
+      managedSysProps.put(k,v);
+      sysPropsToRemove.remove(k);
       if (!v.equals(systemProps.get(k))) {
         systemProps.put(k,v);
         restart=true;
       }
     }
+ else     if (key.startsWith("lib.")) {
+      String value=properties.get(key);
+      File libFile=manager.download(value).await().getFile();
+      String libName=libFile.getName();
+      Long checksum=ChecksumUtils.checksum(new FileInputStream(libFile));
+      managedLibs.put(libName,"true");
+      libsToRemove.remove(libName);
+      if (!Long.toString(checksum).equals(libChecksums.getProperty(libName))) {
+        Files.copy(libFile,new File(LIB_PATH,libName));
+        restart=true;
+      }
+    }
+ else     if (key.startsWith("endorsed.")) {
+      String value=properties.get(key);
+      File libFile=manager.download(value).await().getFile();
+      String libName=libFile.getName();
+      Long checksum=ChecksumUtils.checksum(new FileInputStream(libFile));
+      managedEndorsedLibs.put(libName,"true");
+      endorsedLibsToRemove.remove(libName);
+      if (!Long.toString(checksum).equals(endorsedChecksums.getProperty(libName))) {
+        Files.copy(libFile,new File(LIB_ENDORSED_PATH,libName));
+        restart=true;
+      }
+    }
+ else     if (key.startsWith("extension.")) {
+      String value=properties.get(key);
+      File libFile=manager.download(value).await().getFile();
+      String libName=libFile.getName();
+      Long checksum=ChecksumUtils.checksum(new FileInputStream(libFile));
+      managedExtensionLibs.put(libName,"true");
+      extensionLibsToRemove.remove(libName);
+      if (!Long.toString(checksum).equals(extensionChecksums.getProperty(libName))) {
+        Files.copy(libFile,new File(LIB_EXT_PATH,libName));
+        restart=true;
+      }
+    }
   }
+  for (  String sysProp : sysPropsToRemove) {
+    systemProps.remove(sysProp);
+    managedSysProps.remove(sysProp);
+    System.clearProperty(sysProp);
+    restart=true;
+  }
+  for (  String configProp : configPropsToRemove) {
+    configProps.remove(configProp);
+    managedConfigProps.remove(configProp);
+    restart=true;
+  }
+  for (  String lib : libsToRemove) {
+    File libFile=new File(LIB_PATH,lib);
+    libFile.delete();
+    libChecksums.remove(lib);
+    managedLibs.remove(lib);
+    restart=true;
+  }
+  for (  String lib : endorsedLibsToRemove) {
+    File libFile=new File(LIB_ENDORSED_PATH,lib);
+    libFile.delete();
+    endorsedChecksums.remove(lib);
+    managedEndorsedLibs.remove(lib);
+    restart=true;
+  }
+  for (  String lib : extensionLibsToRemove) {
+    File libFile=new File(LIB_EXT_PATH,lib);
+    libFile.delete();
+    extensionChecksums.remove(lib);
+    managedExtensionLibs.remove(lib);
+    restart=true;
+  }
+  libChecksums.save();
+  endorsedChecksums.save();
+  extensionChecksums.save();
+  managedLibs.save();
+  managedEndorsedLibs.save();
+  managedExtensionLibs.save();
+  managedConfigProps.save();
+  managedSysProps.save();
   if (restart) {
     updateStatus("restarting",null);
     configProps.save();

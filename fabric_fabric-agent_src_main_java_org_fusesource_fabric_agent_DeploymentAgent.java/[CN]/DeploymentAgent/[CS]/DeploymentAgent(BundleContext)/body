@@ -1,0 +1,16 @@
+{
+  this.bundleContext=bundleContext;
+  this.systemBundleContext=bundleContext.getBundle(0).getBundleContext();
+  this.bundleChecksums=new Properties(bundleContext.getDataFile("bundle-checksums.properties"));
+  this.libChecksums=new Properties(bundleContext.getDataFile("lib-checksums.properties"));
+  this.endorsedChecksums=new Properties(bundleContext.getDataFile("endorsed-checksums.properties"));
+  this.extensionChecksums=new Properties(bundleContext.getDataFile("extension-checksums.properties"));
+  this.managedSysProps=new Properties(bundleContext.getDataFile("system.properties"));
+  this.managedConfigProps=new Properties(bundleContext.getDataFile("config.properties"));
+  this.managedLibs=new Properties(bundleContext.getDataFile("libs.properties"));
+  this.managedEndorsedLibs=new Properties(bundleContext.getDataFile("endorsed.properties"));
+  this.managedExtensionLibs=new Properties(bundleContext.getDataFile("extension.properties"));
+  MavenConfigurationImpl config=new MavenConfigurationImpl(new PropertiesPropertyResolver(System.getProperties()),"org.ops4j.pax.url.mvn");
+  config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
+  manager=new DownloadManager(config);
+}
