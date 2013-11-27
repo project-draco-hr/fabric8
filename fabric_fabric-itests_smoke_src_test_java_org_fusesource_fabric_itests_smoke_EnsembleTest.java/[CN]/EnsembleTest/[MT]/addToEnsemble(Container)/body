@@ -10,7 +10,7 @@
  catch (  CommandExecutionException e) {
     if (isRetriable(e)) {
       System.err.println("Retrying...");
-      Provision.containerAlive(Arrays.asList(getFabricService().getContainers()),PROVISION_TIMEOUT);
+      Provision.provisioningSuccess(Arrays.asList(getFabricService().getContainers()),PROVISION_TIMEOUT);
       System.err.println(executeCommand(sb.toString(),240000L,false));
     }
  else {
