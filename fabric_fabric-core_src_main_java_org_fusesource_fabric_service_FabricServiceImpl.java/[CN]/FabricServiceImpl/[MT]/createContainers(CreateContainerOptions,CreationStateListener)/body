@@ -37,6 +37,9 @@
         containerName=originalName;
       }
       optionsMap.put("name",containerName);
+      if (!hasValidDataStoreProperties(optionsMap)) {
+        optionsMap.put("dataStoreProperties",getDataStore().getDataStoreProperties());
+      }
       Class cl=options.getClass().getClassLoader().loadClass(options.getClass().getName() + "$Builder");
       CreateContainerBasicOptions.Builder builder=(CreateContainerBasicOptions.Builder)mapper.readValue(mapper.writeValueAsString(optionsMap),cl);
       final CreateContainerOptions containerOptions=builder.build();
