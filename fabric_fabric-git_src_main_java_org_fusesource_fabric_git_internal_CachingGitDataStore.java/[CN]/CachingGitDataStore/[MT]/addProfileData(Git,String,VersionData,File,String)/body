@@ -9,19 +9,17 @@
       if (files != null) {
         for (        File child : files) {
           if (child.isDirectory()) {
-            addProfileData(git,data,child,prefix + file.getName() + "-");
+            addProfileData(git,version,data,child,prefix + file.getName() + "-");
           }
         }
       }
       return;
     }
   }
-  long lastModified=file.lastModified();
-  File metadataFile=new File(file,AGENT_METADATA_FILE);
-  if (metadataFile.exists()) {
-    long modified=metadataFile.lastModified();
-    lastModified=Math.max(lastModified,modified);
-  }
+  String revision=git.getRepository().getRefDatabase().getRef(version).getObjectId().getName();
+  String path=convertProfileIdToDirectory(profile);
+  RevCommit commit=CommitUtils.getLastCommit(git.getRepository(),revision,CONFIGS_PROFILES + File.separator + path);
+  String lastModified=commit != null ? commit.getId().abbreviate(GIT_COMMIT_SHORT_LENGTH).name() : "";
   Map<String,byte[]> configurations=doGetFileConfigurations(git,profile);
   Map<String,Map<String,String>> substituted=new HashMap<String,Map<String,String>>();
   for (  Map.Entry<String,byte[]> entry : configurations.entrySet()) {

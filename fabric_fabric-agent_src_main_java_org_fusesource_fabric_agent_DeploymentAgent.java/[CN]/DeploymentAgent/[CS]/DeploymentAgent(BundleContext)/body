@@ -13,4 +13,22 @@
   MavenConfigurationImpl config=new MavenConfigurationImpl(new PropertiesPropertyResolver(System.getProperties()),"org.ops4j.pax.url.mvn");
   config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
   manager=new DownloadManager(config);
+  fabricService=new ServiceTracker<FabricService,FabricService>(systemBundleContext,FabricService.class,new ServiceTrackerCustomizer<FabricService,FabricService>(){
+    @Override public FabricService addingService(    ServiceReference<FabricService> reference){
+      FabricService service=systemBundleContext.getService(reference);
+      if (provisioningStatus != null) {
+        updateStatus(service,provisioningStatus,provisioningError,provisionList,false);
+      }
+      return service;
+    }
+    @Override public void modifiedService(    ServiceReference<FabricService> reference,    FabricService service){
+      if (provisioningStatus != null) {
+        updateStatus(service,provisioningStatus,provisioningError,provisionList,false);
+      }
+    }
+    @Override public void removedService(    ServiceReference<FabricService> reference,    FabricService service){
+    }
+  }
+);
+  fabricService.open();
 }

@@ -1,0 +1,34 @@
+{
+  try {
+    provisioningStatus=status;
+    provisioningError=result;
+    provisionList=resources;
+    if (fs != null) {
+      Container container=fs.getCurrentContainer();
+      String e;
+      if (result == null) {
+        e=null;
+      }
+ else {
+        StringWriter sw=new StringWriter();
+        result.printStackTrace(new PrintWriter(sw));
+        e=sw.toString();
+      }
+      if (resources != null) {
+        List<String> uris=new ArrayList<String>();
+        for (        Resource res : resources) {
+          uris.add(getUri(res));
+        }
+        container.setProvisionList(uris);
+      }
+      container.setProvisionResult(status);
+      container.setProvisionException(e);
+    }
+ else {
+      LOGGER.info("FabricService not available");
+    }
+  }
+ catch (  Throwable e) {
+    LOGGER.warn("Unable to set provisioning result");
+  }
+}
