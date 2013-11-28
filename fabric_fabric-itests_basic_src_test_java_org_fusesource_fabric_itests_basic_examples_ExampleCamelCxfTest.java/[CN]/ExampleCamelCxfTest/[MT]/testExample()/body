@@ -2,10 +2,15 @@
   System.err.println(executeCommand("fabric:create -n"));
   Set<Container> containers=ContainerBuilder.create().withName("child").withProfiles("example-camel-cxf").assertProvisioningResult().build();
   System.err.println(executeCommand("fabric:container-list"));
-  for (  Container container : containers) {
+  for (  final Container container : containers) {
+    Provision.waitForCondition(new Callable<Boolean>(){
+      @Override public Boolean call() throws Exception {
+        String response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin " + container.getId() + " camel:route-list | grep fabric-camel-cxf")).getPlain().toString();
+        return response.contains("fabric-camel-cxf");
+      }
+    }
+,10000L);
     System.err.println(executeCommand("fabric:container-connect -u admin -p admin " + container.getId() + " osgi:list"));
     System.err.println(executeCommand("fabric:container-connect -u admin -p admin " + container.getId() + " camel:route-list"));
-    String response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin " + container.getId() + " camel:route-list | grep fabric-camel-cxf")).getPlain().toString();
-    Assert.assertTrue(response.contains("fabric-camel-cxf"));
   }
 }

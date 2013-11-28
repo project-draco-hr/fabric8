@@ -1,0 +1,20 @@
+{
+  boolean done=condition.call();
+  Exception lastError=null;
+  for (long t=0; (!done && t < timeOut); t+=2000L) {
+    lastError=null;
+    try {
+      done=condition.call();
+    }
+ catch (    Exception e) {
+      lastError=e;
+    }
+    if (!done) {
+      Thread.sleep(2000L);
+    }
+  }
+  if (lastError != null) {
+    throw lastError;
+  }
+  return done;
+}
