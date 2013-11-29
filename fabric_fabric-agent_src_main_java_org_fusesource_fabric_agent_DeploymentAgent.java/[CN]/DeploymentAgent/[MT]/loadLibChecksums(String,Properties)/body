@@ -3,7 +3,7 @@
   if (!dir.exists() && !dir.mkdirs()) {
     throw new IOException("Failed to create fabric lib directory at:" + dir.getAbsolutePath());
   }
-  for (  String lib : dir.list(JAR_FILTER)) {
+  for (  String lib : dir.list()) {
     File f=new File(path,lib);
     props.put(lib,Long.toString(ChecksumUtils.checksum(new FileInputStream(f))));
   }
