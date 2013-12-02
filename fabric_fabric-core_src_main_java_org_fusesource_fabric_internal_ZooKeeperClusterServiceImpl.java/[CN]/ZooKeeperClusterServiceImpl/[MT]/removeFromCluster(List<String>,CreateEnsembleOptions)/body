@@ -2,10 +2,17 @@
   assertValid();
   try {
     List<String> current=getEnsembleContainers();
-    current.removeAll(containers);
+    for (    String c : containers) {
+      if (!current.contains(c)) {
+        throw new EnsembleModificationFailed("Container " + c + " is not part of the ensemble.",EnsembleModificationFailed.Reason.CONTAINERS_NOT_IN_ENSEMBLE);
+      }
+ else {
+        current.remove(c);
+      }
+    }
     createCluster(current,options);
   }
  catch (  Exception e) {
-    throw new FabricException("Unable to remove containers to fabric ensemble: " + e.getMessage(),e);
+    throw EnsembleModificationFailed.launderThrowable(e);
   }
 }
