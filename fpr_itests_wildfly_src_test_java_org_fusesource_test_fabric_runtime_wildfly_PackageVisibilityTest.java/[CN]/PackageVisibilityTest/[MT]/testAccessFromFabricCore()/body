@@ -1,0 +1,13 @@
+{
+  ModuleLoader modloader=Module.getCallerModuleLoader();
+  Module core=modloader.loadModule(ModuleIdentifier.fromString("org.fusesource.fabric.core"));
+  Class<?> clazz=core.getClassLoader().loadClass("org.apache.felix.utils.properties.Properties");
+  ModuleClassLoader classLoader=(ModuleClassLoader)clazz.getClassLoader();
+  Assert.assertEquals("org.fusesource.fabric.core",classLoader.getModule().getIdentifier().getName());
+  try {
+    core.getClassLoader().loadClass("org.fusesource.fabric.zookeeper.internal.SimplePathTemplate");
+    Assert.fail("ClassNotFoundException expected");
+  }
+ catch (  ClassNotFoundException ex) {
+  }
+}

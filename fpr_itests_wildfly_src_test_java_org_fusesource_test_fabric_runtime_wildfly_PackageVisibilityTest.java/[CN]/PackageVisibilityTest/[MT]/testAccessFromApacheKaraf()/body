@@ -1,0 +1,7 @@
+{
+  ModuleLoader modloader=Module.getCallerModuleLoader();
+  Module core=modloader.loadModule(ModuleIdentifier.fromString("org.apache.karaf"));
+  Class<?> clazz=core.getClassLoader().loadClass("org.apache.felix.utils.properties.Properties");
+  ModuleClassLoader classLoader=(ModuleClassLoader)clazz.getClassLoader();
+  Assert.assertEquals("org.apache.karaf",classLoader.getModule().getIdentifier().getName());
+}
