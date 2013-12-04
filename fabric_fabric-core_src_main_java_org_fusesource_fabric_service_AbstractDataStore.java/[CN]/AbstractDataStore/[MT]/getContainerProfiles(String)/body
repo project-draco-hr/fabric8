@@ -1,8 +1,13 @@
 {
   assertValid();
   try {
-    String versionId=getStringData(getTreeCache(),ZkPath.CONFIG_CONTAINER.getPath(containerId));
-    String str=getStringData(getTreeCache(),ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId));
+    String str=null;
+    if (Strings.isNotBlank(containerId)) {
+      String versionId=getStringData(getTreeCache(),ZkPath.CONFIG_CONTAINER.getPath(containerId));
+      if (Strings.isNotBlank(versionId)) {
+        str=getStringData(getTreeCache(),ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId));
+      }
+    }
     return str == null || str.isEmpty() ? Collections.<String>emptyList() : Arrays.asList(str.trim().split(" +"));
   }
  catch (  Exception e) {
