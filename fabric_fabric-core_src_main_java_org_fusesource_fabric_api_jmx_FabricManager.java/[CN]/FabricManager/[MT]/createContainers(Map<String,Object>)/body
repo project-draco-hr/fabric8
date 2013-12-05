@@ -34,6 +34,7 @@
   Map<String,String> rc=new HashMap<String,String>();
   for (  CreateContainerMetadata<?> metadata : metadatas) {
     if (!metadata.isSuccess()) {
+      LOG.warn("Failed to create container {}: ",metadata.getContainerName(),metadata.getFailure());
       rc.put(metadata.getContainerName(),metadata.getFailure().getMessage());
     }
   }
