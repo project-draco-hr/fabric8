@@ -3,30 +3,23 @@
   if (installed.isEmpty()) {
     try {
       Map<String,Map<String,Feature>> allFeatures=getFeatures(listProfileRepositories());
-      Container container=fabricService.get().getCurrentContainer();
-      Profile[] profiles=container.getProfiles();
-      if (profiles != null) {
-        for (        Profile profile : profiles) {
-          List<String> featureNames=profile.getFeatures();
-          for (          String featureName : featureNames) {
-            try {
-              Feature f;
-              if (featureName.contains("/")) {
-                String[] parts=featureName.split("/");
-                String name=parts[0];
-                String version=parts[1];
-                f=allFeatures.get(name).get(version);
-              }
- else {
-                TreeMap<String,Feature> versionMap=(TreeMap<String,Feature>)allFeatures.get(featureName);
-                f=versionMap.lastEntry().getValue();
-              }
-              addFeatures(f,installed);
-            }
- catch (            Exception ex) {
-              LOGGER.debug("Error while adding {} to the features list");
-            }
+      for (      String featureName : getAllProfilesOverlay().getFeatures()) {
+        try {
+          Feature f;
+          if (featureName.contains("/")) {
+            String[] parts=featureName.split("/");
+            String name=parts[0];
+            String version=parts[1];
+            f=allFeatures.get(name).get(version);
           }
+ else {
+            TreeMap<String,Feature> versionMap=(TreeMap<String,Feature>)allFeatures.get(featureName);
+            f=versionMap.lastEntry().getValue();
+          }
+          addFeatures(f,installed);
+        }
+ catch (        Exception ex) {
+          LOGGER.debug("Error while adding {} to the features list");
         }
       }
     }

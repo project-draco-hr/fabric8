@@ -1,0 +1,7 @@
+{
+  FabricService service=fabricService.get();
+  Container container=service.getCurrentContainer();
+  Version version=container.getVersion();
+  Profile p=new VersionProfile(version);
+  return new ProfileOverlayImpl(p,true,service.getDataStore(),service.getEnvironment());
+}

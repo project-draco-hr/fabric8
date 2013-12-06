@@ -2,18 +2,9 @@
   assertValid();
   if (repositories.isEmpty()) {
     Set<String> repositoryUris=new LinkedHashSet<String>();
-    Container container=fabricService.get().getCurrentContainer();
-    Version version=container.getVersion();
-    Profile[] profiles=version.getProfiles();
-    if (profiles != null) {
-      for (      Profile profile : profiles) {
-        if (profile.getRepositories() != null) {
-          for (          String uri : profile.getRepositories()) {
-            repositoryUris.add(uri);
-            addRepositoryUri(uri,repositoryUris);
-          }
-        }
-      }
+    for (    String uri : getAllProfilesOverlay().getRepositories()) {
+      repositoryUris.add(uri);
+      addRepositoryUri(uri,repositoryUris);
     }
     for (    String uri : repositoryUris) {
       try {
