@@ -1,7 +1,8 @@
 {
-  realm=configuration != null && configuration.containsKey(REALM_PROPERTY_NAME) ? (String)configuration.get(REALM_PROPERTY_NAME) : DEFAULT_REALM;
-  role=configuration != null && configuration.containsKey(ROLE_PROPERTY_NAME) ? (String)configuration.get(ROLE_PROPERTY_NAME) : DEFAULT_ROLE;
-  registerServlet();
+  RuntimeProperties sysprops=runtimeProperties.get();
+  String realm=getConfiguredRealm(sysprops,configuration);
+  String role=getConfiguredRole(sysprops,configuration);
+  registerServlet(sysprops,realm,role);
   activateComponent();
   group=new ZooKeeperGroup<GitNode>(curator.get(),ZkPath.GIT.getPath(),GitNode.class);
   group.add(this);

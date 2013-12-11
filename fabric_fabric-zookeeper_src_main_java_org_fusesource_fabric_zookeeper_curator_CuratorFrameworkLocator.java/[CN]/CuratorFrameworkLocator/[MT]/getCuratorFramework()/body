@@ -1,0 +1,19 @@
+{
+  CuratorFramework curator=null;
+  ClassLoader classLoader=CuratorFrameworkLocator.class.getClassLoader();
+  if (classLoader instanceof BundleReference) {
+    Bundle bundle=((BundleReference)classLoader).getBundle();
+    BundleContext bundleContext=bundle.getBundleContext();
+    if (bundleContext != null) {
+      BundleContext syscontext=bundleContext.getBundle(0).getBundleContext();
+      org.osgi.framework.ServiceReference<CuratorFramework> sref=syscontext.getServiceReference(CuratorFramework.class);
+      if (sref != null) {
+        curator=syscontext.getService(sref);
+      }
+    }
+  }
+ else {
+    throw new UnsupportedOperationException("Cannot obtain curator using: " + classLoader);
+  }
+  return curator;
+}

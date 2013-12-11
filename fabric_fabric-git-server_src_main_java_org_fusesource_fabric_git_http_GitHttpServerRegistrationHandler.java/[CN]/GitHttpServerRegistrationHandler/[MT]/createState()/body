@@ -1,5 +1,9 @@
 {
-  String fabricRepoUrl="${zk:" + KARAF_NAME + "/http}/git/fabric/";
+  RuntimeProperties sysprops=runtimeProperties.get();
+  TargetContainer runtimeType=TargetContainer.getTargetContainer(sysprops);
+  String context=runtimeType == TargetContainer.KARAF ? "" : "/fabric";
+  String karafName=sysprops.getProperty(SystemProperties.KARAF_NAME);
+  String fabricRepoUrl="${zk:" + karafName + "/http}"+ context+ "/git/fabric/";
   GitNode state=new GitNode();
   state.setId("fabric-repo");
   if (group != null && group.isMaster()) {

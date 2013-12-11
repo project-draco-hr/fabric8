@@ -1,0 +1,13 @@
+{
+  if (principals.isEmpty()) {
+    return false;
+  }
+  RolePolicy policy=RolePolicy.getPolicy(rolePolicy);
+  if (policy != null && roleDiscriminator != null) {
+    policy.handleRoles(subject,principals,roleDiscriminator);
+  }
+ else {
+    subject.getPrincipals().addAll(principals);
+  }
+  return true;
+}

@@ -2,24 +2,9 @@
   assertValid();
   try {
     componentContext.disableComponent(BootstrapConfiguration.COMPONENT_NAME);
-    Configuration[] configs=configAdmin.get().listConfigurations("(|(service.factoryPid=org.fusesource.fabric.zookeeper.server)(service.pid=org.fusesource.fabric.zookeeper))");
-    if (configs != null && configs.length > 0) {
-      for (      Configuration config : configs) {
-        config.delete();
-      }
-    }
-    File zkDir=new File("data/zookeeper");
-    if (zkDir.isDirectory()) {
-      File newZkDir=new File("data/zookeeper." + System.currentTimeMillis());
-      if (!zkDir.renameTo(newZkDir)) {
-        newZkDir=zkDir;
-      }
-      delete(newZkDir);
-    }
-    File gitDir=new File("data/git");
-    if (gitDir.isDirectory()) {
-      delete(gitDir);
-    }
+    cleanConfigurations();
+    cleanZookeeperDirectory();
+    cleanGitDirectory();
     componentContext.enableComponent(BootstrapConfiguration.COMPONENT_NAME);
   }
  catch (  RuntimeException rte) {

@@ -1,35 +1,21 @@
 {
-  debug="true".equalsIgnoreCase((String)options.get("debug"));
-  CuratorFramework curator=ZOOKEEPER_CONTEXT.get();
-  if (curator == null) {
-    BundleContext bundleContext=((BundleReference)getClass().getClassLoader()).getBundle().getBundleContext();
-    encryptionSupport=new EncryptionSupport(options);
-    ServiceReference serviceReference=bundleContext.getServiceReference(CuratorFramework.class.getName());
-    if (serviceReference != null) {
-      try {
-        curator=(CuratorFramework)bundleContext.getService(serviceReference);
-        users=getProperties(curator,ZookeeperBackingEngine.USERS_NODE);
-        containers=getContainerTokens(curator);
-      }
- catch (      Exception e) {
-        LOG.warn("Failed fetching authentication data.",e);
-      }
- finally {
-        bundleContext.ungetService(serviceReference);
-      }
+  this.callbackHandler=callbackHandler;
+  this.subject=subject;
+  this.roleDiscriminator=(String)options.get("role.discriminator");
+  this.rolePolicy=(String)options.get("role.policy");
+  this.encryptionSupport=new BasicEncryptionSupport(options);
+  this.debug=Boolean.parseBoolean((String)options.get("debug"));
+  try {
+    CuratorFramework curator=CuratorFrameworkLocator.getCuratorFramework();
+    if (curator != null) {
+      users=ZooKeeperUtils.getProperties(curator,ZookeeperBackingEngine.USERS_NODE);
+      containers=ZooKeeperUtils.getContainerTokens(curator);
+    }
+    if (debug) {
+      LOG.debug("Initialize [" + this + "] - curator="+ curator+ ",users="+ users);
     }
   }
- else {
-    try {
-      users=getProperties(curator,ZookeeperBackingEngine.USERS_NODE);
-      containers=getContainerTokens(curator);
-    }
- catch (    Exception e) {
-      LOG.warn("Failed fetching authentication data.",e);
-    }
+ catch (  Exception e) {
+    LOG.warn("Failed fetching authentication data.",e);
   }
-  if (encryptionSupport == null) {
-    encryptionSupport=new BasicEncryptionSupport(options);
-  }
-  super.initialize(subject,callbackHandler,options);
 }

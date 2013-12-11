@@ -18,9 +18,15 @@
       FetchResult result=git.fetch().setTimeout(10).setCredentialsProvider(credentialsProvider).setRemote(remoteRef.get()).call();
       if (Strings.isNullOrBlank(result.getMessages()))       ;
       LOG.debug(result.getMessages());
+      lastFetchWarning=null;
     }
- catch (    Exception e) {
-      LOG.warn("Fetch failed. The error will be ignored.",e);
+ catch (    Exception ex) {
+      String fetchWarning=ex.getMessage();
+      if (!fetchWarning.equals(lastFetchWarning)) {
+        LOG.warn("Fetch failed because of: " + fetchWarning);
+        LOG.debug("Fetch failed - the error will be ignored",ex);
+        lastFetchWarning=fetchWarning;
+      }
       return;
     }
     Map<String,Ref> localBranches=new HashMap<String,Ref>();
@@ -76,7 +82,7 @@
     if (hasChanged) {
       LOG.debug("Changed after pull!");
       if (credentialsProvider != null) {
-        File profilesDirectory=getProfilesDirectory(git);
+        getProfilesDirectory(git);
       }
       fireChangeNotifications();
     }

@@ -1,57 +1,60 @@
 {
-  Callback[] callbacks=new Callback[2];
-  callbacks[0]=new NameCallback("Username: ");
-  callbacks[1]=new PasswordCallback("Password: ",false);
+  boolean result;
+  String user=null;
   try {
-    callbackHandler.handle(callbacks);
-  }
- catch (  IOException ioe) {
-    throw new LoginException(ioe.getMessage());
-  }
-catch (  UnsupportedCallbackException uce) {
-    throw new LoginException(uce.getMessage() + " not available to obtain information from user");
-  }
-  user=((NameCallback)callbacks[0]).getName();
-  char[] tmpPassword=((PasswordCallback)callbacks[1]).getPassword();
-  if (tmpPassword == null) {
-    tmpPassword=new char[0];
-  }
-  if (user == null) {
-    throw new FailedLoginException("user name is null");
-  }
-  if (isContainerLogin(user)) {
-    String token=containers.getProperty(user);
-    if (token == null) {
-      throw new FailedLoginException("Container doesn't exist");
+    Callback[] callbacks=new Callback[2];
+    callbacks[0]=new NameCallback("Username: ");
+    callbacks[1]=new PasswordCallback("Password: ",false);
+    try {
+      callbackHandler.handle(callbacks);
     }
-    if (!new String(tmpPassword).equals(token)) {
-      throw new FailedLoginException("Tokens do not match");
+ catch (    IOException ioe) {
+      throw new LoginException(ioe.getMessage());
     }
-    principals=new HashSet<Principal>();
-    principals.add(new UserPrincipal(user));
-    principals.add(new RolePrincipal("container"));
-    principals.add(new RolePrincipal("admin"));
-    subject.getPrivateCredentials().add(new String(tmpPassword));
-  }
+catch (    UnsupportedCallbackException uce) {
+      throw new LoginException(uce.getMessage() + " not available to obtain information from user");
+    }
+    user=((NameCallback)callbacks[0]).getName();
+    if (user == null)     throw new FailedLoginException("user name is null");
+    char[] tmpPassword=((PasswordCallback)callbacks[1]).getPassword();
+    if (tmpPassword == null) {
+      tmpPassword=new char[0];
+    }
+    if (debug)     LOG.debug("Login [" + this + "] - user="+ user+ ",users="+ users);
+    if (ZooKeeperUtils.isContainerLogin(user)) {
+      String token=containers.getProperty(user);
+      if (token == null)       throw new FailedLoginException("Container doesn't exist");
+      if (!new String(tmpPassword).equals(token))       throw new FailedLoginException("Tokens do not match");
+      principals=new HashSet<Principal>();
+      principals.add(new UserPrincipal(user));
+      principals.add(new RolePrincipal("container"));
+      principals.add(new RolePrincipal("admin"));
+      subject.getPrivateCredentials().add(new String(tmpPassword));
+      result=true;
+    }
  else {
-    String userInfos=users.getProperty(user);
-    if (userInfos == null) {
-      throw new FailedLoginException("User doesn't exist");
+      String userInfos=users.getProperty(user);
+      if (userInfos == null)       throw new FailedLoginException("User doesn't exist");
+      String[] infos=userInfos.split(",");
+      String password=infos[0];
+      if (!checkPassword(new String(tmpPassword),password))       throw new FailedLoginException("Password does not match");
+      principals=new HashSet<Principal>();
+      principals.add(new UserPrincipal(user));
+      for (int i=1; i < infos.length; i++) {
+        principals.add(new RolePrincipal(infos[i]));
+      }
+      subject.getPrivateCredentials().add(new String(tmpPassword));
+      result=true;
     }
-    String[] infos=userInfos.split(",");
-    String password=infos[0];
-    if (!checkPassword(new String(tmpPassword),password)) {
-      throw new FailedLoginException("Password does not match");
+  }
+ catch (  LoginException ex) {
+    if (debug) {
+      LOG.debug("Login failed {}",user,ex);
     }
-    principals=new HashSet<Principal>();
-    principals.add(new UserPrincipal(user));
-    for (int i=1; i < infos.length; i++) {
-      principals.add(new RolePrincipal(infos[i]));
-    }
-    subject.getPrivateCredentials().add(new String(tmpPassword));
+    throw ex;
   }
   if (debug) {
     LOG.debug("Successfully logged in {}",user);
   }
-  return true;
+  return result;
 }

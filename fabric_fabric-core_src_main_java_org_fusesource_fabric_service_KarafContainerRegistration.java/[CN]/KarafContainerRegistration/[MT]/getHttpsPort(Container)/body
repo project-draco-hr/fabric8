@@ -1,3 +1,5 @@
 {
-  return getOrAllocatePortForKey(container,HTTP_PID,HTTPS_BINDING_PORT_KEY,Ports.DEFAULT_HTTPS_PORT);
+  String portProperty=runtimeProperties.get().getProperty(HTTPS_BINDING_PORT_KEY);
+  int defaultPort=portProperty != null ? Integer.parseInt(portProperty) : Ports.DEFAULT_HTTPS_PORT;
+  return getOrAllocatePortForKey(container,HTTP_PID,HTTPS_BINDING_PORT_KEY,defaultPort);
 }
