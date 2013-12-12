@@ -1,0 +1,129 @@
+{
+  Container[] containers=service.getContainers();
+  if (nameNode == null || dataNodes.isEmpty()) {
+    throw new IllegalArgumentException("The name node and at least one data node must be specified");
+  }
+  if (!taskTrackers.isEmpty() && jobTracker == null) {
+    throw new IllegalArgumentException("Can not specify task trackers if no job tracker is specified");
+  }
+  if (taskTrackers.isEmpty() && jobTracker != null) {
+    throw new IllegalArgumentException("At least one task tracker node must be specified");
+  }
+  if (!createChildren) {
+    if (findContainer(containers,nameNode) == null) {
+      throw new IllegalStateException("Container " + nameNode + " does not exists");
+    }
+    if (secondaryNameNode != null && findContainer(containers,secondaryNameNode) == null) {
+      throw new IllegalStateException("Container " + secondaryNameNode + " does not exists");
+    }
+    for (    String n : dataNodes) {
+      if (findContainer(containers,n) == null) {
+        throw new IllegalStateException("Container " + n + " does not exists");
+      }
+    }
+    if (jobTracker != null && findContainer(containers,jobTracker) == null) {
+      throw new IllegalStateException("Container " + jobTracker + " does not exists");
+    }
+    for (    String n : taskTrackers) {
+      if (findContainer(containers,n) == null) {
+        throw new IllegalStateException("Container " + n + " does not exists");
+      }
+    }
+  }
+  for (  String p : Arrays.asList("hadoop-" + name,"hadoop-" + name + "-namenode","hadoop-" + name + "-secondary-namenode","hadoop-" + name + "-datanode","hadoop-" + name + "-job-tracker","hadoop-" + name + "-task-tracker","insight-hdfs-" + name)) {
+    Profile profile=null;
+    try {
+      profile=service.getDefaultVersion().getProfile(p);
+    }
+ catch (    Throwable t) {
+    }
+    if (profile != null) {
+      if (force) {
+        profile.delete();
+      }
+ else {
+        throw new IllegalStateException("Profile " + profile.getId() + " already exists. Use --force to recreate the profiles.");
+      }
+    }
+  }
+  Version version=service.getDefaultVersion();
+  Profile hadoop=version.getProfile("hadoop");
+  Map<String,Map<String,String>> configs;
+  Profile cluster=version.createProfile("hadoop-" + name);
+  cluster.setParents(new Profile[]{hadoop});
+  configs=new HashMap<String,Map<String,String>>();
+  configs.put("io.fabric.hadoop",new HashMap<String,String>());
+  configs.get("io.fabric.hadoop").put("fs.default.name","hdfs://${zk:" + nameNode + "/ip}:9000");
+  configs.get("io.fabric.hadoop").put("dfs.http.address","hdfs://${zk:" + nameNode + "/ip}:9002");
+  cluster.setConfigurations(configs);
+  Profile nameNodeProfile=version.createProfile("hadoop-" + name + "-namenode");
+  nameNodeProfile.setParents(new Profile[]{cluster});
+  configs=new HashMap<String,Map<String,String>>();
+  configs.put("io.fabric.hadoop",new HashMap<String,String>());
+  configs.get("io.fabric.hadoop").put("nameNode","true");
+  nameNodeProfile.setConfigurations(configs);
+  Profile secondaryNameNodeProfile=version.createProfile("hadoop-" + name + "-secondary-namenode");
+  secondaryNameNodeProfile.setParents(new Profile[]{cluster});
+  configs=new HashMap<String,Map<String,String>>();
+  configs.put("io.fabric.hadoop",new HashMap<String,String>());
+  configs.get("io.fabric.hadoop").put("secondaryNameNode","true");
+  secondaryNameNodeProfile.setConfigurations(configs);
+  Profile dataNodeProfile=version.createProfile("hadoop-" + name + "-datanode");
+  dataNodeProfile.setParents(new Profile[]{cluster});
+  configs=new HashMap<String,Map<String,String>>();
+  configs.put("io.fabric.hadoop",new HashMap<String,String>());
+  configs.get("io.fabric.hadoop").put("dataNode","true");
+  dataNodeProfile.setConfigurations(configs);
+  Profile jobTrackerProfile=version.createProfile("hadoop-" + name + "-job-tracker");
+  jobTrackerProfile.setParents(new Profile[]{cluster});
+  configs=new HashMap<String,Map<String,String>>();
+  configs.put("io.fabric.hadoop",new HashMap<String,String>());
+  configs.get("io.fabric.hadoop").put("jobTracker","true");
+  jobTrackerProfile.setConfigurations(configs);
+  Profile taskTrackerProfile=version.createProfile("hadoop-" + name + "-task-tracker");
+  taskTrackerProfile.setParents(new Profile[]{cluster});
+  configs=new HashMap<String,Map<String,String>>();
+  configs.put("io.fabric.hadoop",new HashMap<String,String>());
+  configs.get("io.fabric.hadoop").put("taskTracker","true");
+  taskTrackerProfile.setConfigurations(configs);
+  Profile insightProfile=version.createProfile("insight-hdfs-" + name);
+  insightProfile.setParents(new Profile[]{version.getProfile("insight-hdfs")});
+  configs=new HashMap<String,Map<String,String>>();
+  configs.put("org.fusesource.insight.elasticsearch-default",new HashMap<String,String>());
+  configs.get("org.fusesource.insight.elasticsearch-default").put("gateway.hdfs.uri","hdfs://${zk:" + nameNode + "/ip}:9000");
+  insightProfile.setConfigurations(configs);
+  Container nameNodeContainer=findContainer(containers,nameNode);
+  if (nameNodeContainer == null && createChildren) {
+    nameNodeContainer=createChild(nameNode);
+  }
+  addProfile(nameNodeContainer,nameNodeProfile);
+  if (secondaryNameNode != null) {
+    Container secondaryNameNodeContainer=findContainer(containers,secondaryNameNode);
+    if (secondaryNameNodeContainer == null && createChildren) {
+      secondaryNameNodeContainer=createChild(secondaryNameNode);
+    }
+    addProfile(secondaryNameNodeContainer,secondaryNameNodeProfile);
+  }
+  for (  String n : dataNodes) {
+    Container cont=findContainer(containers,n);
+    if (cont == null) {
+      cont=createChild(n);
+    }
+    addProfile(cont,dataNodeProfile);
+  }
+  if (jobTracker != null) {
+    Container jobTrackerContainer=findContainer(containers,jobTracker);
+    if (jobTrackerContainer == null && createChildren) {
+      jobTrackerContainer=createChild(jobTracker);
+    }
+    addProfile(jobTrackerContainer,jobTrackerProfile);
+  }
+  for (  String n : taskTrackers) {
+    Container cont=findContainer(containers,n);
+    if (cont == null) {
+      cont=createChild(n);
+    }
+    addProfile(cont,taskTrackerProfile);
+  }
+  return null;
+}
