@@ -6,7 +6,7 @@
   Assert.assertEquals("manualip",getSubstitutedPath(curator,ZkPath.CONTAINER_RESOLVER.getPath(child.getId())));
   Assert.assertEquals("manualip",getFabricService().getCurrentContainer().getResolver());
   waitForFabricCommands();
-  new BundleUtils(bundleContext).findAndStopBundle("io.fabric.fabric-configadmin");
+  new BundleUtils(bundleContext).findAndStopBundle("io.fabric8.fabric-configadmin");
   System.err.println(executeCommand("fabric:container-resolver-set --container root localip"));
   Assert.assertEquals("localip",getSubstitutedPath(curator,ZkPath.CONTAINER_RESOLVER.getPath(child.getId())));
 }
