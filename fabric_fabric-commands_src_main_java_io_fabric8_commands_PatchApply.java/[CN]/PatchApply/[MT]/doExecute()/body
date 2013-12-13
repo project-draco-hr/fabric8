@@ -1,0 +1,10 @@
+{
+  Version v=null;
+  if (version != null && !version.isEmpty()) {
+    v=fabricService.getVersion(version);
+  }
+  username=username != null && !username.isEmpty() ? username : ShellUtils.retrieveFabricUser(session);
+  password=password != null ? password : ShellUtils.retrieveFabricUserPassword(session);
+  fabricService.getPatchService().applyPatch(v,patch,username,password);
+  return null;
+}

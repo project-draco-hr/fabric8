@@ -1,36 +1,24 @@
 {
-  System.setProperty(ShutdownHooks.JLINE_SHUTDOWNHOOK,"true");
-  AnsiConsole.systemInstall();
-  for (  String arg : args) {
-    int idx=arg.indexOf('=');
-    if (idx > 0) {
-      System.setProperty(arg.substring(0,idx),arg.substring(idx + 1));
-    }
+  File patch;
+  File base;
+  if (args.length < 1) {
+    help();
+    return;
   }
-  List<String> repos=new ArrayList<String>();
-  String repoStr=System.getProperty(REPOSITORIES,DEFAULT_REPOSITORIES);
-  for (  String repo : repoStr.split(",")) {
-    repo=repo.trim();
-    if (!repo.endsWith("/")) {
-      repo+="/";
-    }
-    repos.add(repo);
+  patch=new File(args[0]);
+  if (!patch.isFile()) {
+    System.err.println("Invalid patch file");
+    return;
   }
-  List<String> artifacts=new ArrayList<String>();
-  String artifactStr=System.getProperty(ARTIFACTS,DEFAULT_ARTIFACTS);
-  for (  String artifact : artifactStr.split(",")) {
-    artifact=artifact.trim();
-    artifacts.add(artifact);
+  if (args.length > 1) {
+    base=new File(args[1]);
   }
-  File cache=new File(System.getProperty(CACHE,DEFAULT_CACHE));
-  Main main=new Main(repos,artifacts,cache);
-  try {
-    main.run();
+ else {
+    base=new File(System.getProperty("karaf.base"));
   }
- catch (  Throwable t) {
-    t.printStackTrace();
+  if (!new File(base,"system").isDirectory() || !new File(base,"etc").isDirectory()) {
+    System.err.println("Invalid karaf-base parameter");
+    return;
   }
- finally {
-    main.destroy();
-  }
+  new Offline(base).apply(patch);
 }

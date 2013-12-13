@@ -1,0 +1,19 @@
+{
+  try {
+    byte[] buffer=new byte[8192];
+    int len;
+    for (; ; ) {
+      len=inputStream.read(buffer);
+      if (len > 0) {
+        outputStream.write(buffer,0,len);
+      }
+ else {
+        outputStream.flush();
+        break;
+      }
+    }
+  }
+  finally {
+    close(inputStream,outputStream);
+  }
+}

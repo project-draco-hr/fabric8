@@ -37,6 +37,8 @@
   }
   try {
     applyChanges(toUpdate);
+    writeFully(new File(System.getProperty("karaf.base"),"etc/startup.properties"),((ResultImpl)result).getStartup());
+    writeFully(new File(System.getProperty("karaf.base"),"etc/overrides.properties"),((ResultImpl)result).getOverrides());
   }
  catch (  Exception e) {
     throw new PatchException("Unable to rollback patch " + patch.getId() + ": "+ e.getMessage(),e);

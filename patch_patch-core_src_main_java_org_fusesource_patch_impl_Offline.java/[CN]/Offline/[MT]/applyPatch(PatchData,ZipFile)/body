@@ -1,0 +1,121 @@
+{
+  log(DEBUG,"Applying patch: " + patch.getId() + " / "+ patch.getDescription());
+  File startupFile=new File(karafBase,"etc/startup.properties");
+  File overridesFile=new File(karafBase,"etc/overrides.properties");
+  List<String> startup=readLines(new File(karafBase,"etc/startup.properties"));
+  List<String> overrides=readLines(overridesFile);
+  List<Artifact> toExtract=new ArrayList<Artifact>();
+  List<Artifact> toDelete=new ArrayList<Artifact>();
+  for (  String bundle : patch.getBundles()) {
+    Artifact artifact=mvnurlToArtifact(bundle,true);
+    if (artifact == null) {
+      continue;
+    }
+    VersionRange range;
+    Version oVer=VersionTable.getVersion(artifact.getVersion());
+    String vr=patch.getVersionRange(bundle);
+    String override;
+    if (vr != null && !vr.isEmpty()) {
+      override=bundle + OVERRIDE_RANGE + vr;
+      range=VersionRange.parseVersionRange(vr);
+    }
+ else {
+      override=bundle;
+      Version v1=new Version(oVer.getMajor(),oVer.getMinor(),0);
+      Version v2=new Version(oVer.getMajor(),oVer.getMinor() + 1,0);
+      range=new VersionRange(false,v1,v2,true);
+    }
+    boolean matching=false;
+    boolean added=false;
+    for (int i=0; i < overrides.size(); i++) {
+      String line=overrides.get(i).trim();
+      if (!line.isEmpty() && !line.startsWith("#")) {
+        Artifact overrideArtifact=mvnurlToArtifact(line,true);
+        if (overrideArtifact != null) {
+          Version ver=VersionTable.getVersion(overrideArtifact.getVersion());
+          if (isSameButVersion(artifact,overrideArtifact) && range.contains(ver)) {
+            matching=true;
+            if (ver.compareTo(oVer) < 0) {
+              overrides.set(i,override);
+              if (!added) {
+                log(DEBUG,"Replacing with artifact: " + override);
+                added=true;
+              }
+              toDelete.add(overrideArtifact);
+              toExtract.remove(overrideArtifact);
+            }
+          }
+        }
+ else {
+          log(WARN,"Unable to convert to artifact: " + line);
+        }
+      }
+    }
+    if (!matching) {
+      overrides.add(override);
+      log(DEBUG,"Adding artifact: " + override);
+    }
+    for (int i=0; i < startup.size(); i++) {
+      String line=startup.get(i).trim();
+      if (!line.isEmpty() && !line.startsWith("#")) {
+        int index=line.indexOf('=');
+        String mvnUrl=pathToMvnurl(line.substring(0,index));
+        if (mvnUrl != null) {
+          Artifact startupArtifact=mvnurlToArtifact(mvnUrl,true);
+          if (startupArtifact != null) {
+            Version ver=VersionTable.getVersion(startupArtifact.getVersion());
+            if (isSameButVersion(artifact,startupArtifact) && range.contains(ver)) {
+              matching=true;
+              if (ver.compareTo(oVer) < 0) {
+                line=artifact.getPath() + line.substring(index);
+                startup.set(i,line);
+                log(DEBUG,"Overwriting startup.properties with: " + artifact);
+                added=true;
+              }
+            }
+          }
+        }
+      }
+    }
+    if (!matching || added) {
+      toExtract.add(artifact);
+    }
+  }
+  if (zipFile != null) {
+    for (    Artifact artifact : toExtract) {
+      log(DEBUG,"Extracting artifact: " + artifact);
+      ZipEntry entry=zipFile.getEntry("repository/" + artifact.getPath());
+      if (entry == null) {
+        log(ERROR,"Could not find artifact in patch zip: " + artifact);
+        continue;
+      }
+      File f=new File(karafBase,"system/" + artifact.getPath());
+      if (!f.isFile()) {
+        f.getParentFile().mkdirs();
+        InputStream fis=zipFile.getInputStream(entry);
+        FileOutputStream fos=new FileOutputStream(f);
+        try {
+          copy(fis,fos);
+        }
+  finally {
+          close(fis,fos);
+        }
+      }
+    }
+    for (    Artifact artifact : toDelete) {
+      String fileName=artifact.getPath();
+      File file=new File(karafBase,"system/" + fileName);
+      if (file.exists()) {
+        log(DEBUG,"Removing old artifact " + artifact);
+        file.delete();
+      }
+ else {
+        log(WARN,"Could not find: " + file);
+      }
+    }
+  }
+  overrides=new ArrayList<String>(new HashSet<String>(overrides));
+  Collections.sort(overrides);
+  writeLines(overridesFile,overrides);
+  writeLines(startupFile,startup);
+}

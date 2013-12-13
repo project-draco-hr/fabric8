@@ -1,0 +1,14 @@
+{
+  if (!file.isFile()) {
+    return null;
+  }
+  Reader r=new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+  StringWriter w=new StringWriter();
+  try {
+    copy(r,w);
+    return w.toString();
+  }
+  finally {
+    close(r,w);
+  }
+}

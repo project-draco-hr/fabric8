@@ -1,0 +1,15 @@
+{
+  System.setProperty("karaf.home","target/home");
+  System.setProperty("karaf.default.repository","system");
+  System.setProperty("fuse.patch.location","target/patches");
+  PerfectusPatchServiceImpl service=new PerfectusPatchServiceImpl(null,null,null,null);
+  List<String> repos=Arrays.asList("https://repo.fusesource.com/nexus/content/repositories/ea");
+  long t0=System.currentTimeMillis();
+  Set<Patch> patches1=service.loadPerfectusPatches(repos,true);
+  long t1=System.currentTimeMillis();
+  Set<Patch> patches2=service.loadPerfectusPatches(repos,false);
+  long t2=System.currentTimeMillis();
+  assertEquals(patches1.size(),patches2.size());
+  assertTrue(t2 - t1 < (t1 - t0) / 2);
+  System.out.println(patches1);
+}

@@ -14,7 +14,9 @@
       String ol=props.getProperty(UPDATES + "." + Integer.toString(i)+ "."+ OLD_LOCATION);
       updates.add(new BundleUpdateImpl(sn,nv,nl,ov,ol));
     }
-    return new ResultImpl(patch,false,date,updates);
+    String startup=props.getProperty(STARTUP);
+    String overrides=props.getProperty(OVERRIDES);
+    return new ResultImpl(patch,false,date,updates,startup,overrides);
   }
   finally {
     close(is);

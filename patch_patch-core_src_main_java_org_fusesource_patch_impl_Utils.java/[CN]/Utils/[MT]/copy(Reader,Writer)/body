@@ -1,0 +1,19 @@
+{
+  try {
+    char[] buffer=new char[8192];
+    int len;
+    for (; ; ) {
+      len=reader.read(buffer);
+      if (len > 0) {
+        writer.write(buffer,0,len);
+      }
+ else {
+        writer.flush();
+        break;
+      }
+    }
+  }
+  finally {
+    close(reader,writer);
+  }
+}

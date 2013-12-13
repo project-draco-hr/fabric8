@@ -1,0 +1,31 @@
+{
+  getLog().info("Applyings patches to " + outputDirectory);
+  Offline offline=new Offline(outputDirectory,new Offline.Logger(){
+    @Override public void log(    int level,    String message){
+switch (level) {
+case Offline.DEBUG:
+        getLog().debug(message);
+      break;
+case Offline.INFO:
+    getLog().info(message);
+  break;
+case Offline.WARN:
+getLog().warn(message);
+break;
+case Offline.ERROR:
+getLog().error(message);
+break;
+}
+}
+}
+);
+try {
+for (File patch : patches) {
+getLog().info("Applying patch: " + patch);
+offline.apply(patch);
+}
+}
+ catch (Exception e) {
+throw new MojoFailureException("Error processing patches",e);
+}
+}

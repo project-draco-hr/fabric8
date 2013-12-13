@@ -1,0 +1,13 @@
+{
+  if (content == null) {
+    file.delete();
+  }
+  Reader r=new StringReader(content);
+  Writer w=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+  try {
+    copy(r,w);
+  }
+  finally {
+    close(r,w);
+  }
+}

@@ -4,6 +4,8 @@
     final Map<Bundle,String> toUpdate=new HashMap<Bundle,String>();
     Map<String,BundleUpdate> allUpdates=new HashMap<String,BundleUpdate>();
     for (    Patch patch : patches) {
+      String startup=readFully(new File(System.getProperty("karaf.base"),"etc/startup.properties"));
+      String overrides=readFully(new File(System.getProperty("karaf.base"),"etc/overrides.properties"));
       List<BundleUpdate> updates=new ArrayList<BundleUpdate>();
       Bundle[] allBundles=bundleContext.getBundles();
       for (      String url : patch.getBundles()) {
@@ -52,7 +54,8 @@
           System.err.printf("Skipping bundle %s - unable to process bundle without a version range configuration%n",url);
         }
       }
-      Result result=new ResultImpl(patch,simulate,System.currentTimeMillis(),updates);
+      new Offline(new File(System.getProperty("karaf.base"))).applyConfigChanges(((PatchImpl)patch).getPatch());
+      Result result=new ResultImpl(patch,simulate,System.currentTimeMillis(),updates,startup,overrides);
       results.put(patch.getId(),result);
     }
     System.out.println("Bundles to update:");
