@@ -1,11 +1,11 @@
 {
   ModuleLoader modloader=Module.getCallerModuleLoader();
-  Module core=modloader.loadModule(ModuleIdentifier.fromString("org.fusesource.fabric.core"));
+  Module core=modloader.loadModule(ModuleIdentifier.fromString("io.fabric8.core"));
   Class<?> clazz=core.getClassLoader().loadClass("org.apache.felix.utils.properties.Properties");
   ModuleClassLoader classLoader=(ModuleClassLoader)clazz.getClassLoader();
-  Assert.assertEquals("org.fusesource.fabric.core",classLoader.getModule().getIdentifier().getName());
+  Assert.assertEquals("io.fabric8.core",classLoader.getModule().getIdentifier().getName());
   try {
-    core.getClassLoader().loadClass("org.fusesource.fabric.zookeeper.internal.SimplePathTemplate");
+    core.getClassLoader().loadClass("io.fabric8.zookeeper.internal.SimplePathTemplate");
     Assert.fail("ClassNotFoundException expected");
   }
  catch (  ClassNotFoundException ex) {
