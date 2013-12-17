@@ -31,10 +31,6 @@
       if (exists(curator.get(),ZkPath.CONTAINER_ALIVE.getPath(container)) == null) {
         throw new EnsembleModificationFailed("The container " + container + " is not alive",EnsembleModificationFailed.Reason.CONTAINERS_NOT_ALIVE);
       }
-      String containerVersion=getStringData(curator.get(),ZkPath.CONFIG_CONTAINER.getPath(container));
-      if (!version.equals(containerVersion)) {
-        throw new EnsembleModificationFailed("The container " + container + " is not using the default-version:"+ version,EnsembleModificationFailed.Reason.ILLEGAL_STATE);
-      }
     }
     Map<String,List<Integer>> usedPorts=new HashMap<String,List<Integer>>();
     final String oldClusterId=getStringData(curator.get(),ZkPath.CONFIG_ENSEMBLES.getPath());
