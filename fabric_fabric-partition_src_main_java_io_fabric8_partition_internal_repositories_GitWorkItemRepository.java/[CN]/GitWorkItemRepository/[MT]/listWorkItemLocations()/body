@@ -1,0 +1,17 @@
+{
+  List<String> items=Lists.newArrayList();
+  try {
+    String version=dataStore.getContainerVersion(name);
+    Version v=fabricService.getVersion(version);
+    Profile p=v.getProfile(profile);
+    for (    String f : p.getFileConfigurations().keySet()) {
+      if (f.startsWith(folderPath)) {
+        items.add(f);
+      }
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.debug("Error getting work items from git repository. Returning empty.",e);
+  }
+  return items;
+}

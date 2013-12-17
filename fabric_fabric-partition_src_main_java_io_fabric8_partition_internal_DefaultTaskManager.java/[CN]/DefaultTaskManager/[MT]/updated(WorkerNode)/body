@@ -1,9 +1,0 @@
-{
-  Set<Partition> partitions=listNodePartitions(node);
-  Set<Partition> added=new LinkedHashSet<Partition>(Sets.difference(partitions,assignedPartitions));
-  Set<Partition> removed=new LinkedHashSet<Partition>(Sets.difference(assignedPartitions,partitions));
-  assignedPartitions.addAll(added);
-  assignedPartitions.removeAll(removed);
-  partitionListener.stop(taskId,taskDefinition,removed);
-  partitionListener.start(taskId,taskDefinition,added);
-}

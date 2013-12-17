@@ -1,0 +1,14 @@
+{
+  try {
+    ZooKeeperUtils.createDefault(curator,partitionsPath,null);
+    if (partitionCache == null) {
+      partitionCache=new PathChildrenCache(curator,partitionsPath,true,false,executorService);
+      partitionCache.getListenable().addListener(this);
+      partitionCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
+      partitionCache.rebuild();
+    }
+  }
+ catch (  Exception e) {
+    throw FabricException.launderThrowable(e);
+  }
+}

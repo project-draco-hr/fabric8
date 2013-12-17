@@ -1,9 +1,0 @@
-{
-  List<ChildData> childData=partitionCache.getCurrentData();
-  int totalItems=childData.size();
-  String[] partitions=Lists.transform(childData,ChildDataToPath.INSTANCE).toArray(new String[totalItems]);
-  Map<String,WorkerNode> groupMembers=group.members();
-  int totalMembers=groupMembers.size();
-  String[] members=groupMembers.keySet().toArray(new String[totalMembers]);
-  balancingPolicy.rebalance(taskId,partitions,members);
-}

@@ -1,0 +1,33 @@
+{
+  assertValid();
+  if (members == null || members.isEmpty()) {
+    return;
+  }
+  Multimap<String,String> distribution=LinkedHashMultimap.create();
+  Iterator<String> iterator=members.iterator();
+  for (  String item : workItems) {
+    if (!iterator.hasNext()) {
+      iterator=members.iterator();
+    }
+    String path=iterator.next();
+    distribution.put(path,item);
+  }
+  for (  String member : members) {
+    try {
+      WorkerNode node=mapper.readValue(curator.get().getData().forPath(member),WorkerNode.class);
+      Collection<String> assignedItems=distribution.get(member);
+      if (assignedItems != null) {
+        node.setItems(assignedItems.toArray(new String[assignedItems.size()]));
+      }
+ else {
+        node.setItems(new String[0]);
+      }
+      node.setDefinition(context.getDefinition());
+      String targetPath=ZkPath.TASK_MEMBER_PARTITIONS.getPath(node.getContainer(),context.getId());
+      curator.get().setData().forPath(targetPath,mapper.writeValueAsBytes(node));
+    }
+ catch (    Exception ex) {
+      LOGGER.error("Error while assigning work",ex);
+    }
+  }
+}

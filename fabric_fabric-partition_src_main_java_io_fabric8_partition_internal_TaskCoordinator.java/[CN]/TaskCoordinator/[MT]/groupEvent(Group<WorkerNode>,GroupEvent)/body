@@ -1,0 +1,20 @@
+{
+switch (event) {
+case CONNECTED:
+case CHANGED:
+    WorkerNode state=createNode();
+  if (group.isMaster()) {
+    repository.start();
+    state.setDefinition(context.getDefinition());
+    group.update(state);
+    partitionUpdated();
+  }
+ else {
+    group.update(state);
+    repository.stop();
+  }
+break;
+case DISCONNECTED:
+repository.stop();
+}
+}

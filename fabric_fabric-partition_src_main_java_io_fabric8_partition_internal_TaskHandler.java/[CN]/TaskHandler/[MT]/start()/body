@@ -1,0 +1,11 @@
+{
+  try {
+    ZooKeeperUtils.createDefault(curator,workerPath,null);
+    cache.getListenable().addListener(this);
+    cache.start(true);
+    cache.rebuild();
+  }
+ catch (  Exception e) {
+    throw FabricException.launderThrowable(e);
+  }
+}

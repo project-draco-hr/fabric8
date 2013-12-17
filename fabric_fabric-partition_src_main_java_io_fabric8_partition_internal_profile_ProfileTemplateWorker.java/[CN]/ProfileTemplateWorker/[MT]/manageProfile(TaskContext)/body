@@ -1,0 +1,31 @@
+{
+  Container current=fabricService.get().getCurrentContainer();
+  ProfileData profileData=createProfileData(context);
+  String profileId=context.getDefinition() + "-" + name;
+  Version version=current.getVersion();
+  try {
+    if (lock.acquire(60,TimeUnit.SECONDS)) {
+      if (profileData.isEmpty()) {
+        if (version.hasProfile(profileId)) {
+          version.getProfile(profileId).delete(true);
+        }
+        return;
+      }
+ else       if (!version.hasProfile(profileId)) {
+        fabricService.get().getDataStore().createProfile(version.getId(),profileId);
+      }
+      Profile managedProfile=version.getProfile(profileId);
+      managedProfile.setFileConfigurations(profileData.getFiles());
+      current.addProfiles(managedProfile);
+    }
+ else {
+      throw new TimeoutException("Timed out waiting for lock");
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.error("Error managing work items.",e);
+  }
+ finally {
+    releaseLock();
+  }
+}

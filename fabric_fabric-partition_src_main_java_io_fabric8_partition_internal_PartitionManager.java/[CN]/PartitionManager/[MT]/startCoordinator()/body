@@ -1,0 +1,20 @@
+{
+  if (coordinator == null) {
+    BalancingPolicy balancingPolicy=balancingPolicies.get(policyType);
+    WorkItemRepositoryFactory repositoryFactory=repositoryFactories.get(repositoryType);
+    if (balancingPolicies == null) {
+      LOGGER.warn("Policy type {} not found. Task Coordinator will resume: {} when policy is made available.",policyType,taskId);
+    }
+ else     if (repositoryFactory == null) {
+      LOGGER.warn("Repository type {} not found. Task Coordinator will resume: {} when worker type is made available.",repositoryType,taskId);
+    }
+ else {
+      LOGGER.info("Starting Task Coordinator with repository {} for task {}.",repositoryType,taskId);
+      if (repository == null) {
+        repository=repositoryFactory.build(partitionsPath);
+      }
+      coordinator=new TaskCoordinator(new TaskContextImpl(taskId,taskDefinition),repository,balancingPolicy,curator.get());
+      coordinator.start();
+    }
+  }
+}

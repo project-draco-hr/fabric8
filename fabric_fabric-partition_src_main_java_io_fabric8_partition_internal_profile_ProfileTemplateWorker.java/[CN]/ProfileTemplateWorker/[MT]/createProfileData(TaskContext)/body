@@ -1,0 +1,31 @@
+{
+  ProfileData profileData=new ProfileData();
+  Set<WorkItem> workItems=assignedWorkItems.get(context);
+  if (workItems.isEmpty()) {
+    return profileData;
+  }
+  Container current=fabricService.get().getCurrentContainer();
+  Version version=current.getVersion();
+  Profile templateProfile=version.getProfile(context.getDefinition());
+  Iterable<String> fileTemplates=Iterables.filter(templateProfile.getFileConfigurations().keySet(),new MvelPredicate());
+  for (  String fileTemplate : fileTemplates) {
+    Key key=new Key(templateProfile.getId(),fileTemplate);
+synchronized (templates) {
+      CompiledTemplate template=templates.get(key);
+      if (template == null) {
+        template=TemplateCompiler.compileTemplate(new String(templateProfile.getFileConfigurations().get(fileTemplate)),parserContext);
+        templates.put(key,template);
+      }
+    }
+  }
+  for (  WorkItem workItem : workItems) {
+    Map<String,String> partitionData=workItem.getData();
+    for (    String fileTemplate : fileTemplates) {
+      String file=renderTemplateName(fileTemplate,partitionData);
+      Key key=new Key(templateProfile.getId(),fileTemplate);
+      String renderedTemplate=TemplateRuntime.execute(templates.get(key),parserContext,partitionData).toString();
+      updateProfileData(file,renderedTemplate,profileData);
+    }
+  }
+  return profileData;
+}

@@ -1,0 +1,13 @@
+{
+  LOGGER.info("Task Handler for {} detected change.",context.getId());
+  WorkerNode node=readWorkerNode();
+  Set<WorkItem> workItems=listWorkItemsOfNode(node);
+  Set<WorkItem> added=new LinkedHashSet<WorkItem>(Sets.difference(workItems,assignedWorkItems));
+  Set<WorkItem> removed=new LinkedHashSet<WorkItem>(Sets.difference(assignedWorkItems,workItems));
+  assignedWorkItems.addAll(added);
+  assignedWorkItems.removeAll(removed);
+  LOGGER.info("Releasing work items: {}.",removed.toArray());
+  worker.release(context,removed);
+  LOGGER.info("Assigning work items: {}.",added.toArray());
+  worker.assign(context,added);
+}
