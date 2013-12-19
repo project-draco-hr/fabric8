@@ -1,10 +1,11 @@
 {
   System.out.println(String.format("Waiting for container %s to provision.",containerName));
-  FabricService fabric=fabricService.get();
+  BundleContext sysContext=componentContext.getBundleContext().getBundle(0).getBundleContext();
+  FabricService fabricServiceProxy=ServiceProxy.getOsgiServiceProxy(sysContext,FabricService.class);
   long startedAt=System.currentTimeMillis();
   while (!Thread.interrupted() && startedAt + timeout > System.currentTimeMillis()) {
     try {
-      Container container=fabric != null ? fabric.getContainer(containerName) : null;
+      Container container=fabricServiceProxy != null ? fabricServiceProxy.getContainer(containerName) : null;
       if (container != null && container.isAlive() && "success".equals(container.getProvisionStatus())) {
         return;
       }

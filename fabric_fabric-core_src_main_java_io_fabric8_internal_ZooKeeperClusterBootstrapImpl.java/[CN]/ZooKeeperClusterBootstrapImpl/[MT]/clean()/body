@@ -1,0 +1,21 @@
+{
+  assertValid();
+  try {
+    org.apache.felix.scr.Component[] components=scrService.get().getComponents(BootstrapConfiguration.COMPONENT_NAME);
+    for (    org.apache.felix.scr.Component component : components) {
+      component.disable();
+    }
+    cleanConfigurations();
+    cleanZookeeperDirectory();
+    cleanGitDirectory();
+    for (    org.apache.felix.scr.Component component : components) {
+      component.enable();
+    }
+  }
+ catch (  RuntimeException rte) {
+    throw rte;
+  }
+catch (  Exception e) {
+    throw new FabricException("Unable to delete zookeeper configuration",e);
+  }
+}
