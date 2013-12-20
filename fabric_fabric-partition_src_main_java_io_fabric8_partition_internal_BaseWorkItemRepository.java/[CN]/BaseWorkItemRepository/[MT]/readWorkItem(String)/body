@@ -1,0 +1,11 @@
+{
+  String id=location.contains(File.separator) ? location.substring(location.lastIndexOf(File.separator) + 1) : location;
+  try {
+    String content=readContent(location);
+    Map<String,String> data=mapper.readValue(content,partitionTypeRef);
+    return new WorkItemImpl(id,location,content,data);
+  }
+ catch (  Exception ex) {
+    return new WorkItemImpl(id,location,"",Maps.<String,String>newHashMap());
+  }
+}
