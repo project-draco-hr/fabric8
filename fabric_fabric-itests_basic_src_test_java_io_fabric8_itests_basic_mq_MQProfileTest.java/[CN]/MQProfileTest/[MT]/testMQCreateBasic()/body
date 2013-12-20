@@ -1,17 +1,30 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Thread.sleep(10000);
-  System.out.println(executeCommand("mq-create --create-container mq --jmx-user admin --jmx-password admin --minimumInstances 1 mq"));
-  Thread.sleep(5000);
-  installAndCheckFeature("activemq");
+  System.err.println(executeCommand("mq-create --create-container mq --jmx-user admin --jmx-password admin --minimumInstances 1 mq"));
+  Provision.waitForCondition(new Callable<Boolean>(){
+    @Override public Boolean call() throws Exception {
+      while (getFabricService().getContainer("mq1") == null) {
+        Thread.sleep(1000);
+      }
+      return true;
+    }
+  }
+,30000L);
   Container container=getFabricService().getContainer("mq1");
-  containers.add(container);
+  containers.put("mq1",container);
   Provision.containersStatus(Arrays.asList(container),"success",PROVISION_TIMEOUT);
-  BrokerViewMBean bean=(BrokerViewMBean)getMBean(container,new ObjectName("org.apache.activemq:type=Broker,brokerName=mq"),BrokerViewMBean.class);
-  System.out.println(executeCommand("container-list"));
-  containers.addAll(ContainerBuilder.create().withName("example").withProfiles("example-mq").assertProvisioningResult().build());
-  Thread.sleep(10000);
-  installAndCheckFeature("activemq");
+  final BrokerViewMBean bean=(BrokerViewMBean)Provision.getMBean(container,new ObjectName("org.apache.activemq:type=Broker,brokerName=mq"),BrokerViewMBean.class,30000);
+  System.err.println(executeCommand("container-list"));
+  addAll(containers,ContainerBuilder.create().withName("example").withProfiles("example-mq").assertProvisioningResult().build());
+  Provision.waitForCondition(new Callable<Boolean>(){
+    @Override public Boolean call() throws Exception {
+      while (bean.getTotalProducerCount() == 0 && bean.getTotalConsumerCount() == 0) {
+        Thread.sleep(1000);
+      }
+      return true;
+    }
+  }
+,30000L);
   assertEquals("Producer not present",1,bean.getTotalProducerCount());
   assertEquals("Consumer not present",1,bean.getTotalConsumerCount());
 }

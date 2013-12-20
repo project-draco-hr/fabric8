@@ -1,19 +1,42 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Thread.sleep(10000);
+  CuratorFramework curator=getCurator();
   executeCommand("mq-create --create-container broker --jmx-user admin --jmx-password admin ms-broker");
   Container container1=getFabricService().getContainer("broker1");
   Container container2=getFabricService().getContainer("broker2");
-  containers.add(container1);
-  containers.add(container2);
-  Provision.containersStatus(containers,"success",PROVISION_TIMEOUT);
-  installAndCheckFeature("activemq");
-  Thread.sleep(10000);
-  BrokerViewMBean broker1=(BrokerViewMBean)getMBean(container1,new ObjectName("org.apache.activemq:type=Broker,brokerName=ms-broker"),BrokerViewMBean.class);
+  containers.put("broker1",container1);
+  containers.put("broker2",container2);
+  Provision.containersStatus(containers.values(),"success",PROVISION_TIMEOUT);
+  final ZooKeeperMultiGroup group=new ZooKeeperMultiGroup<ActiveMQNode>(curator,"/fabric/registry/clusters/fusemq/default",ActiveMQNode.class);
+  group.start();
+  ActiveMQNode master=null;
+  Provision.waitForCondition(new Callable<Boolean>(){
+    @Override public Boolean call() throws Exception {
+      while ((ActiveMQNode)group.master() == null) {
+        Thread.sleep(1000);
+      }
+      return true;
+    }
+  }
+,30000L);
+  master=(ActiveMQNode)group.master();
+  final String masterContainer=master.getContainer();
+  System.err.println("master=" + masterContainer);
+  BrokerViewMBean broker1=(BrokerViewMBean)Provision.getMBean(getFabricService().getContainer(masterContainer),new ObjectName("org.apache.activemq:type=Broker,brokerName=ms-broker"),BrokerViewMBean.class,30000);
   assertEquals("ms-broker",broker1.getBrokerName());
-  destroyChildContainer("broker1");
-  containers.remove(container1);
-  Thread.sleep(10000);
-  BrokerViewMBean broker2=(BrokerViewMBean)getMBean(container2,new ObjectName("org.apache.activemq:type=Broker,brokerName=ms-broker"),BrokerViewMBean.class);
+  destroyChildContainer(masterContainer);
+  containers.remove(containers.get(masterContainer));
+  Provision.waitForCondition(new Callable<Boolean>(){
+    @Override public Boolean call() throws Exception {
+      while (group.master() == null || group.master().getContainer() == masterContainer) {
+        Thread.sleep(1000);
+      }
+      return true;
+    }
+  }
+,30000L);
+  master=(ActiveMQNode)group.master();
+  System.err.println("new master=" + master.getContainer());
+  BrokerViewMBean broker2=(BrokerViewMBean)Provision.getMBean(getFabricService().getContainer(master.getContainer()),new ObjectName("org.apache.activemq:type=Broker,brokerName=ms-broker"),BrokerViewMBean.class,30000);
   assertEquals("ms-broker",broker2.getBrokerName());
 }

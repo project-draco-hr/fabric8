@@ -1,0 +1,27 @@
+{
+  CompletionService<Object> completionService=new ExecutorCompletionService<Object>(EXECUTOR);
+  completionService.submit(new Callable<Object>(){
+    @Override public Object call() throws Exception {
+      long time=0;
+      while (time <= timeout) {
+        try {
+          JMXServiceURL url=new JMXServiceURL(container.getJmxUrl());
+          Map env=new HashMap();
+          String[] creds={"admin","admin"};
+          env.put(JMXConnector.CREDENTIALS,creds);
+          JMXConnector jmxc=JMXConnectorFactory.connect(url,env);
+          MBeanServerConnection mbsc=jmxc.getMBeanServerConnection();
+          mbsc.getObjectInstance(mbeanName);
+          return JMX.newMBeanProxy(mbsc,mbeanName,clazz,true);
+        }
+ catch (        Exception e) {
+          Thread.sleep(2000L);
+          time+=2000L;
+        }
+      }
+      return null;
+    }
+  }
+);
+  return completionService.poll(timeout,TimeUnit.MILLISECONDS).get();
+}

@@ -1,14 +1,20 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Set<Container> containers=ContainerBuilder.create().withName("mq").withProfiles("mq-default").assertProvisioningResult().build();
-  installAndCheckFeature("activemq");
+  addAll(containers,ContainerBuilder.create().withName("mq").withProfiles("mq-default").assertProvisioningResult().build());
   Container container=getFabricService().getContainer("mq1");
-  Thread.sleep(5000);
-  BrokerViewMBean bean=(BrokerViewMBean)getMBean(container,new ObjectName("org.apache.activemq:type=Broker,brokerName=mq1"),BrokerViewMBean.class);
+  final BrokerViewMBean bean=(BrokerViewMBean)Provision.getMBean(container,new ObjectName("org.apache.activemq:type=Broker,brokerName=mq1"),BrokerViewMBean.class,30000);
   assertEquals("Producer not present",0,bean.getTotalProducerCount());
   assertEquals("Consumer not present",0,bean.getTotalConsumerCount());
-  containers.addAll(ContainerBuilder.create().withName("example").withProfiles("example-mq").assertProvisioningResult().build());
-  Thread.sleep(10000);
+  addAll(containers,ContainerBuilder.create().withName("example").withProfiles("example-mq").assertProvisioningResult().build());
+  Provision.waitForCondition(new Callable<Boolean>(){
+    @Override public Boolean call() throws Exception {
+      while (bean.getTotalProducerCount() == 0 && bean.getTotalConsumerCount() == 0) {
+        Thread.sleep(1000);
+      }
+      return true;
+    }
+  }
+,30000L);
   assertEquals("Producer not present",1,bean.getTotalProducerCount());
   assertEquals("Consumer not present",1,bean.getTotalConsumerCount());
 }
