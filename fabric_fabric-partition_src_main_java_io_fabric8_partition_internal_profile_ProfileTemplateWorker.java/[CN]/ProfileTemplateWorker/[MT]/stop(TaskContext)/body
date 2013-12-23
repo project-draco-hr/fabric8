@@ -1,0 +1,8 @@
+{
+  Container current=fabricService.get().getCurrentContainer();
+  Version version=current.getVersion();
+  String profileId=context.getConfiguration().get(TEMPLATE_PROFILE_PROPERTY_NAME) + "-" + name;
+  if (version.hasProfile(profileId)) {
+    version.getProfile(profileId).delete(true);
+  }
+}

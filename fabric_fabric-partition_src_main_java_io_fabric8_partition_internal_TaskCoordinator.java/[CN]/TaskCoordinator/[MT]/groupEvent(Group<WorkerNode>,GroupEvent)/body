@@ -5,7 +5,7 @@ case CHANGED:
     WorkerNode state=createNode();
   if (group.isMaster()) {
     repository.start();
-    state.setDefinition(context.getDefinition());
+    state.setServices(new String[]{context.getId()});
     group.update(state);
     partitionUpdated();
   }

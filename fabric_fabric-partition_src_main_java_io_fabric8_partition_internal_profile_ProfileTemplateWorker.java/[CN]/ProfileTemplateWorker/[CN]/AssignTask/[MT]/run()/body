@@ -1,7 +1,12 @@
 {
-  if (items.isEmpty()) {
-    return;
+  try {
+    if (items.isEmpty()) {
+      return;
+    }
+    assignedWorkItems.putAll(context,items);
+    manageProfile(context);
   }
-  assignedWorkItems.putAll(context,items);
-  manageProfile(context);
+ catch (  Exception ex) {
+    LOGGER.debug("Error assigning items.",ex);
+  }
 }

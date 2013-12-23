@@ -1,9 +1,14 @@
 {
-  if (items.isEmpty()) {
-    return;
+  try {
+    if (items.isEmpty()) {
+      return;
+    }
+    for (    WorkItem workItem : items) {
+      assignedWorkItems.remove(context,workItem);
+    }
+    manageProfile(context);
   }
-  for (  WorkItem workItem : items) {
-    assignedWorkItems.remove(context,workItem);
+ catch (  Exception ex) {
+    LOGGER.debug("Error releasing items.",ex);
   }
-  manageProfile(context);
 }

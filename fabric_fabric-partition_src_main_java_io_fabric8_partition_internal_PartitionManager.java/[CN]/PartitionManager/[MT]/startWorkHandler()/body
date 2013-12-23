@@ -13,7 +13,7 @@
         repository=repositoryFactory.build(partitionsPath);
       }
       LOGGER.info("Starting Task Handler type {} for task {}.",workerType,taskId);
-      taskHandler=new TaskHandler(new TaskContextImpl(taskId,taskDefinition),curator.get(),worker,repository);
+      taskHandler=new TaskHandler(new TaskContextImpl(taskId,taskConfiguration),curator.get(),worker,repository);
       taskHandler.start();
     }
   }

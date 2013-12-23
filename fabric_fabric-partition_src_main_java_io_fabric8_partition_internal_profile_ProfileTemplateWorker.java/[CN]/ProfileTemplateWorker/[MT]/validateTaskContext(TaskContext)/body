@@ -1,0 +1,11 @@
+{
+  if (context == null) {
+    throw new IllegalArgumentException("Task context cannot be null");
+  }
+ else   if (context.getConfiguration() == null || context.getConfiguration().isEmpty()) {
+    throw new IllegalArgumentException("Task context configuration cannot be null");
+  }
+ else   if (!context.getConfiguration().containsKey(TEMPLATE_PROFILE_PROPERTY_NAME)) {
+    throw new IllegalArgumentException("Task context configuration: Missing required property: " + TEMPLATE_PROFILE_PROPERTY_NAME);
+  }
+}

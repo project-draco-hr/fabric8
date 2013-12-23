@@ -6,7 +6,8 @@
   }
   Container current=fabricService.get().getCurrentContainer();
   Version version=current.getVersion();
-  Profile templateProfile=version.getProfile(context.getDefinition());
+  String templateProfileName=String.valueOf(context.getConfiguration().get(TEMPLATE_PROFILE_PROPERTY_NAME));
+  Profile templateProfile=version.getProfile(templateProfileName);
   Iterable<String> fileTemplates=Iterables.filter(templateProfile.getFileConfigurations().keySet(),new MvelPredicate());
   for (  String fileTemplate : fileTemplates) {
     Key key=new Key(templateProfile.getId(),fileTemplate);
