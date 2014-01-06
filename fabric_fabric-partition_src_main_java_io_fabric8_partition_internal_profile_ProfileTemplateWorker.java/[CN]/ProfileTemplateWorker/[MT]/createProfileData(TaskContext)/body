@@ -8,13 +8,15 @@
   Version version=current.getVersion();
   String templateProfileName=String.valueOf(context.getConfiguration().get(TEMPLATE_PROFILE_PROPERTY_NAME));
   Profile templateProfile=version.getProfile(templateProfileName);
-  Iterable<String> fileTemplates=Iterables.filter(templateProfile.getFileConfigurations().keySet(),new MvelPredicate());
-  for (  String fileTemplate : fileTemplates) {
-    Key key=new Key(templateProfile.getId(),fileTemplate);
+  Set<String> allFiles=templateProfile.getFileConfigurations().keySet();
+  Iterable<String> mvelFiles=Iterables.filter(allFiles,MvelPredicate.INSTANCE);
+  Iterable<String> plainFiles=Iterables.filter(allFiles,Predicates.not(MvelPredicate.INSTANCE));
+  for (  String mvelFile : mvelFiles) {
+    Key key=new Key(templateProfile.getId(),mvelFile);
 synchronized (templates) {
       CompiledTemplate template=templates.get(key);
       if (template == null) {
-        template=TemplateCompiler.compileTemplate(new String(templateProfile.getFileConfigurations().get(fileTemplate)),parserContext);
+        template=TemplateCompiler.compileTemplate(new String(templateProfile.getFileConfigurations().get(mvelFile)),parserContext);
         templates.put(key,template);
       }
     }
@@ -22,7 +24,7 @@ synchronized (templates) {
   for (  WorkItem workItem : workItems) {
     Map<String,WorkItem> data=new HashMap<String,WorkItem>();
     data.put(WorkItem.ITEM,workItem);
-    for (    String fileTemplate : fileTemplates) {
+    for (    String fileTemplate : mvelFiles) {
       String file=renderTemplateName(fileTemplate,workItem);
       Key key=new Key(templateProfile.getId(),fileTemplate);
       try {
@@ -32,6 +34,10 @@ synchronized (templates) {
  catch (      Exception ex) {
         LOGGER.warn("Failed to render {}. Ignoring.",fileTemplate);
       }
+    }
+    for (    String file : plainFiles) {
+      String content=new String(templateProfile.getFileConfigurations().get(file));
+      updateProfileData(file,content,profileData);
     }
   }
   return profileData;
