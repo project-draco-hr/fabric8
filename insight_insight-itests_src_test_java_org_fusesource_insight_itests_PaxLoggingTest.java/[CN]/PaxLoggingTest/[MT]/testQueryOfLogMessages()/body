@@ -1,4 +1,6 @@
 {
+  MBeanServer mbs=ManagementFactory.getPlatformMBeanServer();
+  LogQueryMBean logQuery=JMX.newMBeanProxy(mbs,new ObjectName("org.fusesource.insight:type=LogQuery"),LogQueryMBean.class);
   Logger LOG=LoggerFactory.getLogger(PaxLoggingTest.class);
   LOG.info(info1);
   LOG.debug(debug1);
