@@ -1,24 +1,13 @@
 {
   assertValid();
-  if (repositories.isEmpty()) {
-    Set<String> repositoryUris=new LinkedHashSet<String>();
-    for (    String uri : getAllProfilesOverlay().getRepositories()) {
-      repositoryUris.add(uri);
-      addRepositoryUri(uri,repositoryUris);
+  Set<Repository> repos=new LinkedHashSet<Repository>();
+  for (  String uri : getAllProfilesOverlay().getRepositories()) {
+    try {
+      populateRepositories(uri,repos);
     }
-    for (    String uri : repositoryUris) {
-      try {
-        RepositoryImpl r=new RepositoryImpl(new URI(uri));
-        r.load();
-        repositories.add(r);
-      }
- catch (      URISyntaxException e) {
-        LOGGER.debug("Error while adding repository with uri {}.",uri);
-      }
-catch (      IOException e) {
-        LOGGER.debug("Error while loading repository with uri {}.",uri);
-      }
+ catch (    Exception ex) {
+      LOGGER.warn("Error while populating repositories from uri.",ex);
     }
   }
-  return repositories.toArray(new Repository[repositories.size()]);
+  return repos.toArray(new Repository[repos.size()]);
 }
