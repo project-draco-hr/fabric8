@@ -10,7 +10,7 @@
   if (options.getJvmOpts() != null && !options.getJvmOpts().isEmpty()) {
     jvmOptsBuilder.append(" ").append(options.getJvmOpts());
   }
-  if (options.getJvmOpts() != null && !options.getJvmOpts().contains("-XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass")) {
+  if (options.getJvmOpts() == null || !options.getJvmOpts().contains("-XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass")) {
     jvmOptsBuilder.append(" -XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass");
   }
   if (options.getBindAddress() != null && !options.getBindAddress().isEmpty()) {
