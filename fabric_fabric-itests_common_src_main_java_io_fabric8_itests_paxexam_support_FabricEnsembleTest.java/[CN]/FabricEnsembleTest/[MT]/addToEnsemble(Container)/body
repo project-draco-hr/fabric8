@@ -4,17 +4,5 @@
   for (  Container c : containers) {
     sb.append(c.getId()).append(" ");
   }
-  try {
-    System.err.println(executeCommand(sb.toString(),240000L,false));
-  }
- catch (  CommandExecutionException e) {
-    if (isRetriable(e)) {
-      System.err.println("Retrying...");
-      Provision.provisioningSuccess(Arrays.asList(getFabricService().getContainers()),PROVISION_TIMEOUT);
-      System.err.println(executeCommand(sb.toString(),240000L,false));
-    }
- else {
-      throw e;
-    }
-  }
+  doWithEnsemble(sb.toString());
 }

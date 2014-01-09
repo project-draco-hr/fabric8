@@ -27,11 +27,9 @@
     Container child1=fabricService.getContainer("child1");
     Container child2=fabricService.getContainer("child2");
     Provision.containersStatus(Arrays.asList(child1,child2),"success",PROVISION_TIMEOUT);
-    System.err.println(executeCommand("fabric:ensemble-add --force --migration-timeout 240000 child1 child2",240000L,false));
-    getCurator().getZookeeperClient().blockUntilConnectedOrTimedOut();
+    addToEnsemble(child1,child2);
     System.err.println(executeCommand("fabric:container-list"));
-    System.err.println(executeCommand("fabric:ensemble-remove --force --migration-timeout 240000 child1 child2",240000L,false));
-    getCurator().getZookeeperClient().blockUntilConnectedOrTimedOut();
+    removeFromEnsemble(child1,child2);
     System.err.println(executeCommand("fabric:container-list"));
   }
   finally {

@@ -1,5 +1,6 @@
 {
-  CuratorFramework curator=ServiceProxy.getOsgiServiceProxy(CuratorFramework.class);
+  CuratorFramework curator=ServiceProxy.getOsgiServiceProxy(bundleContext.getBundle(0).getBundleContext(),CuratorFramework.class,60,TimeUnit.SECONDS);
+  ;
   assertNotNull(curator);
   return curator;
 }

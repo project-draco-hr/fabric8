@@ -1,24 +1,22 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  System.err.println(executeCommand("mq-create --create-container mq --jmx-user admin --jmx-password admin --minimumInstances 1 mq"));
-  Provision.waitForCondition(new Callable<Boolean>(){
-    @Override public Boolean call() throws Exception {
-      while (getFabricService().getContainer("mq1") == null) {
-        Thread.sleep(1000);
-      }
-      return true;
-    }
-  }
-,30000L);
-  Container container=getFabricService().getContainer("mq1");
-  containers.put("mq1",container);
-  Provision.containersStatus(Arrays.asList(container),"success",PROVISION_TIMEOUT);
-  final BrokerViewMBean bean=(BrokerViewMBean)Provision.getMBean(container,new ObjectName("org.apache.activemq:type=Broker,brokerName=mq"),BrokerViewMBean.class,30000);
+  System.err.println(executeCommand("mq-create --jmx-user admin --jmx-password admin --minimumInstances 1 mq"));
+  Set<Container> containers=ContainerBuilder.create(2).withName("child").withProfiles("default").assertProvisioningResult().build();
+  Container broker=containers.iterator().next();
+  containers.remove(broker);
+  Profile brokerProfile=broker.getVersion().getProfile("mq-broker-default.mq");
+  broker.setProfiles(new Profile[]{brokerProfile});
+  Provision.provisioningSuccess(Arrays.asList(broker),PROVISION_TIMEOUT);
+  final BrokerViewMBean bean=(BrokerViewMBean)Provision.getMBean(broker,new ObjectName("org.apache.activemq:type=Broker,brokerName=mq"),BrokerViewMBean.class,30000);
   System.err.println(executeCommand("container-list"));
-  addAll(containers,ContainerBuilder.create().withName("example").withProfiles("example-mq").assertProvisioningResult().build());
+  for (  Container c : containers) {
+    Profile exampleProfile=broker.getVersion().getProfile("example-mq");
+    c.setProfiles(new Profile[]{exampleProfile});
+  }
+  Provision.provisioningSuccess(containers,PROVISION_TIMEOUT);
   Provision.waitForCondition(new Callable<Boolean>(){
     @Override public Boolean call() throws Exception {
-      while (bean.getTotalProducerCount() == 0 && bean.getTotalConsumerCount() == 0) {
+      while (bean.getTotalProducerCount() == 0 || bean.getTotalConsumerCount() == 0) {
         Thread.sleep(1000);
       }
       return true;
