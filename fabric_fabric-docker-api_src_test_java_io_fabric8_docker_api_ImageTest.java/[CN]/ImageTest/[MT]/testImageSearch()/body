@@ -1,0 +1,10 @@
+{
+  String json=Resources.toString(getResource("image/image-search.json"),Charsets.UTF_8);
+  MockWebServer server=new MockWebServer();
+  server.enqueue(new MockResponse().setBody(json));
+  server.play();
+  Docker docker=createDockerForMock(server);
+  List<ImageSearchResult> results=docker.imageSearch("sshd");
+  assertNotNull(results);
+  assertEquals(results.size(),3);
+}

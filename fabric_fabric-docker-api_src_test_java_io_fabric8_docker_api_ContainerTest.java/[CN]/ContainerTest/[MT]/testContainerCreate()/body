@@ -1,0 +1,13 @@
+{
+  String json=Resources.toString(getResource("container/create-response.json"),Charsets.UTF_8);
+  MockWebServer server=new MockWebServer();
+  server.enqueue(new MockResponse().setBody(json));
+  server.play();
+  Docker docker=createDockerForMock(server);
+  ContainerConfig cfg=new ContainerConfig();
+  cfg.setImage("base");
+  cfg.setCmd(new String[]{"date"});
+  ContainerCreateStatus containerCreateStatus=docker.containerCreate(cfg);
+  assertNotNull(containerCreateStatus);
+  assertEquals(containerCreateStatus.getId(),"e90e34656806");
+}

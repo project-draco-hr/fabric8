@@ -1,0 +1,11 @@
+{
+  String json=Resources.toString(getResource("container/containers-all.json"),Charsets.UTF_8);
+  MockWebServer server=new MockWebServer();
+  server.enqueue(new MockResponse().setBody(json));
+  server.play();
+  Docker docker=createDockerForMock(server);
+  List<Container> containers=docker.containers(1,1,null,null,1);
+  assertNotNull(containers);
+  assertEquals(containers.size(),4);
+  assertContainers(containers);
+}

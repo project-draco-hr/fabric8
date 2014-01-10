@@ -1,0 +1,9 @@
+{
+  String json=Resources.toString(getResource("container/inspect-4fa6e0f0c678.json"),Charsets.UTF_8);
+  MockWebServer server=new MockWebServer();
+  server.enqueue(new MockResponse().setBody(json));
+  server.play();
+  Docker docker=createDockerForMock(server);
+  ContainerInfo containerInfo=docker.containerInspect("4fa6e0f0c678");
+  assertNotNull(containerInfo);
+}

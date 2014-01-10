@@ -1,0 +1,18 @@
+{
+  final String json=Resources.toString(getResource("image/image-push.json"),Charsets.UTF_8);
+  final Auth auth=new Auth();
+  auth.setUsername("hannibal");
+  auth.setPassword("xxxx");
+  auth.setEmail("hannibal@a-team.com");
+  MockWebServer server=new MockWebServer();
+  server.enqueue(new MockResponse().setBody(json));
+  server.play();
+  Docker docker=createDockerForMock(server);
+  Progress response=docker.imagePush("base","reg",auth);
+  assertNotNull(response);
+  assertEquals(response.getError(),"Invalid...");
+  RecordedRequest recordedRequest=server.takeRequest();
+  String body=new String(recordedRequest.getBody());
+  Auth requestAuth=JsonHelper.fromJson(body,Auth.class);
+  assertEquals(auth.getEmail(),requestAuth.getEmail());
+}

@@ -1,0 +1,23 @@
+{
+  DockerFactory dockerFactory=new DockerFactory();
+  if (args.length > 0) {
+    dockerFactory.setAddress(args[0]);
+  }
+  System.out.println("Connecting to docker on: " + dockerFactory.getAddress());
+  Docker docker=dockerFactory.createDocker();
+  displayVersion(docker);
+  displayInfo(docker);
+  displayContainers(docker);
+  displayImages(docker);
+  String newContainer=createContainer(docker);
+  System.out.println("Working on new container id: " + newContainer);
+  containerStart(docker,newContainer);
+  inspectContainer(docker,newContainer);
+  if (useTop) {
+    containerTop(docker,newContainer);
+  }
+  containerChanges(docker,newContainer);
+  containerStop(docker,newContainer);
+  deleteContainer(docker,newContainer);
+  displayContainers(docker);
+}

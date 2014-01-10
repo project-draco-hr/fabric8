@@ -1,0 +1,10 @@
+{
+  String json=Resources.toString(getResource("image/images-all.json"),Charsets.UTF_8);
+  MockWebServer server=new MockWebServer();
+  server.enqueue(new MockResponse().setBody(json));
+  server.play();
+  Docker docker=createDockerForMock(server);
+  List<Image> images=docker.images(1);
+  assertNotNull(images);
+  assertEquals(images.size(),5);
+}

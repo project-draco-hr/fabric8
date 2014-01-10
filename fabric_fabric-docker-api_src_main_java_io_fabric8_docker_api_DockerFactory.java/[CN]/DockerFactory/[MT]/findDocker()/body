@@ -1,0 +1,14 @@
+{
+  String dockerHost=System.getenv("DOCKER_HOST");
+  if (isEmpty(dockerHost)) {
+    dockerHost=System.getProperty("docker.host");
+  }
+  if (!isEmpty(dockerHost)) {
+    if (dockerHost.startsWith("tcp:")) {
+      this.address="http:" + dockerHost.substring(4);
+    }
+ else {
+      this.address=dockerHost;
+    }
+  }
+}
