@@ -1,0 +1,11 @@
+{
+  updateConfiguration(configuration);
+  activateComponent();
+  if (mbeanServer != null) {
+    objectName=new ObjectName("io.fabric8:type=OpenShift");
+    mbean=new DockerFacade(this);
+    if (!mbeanServer.isRegistered(objectName)) {
+      mbeanServer.registerMBean(mbean,objectName);
+    }
+  }
+}

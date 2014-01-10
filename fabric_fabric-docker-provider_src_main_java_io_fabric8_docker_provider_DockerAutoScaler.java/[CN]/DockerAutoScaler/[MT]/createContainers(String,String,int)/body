@@ -1,0 +1,18 @@
+{
+  CreateDockerContainerOptions.Builder builder=createAuthoScaleOptions();
+  if (builder != null) {
+    for (int i=0; i < count; i++) {
+      FabricService fabricService=containerProvider.getFabricService();
+      Container[] containers=fabricService.getContainers();
+      final CreateDockerContainerOptions.Builder configuredBuilder=builder.number(1).version(version).profiles(profile);
+      NameValidator nameValidator=containerProvider.createNameValidator(configuredBuilder.build());
+      String name=Containers.createContainerName(containers,profile,containerProvider.getScheme(),nameValidator);
+      CreateDockerContainerOptions options=configuredBuilder.name(name).build();
+      LOG.info("Creating container name " + name + " version "+ version+ " profile "+ profile+ " "+ count+ " container(s)");
+      fabricService.createContainers(options);
+    }
+  }
+ else {
+    LOG.warn("Could not create version " + version + " profile "+ profile+ " due to missing autoscale configuration");
+  }
+}

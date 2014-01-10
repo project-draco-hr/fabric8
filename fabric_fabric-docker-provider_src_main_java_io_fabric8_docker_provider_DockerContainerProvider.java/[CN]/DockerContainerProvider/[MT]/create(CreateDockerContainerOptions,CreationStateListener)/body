@@ -1,0 +1,32 @@
+{
+  assertValid();
+  ContainerConfig containerConfig=options.createContainerConfig();
+  Set<String> profiles=options.getProfiles();
+  String versionId=options.getVersion();
+  Map<String,String> configOverlay=new HashMap<String,String>();
+  if (profiles != null && versionId != null) {
+    Version version=fabricService.get().getVersion(versionId);
+    if (version != null) {
+      for (      String profileId : profiles) {
+        Profile profile=version.getProfile(profileId);
+        if (profile != null) {
+          Profile overlay=profile.getOverlay();
+          Map<String,String> dockerConfig=overlay.getConfiguration(DockerConstants.DOCKER_PROVIDER_PID);
+          if (dockerConfig != null) {
+            configOverlay.putAll(dockerConfig);
+          }
+        }
+      }
+    }
+  }
+  String image=containerConfig.getImage();
+  if (Strings.isEmpty(image)) {
+    image=configOverlay.get(DockerConstants.PROPERTIES.IMAGE);
+    containerConfig.setImage(image);
+  }
+  LOG.info("Creating image: " + image);
+  ContainerCreateStatus status=docker.containerCreate(containerConfig);
+  CreateDockerContainerMetadata metadata=CreateDockerContainerMetadata.newInstance(containerConfig,status);
+  metadata.setCreateOptions(options);
+  return metadata;
+}
