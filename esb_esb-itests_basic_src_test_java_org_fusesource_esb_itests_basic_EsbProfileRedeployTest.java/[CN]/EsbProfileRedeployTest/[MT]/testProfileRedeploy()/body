@@ -1,0 +1,20 @@
+{
+  executeCommand("fabric:create");
+  FabricService service=getFabricService();
+  CuratorFramework curator=getCurator();
+  final ZooKeeperMultiGroup group=new ZooKeeperMultiGroup<FabricDiscoveryAgent.ActiveMQNode>(curator,"/fabric/registry/clusters/fusemq/default",FabricDiscoveryAgent.ActiveMQNode.class);
+  group.start();
+  FabricDiscoveryAgent.ActiveMQNode master=null;
+  Provision.waitForCondition(new Callable<Boolean>(){
+    @Override public Boolean call() throws Exception {
+      while ((FabricDiscoveryAgent.ActiveMQNode)group.master() == null) {
+        Thread.sleep(1000);
+      }
+      return true;
+    }
+  }
+,30000L);
+  master=(FabricDiscoveryAgent.ActiveMQNode)group.master();
+  final String masterContainer=master.getContainer();
+  assertEquals("root",masterContainer);
+}
