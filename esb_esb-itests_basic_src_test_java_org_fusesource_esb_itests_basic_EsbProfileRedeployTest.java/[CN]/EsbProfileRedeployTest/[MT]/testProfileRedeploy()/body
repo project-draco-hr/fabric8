@@ -1,6 +1,7 @@
 {
   executeCommand("fabric:create -n");
   FabricService service=getFabricService();
+  Provision.provisioningSuccess(Arrays.asList(service.getContainers()),PROVISION_TIMEOUT);
   CuratorFramework curator=getCurator();
   final ZooKeeperMultiGroup group=new ZooKeeperMultiGroup<FabricDiscoveryAgent.ActiveMQNode>(curator,"/fabric/registry/clusters/fusemq/default",FabricDiscoveryAgent.ActiveMQNode.class);
   group.start();
@@ -20,6 +21,7 @@
   for (int i=0; i < 10; i++) {
     Thread.sleep(5000);
     executeCommand("container-remove-profile root jboss-fuse-full");
+    Provision.provisioningSuccess(Arrays.asList(service.getContainers()),PROVISION_TIMEOUT);
     Provision.waitForCondition(new Callable<Boolean>(){
       @Override public Boolean call() throws Exception {
         while ((FabricDiscoveryAgent.ActiveMQNode)group.master() != null) {
@@ -33,6 +35,7 @@
     assertNull(master);
     Thread.sleep(5000);
     executeCommand("container-add-profile root jboss-fuse-full");
+    Provision.provisioningSuccess(Arrays.asList(service.getContainers()),PROVISION_TIMEOUT);
     Provision.waitForCondition(new Callable<Boolean>(){
       @Override public Boolean call() throws Exception {
         while ((FabricDiscoveryAgent.ActiveMQNode)group.master() == null) {
