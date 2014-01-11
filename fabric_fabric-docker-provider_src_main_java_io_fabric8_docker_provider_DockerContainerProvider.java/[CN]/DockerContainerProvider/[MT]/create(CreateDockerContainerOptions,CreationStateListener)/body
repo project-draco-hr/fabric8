@@ -24,6 +24,9 @@
     image=configOverlay.get(DockerConstants.PROPERTIES.IMAGE);
     containerConfig.setImage(image);
   }
+  if (Strings.isEmpty(image)) {
+    image=DockerConstants.DEFAULT_IMAGE;
+  }
   LOG.info("Creating image: " + image);
   ContainerCreateStatus status=docker.containerCreate(containerConfig);
   CreateDockerContainerMetadata metadata=CreateDockerContainerMetadata.newInstance(containerConfig,status);
