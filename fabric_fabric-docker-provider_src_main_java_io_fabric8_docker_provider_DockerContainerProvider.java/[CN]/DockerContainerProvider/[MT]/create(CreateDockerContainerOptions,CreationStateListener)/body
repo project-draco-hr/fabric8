@@ -27,8 +27,20 @@
     }
     containerConfig.setImage(image);
   }
+  String[] cmd=containerConfig.getCmd();
+  if (cmd == null || cmd.length == 0) {
+    String value=configOverlay.get(DockerConstants.PROPERTIES.CMD);
+    if (Strings.isEmpty(value)) {
+      cmd=null;
+    }
+ else {
+      cmd=new String[]{value};
+    }
+    containerConfig.setCmd(cmd);
+  }
   LOG.info("Creating container: " + containerConfig + " on docker "+ getDockerAddress());
   ContainerCreateStatus status=docker.containerCreate(containerConfig);
+  LOG.info("Got status: " + status);
   CreateDockerContainerMetadata metadata=CreateDockerContainerMetadata.newInstance(containerConfig,status);
   metadata.setCreateOptions(options);
   return metadata;

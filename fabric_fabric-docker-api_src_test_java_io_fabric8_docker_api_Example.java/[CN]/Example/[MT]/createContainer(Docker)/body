@@ -1,7 +1,10 @@
 {
   ContainerConfig config=new ContainerConfig();
-  config.setImage(testImage);
-  config.setCmd(new String[]{"date"});
+  config.setImage(image);
+  if (!Strings.isNullOrEmpty(cmd)) {
+    config.setCmd(new String[]{cmd});
+  }
+  System.out.println("Creating container: " + config);
   ContainerCreateStatus status=docker.containerCreate(config);
   System.out.println(status);
   return status.getId();
