@@ -1,3 +1,10 @@
 {
-  return JAXRSClientFactory.create(address,Docker.class,providers);
+  ResteasyProviderFactory providerFactory=ResteasyProviderFactory.getInstance();
+  providerFactory.register(ResteasyJackson2Provider.class);
+  providerFactory.register(Jackson2JsonpInterceptor.class);
+  ResteasyClientBuilder builder=new ResteasyClientBuilder();
+  builder.providerFactory(providerFactory);
+  Client client=builder.build();
+  ResteasyWebTarget target=(ResteasyWebTarget)client.target(address);
+  return target.proxy(Docker.class);
 }

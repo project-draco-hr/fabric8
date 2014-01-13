@@ -17,7 +17,22 @@
     containerTop(docker,newContainer);
   }
   containerChanges(docker,newContainer);
-  containerStop(docker,newContainer);
+  if (pauseBeforeStopping) {
+    System.out.println("Press enter to kill the container: ");
+    try {
+      System.in.read();
+    }
+ catch (    IOException e) {
+    }
+  }
+  if (stopContainer) {
+    System.out.println("Now stopping the container");
+    containerStop(docker,newContainer);
+  }
+ else {
+    System.out.println("Now stopping the container");
+    containerKill(docker,newContainer);
+  }
   deleteContainer(docker,newContainer);
   displayContainers(docker);
 }
