@@ -1,0 +1,18 @@
+{
+  return new NameValidator(){
+    @Override public String toString(){
+      return "NameValidators:" + Arrays.asList(validators);
+    }
+    @Override public boolean isValid(    String name){
+      for (      NameValidator validator : validators) {
+        if (validator != null) {
+          if (!validator.isValid(name)) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+  }
+;
+}

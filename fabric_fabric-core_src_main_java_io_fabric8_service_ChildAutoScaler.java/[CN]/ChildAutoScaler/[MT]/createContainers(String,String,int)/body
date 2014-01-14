@@ -1,16 +1,16 @@
 {
+  CreateChildContainerOptions.Builder builder=null;
   FabricService fabricService=containerProvider.getFabricService();
-  CreateDockerContainerOptions.Builder builder=null;
   if (fabricService != null) {
     builder=createAuthoScaleOptions(fabricService);
   }
   if (builder != null) {
+    Container[] containers=fabricService.getContainers();
     for (int i=0; i < count; i++) {
-      Container[] containers=fabricService.getContainers();
-      final CreateDockerContainerOptions.Builder configuredBuilder=builder.number(1).version(version).profiles(profile);
-      NameValidator nameValidator=Containers.createNameValidator(fabricService.getContainers());
+      final CreateChildContainerOptions.Builder configuredBuilder=builder.number(1).version(version).profiles(profile);
+      NameValidator nameValidator=Containers.createNameValidator(containers);
       String name=Containers.createContainerName(containers,profile,containerProvider.getScheme(),nameValidator);
-      CreateDockerContainerOptions options=configuredBuilder.name(name).build();
+      CreateChildContainerOptions options=configuredBuilder.name(name).build();
       LOG.info("Creating container name " + name + " version "+ version+ " profile "+ profile+ " "+ count+ " container(s)");
       fabricService.createContainers(options);
     }

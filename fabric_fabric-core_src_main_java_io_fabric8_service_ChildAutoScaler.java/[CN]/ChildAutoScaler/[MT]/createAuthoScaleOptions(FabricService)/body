@@ -1,0 +1,17 @@
+{
+  CreateChildContainerOptions.Builder builder=CreateChildContainerOptions.builder();
+  Container[] containers=fabricService.getContainers();
+  if (containers != null) {
+    String parent=null;
+    for (    Container container : containers) {
+      if (container.isRoot()) {
+        parent=container.getId();
+        builder=builder.parent(parent);
+        break;
+      }
+    }
+  }
+  String zookeeperUrl=fabricService.getZookeeperUrl();
+  String zookeeperPassword=fabricService.getZookeeperPassword();
+  return builder.jmxUser("admin").jmxPassword(zookeeperPassword).zookeeperUrl(zookeeperUrl).zookeeperPassword(zookeeperPassword);
+}
