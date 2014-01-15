@@ -1,0 +1,8 @@
+{
+  System.err.println(executeCommand("fabric:create -n"));
+  Set<Container> containers=ContainerBuilder.create().withName("esb").withProfiles("jboss-fuse-minimal").assertProvisioningResult().build();
+  prepareFeaturesForTesting(containers,"connector","jboss-fuse-minimal","geronimo-connector");
+  prepareFeaturesForTesting(containers,"saaj","jboss-fuse-minimal","saaj-impl");
+  prepareFeaturesForTesting(containers,"cxf-nmr","jboss-fuse-minimal","org.apache.servicemix.cxf.binding.nmr");
+  prepareFeaturesForTesting(containers,"camel-nmr","jboss-fuse-minimal","org.apache.servicemix.camel.component");
+}

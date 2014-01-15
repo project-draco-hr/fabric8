@@ -1,0 +1,6 @@
+{
+  if (distroArtifactId == null) {
+    distroArtifactId=ARTIFACT_ID;
+  }
+  return new Option[]{karafDistributionConfiguration().frameworkUrl(maven().groupId("org.jboss.fuse").artifactId(distroArtifactId).versionAsInProject().type("zip")).karafVersion(MavenUtils.getArtifactVersion("org.jboss.fuse",distroArtifactId)).name("JBoss Fuse").unpackDirectory(new File("target/exam")),useOwnExamBundlesStartLevel(50),editConfigurationFilePut("etc/config.properties","karaf.startlevel.bundle","50"),editConfigurationFilePut("etc/config.properties","karaf.startup.message","Loading Fuse from: ${karaf.home}"),editConfigurationFilePut("etc/users.properties","admin","admin,admin"),mavenBundle("org.fusesource.tooling.testing","pax-exam-karaf",MavenUtils.getArtifactVersion("org.fusesource.tooling.testing","pax-exam-karaf")),mavenBundle("org.jboss.fuse.itests","esb-itests-common",MavenUtils.getArtifactVersion("org.jboss.fuse.itests","esb-itests-common")),mavenBundle("io.fabric8.itests","fabric-itests-common",MavenUtils.getArtifactVersion("io.fabric8.itests","fabric-itests-common")),keepRuntimeFolder(),logLevel(LogLevelOption.LogLevel.ERROR)};
+}
