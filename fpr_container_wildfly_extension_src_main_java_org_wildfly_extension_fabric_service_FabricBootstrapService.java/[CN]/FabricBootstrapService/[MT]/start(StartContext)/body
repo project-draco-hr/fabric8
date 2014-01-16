@@ -1,13 +1,16 @@
 {
   LOGGER.info("Activating Fabric Subsystem");
   final CountDownLatch latch=new CountDownLatch(1);
+  final ModuleContext syscontext=injectedModuleContext.getValue();
   ServiceListener listener=new ServiceListener(){
     @Override public void serviceChanged(    ServiceEvent event){
-      if (event.getType() == ServiceEvent.REGISTERED)       latch.countDown();
+      if (event.getType() == ServiceEvent.REGISTERED) {
+        syscontext.removeServiceListener(this);
+        latch.countDown();
+      }
     }
   }
 ;
-  ModuleContext syscontext=injectedModuleContext.getValue();
   syscontext.addServiceListener(listener,"(objectClass=" + FabricService.class.getName() + ")");
   Runtime runtime=injectedRuntime.getValue();
   ModuleClassLoader classLoader=(ModuleClassLoader)getClass().getClassLoader();
@@ -16,6 +19,9 @@
     Manifest manifest=new Manifest(url.openStream());
     Dictionary<String,String> headers=new ManifestHeadersProvider(manifest).getHeaders();
     module=runtime.installModule(classLoader,headers);
+    ModuleEntriesProvider entriesProvider=new ClassLoaderEntriesProvider(module);
+    Attachable attachable=AbstractModule.assertAbstractModule(module);
+    attachable.putAttachment(AbstractModule.MODULE_ENTRIES_PROVIDER_KEY,entriesProvider);
     module.start();
   }
  catch (  RuntimeException rte) {

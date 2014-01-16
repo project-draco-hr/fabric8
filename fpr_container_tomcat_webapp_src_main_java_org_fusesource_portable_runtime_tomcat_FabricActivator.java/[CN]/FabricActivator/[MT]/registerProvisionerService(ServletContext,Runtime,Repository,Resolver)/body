@@ -1,0 +1,8 @@
+{
+  RuntimeEnvironment environment=createEnvironment(servletContext,runtime);
+  TomcatResourceInstaller installer=new TomcatResourceInstaller(environment);
+  Provisioner provisioner=new DefaultProvisioner(environment,resolver,repository,installer);
+  ModuleContext syscontext=runtime.getModuleContext();
+  provisionerRegistration=syscontext.registerService(Provisioner.class,provisioner,null);
+  return provisioner;
+}

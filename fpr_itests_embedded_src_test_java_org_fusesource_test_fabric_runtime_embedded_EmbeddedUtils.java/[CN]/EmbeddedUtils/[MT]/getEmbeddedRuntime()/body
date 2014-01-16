@@ -1,7 +1,18 @@
 {
   Runtime runtime=RuntimeLocator.getRuntime();
   if (runtime == null) {
-    runtime=RuntimeLocator.createRuntime(new DefaultPropertiesProvider());
+    RuntimeFactory factory=new RuntimeFactory(){
+      @Override public Runtime createRuntime(      PropertiesProvider propertiesProvider){
+        return new EmbeddedRuntime(propertiesProvider,null){
+          @Override protected ModuleEntriesProvider getDefaultEntriesProvider(          Module module,          Attachable context){
+            return new ClassLoaderEntriesProvider(module);
+          }
+        }
+;
+      }
+    }
+;
+    runtime=RuntimeLocator.createRuntime(factory,new DefaultPropertiesProvider());
     runtime.init();
   }
   return runtime;

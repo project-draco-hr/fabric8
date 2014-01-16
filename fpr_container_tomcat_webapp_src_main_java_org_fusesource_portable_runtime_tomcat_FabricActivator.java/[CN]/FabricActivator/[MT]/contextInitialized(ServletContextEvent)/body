@@ -1,10 +1,10 @@
 {
-  Properties sysprops=getRuntimeProperties();
-  DefaultPropertiesProvider propsProvider=new DefaultPropertiesProvider(sysprops,true);
-  Runtime runtime=RuntimeLocator.createRuntime(new TomcatRuntimeFactory(),propsProvider);
+  ServletContext servletContext=event.getServletContext();
+  PropertiesProvider propsProvider=new FabricPropertiesProvider(servletContext);
+  Runtime runtime=RuntimeLocator.createRuntime(new TomcatRuntimeFactory(servletContext),propsProvider);
   runtime.init();
   final BoostrapLatch latch=new BoostrapLatch(1);
-  final ModuleContext syscontext=runtime.getModule(0).getModuleContext();
+  final ModuleContext syscontext=runtime.getModuleContext();
   ServiceListener listener=new ServiceListener(){
     @Override public void serviceChanged(    ServiceEvent event){
       if (event.getType() == ServiceEvent.REGISTERED) {
@@ -15,10 +15,9 @@
   }
 ;
   syscontext.addServiceListener(listener,"(objectClass=" + FabricService.class.getName() + ")");
-  ServletContext servletContext=event.getServletContext();
   servletContext.setAttribute(BoostrapLatch.class.getName(),latch);
   WebAppContextListener webappInstaller=new WebAppContextListener();
-  Module module=webappInstaller.installWebappModule(runtime,servletContext);
+  Module module=webappInstaller.installWebappModule(servletContext);
   servletContext.setAttribute(Module.class.getName(),module);
   try {
     module.start();
@@ -26,6 +25,10 @@
  catch (  ModuleException ex) {
     throw new IllegalStateException(ex);
   }
-  BundleContext bundleContext=module.adapt(Bundle.class).getBundleContext();
-  servletContext.setAttribute("org.osgi.framework.BundleContext",bundleContext);
+  ModuleContext moduleContext=module.getModuleContext();
+  BundleContext bundleContext=new BundleContextAdaptor(moduleContext);
+  servletContext.setAttribute(BundleContext.class.getName(),bundleContext);
+  Repository repository=registerRepositoryService(runtime);
+  Resolver resolver=registerResolverService(runtime);
+  registerProvisionerService(servletContext,runtime,repository,resolver);
 }
