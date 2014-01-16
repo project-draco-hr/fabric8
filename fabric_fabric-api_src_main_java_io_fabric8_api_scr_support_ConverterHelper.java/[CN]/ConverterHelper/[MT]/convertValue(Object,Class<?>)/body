@@ -1,0 +1,46 @@
+{
+  if (value != null) {
+    if (clazz.isInstance(value)) {
+      return value;
+    }
+    if (clazz == String.class) {
+      return value.toString();
+    }
+    if (clazz == Character.class || clazz == char.class) {
+      String text=value.toString();
+      if (text.length() > 0) {
+        return text.charAt(0);
+      }
+    }
+    String text=value.toString();
+    if (clazz.isArray()) {
+      String[] tokens=splitValues(text);
+      Class<?> componentType=clazz.getComponentType();
+      Object array=Array.newInstance(componentType,tokens.length);
+      int index=0;
+      for (      String token : tokens) {
+        Object item=convertValue(token,componentType);
+        if (item != null) {
+          Array.set(array,index++,item);
+        }
+      }
+      return array;
+    }
+ else     if (Collection.class.isAssignableFrom(clazz)) {
+      List list=new ArrayList();
+      Class<?> componentType=Object.class;
+      String[] tokens=splitValues(text);
+      for (      String token : tokens) {
+        Object item=convertValue(token,componentType);
+        list.add(item);
+      }
+      return list;
+    }
+    PropertyEditor editor=PropertyEditorManager.findEditor(clazz);
+    if (editor != null) {
+      editor.setAsText(text);
+      return editor.getValue();
+    }
+  }
+  return null;
+}

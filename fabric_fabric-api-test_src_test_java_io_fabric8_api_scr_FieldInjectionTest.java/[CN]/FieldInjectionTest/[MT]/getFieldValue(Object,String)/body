@@ -1,0 +1,11 @@
+{
+  Field declaredField=null;
+  try {
+    Class<?> clazz=instance.getClass();
+    declaredField=clazz.getDeclaredField(fieldName);
+  }
+ catch (  Exception e) {
+    fail("Could not find field: " + fieldName + " in "+ instance);
+  }
+  return ReflectionHelper.getField(declaredField,instance);
+}

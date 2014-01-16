@@ -1,0 +1,16 @@
+{
+  try {
+    boolean oldAccessible=f.isAccessible();
+    boolean shouldSetAccessible=!Modifier.isPublic(f.getModifiers()) && !oldAccessible;
+    if (shouldSetAccessible) {
+      f.setAccessible(true);
+    }
+    f.set(instance,value);
+    if (shouldSetAccessible) {
+      f.setAccessible(oldAccessible);
+    }
+  }
+ catch (  Exception ex) {
+    throw new UnsupportedOperationException("Cannot inject value of class: " + value.getClass() + " into: "+ f);
+  }
+}
