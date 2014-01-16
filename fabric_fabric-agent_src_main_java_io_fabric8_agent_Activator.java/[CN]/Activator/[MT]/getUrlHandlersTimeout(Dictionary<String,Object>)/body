@@ -1,0 +1,12 @@
+{
+  if (config != null) {
+    Object timeout=config.get(URL_HANDLERS_TIMEOUT);
+    if (timeout instanceof Number) {
+      return ((Number)timeout).longValue();
+    }
+ else     if (timeout instanceof String) {
+      return Long.parseLong((String)timeout);
+    }
+  }
+  return TimeUnit.MILLISECONDS.convert(5,TimeUnit.MINUTES);
+}
