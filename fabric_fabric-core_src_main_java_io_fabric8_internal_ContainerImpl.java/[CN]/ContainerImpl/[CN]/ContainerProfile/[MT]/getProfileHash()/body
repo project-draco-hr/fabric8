@@ -1,14 +1,19 @@
 {
   StringBuilder sb=new StringBuilder();
+  Version v=service.getVersion(getVersion());
   boolean first=true;
-  for (  Profile p : getProfiles()) {
-    if (!first) {
-      sb.append("-");
-    }
+  for (  String p : service.getDataStore().getContainerProfiles(id)) {
+    try {
+      if (!first) {
+        sb.append("-");
+      }
  else {
-      first=false;
+        first=false;
+      }
+      sb.append(v.getProfile(p));
     }
-    sb.append(p.getProfileHash());
+ catch (    Exception e) {
+    }
   }
   return sb.toString();
 }

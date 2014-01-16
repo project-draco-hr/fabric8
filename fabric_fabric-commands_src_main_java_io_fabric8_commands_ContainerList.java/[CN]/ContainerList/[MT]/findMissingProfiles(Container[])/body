@@ -1,9 +1,9 @@
 {
   Set<String> missingProfiles=new HashSet<String>();
   for (  Container container : containers) {
-    for (    Profile p : container.getProfiles()) {
-      if (!p.exists()) {
-        missingProfiles.add(p.getId());
+    for (    String p : fabricService.getDataStore().getContainerProfiles(container.getId())) {
+      if (!container.getVersion().hasProfile(p)) {
+        missingProfiles.add(p);
       }
     }
   }

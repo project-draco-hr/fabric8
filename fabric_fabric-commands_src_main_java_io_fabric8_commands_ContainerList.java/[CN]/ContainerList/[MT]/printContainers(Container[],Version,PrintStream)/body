@@ -12,7 +12,7 @@
       if (container.getId().equals(fabricService.getCurrentContainer().getId())) {
         marker="*";
       }
-      String assignedProfiles=toString(container.getProfiles());
+      String assignedProfiles=toString(fabricService.getDataStore().getContainerProfiles(container.getId()));
       String highlightedProfiles=new String(assignedProfiles);
       String line=String.format(FORMAT,indent + container.getId() + marker,container.getVersion().getId(),container.isAlive(),assignedProfiles,status(container));
       int pStart=Math.max(header.indexOf(HEADERS[3]),line.indexOf(assignedProfiles));

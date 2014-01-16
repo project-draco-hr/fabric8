@@ -1,8 +1,9 @@
 {
   List<Profile> removedProfiles=Arrays.asList(profiles);
   List<Profile> updatedProfileList=new LinkedList<Profile>();
-  for (  Profile p : getProfiles()) {
-    if (!removedProfiles.contains(p))     updatedProfileList.add(p);
+  for (  String p : service.getDataStore().getContainerProfiles(id)) {
+    Profile profile=getVersion().hasProfile(p) ? getVersion().getProfile(p) : new ProfileImpl(p,getVersion().getId(),service);
+    if (!removedProfiles.contains(profile))     updatedProfileList.add(profile);
   }
   setProfiles(updatedProfileList.toArray(new Profile[updatedProfileList.size()]));
 }

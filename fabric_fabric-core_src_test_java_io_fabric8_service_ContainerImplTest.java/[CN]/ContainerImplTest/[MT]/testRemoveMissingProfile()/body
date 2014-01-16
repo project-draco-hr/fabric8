@@ -1,0 +1,23 @@
+{
+  String v="1.0";
+  String profile1Id="feature-camel";
+  String profile2Id="feature-cxf";
+  String missing="missing";
+  Version version=new VersionImpl(v,fabricService);
+  List<String> profiles=Arrays.asList(profile1Id,profile2Id,missing);
+  List<String> profilesToSet=Arrays.asList(profile1Id,profile2Id);
+  expect(fabricService.getVersion(eq(v))).andReturn(version).anyTimes();
+  expect(dataStore.getContainerVersion(eq(CONTAINER_ID))).andReturn(v).anyTimes();
+  expect(dataStore.getContainerProfiles(eq(CONTAINER_ID))).andReturn(profiles).anyTimes();
+  expect(dataStore.hasProfile(v,profile1Id)).andReturn(true).anyTimes();
+  expect(dataStore.hasProfile(v,profile2Id)).andReturn(true).anyTimes();
+  expect(dataStore.hasProfile(v,missing)).andReturn(false).anyTimes();
+  expect(dataStore.getProfileAttributes(eq(v),EasyMock.<String>anyObject())).andReturn(Maps.<String,String>newHashMap()).anyTimes();
+  dataStore.setContainerProfiles(eq(CONTAINER_ID),eq(profilesToSet));
+  expectLastCall().once();
+  replay(fabricService);
+  replay(dataStore);
+  container.removeProfiles(new Profile[]{new ProfileImpl(missing,v,fabricService)});
+  verify(fabricService);
+  verify(dataStore);
+}
