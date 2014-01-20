@@ -1,10 +1,18 @@
 {
-  Version v=null;
+  List<Version> versions;
   if (version != null && !version.isEmpty()) {
-    v=fabricService.getVersion(version);
+    versions=Collections.singletonList(fabricService.getVersion(version));
+  }
+ else   if (allVersions) {
+    versions=Arrays.asList(fabricService.getVersions());
+  }
+ else {
+    versions=Collections.singletonList(fabricService.getDefaultVersion());
   }
   username=username != null && !username.isEmpty() ? username : ShellUtils.retrieveFabricUser(session);
   password=password != null ? password : ShellUtils.retrieveFabricUserPassword(session);
-  fabricService.getPatchService().applyPatch(v,patch,username,password);
+  for (  Version version : versions) {
+    fabricService.getPatchService().applyPatch(version,patch,username,password);
+  }
   return null;
 }
