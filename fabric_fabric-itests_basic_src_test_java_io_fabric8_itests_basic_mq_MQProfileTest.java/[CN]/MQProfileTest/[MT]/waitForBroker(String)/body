@@ -1,0 +1,19 @@
+{
+  CuratorFramework curatorFramework=getCurator();
+  final CountDownLatch serviceLatch=new CountDownLatch(1);
+  final FabricDiscoveryAgent discoveryAgent=new FabricDiscoveryAgent();
+  discoveryAgent.setCurator(curatorFramework);
+  discoveryAgent.setGroupName(groupName);
+  discoveryAgent.setDiscoveryListener(new DiscoveryListener(){
+    @Override public void onServiceAdd(    DiscoveryEvent discoveryEvent){
+      System.out.println("Service added:" + discoveryEvent.getServiceName());
+      serviceLatch.countDown();
+    }
+    @Override public void onServiceRemove(    DiscoveryEvent discoveryEvent){
+      System.out.println("Service removed:" + discoveryEvent.getServiceName());
+    }
+  }
+);
+  discoveryAgent.start();
+  assertTrue(serviceLatch.await(5,TimeUnit.MINUTES));
+}

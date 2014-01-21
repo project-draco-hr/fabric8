@@ -12,6 +12,8 @@
   Profile westBrokerProfile=eastBroker.getVersion().getProfile("mq-broker-us-west.us-west");
   westBroker.setProfiles(new Profile[]{westBrokerProfile});
   Provision.provisioningSuccess(Arrays.asList(westBroker,eastBroker),PROVISION_TIMEOUT);
+  waitForBroker("us-east");
+  waitForBroker("us-west");
   final BrokerViewMBean brokerEast=(BrokerViewMBean)Provision.getMBean(eastBroker,new ObjectName("org.apache.activemq:type=Broker,brokerName=us-east"),BrokerViewMBean.class,120000);
   final BrokerViewMBean brokerWest=(BrokerViewMBean)Provision.getMBean(westBroker,new ObjectName("org.apache.activemq:type=Broker,brokerName=us-west"),BrokerViewMBean.class,120000);
   Container eastProducer=containers.iterator().next();

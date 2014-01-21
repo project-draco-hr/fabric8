@@ -7,6 +7,7 @@
   Profile brokerProfile=broker.getVersion().getProfile("mq-broker-default.mq");
   broker.setProfiles(new Profile[]{brokerProfile});
   Provision.provisioningSuccess(Arrays.asList(broker),PROVISION_TIMEOUT);
+  waitForBroker("default");
   final BrokerViewMBean bean=(BrokerViewMBean)Provision.getMBean(broker,new ObjectName("org.apache.activemq:type=Broker,brokerName=mq"),BrokerViewMBean.class,120000);
   System.err.println(executeCommand("container-list"));
   for (  Container c : containers) {
