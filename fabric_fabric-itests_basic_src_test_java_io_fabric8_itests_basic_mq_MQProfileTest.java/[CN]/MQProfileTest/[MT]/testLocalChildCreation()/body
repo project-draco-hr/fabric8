@@ -6,7 +6,7 @@
   Profile brokerProfile=broker.getVersion().getProfile("mq-default");
   broker.setProfiles(new Profile[]{brokerProfile});
   Provision.provisioningSuccess(Arrays.asList(broker),PROVISION_TIMEOUT);
-  final BrokerViewMBean bean=(BrokerViewMBean)Provision.getMBean(broker,new ObjectName("org.apache.activemq:type=Broker,brokerName=" + broker.getId()),BrokerViewMBean.class,30000);
+  final BrokerViewMBean bean=(BrokerViewMBean)Provision.getMBean(broker,new ObjectName("org.apache.activemq:type=Broker,brokerName=" + broker.getId()),BrokerViewMBean.class,120000);
   assertEquals("Producer not present",0,bean.getTotalProducerCount());
   assertEquals("Consumer not present",0,bean.getTotalConsumerCount());
   for (  Container c : containers) {
@@ -22,7 +22,7 @@
       return true;
     }
   }
-,30000L);
+,120000L);
   assertEquals("Producer not present",1,bean.getTotalProducerCount());
   assertEquals("Consumer not present",1,bean.getTotalConsumerCount());
 }
