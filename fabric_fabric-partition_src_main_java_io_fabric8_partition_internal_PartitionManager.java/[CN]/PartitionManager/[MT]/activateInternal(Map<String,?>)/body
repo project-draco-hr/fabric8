@@ -1,11 +1,6 @@
 {
   validate(configuration);
-  taskId=readString(configuration,TASK_ID_PROPERTY_NAME);
-  taskConfiguration=Collections.unmodifiableMap(configuration);
-  partitionsPath=readString(configuration,WORKITEM_PATH_PROPERTY_NAME);
-  policyType=readString(configuration,WORK_BALANCING_POLICY);
-  workerType=readString(configuration,WORKER_TYPE);
-  repositoryType=readString(configuration,WORKITEM_REPO_TYPE_PROPERTY_NAME);
+  ConfigInjection.applyConfiguration(configuration,this);
   startCoordinator();
   startWorkHandler();
 }

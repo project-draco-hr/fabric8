@@ -9,7 +9,7 @@
     session=newSession(system,localRepository);
   }
   repositories=new HashMap<String,RemoteRepository>();
-  for (  String rep : remoteRepositories.split(",")) {
+  for (  String rep : remoteRepositories) {
     RemoteRepository remoteRepository=createRemoteRepository(rep);
     remoteRepository.setPolicy(true,new RepositoryPolicy(true,updatePolicy,checksumPolicy));
     remoteRepository.setProxy(session.getProxySelector().getProxy(remoteRepository));

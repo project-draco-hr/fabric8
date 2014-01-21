@@ -1,0 +1,38 @@
+{
+  Set<String> injectedNames=new HashSet<String>();
+  ClassLoader classLoader=clazz.getClassLoader();
+  String metaTypeXml="OSGI-INF/metatype/" + clazz.getName() + ".xml";
+  Document document=loadClassPathXmlDocument(documentBuilder,classLoader,metaTypeXml);
+  if (document != null) {
+    NodeList ads=document.getElementsByTagName("AD");
+    int length=ads.getLength();
+    for (int i=0; i < length; i++) {
+      Node item=ads.item(i);
+      if (item instanceof Element) {
+        Element element=(Element)item;
+        String propertyName=element.getAttribute("id");
+        String defaultValue=element.getAttribute("default");
+        if (!Strings.isNullOrBlank(propertyName) && injectedNames.add(propertyName)) {
+          injectMetaTypePropertyValue(clazz,target,propertyName,defaultValue,configuration);
+        }
+      }
+    }
+  }
+  String dsXml="OSGI-INF/" + clazz.getName() + ".xml";
+  document=loadClassPathXmlDocument(documentBuilder,classLoader,dsXml);
+  if (document != null) {
+    NodeList ads=document.getElementsByTagName("property");
+    int length=ads.getLength();
+    for (int i=0; i < length; i++) {
+      Node item=ads.item(i);
+      if (item instanceof Element) {
+        Element element=(Element)item;
+        String propertyName=element.getAttribute("name");
+        String defaultValue=element.getAttribute("value");
+        if (!Strings.isNullOrBlank(propertyName) && injectedNames.add(propertyName)) {
+          injectMetaTypePropertyValue(clazz,target,propertyName,defaultValue,configuration);
+        }
+      }
+    }
+  }
+}

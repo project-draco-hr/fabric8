@@ -1,9 +1,7 @@
 {
   try {
     super.activateInternal();
-    Map<String,String> configuration=getDataStoreProperties();
-    pullPeriod=PropertiesHelper.getLongValue(configuration,GIT_PULL_PERIOD,this.pullPeriod);
-    configuredUrl=configuration.get(GIT_REMOTE_URL);
+    ;
     GitService optionalService=gitService.getOptional();
     if (configuredUrl != null) {
       gitListener.onRemoteUrlChanged(configuredUrl);
@@ -15,7 +13,7 @@
       gitListener.onRemoteUrlChanged(remoteUrl);
     }
     forceGetVersions();
-    LOG.info("starting to pull from remote repository every " + pullPeriod + " millis");
+    LOG.info("starting to pull from remote repository every " + gitPullPeriod + " millis");
     threadPool.scheduleWithFixedDelay(new Runnable(){
       @Override public void run(){
         if (isValid()) {
@@ -25,7 +23,7 @@
         }
       }
     }
-,pullPeriod,pullPeriod,TimeUnit.MILLISECONDS);
+,gitPullPeriod,gitPullPeriod,TimeUnit.MILLISECONDS);
   }
  catch (  Exception ex) {
     throw new FabricException("Failed to start GitDataStore:",ex);
