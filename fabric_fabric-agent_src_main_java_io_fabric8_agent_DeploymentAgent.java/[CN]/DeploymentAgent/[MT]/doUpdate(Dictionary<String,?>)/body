@@ -157,7 +157,8 @@
   updateStatus("resolving",null);
   Resource systemBundle=systemBundleContext.getBundle(0).adapt(BundleRevision.class);
   Collection<Resource> allResources=builder.resolve(systemBundle,resolveOptionalImports);
+  Set<String> ignoredBundles=getPrefixedProperties(properties,"ignore.");
   Map<String,StreamProvider> providers=builder.getProviders();
-  install(allResources,providers);
+  install(allResources,ignoredBundles,providers);
   return true;
 }

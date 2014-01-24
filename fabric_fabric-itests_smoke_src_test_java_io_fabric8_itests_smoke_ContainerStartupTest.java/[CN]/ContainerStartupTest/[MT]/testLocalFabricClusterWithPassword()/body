@@ -1,7 +1,8 @@
 {
-  System.out.println(executeCommand("fabric:create -n --clean --zookeeper-password testpassword root"));
+  System.out.println(executeCommand("fabric:create --clean --zookeeper-password testpassword root"));
   Container[] containers=getFabricService().getContainers();
   assertNotNull(containers);
+  Provision.containersStatus(Arrays.asList(containers),"success",PROVISION_TIMEOUT);
   assertEquals("Expected to find 1 container",1,containers.length);
   assertEquals("Expected to find the root container","root",containers[0].getId());
   ConfigurationAdmin configurationAdmin=getOsgiService(ConfigurationAdmin.class);
