@@ -5,11 +5,16 @@
   ClassLoaders.withContextClassLoader(classLoader,new Callable<Object>(){
     @Override public Object call() throws Exception {
       if (vertx == null) {
-        vertx=VertxFactory.newVertx();
-      }
-      GatewaysConfig config=loadConfig();
-      if (config != null) {
-        createListeners(config);
+        try {
+          vertx=VertxFactory.newVertx();
+        }
+ catch (        Exception e) {
+          LOG.warn("Failed to use META-INF/services to discover vertx: " + e,e);
+        }
+        if (vertx == null) {
+          DefaultVertxFactory factory=new DefaultVertxFactory();
+          vertx=factory.createVertx();
+        }
       }
       return null;
     }

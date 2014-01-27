@@ -1,0 +1,17 @@
+{
+  String zkPath=getZooKeeperPath();
+  ServiceMap serviceMap=new ServiceMap();
+  FabricGateway gatewayService=getGateway();
+  Vertx vertx=gatewayService.getVertx();
+  CuratorFramework curator=gatewayService.getCurator();
+  List<Gateway> gateways=new ArrayList<Gateway>();
+  addGateway(gateways,vertx,serviceMap,"tcp",isOpenWireEnabled(),getOpenWirePort());
+  addGateway(gateways,vertx,serviceMap,"stomp",isStompEnabled(),getStompPort());
+  addGateway(gateways,vertx,serviceMap,"amqp",isAmqpEnabled(),getAmqpPort());
+  addGateway(gateways,vertx,serviceMap,"mqtt",isMqttEnabled(),getMqttPort());
+  addGateway(gateways,vertx,serviceMap,"ws",isWebsocketEnabled(),getWebsocketPort());
+  if (gateways.isEmpty()) {
+    return null;
+  }
+  return new GatewayListener(curator,zkPath,serviceMap,gateways);
+}

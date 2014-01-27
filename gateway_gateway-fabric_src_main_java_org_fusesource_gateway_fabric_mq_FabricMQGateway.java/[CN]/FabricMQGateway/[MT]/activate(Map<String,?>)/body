@@ -1,0 +1,10 @@
+{
+  ConfigInjection.applyConfiguration(configuration,this);
+  Objects.notNull(getGateway(),"gateway");
+  Objects.notNull(getZooKeeperPath(),"zooKeeperPath");
+  activateComponent();
+  gatewayListener=createListener();
+  if (gatewayListener != null) {
+    gatewayListener.init();
+  }
+}
