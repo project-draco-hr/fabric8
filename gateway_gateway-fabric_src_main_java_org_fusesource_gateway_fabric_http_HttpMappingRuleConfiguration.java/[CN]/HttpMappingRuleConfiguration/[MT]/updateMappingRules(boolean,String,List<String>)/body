@@ -1,0 +1,43 @@
+{
+  SimplePathTemplate pathTemplate=getPathTemplate();
+  if (pathTemplate != null) {
+    String containerId=null;
+    int idx=path.lastIndexOf('/');
+    if (idx > 0) {
+      containerId=path.substring(idx + 1);
+      path=path.substring(0,idx);
+    }
+    String versionId=null;
+    idx=path.lastIndexOf('/');
+    if (idx > 0) {
+      versionId=path.substring(idx + 1);
+      path=path.substring(0,idx);
+    }
+    boolean versionSpecificUri=pathTemplate.getParameterNames().contains("version");
+    Map<String,String> params=new HashMap<String,String>();
+    params.put("servicePath",path);
+    params.put("container",containerId);
+    params.put("version",versionId);
+    for (    String service : services) {
+      populateUrlParams(params,service);
+      String fullPath=pathTemplate.bindByNameNonStrict(params);
+      if (remove) {
+        MappingRule rule=mappingRules.get(fullPath);
+        if (rule != null) {
+          Set<String> serviceUrls=rule.getServiceUrls();
+          serviceUrls.remove(service);
+          if (serviceUrls.isEmpty()) {
+            mappingRules.remove(fullPath);
+          }
+        }
+      }
+ else {
+        MappingRule mappingRule=new MappingRule(service);
+        MappingRule oldRule=mappingRules.put(fullPath,mappingRule);
+        if (oldRule != null) {
+          mappingRule.getServiceUrls().addAll(oldRule.getServiceUrls());
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  LOG.info("activating http mapping rule " + configuration);
+  ConfigInjection.applyConfiguration(configuration,this);
+  LOG.info("activating http mapping rule " + zooKeeperPath + " on "+ gateway.getPort());
+  Objects.notNull(getGateway(),"gateway");
+  Objects.notNull(getZooKeeperPath(),"zooKeeperPath");
+  Objects.notNull(getUriTemplate(),"uriTemplate");
+  CuratorFramework curator=gateway.getCurator();
+  mappingTree=new HttpProxyMappingTree(curator,this);
+  mappingTree.init();
+  gateway.addMappingRuleConfiguration(this);
+}

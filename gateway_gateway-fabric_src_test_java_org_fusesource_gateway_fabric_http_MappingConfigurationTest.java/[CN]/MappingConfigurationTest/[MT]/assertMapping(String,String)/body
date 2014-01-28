@@ -1,0 +1,8 @@
+{
+  Map<String,MappingRule> mappingRules=httpGateway.getMappingRules();
+  assertTrue("Should have some mapping rules",mappingRules.size() > 0);
+  MappingRule mappingRule=mappingRules.get(path);
+  assertNotNull("Could not find mapping rule for path " + path,mappingRule);
+  Set<String> serviceUrls=mappingRule.getServiceUrls();
+  assertTrue("Could not find service " + service + " in services "+ serviceUrls,serviceUrls.contains(service));
+}
