@@ -4,7 +4,7 @@
   FabricGateway gatewayService=getGateway();
   Vertx vertx=gatewayService.getVertx();
   CuratorFramework curator=gatewayService.getCurator();
-  List<Gateway> gateways=new ArrayList<Gateway>();
+  List<TcpGateway> gateways=new ArrayList<TcpGateway>();
   addGateway(gateways,vertx,serviceMap,"tcp",isOpenWireEnabled(),getOpenWirePort());
   addGateway(gateways,vertx,serviceMap,"stomp",isStompEnabled(),getStompPort());
   addGateway(gateways,vertx,serviceMap,"amqp",isAmqpEnabled(),getAmqpPort());
@@ -13,5 +13,5 @@
   if (gateways.isEmpty()) {
     return null;
   }
-  return new GatewayListener(curator,zkPath,serviceMap,gateways);
+  return new GatewayServiceTreeCache(curator,zkPath,serviceMap,gateways);
 }

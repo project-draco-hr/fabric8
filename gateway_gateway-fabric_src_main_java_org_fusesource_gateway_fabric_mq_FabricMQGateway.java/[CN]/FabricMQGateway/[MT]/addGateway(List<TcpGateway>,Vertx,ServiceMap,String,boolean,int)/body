@@ -1,0 +1,13 @@
+{
+  if (enabled) {
+    TcpGateway gateway=new TcpGateway(vertx,serviceMap,listenPort,protocolName);
+    if (Strings.isNotBlank(host)) {
+      gateway.setHost(host);
+    }
+    gateways.add(gateway);
+    return gateway;
+  }
+ else {
+    return null;
+  }
+}

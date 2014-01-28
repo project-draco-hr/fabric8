@@ -1,0 +1,11 @@
+{
+  if (active.compareAndSet(true,false)) {
+    treeCache.getListenable().removeListener(treeListener);
+    Closeables.closeQuitely(treeCache);
+    treeCache=null;
+    treeCacheExecutor.shutdownNow();
+    for (    TcpGateway gateway : gateways) {
+      gateway.destroy();
+    }
+  }
+}

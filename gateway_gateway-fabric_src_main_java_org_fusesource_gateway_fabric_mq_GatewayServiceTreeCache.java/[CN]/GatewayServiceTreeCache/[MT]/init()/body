@@ -1,0 +1,11 @@
+{
+  if (active.compareAndSet(false,true)) {
+    treeCache=new TreeCache(curator,zkPath,true,false,true,treeCacheExecutor);
+    treeCache.start(TreeCache.StartMode.NORMAL);
+    treeCache.getListenable().addListener(treeListener);
+    LOG.info("Started a group listener for " + zkPath);
+    for (    TcpGateway gateway : gateways) {
+      gateway.init();
+    }
+  }
+}

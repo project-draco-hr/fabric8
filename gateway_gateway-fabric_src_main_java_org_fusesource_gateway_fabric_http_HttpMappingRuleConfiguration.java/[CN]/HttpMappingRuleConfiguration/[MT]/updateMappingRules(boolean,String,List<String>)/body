@@ -22,7 +22,7 @@
       populateUrlParams(params,service);
       String fullPath=pathTemplate.bindByNameNonStrict(params);
       if (remove) {
-        MappingRule rule=mappingRules.get(fullPath);
+        MappedServices rule=mappingRules.get(fullPath);
         if (rule != null) {
           Set<String> serviceUrls=rule.getServiceUrls();
           serviceUrls.remove(service);
@@ -32,10 +32,10 @@
         }
       }
  else {
-        MappingRule mappingRule=new MappingRule(service);
-        MappingRule oldRule=mappingRules.put(fullPath,mappingRule);
+        MappedServices mappedServices=new MappedServices(service);
+        MappedServices oldRule=mappingRules.put(fullPath,mappedServices);
         if (oldRule != null) {
-          mappingRule.getServiceUrls().addAll(oldRule.getServiceUrls());
+          mappedServices.getServiceUrls().addAll(oldRule.getServiceUrls());
         }
       }
     }

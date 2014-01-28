@@ -11,7 +11,7 @@
   String remaining=null;
   String prefix=null;
   String urlText=null;
-  Map<String,MappingRule> mappingRules=httpGateway.getMappingRules();
+  Map<String,MappedServices> mappingRules=httpGateway.getMappingRules();
   try {
     if (isMappingIndexRequest(request)) {
       String json=mappingRulesToJson(mappingRules);
@@ -21,17 +21,17 @@
       response.setStatusCode(200);
     }
  else {
-      Set<Map.Entry<String,MappingRule>> entries=mappingRules.entrySet();
-      for (      Map.Entry<String,MappingRule> entry : entries) {
+      Set<Map.Entry<String,MappedServices>> entries=mappingRules.entrySet();
+      for (      Map.Entry<String,MappedServices> entry : entries) {
         String path=entry.getKey();
-        MappingRule mappingRule=entry.getValue();
+        MappedServices mappedServices=entry.getValue();
         String pathPrefix=path;
         if (uri.startsWith(pathPrefix) || (uri2 != null && uri2.startsWith(pathPrefix))) {
           int pathPrefixLength=pathPrefix.length();
           if (pathPrefixLength < uri.length()) {
             remaining=uri.substring(pathPrefixLength);
           }
-          urlText=mappingRule.chooseService(request);
+          urlText=mappedServices.chooseService(request);
           if (urlText != null) {
             try {
               URL url=new URL(urlText);
