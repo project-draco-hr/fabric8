@@ -1,20 +1,7 @@
 {
   if (taskHandler == null) {
-    Worker worker=workers.get(workerType);
-    WorkItemRepositoryFactory repositoryFactory=repositoryFactories.get(workItemRepositoryType);
-    if (worker == null) {
-      LOGGER.warn("Worker type {} not found. Task Handler will resume: {} when worker type is made available.",workerType,id);
-    }
- else     if (repositoryFactory == null) {
-      LOGGER.warn("Repository type {} not found. Task Handler will resume: {} when worker type is made available.",workItemRepositoryType,id);
-    }
- else {
-      if (repository == null) {
-        repository=repositoryFactory.build(workItemPath);
-      }
-      LOGGER.info("Starting Task Handler type {} for task {}.",workerType,id);
-      taskHandler=new TaskHandler(new TaskContextImpl(id,taskConfiguration),curator.get(),worker,repository);
-      taskHandler.start();
-    }
+    LOGGER.info("Starting Task Handler type {} for task {}.",workerTarget,id);
+    taskHandler=new TaskHandler(new TaskContextImpl(id,taskConfiguration),curator.get(),worker.get(),workItemRepositoryFactory.get().build(workItemPath));
+    taskHandler.start();
   }
 }
