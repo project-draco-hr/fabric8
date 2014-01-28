@@ -1,9 +1,11 @@
 {
   String id=container.getId();
+  Version version=container.getVersion();
+  String versionId=version != null ? version.getId() : null;
   String url="${zk:" + id + "/http}"+ servletEvent.getAlias();
   String name=servletEvent.getBundle().getSymbolicName();
   setJolokiaUrl(container,url,name);
-  String json="{\"id\":\"" + id + "\", \"services\":[\""+ url+ "\"],\"container\":\""+ id+ "\"}";
+  String json="{\"id\":" + jsonEncodeString(id) + ",\"services\":["+ jsonEncodeString(url)+ "]"+ ",\"container\":"+ jsonEncodeString(id)+ ",\"version\":"+ JsonHelper.jsonEncodeString(versionId)+ "}";
   try {
     if (!servletEvent.getAlias().equals("/")) {
       String path=createServletPath(servletEvent,id);
