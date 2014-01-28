@@ -1,0 +1,13 @@
+{
+  FabricService fabricService=gateway.getFabricService();
+  if (fabricService != null) {
+    Container currentContainer=fabricService.getCurrentContainer();
+    if (currentContainer != null) {
+      Version version=currentContainer.getVersion();
+      if (version != null) {
+        return version.getId();
+      }
+    }
+  }
+  return null;
+}
