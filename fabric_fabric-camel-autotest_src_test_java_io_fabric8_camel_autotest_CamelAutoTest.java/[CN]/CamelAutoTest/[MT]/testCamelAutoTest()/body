@@ -1,0 +1,26 @@
+{
+  context=new DefaultCamelContext();
+  context.addRoutes(new RouteBuilder(){
+    @Override public void configure() throws Exception {
+      from("seda:start").routeId("foo").to("log:input").to("seda:a").to("seda:b");
+    }
+  }
+);
+  context.start();
+  MockEndpoint input=context.getEndpoint("mock://log:input",MockEndpoint.class);
+  MockEndpoint a=context.getEndpoint("mock://seda:a",MockEndpoint.class);
+  MockEndpoint b=context.getEndpoint("mock://seda:b",MockEndpoint.class);
+  input.expectedBodiesReceived("Hello Camel");
+  a.expectedBodiesReceived("Hello Camel");
+  b.expectedBodiesReceived("Hello Camel");
+  CamelAutoInterceptSendToEndpointStrategy strategy=new CamelAutoInterceptSendToEndpointStrategy();
+  context.addRegisterEndpointCallback(strategy);
+  context.stopRoute("foo");
+  context.startRoute("foo");
+  ProducerTemplate template=context.createProducerTemplate();
+  template.sendBody("seda:start","Hello Camel");
+  input.assertIsSatisfied();
+  a.assertIsSatisfied();
+  b.assertIsSatisfied();
+  context.stop();
+}

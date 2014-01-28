@@ -1,5 +1,5 @@
 {
-  LOG.warn("onConfigured! mockOutputs: " + mockOutputs + " mockInputs: "+ mockInputs+ " messageFolder: "+ messageFolder);
+  LOG.debug("onConfigured. mockOutputs: " + mockOutputs + " mockInputs: "+ mockInputs+ " messageFolder: "+ messageFolder);
   FabricService fabricService=this.fabricService.getOptional();
   MBeanServer mbeanServerValue=mbeanServer;
   if (mbeanServerValue != null && fabricService != null) {
@@ -8,7 +8,7 @@
     for (    CamelContext camelContext : camelContexts.values()) {
       String camelContextID=camelContext.getName();
       if (camelContext instanceof ModelCamelContext) {
-        ModelCamelContext modelCamelContext=(ModelCamelContext)camelContext;
+        final ModelCamelContext modelCamelContext=(ModelCamelContext)camelContext;
         List<RouteDefinition> routeDefinitions=modelCamelContext.getRouteDefinitions();
         if (camelContextsConfigured.add(camelContextID)) {
           NodeIdFactory nodeIdFactory=camelContext.getNodeIdFactory();
@@ -17,18 +17,15 @@
               String routeId=routeDefinition.idOrCreate(nodeIdFactory);
               modelCamelContext.stopRoute(routeId);
               final String routeKey=camelContextID + "." + routeId;
-              LOG.info("mocking camel route: " + routeKey);
+              LOG.info("Mocking Camel route: " + routeKey);
               routeDefinition.adviceWith(modelCamelContext,new AdviceWithRouteBuilder(){
                 @Override public void configure() throws Exception {
                   if (mockOutputs) {
-                    mockEndpoints();
+                    modelCamelContext.addRegisterEndpointCallback(strategy);
                   }
                 }
               }
 );
-              modelCamelContext.removeRouteDefinition(routeDefinition);
-              modelCamelContext.addRouteDefinition(routeDefinition);
-              modelCamelContext.startRoute(routeId);
             }
           }
           String path=messageFolder;

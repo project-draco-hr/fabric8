@@ -1,8 +1,10 @@
 {
-  if (LOG.isDebugEnabled()) {
-    LOG.debug("bind camel context " + camelContext + " status: "+ (camelContext == null ? "null" : camelContext.getStatus()));
+  if (camelContext != null) {
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Bind camelContext " + camelContext + " status: "+ camelContext.getStatus());
+    }
+    String id=camelContext.getName();
+    this.camelContexts.put(id,camelContext);
+    clearCamelContextConfiguration(id);
   }
-  String id=camelContext.getName();
-  this.camelContexts.put(id,camelContext);
-  clearCamelContextConfiguration(id);
 }
