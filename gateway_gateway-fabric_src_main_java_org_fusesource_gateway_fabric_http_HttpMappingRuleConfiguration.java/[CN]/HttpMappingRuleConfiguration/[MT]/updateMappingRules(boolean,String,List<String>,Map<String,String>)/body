@@ -2,6 +2,12 @@
   SimplePathTemplate pathTemplate=getPathTemplate();
   if (pathTemplate != null) {
     boolean versionSpecificUri=pathTemplate.getParameterNames().contains("version");
+    String versionId=defaultParams.get("version");
+    if (!remove && versionId != null && !versionSpecificUri && gatewayVersion != null) {
+      if (!gatewayVersion.equals(versionId)) {
+        remove=true;
+      }
+    }
     Map<String,String> params=new HashMap<String,String>();
     if (defaultParams != null) {
       params.putAll(defaultParams);
