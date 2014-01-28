@@ -27,7 +27,7 @@
         }
       }
  else {
-        MappedServices mappedServices=new MappedServices(service);
+        MappedServices mappedServices=new MappedServices(service,serviceDetails);
         MappedServices oldRule=mappingRules.put(fullPath,mappedServices);
         if (oldRule != null) {
           mappedServices.getServiceUrls().addAll(oldRule.getServiceUrls());
@@ -35,4 +35,5 @@
       }
     }
   }
+  fireMappingRulesChanged();
 }
