@@ -1,23 +1,12 @@
 {
   SimplePathTemplate pathTemplate=getPathTemplate();
   if (pathTemplate != null) {
-    String containerId=null;
-    int idx=path.lastIndexOf('/');
-    if (idx > 0) {
-      containerId=path.substring(idx + 1);
-      path=path.substring(0,idx);
-    }
-    String versionId=null;
-    idx=path.lastIndexOf('/');
-    if (idx > 0) {
-      versionId=path.substring(idx + 1);
-      path=path.substring(0,idx);
-    }
     boolean versionSpecificUri=pathTemplate.getParameterNames().contains("version");
     Map<String,String> params=new HashMap<String,String>();
+    if (defaultParams != null) {
+      params.putAll(defaultParams);
+    }
     params.put("servicePath",path);
-    params.put("container",containerId);
-    params.put("version",versionId);
     for (    String service : services) {
       populateUrlParams(params,service);
       String fullPath=pathTemplate.bindByNameNonStrict(params);
