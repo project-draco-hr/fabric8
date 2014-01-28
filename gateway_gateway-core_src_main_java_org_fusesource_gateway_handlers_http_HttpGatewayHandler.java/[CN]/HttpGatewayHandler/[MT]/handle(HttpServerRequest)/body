@@ -11,7 +11,7 @@
   String remaining=null;
   String prefix=null;
   String urlText=null;
-  Map<String,MappedServices> mappingRules=httpGateway.getMappingRules();
+  Map<String,MappedServices> mappingRules=httpGateway.getMappedServices();
   try {
     if (isMappingIndexRequest(request)) {
       String json=mappingRulesToJson(mappingRules);
@@ -31,6 +31,9 @@
           if (pathPrefixLength < uri.length()) {
             remaining=uri.substring(pathPrefixLength);
           }
+ else {
+            remaining=null;
+          }
           urlText=mappedServices.chooseService(request);
           if (urlText != null) {
             try {
@@ -47,10 +50,10 @@
       }
       if (client != null) {
         String actualUrl=prefix != null ? prefix : "";
+        if (actualUrl.length() > 0 && !actualUrl.endsWith("/")) {
+          actualUrl+="/";
+        }
         if (remaining != null) {
-          if (actualUrl.length() > 0 && !actualUrl.endsWith("/")) {
-            actualUrl+="/";
-          }
           actualUrl+=remaining;
         }
         LOG.info("Proxying request " + uri + " to actual path: "+ actualUrl+ " on service: "+ urlText);
