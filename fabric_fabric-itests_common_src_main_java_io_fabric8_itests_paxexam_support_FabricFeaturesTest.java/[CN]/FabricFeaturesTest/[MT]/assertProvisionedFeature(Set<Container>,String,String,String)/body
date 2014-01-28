@@ -29,8 +29,20 @@
   for (  Container container : containers) {
     for (    String symbolicName : expectedSymbolicNames.split(" ")) {
       System.out.println(executeCommand("container-connect -u admin -p admin " + container.getId() + " osgi:list -s -t 0"));
-      String bundles=executeCommand("container-connect -u admin -p admin " + container.getId() + " osgi:list -s -t 0 | grep "+ symbolicName);
-      System.out.flush();
+      int i=0;
+      String bundles=null;
+      while (i < maxTry) {
+        bundles=executeCommand("container-connect -u admin -p admin " + container.getId() + " osgi:list -s -t 0 | grep "+ symbolicName);
+        System.out.flush();
+        if (bundles != null) {
+          i=Integer.MAX_VALUE;
+        }
+ else {
+          System.out.println("Waiting for container to provision so we sleep for 3 seconds at attempt #" + i);
+          i++;
+          Thread.sleep(3000);
+        }
+      }
       Assert.assertNotNull(bundles);
       Assert.assertTrue("Expected to find symbolic name:" + symbolicName,bundles.contains(symbolicName));
       System.out.println(bundles);
