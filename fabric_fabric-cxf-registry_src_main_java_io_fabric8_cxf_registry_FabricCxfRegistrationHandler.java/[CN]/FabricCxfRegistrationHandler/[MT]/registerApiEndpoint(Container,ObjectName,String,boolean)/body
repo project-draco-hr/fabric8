@@ -14,18 +14,20 @@
     String apiDocPath="/api-docs";
     String wsdlPath="?wsdl";
     String wadlPath="?_wadl";
-    String json="{\"id\":\"" + jsonEncode(id) + "\", \"container\":\""+ jsonEncode(id)+ "\", \"services\":[\""+ jsonEncode(url)+ "\"]"+ ", \"objectName\": \""+ jsonEncode(oName.toString())+ "\"";
+    Version version=container.getVersion();
+    String versionId=version != null ? version.getId() : null;
+    String json="{\"id\":" + JsonHelper.jsonEncodeString(id) + ", \"container\":"+ JsonHelper.jsonEncodeString(id)+ ", \"version\":"+ JsonHelper.jsonEncodeString(versionId)+ ", \"services\":["+ JsonHelper.jsonEncodeString(url)+ "]"+ ", \"objectName\":"+ JsonHelper.jsonEncodeString(oName.toString())+ "";
     boolean rest=false;
     if (booleanAttribute(oName,"isWADL")) {
       rest=true;
-      json+=", \"wadl\": \"" + wadlPath + "\"";
+      json+=", \"wadl\":" + JsonHelper.jsonEncodeString(wadlPath);
     }
     if (booleanAttribute(oName,"isSwagger")) {
       rest=true;
-      json+=", \"apidocs\": \"" + apiDocPath + "\"";
+      json+=", \"apidocs\":" + JsonHelper.jsonEncodeString(apiDocPath);
     }
     if (booleanAttribute(oName,"isWSDL")) {
-      json+=", \"wsdl\": \"" + wsdlPath + "\"";
+      json+=", \"wsdl\":" + JsonHelper.jsonEncodeString(wsdlPath);
     }
     json+="}";
     String path=getPath(container,oName,address,rest);

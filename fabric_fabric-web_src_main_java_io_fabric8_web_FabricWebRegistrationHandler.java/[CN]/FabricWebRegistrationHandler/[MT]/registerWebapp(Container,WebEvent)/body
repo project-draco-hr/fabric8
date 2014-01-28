@@ -3,7 +3,9 @@
   String url="${zk:" + id + "/http}"+ webEvent.getContextPath();
   String name=webEvent.getBundle().getSymbolicName();
   setJolokiaUrl(container,url,name);
-  String json="{\"id\":\"" + id + "\", \"services\":[\""+ url+ "\"],\"container\":\""+ id+ "\"}";
+  Version version=container.getVersion();
+  String versionId=version != null ? version.getId() : null;
+  String json="{\"id\":" + jsonEncodeString(id) + ", \"services\":["+ jsonEncodeString(url)+ "]"+ ", \"version\":"+ JsonHelper.jsonEncodeString(versionId)+ ", \"container\":"+ jsonEncodeString(id)+ "}";
   try {
     setData(curator.get(),ZkPath.WEBAPPS_CONTAINER.getPath(name,webEvent.getBundle().getVersion().toString(),id),json,CreateMode.EPHEMERAL);
   }
