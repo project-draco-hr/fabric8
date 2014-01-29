@@ -4,12 +4,14 @@
   FabricGateway gatewayService=getGateway();
   Vertx vertx=gatewayService.getVertx();
   CuratorFramework curator=gatewayService.getCurator();
+  LoadBalancer<String> loadBalancer=LoadBalancers.createLoadBalancer(loadBalancerType,stickyLoadBalancerCacheSize);
+  LOG.info("activating MQ mapping ZooKeeper path: " + zkPath + " host: "+ host+ " with load balancer: "+ loadBalancer);
   List<TcpGateway> gateways=new ArrayList<TcpGateway>();
-  addGateway(gateways,vertx,serviceMap,"tcp",isOpenWireEnabled(),getOpenWirePort());
-  addGateway(gateways,vertx,serviceMap,"stomp",isStompEnabled(),getStompPort());
-  addGateway(gateways,vertx,serviceMap,"amqp",isAmqpEnabled(),getAmqpPort());
-  addGateway(gateways,vertx,serviceMap,"mqtt",isMqttEnabled(),getMqttPort());
-  addGateway(gateways,vertx,serviceMap,"ws",isWebsocketEnabled(),getWebsocketPort());
+  addGateway(gateways,vertx,serviceMap,"tcp",isOpenWireEnabled(),getOpenWirePort(),loadBalancer);
+  addGateway(gateways,vertx,serviceMap,"stomp",isStompEnabled(),getStompPort(),loadBalancer);
+  addGateway(gateways,vertx,serviceMap,"amqp",isAmqpEnabled(),getAmqpPort(),loadBalancer);
+  addGateway(gateways,vertx,serviceMap,"mqtt",isMqttEnabled(),getMqttPort(),loadBalancer);
+  addGateway(gateways,vertx,serviceMap,"ws",isWebsocketEnabled(),getWebsocketPort(),loadBalancer);
   if (gateways.isEmpty()) {
     return null;
   }

@@ -2,11 +2,11 @@
   NetClient client=null;
   List<String> paths=serviceMap.getPaths();
   TcpClientRequestFacade requestFacade=new TcpClientRequestFacade(socket);
-  String path=pathLoadBalancer.choose(paths,requestFacade);
+  String path=(String)loadBalancer.choose(paths,requestFacade);
   if (path != null) {
     List<ServiceDetails> services=serviceMap.getServices(path);
     if (!services.isEmpty()) {
-      ServiceDetails serviceDetails=serviceChooser.choose(services,requestFacade);
+      ServiceDetails serviceDetails=(ServiceDetails)loadBalancer.choose(services,requestFacade);
       if (serviceDetails != null) {
         List<String> urlStrings=serviceDetails.getServices();
         for (        String urlString : urlStrings) {
