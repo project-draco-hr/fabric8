@@ -6,6 +6,9 @@
   Objects.notNull(getUriTemplate(),"uriTemplate");
   LoadBalancer<String> loadBalancer=LoadBalancers.createLoadBalancer(loadBalancerType,stickyLoadBalancerCacheSize);
   LOG.info("activating http mapping ZooKeeper path: " + zkPath + " with URI template: "+ uriTemplate+ " enabledVersion: "+ enabledVersion+ " with load balancer: "+ loadBalancer);
+  if (httpMappingRuleBase != null) {
+    gateway.removeMappingRuleConfiguration(httpMappingRuleBase);
+  }
   httpMappingRuleBase=new HttpMappingRuleBase(zkPath,new SimplePathTemplate(uriTemplate),gateway.getGatewayVersion(),enabledVersion,loadBalancer);
   CuratorFramework curator=gateway.getCurator();
   mappingTree=new HttpMappingZooKeeperTreeCache(curator,httpMappingRuleBase);
