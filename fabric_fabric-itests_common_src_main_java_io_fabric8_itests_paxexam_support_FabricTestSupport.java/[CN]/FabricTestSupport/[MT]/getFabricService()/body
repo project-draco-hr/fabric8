@@ -1,5 +1,4 @@
 {
-  FabricService fabricService=ServiceProxy.getOsgiServiceProxy(bundleContext.getBundle(0).getBundleContext(),FabricService.class,60,TimeUnit.SECONDS);
-  Assert.assertNotNull(fabricService);
-  return fabricService;
+  ServiceProxy serviceProxy=new ServiceProxy(bundleContext);
+  return serviceProxy.getService(FabricService.class,60,TimeUnit.SECONDS);
 }

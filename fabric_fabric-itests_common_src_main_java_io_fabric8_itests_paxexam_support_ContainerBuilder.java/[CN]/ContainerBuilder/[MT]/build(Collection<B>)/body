@@ -1,37 +1,44 @@
 {
   Set<Container> containers=new HashSet<Container>();
-  FabricService fabricService=getOsgiServiceProxy(FabricService.class);
-  CompletionService<Set<Container>> completionService=new ExecutorCompletionService<Set<Container>>(executorService);
-  int tasks=0;
-  for (  B options : buildersList) {
-    options.profiles(profileNames);
-    if (!options.isEnsembleServer()) {
-      options.zookeeperUrl(fabricService.getZookeeperUrl());
-      completionService.submit(new CreateContainerTask(fabricService,options));
-      tasks++;
-    }
-  }
+  BundleContext bundleContext=FrameworkUtil.getBundle(ContainerBuilder.class).getBundleContext();
+  ServiceProxy serviceProxy=new ServiceProxy(bundleContext);
   try {
-    for (int i=0; i < tasks; i++) {
-      Future<Set<Container>> futureContainerSet=completionService.poll(CREATE_TIMEOUT,TimeUnit.MILLISECONDS);
-      Set<Container> containerSet=futureContainerSet.get();
-      CONTAINERS.addAll(containerSet);
-      containers.addAll(containerSet);
+    FabricService fabricService=serviceProxy.getService(FabricService.class);
+    CompletionService<Set<Container>> completionService=new ExecutorCompletionService<Set<Container>>(executorService);
+    int tasks=0;
+    for (    B options : buildersList) {
+      options.profiles(profileNames);
+      if (!options.isEnsembleServer()) {
+        options.zookeeperUrl(fabricService.getZookeeperUrl());
+        completionService.submit(new CreateContainerTask(fabricService,options));
+        tasks++;
+      }
     }
     try {
-      if (waitForProvisioning) {
-        Provision.containerStatus(containers,provisionTimeOut);
+      for (int i=0; i < tasks; i++) {
+        Future<Set<Container>> futureContainerSet=completionService.poll(CREATE_TIMEOUT,TimeUnit.MILLISECONDS);
+        Set<Container> containerSet=futureContainerSet.get();
+        CONTAINERS.addAll(containerSet);
+        containers.addAll(containerSet);
       }
-      if (assertProvisioningResult) {
-        Provision.provisioningSuccess(containers,provisionTimeOut);
+      try {
+        if (waitForProvisioning) {
+          Provision.containerStatus(containers,provisionTimeOut);
+        }
+        if (assertProvisioningResult) {
+          Provision.provisioningSuccess(containers,provisionTimeOut);
+        }
+      }
+ catch (      Exception e) {
+        throw FabricException.launderThrowable(e);
       }
     }
  catch (    Exception e) {
       throw FabricException.launderThrowable(e);
     }
+    return containers;
   }
- catch (  Exception e) {
-    throw FabricException.launderThrowable(e);
+  finally {
+    serviceProxy.close();
   }
-  return containers;
 }

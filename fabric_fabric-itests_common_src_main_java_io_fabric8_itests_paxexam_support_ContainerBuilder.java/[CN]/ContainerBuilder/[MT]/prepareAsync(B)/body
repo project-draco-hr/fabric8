@@ -1,5 +1,12 @@
 {
-  FabricService fabricService=getOsgiServiceProxy(FabricService.class);
-  CompletionService<Set<Container>> completionService=new ExecutorCompletionService<Set<Container>>(executorService);
-  return completionService.submit(new CreateContainerTask(fabricService,builder));
+  BundleContext bundleContext=FrameworkUtil.getBundle(ContainerBuilder.class).getBundleContext();
+  ServiceProxy serviceProxy=new ServiceProxy(bundleContext);
+  try {
+    FabricService fabricService=serviceProxy.getService(FabricService.class);
+    CompletionService<Set<Container>> completionService=new ExecutorCompletionService<Set<Container>>(executorService);
+    return completionService.submit(new CreateContainerTask(fabricService,builder));
+  }
+  finally {
+    serviceProxy.close();
+  }
 }

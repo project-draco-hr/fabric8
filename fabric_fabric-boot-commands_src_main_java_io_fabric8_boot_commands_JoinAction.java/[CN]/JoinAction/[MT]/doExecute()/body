@@ -1,0 +1,61 @@
+{
+  String oldName=System.getProperty(SystemProperties.KARAF_NAME);
+  if (containerName == null) {
+    containerName=oldName;
+  }
+  if (resolver != null) {
+    System.setProperty(ZkDefs.LOCAL_RESOLVER_PROPERTY,resolver);
+  }
+  if (manualIp != null) {
+    System.setProperty(ZkDefs.MANUAL_IP,manualIp);
+  }
+  if (bindAddress != null) {
+    System.setProperty(ZkDefs.BIND_ADDRESS,bindAddress);
+  }
+  zookeeperPassword=zookeeperPassword != null ? zookeeperPassword : ShellUtils.retrieveFabricZookeeperPassword(session);
+  System.setProperty(ZkDefs.MINIMUM_PORT,String.valueOf(minimumPort));
+  System.setProperty(ZkDefs.MAXIMUM_PORT,String.valueOf(maximumPort));
+  if (!containerName.equals(oldName)) {
+    if (force || permissionToRenameContainer()) {
+      if (!registerContainer(containerName,zookeeperPassword,profile,force)) {
+        System.err.print("A container with the name: " + containerName + " is already member of the cluster. You can specify a different name as an argument.");
+        return null;
+      }
+      System.setProperty(SystemProperties.KARAF_NAME,containerName);
+      System.setProperty("zookeeper.url",zookeeperUrl);
+      System.setProperty("zookeeper.password",zookeeperPassword);
+      File file=new File(System.getProperty("karaf.base") + "/etc/system.properties");
+      Properties props=new Properties(file);
+      props.put(SystemProperties.KARAF_NAME,containerName);
+      props.put("zookeeper.url",zookeeperUrl);
+      props.put("zookeeper.password",zookeeperPassword);
+      props.save();
+      if (!nonManaged) {
+        installBundles();
+      }
+      System.setProperty("karaf.restart","true");
+      System.setProperty("karaf.restart.clean","false");
+      bundleContext.getBundle(0).stop();
+      return null;
+    }
+ else {
+      return null;
+    }
+  }
+ else {
+    if (!registerContainer(containerName,zookeeperPassword,profile,force)) {
+      System.err.println("A container with the name: " + containerName + " is already member of the cluster. You can specify a different name as an argument.");
+      return null;
+    }
+    Configuration config=configurationAdmin.getConfiguration(Constants.ZOOKEEPER_CLIENT_PID);
+    Hashtable<String,Object> properties=new Hashtable<String,Object>();
+    properties.put("zookeeper.url",zookeeperUrl);
+    properties.put("zookeeper.password",zookeeperPassword);
+    config.setBundleLocation(null);
+    config.update(properties);
+    if (!nonManaged) {
+      installBundles();
+    }
+    return null;
+  }
+}
