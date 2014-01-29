@@ -1,10 +1,12 @@
 {
-  LOG.info("activating http mapping rule " + configuration);
   ConfigInjection.applyConfiguration(configuration,this);
+  String zkPath=getZooKeeperPath();
   Objects.notNull(getGateway(),"gateway");
-  Objects.notNull(getZooKeeperPath(),"zooKeeperPath");
+  Objects.notNull(zkPath,"zooKeeperPath");
   Objects.notNull(getUriTemplate(),"uriTemplate");
-  httpMappingRuleBase=new HttpMappingRuleBase(getZooKeeperPath(),new SimplePathTemplate(uriTemplate),gateway.getGatewayVersion(),enabledVersion);
+  LoadBalancer<String> loadBalancer=LoadBalancers.createLoadBalancer(loadBalancerType,stickyLoadBalancerCacheSize);
+  LOG.info("activating http mapping ZooKeeper path: " + zkPath + " with URI template: "+ uriTemplate+ " enabledVersion: "+ enabledVersion+ " with load balancer: "+ loadBalancer);
+  httpMappingRuleBase=new HttpMappingRuleBase(zkPath,new SimplePathTemplate(uriTemplate),gateway.getGatewayVersion(),enabledVersion,loadBalancer);
   CuratorFramework curator=gateway.getCurator();
   mappingTree=new HttpMappingZooKeeperTreeCache(curator,httpMappingRuleBase);
   mappingTree.init();

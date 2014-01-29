@@ -1,8 +1,3 @@
 {
-  for (  String serviceUrl : serviceUrls) {
-    if (Strings.isNotBlank(serviceUrl)) {
-      return serviceUrl;
-    }
-  }
-  return null;
+  return loadBalancer.choose(serviceUrls,new HttpClientRequestFacade(request));
 }

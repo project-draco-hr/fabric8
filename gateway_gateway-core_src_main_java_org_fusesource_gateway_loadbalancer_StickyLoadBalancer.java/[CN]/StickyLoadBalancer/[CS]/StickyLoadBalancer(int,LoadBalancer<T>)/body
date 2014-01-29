@@ -1,8 +1,9 @@
 {
   this.firstRequestLoadBalancer=firstRequestLoadBalancer;
+  this.maximumCacheSize=maximumCacheSize;
   this.requestCache=new LinkedHashMap(maximumCacheSize + 1,.75F,true){
     public boolean removeEldestEntry(    Map.Entry eldest){
-      return size() > maximumCacheSize;
+      return size() > StickyLoadBalancer.this.maximumCacheSize;
     }
   }
 ;
