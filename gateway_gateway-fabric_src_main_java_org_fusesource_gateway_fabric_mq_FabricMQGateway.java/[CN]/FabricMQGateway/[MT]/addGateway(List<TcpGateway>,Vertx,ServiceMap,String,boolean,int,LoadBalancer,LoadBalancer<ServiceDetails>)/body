@@ -1,6 +1,6 @@
 {
   if (enabled) {
-    TcpGatewayHandler handler=new TcpGatewayHandler(vertx,serviceMap,protocolName,loadBalancer);
+    TcpGatewayHandler handler=new TcpGatewayHandler(vertx,serviceMap,protocolName,pathLoadBalancer,serviceLoadBalancer);
     TcpGateway gateway=new TcpGateway(vertx,serviceMap,listenPort,protocolName,handler);
     if (Strings.isNotBlank(host)) {
       gateway.setHost(host);
