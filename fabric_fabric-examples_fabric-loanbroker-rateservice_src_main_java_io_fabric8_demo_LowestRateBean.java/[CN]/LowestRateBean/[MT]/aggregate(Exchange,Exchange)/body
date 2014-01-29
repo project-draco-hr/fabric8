@@ -1,0 +1,21 @@
+{
+  String newBank=newExchange.getIn().getHeader("host.bank",String.class);
+  Double newRate=newExchange.getIn().getHeader("loan.rate",Double.class);
+  LOG.info("Received rate {} from {}",newRate,newBank);
+  if (oldExchange == null) {
+    LOG.info("New lowest rate {} from {}",newRate,newBank);
+    return newExchange;
+  }
+  String oldBank=oldExchange.getIn().getHeader("host.bank",String.class);
+  Double oldRate=oldExchange.getIn().getHeader("loan.rate",Double.class);
+  int winner=oldRate.compareTo(newRate);
+  boolean newWinner=winner > 0;
+  if (newWinner) {
+    LOG.info("New lowest rate {} from {}",newRate,newBank);
+    return newExchange;
+  }
+ else {
+    LOG.info("Keeping lowest rate {} from {}",oldRate,oldBank);
+    return oldExchange;
+  }
+}
