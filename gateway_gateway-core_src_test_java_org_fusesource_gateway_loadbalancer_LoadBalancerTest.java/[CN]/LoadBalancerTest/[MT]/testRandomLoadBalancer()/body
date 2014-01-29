@@ -1,0 +1,7 @@
+{
+  LoadBalancer<String> loadBalancer=new RandomLoadBalancer<String>();
+  assertLoadBalancerWorksOnEmptyOrSingletonServices(loadBalancer);
+  List<String> results=performRequests(loadBalancer);
+  Set<String> set=asSet(results);
+  assertTrue("Should have most of the values but was: " + set,set.size() > 1);
+}

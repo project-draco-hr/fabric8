@@ -1,0 +1,10 @@
+{
+  List<String> answer=new ArrayList<String>();
+  for (int i=0; i < requestCount; i++) {
+    String result=loadBalancer.choose(services,clientRequestFacade);
+    assertNotNull("No service found for load balancer " + loadBalancer + " on request #"+ i,result);
+    answer.add(result);
+  }
+  assertEquals("number of results",requestCount,answer.size());
+  return answer;
+}

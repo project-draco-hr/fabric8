@@ -1,0 +1,10 @@
+{
+  LoadBalancer<String> loadBalancer=new RoundRobinLoadBalancer<String>();
+  assertLoadBalancerWorksOnEmptyOrSingletonServices(loadBalancer);
+  List<String> results=performRequests(loadBalancer);
+  Set<String> set=asSet(results);
+  assertEquals("Should have all of the values: " + set,services.size(),set.size());
+  for (  String service : services) {
+    assertTrue("Should have found service: " + service,set.contains(service));
+  }
+}
