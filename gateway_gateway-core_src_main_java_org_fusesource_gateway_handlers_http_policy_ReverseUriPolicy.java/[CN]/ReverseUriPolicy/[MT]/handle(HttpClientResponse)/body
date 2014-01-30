@@ -1,0 +1,19 @@
+{
+  delegate.handle(clientResponse);
+  MultiMap headers=clientResponse.headers();
+  for (  String headerName : rewriteHeaders) {
+    List<String> headerValues=headers.getAll(headerName);
+    int size=headerValues.size();
+    if (size > 0) {
+      List<String> newHeaders=new ArrayList<String>(size);
+      for (      String headerValue : headerValues) {
+        String newValue=headerValue;
+        if (headerValue != null && headerValue.length() > 0) {
+          newValue=proxyMappingDetails.rewriteBackendUrl(headerValue);
+        }
+      }
+      LOG.info("Rewriting header " + headerName + " from: "+ headerValues+ " to: "+ newHeaders);
+      headers.set(headerName,newHeaders);
+    }
+  }
+}

@@ -9,7 +9,7 @@
   if (httpMappingRuleBase != null) {
     gateway.removeMappingRuleConfiguration(httpMappingRuleBase);
   }
-  httpMappingRuleBase=new HttpMappingRuleBase(zkPath,new SimplePathTemplate(uriTemplate),gateway.getGatewayVersion(),enabledVersion,loadBalancer);
+  httpMappingRuleBase=new HttpMappingRuleBase(zkPath,new SimplePathTemplate(uriTemplate),gateway.getGatewayVersion(),enabledVersion,loadBalancer,reverseHeaders);
   CuratorFramework curator=gateway.getCurator();
   mappingTree=new HttpMappingZooKeeperTreeCache(curator,httpMappingRuleBase);
   mappingTree.init();
