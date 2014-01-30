@@ -1,10 +1,11 @@
 {
   try {
-    String name=servletEvent.getBundle().getSymbolicName();
-    clearJolokiaUrl(container,name);
+    String bundleName=servletEvent.getBundle().getSymbolicName();
+    String bundleVersion=servletEvent.getBundle().getVersion().toString();
+    clearJolokiaUrl(container,bundleName);
     String id=container.getId();
     if (!servletEvent.getAlias().equals("/")) {
-      String path=createServletPath(servletEvent,id);
+      String path=createServletPath(servletEvent,id,bundleName,bundleVersion);
       delete(curator.get(),path);
     }
   }

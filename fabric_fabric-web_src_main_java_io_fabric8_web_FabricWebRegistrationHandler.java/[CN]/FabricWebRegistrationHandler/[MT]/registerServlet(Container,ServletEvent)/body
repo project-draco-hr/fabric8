@@ -3,12 +3,14 @@
   Version version=container.getVersion();
   String versionId=version != null ? version.getId() : null;
   String url="${zk:" + id + "/http}"+ servletEvent.getAlias();
+  String bundleName=servletEvent.getBundle().getSymbolicName();
+  String bundleVersion=servletEvent.getBundle().getVersion().toString();
   String name=servletEvent.getBundle().getSymbolicName();
   setJolokiaUrl(container,url,name);
-  String json="{\"id\":" + jsonEncodeString(id) + ",\"services\":["+ jsonEncodeString(url)+ "]"+ ",\"container\":"+ jsonEncodeString(id)+ ",\"version\":"+ JsonHelper.jsonEncodeString(versionId)+ "}";
+  String json="{\"id\":" + jsonEncodeString(id) + ",\"services\":["+ jsonEncodeString(url)+ "]"+ ",\"container\":"+ jsonEncodeString(id)+ ",\"bundleName\":"+ jsonEncodeString(bundleName)+ ",\"bundleVersion\":"+ jsonEncodeString(bundleVersion)+ ",\"version\":"+ JsonHelper.jsonEncodeString(versionId)+ "}";
   try {
     if (!servletEvent.getAlias().equals("/")) {
-      String path=createServletPath(servletEvent,id);
+      String path=createServletPath(servletEvent,id,bundleName,bundleVersion);
       setData(curator.get(),path,json,CreateMode.EPHEMERAL);
     }
   }
