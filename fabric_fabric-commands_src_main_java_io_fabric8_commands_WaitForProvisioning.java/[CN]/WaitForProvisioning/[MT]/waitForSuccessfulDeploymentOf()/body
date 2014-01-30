@@ -4,7 +4,7 @@
     try {
       Container[] fabric=fabricService.getContainers();
       if (isFabricProvisioned(fabric)) {
-        return;
+        return "SUCCESS";
       }
       Thread.sleep(1000);
     }
@@ -15,4 +15,5 @@ catch (    Throwable t) {
       throw FabricException.launderThrowable(t);
     }
   }
+  return "ERROR";
 }
