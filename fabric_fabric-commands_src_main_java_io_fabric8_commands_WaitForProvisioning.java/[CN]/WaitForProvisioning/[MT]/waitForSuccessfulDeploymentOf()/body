@@ -1,0 +1,18 @@
+{
+  long startedAt=System.currentTimeMillis();
+  while (!Thread.interrupted() && startedAt + provisionTimeout > System.currentTimeMillis()) {
+    try {
+      Container[] fabric=fabricService.getContainers();
+      if (isFabricProvisioned(fabric)) {
+        return;
+      }
+      Thread.sleep(1000);
+    }
+ catch (    InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
+catch (    Throwable t) {
+      throw FabricException.launderThrowable(t);
+    }
+  }
+}

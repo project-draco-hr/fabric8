@@ -1,0 +1,17 @@
+{
+  if (fabric == null) {
+    return false;
+  }
+  for (  Container container : fabric) {
+    if (container == null || !container.isAlive() || !Container.PROVISION_SUCCESS.equals(container.getProvisionStatus())) {
+      if (verbose) {
+        System.out.println(String.format("Waiting: Container %s is %s",container.getId(),container.getProvisionStatus()));
+      }
+      if (container.getProvisionStatus() != null && container.getProvisionStatus().startsWith(Container.PROVISION_ERROR)) {
+        throw new FabricException("Error provisioning container " + container.getId() + " : "+ container.getProvisionStatus());
+      }
+      return false;
+    }
+  }
+  return true;
+}
