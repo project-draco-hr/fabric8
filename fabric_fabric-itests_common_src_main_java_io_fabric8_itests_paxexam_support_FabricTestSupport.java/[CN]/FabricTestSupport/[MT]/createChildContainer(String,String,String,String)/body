@@ -2,7 +2,7 @@
   FabricService fabricService=getFabricService();
   Thread.sleep(DEFAULT_WAIT);
   Container parentContainer=fabricService.getContainer(parent);
-  assertNotNull(parentContainer);
+  Assert.assertNotNull(parentContainer);
   CreateChildContainerOptions.Builder builder=CreateChildContainerOptions.builder().name(name).parent(parent).zookeeperPassword(fabricService.getZookeeperPassword()).jmxUser("admin").jmxPassword("admin");
   if (jvmOpts != null) {
     builder.jvmOpts(jvmOpts);
@@ -18,7 +18,7 @@
     Container container=metadata[0].getContainer();
     Version version=fabricService.getDefaultVersion();
     Profile profile=version.getProfile(profileName);
-    assertNotNull("Expected to find profile with name:" + profileName,profile);
+    Assert.assertNotNull("Expected to find profile with name:" + profileName,profile);
     container.setProfiles(new Profile[]{profile});
     Provision.containersStatus(Arrays.asList(container),"success",PROVISION_TIMEOUT);
     return container;

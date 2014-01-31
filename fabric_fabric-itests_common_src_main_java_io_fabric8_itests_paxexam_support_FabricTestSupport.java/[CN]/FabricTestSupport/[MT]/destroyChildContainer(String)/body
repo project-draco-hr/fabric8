@@ -1,7 +1,7 @@
 {
   try {
     Thread.sleep(DEFAULT_WAIT);
-    if (exists(getCurator(),ZkPath.CONTAINER.getPath(name)) != null) {
+    if (ZooKeeperUtils.exists(getCurator(),ZkPath.CONTAINER.getPath(name)) != null) {
       Container container=getFabricService().getContainer(name);
       container.destroy();
     }
