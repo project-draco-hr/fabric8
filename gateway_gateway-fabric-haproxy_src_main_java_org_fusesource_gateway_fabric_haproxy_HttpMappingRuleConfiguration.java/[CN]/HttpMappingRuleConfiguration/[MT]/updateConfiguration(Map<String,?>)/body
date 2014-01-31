@@ -9,9 +9,9 @@
   if (httpMappingRuleBase != null) {
     gateway.removeMappingRuleConfiguration(httpMappingRuleBase);
   }
-  httpMappingRuleBase=new HttpMappingRuleBase(zkPath,new SimplePathTemplate(uriTemplate),gateway.getGatewayVersion(),enabledVersion,loadBalancer,reverseHeaders);
+  httpMappingRuleBase=new HttpMappingRuleBase(new SimplePathTemplate(uriTemplate),gateway.getGatewayVersion(),enabledVersion,loadBalancer,reverseHeaders);
   CuratorFramework curator=gateway.getCurator();
-  mappingTree=new HttpMappingZooKeeperTreeCache(curator,httpMappingRuleBase);
+  mappingTree=new HttpMappingZooKeeperTreeCache(curator,httpMappingRuleBase,zooKeeperPath);
   mappingTree.init();
   gateway.addMappingRuleConfiguration(httpMappingRuleBase);
 }
