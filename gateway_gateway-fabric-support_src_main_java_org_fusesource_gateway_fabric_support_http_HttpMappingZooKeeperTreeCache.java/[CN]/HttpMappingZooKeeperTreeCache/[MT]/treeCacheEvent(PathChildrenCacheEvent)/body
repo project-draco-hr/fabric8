@@ -1,0 +1,46 @@
+{
+  String zkPath=mappingRuleConfiguration.getZooKeeperPath();
+  ChildData childData=event.getData();
+  if (childData == null) {
+    return;
+  }
+  String path=childData.getPath();
+  Type type=event.getType();
+  byte[] data=childData.getData();
+  if (data == null || data.length == 0 || path == null) {
+    return;
+  }
+  if (path.startsWith(zkPath)) {
+    path=path.substring(zkPath.length());
+  }
+  boolean remove=false;
+switch (type) {
+case CHILD_ADDED:
+case CHILD_UPDATED:
+    break;
+case CHILD_REMOVED:
+  remove=true;
+break;
+default :
+return;
+}
+ServiceDTO dto=null;
+try {
+dto=mapper.readValue(data,ServiceDTO.class);
+expandPropertyResolvers(dto);
+List<String> services=dto.getServices();
+Map<String,String> params=new HashMap<String,String>();
+params.put("id",paramValue(dto.getId()));
+params.put("container",paramValue(dto.getContainer()));
+params.put("version",paramValue(dto.getVersion()));
+params.put("bundleName",paramValue(dto.getBundleName()));
+params.put("bundleVersion",paramValue(dto.getBundleVersion()));
+mappingRuleConfiguration.updateMappingRules(remove,path,services,params,dto);
+}
+ catch (IOException e) {
+LOG.warn("Failed to parse the JSON: " + new String(data) + ". Reason: "+ e,e);
+}
+catch (URISyntaxException e) {
+LOG.warn("Failed to update URI for dto: " + dto + ", .Reason: "+ e,e);
+}
+}

@@ -1,9 +1,9 @@
 {
   String zkPath=getZooKeeperPath();
   ServiceMap serviceMap=new ServiceMap();
-  FabricGateway gatewayService=getGateway();
-  Vertx vertx=gatewayService.getVertx();
-  CuratorFramework curator=gatewayService.getCurator();
+  VertxService vertxService=getVertxService();
+  Vertx vertx=vertxService.getVertx();
+  CuratorFramework curator=getCurator();
   LoadBalancer<String> pathLoadBalancer=LoadBalancers.createLoadBalancer(loadBalancerType,stickyLoadBalancerCacheSize);
   LoadBalancer<ServiceDetails> serviceLoadBalancer=LoadBalancers.createLoadBalancer(loadBalancerType,stickyLoadBalancerCacheSize);
   LOG.info("activating MQ mapping ZooKeeper path: " + zkPath + " host: "+ host+ " with load balancer: "+ pathLoadBalancer);

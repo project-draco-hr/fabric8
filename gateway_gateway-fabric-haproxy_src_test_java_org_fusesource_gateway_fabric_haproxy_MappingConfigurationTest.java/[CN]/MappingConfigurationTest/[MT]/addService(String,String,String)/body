@@ -1,0 +1,10 @@
+{
+  Map<String,String> params=new HashMap<String,String>();
+  params.put("version",version);
+  String container=path.contains("HelloWorld") ? "soapy" : "resty";
+  params.put("container",container);
+  ServiceDTO serviceDetails=new ServiceDTO();
+  serviceDetails.setContainer(container);
+  serviceDetails.setVersion(version);
+  config.updateMappingRules(false,path,Arrays.asList(service),params,serviceDetails);
+}
