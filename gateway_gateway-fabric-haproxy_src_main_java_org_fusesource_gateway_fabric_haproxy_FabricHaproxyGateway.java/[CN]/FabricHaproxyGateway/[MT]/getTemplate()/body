@@ -1,0 +1,15 @@
+{
+  String oldTemplateText=templateText;
+  if (templateText == null && fabricService != null) {
+    Container current=fabricService.getCurrentContainer();
+    byte[] bytes=current.getOverlayProfile().getFileConfiguration(TEMPLATE_FILE_NAME);
+    if (bytes != null) {
+      templateText=new String(bytes);
+    }
+  }
+  Objects.notNull(templateText,"Could not find template text in profile config file: " + TEMPLATE_FILE_NAME);
+  if (template == null || oldTemplateText == null || !oldTemplateText.equals(templateText)) {
+    template=TemplateCompiler.compileTemplate(templateText,parserContext);
+  }
+  return template;
+}

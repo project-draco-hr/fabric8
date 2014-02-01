@@ -1,0 +1,31 @@
+{
+  Map<String,List<FrontEnd>> answer=new HashMap<String,List<FrontEnd>>();
+  List<FrontEnd> frontEnds=new ArrayList<FrontEnd>();
+  Set<Map.Entry<String,MappedServices>> entries=getMappedServices().entrySet();
+  for (  Map.Entry<String,MappedServices> entry : entries) {
+    String uri=entry.getKey();
+    MappedServices services=entry.getValue();
+    String id="b" + uri.replace('/','_').replace('-','_');
+    while (id.endsWith("_")) {
+      id=id.substring(0,id.length() - 1);
+    }
+    List<BackEndServer> backends=new ArrayList<BackEndServer>();
+    FrontEnd frontEnd=new FrontEnd(id,uri,services,backends);
+    frontEnds.add(frontEnd);
+    Collection<String> serviceUrls=services.getServiceUrls();
+    for (    String serviceUrl : serviceUrls) {
+      URL url=null;
+      try {
+        url=new URL(serviceUrl);
+      }
+ catch (      MalformedURLException e) {
+        LOG.warn("Ignore bad URL: " + e);
+      }
+      if (url != null) {
+        backends.add(new BackEndServer(url));
+      }
+    }
+  }
+  answer.put("frontEnds",frontEnds);
+  return answer;
+}

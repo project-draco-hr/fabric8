@@ -4,33 +4,11 @@
   outFile.getParentFile().mkdirs();
   PrintWriter writer=new PrintWriter(new FileWriter(outFile));
   try {
-    Map<String,String> servers=new HashMap<String,String>();
-    Map<String,String> backends=new HashMap<String,String>();
     Map<String,MappedServices> mappedServices=getMappedServices();
-    Set<Map.Entry<String,MappedServices>> entries=mappedServices.entrySet();
-    for (    Map.Entry<String,MappedServices> entry : entries) {
-      String uri=entry.getKey();
-      MappedServices services=entry.getValue();
-      Collection<String> serviceUrls=services.getServiceUrls();
-      for (      String serviceUrl : serviceUrls) {
-        URL url=null;
-        try {
-          url=new URL(serviceUrl);
-        }
- catch (        MalformedURLException e) {
-          LOG.warn("Ignore bad URL: " + e);
-        }
-        if (url != null) {
-          writeHaproxyConfig(writer,uri,url,services,servers,backends);
-        }
-      }
-    }
-    for (    Map.Entry<String,String> entry : backends.entrySet()) {
-      writer.println(entry.getValue());
-    }
-    for (    Map.Entry<String,String> entry : servers.entrySet()) {
-      writer.println(entry.getValue());
-    }
+    CompiledTemplate compiledTemplate=getTemplate();
+    Map<String,?> data=createTemplateData();
+    String renderedTemplate=TemplateRuntime.execute(compiledTemplate,parserContext,data).toString();
+    writer.println(renderedTemplate);
   }
   finally {
     try {
