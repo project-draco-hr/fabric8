@@ -4,7 +4,8 @@
     LOG.info("Removing Dozer Mapping file " + url);
     WatcherDozerTypeConverterLoader loader=loaders.remove(url);
     if (url != null) {
-      loader.remove();
+      ServiceHelper.stopAndShutdownService(loader);
+      camelContext.removeService(loader);
     }
   }
  catch (  Exception e) {

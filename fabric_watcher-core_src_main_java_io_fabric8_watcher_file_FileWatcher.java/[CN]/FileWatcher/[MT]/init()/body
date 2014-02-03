@@ -20,6 +20,18 @@
   if (watcher == null) {
     watcher=watch ? getFileSystem().newWatchService() : null;
   }
+  executor.submit(new Runnable(){
+    @Override public void run(){
+      try {
+        rescan();
+      }
+ catch (      IOException e) {
+        LOGGER.warn("Caught: " + e,e);
+      }
+      LOGGER.debug("Completed rescan file watcher");
+    }
+  }
+);
   if (watch) {
     this.executor.execute(new Runnable(){
       @Override public void run(){
@@ -34,5 +46,4 @@
     }
 );
   }
-  rescan();
 }
