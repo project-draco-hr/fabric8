@@ -150,7 +150,7 @@
 );
   DeploymentBuilder builder=new DeploymentBuilder(manager,fabResolverFactory,repositories.values(),urlHandlersTimeout);
   updateStatus("downloading",null);
-  builder.download(getPrefixedProperties(properties,"feature."),getPrefixedProperties(properties,"bundle."),getPrefixedProperties(properties,"fab."),getPrefixedProperties(properties,"req."),getPrefixedProperties(properties,"override."),getPrefixedProperties(properties,"optional."));
+  Map<String,Resource> downloadedResources=builder.download(getPrefixedProperties(properties,"feature."),getPrefixedProperties(properties,"bundle."),getPrefixedProperties(properties,"fab."),getPrefixedProperties(properties,"req."),getPrefixedProperties(properties,"override."),getPrefixedProperties(properties,"optional."));
   for (  String uri : getPrefixedProperties(properties,"resources.")) {
     builder.addResourceRepository(new MetadataRepository(new HttpMetadataProvider(uri)));
   }
@@ -160,5 +160,6 @@
   Set<String> ignoredBundles=getPrefixedProperties(properties,"ignore.");
   Map<String,StreamProvider> providers=builder.getProviders();
   install(allResources,ignoredBundles,providers);
+  installFeatureConfigs(bundleContext,downloadedResources);
   return true;
 }

@@ -1,0 +1,9 @@
+{
+  org.osgi.service.cm.Configuration configuration=configurationAdmin.getConfiguration(pid);
+  Dictionary<String,?> properties=configuration.getProperties();
+  if (properties == null) {
+    return false;
+  }
+  String fabricManagedPid=(String)properties.get(DeploymentAgent.FABRIC_ZOOKEEPER_PID);
+  return Strings.isNotBlank(fabricManagedPid);
+}
