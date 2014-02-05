@@ -1,14 +1,7 @@
 {
-  try {
-    DocumentBuilderFactory documentBuilderFactory=DocumentBuilderFactory.newInstance();
-    DocumentBuilder documentBuilder=documentBuilderFactory.newDocumentBuilder();
-    Class<?> clazz=target.getClass();
-    while (clazz != null && clazz != Object.class) {
-      applyConfiguration(target,clazz,configuration,documentBuilder);
-      clazz=clazz.getSuperclass();
-    }
-  }
- catch (  Exception e) {
-    LOG.error("Failed to inject configuration " + configuration + " into "+ target,e);
+  Class<?> clazz=target.getClass();
+  while (clazz != null && clazz != Object.class) {
+    applyConfiguration(configuration,target,clazz);
+    clazz=clazz.getSuperclass();
   }
 }

@@ -1,0 +1,14 @@
+{
+  String oResolver=Strings.isNotBlank(options.getResolver()) ? options.getResolver() : resolver;
+  String oManualIp=Strings.isNotBlank(options.getManualIp()) ? options.getManualIp() : manualip;
+  if (oResolver.equals(ZkDefs.LOCAL_HOSTNAME)) {
+    return HostUtils.getLocalHostName();
+  }
+ else   if (oResolver.equals(ZkDefs.LOCAL_IP)) {
+    return HostUtils.getLocalIp();
+  }
+ else   if (oResolver.equals(ZkDefs.MANUAL_IP) && (oManualIp != null && !oManualIp.isEmpty())) {
+    return options.getManualIp();
+  }
+ else   return HostUtils.getLocalHostName();
+}

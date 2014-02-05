@@ -1,0 +1,14 @@
+{
+  CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().ensembleProvider(new FixedEnsembleProvider(zookeeperUrl)).connectionTimeoutMs(zookeeperConnectionTimeOut).sessionTimeoutMs(zookeeperSessionTimeout).retryPolicy(new RetryNTimes(zookeeperRetryMax,zookeeperRetryInterval));
+  if (!Strings.isNullOrEmpty(zookeeperPassword)) {
+    String scheme="digest";
+    byte[] auth=("fabric:" + zookeeperPassword).getBytes();
+    builder=builder.authorization(scheme,auth).aclProvider(aclProvider.get());
+  }
+  CuratorFramework framework=builder.build();
+  for (  ConnectionStateListener listener : connectionStateListeners) {
+    framework.getConnectionStateListenable().addListener(listener);
+  }
+  framework.start();
+  return framework;
+}

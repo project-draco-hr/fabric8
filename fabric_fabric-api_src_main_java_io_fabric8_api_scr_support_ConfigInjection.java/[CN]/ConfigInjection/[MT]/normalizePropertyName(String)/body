@@ -1,12 +1,12 @@
 {
-  if (Strings.isNullOrBlank(name)) {
+  if (name == null || name.isEmpty()) {
     return name;
   }
- else   if (!name.contains(".")) {
+ else   if (!name.contains(".") && !name.contains("-")) {
     return name;
   }
  else {
-    String[] parts=name.replaceAll(" ","").split("\\.");
+    String[] parts=name.replaceAll(" ","").split("-|\\.");
     StringBuilder sb=new StringBuilder();
     if (parts.length > 0) {
       sb.append(parts[0]);

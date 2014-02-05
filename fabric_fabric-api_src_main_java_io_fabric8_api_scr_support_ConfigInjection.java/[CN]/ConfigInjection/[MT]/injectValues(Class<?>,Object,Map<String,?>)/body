@@ -1,0 +1,18 @@
+{
+  for (  Map.Entry<String,?> entry : configuration.entrySet()) {
+    String name=entry.getKey();
+    Object value=entry.getValue();
+    try {
+      Field field=clazz.getDeclaredField(normalizePropertyName(name));
+      if (field != null) {
+        Object convertedValue=ConverterHelper.convertValue(value,field.getGenericType());
+        if (convertedValue != null) {
+          ReflectionHelper.setField(field,instance,convertedValue);
+        }
+      }
+    }
+ catch (    NoSuchFieldException e) {
+      LOG.debug("No matching field for property with name {}.",name);
+    }
+  }
+}

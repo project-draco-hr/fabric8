@@ -1,0 +1,12 @@
+{
+  String result=new String(key);
+  Matcher matcher=PLACEHOLDER_PATTERN.matcher(key);
+  while (matcher.find()) {
+    String name=matcher.group(1);
+    String toReplace=String.format(BOX_FORMAT,name);
+    String replacement=properties.getProperty(name,System.getenv(toEnvVariable(name)));
+    replacement=Strings.isNotBlank(replacement) ? replacement : "";
+    result=result.replaceAll(toReplace,replacement);
+  }
+  return result;
+}

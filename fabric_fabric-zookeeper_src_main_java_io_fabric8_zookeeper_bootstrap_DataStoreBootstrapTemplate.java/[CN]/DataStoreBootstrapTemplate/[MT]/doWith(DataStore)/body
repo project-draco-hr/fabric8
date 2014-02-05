@@ -12,16 +12,14 @@
     curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
     File importPath=new File(options.getImportPath());
     if (!importPath.isAbsolute()) {
-      String karafHome=runtimeProperties.getProperty(SystemProperties.KARAF_HOME);
-      importPath=new File(karafHome,options.getImportPath());
+      importPath=new File(home,options.getImportPath());
     }
     if (options.isAutoImportEnabled()) {
       dataStore.importFromFileSystem(importPath.getAbsolutePath());
     }
     setData(curator,ZkPath.CONFIG_DEFAULT_VERSION.getPath(),version);
     String defaultProfile=dataStore.getProfile(version,"default",true);
-    String karafName=runtimeProperties.getProperty(SystemProperties.KARAF_NAME);
-    setData(curator,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),"${zk:" + karafName + "/ip}:"+ zooKeeperServerConnectionPort);
+    setData(curator,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),"${zk:" + name + "/ip}:"+ zooKeeperServerConnectionPort);
     setData(curator,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
     Properties zkProps=new Properties();
     zkProps.setProperty("zookeeper.url","${zk:" + ZkPath.CONFIG_ENSEMBLE_URL.getPath() + "}");
@@ -45,12 +43,12 @@
     serverProps.put("clientPortAddress",zooKeeperServerHost);
     dataStore.setFileConfiguration(version,ensembleServerProfile,"io.fabric8.zookeeper.server-0000.properties",DataStoreUtils.toBytes(serverProps));
     setData(curator,ZkPath.CONFIG_ENSEMBLES.getPath(),"0000");
-    setData(curator,ZkPath.CONFIG_ENSEMBLE.getPath("0000"),karafName);
+    setData(curator,ZkPath.CONFIG_ENSEMBLE.getPath("0000"),name);
     String fabricProfile=dataStore.getProfile(version,"fabric",true);
     Properties agentProps=DataStoreUtils.toProperties(dataStore.getFileConfiguration(version,fabricProfile,"io.fabric8.agent.properties"));
     agentProps.put("feature.fabric-commands","fabric-commands");
     dataStore.setFileConfiguration(version,"fabric","io.fabric8.agent.properties",DataStoreUtils.toBytes(agentProps));
-    createDefault(curator,ZkPath.CONFIG_CONTAINER.getPath(karafName),version);
+    createDefault(curator,ZkPath.CONFIG_CONTAINER.getPath(name),version);
     StringBuilder profilesBuilder=new StringBuilder();
     Set<String> profiles=options.getProfiles();
     profilesBuilder.append("fabric").append(" ").append("fabric-ensemble-0000-1");
@@ -60,7 +58,7 @@
     if (!options.isAgentEnabled()) {
       profilesBuilder.append(" ").append("unmanaged");
     }
-    createDefault(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,karafName),profilesBuilder.toString());
+    createDefault(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(version,name),profilesBuilder.toString());
     Map<String,String> configs=new HashMap<String,String>();
     configs.put("encryption.enabled","${zk:/fabric/authentication/encryption.enabled}");
     dataStore.setConfiguration(version,defaultProfile,"io.fabric8.jaas",configs);

@@ -1,6 +1,6 @@
 {
-  String zookeeperURL=getZookeeperURL(configuration);
-  if (!Strings.isNullOrEmpty(zookeeperURL)) {
+  configurer.configure(configuration,this);
+  if (!Strings.isNullOrEmpty(zookeeperUrl)) {
     State prev=state.get();
     Map<String,?> oldConfiguration=prev != null ? prev.configuration : null;
     if (isRestartRequired(oldConfiguration,configuration)) {

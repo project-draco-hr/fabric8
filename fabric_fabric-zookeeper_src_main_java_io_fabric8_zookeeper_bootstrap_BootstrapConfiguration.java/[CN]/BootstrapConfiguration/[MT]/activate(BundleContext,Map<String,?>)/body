@@ -1,0 +1,21 @@
+{
+  configurer.configure(configuration,this);
+  org.apache.felix.utils.properties.Properties userProps=null;
+  try {
+    userProps=new org.apache.felix.utils.properties.Properties(new File(home + "/etc/users.properties"));
+  }
+ catch (  IOException e) {
+    LOGGER.warn("Failed to load users from etc/users.properties. No users will be imported.",e);
+  }
+  options=CreateEnsembleOptions.builder().agentEnabled(agentAutoStart).ensembleStart(ensembleAutoStart).zookeeperPassword(zookeeperPassword).zooKeeperServerPort(zookeeperServerPort).zooKeeperServerConnectionPort(zookeeperServerConnectionPort).autoImportEnabled(profilesAutoImport).importPath(profilesAutoImportPath).build();
+  boolean isCreated=checkCreated(bundleContext);
+  if (!Strings.isNotBlank(zookeeperUrl) && !isCreated && options.isEnsembleStart()) {
+    String connectionUrl=getConnectionUrl(options);
+    registrationHandler.get().setRegistrationCallback(new DataStoreBootstrapTemplate(name,home,connectionUrl,options));
+    createOrUpdateDataStoreConfig(options);
+    createZooKeeeperServerConfig(options);
+    createZooKeeeperClientConfig(connectionUrl,options);
+    markCreated(bundleContext);
+  }
+  activateComponent();
+}

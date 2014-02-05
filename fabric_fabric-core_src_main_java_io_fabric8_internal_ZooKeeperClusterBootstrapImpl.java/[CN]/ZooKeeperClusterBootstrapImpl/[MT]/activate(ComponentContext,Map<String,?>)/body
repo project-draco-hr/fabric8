@@ -1,0 +1,10 @@
+{
+  configurer.configure(configuration,this);
+  this.bundleUtils=new BundleUtils(componentContext.getBundleContext());
+  BootstrapConfiguration bootConfig=bootstrapConfiguration.get();
+  CreateEnsembleOptions options=bootConfig.getBootstrapOptions();
+  if (options.isEnsembleStart()) {
+    startBundles(options);
+  }
+  activateComponent();
+}
