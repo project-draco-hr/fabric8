@@ -1,4 +1,6 @@
 {
-  String value=properties.getProperty(key);
-  return value != null ? value : System.getProperty(key,defaultValue);
+synchronized (properties) {
+    String value=properties.getProperty(key);
+    return value != null ? value : System.getProperty(key,defaultValue);
+  }
 }
