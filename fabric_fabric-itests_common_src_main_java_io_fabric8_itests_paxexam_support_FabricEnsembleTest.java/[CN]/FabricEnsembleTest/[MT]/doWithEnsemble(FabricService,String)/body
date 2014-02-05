@@ -1,0 +1,21 @@
+{
+  long start=System.currentTimeMillis();
+  long now=System.currentTimeMillis();
+  boolean keepRunning=true;
+  while (!Thread.currentThread().isInterrupted() && keepRunning && now - start <= 30000L) {
+    try {
+      System.err.println(executeCommand(command,240000L - (start - now),false));
+      keepRunning=false;
+    }
+ catch (    CommandExecutionException e) {
+      if (isRetriable(e)) {
+        System.err.println("Not ready for ensemble modification! Retrying...");
+        Provision.provisioningSuccess(Arrays.asList(fabricService.getContainers()),PROVISION_TIMEOUT);
+        now=System.currentTimeMillis();
+      }
+ else {
+        throw e;
+      }
+    }
+  }
+}

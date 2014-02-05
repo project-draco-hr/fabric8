@@ -2,17 +2,22 @@
   System.err.println(executeCommand("fabric:create -n"));
   System.err.println(executeCommand("fabric:version-create"));
   Set<Container> containers=ContainerBuilder.child(1).withName("child").assertProvisioningResult().build();
-  CuratorFramework curator=getOsgiService(CuratorFramework.class);
-  for (  Container c : containers) {
-    try {
-      c.destroy();
-      Assert.assertNull(exists(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.1",c.getId())));
-      Assert.assertNull(exists(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.0",c.getId())));
-      Assert.assertNull(exists(curator,ZkPath.CONTAINER.getPath(c.getId())));
-      Assert.assertNull(exists(curator,ZkPath.CONTAINER_DOMAINS.getPath(c.getId())));
-      Assert.assertNull(exists(curator,ZkPath.CONTAINER_PROVISION.getPath(c.getId())));
+  try {
+    CuratorFramework curator=ServiceLocator.getOsgiService(CuratorFramework.class);
+    for (    Container c : containers) {
+      try {
+        c.destroy();
+        Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.1",c.getId())));
+        Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.0",c.getId())));
+        Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONTAINER.getPath(c.getId())));
+        Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONTAINER_DOMAINS.getPath(c.getId())));
+        Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONTAINER_PROVISION.getPath(c.getId())));
+      }
+ catch (      Exception ex) {
+      }
     }
- catch (    Exception ex) {
-    }
+  }
+  finally {
+    ContainerBuilder.destroy(containers);
   }
 }

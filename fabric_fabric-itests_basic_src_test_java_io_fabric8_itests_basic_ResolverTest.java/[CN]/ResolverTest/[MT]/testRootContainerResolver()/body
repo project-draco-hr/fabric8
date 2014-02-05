@@ -1,14 +1,21 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Container current=getFabricService().getCurrentContainer();
-  ServiceLocator.getOsgiService(ContainerRegistration.class);
-  Assert.assertEquals("localhostname",current.getResolver());
-  String sshUrlWithLocalhostResolver=current.getSshUrl();
-  waitForFabricCommands();
-  System.err.println(executeCommand("fabric:container-resolver-set --container root localip"));
-  Assert.assertEquals("localip",current.getResolver());
-  String sshUrlWithLocalIpResolver=current.getSshUrl();
-  System.out.println("SSH URL with " + sshUrlWithLocalhostResolver + " resolver: localhostname");
-  System.out.println("SSH URL with " + sshUrlWithLocalIpResolver + " resolver: localip");
-  Assert.assertNotSame(sshUrlWithLocalhostResolver,sshUrlWithLocalIpResolver);
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  try {
+    FabricService fabricService=fabricProxy.getService();
+    Container current=fabricService.getCurrentContainer();
+    ServiceLocator.getOsgiService(ContainerRegistration.class);
+    Assert.assertEquals("localhostname",current.getResolver());
+    String sshUrlWithLocalhostResolver=current.getSshUrl();
+    waitForFabricCommands();
+    System.err.println(executeCommand("fabric:container-resolver-set --container root localip"));
+    Assert.assertEquals("localip",current.getResolver());
+    String sshUrlWithLocalIpResolver=current.getSshUrl();
+    System.out.println("SSH URL with " + sshUrlWithLocalhostResolver + " resolver: localhostname");
+    System.out.println("SSH URL with " + sshUrlWithLocalIpResolver + " resolver: localip");
+    Assert.assertNotSame(sshUrlWithLocalhostResolver,sshUrlWithLocalIpResolver);
+  }
+  finally {
+    fabricProxy.close();
+  }
 }

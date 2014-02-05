@@ -1,0 +1,26 @@
+{
+  System.out.println("Switching profile: " + profileName + " on container:"+ containerName);
+  Container container=fabricService.getContainer(containerName);
+  Version version=container.getVersion();
+  Profile[] profiles=new Profile[]{version.getProfile(profileName)};
+  Profile[] currentProfiles=container.getProfiles();
+  Arrays.sort(profiles);
+  Arrays.sort(currentProfiles);
+  boolean same=true;
+  if (profiles.length != currentProfiles.length) {
+    same=false;
+  }
+ else {
+    for (int i=0; i < currentProfiles.length; i++) {
+      if (!currentProfiles[i].configurationEquals(profiles[i])) {
+        same=false;
+      }
+    }
+  }
+  if (!same && waitForProvision) {
+    ZooKeeperUtils.setData(curator,ZkPath.CONTAINER_PROVISION_RESULT.getPath(containerName),"switching profile");
+    container.setProfiles(profiles);
+    Provision.containersStatus(Arrays.asList(container),"success",PROVISION_TIMEOUT);
+  }
+  return same;
+}

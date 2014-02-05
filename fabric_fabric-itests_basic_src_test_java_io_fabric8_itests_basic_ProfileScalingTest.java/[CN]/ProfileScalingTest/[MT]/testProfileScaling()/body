@@ -1,17 +1,22 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  FabricService fabricService=getFabricService();
-  assertNotNull(fabricService);
-  waitForFabricCommands();
-  String profile="mq-amq";
-  Integer expected=1;
-  boolean changed=fabricService.scaleProfile(profile,expected);
-  assertProfileMinimumSize(profile,expected);
-  changed=fabricService.scaleProfile(profile,expected);
-  assertProfileMinimumSize(profile,expected);
-  Assert.assertEquals("should not have changed!",false,changed);
-  changed=fabricService.scaleProfile(profile,2);
-  assertProfileMinimumSize(profile,2);
-  changed=fabricService.scaleProfile(profile,-1);
-  assertProfileMinimumSize(profile,null);
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  try {
+    FabricService fabricService=fabricProxy.getService();
+    waitForFabricCommands();
+    String profile="mq-amq";
+    Integer expected=1;
+    boolean changed=fabricService.scaleProfile(profile,expected);
+    assertProfileMinimumSize(fabricService,profile,expected);
+    changed=fabricService.scaleProfile(profile,expected);
+    assertProfileMinimumSize(fabricService,profile,expected);
+    Assert.assertEquals("should not have changed!",false,changed);
+    changed=fabricService.scaleProfile(profile,2);
+    assertProfileMinimumSize(fabricService,profile,2);
+    changed=fabricService.scaleProfile(profile,-1);
+    assertProfileMinimumSize(fabricService,profile,null);
+  }
+  finally {
+    fabricProxy.close();
+  }
 }

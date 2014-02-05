@@ -3,38 +3,43 @@
   executeCommand("mq-create --group us-east --networks us-west --jmx-user admin --jmx-password admin --networks-username admin --networks-password admin --minimumInstances 1 us-east");
   executeCommand("mq-create --group us-west --networks us-east --jmx-user admin --jmx-password admin --networks-username admin --networks-password admin --minimumInstances 1 us-west");
   Set<Container> containers=ContainerBuilder.create(4).withName("child").withProfiles("default").assertProvisioningResult().build();
-  Container eastBroker=containers.iterator().next();
-  containers.remove(eastBroker);
-  Container westBroker=containers.iterator().next();
-  containers.remove(westBroker);
-  Profile eastBrokerProfile=eastBroker.getVersion().getProfile("mq-broker-us-east.us-east");
-  eastBroker.setProfiles(new Profile[]{eastBrokerProfile});
-  Profile westBrokerProfile=eastBroker.getVersion().getProfile("mq-broker-us-west.us-west");
-  westBroker.setProfiles(new Profile[]{westBrokerProfile});
-  Provision.provisioningSuccess(Arrays.asList(westBroker,eastBroker),PROVISION_TIMEOUT);
-  waitForBroker("us-east");
-  waitForBroker("us-west");
-  final BrokerViewMBean brokerEast=(BrokerViewMBean)Provision.getMBean(eastBroker,new ObjectName("org.apache.activemq:type=Broker,brokerName=us-east"),BrokerViewMBean.class,120000);
-  final BrokerViewMBean brokerWest=(BrokerViewMBean)Provision.getMBean(westBroker,new ObjectName("org.apache.activemq:type=Broker,brokerName=us-west"),BrokerViewMBean.class,120000);
-  Container eastProducer=containers.iterator().next();
-  containers.remove(eastProducer);
-  executeCommand("container-add-profile " + eastProducer.getId() + " example-mq-producer mq-client-us-east");
-  Container westConsumer=containers.iterator().next();
-  containers.remove(westConsumer);
-  executeCommand("container-add-profile " + westConsumer.getId() + " example-mq-consumer mq-client-us-west");
-  Provision.provisioningSuccess(Arrays.asList(eastProducer,westConsumer),PROVISION_TIMEOUT);
-  System.out.println(executeCommand("fabric:container-list"));
-  Provision.waitForCondition(new Callable<Boolean>(){
-    @Override public Boolean call() throws Exception {
-      while (brokerEast.getTotalEnqueueCount() == 0 || brokerWest.getTotalDequeueCount() == 0) {
-        Thread.sleep(1000);
+  try {
+    Container eastBroker=containers.iterator().next();
+    containers.remove(eastBroker);
+    Container westBroker=containers.iterator().next();
+    containers.remove(westBroker);
+    Profile eastBrokerProfile=eastBroker.getVersion().getProfile("mq-broker-us-east.us-east");
+    eastBroker.setProfiles(new Profile[]{eastBrokerProfile});
+    Profile westBrokerProfile=eastBroker.getVersion().getProfile("mq-broker-us-west.us-west");
+    westBroker.setProfiles(new Profile[]{westBrokerProfile});
+    Provision.provisioningSuccess(Arrays.asList(westBroker,eastBroker),PROVISION_TIMEOUT);
+    waitForBroker("us-east");
+    waitForBroker("us-west");
+    final BrokerViewMBean brokerEast=(BrokerViewMBean)Provision.getMBean(eastBroker,new ObjectName("org.apache.activemq:type=Broker,brokerName=us-east"),BrokerViewMBean.class,120000);
+    final BrokerViewMBean brokerWest=(BrokerViewMBean)Provision.getMBean(westBroker,new ObjectName("org.apache.activemq:type=Broker,brokerName=us-west"),BrokerViewMBean.class,120000);
+    Container eastProducer=containers.iterator().next();
+    containers.remove(eastProducer);
+    executeCommand("container-add-profile " + eastProducer.getId() + " example-mq-producer mq-client-us-east");
+    Container westConsumer=containers.iterator().next();
+    containers.remove(westConsumer);
+    executeCommand("container-add-profile " + westConsumer.getId() + " example-mq-consumer mq-client-us-west");
+    Provision.provisioningSuccess(Arrays.asList(eastProducer,westConsumer),PROVISION_TIMEOUT);
+    System.out.println(executeCommand("fabric:container-list"));
+    Provision.waitForCondition(new Callable<Boolean>(){
+      @Override public Boolean call() throws Exception {
+        while (brokerEast.getTotalEnqueueCount() == 0 || brokerWest.getTotalDequeueCount() == 0) {
+          Thread.sleep(1000);
+        }
+        return true;
       }
-      return true;
     }
-  }
 ,120000L);
-  System.out.println(executeCommand("fabric:container-connect -u admin -p admin " + eastBroker.getId() + " bstat"));
-  System.out.println(executeCommand("fabric:container-connect -u admin -p admin " + westBroker.getId() + " bstat"));
-  assertFalse("Messages not sent",brokerEast.getTotalEnqueueCount() == 0);
-  assertFalse("Messages not received",brokerWest.getTotalDequeueCount() == 0);
+    System.out.println(executeCommand("fabric:container-connect -u admin -p admin " + eastBroker.getId() + " bstat"));
+    System.out.println(executeCommand("fabric:container-connect -u admin -p admin " + westBroker.getId() + " bstat"));
+    Assert.assertFalse("Messages not sent",brokerEast.getTotalEnqueueCount() == 0);
+    Assert.assertFalse("Messages not received",brokerWest.getTotalDequeueCount() == 0);
+  }
+  finally {
+    ContainerBuilder.destroy(containers);
+  }
 }

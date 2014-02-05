@@ -1,52 +1,64 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  FabricService fabricService=getFabricService();
-  System.err.println(executeCommand("fabric:version-create"));
-  System.err.println(executeCommand("fabric:container-upgrade --all 1.1"));
-  LinkedList<Container> containerQueue=new LinkedList<Container>(ContainerBuilder.create(2).withName("ens").withProfiles("fabric").assertProvisioningResult().build());
-  LinkedList<Container> addedContainers=new LinkedList<Container>();
-  System.err.println(executeCommand("fabric:version-create"));
-  System.err.println(executeCommand("fabric:container-upgrade --all 1.2"));
-  Random rand=new Random();
-  for (int version=3; version < 5; version++) {
-    Provision.provisioningSuccess(Arrays.asList(getFabricService().getContainers()),PROVISION_TIMEOUT);
-    for (int e=0; e < 3 && containerQueue.size() >= 2 && containerQueue.size() % 2 == 0; e++) {
-      Container cnt1=containerQueue.removeFirst();
-      Container cnt2=containerQueue.removeFirst();
-      addedContainers.add(cnt1);
-      addedContainers.add(cnt2);
-      addToEnsemble(cnt1,cnt2);
-      System.err.println(executeCommand("config:proplist --pid io.fabric8.zookeeper"));
-      System.err.println(executeCommand("fabric:container-list"));
-      System.err.println(executeCommand("fabric:ensemble-list"));
-      ZooKeeperClusterService zooKeeperClusterService=ServiceLocator.getOsgiService(ZooKeeperClusterService.class);
-      org.junit.Assert.assertNotNull(zooKeeperClusterService);
-      List<String> ensembleContainersResult=zooKeeperClusterService.getEnsembleContainers();
-      org.junit.Assert.assertTrue(ensembleContainersResult.contains(cnt1.getId()));
-      org.junit.Assert.assertTrue(ensembleContainersResult.contains(cnt2.getId()));
-      Provision.provisioningSuccess(Arrays.asList(getFabricService().getContainers()),PROVISION_TIMEOUT);
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  try {
+    FabricService fabricService=fabricProxy.getService();
+    System.err.println(executeCommand("fabric:version-create"));
+    System.err.println(executeCommand("fabric:container-upgrade --all 1.1"));
+    Set containers=ContainerBuilder.create(2).withName("ens").withProfiles("fabric").assertProvisioningResult().build();
+    try {
+      LinkedList<Container> containerQueue=new LinkedList<Container>(containers);
+      LinkedList<Container> addedContainers=new LinkedList<Container>();
+      System.err.println(executeCommand("fabric:version-create"));
+      System.err.println(executeCommand("fabric:container-upgrade --all 1.2"));
+      Random rand=new Random();
+      for (int version=3; version < 5; version++) {
+        Provision.provisioningSuccess(Arrays.asList(fabricService.getContainers()),PROVISION_TIMEOUT);
+        for (int e=0; e < 3 && containerQueue.size() >= 2 && containerQueue.size() % 2 == 0; e++) {
+          Container cnt1=containerQueue.removeFirst();
+          Container cnt2=containerQueue.removeFirst();
+          addedContainers.add(cnt1);
+          addedContainers.add(cnt2);
+          addToEnsemble(fabricService,cnt1,cnt2);
+          System.err.println(executeCommand("config:proplist --pid io.fabric8.zookeeper"));
+          System.err.println(executeCommand("fabric:container-list"));
+          System.err.println(executeCommand("fabric:ensemble-list"));
+          ZooKeeperClusterService zooKeeperClusterService=ServiceLocator.getOsgiService(ZooKeeperClusterService.class);
+          org.junit.Assert.assertNotNull(zooKeeperClusterService);
+          List<String> ensembleContainersResult=zooKeeperClusterService.getEnsembleContainers();
+          org.junit.Assert.assertTrue(ensembleContainersResult.contains(cnt1.getId()));
+          org.junit.Assert.assertTrue(ensembleContainersResult.contains(cnt2.getId()));
+          Provision.provisioningSuccess(Arrays.asList(fabricService.getContainers()),PROVISION_TIMEOUT);
+        }
+        int index=rand.nextInt(addedContainers.size());
+        String randomContainer=addedContainers.get(index).getId();
+        System.err.println(executeCommand("fabric:version-create 1." + version));
+        System.err.println(executeCommand("fabric:container-upgrade 1." + version + " "+ randomContainer));
+        Provision.provisioningSuccess(Arrays.asList(fabricService.getContainers()),PROVISION_TIMEOUT);
+        for (int e=0; e < 3 && addedContainers.size() >= 2 && addedContainers.size() % 2 == 0; e++) {
+          Container cnt1=addedContainers.removeFirst();
+          Container cnt2=addedContainers.removeFirst();
+          containerQueue.add(cnt1);
+          containerQueue.add(cnt2);
+          removeFromEnsemble(fabricService,cnt1,cnt2);
+          System.err.println(executeCommand("config:proplist --pid io.fabric8.zookeeper"));
+          System.err.println(executeCommand("fabric:container-list"));
+          System.err.println(executeCommand("fabric:ensemble-list"));
+          ZooKeeperClusterService zooKeeperClusterService=ServiceLocator.getOsgiService(ZooKeeperClusterService.class);
+          org.junit.Assert.assertNotNull(zooKeeperClusterService);
+          List<String> ensembleContainersResult=zooKeeperClusterService.getEnsembleContainers();
+          org.junit.Assert.assertFalse(ensembleContainersResult.contains(cnt1.getId()));
+          org.junit.Assert.assertFalse(ensembleContainersResult.contains(cnt2.getId()));
+          Provision.provisioningSuccess(Arrays.asList(fabricService.getContainers()),PROVISION_TIMEOUT);
+        }
+        System.err.println(executeCommand("fabric:container-rollback 1." + (version - 1) + " "+ randomContainer));
+      }
     }
-    int index=rand.nextInt(addedContainers.size());
-    String randomContainer=addedContainers.get(index).getId();
-    System.err.println(executeCommand("fabric:version-create 1." + version));
-    System.err.println(executeCommand("fabric:container-upgrade 1." + version + " "+ randomContainer));
-    Provision.provisioningSuccess(Arrays.asList(getFabricService().getContainers()),PROVISION_TIMEOUT);
-    for (int e=0; e < 3 && addedContainers.size() >= 2 && addedContainers.size() % 2 == 0; e++) {
-      Container cnt1=addedContainers.removeFirst();
-      Container cnt2=addedContainers.removeFirst();
-      containerQueue.add(cnt1);
-      containerQueue.add(cnt2);
-      removeFromEnsemble(cnt1,cnt2);
-      System.err.println(executeCommand("config:proplist --pid io.fabric8.zookeeper"));
-      System.err.println(executeCommand("fabric:container-list"));
-      System.err.println(executeCommand("fabric:ensemble-list"));
-      ZooKeeperClusterService zooKeeperClusterService=ServiceLocator.getOsgiService(ZooKeeperClusterService.class);
-      org.junit.Assert.assertNotNull(zooKeeperClusterService);
-      List<String> ensembleContainersResult=zooKeeperClusterService.getEnsembleContainers();
-      org.junit.Assert.assertFalse(ensembleContainersResult.contains(cnt1.getId()));
-      org.junit.Assert.assertFalse(ensembleContainersResult.contains(cnt2.getId()));
-      Provision.provisioningSuccess(Arrays.asList(getFabricService().getContainers()),PROVISION_TIMEOUT);
+  finally {
+      ContainerBuilder.destroy(containers);
     }
-    System.err.println(executeCommand("fabric:container-rollback 1." + (version - 1) + " "+ randomContainer));
+  }
+  finally {
+    fabricProxy.close();
   }
 }

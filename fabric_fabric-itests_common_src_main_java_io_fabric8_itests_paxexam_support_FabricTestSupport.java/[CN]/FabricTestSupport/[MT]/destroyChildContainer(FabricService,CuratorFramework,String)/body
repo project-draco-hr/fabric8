@@ -1,0 +1,12 @@
+{
+  try {
+    Thread.sleep(DEFAULT_WAIT);
+    if (ZooKeeperUtils.exists(curator,ZkPath.CONTAINER.getPath(name)) != null) {
+      Container container=fabricService.getContainer(name);
+      container.destroy();
+    }
+  }
+ catch (  Exception ex) {
+    ex.printStackTrace();
+  }
+}

@@ -1,0 +1,26 @@
+{
+  Thread.sleep(DEFAULT_WAIT);
+  Container parentContainer=fabricService.getContainer(parent);
+  Assert.assertNotNull(parentContainer);
+  CreateChildContainerOptions.Builder builder=CreateChildContainerOptions.builder().name(name).parent(parent).zookeeperPassword(fabricService.getZookeeperPassword()).jmxUser("admin").jmxPassword("admin");
+  if (jvmOpts != null) {
+    builder.jvmOpts(jvmOpts);
+  }
+ else {
+    builder.jvmOpts("-Xms1024m -Xmx1024m");
+  }
+  CreateContainerMetadata[] metadata=fabricService.createContainers(builder.build());
+  if (metadata.length > 0) {
+    if (metadata[0].getFailure() != null) {
+      throw new Exception("Error creating child container:" + name,metadata[0].getFailure());
+    }
+    Container container=metadata[0].getContainer();
+    Version version=fabricService.getDefaultVersion();
+    Profile profile=version.getProfile(profileName);
+    Assert.assertNotNull("Expected to find profile with name:" + profileName,profile);
+    container.setProfiles(new Profile[]{profile});
+    Provision.containersStatus(Arrays.asList(container),"success",PROVISION_TIMEOUT);
+    return container;
+  }
+  throw new Exception("Could container not created");
+}

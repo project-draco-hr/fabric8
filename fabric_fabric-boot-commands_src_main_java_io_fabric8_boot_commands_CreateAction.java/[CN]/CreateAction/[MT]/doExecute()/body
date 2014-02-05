@@ -91,19 +91,23 @@
     builder.zookeeperPassword(zookeeperPassword);
   }
   CreateEnsembleOptions options=builder.users(userProps).withUser(newUser,newUserPassword,newUserRole).build();
-  ServiceProxy serviceProxy=new ServiceProxy(bundleContext);
-  try {
-    if (containers.size() == 1 && containers.contains(karafName)) {
-      ZooKeeperClusterBootstrap activeBootstrap=serviceProxy.getService(ZooKeeperClusterBootstrap.class);
-      activeBootstrap.create(options);
+  if (containers.size() == 1 && containers.contains(karafName)) {
+    ServiceProxy<ZooKeeperClusterBootstrap> serviceProxy=ServiceProxy.createServiceProxy(bundleContext,ZooKeeperClusterBootstrap.class);
+    try {
+      serviceProxy.getService().create(options);
     }
- else {
-      ZooKeeperClusterService activeBootstrap=serviceProxy.getService(ZooKeeperClusterService.class);
-      activeBootstrap.createCluster(containers,options);
+  finally {
+      serviceProxy.close();
     }
   }
+ else {
+    ServiceProxy<ZooKeeperClusterService> serviceProxy=ServiceProxy.createServiceProxy(bundleContext,ZooKeeperClusterService.class);
+    try {
+      serviceProxy.getService().createCluster(containers,options);
+    }
   finally {
-    serviceProxy.close();
+      serviceProxy.close();
+    }
   }
   ShellUtils.storeZookeeperPassword(session,options.getZookeeperPassword());
   if (zookeeperPassword == null && !generateZookeeperPassword) {

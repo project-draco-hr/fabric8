@@ -1,4 +1,14 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Set<Container> containers=ContainerBuilder.child(1).withName("child").withJvmOpts("-Xms512m -XX:MaxPermSize=512m -Xmx2048m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5008").assertProvisioningResult().build();
+  String jvmopts="-Xms512m -XX:MaxPermSize=512m -Xmx2048m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5008";
+  Set<Container> containers=ContainerBuilder.child(1).withName("child").withJvmOpts(jvmopts).assertProvisioningResult().build();
+  try {
+    Assert.assertEquals("One container",1,containers.size());
+    Container child=containers.iterator().next();
+    Assert.assertEquals("child1",child.getId());
+    Assert.assertEquals("root",child.getParent().getId());
+  }
+  finally {
+    ContainerBuilder.destroy(containers);
+  }
 }

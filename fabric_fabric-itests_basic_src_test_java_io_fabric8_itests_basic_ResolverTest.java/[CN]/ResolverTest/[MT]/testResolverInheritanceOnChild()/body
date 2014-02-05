@@ -1,12 +1,26 @@
 {
   System.err.println(executeCommand("fabric:create -n -g localip -r manualip --manual-ip localhost -b localhost"));
-  CuratorFramework curator=getCurator();
-  Set<Container> containers=ContainerBuilder.create(1,1).withName("child").withProfiles("default").assertProvisioningResult().build();
-  Container child=containers.iterator().next();
-  Assert.assertEquals("manualip",getSubstitutedPath(curator,ZkPath.CONTAINER_RESOLVER.getPath(child.getId())));
-  Assert.assertEquals("manualip",getFabricService().getCurrentContainer().getResolver());
-  waitForFabricCommands();
-  new BundleUtils(bundleContext).findAndStopBundle("io.fabric8.fabric-configadmin");
-  System.err.println(executeCommand("fabric:container-resolver-set --container root localip"));
-  Assert.assertEquals("localip",getSubstitutedPath(curator,ZkPath.CONTAINER_RESOLVER.getPath(child.getId())));
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  ServiceProxy<CuratorFramework> curatorProxy=ServiceProxy.createServiceProxy(bundleContext,CuratorFramework.class);
+  try {
+    FabricService fabricService=fabricProxy.getService();
+    CuratorFramework curator=curatorProxy.getService();
+    Set<Container> containers=ContainerBuilder.create(1,1).withName("child").withProfiles("default").assertProvisioningResult().build();
+    try {
+      Container child=containers.iterator().next();
+      Assert.assertEquals("manualip",getSubstitutedPath(curator,ZkPath.CONTAINER_RESOLVER.getPath(child.getId())));
+      Assert.assertEquals("manualip",fabricService.getCurrentContainer().getResolver());
+      waitForFabricCommands();
+      new BundleUtils(bundleContext).findAndStopBundle("io.fabric8.fabric-configadmin");
+      System.err.println(executeCommand("fabric:container-resolver-set --container root localip"));
+      Assert.assertEquals("localip",getSubstitutedPath(curator,ZkPath.CONTAINER_RESOLVER.getPath(child.getId())));
+    }
+  finally {
+      ContainerBuilder.destroy(containers);
+    }
+  }
+  finally {
+    fabricProxy.close();
+    curatorProxy.close();
+  }
 }

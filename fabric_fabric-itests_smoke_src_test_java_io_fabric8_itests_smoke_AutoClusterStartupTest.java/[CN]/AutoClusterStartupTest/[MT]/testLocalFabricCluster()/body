@@ -1,16 +1,23 @@
 {
-  fabricService=getFabricService();
-  assertNotNull(fabricService);
-  CuratorFramework curator=getCurator();
-  curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
-  Provision.containerAlive(Arrays.<Container>asList(new ContainerImpl(null,"root",fabricService)),PROVISION_TIMEOUT);
-  Container[] containers=fabricService.getContainers();
-  assertNotNull(containers);
-  assertEquals("Expected to find 1 container",1,containers.length);
-  assertEquals("Expected to find the root container","root",containers[0].getId());
-  ConfigurationAdmin configurationAdmin=getOsgiService(ConfigurationAdmin.class);
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  ServiceProxy<CuratorFramework> curatorProxy=ServiceProxy.createServiceProxy(bundleContext,CuratorFramework.class);
+  try {
+    FabricService fabricService=fabricProxy.getService();
+    CuratorFramework curator=curatorProxy.getService();
+    curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+    Provision.containerAlive(Arrays.<Container>asList(new ContainerImpl(null,"root",fabricService)),PROVISION_TIMEOUT);
+    Container[] containers=fabricService.getContainers();
+    Assert.assertNotNull(containers);
+    Assert.assertEquals("Expected to find 1 container",1,containers.length);
+    Assert.assertEquals("Expected to find the root container","root",containers[0].getId());
+  }
+  finally {
+    fabricProxy.close();
+    curatorProxy.close();
+  }
+  ConfigurationAdmin configurationAdmin=ServiceLocator.getOsgiService(ConfigurationAdmin.class);
   org.osgi.service.cm.Configuration configuration=configurationAdmin.getConfiguration(Constants.ZOOKEEPER_CLIENT_PID);
   Dictionary<String,Object> dictionary=configuration.getProperties();
-  assertNotNull("Expected a generated zookeeper password",dictionary.get("zookeeper.password"));
-  assertTrue(String.valueOf(dictionary.get("zookeeper.url")).endsWith("2182"));
+  Assert.assertNotNull("Expected a generated zookeeper password",dictionary.get("zookeeper.password"));
+  Assert.assertTrue(String.valueOf(dictionary.get("zookeeper.url")).endsWith("2182"));
 }

@@ -1,0 +1,19 @@
+{
+  BundleContext bundleContext=FrameworkUtil.getBundle(ContainerBuilder.class).getBundleContext();
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  try {
+    FabricService fabricService=fabricProxy.getService();
+    for (    Container aux : containers) {
+      try {
+        Container updated=fabricService.getContainer(aux.getId());
+        updated.stop(true);
+      }
+ catch (      Exception ex) {
+        ex.printStackTrace(System.err);
+      }
+    }
+  }
+  finally {
+    fabricProxy.close();
+  }
+}

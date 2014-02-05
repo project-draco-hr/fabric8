@@ -1,8 +1,8 @@
 {
   System.out.println(executeCommand("fabric:create -p missing"));
   String response=executeCommand("fabric:container-list");
-  assertTrue(response.contains("The following profiles are assigned but not found: missing."));
+  Assert.assertTrue(response.contains("The following profiles are assigned but not found: missing."));
   executeCommand("fabric:container-remove-profile root missing");
   response=executeCommand("fabric:container-list");
-  assertFalse(response.contains("The following profiles are assigned but not found:"));
+  Assert.assertFalse(response.contains("The following profiles are assigned but not found:"));
 }

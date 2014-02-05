@@ -1,6 +1,13 @@
 {
   System.err.println(executeCommand("fabric:create -n -g manualip --manual-ip localhost -b localhost --clean"));
   ServiceLocator.getOsgiService(ContainerRegistration.class);
-  Container current=getFabricService().getCurrentContainer();
-  Assert.assertEquals("manualip",current.getResolver());
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  try {
+    FabricService fabricService=fabricProxy.getService();
+    Container current=fabricService.getCurrentContainer();
+    Assert.assertEquals("manualip",current.getResolver());
+  }
+  finally {
+    fabricProxy.close();
+  }
 }

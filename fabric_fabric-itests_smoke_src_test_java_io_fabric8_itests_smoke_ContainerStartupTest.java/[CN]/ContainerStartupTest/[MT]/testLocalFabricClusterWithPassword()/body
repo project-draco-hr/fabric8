@@ -1,12 +1,18 @@
 {
   System.out.println(executeCommand("fabric:create --clean --zookeeper-password testpassword root"));
-  Container[] containers=getFabricService().getContainers();
-  assertNotNull(containers);
-  Provision.containersStatus(Arrays.asList(containers),"success",PROVISION_TIMEOUT);
-  assertEquals("Expected to find 1 container",1,containers.length);
-  assertEquals("Expected to find the root container","root",containers[0].getId());
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  try {
+    Container[] containers=fabricProxy.getService().getContainers();
+    Assert.assertNotNull(containers);
+    Provision.containersStatus(Arrays.asList(containers),"success",PROVISION_TIMEOUT);
+    Assert.assertEquals("Expected to find 1 container",1,containers.length);
+    Assert.assertEquals("Expected to find the root container","root",containers[0].getId());
+  }
+  finally {
+    fabricProxy.close();
+  }
   ConfigurationAdmin configurationAdmin=getOsgiService(ConfigurationAdmin.class);
   org.osgi.service.cm.Configuration configuration=configurationAdmin.getConfiguration(Constants.ZOOKEEPER_CLIENT_PID);
   Dictionary<String,Object> dictionary=configuration.getProperties();
-  assertEquals("Expected provided zookeeper password","testpassword",dictionary.get("zookeeper.password"));
+  Assert.assertEquals("Expected provided zookeeper password","testpassword",dictionary.get("zookeeper.password"));
 }

@@ -1,0 +1,16 @@
+{
+  String feature=System.getProperty("feature");
+  if (feature != null && !feature.isEmpty() && featureArguments.containsKey(feature)) {
+    String[] arguments=featureArguments.get(feature);
+    Assert.assertEquals("Feature " + feature + " should have been prepared with 4 arguments",3,arguments.length);
+    assertProvisionedFeature(fabricService,curator,targetContainers,arguments[0],arguments[1],arguments[2]);
+  }
+ else {
+    for (    Map.Entry<String,String[]> entry : featureArguments.entrySet()) {
+      feature=entry.getKey();
+      String[] arguments=entry.getValue();
+      Assert.assertEquals("Feature " + feature + " should have been prepared with 4 arguments",3,arguments.length);
+      assertProvisionedFeature(fabricService,curator,targetContainers,arguments[0],arguments[1],arguments[2]);
+    }
+  }
+}

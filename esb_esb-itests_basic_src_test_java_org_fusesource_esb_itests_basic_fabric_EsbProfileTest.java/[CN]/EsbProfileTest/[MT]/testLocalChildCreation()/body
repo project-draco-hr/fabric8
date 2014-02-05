@@ -1,4 +1,9 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
   Set<Container> containers=ContainerBuilder.create().withName("esb").withProfiles("jboss-fuse-minimal").assertProvisioningResult().build();
+  try {
+  }
+  finally {
+    ContainerBuilder.destroy(containers);
+  }
 }

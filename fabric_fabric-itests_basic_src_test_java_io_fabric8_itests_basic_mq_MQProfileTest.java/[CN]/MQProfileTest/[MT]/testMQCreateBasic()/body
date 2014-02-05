@@ -2,28 +2,33 @@
   System.err.println(executeCommand("fabric:create -n"));
   System.err.println(executeCommand("mq-create --jmx-user admin --jmx-password admin --minimumInstances 1 mq"));
   Set<Container> containers=ContainerBuilder.create(2).withName("child").withProfiles("default").assertProvisioningResult().build();
-  Container broker=containers.iterator().next();
-  containers.remove(broker);
-  Profile brokerProfile=broker.getVersion().getProfile("mq-broker-default.mq");
-  broker.setProfiles(new Profile[]{brokerProfile});
-  Provision.provisioningSuccess(Arrays.asList(broker),PROVISION_TIMEOUT);
-  waitForBroker("default");
-  final BrokerViewMBean bean=(BrokerViewMBean)Provision.getMBean(broker,new ObjectName("org.apache.activemq:type=Broker,brokerName=mq"),BrokerViewMBean.class,120000);
-  System.err.println(executeCommand("container-list"));
-  for (  Container c : containers) {
-    Profile exampleProfile=broker.getVersion().getProfile("example-mq");
-    c.setProfiles(new Profile[]{exampleProfile});
-  }
-  Provision.provisioningSuccess(containers,PROVISION_TIMEOUT);
-  Provision.waitForCondition(new Callable<Boolean>(){
-    @Override public Boolean call() throws Exception {
-      while (bean.getTotalProducerCount() == 0 || bean.getTotalConsumerCount() == 0) {
-        Thread.sleep(1000);
-      }
-      return true;
+  try {
+    Container broker=containers.iterator().next();
+    containers.remove(broker);
+    Profile brokerProfile=broker.getVersion().getProfile("mq-broker-default.mq");
+    broker.setProfiles(new Profile[]{brokerProfile});
+    Provision.provisioningSuccess(Arrays.asList(broker),PROVISION_TIMEOUT);
+    waitForBroker("default");
+    final BrokerViewMBean bean=(BrokerViewMBean)Provision.getMBean(broker,new ObjectName("org.apache.activemq:type=Broker,brokerName=mq"),BrokerViewMBean.class,120000);
+    System.err.println(executeCommand("container-list"));
+    for (    Container c : containers) {
+      Profile exampleProfile=broker.getVersion().getProfile("example-mq");
+      c.setProfiles(new Profile[]{exampleProfile});
     }
-  }
+    Provision.provisioningSuccess(containers,PROVISION_TIMEOUT);
+    Provision.waitForCondition(new Callable<Boolean>(){
+      @Override public Boolean call() throws Exception {
+        while (bean.getTotalProducerCount() == 0 || bean.getTotalConsumerCount() == 0) {
+          Thread.sleep(1000);
+        }
+        return true;
+      }
+    }
 ,120000L);
-  assertEquals("Producer not present",1,bean.getTotalProducerCount());
-  assertEquals("Consumer not present",1,bean.getTotalConsumerCount());
+    Assert.assertEquals("Producer not present",1,bean.getTotalProducerCount());
+    Assert.assertEquals("Consumer not present",1,bean.getTotalConsumerCount());
+  }
+  finally {
+    ContainerBuilder.destroy(containers);
+  }
 }

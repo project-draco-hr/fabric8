@@ -7,7 +7,7 @@
   System.out.println(executeCommand("fabric:container-rollback --all 1.0"));
   Provision.provisioningSuccess(containers,PROVISION_TIMEOUT);
   for (  Container container : containers) {
-    assertEquals("Container should have version 1.0","1.0",container.getVersion().getId());
-    assertNotNull(exists(ServiceLocator.getOsgiService(CuratorFramework.class),"/fabric/configs/versions/1.0/containers/" + container.getId()));
+    Assert.assertEquals("Container should have version 1.0","1.0",container.getVersion().getId());
+    Assert.assertNotNull(ZooKeeperUtils.exists(ServiceLocator.getOsgiService(CuratorFramework.class),"/fabric/configs/versions/1.0/containers/" + container.getId()));
   }
 }

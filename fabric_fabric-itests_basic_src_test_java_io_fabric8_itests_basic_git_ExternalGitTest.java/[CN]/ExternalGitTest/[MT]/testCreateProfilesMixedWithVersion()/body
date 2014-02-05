@@ -2,22 +2,31 @@
   String testZkProfilebase="zkprofile";
   String testGitProfilebase="gitprofile";
   System.err.println(executeCommand("fabric:create -n"));
-  String gitRepoUrl=GitUtils.getMasterUrl(getCurator());
-  assertNotNull(gitRepoUrl);
-  GitUtils.waitForBranchUpdate(getCurator(),"1.0");
-  Git.cloneRepository().setURI(gitRepoUrl).setCloneAllBranches(true).setDirectory(testrepo).setCredentialsProvider(getCredentialsProvider()).call();
-  Git git=Git.open(testrepo);
-  GitUtils.configureBranch(git,"origin",gitRepoUrl,"1.0");
-  git.fetch().setCredentialsProvider(getCredentialsProvider());
-  GitUtils.checkoutBranch(git,"origin","1.0");
-  assertTrue(new File(testrepo,"fabric/profiles/default.profile").exists());
-  FabricService fabricService=getFabricService();
-  for (int v=0; v < 2; v++) {
-    for (int i=1; i < 2; i++) {
-      String gitProfile=testGitProfilebase + v + "p"+ i;
-      String zkProfile=testZkProfilebase + v + "p"+ i;
-      createAndTestProfileInGit(git,"1." + v,gitProfile);
-      createAndTestProfileInDataStore(git,"1." + v,zkProfile);
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  ServiceProxy<CuratorFramework> curatorProxy=ServiceProxy.createServiceProxy(bundleContext,CuratorFramework.class);
+  try {
+    FabricService fabricService=fabricProxy.getService();
+    CuratorFramework curator=curatorProxy.getService();
+    String gitRepoUrl=GitUtils.getMasterUrl(curator);
+    assertNotNull(gitRepoUrl);
+    GitUtils.waitForBranchUpdate(curator,"1.0");
+    Git.cloneRepository().setURI(gitRepoUrl).setCloneAllBranches(true).setDirectory(testrepo).setCredentialsProvider(getCredentialsProvider()).call();
+    Git git=Git.open(testrepo);
+    GitUtils.configureBranch(git,"origin",gitRepoUrl,"1.0");
+    git.fetch().setCredentialsProvider(getCredentialsProvider());
+    GitUtils.checkoutBranch(git,"origin","1.0");
+    assertTrue(new File(testrepo,"fabric/profiles/default.profile").exists());
+    for (int v=0; v < 2; v++) {
+      for (int i=1; i < 2; i++) {
+        String gitProfile=testGitProfilebase + v + "p"+ i;
+        String zkProfile=testZkProfilebase + v + "p"+ i;
+        createAndTestProfileInGit(fabricService,curator,git,"1." + v,gitProfile);
+        createAndTestProfileInDataStore(fabricService,curator,git,"1." + v,zkProfile);
+      }
     }
+  }
+  finally {
+    fabricProxy.close();
+    curatorProxy.close();
   }
 }
