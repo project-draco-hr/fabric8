@@ -1,0 +1,30 @@
+{
+  System.out.println(String.format("Waiting for container %s to provision.",containerName));
+  Exception lastException=null;
+  long startedAt=System.currentTimeMillis();
+  while (!Thread.interrupted() && System.currentTimeMillis() < startedAt + timeout) {
+    ServiceReference<FabricService> sref=syscontext.getServiceReference(FabricService.class);
+    FabricService fabricService=sref != null ? syscontext.getService(sref) : null;
+    try {
+      Container container=fabricService != null ? fabricService.getContainer(containerName) : null;
+      if (container != null && container.isAlive() && "success".equals(container.getProvisionStatus())) {
+        return;
+      }
+ else {
+        Thread.sleep(500);
+      }
+    }
+ catch (    InterruptedException ex) {
+      Thread.currentThread().interrupt();
+      lastException=ex;
+    }
+catch (    Exception ex) {
+      lastException=ex;
+    }
+  }
+  TimeoutException toex=new TimeoutException("Cannot provision container in time");
+  if (lastException != null) {
+    toex.initCause(lastException);
+  }
+  throw toex;
+}

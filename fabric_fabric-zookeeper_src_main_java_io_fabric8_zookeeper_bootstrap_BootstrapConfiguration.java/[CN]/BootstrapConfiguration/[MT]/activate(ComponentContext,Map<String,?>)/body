@@ -1,4 +1,5 @@
 {
+  this.componentContext=componentContext;
   configurer.configure(configuration,this);
   org.apache.felix.utils.properties.Properties userProps=null;
   try {
@@ -8,6 +9,7 @@
     LOGGER.warn("Failed to load users from etc/users.properties. No users will be imported.",e);
   }
   options=CreateEnsembleOptions.builder().agentEnabled(agentAutoStart).ensembleStart(ensembleAutoStart).zookeeperPassword(zookeeperPassword).zooKeeperServerPort(zookeeperServerPort).zooKeeperServerConnectionPort(zookeeperServerConnectionPort).autoImportEnabled(profilesAutoImport).importPath(profilesAutoImportPath).build();
+  BundleContext bundleContext=componentContext.getBundleContext();
   boolean isCreated=checkCreated(bundleContext);
   if (!Strings.isNotBlank(zookeeperUrl) && !isCreated && options.isEnsembleStart()) {
     String connectionUrl=getConnectionUrl(options);
@@ -17,5 +19,6 @@
     createZooKeeeperClientConfig(connectionUrl,options);
     markCreated(bundleContext);
   }
+  deactivateLatch=new CountDownLatch(1);
   activateComponent();
 }

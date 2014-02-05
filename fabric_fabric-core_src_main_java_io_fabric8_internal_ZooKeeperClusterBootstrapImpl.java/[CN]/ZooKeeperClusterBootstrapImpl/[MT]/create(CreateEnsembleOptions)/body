@@ -2,16 +2,17 @@
   assertValid();
   try {
     stopBundles();
-    DataStoreRegistrationHandler dsregHandler=registrationHandler.get();
+    DataStoreRegistrationHandler regHandler=registrationHandler.get();
     BootstrapConfiguration bootConfig=bootstrapConfiguration.get();
     if (options.isClean()) {
-      bootConfig=cleanInternal();
+      bootConfig=cleanInternal(bootConfig,regHandler);
     }
-    BootstrapCreateHandler createHandler=new BootstrapCreateHandler(bundleContext,bootConfig,dsregHandler);
+    BootstrapCreateHandler createHandler=new BootstrapCreateHandler(bootConfig,regHandler);
     createHandler.bootstrapFabric(name,home,options);
     startBundles(options);
+    createHandler.waitForContainerAlive(name,syscontext,30000L);
     if (options.isWaitForProvision() && options.isAgentEnabled()) {
-      createHandler.waitForSuccessfulDeploymentOf(name,options.getProvisionTimeout());
+      createHandler.waitForSuccessfulDeploymentOf(name,syscontext,options.getProvisionTimeout());
     }
   }
  catch (  RuntimeException rte) {

@@ -1,14 +1,15 @@
 {
-  assertValid();
-  try {
-    gitOperation(new GitOperation<Object>(){
-      public Object call(      Git git,      GitContext context) throws Exception {
-        return null;
+  if (isValid()) {
+    try {
+      gitOperation(new GitOperation<Object>(){
+        public Object call(        Git git,        GitContext context) throws Exception {
+          return null;
+        }
       }
-    }
 );
-  }
- catch (  Exception e) {
-    LOG.warn("Failed to perform a pull " + e,e);
+    }
+ catch (    Exception e) {
+      LOG.warn("Failed to perform a pull " + e,e);
+    }
   }
 }

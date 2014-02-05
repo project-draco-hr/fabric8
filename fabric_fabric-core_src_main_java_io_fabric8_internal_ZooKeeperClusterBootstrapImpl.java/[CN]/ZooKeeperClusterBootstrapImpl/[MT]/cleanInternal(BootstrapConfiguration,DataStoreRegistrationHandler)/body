@@ -1,32 +1,29 @@
 {
   try {
+    ComponentContext componentContext=bootConfig.getComponentContext();
     Configuration[] configs=configAdmin.get().listConfigurations("(|(service.factoryPid=io.fabric8.zookeeper.server)(service.pid=io.fabric8.zookeeper))");
     File karafData=new File(data);
-    org.apache.felix.scr.Component[] components=scrService.get().getComponents(BootstrapConfiguration.COMPONENT_NAME);
-    for (    org.apache.felix.scr.Component component : components) {
-      component.disable();
-    }
+    bootConfig.disable(false);
+    registrationHandler.removeRegistrationCallback();
     cleanConfigurations(configs);
     cleanZookeeperDirectory(karafData);
     cleanGitDirectory(karafData);
-    final CountDownLatch latch=new CountDownLatch(1);
+    final CountDownLatch registerLatch=new CountDownLatch(1);
     final AtomicReference<ServiceReference<?>> sref=new AtomicReference<ServiceReference<?>>();
     ServiceListener listener=new ServiceListener(){
       @Override public void serviceChanged(      ServiceEvent event){
         if (event.getType() == ServiceEvent.REGISTERED) {
-          bundleContext.removeServiceListener(this);
+          syscontext.removeServiceListener(this);
           sref.set(event.getServiceReference());
-          latch.countDown();
+          registerLatch.countDown();
         }
       }
     }
 ;
-    bundleContext.addServiceListener(listener,"(objectClass=" + BootstrapConfiguration.class.getName() + ")");
-    for (    org.apache.felix.scr.Component component : components) {
-      component.enable();
-    }
-    if (!latch.await(10,TimeUnit.SECONDS))     throw new TimeoutException("Cannot obtain BootstrapConfiguration service");
-    return (BootstrapConfiguration)bundleContext.getService(sref.get());
+    syscontext.addServiceListener(listener,"(objectClass=" + BootstrapConfiguration.class.getName() + ")");
+    componentContext.enableComponent(BootstrapConfiguration.COMPONENT_NAME);
+    if (!registerLatch.await(10,TimeUnit.SECONDS))     throw new TimeoutException("Timeout for registering BootstrapConfiguration service");
+    return (BootstrapConfiguration)syscontext.getService(sref.get());
   }
  catch (  RuntimeException rte) {
     throw rte;
