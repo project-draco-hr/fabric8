@@ -1,12 +1,9 @@
 {
   String karafName=runtimeProperties.getProperty(SystemProperties.KARAF_NAME);
-  CreateEnsembleOptions.Builder builder=CreateEnsembleOptions.builder().zooKeeperServerTickTime(zooKeeperTickTime).zooKeeperServerInitLimit(zooKeeperInitLimit).zooKeeperServerSyncLimit(zooKeeperSyncLimit).zooKeeperServerDataDir(zooKeeperDataDir).fromRuntimeProperties(new DefaultRuntimeProperties()).provisionTimeout(provisionTimeout).waitForProvision(waitForProvisioning);
+  CreateEnsembleOptions.Builder builder=CreateEnsembleOptions.builder().zooKeeperServerTickTime(zooKeeperTickTime).zooKeeperServerInitLimit(zooKeeperInitLimit).zooKeeperServerSyncLimit(zooKeeperSyncLimit).zooKeeperServerDataDir(zooKeeperDataDir).fromRuntimeProperties(new DefaultRuntimeProperties()).provisionTimeout(provisionTimeout).waitForProvision(waitForProvisioning).clean(clean);
   builder.version(version);
   if (containers == null || containers.isEmpty()) {
     containers=Arrays.asList(karafName);
-  }
-  if (clean) {
-    bootstrap.clean();
   }
   if (!noImport && importDir != null) {
     builder.autoImportEnabled(true);

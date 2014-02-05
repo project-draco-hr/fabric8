@@ -2,15 +2,16 @@
   assertValid();
   try {
     stopBundles();
+    DataStoreRegistrationHandler dsregHandler=registrationHandler.get();
     BootstrapConfiguration bootConfig=bootstrapConfiguration.get();
-    String connectionUrl=bootConfig.getConnectionUrl(options);
-    registrationHandler.get().setRegistrationCallback(new DataStoreBootstrapTemplate(name,home,connectionUrl,options));
-    bootConfig.createOrUpdateDataStoreConfig(options);
-    bootConfig.createZooKeeeperServerConfig(options);
-    bootConfig.createZooKeeeperClientConfig(connectionUrl,options);
+    if (options.isClean()) {
+      bootConfig=cleanInternal();
+    }
+    BootstrapCreateHandler createHandler=new BootstrapCreateHandler(bundleContext,bootConfig,dsregHandler);
+    createHandler.bootstrapFabric(name,home,options);
     startBundles(options);
     if (options.isWaitForProvision() && options.isAgentEnabled()) {
-      waitForSuccessfulDeploymentOf(name,options.getProvisionTimeout());
+      createHandler.waitForSuccessfulDeploymentOf(name,options.getProvisionTimeout());
     }
   }
  catch (  RuntimeException rte) {
