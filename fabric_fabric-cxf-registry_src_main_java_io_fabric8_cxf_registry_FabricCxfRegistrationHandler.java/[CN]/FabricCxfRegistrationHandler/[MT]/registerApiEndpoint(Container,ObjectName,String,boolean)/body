@@ -35,6 +35,7 @@
     if (!started && !rest) {
       LOGGER.warn("Since the CXF service isn't started, this could really be a REST endpoint rather than WSDL at " + path);
     }
+    registeredZkPaths.add(path);
     ZooKeeperUtils.setData(curator.get(),path,json,CreateMode.EPHEMERAL);
   }
  catch (  Exception e) {

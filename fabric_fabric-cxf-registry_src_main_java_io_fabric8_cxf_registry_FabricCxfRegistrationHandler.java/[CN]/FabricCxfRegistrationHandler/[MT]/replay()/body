@@ -6,7 +6,8 @@
       Set<ObjectInstance> instances=mBeanServer.queryMBeans(objectName,isCxfServiceEndpointQuery);
       for (      ObjectInstance instance : instances) {
         ObjectName oName=instance.getObjectName();
-        onMBeanEvent(container,oName);
+        String type=null;
+        onMBeanEvent(container,oName,type);
       }
     }
     if (container == null) {

@@ -1,6 +1,10 @@
 {
-  deactivateComponent();
   if (registeredListener && mBeanServer != null) {
     mBeanServer.removeNotificationListener(MBeanServerDelegate.DELEGATE_NAME,listener);
   }
+  List<String> paths=new ArrayList<String>(registeredZkPaths);
+  for (  String path : paths) {
+    removeZkPath(path);
+  }
+  deactivateComponent();
 }
