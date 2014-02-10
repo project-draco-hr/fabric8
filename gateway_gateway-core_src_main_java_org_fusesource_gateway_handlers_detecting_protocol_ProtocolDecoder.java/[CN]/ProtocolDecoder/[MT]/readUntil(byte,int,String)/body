@@ -1,0 +1,20 @@
+{
+  int pos=indexOf(buff,readEnd,buff.length(),octet);
+  if (pos >= 0) {
+    int offset=readStart;
+    readEnd=pos + 1;
+    readStart=readEnd;
+    int length=readEnd - offset;
+    if (max >= 0 && length > max) {
+      throw new ProtocolException(msg);
+    }
+    return buff.getBuffer(offset,readEnd);
+  }
+ else {
+    readEnd+=buff.length();
+    if (max >= 0 && (readEnd - readStart) > max) {
+      throw new ProtocolException(msg);
+    }
+    return null;
+  }
+}

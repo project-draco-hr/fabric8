@@ -1,0 +1,9 @@
+{
+  String loadBalancerType=LoadBalancers.STICKY_LOAD_BALANCER;
+  int stickyLoadBalancerCacheSize=LoadBalancers.STICKY_LOAD_BALANCER_DEFAULT_CACHE_SIZE;
+  LoadBalancer<ServiceDetails> serviceLoadBalancer=LoadBalancers.createLoadBalancer(loadBalancerType,stickyLoadBalancerCacheSize);
+  ArrayList<Protocol> protocols=new ArrayList<Protocol>();
+  protocols.add(new StompProtocol());
+  DetectingGatewayProtocolHandler handler=new DetectingGatewayProtocolHandler(vertx,serviceMap,protocols,serviceLoadBalancer);
+  return new DetectingGateway(vertx,0,handler);
+}

@@ -1,0 +1,42 @@
+{
+  NetClient client=null;
+  String host=params.protocolVirtualHost;
+  if (host != null) {
+    List<ServiceDetails> services=serviceMap.getServices(host);
+    if (!services.isEmpty()) {
+      ClientRequestFacade clientRequestFacade=clientRequestFacadeFactory.create(socket,params);
+      ServiceDetails serviceDetails=serviceLoadBalancer.choose(services,clientRequestFacade);
+      if (serviceDetails != null) {
+        List<String> urlStrings=serviceDetails.getServices();
+        for (        String urlString : urlStrings) {
+          if (Strings.notEmpty(urlString)) {
+            try {
+              URI uri=new URI(urlString);
+              String urlProtocol=uri.getScheme();
+              if (Objects.equal(params.protocol,urlProtocol)) {
+                Handler<AsyncResult<NetSocket>> handler=new Handler<AsyncResult<NetSocket>>(){
+                  public void handle(                  final AsyncResult<NetSocket> asyncSocket){
+                    NetSocket clientSocket=asyncSocket.result();
+                    clientSocket.write(received);
+                    Pump.createPump(clientSocket,socket).start();
+                    Pump.createPump(socket,clientSocket).start();
+                  }
+                }
+;
+                client=createClient(socket,uri,handler,clientRequestFacade,params);
+                break;
+              }
+            }
+ catch (            URISyntaxException e) {
+              LOG.warn("Failed to parse URI: " + urlString + ". "+ e,e);
+            }
+          }
+        }
+      }
+    }
+  }
+  if (client == null) {
+    LOG.info("No service available for protocol " + params.protocol + " for service "+ host);
+    socket.close();
+  }
+}

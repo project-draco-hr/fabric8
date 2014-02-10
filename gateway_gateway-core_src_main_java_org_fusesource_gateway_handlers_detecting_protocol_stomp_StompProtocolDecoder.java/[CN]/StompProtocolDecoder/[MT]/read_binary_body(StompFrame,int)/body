@@ -1,0 +1,19 @@
+{
+  return new Action<StompFrame>(){
+    public StompFrame apply() throws IOException {
+      Buffer content=readBytes(contentLength + 1);
+      if (content != null) {
+        if (content.getByte(contentLength) != 0) {
+          throw new IOException("Expected null terminator after " + contentLength + " content bytes");
+        }
+        frame.content(chomp(content));
+        nextDecodeAction=read_action;
+        return frame;
+      }
+ else {
+        return null;
+      }
+    }
+  }
+;
+}

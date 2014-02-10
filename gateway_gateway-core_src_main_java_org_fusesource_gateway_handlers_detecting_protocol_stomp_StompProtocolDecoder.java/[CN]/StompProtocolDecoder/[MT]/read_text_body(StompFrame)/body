@@ -1,0 +1,16 @@
+{
+  return new Action<StompFrame>(){
+    public StompFrame apply() throws IOException {
+      Buffer content=readUntil((byte)0);
+      if (content != null) {
+        nextDecodeAction=read_action;
+        frame.content(chomp(content));
+        return frame;
+      }
+ else {
+        return null;
+      }
+    }
+  }
+;
+}

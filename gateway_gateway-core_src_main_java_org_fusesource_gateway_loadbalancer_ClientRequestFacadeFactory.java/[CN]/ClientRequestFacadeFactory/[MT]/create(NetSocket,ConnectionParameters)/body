@@ -1,0 +1,14 @@
+{
+  return new ClientRequestFacade(){
+    @Override public String getClientRequestKey(){
+      for (      KeyExtractor extractor : keyExtractors) {
+        String value=extractor.extract(socket,params);
+        if (value != null) {
+          return value;
+        }
+      }
+      return null;
+    }
+  }
+;
+}

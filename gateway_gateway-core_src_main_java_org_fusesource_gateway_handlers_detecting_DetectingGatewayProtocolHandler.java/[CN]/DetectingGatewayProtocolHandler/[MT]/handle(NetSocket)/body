@@ -1,0 +1,26 @@
+{
+  final HashMap<ConnectionParameters,String> context=new HashMap<ConnectionParameters,String>();
+  socket.dataHandler(new Handler<Buffer>(){
+    Buffer received=new Buffer();
+    @Override public void handle(    Buffer event){
+      received.appendBuffer(event);
+      LOG.info("Received a buffer, matching protocols against: " + received.length());
+      for (      final Protocol protocol : protocols) {
+        if (protocol.matches(received)) {
+          protocol.snoopConnectionParameters(socket,received,new Handler<ConnectionParameters>(){
+            @Override public void handle(            ConnectionParameters connectionParameters){
+              route(socket,connectionParameters,received);
+            }
+          }
+);
+          return;
+        }
+      }
+      if (received.length() >= maxProtocolIdentificationLength) {
+        LOG.info("Connection did not use one of the enabled protocols " + getProtocolNames());
+        socket.close();
+      }
+    }
+  }
+);
+}

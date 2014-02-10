@@ -1,0 +1,25 @@
+{
+  if (value == null)   return null;
+  Buffer rc=new Buffer(value.length());
+  int pos=0;
+  int max=value.length();
+  while (pos < max) {
+    if (startsWith(value,pos,ESCAPE_ESCAPE_SEQ.toBuffer())) {
+      rc.appendByte(ESCAPE_BYTE);
+      pos+=2;
+    }
+ else     if (startsWith(value,pos,COLON_ESCAPE_SEQ.toBuffer())) {
+      rc.appendByte(COLON_BYTE);
+      pos+=2;
+    }
+ else     if (startsWith(value,pos,NEWLINE_ESCAPE_SEQ.toBuffer())) {
+      rc.appendByte(NEWLINE_BYTE);
+      pos+=2;
+    }
+ else {
+      rc.appendByte(value.getByte(pos));
+      pos+=1;
+    }
+  }
+  return rc.toString();
+}
