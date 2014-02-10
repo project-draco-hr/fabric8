@@ -1,14 +1,13 @@
 {
   executeCommand("fabric:create -n");
-  Container container=getFabricService().getContainers()[0];
-  Assert.assertEquals("Expected to find the root container","root",container.getId());
-  container=ContainerBuilder.child(1).withName("child").assertProvisioningResult().build().iterator().next();
+  Set<Container> containers=ContainerBuilder.child(1).withName("child").assertProvisioningResult().build();
   try {
-    Assert.assertEquals("Expected to find the child container","child1",container.getId());
+    Container childContainer=containers.iterator().next();
+    Assert.assertEquals("Expected to find the child container","child1",childContainer.getId());
     executeCommand("container-add-profile child1 controller-wildfly");
-    Provision.containersStatus(Arrays.asList(container),"success",PROVISION_TIMEOUT);
+    Provision.containerStatus(containers,PROVISION_TIMEOUT);
     SimpleDateFormat df=new SimpleDateFormat("HH:mm:ss:SSS");
-    File childHome=new File(System.getProperty("karaf.home") + "/instances/" + container.getId());
+    File childHome=new File(System.getProperty("karaf.home") + "/instances/" + childContainer.getId());
     Assert.assertTrue("[" + df.format(new Date()) + "] Child home exists: "+ childHome,childHome.exists());
     File procHome=new File(childHome + "/processes/1");
     System.out.println("[" + df.format(new Date()) + "] Waiting for: "+ procHome);
@@ -38,6 +37,6 @@
     pidFile.delete();
   }
   finally {
-    container.stop();
+    ContainerBuilder.destroy(containers);
   }
 }

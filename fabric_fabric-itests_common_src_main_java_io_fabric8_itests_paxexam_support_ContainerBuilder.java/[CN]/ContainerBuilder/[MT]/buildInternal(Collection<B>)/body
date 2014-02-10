@@ -1,0 +1,43 @@
+{
+  Set<Container> containers=new HashSet<Container>();
+  BundleContext bundleContext=FrameworkUtil.getBundle(ContainerBuilder.class).getBundleContext();
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  try {
+    FabricService fabricService=fabricProxy.getService();
+    CompletionService<Set<Container>> completionService=new ExecutorCompletionService<Set<Container>>(executorService);
+    int tasks=0;
+    for (    B options : buildersList) {
+      options.profiles(profileNames);
+      if (!options.isEnsembleServer()) {
+        options.zookeeperUrl(fabricService.getZookeeperUrl());
+        completionService.submit(new CreateContainerTask(fabricService,options));
+        tasks++;
+      }
+    }
+    try {
+      for (int i=0; i < tasks; i++) {
+        Future<Set<Container>> futureContainerSet=completionService.poll(CREATE_TIMEOUT,TimeUnit.MILLISECONDS);
+        Set<Container> containerSet=futureContainerSet.get();
+        containers.addAll(containerSet);
+      }
+      try {
+        if (waitForProvisioning) {
+          Provision.containerStatus(containers,provisionTimeOut);
+        }
+        if (assertProvisioningResult) {
+          Provision.provisioningSuccess(containers,provisionTimeOut);
+        }
+      }
+ catch (      Exception e) {
+        throw FabricException.launderThrowable(e);
+      }
+    }
+ catch (    Exception e) {
+      throw FabricException.launderThrowable(e);
+    }
+  }
+  finally {
+    fabricProxy.close();
+  }
+  return Collections.unmodifiableSet(containers);
+}
