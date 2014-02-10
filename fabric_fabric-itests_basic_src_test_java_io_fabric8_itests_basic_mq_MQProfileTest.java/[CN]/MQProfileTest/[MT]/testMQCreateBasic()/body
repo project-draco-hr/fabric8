@@ -3,15 +3,15 @@
   System.err.println(executeCommand("mq-create --jmx-user admin --jmx-password admin --minimumInstances 1 mq"));
   Set<Container> containers=ContainerBuilder.create(2).withName("child").withProfiles("default").assertProvisioningResult().build();
   try {
-    Container broker=containers.iterator().next();
-    containers.remove(broker);
+    LinkedList<Container> containerList=new LinkedList<Container>(containers);
+    Container broker=containerList.removeLast();
     Profile brokerProfile=broker.getVersion().getProfile("mq-broker-default.mq");
     broker.setProfiles(new Profile[]{brokerProfile});
     Provision.provisioningSuccess(Arrays.asList(broker),PROVISION_TIMEOUT);
     waitForBroker("default");
     final BrokerViewMBean bean=(BrokerViewMBean)Provision.getMBean(broker,new ObjectName("org.apache.activemq:type=Broker,brokerName=mq"),BrokerViewMBean.class,120000);
     System.err.println(executeCommand("container-list"));
-    for (    Container c : containers) {
+    for (    Container c : containerList) {
       Profile exampleProfile=broker.getVersion().getProfile("example-mq");
       c.setProfiles(new Profile[]{exampleProfile});
     }

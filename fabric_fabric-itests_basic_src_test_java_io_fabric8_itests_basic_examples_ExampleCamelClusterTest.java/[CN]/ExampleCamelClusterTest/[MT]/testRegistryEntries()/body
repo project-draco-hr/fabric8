@@ -2,9 +2,9 @@
   System.err.println(executeCommand("fabric:create -n root"));
   Set<Container> containers=ContainerBuilder.create(3).withName("fabric-camel").withProfiles("fabric-camel").assertProvisioningResult().build();
   try {
-    Container client=containers.iterator().next();
-    containers.remove(client);
-    Set<Container> servers=new LinkedHashSet<Container>(containers);
+    LinkedList<Container> containerList=new LinkedList<Container>(containers);
+    Container client=containerList.removeLast();
+    Set<Container> servers=new LinkedHashSet<Container>(containerList);
     for (    Container c : servers) {
       Profile p=c.getVersion().getProfile("example-camel-cluster.server");
       c.setProfiles(new Profile[]{p});

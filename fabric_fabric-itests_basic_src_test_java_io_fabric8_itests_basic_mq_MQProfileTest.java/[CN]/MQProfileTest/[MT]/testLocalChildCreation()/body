@@ -2,8 +2,8 @@
   System.err.println(executeCommand("fabric:create -n"));
   Set<Container> containers=ContainerBuilder.create(2).withName("child").withProfiles("default").assertProvisioningResult().build();
   try {
-    Container broker=containers.iterator().next();
-    containers.remove(broker);
+    LinkedList<Container> containerList=new LinkedList<Container>(containers);
+    Container broker=containerList.removeLast();
     Profile brokerProfile=broker.getVersion().getProfile("mq-default");
     broker.setProfiles(new Profile[]{brokerProfile});
     Provision.provisioningSuccess(Arrays.asList(broker),PROVISION_TIMEOUT);
@@ -11,7 +11,7 @@
     final BrokerViewMBean bean=(BrokerViewMBean)Provision.getMBean(broker,new ObjectName("org.apache.activemq:type=Broker,brokerName=" + broker.getId()),BrokerViewMBean.class,120000);
     Assert.assertEquals("Producer not present",0,bean.getTotalProducerCount());
     Assert.assertEquals("Consumer not present",0,bean.getTotalConsumerCount());
-    for (    Container c : containers) {
+    for (    Container c : containerList) {
       Profile exampleProfile=broker.getVersion().getProfile("example-mq");
       c.setProfiles(new Profile[]{exampleProfile});
     }
