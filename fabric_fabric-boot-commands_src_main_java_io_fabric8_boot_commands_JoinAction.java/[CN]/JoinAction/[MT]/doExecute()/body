@@ -1,29 +1,29 @@
 {
-  String oldName=System.getProperty(SystemProperties.KARAF_NAME);
+  String oldName=runtimeProperties.getProperty(SystemProperties.KARAF_NAME);
   if (containerName == null) {
     containerName=oldName;
   }
   if (resolver != null) {
-    System.setProperty(ZkDefs.LOCAL_RESOLVER_PROPERTY,resolver);
+    runtimeProperties.setProperty(ZkDefs.LOCAL_RESOLVER_PROPERTY,resolver);
   }
   if (manualIp != null) {
-    System.setProperty(ZkDefs.MANUAL_IP,manualIp);
+    runtimeProperties.setProperty(ZkDefs.MANUAL_IP,manualIp);
   }
   if (bindAddress != null) {
-    System.setProperty(ZkDefs.BIND_ADDRESS,bindAddress);
+    runtimeProperties.setProperty(ZkDefs.BIND_ADDRESS,bindAddress);
   }
   zookeeperPassword=zookeeperPassword != null ? zookeeperPassword : ShellUtils.retrieveFabricZookeeperPassword(session);
-  System.setProperty(ZkDefs.MINIMUM_PORT,String.valueOf(minimumPort));
-  System.setProperty(ZkDefs.MAXIMUM_PORT,String.valueOf(maximumPort));
+  runtimeProperties.setProperty(ZkDefs.MINIMUM_PORT,String.valueOf(minimumPort));
+  runtimeProperties.setProperty(ZkDefs.MAXIMUM_PORT,String.valueOf(maximumPort));
   if (!containerName.equals(oldName)) {
     if (force || permissionToRenameContainer()) {
       if (!registerContainer(containerName,zookeeperPassword,profile,force)) {
         System.err.print("A container with the name: " + containerName + " is already member of the cluster. You can specify a different name as an argument.");
         return null;
       }
-      System.setProperty(SystemProperties.KARAF_NAME,containerName);
-      System.setProperty("zookeeper.url",zookeeperUrl);
-      System.setProperty("zookeeper.password",zookeeperPassword);
+      runtimeProperties.setProperty(SystemProperties.KARAF_NAME,containerName);
+      runtimeProperties.setProperty("zookeeper.url",zookeeperUrl);
+      runtimeProperties.setProperty("zookeeper.password",zookeeperPassword);
       File file=new File(System.getProperty("karaf.base") + "/etc/system.properties");
       Properties props=new Properties(file);
       props.put(SystemProperties.KARAF_NAME,containerName);
@@ -33,8 +33,8 @@
       if (!nonManaged) {
         installBundles();
       }
-      System.setProperty("karaf.restart","true");
-      System.setProperty("karaf.restart.clean","false");
+      runtimeProperties.setProperty("karaf.restart","true");
+      runtimeProperties.setProperty("karaf.restart.clean","false");
       bundleContext.getBundle(0).stop();
       return null;
     }
