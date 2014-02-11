@@ -1,0 +1,20 @@
+{
+  MQTTFrame frame=(MQTTFrame)value;
+  self.appendByte(frame.header());
+  int remaining=0;
+  for (  org.fusesource.hawtbuf.Buffer buffer : frame.buffers) {
+    remaining+=buffer.length;
+  }
+  do {
+    byte digit=(byte)(remaining & 0x7F);
+    remaining>>>=7;
+    if (remaining > 0) {
+      digit|=0x80;
+    }
+    self.appendByte(digit);
+  }
+ while (remaining > 0);
+  for (  org.fusesource.hawtbuf.Buffer buffer : frame.buffers) {
+    self.appendBytes(buffer.toByteArray());
+  }
+}

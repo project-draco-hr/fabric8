@@ -3,7 +3,7 @@
   gateway.init();
   Stomp stomp=new Stomp("localhost",gateway.getBoundPort());
   stomp.setHost("broker0");
-  BlockingConnection connection=stomp.connectBlocking();
+  org.fusesource.stomp.client.BlockingConnection connection=stomp.connectBlocking();
   assertEquals(1,getConnectionsOnBroker(0));
   for (int i=1; i < brokers.size(); i++) {
     assertEquals(0,getConnectionsOnBroker(i));

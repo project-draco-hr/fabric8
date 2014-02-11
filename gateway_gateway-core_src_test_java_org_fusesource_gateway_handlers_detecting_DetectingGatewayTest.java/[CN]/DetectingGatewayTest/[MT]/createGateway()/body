@@ -4,6 +4,7 @@
   LoadBalancer<ServiceDetails> serviceLoadBalancer=LoadBalancers.createLoadBalancer(loadBalancerType,stickyLoadBalancerCacheSize);
   ArrayList<Protocol> protocols=new ArrayList<Protocol>();
   protocols.add(new StompProtocol());
+  protocols.add(new MqttProtocol());
   DetectingGatewayProtocolHandler handler=new DetectingGatewayProtocolHandler(vertx,serviceMap,protocols,serviceLoadBalancer);
   return new DetectingGateway(vertx,0,handler);
 }
