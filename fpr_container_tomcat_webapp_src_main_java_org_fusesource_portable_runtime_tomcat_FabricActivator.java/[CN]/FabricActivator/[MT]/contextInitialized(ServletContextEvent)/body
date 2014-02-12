@@ -1,7 +1,7 @@
 {
   Properties sysprops=getRuntimeProperties();
   DefaultPropertiesProvider propsProvider=new DefaultPropertiesProvider(sysprops,true);
-  Runtime runtime=RuntimeLocator.createRuntime(propsProvider);
+  Runtime runtime=RuntimeLocator.createRuntime(new TomcatRuntimeFactory(),propsProvider);
   runtime.init();
   final CountDownLatch latch=new CountDownLatch(1);
   ServiceListener listener=new ServiceListener(){

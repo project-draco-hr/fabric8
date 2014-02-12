@@ -1,0 +1,25 @@
+{
+  final ArchiveBuilder archive=new ArchiveBuilder("fabric-service");
+  archive.addClasses(TargetContainer.tomcat,ApplicationActivator.class);
+  archive.setManifest(new Asset(){
+    @Override public InputStream openStream(){
+      if (archive.getTargetContainer() == TargetContainer.karaf) {
+        OSGiManifestBuilder builder=OSGiManifestBuilder.newInstance();
+        builder.addBundleManifestVersion(2);
+        builder.addBundleSymbolicName(archive.getName());
+        builder.addBundleVersion("1.0.0");
+        builder.addManifestHeader(Constants.GRAVIA_ENABLED,Boolean.TRUE.toString());
+        builder.addImportPackages(RuntimeLocator.class,FabricService.class);
+        return builder.openStream();
+      }
+ else {
+        ManifestBuilder builder=new ManifestBuilder();
+        builder.addIdentityCapability(archive.getName(),"1.0.0");
+        builder.addManifestHeader("Dependencies","org.jboss.gravia,org.fusesource.fabric.api");
+        return builder.openStream();
+      }
+    }
+  }
+);
+  return archive.getArchive();
+}
