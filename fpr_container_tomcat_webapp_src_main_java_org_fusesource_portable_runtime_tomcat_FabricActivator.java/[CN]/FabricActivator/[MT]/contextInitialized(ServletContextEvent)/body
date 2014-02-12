@@ -3,6 +3,10 @@
   DefaultPropertiesProvider propsProvider=new DefaultPropertiesProvider(sysprops,true);
   Runtime runtime=RuntimeLocator.createRuntime(new TomcatRuntimeFactory(),propsProvider);
   runtime.init();
+  ServletContext servletContext=event.getServletContext();
+  ModuleContext moduleContext=runtime.getModule(0).getModuleContext();
+  BundleContext bundleContext=new BundleContextAdaptor(moduleContext);
+  servletContext.setAttribute("org.osgi.framework.BundleContext",bundleContext);
   final CountDownLatch latch=new CountDownLatch(1);
   ServiceListener listener=new ServiceListener(){
     @Override public void serviceChanged(    ServiceEvent event){
@@ -53,7 +57,6 @@ catch (    Exception ex) {
   Properties brandingProperties=new Properties();
   String resname="/WEB-INF/branding.properties";
   try {
-    ServletContext servletContext=event.getServletContext();
     URL brandingURL=servletContext.getResource(resname);
     brandingProperties.load(brandingURL.openStream());
   }
