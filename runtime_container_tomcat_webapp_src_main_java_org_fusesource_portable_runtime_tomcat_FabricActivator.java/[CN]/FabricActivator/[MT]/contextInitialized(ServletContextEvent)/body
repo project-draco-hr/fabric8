@@ -25,9 +25,6 @@
  catch (  ModuleException ex) {
     throw new IllegalStateException(ex);
   }
-  ModuleContext moduleContext=module.getModuleContext();
-  BundleContext bundleContext=new BundleContextAdaptor(moduleContext);
-  servletContext.setAttribute(BundleContext.class.getName(),bundleContext);
   Repository repository=registerRepositoryService(runtime);
   Resolver resolver=registerResolverService(runtime);
   registerProvisionerService(servletContext,runtime,repository,resolver);

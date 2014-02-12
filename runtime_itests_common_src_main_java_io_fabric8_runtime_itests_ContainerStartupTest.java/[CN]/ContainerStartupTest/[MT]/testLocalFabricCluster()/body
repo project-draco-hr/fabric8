@@ -1,7 +1,7 @@
 {
   String zkpassword=System.getProperty(CreateEnsembleOptions.ZOOKEEPER_PASSWORD);
   Assert.assertNotNull(CreateEnsembleOptions.ZOOKEEPER_PASSWORD + " not null",zkpassword);
-  Builder<?> builder=CreateEnsembleOptions.builder().agentEnabled(false).zookeeperPassword(zkpassword).waitForProvision(false);
+  Builder<?> builder=CreateEnsembleOptions.builder().agentEnabled(false).clean(true).zookeeperPassword(zkpassword).waitForProvision(false);
   CreateEnsembleOptions options=builder.build();
   ModuleContext syscontext=RuntimeLocator.getRequiredRuntime().getModuleContext();
   ZooKeeperClusterBootstrap bootstrap=syscontext.getService(syscontext.getServiceReference(ZooKeeperClusterBootstrap.class));

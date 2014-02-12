@@ -1,8 +1,10 @@
 {
-  String[] tokens=cmdstr.split("\\s")[0].split(":");
-  Assert.assertTrue("Two tokens",tokens.length == 2);
-  String filter="(&(osgi.command.scope=" + tokens[0] + ")(osgi.command.function="+ tokens[1]+ "))";
-  AbstractCommand commandService=(AbstractCommand)FabricTestSupport.awaitService(Function.class,filter);
-  Action action=commandService.createNewAction();
-  return action.execute(session);
+  List<String> tokens=Arrays.asList(cmdstr.split("\\s"));
+  String[] header=tokens.get(0).split(":");
+  Assert.assertTrue("Two tokens",header.length == 2);
+  String filter="(&(osgi.command.scope=" + header[0] + ")(osgi.command.function="+ header[1]+ "))";
+  AbstractCommand command=(AbstractCommand)FabricTestSupport.awaitService(Function.class,filter);
+  List<Object> args=new ArrayList<Object>(tokens);
+  args.remove(0);
+  return command.execute(session,args);
 }

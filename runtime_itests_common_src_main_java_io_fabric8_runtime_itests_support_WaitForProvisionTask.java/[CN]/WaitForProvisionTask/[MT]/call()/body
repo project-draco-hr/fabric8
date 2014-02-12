@@ -1,0 +1,13 @@
+{
+  for (long t=0; (!isComplete(container,status) && t < provisionTimeOut); t+=2000L) {
+    if (container.getProvisionException() != null) {
+      return false;
+    }
+    Thread.sleep(2000L);
+    System.out.println("Container:" + container.getId() + " Alive:"+ container.isAlive()+ " Status:"+ container.getProvisionStatus()+ " SSH URL:"+ container.getSshUrl());
+  }
+  if (!isComplete(container,status)) {
+    return false;
+  }
+  return true;
+}
