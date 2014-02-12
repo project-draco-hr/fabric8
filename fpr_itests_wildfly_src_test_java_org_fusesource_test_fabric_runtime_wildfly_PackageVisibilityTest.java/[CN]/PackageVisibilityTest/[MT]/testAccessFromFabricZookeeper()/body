@@ -1,7 +1,0 @@
-{
-  ModuleLoader modloader=Module.getCallerModuleLoader();
-  Module core=modloader.loadModule(ModuleIdentifier.fromString("io.fabric8.zookeeper"));
-  Class<?> clazz=core.getClassLoader().loadClass("org.apache.felix.utils.properties.Properties");
-  ModuleClassLoader classLoader=(ModuleClassLoader)clazz.getClassLoader();
-  Assert.assertEquals("io.fabric8.zookeeper",classLoader.getModule().getIdentifier().getName());
-}

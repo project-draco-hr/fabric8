@@ -3,7 +3,29 @@
   DefaultPropertiesProvider propsProvider=new DefaultPropertiesProvider(sysprops,true);
   Runtime runtime=RuntimeLocator.createRuntime(new TomcatRuntimeFactory(),propsProvider);
   runtime.init();
-  installBootstrapModules(runtime);
+  final BoostrapLatch latch=new BoostrapLatch(1);
+  final ModuleContext syscontext=runtime.getModule(0).getModuleContext();
+  ServiceListener listener=new ServiceListener(){
+    @Override public void serviceChanged(    ServiceEvent event){
+      if (event.getType() == ServiceEvent.REGISTERED) {
+        syscontext.removeServiceListener(this);
+        latch.countDown();
+      }
+    }
+  }
+;
+  syscontext.addServiceListener(listener,"(objectClass=" + FabricService.class.getName() + ")");
   ServletContext servletContext=event.getServletContext();
-  printFabricBanner(servletContext);
+  servletContext.setAttribute(BoostrapLatch.class.getName(),latch);
+  WebAppContextListener webappInstaller=new WebAppContextListener();
+  Module module=webappInstaller.installWebappModule(runtime,servletContext);
+  servletContext.setAttribute(Module.class.getName(),module);
+  try {
+    module.start();
+  }
+ catch (  ModuleException ex) {
+    throw new IllegalStateException(ex);
+  }
+  BundleContext bundleContext=module.adapt(Bundle.class).getBundleContext();
+  servletContext.setAttribute("org.osgi.framework.BundleContext",bundleContext);
 }

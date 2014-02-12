@@ -1,0 +1,17 @@
+{
+  ServletContext servletContext=event.getServletContext();
+  BoostrapLatch latch=(BoostrapLatch)servletContext.getAttribute(BoostrapLatch.class.getName());
+  try {
+    try {
+      if (!latch.await(5,TimeUnit.SECONDS)) {
+        throw new IllegalStateException("Cannot obtain FabricService");
+      }
+    }
+ catch (    InterruptedException ex) {
+    }
+  }
+  finally {
+    servletContext.removeAttribute(BoostrapLatch.class.getName());
+  }
+  printFabricBanner(servletContext);
+}
