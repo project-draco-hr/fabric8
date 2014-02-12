@@ -1,0 +1,8 @@
+{
+  String[] tokens=cmdstr.split("\\s")[0].split(":");
+  Assert.assertTrue("Two tokens",tokens.length == 2);
+  String filter="(&(osgi.command.scope=" + tokens[0] + ")(osgi.command.function="+ tokens[1]+ "))";
+  AbstractCommand commandService=(AbstractCommand)FabricTestSupport.awaitService(Function.class,filter);
+  Action action=commandService.createNewAction();
+  return action.execute(session);
+}

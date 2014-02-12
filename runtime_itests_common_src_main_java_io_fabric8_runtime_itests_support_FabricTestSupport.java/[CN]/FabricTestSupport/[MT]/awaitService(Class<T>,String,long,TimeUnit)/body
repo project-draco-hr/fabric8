@@ -1,21 +1,31 @@
 {
   final ModuleContext context=RuntimeLocator.getRequiredRuntime().getModuleContext();
   final AtomicReference<ServiceReference<T>> serviceRef=new AtomicReference<ServiceReference<T>>();
+  final Filter filter=filterspec != null ? context.createFilter(filterspec) : null;
   final CountDownLatch latch=new CountDownLatch(1);
   ServiceListener listener=new ServiceListener(){
     @Override @SuppressWarnings("unchecked") public void serviceChanged(    ServiceEvent event){
       ServiceReference<?> sref=event.getServiceReference();
       List<String> classes=Arrays.asList((String[])sref.getProperty(Constants.OBJECTCLASS));
       if (event.getType() == ServiceEvent.REGISTERED && classes.contains(clazz.getName())) {
-        serviceRef.set((ServiceReference<T>)sref);
-        latch.countDown();
+        if (filter == null || filter.match(sref)) {
+          serviceRef.set((ServiceReference<T>)sref);
+          latch.countDown();
+        }
       }
     }
   }
 ;
   context.addServiceListener(listener);
   try {
-    ServiceReference<T> sref=context.getServiceReference(clazz);
+    ServiceReference<T> sref;
+    if (filterspec != null) {
+      Collection<ServiceReference<T>> srefs=context.getServiceReferences(clazz,filterspec);
+      sref=srefs.isEmpty() ? null : srefs.iterator().next();
+    }
+ else {
+      sref=context.getServiceReference(clazz);
+    }
     if (sref == null && latch.await(timeout,unit)) {
       sref=serviceRef.get();
     }
