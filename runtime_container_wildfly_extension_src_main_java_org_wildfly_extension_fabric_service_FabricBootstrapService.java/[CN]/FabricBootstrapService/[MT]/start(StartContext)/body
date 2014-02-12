@@ -5,13 +5,15 @@
   ServiceListener listener=new ServiceListener(){
     @Override public void serviceChanged(    ServiceEvent event){
       if (event.getType() == ServiceEvent.REGISTERED) {
+        ServiceReference<?> sref=event.getServiceReference();
+        bootstrapService=(ZooKeeperClusterBootstrap)syscontext.getService(sref);
         syscontext.removeServiceListener(this);
         latch.countDown();
       }
     }
   }
 ;
-  syscontext.addServiceListener(listener,"(objectClass=" + FabricService.class.getName() + ")");
+  syscontext.addServiceListener(listener,"(objectClass=" + ZooKeeperClusterBootstrap.class.getName() + ")");
   Runtime runtime=injectedRuntime.getValue();
   ModuleClassLoader classLoader=(ModuleClassLoader)getClass().getClassLoader();
   try {
@@ -32,13 +34,11 @@ catch (  Exception ex) {
   }
   try {
     if (!latch.await(5,TimeUnit.SECONDS)) {
-      throw new StartException("Cannot obtain FabricService");
+      throw new StartException("Cannot obtain ZooKeeperClusterBootstrap");
     }
   }
  catch (  InterruptedException ex) {
   }
-  ServiceReference<FabricService> sref=syscontext.getServiceReference(FabricService.class);
-  fabricService=syscontext.getService(sref);
   Properties brandingProperties=new Properties();
   String resname="/META-INF/branding.properties";
   try {

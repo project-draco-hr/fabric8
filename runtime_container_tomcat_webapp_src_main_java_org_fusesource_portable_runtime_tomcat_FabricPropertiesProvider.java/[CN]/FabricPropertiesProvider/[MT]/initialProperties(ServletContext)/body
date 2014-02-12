@@ -1,13 +1,12 @@
 {
   Properties properties=super.initialProperties(servletContext);
-  File karafHome=new File(getCatalinaWork().getPath() + File.separator + "fabric");
-  File karafData=new File(karafHome.getPath() + File.separator + "data");
-  File profilesImport=new File(karafHome.getPath() + File.separator + "import");
-  properties.setProperty(CreateEnsembleOptions.ENSEMBLE_AUTOSTART,Boolean.TRUE.toString());
+  File karafBase=new File(getCatalinaWork().getPath() + File.separator + "karaf-base");
+  File karafData=new File(karafBase.getPath() + File.separator + "data");
+  File profilesImport=new File(karafBase.getPath() + File.separator + CreateEnsembleOptions.DEFAULT_IMPORT_PATH);
   properties.setProperty(CreateEnsembleOptions.PROFILES_AUTOIMPORT_PATH,profilesImport.getAbsolutePath());
   properties.setProperty("org.osgi.service.http.port","8080");
-  properties.setProperty(SystemProperties.KARAF_HOME,karafHome.getAbsolutePath());
-  properties.setProperty(SystemProperties.KARAF_BASE,karafHome.getAbsolutePath());
+  properties.setProperty(SystemProperties.KARAF_HOME,karafBase.getAbsolutePath());
+  properties.setProperty(SystemProperties.KARAF_BASE,karafBase.getAbsolutePath());
   properties.setProperty(SystemProperties.KARAF_DATA,karafData.getAbsolutePath());
   properties.setProperty(SystemProperties.KARAF_NAME,"root");
   return properties;
