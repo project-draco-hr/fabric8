@@ -1,6 +1,7 @@
 {
   PropertiesProvider propertyProvider=new RuntimePropertiesProvider(runtime);
   Repository repository=new DefaultRepository(propertyProvider);
-  repositoryRegistration=RepositoryRuntimeRegistration.registerRepository(runtime,repository);
+  ModuleContext context=runtime.getModuleContext();
+  repositoryRegistration=RepositoryRuntimeRegistration.registerRepository(context,repository);
   return repository;
 }
