@@ -1,0 +1,23 @@
+{
+  ModelNode address=new ModelNode();
+  address.add(SUBSYSTEM,FabricExtension.SUBSYSTEM_NAME);
+  address.protect();
+  ModelNode subsystemAdd=new ModelNode();
+  subsystemAdd.get(OP).set(ADD);
+  subsystemAdd.get(OP_ADDR).set(address);
+  operations.add(subsystemAdd);
+  while (reader.hasNext() && reader.nextTag() != END_ELEMENT) {
+switch (Namespace.forUri(reader.getNamespaceURI())) {
+case VERSION_1_0:
+{
+        final Element element=Element.forName(reader.getLocalName());
+switch (element) {
+default :
+          throw unexpectedElement(reader);
+      }
+    }
+default :
+  continue;
+}
+}
+}

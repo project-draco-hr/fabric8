@@ -1,0 +1,55 @@
+{
+  LOGGER.info("Activating Fabric Subsystem");
+  final CountDownLatch latch=new CountDownLatch(1);
+  ServiceListener listener=new ServiceListener(){
+    @Override public void serviceChanged(    ServiceEvent event){
+      if (event.getType() == ServiceEvent.REGISTERED)       latch.countDown();
+    }
+  }
+;
+  ModuleContext syscontext=injectedModuleContext.getValue();
+  syscontext.addServiceListener(listener,"(objectClass=" + FabricService.class.getName() + ")");
+  Runtime runtime=injectedRuntime.getValue();
+  modules=new ArrayList<Module>();
+  for (  String name : moduleNames) {
+    try {
+      ModuleClassLoader classLoader=moduleLoader.loadModule(ModuleIdentifier.fromString(name)).getClassLoader();
+      URL url=classLoader.getResource(JarFile.MANIFEST_NAME);
+      Manifest manifest=new Manifest(url.openStream());
+      Dictionary<String,String> headers=new ManifestHeadersProvider(manifest).getHeaders();
+      modules.add(runtime.installModule(classLoader,headers));
+    }
+ catch (    RuntimeException rte) {
+      throw rte;
+    }
+catch (    Exception ex) {
+      throw new StartException(ex);
+    }
+  }
+  for (  Module module : modules) {
+    try {
+      module.start();
+    }
+ catch (    ModuleException ex) {
+      throw new StartException(ex);
+    }
+  }
+  try {
+    if (!latch.await(5,TimeUnit.SECONDS)) {
+      throw new StartException("Cannot obtain FabricService");
+    }
+  }
+ catch (  InterruptedException ex) {
+  }
+  ServiceReference<FabricService> sref=syscontext.getServiceReference(FabricService.class);
+  fabricService=syscontext.getService(sref);
+  URL brandingURL=getClass().getResource("/META-INF/branding.properties");
+  Properties brandingProperties=new Properties();
+  try {
+    brandingProperties.load(brandingURL.openStream());
+  }
+ catch (  IOException e) {
+    throw new StartException("Cannot read branding properties from: " + brandingURL);
+  }
+  System.out.println(brandingProperties.getProperty("welcome"));
+}

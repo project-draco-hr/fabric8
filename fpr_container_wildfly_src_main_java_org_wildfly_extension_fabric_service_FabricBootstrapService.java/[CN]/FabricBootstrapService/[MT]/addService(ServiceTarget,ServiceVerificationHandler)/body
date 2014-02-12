@@ -1,0 +1,9 @@
+{
+  FabricBootstrapService service=new FabricBootstrapService();
+  ServiceBuilder<FabricService> builder=serviceTarget.addService(FabricConstants.FABRIC_SUBSYSTEM_SERVICE_NAME,service);
+  builder.addDependency(ServerEnvironmentService.SERVICE_NAME,ServerEnvironment.class,service.injectedServerEnvironment);
+  builder.addDependency(GraviaConstants.MODULE_CONTEXT_SERVICE_NAME,ModuleContext.class,service.injectedModuleContext);
+  builder.addDependency(GraviaConstants.RUNTIME_SERVICE_NAME,Runtime.class,service.injectedRuntime);
+  builder.addListener(verificationHandler);
+  return builder.install();
+}
