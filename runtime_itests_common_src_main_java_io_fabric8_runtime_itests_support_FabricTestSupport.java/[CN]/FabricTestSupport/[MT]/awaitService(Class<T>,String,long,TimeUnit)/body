@@ -29,7 +29,7 @@
     if (sref == null && latch.await(timeout,unit)) {
       sref=serviceRef.get();
     }
-    Assert.assertNotNull("ServiceReference not available",sref);
+    Assert.assertNotNull("ServiceReference not available: " + clazz.getName(),sref);
     return context.getService(sref);
   }
  catch (  InterruptedException ex) {

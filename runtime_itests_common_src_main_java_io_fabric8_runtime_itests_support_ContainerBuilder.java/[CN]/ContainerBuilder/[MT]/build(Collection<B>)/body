@@ -1,7 +1,7 @@
 {
   Set<Container> containers=new HashSet<Container>();
-  BundleContext bundleContext=FrameworkUtil.getBundle(ContainerBuilder.class).getBundleContext();
-  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  ModuleContext moduleContext=RuntimeLocator.getRequiredRuntime().getModuleContext();
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(moduleContext,FabricService.class);
   try {
     FabricService fabricService=fabricProxy.getService();
     CompletionService<Set<Container>> completionService=new ExecutorCompletionService<Set<Container>>(executorService);
