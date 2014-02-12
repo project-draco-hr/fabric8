@@ -1,5 +1,5 @@
 {
-  final ArchiveBuilder archive=new ArchiveBuilder("fabric-service");
+  final ArchiveBuilder archive=new ArchiveBuilder("git-data-store");
   archive.addClasses(RuntimeType.TOMCAT,AnnotatedContextListener.class);
   archive.setManifest(new Asset(){
     @Override public InputStream openStream(){
@@ -9,13 +9,14 @@
         builder.addBundleSymbolicName(archive.getName());
         builder.addBundleVersion("1.0.0");
         builder.addManifestHeader(Constants.GRAVIA_ENABLED,Boolean.TRUE.toString());
-        builder.addImportPackages(RuntimeLocator.class,FabricService.class);
+        builder.addImportPackages(RuntimeLocator.class,FabricService.class,GitDataStore.class,GroupListener.class,CuratorFramework.class);
+        builder.addImportPackages(ZooKeeperGroup.class,ZkPath.class,GitNode.class,ZooKeeperUtils.class,Git.class,UsernamePasswordCredentialsProvider.class);
         return builder.openStream();
       }
  else {
         ManifestBuilder builder=new ManifestBuilder();
         builder.addIdentityCapability(archive.getName(),"1.0.0");
-        builder.addManifestHeader("Dependencies","org.jboss.gravia,org.fusesource.fabric.api");
+        builder.addManifestHeader("Dependencies","org.jboss.gravia,org.fusesource.fabric.api,org.fusesource.fabric.git,org.fusesource.fabric.groups,org.fusesource.fabric.zookeeper");
         return builder.openStream();
       }
     }

@@ -1,0 +1,12 @@
+{
+  Properties brandingProperties=new Properties();
+  String resname="/WEB-INF/branding.properties";
+  try {
+    URL brandingURL=servletContext.getResource(resname);
+    brandingProperties.load(brandingURL.openStream());
+  }
+ catch (  IOException e) {
+    throw new IllegalStateException("Cannot read branding properties from: " + resname);
+  }
+  System.out.println(brandingProperties.getProperty("welcome"));
+}

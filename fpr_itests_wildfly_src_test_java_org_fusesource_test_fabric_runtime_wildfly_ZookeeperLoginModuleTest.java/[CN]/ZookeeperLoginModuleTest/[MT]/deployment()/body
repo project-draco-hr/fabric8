@@ -1,0 +1,13 @@
+{
+  final JavaArchive archive=ShrinkWrap.create(JavaArchive.class,"fabric-realm.jar");
+  archive.setManifest(new Asset(){
+    @Override public InputStream openStream(){
+      ManifestBuilder builder=new ManifestBuilder();
+      builder.addIdentityCapability(archive.getName(),"1.0.0");
+      builder.addManifestHeader("Dependencies","org.jboss.modules,org.fusesource.fabric.jaas");
+      return builder.openStream();
+    }
+  }
+);
+  return archive;
+}

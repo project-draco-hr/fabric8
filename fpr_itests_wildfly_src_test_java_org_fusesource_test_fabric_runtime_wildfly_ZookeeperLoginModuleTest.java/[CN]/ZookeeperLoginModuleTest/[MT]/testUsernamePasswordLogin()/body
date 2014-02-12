@@ -1,0 +1,27 @@
+{
+  Subject subject=new Subject();
+  LoginContext loginContext=new LoginContext("fabric-domain",subject,new CallbackHandler(){
+    public void handle(    Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+      for (int i=0; i < callbacks.length; i++) {
+        if (callbacks[i] instanceof NameCallback) {
+          ((NameCallback)callbacks[i]).setName("admin");
+        }
+ else         if (callbacks[i] instanceof PasswordCallback) {
+          ((PasswordCallback)callbacks[i]).setPassword("admin".toCharArray());
+        }
+ else {
+          throw new UnsupportedCallbackException(callbacks[i]);
+        }
+      }
+    }
+  }
+);
+  loginContext.login();
+  Principal user=null;
+  for (  Principal p : subject.getPrincipals()) {
+    if ("admin".equals(p.getName())) {
+      user=p;
+    }
+  }
+  Assert.assertNotNull("UserPricipal found",user);
+}
