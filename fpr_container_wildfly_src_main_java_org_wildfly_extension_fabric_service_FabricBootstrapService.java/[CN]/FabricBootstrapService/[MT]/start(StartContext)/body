@@ -13,6 +13,7 @@
   modules=new ArrayList<Module>();
   for (  String name : moduleNames) {
     try {
+      ModuleLoader moduleLoader=org.jboss.modules.Module.getCallerModuleLoader();
       ModuleClassLoader classLoader=moduleLoader.loadModule(ModuleIdentifier.fromString(name)).getClassLoader();
       URL url=classLoader.getResource(JarFile.MANIFEST_NAME);
       Manifest manifest=new Manifest(url.openStream());

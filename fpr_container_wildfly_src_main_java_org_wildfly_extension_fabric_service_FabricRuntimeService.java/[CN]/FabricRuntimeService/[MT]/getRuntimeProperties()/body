@@ -1,0 +1,18 @@
+{
+  Properties properties=super.getRuntimeProperties();
+  ServerEnvironment env=getServerEnvironment();
+  File karafHomeDir=new File(env.getServerDataDir().getPath() + File.separator + "fabric");
+  File profilesImportDir=new File(karafHomeDir.getPath() + File.separator + "import");
+  File dataDir=new File(karafHomeDir.getPath() + File.separator + "data");
+  File storageDir=new File(dataDir.getPath() + File.separator + Constants.RUNTIME_STORAGE_DEFAULT);
+  properties.setProperty(Constants.RUNTIME_STORAGE_CLEAN,Constants.RUNTIME_STORAGE_CLEAN_ONFIRSTINIT);
+  properties.setProperty(Constants.RUNTIME_STORAGE,storageDir.getAbsolutePath());
+  properties.setProperty(CreateEnsembleOptions.ENSEMBLE_AUTOSTART,Boolean.TRUE.toString());
+  properties.setProperty(CreateEnsembleOptions.PROFILES_AUTOIMPORT_PATH,profilesImportDir.getAbsolutePath());
+  properties.setProperty("hack.skip.zookeeper.jaas.auth",Boolean.TRUE.toString());
+  properties.setProperty(SystemProperties.KARAF_HOME,karafHomeDir.getAbsolutePath());
+  properties.setProperty(SystemProperties.KARAF_BASE,karafHomeDir.getAbsolutePath());
+  properties.setProperty(SystemProperties.KARAF_DATA,dataDir.getAbsolutePath());
+  properties.setProperty(SystemProperties.KARAF_NAME,"root");
+  return properties;
+}
