@@ -5,6 +5,7 @@
   ArrayList<Protocol> protocols=new ArrayList<Protocol>();
   protocols.add(new StompProtocol());
   protocols.add(new MqttProtocol());
+  protocols.add(new AmqpProtocol());
   DetectingGatewayProtocolHandler handler=new DetectingGatewayProtocolHandler(vertx,serviceMap,protocols,serviceLoadBalancer);
   return new DetectingGateway(vertx,0,handler);
 }

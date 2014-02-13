@@ -1,0 +1,12 @@
+{
+  DetectingGateway gateway=createGateway();
+  gateway.init();
+  final ConnectionFactoryImpl factory=new ConnectionFactoryImpl("localhost",gateway.getBoundPort(),"admin","password");
+  ConnectionImpl connection=factory.createConnection();
+  connection.start();
+  assertEquals(1,getConnectionsOnBroker(0));
+  for (int i=1; i < brokers.size(); i++) {
+    assertEquals(0,getConnectionsOnBroker(i));
+  }
+  connection.close();
+}

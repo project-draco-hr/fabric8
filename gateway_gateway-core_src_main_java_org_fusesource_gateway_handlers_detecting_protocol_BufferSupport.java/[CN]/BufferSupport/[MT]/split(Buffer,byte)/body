@@ -1,0 +1,19 @@
+{
+  ArrayList<Buffer> rc=new ArrayList<Buffer>();
+  int pos=0;
+  int nextStart=pos;
+  int end=self.length();
+  while (pos < end) {
+    if (self.getByte(pos) == separator) {
+      if (nextStart < pos) {
+        rc.add(self.getBuffer(nextStart,pos));
+      }
+      nextStart=pos + 1;
+    }
+    pos++;
+  }
+  if (nextStart < pos) {
+    rc.add(self.getBuffer(nextStart,pos));
+  }
+  return rc.toArray(new Buffer[rc.size()]);
+}

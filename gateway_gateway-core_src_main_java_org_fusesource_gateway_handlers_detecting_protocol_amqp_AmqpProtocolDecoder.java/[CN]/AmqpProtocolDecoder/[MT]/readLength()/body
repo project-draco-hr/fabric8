@@ -1,0 +1,17 @@
+{
+  readEnd=readStart + 2;
+  int limit=buff.length();
+  int length=0;
+  int multiplier=1;
+  byte digit;
+  while (readEnd - 1 < limit) {
+    digit=buff.getByte(readEnd - 1);
+    length+=(digit & 0x7F) * multiplier;
+    if ((digit & 0x80) == 0) {
+      return length;
+    }
+    multiplier<<=7;
+    readEnd++;
+  }
+  return -1;
+}
