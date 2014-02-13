@@ -1,7 +1,7 @@
 {
   assertValid();
   String name=from.getName();
-  String pattern=path + (path.length() > 0 ? "/" : "") + name;
+  String pattern=path + (path.length() > 0 && !path.endsWith(File.separator) ? File.separator : "") + name;
   File toFile=new File(toDir,name);
   if (from.isDirectory()) {
     if (useToDirAsDestination) {
@@ -18,5 +18,5 @@
  else {
     Files.copy(from,toFile);
   }
-  git.add().addFilepattern(pattern).call();
+  git.add().addFilepattern(fixFilePattern(pattern)).call();
 }
