@@ -2,21 +2,22 @@
   assertValid();
   String containerId=container.getId();
   LOGGER.info("Destroying container {}",containerId);
-  ContainerProvider provider=getProvider(container,true);
-  if (provider == null && !force) {
-    getProvider(container);
-  }
-  if (provider != null) {
-    if (container.isAlive()) {
-      provider.stop(container);
-    }
-    provider.destroy(container);
-  }
+  boolean destroyed=false;
   try {
-    portService.get().unregisterPort(container);
-    getDataStore().deleteContainer(container.getId());
+    ContainerProvider provider=getProvider(container,true);
+    provider.stop(container);
+    provider.destroy(container);
+    destroyed=true;
   }
- catch (  Exception e) {
-    LOGGER.warn("Failed to cleanup container {} entries due to: {}. This will be ignored.",containerId,e.getMessage());
+  finally {
+    try {
+      if (destroyed || force) {
+        portService.get().unregisterPort(container);
+        getDataStore().deleteContainer(container.getId());
+      }
+    }
+ catch (    Exception e) {
+      LOGGER.warn("Failed to cleanup container {} entries due to: {}. This will be ignored.",containerId,e.getMessage());
+    }
   }
 }
