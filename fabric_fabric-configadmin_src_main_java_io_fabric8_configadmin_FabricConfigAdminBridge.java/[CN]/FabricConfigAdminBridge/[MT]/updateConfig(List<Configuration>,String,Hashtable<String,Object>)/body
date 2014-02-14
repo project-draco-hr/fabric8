@@ -1,0 +1,30 @@
+{
+  String p[]=parsePid(pid);
+  Configuration config=getConfiguration(configAdmin.get(),pid,p[0],p[1]);
+  configs.remove(config);
+  Dictionary<String,Object> props=config.getProperties();
+  Hashtable<String,Object> old=props != null ? new Hashtable<String,Object>() : null;
+  if (old != null) {
+    for (Enumeration<String> e=props.keys(); e.hasMoreElements(); ) {
+      String key=e.nextElement();
+      Object val=props.get(key);
+      old.put(key,val);
+    }
+    old.remove(FABRIC_ZOOKEEPER_PID);
+    old.remove(org.osgi.framework.Constants.SERVICE_PID);
+    old.remove(ConfigurationAdmin.SERVICE_FACTORYPID);
+  }
+  if (!c.equals(old)) {
+    LOGGER.info("Updating configuration {}",config.getPid());
+    c.put(FABRIC_ZOOKEEPER_PID,pid);
+    if (config.getBundleLocation() != null) {
+      config.setBundleLocation(null);
+    }
+    config.update(c);
+  }
+ else {
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Ignoring configuration {} (no changes)",config.getPid());
+    }
+  }
+}
