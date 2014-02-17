@@ -1,0 +1,15 @@
+{
+  String current=currentBranch(git);
+  if (equals(current,branch)) {
+    return;
+  }
+ else   if (localBranchExists(git,branch)) {
+    List<String> list=git.branchDelete().setBranchNames(branch).setForce(true).call();
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Deleted branch " + branch + " with results "+ list);
+    }
+  }
+ else {
+    LOG.debug("Branch " + branch + "not found!");
+  }
+}
