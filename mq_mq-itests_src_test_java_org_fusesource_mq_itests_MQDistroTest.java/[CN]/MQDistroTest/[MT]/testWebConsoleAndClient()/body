@@ -20,7 +20,7 @@
   finally {
     connection.close();
   }
-  ConnectionFactory connectionFactory=getOsgiService(ConnectionFactory.class);
+  ConnectionFactory connectionFactory=ServiceLocator.awaitService(ConnectionFactory.class);
   assertTrue(connectionFactory instanceof ActiveMQConnectionFactory);
   ActiveMQConnection connectionFromOsgiFactory=(ActiveMQConnection)connectionFactory.createConnection(USER_NAME_ND_PASSWORD,USER_NAME_ND_PASSWORD);
   connectionFromOsgiFactory.start();

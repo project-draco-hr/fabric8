@@ -1,5 +1,5 @@
 {
   String listFeaturesOutput=executeCommand("features:list | grep -i \" hawtio \"");
   assertTrue("Feature hawtio is installed",listFeaturesOutput.contains("installed"));
-  getOsgiService(javax.servlet.ServletContext.class,"(osgi.web.contextpath=/hawtio)");
+  ServiceLocator.awaitService(javax.servlet.ServletContext.class,"(osgi.web.contextpath=/hawtio)");
 }

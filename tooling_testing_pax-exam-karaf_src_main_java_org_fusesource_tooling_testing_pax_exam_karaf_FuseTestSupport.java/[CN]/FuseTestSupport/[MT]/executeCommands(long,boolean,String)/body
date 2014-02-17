@@ -2,7 +2,7 @@
   String response=null;
   final ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
   final PrintStream printStream=new PrintStream(byteArrayOutputStream);
-  final CommandProcessor commandProcessor=getOsgiService(CommandProcessor.class);
+  final CommandProcessor commandProcessor=ServiceLocator.awaitService(CommandProcessor.class);
   final CommandSession commandSession=commandProcessor.createSession(System.in,printStream,printStream);
   commandSession.put("APPLICATION",System.getProperty("karaf.name","root"));
   commandSession.put("USER","karaf");

@@ -1,6 +1,6 @@
 {
   System.err.println(executeCommand("fabric:create -n -g manualip -r localhostname --manual-ip localhost --clean"));
-  ServiceLocator.getOsgiService(ContainerRegistration.class);
+  ServiceLocator.awaitService(ContainerRegistration.class);
   ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
   try {
     FabricService fabricService=fabricProxy.getService();
