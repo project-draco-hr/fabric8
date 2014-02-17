@@ -1,5 +1,7 @@
 {
   LOGGER.info("Activating Fabric Subsystem");
+  Runtime runtime=injectedRuntime.getValue();
+  initConfigurationAdmin(runtime);
   final CountDownLatch latch=new CountDownLatch(1);
   final ModuleContext syscontext=injectedModuleContext.getValue();
   ServiceListener listener=new ServiceListener(){
@@ -14,7 +16,6 @@
   }
 ;
   syscontext.addServiceListener(listener,"(objectClass=" + ZooKeeperClusterBootstrap.class.getName() + ")");
-  Runtime runtime=injectedRuntime.getValue();
   ModuleClassLoader classLoader=(ModuleClassLoader)getClass().getClassLoader();
   try {
     URL url=classLoader.getResource(JarFile.MANIFEST_NAME);

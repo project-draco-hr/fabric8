@@ -3,8 +3,10 @@
   PropertiesProvider propsProvider=new FabricPropertiesProvider(servletContext);
   Runtime runtime=RuntimeLocator.createRuntime(new TomcatRuntimeFactory(servletContext),propsProvider);
   runtime.init();
-  final BoostrapLatch latch=new BoostrapLatch(1);
+  Object configsDir=propsProvider.getProperty(Constants.PROPERTY_CONFIGURATIONS_DIR);
+  ActivationSupport.initConfigurationAdmin(new File((String)configsDir));
   final ModuleContext syscontext=runtime.getModuleContext();
+  final BoostrapLatch latch=new BoostrapLatch(1);
   ServiceListener listener=new ServiceListener(){
     @Override public void serviceChanged(    ServiceEvent event){
       if (event.getType() == ServiceEvent.REGISTERED) {
