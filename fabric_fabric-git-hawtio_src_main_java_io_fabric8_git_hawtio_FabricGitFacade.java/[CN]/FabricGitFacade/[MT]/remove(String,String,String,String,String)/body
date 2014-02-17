@@ -5,7 +5,9 @@
     public RevCommit call(    Git git,    GitContext context) throws Exception {
       checkoutBranch(git,branch);
       File rootDir=getRootGitDirectory(git);
-      return doRemove(git,rootDir,branch,path,commitMessage,personIdent);
+      RevCommit answer=doRemove(git,rootDir,branch,path,commitMessage,personIdent);
+      context.commit(commitMessage);
+      return answer;
     }
   }
 );

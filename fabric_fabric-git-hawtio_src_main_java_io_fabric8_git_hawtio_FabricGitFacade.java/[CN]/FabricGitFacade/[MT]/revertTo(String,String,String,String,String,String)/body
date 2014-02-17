@@ -5,7 +5,9 @@
     public Void call(    Git git,    GitContext context) throws Exception {
       checkoutBranch(git,branch);
       File rootDir=getRootGitDirectory(git);
-      return doRevert(git,rootDir,branch,objectId,blobPath,commitMessage,personIdent);
+      Void answer=doRevert(git,rootDir,branch,objectId,blobPath,commitMessage,personIdent);
+      context.commit(commitMessage);
+      return answer;
     }
   }
 );

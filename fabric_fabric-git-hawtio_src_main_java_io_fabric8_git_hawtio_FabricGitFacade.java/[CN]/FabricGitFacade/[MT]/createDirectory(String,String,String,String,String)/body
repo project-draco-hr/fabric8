@@ -5,7 +5,9 @@
     public CommitInfo call(    Git git,    GitContext context) throws Exception {
       checkoutBranch(git,branch);
       File rootDir=getRootGitDirectory(git);
-      return doCreateDirectory(git,rootDir,branch,path,personIdent,commitMessage);
+      CommitInfo answer=doCreateDirectory(git,rootDir,branch,path,personIdent,commitMessage);
+      context.commit(commitMessage);
+      return answer;
     }
   }
 );
