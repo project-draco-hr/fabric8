@@ -1,9 +1,8 @@
 {
   this.componentContext=componentContext;
   configurer.configure(configuration,this);
-  org.apache.felix.utils.properties.Properties userProps=null;
   try {
-    userProps=new org.apache.felix.utils.properties.Properties(new File(home + "/etc/users.properties"));
+    new org.apache.felix.utils.properties.Properties(new File(home + "/etc/users.properties"));
   }
  catch (  IOException e) {
     LOGGER.warn("Failed to load users from etc/users.properties. No users will be imported.",e);
@@ -19,6 +18,5 @@
     createZooKeeeperClientConfig(connectionUrl,options);
     markCreated(bundleContext);
   }
-  deactivateLatch=new CountDownLatch(1);
   activateComponent();
 }

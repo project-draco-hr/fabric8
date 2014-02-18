@@ -1,16 +1,28 @@
 {
   try {
-    ComponentContext componentContext=bootConfig.getComponentContext();
     Configuration[] configs=configAdmin.get().listConfigurations("(|(service.factoryPid=io.fabric8.zookeeper.server)(service.pid=io.fabric8.zookeeper))");
     File karafData=new File(data);
-    bootConfig.disable(false);
+    final CountDownLatch unregisterLatch=new CountDownLatch(1);
+    ServiceListener listener=new ServiceListener(){
+      @Override public void serviceChanged(      ServiceEvent event){
+        if (event.getType() == ServiceEvent.UNREGISTERING) {
+          syscontext.removeServiceListener(this);
+          unregisterLatch.countDown();
+        }
+      }
+    }
+;
+    syscontext.addServiceListener(listener,"(objectClass=" + BootstrapConfiguration.class.getName() + ")");
+    ComponentContext componentContext=bootConfig.getComponentContext();
+    componentContext.disableComponent(BootstrapConfiguration.COMPONENT_NAME);
+    if (!unregisterLatch.await(30,TimeUnit.SECONDS))     throw new TimeoutException("Timeout for unregistering BootstrapConfiguration service");
     registrationHandler.removeRegistrationCallback();
     cleanConfigurations(configs);
     cleanZookeeperDirectory(karafData);
     cleanGitDirectory(karafData);
     final CountDownLatch registerLatch=new CountDownLatch(1);
     final AtomicReference<ServiceReference<?>> sref=new AtomicReference<ServiceReference<?>>();
-    ServiceListener listener=new ServiceListener(){
+    listener=new ServiceListener(){
       @Override public void serviceChanged(      ServiceEvent event){
         if (event.getType() == ServiceEvent.REGISTERED) {
           syscontext.removeServiceListener(this);
@@ -22,13 +34,16 @@
 ;
     syscontext.addServiceListener(listener,"(objectClass=" + BootstrapConfiguration.class.getName() + ")");
     componentContext.enableComponent(BootstrapConfiguration.COMPONENT_NAME);
-    if (!registerLatch.await(10,TimeUnit.SECONDS))     throw new TimeoutException("Timeout for registering BootstrapConfiguration service");
+    if (!registerLatch.await(30,TimeUnit.SECONDS))     throw new TimeoutException("Timeout for registering BootstrapConfiguration service");
     return (BootstrapConfiguration)syscontext.getService(sref.get());
   }
  catch (  RuntimeException rte) {
     throw rte;
   }
-catch (  Exception e) {
-    throw new FabricException("Unable to delete zookeeper configuration",e);
+catch (  TimeoutException toe) {
+    throw toe;
+  }
+catch (  Exception ex) {
+    throw new FabricException("Unable to delete zookeeper configuration",ex);
   }
 }
