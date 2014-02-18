@@ -20,4 +20,21 @@
   Dictionary<String,Object> dictionary=configuration.getProperties();
   Assert.assertNotNull("Expected a generated zookeeper password",dictionary.get("zookeeper.password"));
   Assert.assertTrue(String.valueOf(dictionary.get("zookeeper.url")).endsWith("2182"));
+  LoginContext loginContext=new LoginContext(REALM,new CallbackHandler(){
+    @Override public void handle(    Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+      for (int i=0; i < callbacks.length; i++) {
+        if (callbacks[i] instanceof NameCallback) {
+          ((NameCallback)callbacks[i]).setName(USERNAME);
+        }
+ else         if (callbacks[i] instanceof PasswordCallback) {
+          ((PasswordCallback)callbacks[i]).setPassword(PASSOWRD.toCharArray());
+        }
+ else {
+          throw new UnsupportedCallbackException(callbacks[i]);
+        }
+      }
+    }
+  }
+);
+  loginContext.login();
 }
