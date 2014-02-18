@@ -1,6 +1,6 @@
 {
   System.err.println(executeCommand("features:install " + feature));
-  FeaturesService featuresService=ServiceLocator.awaitService(FeaturesService.class);
+  FeaturesService featuresService=ServiceLocator.awaitService(bundleContext,FeaturesService.class);
   System.err.println(executeCommand("osgi:list -t 0"));
   Assert.assertTrue("Expected " + feature + " feature to be installed.",featuresService.isInstalled(featuresService.getFeature(feature)));
 }

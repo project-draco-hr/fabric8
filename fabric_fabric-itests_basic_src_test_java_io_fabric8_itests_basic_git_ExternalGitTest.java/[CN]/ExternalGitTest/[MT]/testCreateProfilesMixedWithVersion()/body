@@ -7,7 +7,7 @@
   try {
     FabricService fabricService=fabricProxy.getService();
     CuratorFramework curator=curatorProxy.getService();
-    String gitRepoUrl=GitUtils.getMasterUrl(curator);
+    String gitRepoUrl=GitUtils.getMasterUrl(bundleContext,curator);
     assertNotNull(gitRepoUrl);
     GitUtils.waitForBranchUpdate(curator,"1.0");
     Git.cloneRepository().setURI(gitRepoUrl).setCloneAllBranches(true).setDirectory(testrepo).setCredentialsProvider(getCredentialsProvider()).call();

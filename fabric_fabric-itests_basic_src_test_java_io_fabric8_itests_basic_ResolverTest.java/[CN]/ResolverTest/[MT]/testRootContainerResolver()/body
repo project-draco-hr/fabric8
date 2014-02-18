@@ -4,7 +4,7 @@
   try {
     FabricService fabricService=fabricProxy.getService();
     Container current=fabricService.getCurrentContainer();
-    ServiceLocator.awaitService(ContainerRegistration.class);
+    ServiceLocator.awaitService(bundleContext,ContainerRegistration.class);
     Assert.assertEquals("localhostname",current.getResolver());
     String sshUrlWithLocalhostResolver=current.getSshUrl();
     waitForFabricCommands();

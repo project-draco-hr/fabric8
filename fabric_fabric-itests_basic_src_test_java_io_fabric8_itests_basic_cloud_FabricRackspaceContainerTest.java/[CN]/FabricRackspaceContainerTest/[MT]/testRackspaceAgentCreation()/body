@@ -10,7 +10,7 @@
   }
   System.err.println(executeCommand("features:install jclouds-cloudserver-us fabric-jclouds jclouds-commands"));
   executeCommand("fabric:cloud-service-add --provider cloudservers-us --identity " + identity + " --credential "+ credential);
-  ComputeService computeService=ServiceLocator.awaitService(ComputeService.class,null,3 * DEFAULT_TIMEOUT);
+  ComputeService computeService=ServiceLocator.awaitService(bundleContext,ComputeService.class,3,TimeUnit.MINUTES);
   System.err.println(executeCommand(String.format("fabric:container-create-cloud --provider cloudservers-us --group %s --ensemble-server ensemble1",group),10 * 60000L,false));
   String publicIp=getNodePublicIp(computeService);
   assertNotNull(publicIp);

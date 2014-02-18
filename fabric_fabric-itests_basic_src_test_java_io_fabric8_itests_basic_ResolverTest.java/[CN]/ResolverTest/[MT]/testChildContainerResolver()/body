@@ -1,6 +1,6 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  ServiceLocator.awaitService(ContainerRegistration.class);
+  ServiceLocator.awaitService(bundleContext,ContainerRegistration.class);
   ServiceProxy<CuratorFramework> curatorProxy=ServiceProxy.createServiceProxy(bundleContext,CuratorFramework.class);
   try {
     CuratorFramework curator=curatorProxy.getService();

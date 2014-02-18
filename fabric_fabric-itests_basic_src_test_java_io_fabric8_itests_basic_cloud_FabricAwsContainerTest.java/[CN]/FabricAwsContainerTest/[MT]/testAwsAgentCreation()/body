@@ -10,7 +10,7 @@
   }
   System.err.println(executeCommand("features:install jclouds-aws-ec2 fabric-jclouds jclouds-commands"));
   executeCommand("fabric:cloud-service-add --provider aws-ec2 --identity " + identity + " --credential "+ credential);
-  ComputeService computeService=ServiceLocator.awaitService(ComputeService.class,null,3 * DEFAULT_TIMEOUT);
+  ComputeService computeService=ServiceLocator.awaitService(bundleContext,ComputeService.class,3,TimeUnit.MINUTES);
   System.err.println(executeCommand("fabric:cloud-service-list"));
   System.err.println(executeCommand(String.format("fabric:container-create-cloud --name aws-ec2 --locationId %s --imageId %s --group %s --ensemble-server ensemble1",location,image,group),10 * 60000L,false));
   String publicIp=getNodePublicIp(computeService);

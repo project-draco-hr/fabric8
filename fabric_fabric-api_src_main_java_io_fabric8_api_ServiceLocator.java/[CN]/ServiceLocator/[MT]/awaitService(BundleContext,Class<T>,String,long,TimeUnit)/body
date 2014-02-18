@@ -1,0 +1,44 @@
+{
+  if (fspec != null) {
+    if (fspec.startsWith("(")) {
+      fspec="(&(" + Constants.OBJECTCLASS + "="+ type.getName()+ ")"+ fspec+ ")";
+    }
+ else {
+      fspec="(&(" + Constants.OBJECTCLASS + "="+ type.getName()+ ")("+ fspec+ "))";
+    }
+  }
+ else {
+    fspec="(" + Constants.OBJECTCLASS + "="+ type.getName()+ ")";
+  }
+  Filter filter;
+  try {
+    filter=FrameworkUtil.createFilter(fspec);
+  }
+ catch (  InvalidSyntaxException ex) {
+    throw new IllegalArgumentException("Invalid filter",ex);
+  }
+  final CountDownLatch latch=new CountDownLatch(1);
+  final AtomicReference<T> serviceRef=new AtomicReference<T>();
+  ServiceTracker<T,T> tracker=new ServiceTracker<T,T>(bundleContext,filter,null){
+    @Override public T addingService(    ServiceReference<T> sref){
+      T service=super.addingService(sref);
+      serviceRef.set(bundleContext.getService(sref));
+      latch.countDown();
+      return service;
+    }
+  }
+;
+  tracker.open();
+  try {
+    if (!latch.await(timeout,unit)) {
+      throw new RuntimeException("Cannot obtain service: " + filter);
+    }
+    return serviceRef.get();
+  }
+ catch (  InterruptedException ex) {
+    throw new IllegalStateException();
+  }
+ finally {
+    tracker.close();
+  }
+}

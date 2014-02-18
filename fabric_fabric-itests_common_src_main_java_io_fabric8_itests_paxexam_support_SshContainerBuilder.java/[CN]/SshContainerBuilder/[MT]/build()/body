@@ -1,7 +1,7 @@
 {
+  BundleContext bundleContext=ContainerBuilder.getBundleContext();
   if (getOptionsBuilder().getHost() == null || getOptionsBuilder().getHost().isEmpty()) {
-    Set<Container> containers=new HashSet<Container>();
-    FabricService fabricService=ServiceLocator.awaitService(FabricService.class);
+    FabricService fabricService=ServiceLocator.awaitService(bundleContext,FabricService.class);
     getOptionsBuilder().zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword("admin").proxyUri(fabricService.getMavenRepoURI());
     String hostProperty=System.getProperty(SSH_HOSTS_PROPERTY);
     String userProperty=System.getProperty(SSH_USERS_PROPERTY);
