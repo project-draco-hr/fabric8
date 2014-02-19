@@ -1,0 +1,9 @@
+{
+  FabricService fabric=getFabricService();
+  Profile profile=getOrCreateProfile(requirements);
+  writeRequirementsJson(requirements,profile);
+  Profile overlay=profile.getOverlay();
+  DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,overlay,executorService);
+  Map<String,Parser> profileArtifacts=AgentUtils.getProfileArtifacts(downloadManager,overlay);
+  return resolveProfileDeployments(requirements,profile,profileArtifacts);
+}

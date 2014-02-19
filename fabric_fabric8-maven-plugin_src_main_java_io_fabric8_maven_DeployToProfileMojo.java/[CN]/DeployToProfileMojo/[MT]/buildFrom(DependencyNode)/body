@@ -1,0 +1,23 @@
+{
+  Artifact artifact=node.getArtifact();
+  if (artifact != null) {
+    DependencyDTO answer=new DependencyDTO();
+    answer.setGroupId(artifact.getGroupId());
+    answer.setArtifactId(artifact.getArtifactId());
+    answer.setVersion(artifact.getVersion());
+    answer.setClassifier(artifact.getClassifier());
+    answer.setScope(artifact.getScope());
+    answer.setType(artifact.getType());
+    answer.setOptional(artifact.isOptional());
+    List children=node.getChildren();
+    for (    Object child : children) {
+      if (child instanceof DependencyNode) {
+        DependencyNode childNode=(DependencyNode)child;
+        DependencyDTO childDTO=buildFrom(childNode);
+        answer.addChild(childDTO);
+      }
+    }
+    return answer;
+  }
+  return null;
+}

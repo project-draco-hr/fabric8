@@ -1,0 +1,22 @@
+{
+  FabricService fabric=getFabricService();
+  String versionId=getVersionId(requirements);
+  Version version=fabric.getVersion(versionId);
+  if (version == null) {
+    version=fabric.createVersion(versionId);
+  }
+  String profileId=getProfileId(requirements);
+  if (Strings.isEmpty(profileId)) {
+    throw new IllegalArgumentException("No profile ID could be deduced for requirements: " + requirements);
+  }
+  if (!version.hasProfile(profileId)) {
+    version.createProfile(profileId);
+    LOG.info("Creating new profile " + profileId + " version "+ version+ " for requirements: "+ requirements);
+  }
+ else {
+    LOG.info("Upadting profile " + profileId + " version "+ version+ " for requirements: "+ requirements);
+  }
+  Profile profile=version.getProfile(profileId);
+  Objects.notNull(profile,"Profile could not be created");
+  return profile;
+}

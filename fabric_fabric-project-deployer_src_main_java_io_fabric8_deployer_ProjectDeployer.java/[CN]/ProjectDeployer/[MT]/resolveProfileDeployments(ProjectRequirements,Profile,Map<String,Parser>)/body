@@ -1,0 +1,15 @@
+{
+  DependencyDTO rootDependency=requirements.getRootDependency();
+  if (rootDependency != null) {
+    LOG.info("Got root: " + rootDependency);
+    String bundleUrl=rootDependency.toBundleUrl();
+    List<String> bundles=profile.getBundles();
+    if (!bundles.contains(bundleUrl)) {
+      bundles.add(bundleUrl);
+      profile.setBundles(bundles);
+      LOG.info("Adding bundle: " + bundleUrl);
+    }
+  }
+  LOG.info("Got profile artifacts: " + profileArtifacts);
+  return new DeployResults(profile);
+}

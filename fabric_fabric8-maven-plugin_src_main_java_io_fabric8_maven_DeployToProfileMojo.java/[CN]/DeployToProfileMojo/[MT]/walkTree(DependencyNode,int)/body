@@ -1,0 +1,16 @@
+{
+  if (node == null) {
+    getLog().warn("Null node!");
+    return;
+  }
+  getLog().info(indent(level) + node.getArtifact());
+  List children=node.getChildren();
+  for (  Object child : children) {
+    if (child instanceof DependencyNode) {
+      walkTree((DependencyNode)child,level + 1);
+    }
+ else {
+      getLog().warn("Unknown class " + child.getClass());
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  sfb=new ZKServerFactoryBean();
+  delete(sfb.getDataDir());
+  delete(sfb.getDataLogDir());
+  sfb.afterPropertiesSet();
+  CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().connectString("localhost:" + sfb.getClientPortAddress().getPort()).retryPolicy(new RetryOneTime(1000)).connectionTimeoutMs(360000);
+  curator=builder.build();
+  curator.start();
+  curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+  basedir=System.getProperty("basedir",".");
+  File root=new File(basedir + "/target/git").getCanonicalFile();
+  delete(root);
+  new File(root,"remote").mkdirs();
+  remote=Git.init().setDirectory(new File(root,"remote")).call();
+  remote.commit().setMessage("First Commit").setCommitter("fabric","user@fabric").call();
+  String remoteUrl="file://" + new File(root,"remote").getCanonicalPath();
+  new File(root,"local").mkdirs();
+  git=Git.init().setDirectory(new File(root,"local")).call();
+  git.commit().setMessage("First Commit").setCommitter("fabric","user@fabric").call();
+  StoredConfig config=git.getRepository().getConfig();
+  config.setString("remote","origin","url",remoteUrl);
+  config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
+  config.save();
+  DefaultRuntimeProperties runtimeProperties=new DefaultRuntimeProperties();
+  runtimeProperties.setProperty(SystemProperties.KARAF_DATA,"target/data");
+  FabricGitServiceImpl gitService=new FabricGitServiceImpl();
+  gitService.bindRuntimeProperties(runtimeProperties);
+  gitService.activate();
+  gitService.setGitForTesting(git);
+  DataStoreTemplateRegistry registrationHandler=new DataStoreTemplateRegistry();
+  registrationHandler.activateComponent();
+  dataStore=new CachingGitDataStore();
+  dataStore.bindCurator(curator);
+  dataStore.bindGitService(gitService);
+  dataStore.bindRegistrationHandler(registrationHandler);
+  dataStore.bindRuntimeProperties(runtimeProperties);
+  dataStore.bindConfigurer(new Configurer(){
+    @Override public <T>void configure(    Map<String,?> configuration,    T target) throws Exception {
+    }
+  }
+);
+  Map<String,String> datastoreProperties=new HashMap<String,String>();
+  datastoreProperties.put(GitDataStore.GIT_REMOTE_URL,remoteUrl);
+  dataStore.activate(datastoreProperties);
+  fabricService=new FabricServiceImpl();
+  fabricService.bindDataStore(dataStore);
+  fabricService.bindRuntimeProperties(runtimeProperties);
+  fabricService.activateComponent();
+  projectDeployer=new ProjectDeployer();
+  projectDeployer.bindFabricService(fabricService);
+  projectDeployer.bindMBeanServer(ManagementFactory.getPlatformMBeanServer());
+  String defaultVersion=dataStore.getDefaultVersion();
+  assertEquals("defaultVersion","1.0",defaultVersion);
+  String importPath=basedir + "/../fabric8-karaf/src/main/resources/distro/fabric/import";
+  assertFolderExists(importPath);
+  dataStore.importFromFileSystem(importPath);
+  assertHasVersion(defaultVersion);
+}

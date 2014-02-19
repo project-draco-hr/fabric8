@@ -1,0 +1,18 @@
+{
+  byte[] json=DtoHelper.getMapper().writeValueAsBytes(requirements);
+  StringBuilder builder=new StringBuilder("modules/");
+  String groupId=requirements.getGroupId();
+  if (!Strings.isEmpty(groupId)) {
+    builder.append(groupId);
+    builder.append("/");
+  }
+  String artifactId=requirements.getArtifactId();
+  if (!Strings.isEmpty(artifactId)) {
+    builder.append(artifactId);
+    builder.append("-");
+  }
+  builder.append("requirements.json");
+  String name=builder.toString();
+  LOG.info("Writing file " + name + " to profile "+ profile);
+  getFabricService().getDataStore().setFileConfiguration(profile.getVersion(),profile.getId(),name,json);
+}

@@ -1,0 +1,18 @@
+{
+  FabricService fabric=getFabricService();
+  String profileId=requirements.getProfileId();
+  if (Strings.isEmpty(profileId)) {
+    String groupId=requirements.getGroupId();
+    String artifactId=requirements.getArtifactId();
+    if (Strings.isEmpty(groupId)) {
+      profileId=artifactId;
+    }
+    if (Strings.isEmpty(artifactId)) {
+      profileId=groupId;
+    }
+ else {
+      profileId=groupId + "-" + artifactId;
+    }
+  }
+  return profileId;
+}
