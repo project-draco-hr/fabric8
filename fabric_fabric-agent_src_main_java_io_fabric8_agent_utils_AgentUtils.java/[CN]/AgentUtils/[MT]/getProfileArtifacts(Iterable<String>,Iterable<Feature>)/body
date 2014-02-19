@@ -1,0 +1,28 @@
+{
+  Set<String> locations=new HashSet<String>();
+  for (  Feature feature : features) {
+    List<BundleInfo> bundleList=feature.getBundles();
+    if (bundleList == null) {
+      LOGGER.warn("No bundles for feature " + feature);
+    }
+ else {
+      for (      BundleInfo bundle : bundleList) {
+        locations.add(bundle.getLocation());
+      }
+    }
+  }
+  for (  String bundle : bundles) {
+    locations.add(bundle);
+  }
+  Map<String,Parser> artifacts=new HashMap<String,Parser>();
+  for (  String location : locations) {
+    try {
+      Parser parser=new Parser(location.substring(4));
+      artifacts.put(location,parser);
+    }
+ catch (    MalformedURLException e) {
+      LOGGER.error("Failed to parse bundle URL: " + location + ". "+ e,e);
+    }
+  }
+  return artifacts;
+}

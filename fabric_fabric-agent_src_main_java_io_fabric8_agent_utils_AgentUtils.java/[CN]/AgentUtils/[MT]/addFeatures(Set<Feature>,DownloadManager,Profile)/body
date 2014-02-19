@@ -1,0 +1,13 @@
+{
+  List<String> featureNames=profile.getFeatures();
+  Map<URI,Repository> repositories=getRepositories(downloadManager,profile);
+  for (  String featureName : featureNames) {
+    Feature feature=FeatureUtils.search(featureName,repositories.values());
+    if (feature == null) {
+      LOGGER.warn("Could not find feature " + featureName + " for profile "+ profile.getId()+ " in repositories "+ repositories.keySet());
+    }
+ else {
+      features.add(feature);
+    }
+  }
+}
