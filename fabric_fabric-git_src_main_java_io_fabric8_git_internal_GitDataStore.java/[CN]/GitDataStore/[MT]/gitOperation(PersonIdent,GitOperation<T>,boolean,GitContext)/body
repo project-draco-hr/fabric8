@@ -1,6 +1,10 @@
 {
 synchronized (gitOperationMonitor) {
     assertValid();
+    ClassLoader oldCl=Thread.currentThread().getContextClassLoader();
+    ClassLoader cl=GitDataStore.class.getClassLoader();
+    Thread.currentThread().setContextClassLoader(cl);
+    LOG.trace("Setting ThreadContextClassLoader to {} instead of {}",cl,oldCl);
     try {
       Git git=getGit();
       Repository repository=git.getRepository();
@@ -34,6 +38,10 @@ synchronized (gitOperationMonitor) {
     }
  catch (    Exception e) {
       throw FabricException.launderThrowable(e);
+    }
+ finally {
+      LOG.trace("Restoring ThreadContextClassLoader to {}",oldCl);
+      Thread.currentThread().setContextClassLoader(oldCl);
     }
   }
 }

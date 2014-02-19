@@ -12,12 +12,15 @@
       gitListener.onRemoteUrlChanged(remoteUrl);
     }
     forceGetVersions();
-    LOG.info("starting to pull from remote repository every " + gitPullPeriod + " millis");
+    LOG.info("starting to pull from remote repository every {} millis",gitPullPeriod);
     threadPool.scheduleWithFixedDelay(new Runnable(){
       @Override public void run(){
         LOG.debug("Performing timed pull");
         pull();
         push();
+      }
+      @Override public String toString(){
+        return "TimedPullTask";
       }
     }
 ,gitPullPeriod,gitPullPeriod,TimeUnit.MILLISECONDS);
