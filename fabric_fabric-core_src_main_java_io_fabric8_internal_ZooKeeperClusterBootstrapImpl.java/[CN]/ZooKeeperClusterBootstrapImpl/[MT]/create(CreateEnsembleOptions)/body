@@ -1,11 +1,13 @@
 {
   assertValid();
   try {
+    ServiceLocator.awaitService(bundleContext,BootstrapComplete.class);
     stopBundles();
     DataStoreRegistrationHandler regHandler=registrationHandler.get();
     BootstrapConfiguration bootConfig=bootstrapConfiguration.get();
+    BundleContext syscontext=bundleContext.getBundle(0).getBundleContext();
     if (options.isClean()) {
-      bootConfig=cleanInternal(bootConfig,regHandler);
+      bootConfig=cleanInternal(syscontext,bootConfig,regHandler);
     }
     BootstrapCreateHandler createHandler=new BootstrapCreateHandler(bootConfig,regHandler);
     createHandler.bootstrapFabric(name,home,options);
