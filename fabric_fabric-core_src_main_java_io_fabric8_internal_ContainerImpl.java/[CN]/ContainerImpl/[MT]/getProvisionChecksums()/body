@@ -1,0 +1,13 @@
+{
+  String str=getOptionalAttribute(DataStore.ContainerAttribute.ProvisionChecksums,null);
+  Properties answer=new Properties();
+  if (str != null) {
+    try {
+      answer.load(new StringReader(str));
+    }
+ catch (    IOException e) {
+      logger.warn("Failed to convert provisionChecksums: " + str + " to a Properties object. "+ e,e);
+    }
+  }
+  return answer;
+}

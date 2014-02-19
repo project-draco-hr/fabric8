@@ -1,0 +1,10 @@
+{
+  StringWriter writer=new StringWriter();
+  try {
+    checksums.store(writer,"provision checksums");
+    setAttribute(DataStore.ContainerAttribute.ProvisionChecksums,writer.toString());
+  }
+ catch (  IOException e) {
+    logger.warn("Failed to convert provisionChecksums: " + checksums + " to a string. "+ e,e);
+  }
+}

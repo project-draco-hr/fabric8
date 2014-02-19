@@ -23,6 +23,9 @@
       }
       container.setProvisionResult(status);
       container.setProvisionException(e);
+      java.util.Properties provisionChecksums=new java.util.Properties();
+      putAllProperties(provisionChecksums,bundleChecksums);
+      container.setProvisionChecksums(provisionChecksums);
     }
  else {
       LOGGER.info("FabricService not available");

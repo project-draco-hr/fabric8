@@ -1,0 +1,11 @@
+{
+  boolean shouldStart=running.get() && (watchURLs.size() == 0);
+  if (!watchURLs.contains(url)) {
+    watchURLs.add(url);
+    counter.incrementAndGet();
+  }
+  if (shouldStart) {
+    Thread thread=new Thread(this);
+    thread.start();
+  }
+}
