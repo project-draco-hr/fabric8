@@ -1,19 +1,31 @@
 {
   String groupId="foo";
   String artifactId="bar";
+  String expectedProfileId=groupId + "-" + artifactId;
+  String versionId="1.0";
   ProjectRequirements requirements=new ProjectRequirements();
   DependencyDTO rootDependency=new DependencyDTO();
   requirements.setRootDependency(rootDependency);
   rootDependency.setGroupId(groupId);
   rootDependency.setArtifactId(artifactId);
+  rootDependency.setVersion("1.0.0");
   projectDeployer.deployProject(requirements);
-  String expectedProfileId=groupId + "-" + artifactId;
-  String versionId="1.0";
-  Profile profile=fabricService.getProfile(versionId,expectedProfileId);
-  assertNotNull("Should have a profile for " + versionId + " and "+ expectedProfileId);
+  Profile profile=assertProfileInFabric(expectedProfileId,versionId);
+  assertBundleCount(profile,1);
   String requirementsFileName="modules/" + groupId + "/"+ artifactId+ "-requirements.json";
   byte[] jsonData=profile.getFileConfiguration(requirementsFileName);
   assertNotNull("should have found some JSON for: " + requirementsFileName,jsonData);
   String json=new String(jsonData);
   LOG.info("Got JSON: " + json);
+  rootDependency.setVersion("1.0.1");
+  projectDeployer.deployProject(requirements);
+  profile=assertProfileInFabric(expectedProfileId,versionId);
+  assertBundleCount(profile,1);
+  expectedProfileId="cheese";
+  versionId="1.2";
+  requirements.setVersion(versionId);
+  requirements.setProfileId(expectedProfileId);
+  projectDeployer.deployProject(requirements);
+  profile=assertProfileInFabric(expectedProfileId,versionId);
+  assertBundleCount(profile,1);
 }

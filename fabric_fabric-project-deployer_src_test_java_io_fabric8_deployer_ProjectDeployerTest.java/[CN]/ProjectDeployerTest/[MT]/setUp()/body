@@ -2,8 +2,11 @@
   sfb=new ZKServerFactoryBean();
   delete(sfb.getDataDir());
   delete(sfb.getDataLogDir());
+  sfb.setPort(9123);
   sfb.afterPropertiesSet();
-  CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().connectString("localhost:" + sfb.getClientPortAddress().getPort()).retryPolicy(new RetryOneTime(1000)).connectionTimeoutMs(360000);
+  int zkPort=sfb.getClientPortAddress().getPort();
+  LOG.info("Connecting to ZK on port: " + zkPort);
+  CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().connectString("localhost:" + zkPort).retryPolicy(new RetryOneTime(1000)).connectionTimeoutMs(360000);
   curator=builder.build();
   curator.start();
   curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
