@@ -1,5 +1,6 @@
 {
   ModuleContext context=RuntimeLocator.getRequiredRuntime().getModuleContext();
   Collection<ServiceReference<T>> srefs=context.getServiceReferences(clazz,filter);
-  return !srefs.isEmpty() ? context.getService(srefs.iterator().next()) : null;
+  Assert.assertFalse("ServiceReferences found: " + clazz.getName(),srefs.isEmpty());
+  return context.getService(srefs.iterator().next());
 }
