@@ -1,0 +1,17 @@
+{
+  J4pResponse<J4pReadRequest> request=client.execute(new J4pReadRequest("io.fabric8:type=Fabric","MavenRepoUploadURI"));
+  Object value=request.getValue();
+  if (value != null) {
+    String uri=value.toString();
+    if (uri.startsWith("http")) {
+      return uri;
+    }
+ else {
+      getLog().warn("Could not find the Maven upload URI. Got: " + value);
+    }
+  }
+ else {
+    getLog().warn("Could not find the Maven upload URI");
+  }
+  throw new MojoExecutionException("Could not find the Maven Upload Repository URI");
+}

@@ -1,3 +1,11 @@
 {
-  return J4pClient.url(jolokiaUrl).user(jolokiaUser).password(jolokiaPassword).build();
+  String user=fabricServer.getUsername();
+  String password=fabricServer.getPassword();
+  if (Strings.isNullOrBlank(user)) {
+    throw new MojoExecutionException("No <username> value defined for the server " + fabricServerId + " in your ~/.m2/settings.xml. Please add a value!");
+  }
+  if (Strings.isNullOrBlank(password)) {
+    throw new MojoExecutionException("No <password> value defined for the server " + fabricServerId + " in your ~/.m2/settings.xml. Please add a value!");
+  }
+  return J4pClient.url(jolokiaUrl).user(user).password(password).build();
 }

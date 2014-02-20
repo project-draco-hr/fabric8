@@ -4,15 +4,18 @@
     ProjectRequirements requirements=new ProjectRequirements();
     requirements.setRootDependency(rootDependency);
     configureRequirements(requirements);
-    String json=DtoHelper.getMapper().writeValueAsString(requirements);
+    fabricServer=mavenSettings.getServer(fabricServerId);
+    if (fabricServer == null) {
+      throw new MojoExecutionException("No <server> element can be found in ~/.m2/settings.xml for the server <id>" + fabricServerId + "</id> so we cannot connect to fabric8!\n\n"+ "Please add the following to your ~/.m2/settings.xml file (using the correct user/password values):\n\n"+ "<servers>\n"+ "  <server>\n"+ "    <id>"+ fabricServerId+ "</id>\n"+ "    <username>admin</username>\n"+ "    <password>admin</password>\n"+ "  </server>\n"+ "</servers>\n");
+    }
     J4pClient client=createJolokiaClient();
-    ObjectName mbeanName=ProjectDeployer.OBJECT_NAME;
-    getLog().info("About to invoke mbean " + mbeanName + " on jolokia URL: "+ jolokiaUrl+ " with user: "+ jolokiaUrl);
-    getLog().debug("JSON: " + json);
-    J4pExecRequest request=new J4pExecRequest(mbeanName,"deployProjectJson",json);
-    J4pResponse<J4pExecRequest> response=client.execute(request,"POST");
-    Object value=response.getValue();
-    getLog().info("Got result: " + value);
+    if (upload) {
+      uploadDeploymentUnit(client);
+    }
+ else {
+      getLog().info("Uploading to the fabric8 maven repository is disabled");
+    }
+    uploadRequirements(client,requirements);
   }
  catch (  Exception e) {
     throw new MojoExecutionException("Error executing",e);

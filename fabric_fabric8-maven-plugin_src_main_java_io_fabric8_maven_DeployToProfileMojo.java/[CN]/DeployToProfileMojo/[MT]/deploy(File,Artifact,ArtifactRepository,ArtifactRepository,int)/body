@@ -1,0 +1,27 @@
+{
+  getLog().info("Uploading file " + source);
+  int retryFailedDeploymentCounter=Math.max(1,Math.min(10,retryFailedDeploymentCount));
+  ArtifactDeploymentException exception=null;
+  for (int count=0; count < retryFailedDeploymentCounter; count++) {
+    try {
+      if (count > 0) {
+        getLog().info("Retrying deployment attempt " + (count + 1) + " of "+ retryFailedDeploymentCounter);
+      }
+      deployer.deploy(source,artifact,deploymentRepository,localRepository);
+      exception=null;
+      break;
+    }
+ catch (    ArtifactDeploymentException e) {
+      if (count + 1 < retryFailedDeploymentCounter) {
+        getLog().warn("Encountered issue during deployment: " + e.getLocalizedMessage());
+        getLog().debug(e);
+      }
+      if (exception == null) {
+        exception=e;
+      }
+    }
+  }
+  if (exception != null) {
+    throw exception;
+  }
+}

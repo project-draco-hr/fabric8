@@ -1,0 +1,46 @@
+{
+  String uri=getMavenUploadUri(client);
+  Artifact artifact=project.getArtifact();
+  resolver.resolve(artifact,remoteRepositories,localRepository);
+  String packaging=project.getPackaging();
+  File pomFile=project.getFile();
+  @SuppressWarnings("unchecked") List<Artifact> attachedArtifacts=project.getAttachedArtifacts();
+  DefaultRepositoryLayout layout=new DefaultRepositoryLayout();
+  ArtifactRepository repo=new DefaultArtifactRepository(fabricServerId,uri,layout);
+  boolean isPomArtifact="pom".equals(packaging);
+  if (!isPomArtifact) {
+    ArtifactMetadata metadata=new ProjectArtifactMetadata(artifact,pomFile);
+    artifact.addMetadata(metadata);
+  }
+  try {
+    if (isPomArtifact) {
+      deploy(pomFile,artifact,repo,localRepository,retryFailedDeploymentCount);
+    }
+ else {
+      File file=artifact.getFile();
+      if (isFile(pomFile)) {
+        deploy(pomFile,artifact,repo,localRepository,retryFailedDeploymentCount);
+      }
+      if (isFile(file)) {
+        deploy(file,artifact,repo,localRepository,retryFailedDeploymentCount);
+      }
+ else       if (!attachedArtifacts.isEmpty()) {
+        getLog().info("No primary artifact to deploy, deploying attached artifacts instead.");
+        Artifact pomArtifact=artifactFactory.createProjectArtifact(artifact.getGroupId(),artifact.getArtifactId(),artifact.getBaseVersion());
+        pomArtifact.setFile(pomFile);
+        deploy(pomFile,pomArtifact,repo,localRepository,retryFailedDeploymentCount);
+        artifact.setResolvedVersion(pomArtifact.getVersion());
+      }
+ else {
+        String message="The packaging for this project did not assign a file to the build artifact";
+        throw new MojoExecutionException(message);
+      }
+    }
+    for (    Artifact attached : attachedArtifacts) {
+      deploy(attached.getFile(),attached,repo,localRepository,retryFailedDeploymentCount);
+    }
+  }
+ catch (  ArtifactDeploymentException e) {
+    throw new MojoExecutionException(e.getMessage(),e);
+  }
+}
