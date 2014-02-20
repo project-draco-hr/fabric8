@@ -1,6 +1,10 @@
 {
-  File gitDir=new File(karafData,"git");
-  if (gitDir.isDirectory()) {
-    delete(gitDir);
+  File gitdir=new File(karafData,"git");
+  if (gitdir.isDirectory()) {
+    File renamed=new File(karafData,"git." + System.currentTimeMillis());
+    if (!gitdir.renameTo(renamed)) {
+      throw new IOException("Cannot rename git data dir for removal: " + gitdir);
+    }
+    delete(renamed);
   }
 }
