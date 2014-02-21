@@ -1,0 +1,7 @@
+{
+  containers();
+  replay(this.fabricService,this.commandSession);
+  this.stop.execute(this.commandSession);
+  verify(this.fabricService);
+  assertThat(new String(this.result.toByteArray()).trim(),is("Please specify container name(s)."));
+}

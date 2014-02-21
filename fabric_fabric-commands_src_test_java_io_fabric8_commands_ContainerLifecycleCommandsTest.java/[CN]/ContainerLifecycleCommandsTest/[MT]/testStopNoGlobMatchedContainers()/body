@@ -1,0 +1,11 @@
+{
+  containers("d*");
+  ContainerImpl c1=newContainer("c1");
+  ContainerImpl c2=newContainer("c2");
+  ContainerImpl c3=newContainer("c3");
+  expect(this.fabricService.getContainers()).andReturn(new Container[]{c1,c3,c2});
+  replay(this.fabricService,this.commandSession);
+  this.stop.execute(this.commandSession);
+  verify(this.fabricService);
+  assertThat(new String(this.result.toByteArray()).trim(),is("Please specify container name(s). Your pattern didn't match any container name."));
+}

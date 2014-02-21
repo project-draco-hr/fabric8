@@ -1,0 +1,12 @@
+{
+  containers("cNon1");
+  expect(this.fabricService.getContainer("cNon1")).andThrow(new FabricException("Container 'cNon1' does not exist"));
+  replay(this.fabricService,this.commandSession);
+  try {
+    this.stop.execute(this.commandSession);
+    fail("Should throw FabricException");
+  }
+ catch (  FabricException e) {
+  }
+  verify(this.fabricService);
+}

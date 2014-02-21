@@ -1,0 +1,8 @@
+{
+  this.stop=new ContainerStop();
+  this.fabricService=createStrictMock(FabricService.class);
+  this.commandSession=createMock(CommandSession.class);
+  this.result=new ByteArrayOutputStream();
+  expect(this.commandSession.getConsole()).andReturn(new PrintStream(result)).anyTimes();
+  ReflectionHelper.setField(FabricCommand.class.getDeclaredField("fabricService"),this.stop,this.fabricService);
+}

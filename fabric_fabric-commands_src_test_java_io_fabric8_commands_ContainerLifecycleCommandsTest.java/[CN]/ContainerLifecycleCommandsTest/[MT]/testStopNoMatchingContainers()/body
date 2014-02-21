@@ -1,0 +1,12 @@
+{
+  containers("c1","c2");
+  expect(this.fabricService.getContainer("c1")).andThrow(new FabricException("Container 'c1' does not exist"));
+  replay(this.fabricService,this.commandSession);
+  try {
+    this.stop.execute(this.commandSession);
+    fail("Should throw FabricException");
+  }
+ catch (  FabricException e) {
+  }
+  verify(this.fabricService);
+}

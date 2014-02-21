@@ -1,0 +1,24 @@
+{
+  containers("c*","c2");
+  ContainerImpl c1=newContainer("c1");
+  ContainerImpl c2=newContainer("c2");
+  ContainerImpl c3=newContainer("c3");
+  ContainerImpl d1=newContainer("d1");
+  expect(this.fabricService.getContainers()).andReturn(new Container[]{c1,c3,c2,d1});
+  expect(this.fabricService.getContainer("c1")).andReturn(c1);
+  expect(this.fabricService.getContainers()).andReturn(new Container[]{c1,c3,c2,d1});
+  this.fabricService.stopContainer(c1,false);
+  expect(this.fabricService.getContainer("c3")).andReturn(c3);
+  expect(this.fabricService.getContainers()).andReturn(new Container[]{c1,c3,c2,d1});
+  this.fabricService.stopContainer(c3,false);
+  expect(this.fabricService.getContainer("c2")).andReturn(c2);
+  expect(this.fabricService.getContainers()).andReturn(new Container[]{c1,c3,c2,d1});
+  this.fabricService.stopContainer(c2,false);
+  replay(this.fabricService,this.commandSession);
+  this.stop.execute(this.commandSession);
+  verify(this.fabricService);
+  String result=new String(this.result.toByteArray());
+  assertThat(result.contains("Container 'c1' stopped successfully."),is(true));
+  assertThat(result.contains("Container 'c2' stopped successfully."),is(true));
+  assertThat(result.contains("Container 'c3' stopped successfully."),is(true));
+}

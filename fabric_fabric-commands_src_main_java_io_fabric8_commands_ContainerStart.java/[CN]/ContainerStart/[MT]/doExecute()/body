@@ -1,13 +1,16 @@
 {
   checkFabricAvailable();
-  validateContainersName(container);
-  Container found=getContainer(container);
-  applyUpdatedCredentials(found);
-  if (force || !found.isAlive()) {
-    found.start(force);
-  }
+  Collection<String> expandedNames=super.expandGlobNames(containers);
+  for (  String containerName : expandedNames) {
+    validateContainersName(containerName);
+    Container found=getContainer(containerName);
+    applyUpdatedCredentials(found);
+    if (force || !found.isAlive()) {
+      found.start(force);
+    }
  else {
-    System.err.println("Container " + container + " is already started");
+      System.err.println("Container " + containerName + " is already started");
+    }
   }
   return null;
 }
