@@ -1,4 +1,5 @@
 {
-  FabricTestSupport.awaitService(ContainerRegistration.class);
+  ModuleContext moduleContext=RuntimeLocator.getRequiredRuntime().getModuleContext();
+  ServiceLocator.awaitService(moduleContext,ContainerRegistration.class);
   return build(Arrays.<B>asList(getOptionsBuilder()));
 }

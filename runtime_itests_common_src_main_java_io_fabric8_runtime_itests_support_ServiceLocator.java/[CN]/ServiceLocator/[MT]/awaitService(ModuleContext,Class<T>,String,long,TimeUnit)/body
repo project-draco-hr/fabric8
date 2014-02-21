@@ -1,0 +1,29 @@
+{
+  final CountDownLatch latch=new CountDownLatch(1);
+  final AtomicReference<T> serviceRef=new AtomicReference<T>();
+  final Filter srvfilter=filterspec != null ? moduleContext.createFilter(filterspec) : null;
+  ServiceTracker<T,T> tracker=new ServiceTracker<T,T>(moduleContext,type,null){
+    @Override public T addingService(    ServiceReference<T> sref){
+      T service=super.addingService(sref);
+      if (srvfilter == null || srvfilter.match(sref)) {
+        serviceRef.set(moduleContext.getService(sref));
+        latch.countDown();
+      }
+      return service;
+    }
+  }
+;
+  tracker.open();
+  try {
+    if (!latch.await(timeout,unit)) {
+      throw new RuntimeException("Cannot obtain service: " + srvfilter);
+    }
+    return serviceRef.get();
+  }
+ catch (  InterruptedException ex) {
+    throw new IllegalStateException();
+  }
+ finally {
+    tracker.close();
+  }
+}

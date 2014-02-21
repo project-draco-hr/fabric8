@@ -1,5 +1,6 @@
 {
-  FabricService service=FabricTestSupport.awaitService(FabricService.class);
+  ModuleContext moduleContext=RuntimeLocator.getRequiredRuntime().getModuleContext();
+  FabricService service=ServiceLocator.awaitService(moduleContext,FabricService.class);
   for (long t=0; (!service.getDataStore().hasProfile(version,profile) && t < timeout); t+=2000L) {
     Thread.sleep(2000L);
   }

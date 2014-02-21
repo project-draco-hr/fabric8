@@ -6,7 +6,7 @@
   ModuleContext syscontext=RuntimeLocator.getRequiredRuntime().getModuleContext();
   ZooKeeperClusterBootstrap bootstrap=syscontext.getService(syscontext.getServiceReference(ZooKeeperClusterBootstrap.class));
   bootstrap.create(options);
-  FabricService fabricService=FabricTestSupport.awaitService(FabricService.class);
+  FabricService fabricService=FabricTestSupport.getService(FabricService.class);
   Container[] containers=fabricService.getContainers();
   Assert.assertNotNull("Containers not null",containers);
   ConfigurationAdmin configurationAdmin=FabricTestSupport.getRequiredService(ConfigurationAdmin.class);

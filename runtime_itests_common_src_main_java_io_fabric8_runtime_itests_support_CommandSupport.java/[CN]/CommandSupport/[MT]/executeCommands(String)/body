@@ -1,0 +1,11 @@
+{
+  StringBuffer aggregated=new StringBuffer();
+  for (  String cmdstr : commands) {
+    String result=executeCommand(cmdstr,new DummyCommandSession());
+    if (result != null) {
+      aggregated.append(result);
+    }
+    return result;
+  }
+  return aggregated.length() > 0 ? aggregated.toString() : null;
+}
