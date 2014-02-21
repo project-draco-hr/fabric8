@@ -1,0 +1,29 @@
+{
+  String profileId=results.getProfileId();
+  String versionId=results.getVersionId();
+  if (Strings.isNullOrBlank(profileId)) {
+    throw new MojoExecutionException("Cannot upload configuration file " + file + " to profile as the profileId was not returned");
+  }
+  if (Strings.isNullOrBlank(versionId)) {
+    throw new MojoExecutionException("Cannot upload configuration file " + file + " to profile as the versionId was not returned");
+  }
+  String relativePath=Files.getRelativePath(rootDir,file);
+  String text=Files.toString(file);
+  String data=Base64Encoder.encode(text);
+  String mbeanName="io.fabric8:type=Fabric";
+  getLog().info("Uploading file " + relativePath + " to invoke mbean "+ mbeanName+ " on jolokia URL: "+ jolokiaUrl+ " with user: "+ fabricServer.getUsername());
+  try {
+    J4pExecRequest request=new J4pExecRequest(mbeanName,"setConfigurationFile",versionId,profileId,relativePath,data);
+    J4pResponse<J4pExecRequest> response=client.execute(request,"POST");
+    Object value=response.getValue();
+    getLog().info("Got result: " + value);
+  }
+ catch (  J4pException e) {
+    if (e.getMessage().contains(".InstanceNotFoundException")) {
+      throw new MojoExecutionException("Could not find the mbean " + mbeanName + " in the JVM for "+ jolokiaUrl+ ". Are you sure this JVM is running the Fabric8 console?");
+    }
+ else {
+      throw e;
+    }
+  }
+}

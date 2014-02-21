@@ -1,13 +1,20 @@
 {
   String json=DtoHelper.getMapper().writeValueAsString(requirements);
   ObjectName mbeanName=ProjectDeployer.OBJECT_NAME;
-  getLog().info("About to invoke mbean " + mbeanName + " on jolokia URL: "+ jolokiaUrl+ " with user: "+ jolokiaUrl);
+  getLog().info("About to invoke mbean " + mbeanName + " on jolokia URL: "+ jolokiaUrl+ " with user: "+ fabricServer.getUsername());
   getLog().debug("JSON: " + json);
   try {
     J4pExecRequest request=new J4pExecRequest(mbeanName,"deployProjectJson",json);
     J4pResponse<J4pExecRequest> response=client.execute(request,"POST");
     Object value=response.getValue();
     getLog().info("Got result: " + value);
+    if (value == null) {
+      return null;
+    }
+ else {
+      DeployResults results=DtoHelper.getMapper().reader(DeployResults.class).readValue(value.toString());
+      return results;
+    }
   }
  catch (  J4pException e) {
     if (e.getMessage().contains(".InstanceNotFoundException")) {

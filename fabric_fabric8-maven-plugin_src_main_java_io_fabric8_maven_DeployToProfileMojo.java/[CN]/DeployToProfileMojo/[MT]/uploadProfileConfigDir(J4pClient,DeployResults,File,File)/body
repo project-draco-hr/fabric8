@@ -1,0 +1,13 @@
+{
+  if (file.isDirectory()) {
+    File[] files=file.listFiles();
+    if (files != null) {
+      for (      File child : files) {
+        uploadProfileConfigDir(client,results,rootDir,child);
+      }
+    }
+  }
+ else   if (file.isFile()) {
+    uploadProfileConfigFile(client,results,rootDir,file);
+  }
+}

@@ -17,7 +17,10 @@
  else {
       getLog().info("Uploading to the fabric8 maven repository is disabled");
     }
-    uploadRequirements(client,requirements);
+    DeployResults results=uploadRequirements(client,requirements);
+    if (results != null) {
+      uploadProfileConfigurations(client,results);
+    }
   }
  catch (  MojoExecutionException e) {
     throw e;
