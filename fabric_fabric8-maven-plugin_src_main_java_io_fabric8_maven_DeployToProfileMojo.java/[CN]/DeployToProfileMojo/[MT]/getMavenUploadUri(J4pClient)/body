@@ -1,17 +1,40 @@
 {
-  J4pResponse<J4pReadRequest> request=client.execute(new J4pReadRequest("io.fabric8:type=Fabric","MavenRepoUploadURI"));
-  Object value=request.getValue();
-  if (value != null) {
-    String uri=value.toString();
-    if (uri.startsWith("http")) {
-      return uri;
+  Exception exception=null;
+  try {
+    J4pResponse<J4pReadRequest> request=client.execute(new J4pReadRequest("io.fabric8:type=Fabric","MavenRepoUploadURI"));
+    Object value=request.getValue();
+    if (value != null) {
+      String uri=value.toString();
+      if (uri.startsWith("http")) {
+        return uri;
+      }
+ else {
+        getLog().warn("Could not find the Maven upload URI. Got: " + value);
+      }
     }
  else {
-      getLog().warn("Could not find the Maven upload URI. Got: " + value);
+      getLog().warn("Could not find the Maven upload URI");
     }
   }
+ catch (  J4pRemoteException e) {
+    int status=e.getStatus();
+    if (status == 401) {
+      String message="Unauthorized to access to: " + jolokiaUrl + " using user: "+ fabricServer.getUsername()+ ".\nHave you created a Fabric?\nHave you setup your ~/.m2/settings.xml with the correct user and password for server ID: "+ fabricServerId+ " and do the user/password match the server "+ jolokiaUrl+ "?";
+      getLog().error(message);
+      throw new MojoExecutionException(message);
+    }
  else {
-    getLog().warn("Could not find the Maven upload URI");
+      exception=e;
+    }
   }
-  throw new MojoExecutionException("Could not find the Maven Upload Repository URI");
+catch (  Exception e) {
+    exception=e;
+  }
+  if (exception != null) {
+    getLog().error("Failed to get maven repository URI from " + jolokiaUrl + ". "+ exception,exception);
+    throw new MojoExecutionException("Could not find the Maven Upload Repository URI");
+  }
+ else {
+    throw new MojoExecutionException("Could not find the Maven Upload Repository URI");
+  }
 }

@@ -1,10 +1,20 @@
 {
   String json=DtoHelper.getMapper().writeValueAsString(requirements);
-  String mbeanName="io.fabric8:type=ProjectDeployer";
+  ObjectName mbeanName=ProjectDeployer.OBJECT_NAME;
   getLog().info("About to invoke mbean " + mbeanName + " on jolokia URL: "+ jolokiaUrl+ " with user: "+ jolokiaUrl);
   getLog().debug("JSON: " + json);
-  J4pExecRequest request=new J4pExecRequest(mbeanName,"deployProjectJson",json);
-  J4pResponse<J4pExecRequest> response=client.execute(request,"POST");
-  Object value=response.getValue();
-  getLog().info("Got result: " + value);
+  try {
+    J4pExecRequest request=new J4pExecRequest(mbeanName,"deployProjectJson",json);
+    J4pResponse<J4pExecRequest> response=client.execute(request,"POST");
+    Object value=response.getValue();
+    getLog().info("Got result: " + value);
+  }
+ catch (  J4pException e) {
+    if (e.getMessage().contains(".InstanceNotFoundException")) {
+      throw new MojoExecutionException("Could not find the mbean " + mbeanName + " in the JVM for "+ jolokiaUrl+ ". Are you sure this JVM is running the Fabric8 console?");
+    }
+ else {
+      throw e;
+    }
+  }
 }

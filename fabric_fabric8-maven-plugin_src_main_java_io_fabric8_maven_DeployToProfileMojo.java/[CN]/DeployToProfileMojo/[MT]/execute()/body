@@ -6,7 +6,9 @@
     configureRequirements(requirements);
     fabricServer=mavenSettings.getServer(fabricServerId);
     if (fabricServer == null) {
-      throw new MojoExecutionException("No <server> element can be found in ~/.m2/settings.xml for the server <id>" + fabricServerId + "</id> so we cannot connect to fabric8!\n\n"+ "Please add the following to your ~/.m2/settings.xml file (using the correct user/password values):\n\n"+ "<servers>\n"+ "  <server>\n"+ "    <id>"+ fabricServerId+ "</id>\n"+ "    <username>admin</username>\n"+ "    <password>admin</password>\n"+ "  </server>\n"+ "</servers>\n");
+      String message="No <server> element can be found in ~/.m2/settings.xml for the server <id>" + fabricServerId + "</id> so we cannot connect to fabric8!\n\n"+ "Please add the following to your ~/.m2/settings.xml file (using the correct user/password values):\n\n"+ "<servers>\n"+ "  <server>\n"+ "    <id>"+ fabricServerId+ "</id>\n"+ "    <username>admin</username>\n"+ "    <password>admin</password>\n"+ "  </server>\n"+ "</servers>\n";
+      getLog().error(message);
+      throw new MojoExecutionException(message);
     }
     J4pClient client=createJolokiaClient();
     if (upload) {
@@ -17,7 +19,10 @@
     }
     uploadRequirements(client,requirements);
   }
- catch (  Exception e) {
+ catch (  MojoExecutionException e) {
+    throw e;
+  }
+catch (  Exception e) {
     throw new MojoExecutionException("Error executing",e);
   }
 }
