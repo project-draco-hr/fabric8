@@ -3,7 +3,10 @@
   for (  String repositoryUrl : profile.getRepositories()) {
     if (Strings.isNotBlank(repositoryUrl)) {
       try {
-        String replacedUrl=VersionPropertyPointerResolver.replaceVersions(profile.getConfigurations(),repositoryUrl);
+        String replacedUrl=repositoryUrl;
+        if (repositoryUrl.contains("$")) {
+          replacedUrl=VersionPropertyPointerResolver.replaceVersions(profile.getConfigurations(),repositoryUrl);
+        }
         URI repoUri=new URI(replacedUrl);
         addRepository(downloadManager,repositories,repoUri);
       }

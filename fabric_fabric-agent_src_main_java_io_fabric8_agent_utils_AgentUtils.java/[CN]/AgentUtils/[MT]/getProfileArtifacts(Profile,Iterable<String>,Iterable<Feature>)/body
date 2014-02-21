@@ -17,6 +17,9 @@
   Map<String,Parser> artifacts=new HashMap<String,Parser>();
   for (  String location : locations) {
     try {
+      if (location.contains("$")) {
+        location=VersionPropertyPointerResolver.replaceVersions(profile.getOverlay().getConfigurations(),location);
+      }
       Parser parser=new Parser(location.substring(4));
       artifacts.put(location,parser);
     }
