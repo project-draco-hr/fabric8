@@ -1,3 +1,35 @@
 {
-  LOG.info("TODO - uploadFile " + file.getAbsolutePath() + " to maven repo...");
+  FabricService fabric=getFabricService();
+  String user=fabric.getZooKeeperUser();
+  String password=fabric.getZookeeperPassword();
+  URI uploadUri=fabric.getMavenRepoUploadURI();
+  URI artifactUri=uploadUri.resolve(parser.getArtifactPath());
+  URL url;
+  try {
+    url=artifactUri.toURL();
+  }
+ catch (  MalformedURLException e) {
+    LOG.warn("Failed to parse URI " + artifactUri + ". "+ e,e);
+    return;
+  }
+  if (fileToUpload == null) {
+    return;
+  }
+  if (!fileToUpload.exists() || !fileToUpload.isFile()) {
+    LOG.warn("Artifact file does not exist! " + fileToUpload.getAbsolutePath());
+    return;
+  }
+  LOG.info("Uploading " + fileToUpload.getPath() + " to fabric8 maven repo: "+ url+ " as user: "+ user);
+  try {
+    FileChannel in=new FileInputStream(fileToUpload).getChannel();
+    URLConnection connection=url.openConnection();
+    connection.setDoOutput(true);
+    connection.setRequestProperty("Authorization",Base64Encoder.encode(user + ":" + password));
+    WritableByteChannel out=Channels.newChannel(connection.getOutputStream());
+    in.transferTo(0,fileToUpload.length(),out);
+    LOG.info("Uploaded  " + fileToUpload.getPath() + " to fabric8 maven repo: "+ url);
+  }
+ catch (  Exception e) {
+    LOG.error("Failed to upload " + fileToUpload.getPath() + " to fabric8 maven repo: "+ url+ ". "+ e,e);
+  }
 }

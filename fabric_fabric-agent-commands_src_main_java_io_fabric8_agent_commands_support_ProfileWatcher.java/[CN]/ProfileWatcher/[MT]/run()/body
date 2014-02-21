@@ -1,13 +1,17 @@
 {
   LOG.debug("Profile watcher thread started");
   int oldCounter=-1;
+  SortedSet<String> oldActiveProfiles=null;
   Map<File,Long> localChecksums=new HashMap<File,Long>();
   Map<File,Long> localModified=new HashMap<File,Long>();
   Set<Profile> refreshProfiles=new HashSet<Profile>();
   while (running.get() && watchURLs.size() > 0) {
-    if (oldCounter != counter.get() || profileArtifacts == null) {
+    SortedSet<String> currentActiveProfiles=getCurrentActiveProfileVersions();
+    if (profileArtifacts == null || oldCounter != counter.get() || oldActiveProfiles == null || !oldActiveProfiles.equals(currentActiveProfiles)) {
       oldCounter=counter.get();
+      oldActiveProfiles=currentActiveProfiles;
       try {
+        LOG.debug("Reloading the currently active profile artifacts");
         profileArtifacts=findProfileArifacts();
       }
  catch (      Exception e) {
@@ -61,7 +65,7 @@
                       Long localChecksum=localChecksums.get(file);
                       if (localChecksum == null || !localChecksum.equals(fileChecksum)) {
                         localChecksums.put(file,fileChecksum);
-                        LOG.info("Checksums don't match, container: " + checksum + " and local file: "+ fileChecksum);
+                        LOG.info("Checksums don't match for " + location + ", container: "+ checksum+ " and local file: "+ fileChecksum);
                         if (isUpload()) {
                           uploadFile(location,parser,file);
                         }
