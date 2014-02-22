@@ -5,7 +5,11 @@
   boolean destroyed=false;
   try {
     ContainerProvider provider=getProvider(container,true);
-    provider.stop(container);
+    try {
+      provider.stop(container);
+    }
+ catch (    Exception ex) {
+    }
     provider.destroy(container);
     destroyed=true;
   }
