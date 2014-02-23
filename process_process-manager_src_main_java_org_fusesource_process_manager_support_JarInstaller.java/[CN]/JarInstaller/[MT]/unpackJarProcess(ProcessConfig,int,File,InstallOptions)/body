@@ -1,7 +1,7 @@
 {
   Filter<Dependency> optionalFilter=DependencyFilters.parseExcludeOptionalFilter(join(Arrays.asList(parameters.getOptionalDependencyPatterns())," "));
   Filter<Dependency> excludeFilter=DependencyFilters.parseExcludeFilter(join(Arrays.asList(parameters.getExcludeDependencyFilterPatterns())," "),optionalFilter);
-  DependencyTreeResult result=mavenResolver.collectDependencies(getArtifactFile(parameters.getUrl()),parameters.isOffline(),excludeFilter);
+  DependencyTreeResult result=mavenResolver.collectDependenciesForJar(getArtifactFile(parameters.getUrl()),parameters.isOffline(),excludeFilter);
   DependencyNode mainJarDependency=result.getRootNode();
   File libDir=new File(installDir,"lib");
   libDir.mkdirs();
