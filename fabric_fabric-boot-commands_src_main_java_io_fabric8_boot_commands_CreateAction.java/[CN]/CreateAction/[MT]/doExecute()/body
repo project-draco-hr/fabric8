@@ -57,7 +57,8 @@
   System.setProperty(ZkDefs.MAXIMUM_PORT,String.valueOf(maximumPort));
   newUser=newUser != null ? newUser : ShellUtils.retrieveFabricUser(session);
   newUserPassword=newUserPassword != null ? newUserPassword : ShellUtils.retrieveFabricUserPassword(session);
-  Properties userProps=new Properties(new File(System.getProperty("karaf.home") + "/etc/users.properties"));
+  String karafEtc=runtimeProperties.getProperty(SystemProperties.KARAF_ETC);
+  Properties userProps=new Properties(new File(karafEtc,"users.properties"));
   if (userProps.isEmpty()) {
     String[] credentials=promptForNewUser(newUser,newUserPassword);
     newUser=credentials[0];
@@ -81,7 +82,7 @@
   if (generateZookeeperPassword) {
   }
  else   if (zookeeperPassword == null) {
-    zookeeperPassword=System.getProperty(CreateEnsembleOptions.ZOOKEEPER_PASSWORD,newUserPassword);
+    zookeeperPassword=runtimeProperties.getProperty(CreateEnsembleOptions.ZOOKEEPER_PASSWORD,newUserPassword);
     builder.zookeeperPassword(zookeeperPassword);
   }
  else {
