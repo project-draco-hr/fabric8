@@ -12,8 +12,12 @@
   Bundle bundle=FrameworkUtil.getBundle(getClass());
   if (bundle != null) {
     options.put(BundleContext.class.getName(),bundle.getBundleContext());
-    encryptionSupport=new EncryptionSupport(options);
-    encryption=encryptionSupport.getEncryption();
+    try {
+      encryptionSupport=new EncryptionSupport(options);
+      encryption=encryptionSupport.getEncryption();
+    }
+ catch (    Exception e) {
+    }
   }
   StringBuilder sb=new StringBuilder();
   for (  Map.Entry<String,String> entry : users.entrySet()) {
