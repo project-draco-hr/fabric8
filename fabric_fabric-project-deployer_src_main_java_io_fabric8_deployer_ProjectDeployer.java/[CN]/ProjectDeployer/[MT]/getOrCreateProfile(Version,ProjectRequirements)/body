@@ -1,16 +1,4 @@
 {
-  FabricService fabric=getFabricService();
-  String versionId=getVersionId(requirements);
-  Version version=null;
-  try {
-    version=fabric.getVersion(versionId);
-  }
- catch (  Exception e) {
-    LOG.debug("Ignoring error looking up version; it probably doesn't exist yet: " + e,e);
-  }
-  if (version == null) {
-    version=fabric.createVersion(versionId);
-  }
   String profileId=getProfileId(requirements);
   if (Strings.isEmpty(profileId)) {
     throw new IllegalArgumentException("No profile ID could be deduced for requirements: " + requirements);

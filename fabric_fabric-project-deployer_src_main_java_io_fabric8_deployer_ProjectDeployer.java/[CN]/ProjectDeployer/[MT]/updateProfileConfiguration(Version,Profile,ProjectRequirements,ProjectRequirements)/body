@@ -1,0 +1,20 @@
+{
+  List<String> parentProfiles=Containers.getParentProfileIds(profile);
+  List<String> bundles=profile.getBundles();
+  List<String> features=profile.getFeatures();
+  List<String> repositories=profile.getRepositories();
+  if (oldRequirements != null) {
+    removeAll(parentProfiles,oldRequirements.getParentProfiles());
+    removeAll(bundles,oldRequirements.getBundles());
+    removeAll(features,oldRequirements.getFeatures());
+    removeAll(repositories,oldRequirements.getFeatureRepositories());
+  }
+  addAll(parentProfiles,requirements.getParentProfiles());
+  addAll(bundles,requirements.getBundles());
+  addAll(features,requirements.getFeatures());
+  addAll(repositories,requirements.getFeatureRepositories());
+  Containers.setParentProfileIds(version,profile,parentProfiles);
+  profile.setBundles(bundles);
+  profile.setFeatures(features);
+  profile.setRepositories(repositories);
+}

@@ -1,0 +1,17 @@
+{
+  FabricService fabric=getFabricService();
+  String versionId=getVersionId(requirements);
+  Version version=findVersion(fabric,versionId);
+  if (version == null) {
+    String baseVersionId=requirements.getBaseVersion();
+    baseVersionId=getVersionOrDefaultVersion(fabric,baseVersionId);
+    Version baseVersion=findVersion(fabric,baseVersionId);
+    if (baseVersion != null) {
+      version=fabric.createVersion(baseVersion,versionId);
+    }
+ else {
+      version=fabric.createVersion(versionId);
+    }
+  }
+  return version;
+}

@@ -1,5 +1,6 @@
 {
-  byte[] json=DtoHelper.getMapper().writeValueAsBytes(requirements);
+  ObjectMapper mapper=DtoHelper.getMapper();
+  byte[] json=mapper.writeValueAsBytes(requirements);
   StringBuilder builder=new StringBuilder("modules/");
   String groupId=requirements.getGroupId();
   if (!Strings.isEmpty(groupId)) {
@@ -13,6 +14,16 @@
   }
   builder.append("requirements.json");
   String name=builder.toString();
+  DataStore dataStore=getFabricService().getDataStore();
+  String version=profile.getVersion();
+  String profileId=profile.getId();
+  byte[] oldData=dataStore.getFileConfiguration(version,profileId,name);
   LOG.info("Writing file " + name + " to profile "+ profile);
-  getFabricService().getDataStore().setFileConfiguration(profile.getVersion(),profile.getId(),name,json);
+  dataStore.setFileConfiguration(version,profileId,name,json);
+  if (oldData == null || oldData.length == 0) {
+    return null;
+  }
+ else {
+    return mapper.reader(ProjectRequirements.class).readValue(oldData);
+  }
 }

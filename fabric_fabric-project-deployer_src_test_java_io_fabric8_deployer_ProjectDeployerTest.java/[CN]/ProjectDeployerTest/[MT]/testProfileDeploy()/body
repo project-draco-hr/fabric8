@@ -9,9 +9,15 @@
   rootDependency.setGroupId(groupId);
   rootDependency.setArtifactId(artifactId);
   rootDependency.setVersion("1.0.0");
+  List<String> parentProfileIds=Arrays.asList("karaf");
+  List<String> features=Arrays.asList("cxf","war");
+  requirements.setParentProfiles(parentProfileIds);
+  requirements.setFeatures(features);
   projectDeployer.deployProject(requirements);
   Profile profile=assertProfileInFabric(expectedProfileId,versionId);
   assertBundleCount(profile,1);
+  assertEquals("parent ids",parentProfileIds,Containers.getParentProfileIds(profile));
+  assertFeatures(profile,features);
   String requirementsFileName="modules/" + groupId + "/"+ artifactId+ "-requirements.json";
   byte[] jsonData=profile.getFileConfiguration(requirementsFileName);
   assertNotNull("should have found some JSON for: " + requirementsFileName,jsonData);
@@ -25,7 +31,13 @@
   versionId="1.2";
   requirements.setVersion(versionId);
   requirements.setProfileId(expectedProfileId);
+  parentProfileIds=Arrays.asList("default");
+  features=Arrays.asList("camel","war");
+  requirements.setParentProfiles(parentProfileIds);
+  requirements.setFeatures(features);
   projectDeployer.deployProject(requirements);
   profile=assertProfileInFabric(expectedProfileId,versionId);
   assertBundleCount(profile,1);
+  assertEquals("parent ids",parentProfileIds,Containers.getParentProfileIds(profile));
+  assertFeatures(profile,features);
 }
