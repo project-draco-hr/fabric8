@@ -1,0 +1,11 @@
+{
+  Object value=getObjectProperty(name);
+  if (value == null) {
+    throw new NullPointerException("property " + name + " was null");
+  }
+  Float rc=(Float)TypeConversionSupport.convert(value,Float.class);
+  if (rc == null) {
+    throw new OpenwireException("Property " + name + " was a "+ value.getClass().getName()+ " and cannot be read as a float");
+  }
+  return rc.floatValue();
+}

@@ -1,0 +1,33 @@
+{
+  OpenwireProtocolDecoder h=new OpenwireProtocolDecoder(this);
+  h.errorHandler(new Handler<String>(){
+    @Override public void handle(    String error){
+      LOG.info("Openwire protocol decoding error: " + error);
+      socket.close();
+    }
+  }
+);
+  h.codecHandler(new Handler<Command>(){
+    @Override public void handle(    Command event){
+      if (event instanceof WireFormatInfo) {
+        WireFormatInfo info=(WireFormatInfo)event;
+        ConnectionParameters parameters=new ConnectionParameters();
+        parameters.protocol=getProtocolName();
+        try {
+          parameters.protocolVirtualHost=info.getHost();
+        }
+ catch (        IOException e) {
+          e.printStackTrace();
+        }
+        handler.handle(parameters);
+      }
+ else {
+        LOG.info("Expected a WireFormatInfo frame");
+        socket.close();
+      }
+    }
+  }
+);
+  socket.dataHandler(h);
+  h.handle(received);
+}

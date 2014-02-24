@@ -1,0 +1,8 @@
+{
+  super.tightMarshal2(wireFormat,o,dataOut,bs);
+  WireFormatInfo info=(WireFormatInfo)o;
+  tightMarshalConstByteArray2(info.getMagic(),dataOut,bs,8);
+  dataOut.writeInt(info.getVersion());
+  tightMarshalBuffer2(info.getMarshalledProperties(),dataOut,bs);
+  info.afterMarshall(wireFormat);
+}

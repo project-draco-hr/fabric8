@@ -1,0 +1,58 @@
+{
+  int utflen=dataIn.readInt();
+  if (utflen > -1) {
+    StringBuffer str=new StringBuffer(utflen);
+    byte bytearr[]=new byte[utflen];
+    int c;
+    int char2;
+    int char3;
+    int count=0;
+    dataIn.readFully(bytearr,0,utflen);
+    while (count < utflen) {
+      c=bytearr[count] & 0xff;
+switch (c >> 4) {
+case 0:
+case 1:
+case 2:
+case 3:
+case 4:
+case 5:
+case 6:
+case 7:
+        count++;
+      str.append((char)c);
+    break;
+case 12:
+case 13:
+  count+=2;
+if (count > utflen) {
+  throw new UTFDataFormatException();
+}
+char2=bytearr[count - 1];
+if ((char2 & 0xC0) != 0x80) {
+throw new UTFDataFormatException();
+}
+str.append((char)(((c & 0x1F) << 6) | (char2 & 0x3F)));
+break;
+case 14:
+count+=3;
+if (count > utflen) {
+throw new UTFDataFormatException();
+}
+char2=bytearr[count - 2];
+char3=bytearr[count - 1];
+if (((char2 & 0xC0) != 0x80) || ((char3 & 0xC0) != 0x80)) {
+throw new UTFDataFormatException();
+}
+str.append((char)(((c & 0x0F) << 12) | ((char2 & 0x3F) << 6) | ((char3 & 0x3F) << 0)));
+break;
+default :
+throw new UTFDataFormatException();
+}
+}
+return new String(str);
+}
+ else {
+return null;
+}
+}

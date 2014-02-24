@@ -1,0 +1,10 @@
+{
+  try {
+    Class clazz=Class.forName(className.toString(),false,BaseDataStreamMarshaller.class.getClassLoader());
+    Constructor constructor=clazz.getConstructor(new Class[]{UTF8Buffer.class});
+    return (Throwable)constructor.newInstance(new Object[]{message.toString()});
+  }
+ catch (  Throwable e) {
+    return new OpenwireException(message.toString(),className.toString());
+  }
+}

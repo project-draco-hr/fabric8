@@ -1,0 +1,15 @@
+{
+  checkWriteOnlyBody();
+  if (this.dataIn == null) {
+    Buffer data=getContent();
+    if (data == null) {
+      data=new Buffer(new byte[]{},0,0);
+    }
+    InputStream is=new ByteArrayInputStream(data);
+    if (isCompressed()) {
+      is=new InflaterInputStream(is);
+      is=new BufferedInputStream(is);
+    }
+    this.dataIn=new DataInputStream(is);
+  }
+}

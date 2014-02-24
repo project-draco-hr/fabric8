@@ -1,0 +1,14 @@
+{
+  if (arrayLimit < 64) {
+    dataOut.put((byte)arrayLimit);
+  }
+ else   if (arrayLimit < 256) {
+    dataOut.put((byte)0xC0);
+    dataOut.put((byte)arrayLimit);
+  }
+ else {
+    dataOut.put((byte)0x80);
+    dataOut.putShort(arrayLimit);
+  }
+  dataOut.put(data,0,arrayLimit);
+}

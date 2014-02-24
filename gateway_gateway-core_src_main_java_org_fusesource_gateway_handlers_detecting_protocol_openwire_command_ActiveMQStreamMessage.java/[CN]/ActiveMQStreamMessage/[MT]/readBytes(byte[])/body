@@ -1,0 +1,39 @@
+{
+  initializeReading();
+  try {
+    if (value == null) {
+      throw new NullPointerException();
+    }
+    if (remainingBytes == -1) {
+      this.dataIn.mark(value.length + 1);
+      int type=this.dataIn.read();
+      if (type == -1) {
+        throw new OpenwireException("reached end of data");
+      }
+      if (type != MarshallingSupport.BYTE_ARRAY_TYPE) {
+        throw new OpenwireException("Not a byte array");
+      }
+      remainingBytes=this.dataIn.readInt();
+    }
+ else     if (remainingBytes == 0) {
+      remainingBytes=-1;
+      return -1;
+    }
+    if (value.length <= remainingBytes) {
+      remainingBytes-=value.length;
+      this.dataIn.readFully(value);
+      return value.length;
+    }
+ else {
+      int rc=this.dataIn.read(value,0,remainingBytes);
+      remainingBytes=0;
+      return rc;
+    }
+  }
+ catch (  EOFException e) {
+    throw new OpenwireException(e.getMessage(),e);
+  }
+catch (  IOException e) {
+    throw new OpenwireException(e.getMessage(),e);
+  }
+}

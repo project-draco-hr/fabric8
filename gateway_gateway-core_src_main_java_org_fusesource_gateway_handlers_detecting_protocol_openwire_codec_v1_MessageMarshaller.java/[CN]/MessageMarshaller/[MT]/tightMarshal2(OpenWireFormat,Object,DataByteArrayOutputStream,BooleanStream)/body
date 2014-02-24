@@ -1,0 +1,30 @@
+{
+  super.tightMarshal2(wireFormat,o,dataOut,bs);
+  Message info=(Message)o;
+  tightMarshalCachedObject2(wireFormat,(DataStructure)info.getProducerId(),dataOut,bs);
+  tightMarshalCachedObject2(wireFormat,(DataStructure)info.getDestination(),dataOut,bs);
+  tightMarshalCachedObject2(wireFormat,(DataStructure)info.getTransactionId(),dataOut,bs);
+  tightMarshalCachedObject2(wireFormat,(DataStructure)info.getOriginalDestination(),dataOut,bs);
+  tightMarshalNestedObject2(wireFormat,(DataStructure)info.getMessageId(),dataOut,bs);
+  tightMarshalCachedObject2(wireFormat,(DataStructure)info.getOriginalTransactionId(),dataOut,bs);
+  tightMarshalString2(info.getGroupID(),dataOut,bs);
+  dataOut.writeInt(info.getGroupSequence());
+  tightMarshalString2(info.getCorrelationId(),dataOut,bs);
+  bs.readBoolean();
+  tightMarshalLong2(wireFormat,info.getExpiration(),dataOut,bs);
+  dataOut.writeByte(info.getPriority());
+  tightMarshalNestedObject2(wireFormat,(DataStructure)info.getReplyTo(),dataOut,bs);
+  tightMarshalLong2(wireFormat,info.getTimestamp(),dataOut,bs);
+  tightMarshalString2(info.getType(),dataOut,bs);
+  tightMarshalBuffer2(info.getContent(),dataOut,bs);
+  tightMarshalBuffer2(info.getMarshalledProperties(),dataOut,bs);
+  tightMarshalNestedObject2(wireFormat,(DataStructure)info.getDataStructure(),dataOut,bs);
+  tightMarshalCachedObject2(wireFormat,(DataStructure)info.getTargetConsumerId(),dataOut,bs);
+  bs.readBoolean();
+  dataOut.writeInt(info.getRedeliveryCounter());
+  tightMarshalObjectArray2(wireFormat,info.getBrokerPath(),dataOut,bs);
+  tightMarshalLong2(wireFormat,info.getArrival(),dataOut,bs);
+  tightMarshalString2(info.getUserID(),dataOut,bs);
+  bs.readBoolean();
+  info.afterMarshall(wireFormat);
+}

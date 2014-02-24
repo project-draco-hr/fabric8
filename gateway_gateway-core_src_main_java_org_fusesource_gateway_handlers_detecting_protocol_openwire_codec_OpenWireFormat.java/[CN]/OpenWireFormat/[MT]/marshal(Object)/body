@@ -1,0 +1,53 @@
+{
+  if (cacheEnabled) {
+    runMarshallCacheEvictionSweep();
+  }
+  Buffer sequence=null;
+  if (sequence == null) {
+    int size=1;
+    if (command != null) {
+      DataStructure c=(DataStructure)command;
+      byte type=c.getDataStructureType();
+      DataStreamMarshaller dsm=(DataStreamMarshaller)dataMarshallers[type & 0xFF];
+      if (dsm == null) {
+        throw new IOException("Unknown data type: " + type);
+      }
+      if (tightEncodingEnabled) {
+        BooleanStream bs=new BooleanStream();
+        size+=dsm.tightMarshal1(this,c,bs);
+        size+=bs.marshalledSize();
+        bytesOut.restart(size);
+        if (!sizePrefixDisabled) {
+          bytesOut.writeInt(size);
+        }
+        bytesOut.writeByte(type);
+        bs.marshal(bytesOut);
+        dsm.tightMarshal2(this,c,bytesOut,bs);
+        sequence=bytesOut.toBuffer();
+      }
+ else {
+        bytesOut.restart();
+        if (!sizePrefixDisabled) {
+          bytesOut.writeInt(0);
+        }
+        bytesOut.writeByte(type);
+        dsm.looseMarshal(this,c,bytesOut);
+        sequence=bytesOut.toBuffer();
+        if (!sizePrefixDisabled) {
+          size=sequence.getLength() - 4;
+          int pos=sequence.offset;
+          sequence.offset=0;
+          BufferEditor.big(sequence).writeInt(size);
+          sequence.offset=pos;
+        }
+      }
+    }
+ else {
+      bytesOut.restart(5);
+      bytesOut.writeInt(size);
+      bytesOut.writeByte(NULL_TYPE);
+      sequence=bytesOut.toBuffer();
+    }
+  }
+  return sequence;
+}

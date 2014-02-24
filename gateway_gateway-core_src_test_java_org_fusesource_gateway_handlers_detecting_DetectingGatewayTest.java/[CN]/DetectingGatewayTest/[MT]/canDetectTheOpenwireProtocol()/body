@@ -1,0 +1,13 @@
+{
+  DetectingGateway gateway=createGateway();
+  gateway.init();
+  String url="tcp://localhost:" + gateway.getBoundPort() + "?wireFormat.host=broker0";
+  final ActiveMQConnectionFactory factory=new ActiveMQConnectionFactory(url);
+  Connection connection=factory.createConnection();
+  connection.start();
+  assertEquals(1,getConnectionsOnBroker(0));
+  for (int i=1; i < brokers.size(); i++) {
+    assertEquals(0,getConnectionsOnBroker(i));
+  }
+  connection.close();
+}

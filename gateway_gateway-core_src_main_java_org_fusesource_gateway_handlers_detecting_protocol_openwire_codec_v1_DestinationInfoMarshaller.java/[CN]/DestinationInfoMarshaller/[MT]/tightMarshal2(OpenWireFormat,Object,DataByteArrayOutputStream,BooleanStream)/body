@@ -1,0 +1,9 @@
+{
+  super.tightMarshal2(wireFormat,o,dataOut,bs);
+  DestinationInfo info=(DestinationInfo)o;
+  tightMarshalCachedObject2(wireFormat,(DataStructure)info.getConnectionId(),dataOut,bs);
+  tightMarshalCachedObject2(wireFormat,(DataStructure)info.getDestination(),dataOut,bs);
+  dataOut.writeByte(info.getOperationType());
+  tightMarshalLong2(wireFormat,info.getTimeout(),dataOut,bs);
+  tightMarshalObjectArray2(wireFormat,info.getBrokerPath(),dataOut,bs);
+}

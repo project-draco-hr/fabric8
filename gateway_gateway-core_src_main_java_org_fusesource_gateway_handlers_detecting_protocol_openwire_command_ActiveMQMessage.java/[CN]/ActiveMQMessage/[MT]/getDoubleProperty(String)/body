@@ -1,0 +1,11 @@
+{
+  Object value=getObjectProperty(name);
+  if (value == null) {
+    throw new NullPointerException("property " + name + " was null");
+  }
+  Double rc=(Double)TypeConversionSupport.convert(value,Double.class);
+  if (rc == null) {
+    throw new OpenwireException("Property " + name + " was a "+ value.getClass().getName()+ " and cannot be read as a double");
+  }
+  return rc.doubleValue();
+}

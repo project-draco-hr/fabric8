@@ -1,0 +1,22 @@
+{
+  initializeReading();
+  Object value=map.get(name);
+  if (value == null) {
+    return 0;
+  }
+  if (value instanceof Integer) {
+    return ((Integer)value).intValue();
+  }
+  if (value instanceof Short) {
+    return ((Short)value).intValue();
+  }
+  if (value instanceof Byte) {
+    return ((Byte)value).intValue();
+  }
+  if (value instanceof String) {
+    return Integer.valueOf(value.toString()).intValue();
+  }
+ else {
+    throw new OpenwireException(" cannot read an int from " + value.getClass().getName());
+  }
+}

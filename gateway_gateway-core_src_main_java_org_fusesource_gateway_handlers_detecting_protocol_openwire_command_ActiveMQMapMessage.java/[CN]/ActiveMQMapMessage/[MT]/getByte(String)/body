@@ -1,0 +1,16 @@
+{
+  initializeReading();
+  Object value=map.get(name);
+  if (value == null) {
+    return 0;
+  }
+  if (value instanceof Byte) {
+    return ((Byte)value).byteValue();
+  }
+  if (value instanceof String) {
+    return Byte.valueOf(value.toString()).byteValue();
+  }
+ else {
+    throw new OpenwireException(" cannot read a byte from " + value.getClass().getName());
+  }
+}

@@ -1,0 +1,16 @@
+{
+  if (transactionKey == null) {
+    StringBuffer s=new StringBuffer();
+    s.append("XID:[globalId=");
+    for (int i=0; i < globalTransactionId.length; i++) {
+      s.append(Integer.toHexString(globalTransactionId[i]));
+    }
+    s.append(",branchId=");
+    for (int i=0; i < branchQualifier.length; i++) {
+      s.append(Integer.toHexString(branchQualifier[i]));
+    }
+    s.append("]");
+    transactionKey=s.toString();
+  }
+  return transactionKey;
+}

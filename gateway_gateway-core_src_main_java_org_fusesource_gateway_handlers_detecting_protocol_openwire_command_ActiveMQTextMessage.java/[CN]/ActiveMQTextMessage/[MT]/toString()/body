@@ -1,0 +1,14 @@
+{
+  try {
+    String text=getText();
+    if (text != null) {
+      text=MarshallingSupport.truncate64(text);
+      HashMap<String,Object> overrideFields=new HashMap<String,Object>();
+      overrideFields.put("text",text);
+      return super.toString(overrideFields);
+    }
+  }
+ catch (  OpenwireException e) {
+  }
+  return super.toString();
+}

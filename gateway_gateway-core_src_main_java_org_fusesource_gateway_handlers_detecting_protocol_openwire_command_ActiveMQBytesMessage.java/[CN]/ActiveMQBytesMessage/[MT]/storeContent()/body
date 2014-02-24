@@ -1,0 +1,21 @@
+{
+  try {
+    if (dataOut != null) {
+      dataOut.close();
+      Buffer bs=bytesOut.toBuffer();
+      if (compressed) {
+        int pos=bs.offset;
+        bs.offset=0;
+        BufferEditor e=BufferEditor.big(bs);
+        e.writeInt(length);
+        bs.offset=pos;
+      }
+      setContent(bs);
+      bytesOut=null;
+      dataOut=null;
+    }
+  }
+ catch (  IOException ioe) {
+    throw new RuntimeException(ioe.getMessage(),ioe);
+  }
+}

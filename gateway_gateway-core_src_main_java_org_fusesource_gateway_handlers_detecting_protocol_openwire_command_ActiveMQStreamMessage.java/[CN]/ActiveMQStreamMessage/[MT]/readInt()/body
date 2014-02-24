@@ -1,0 +1,45 @@
+{
+  initializeReading();
+  try {
+    this.dataIn.mark(33);
+    int type=this.dataIn.read();
+    if (type == -1) {
+      throw new OpenwireException("reached end of data");
+    }
+    if (type == MarshallingSupport.INTEGER_TYPE) {
+      return this.dataIn.readInt();
+    }
+    if (type == MarshallingSupport.SHORT_TYPE) {
+      return this.dataIn.readShort();
+    }
+    if (type == MarshallingSupport.BYTE_TYPE) {
+      return this.dataIn.readByte();
+    }
+    if (type == MarshallingSupport.STRING_TYPE) {
+      return Integer.valueOf(this.dataIn.readUTF()).intValue();
+    }
+    if (type == MarshallingSupport.NULL) {
+      this.dataIn.reset();
+      throw new NullPointerException("Cannot convert NULL value to int.");
+    }
+ else {
+      this.dataIn.reset();
+      throw new OpenwireException(" not an int type");
+    }
+  }
+ catch (  NumberFormatException mfe) {
+    try {
+      this.dataIn.reset();
+    }
+ catch (    IOException ioe) {
+      throw new OpenwireException(ioe);
+    }
+    throw mfe;
+  }
+catch (  EOFException e) {
+    throw new OpenwireException(e);
+  }
+catch (  IOException e) {
+    throw new OpenwireException(e);
+  }
+}

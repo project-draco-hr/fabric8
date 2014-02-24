@@ -1,0 +1,37 @@
+{
+  if (bs.readBoolean()) {
+    UTF8Buffer clazz=tightUnmarshalString(dataIn,bs);
+    UTF8Buffer message=tightUnmarshalString(dataIn,bs);
+    Throwable o=createThrowable(clazz,message);
+    if (wireFormat.isStackTraceEnabled()) {
+      if (STACK_TRACE_ELEMENT_CONSTRUCTOR != null) {
+        StackTraceElement ss[]=new StackTraceElement[dataIn.readShort()];
+        for (int i=0; i < ss.length; i++) {
+          try {
+            ss[i]=(StackTraceElement)STACK_TRACE_ELEMENT_CONSTRUCTOR.newInstance(new Object[]{tightUnmarshalString(dataIn,bs),tightUnmarshalString(dataIn,bs),tightUnmarshalString(dataIn,bs),Integer.valueOf(dataIn.readInt())});
+          }
+ catch (          IOException e) {
+            throw e;
+          }
+catch (          Throwable e) {
+          }
+        }
+        o.setStackTrace(ss);
+      }
+ else {
+        short size=dataIn.readShort();
+        for (int i=0; i < size; i++) {
+          tightUnmarshalString(dataIn,bs);
+          tightUnmarshalString(dataIn,bs);
+          tightUnmarshalString(dataIn,bs);
+          dataIn.readInt();
+        }
+      }
+      o.initCause(tightUnmarsalThrowable(wireFormat,dataIn,bs));
+    }
+    return o;
+  }
+ else {
+    return null;
+  }
+}

@@ -1,0 +1,11 @@
+{
+  BrokerInfo info=(BrokerInfo)o;
+  super.looseMarshal(wireFormat,o,dataOut);
+  looseMarshalCachedObject(wireFormat,(DataStructure)info.getBrokerId(),dataOut);
+  looseMarshalString(info.getBrokerURL(),dataOut);
+  looseMarshalObjectArray(wireFormat,info.getPeerBrokerInfos(),dataOut);
+  looseMarshalString(info.getBrokerName(),dataOut);
+  dataOut.writeBoolean(info.isSlaveBroker());
+  dataOut.writeBoolean(info.isMasterBroker());
+  dataOut.writeBoolean(info.isFaultTolerantConfiguration());
+}

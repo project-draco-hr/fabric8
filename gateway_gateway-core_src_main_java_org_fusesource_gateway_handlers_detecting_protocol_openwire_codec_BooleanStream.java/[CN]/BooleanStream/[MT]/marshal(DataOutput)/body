@@ -1,0 +1,15 @@
+{
+  if (arrayLimit < 64) {
+    dataOut.writeByte(arrayLimit);
+  }
+ else   if (arrayLimit < 256) {
+    dataOut.writeByte(0xC0);
+    dataOut.writeByte(arrayLimit);
+  }
+ else {
+    dataOut.writeByte(0x80);
+    dataOut.writeShort(arrayLimit);
+  }
+  dataOut.write(data,0,arrayLimit);
+  clear();
+}

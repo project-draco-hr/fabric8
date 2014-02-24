@@ -1,0 +1,52 @@
+{
+  Object value=null;
+  byte type=in.readByte();
+switch (type) {
+case BYTE_TYPE:
+    value=Byte.valueOf(in.readByte());
+  break;
+case BOOLEAN_TYPE:
+value=in.readBoolean() ? Boolean.TRUE : Boolean.FALSE;
+break;
+case CHAR_TYPE:
+value=Character.valueOf(in.readChar());
+break;
+case SHORT_TYPE:
+value=Short.valueOf(in.readShort());
+break;
+case INTEGER_TYPE:
+value=Integer.valueOf(in.readInt());
+break;
+case LONG_TYPE:
+value=Long.valueOf(in.readLong());
+break;
+case FLOAT_TYPE:
+value=new Float(in.readFloat());
+break;
+case DOUBLE_TYPE:
+value=new Double(in.readDouble());
+break;
+case BYTE_ARRAY_TYPE:
+value=new byte[in.readInt()];
+in.readFully((byte[])value);
+break;
+case STRING_TYPE:
+value=in.readUTF();
+break;
+case BIG_STRING_TYPE:
+value=readUTF8(in);
+break;
+case MAP_TYPE:
+value=unmarshalPrimitiveMap(in);
+break;
+case LIST_TYPE:
+value=unmarshalPrimitiveList(in);
+break;
+case NULL:
+value=null;
+break;
+default :
+throw new IOException("Unknown primitive type: " + type);
+}
+return value;
+}

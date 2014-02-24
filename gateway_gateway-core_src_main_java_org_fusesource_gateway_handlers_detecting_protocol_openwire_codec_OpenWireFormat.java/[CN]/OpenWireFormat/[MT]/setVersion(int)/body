@@ -1,0 +1,23 @@
+{
+  DataStreamMarshaller[] marshallers=versions.get(version);
+  if (marshallers == null) {
+    String mfName=getClass().getPackage().getName() + ".v" + version+ ".MarshallerFactory";
+    Class mfClass;
+    try {
+      mfClass=Class.forName(mfName,false,getClass().getClassLoader());
+    }
+ catch (    ClassNotFoundException e) {
+      throw (IllegalArgumentException)new IllegalArgumentException("Invalid version: " + version + ", could not load "+ mfName).initCause(e);
+    }
+    try {
+      Method method=mfClass.getMethod("createMarshallerMap",new Class[]{OpenWireFormat.class});
+      marshallers=(DataStreamMarshaller[])method.invoke(null,new Object[]{this});
+    }
+ catch (    Throwable e) {
+      throw (IllegalArgumentException)new IllegalArgumentException("Invalid version: " + version + ", "+ mfName+ " does not properly implement the createMarshallerMap method.").initCause(e);
+    }
+    versions.put(version,marshallers);
+  }
+  this.dataMarshallers=marshallers;
+  this.version=version;
+}

@@ -1,0 +1,11 @@
+{
+  Object value=getObjectProperty(name);
+  if (value == null) {
+    throw new NumberFormatException("property " + name + " was null");
+  }
+  Short rc=(Short)TypeConversionSupport.convert(value,Short.class);
+  if (rc == null) {
+    throw new OpenwireException("Property " + name + " was a "+ value.getClass().getName()+ " and cannot be read as a short");
+  }
+  return rc.shortValue();
+}

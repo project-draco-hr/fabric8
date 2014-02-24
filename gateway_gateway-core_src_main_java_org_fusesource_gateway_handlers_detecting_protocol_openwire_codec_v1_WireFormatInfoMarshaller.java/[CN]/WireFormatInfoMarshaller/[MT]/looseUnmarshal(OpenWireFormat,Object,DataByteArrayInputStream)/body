@@ -1,0 +1,9 @@
+{
+  super.looseUnmarshal(wireFormat,o,dataIn);
+  WireFormatInfo info=(WireFormatInfo)o;
+  info.beforeUnmarshall(wireFormat);
+  info.setMagic(looseUnmarshalConstByteArray(dataIn,8));
+  info.setVersion(dataIn.readInt());
+  info.setMarshalledProperties(looseUnmarshalBuffer(dataIn));
+  info.afterUnmarshall(wireFormat);
+}

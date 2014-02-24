@@ -1,0 +1,12 @@
+{
+  checkReadOnlyBody();
+  if (this.dataOut == null) {
+    this.bytesOut=new ByteArrayOutputStream();
+    OutputStream os=bytesOut;
+    if (Settings.enable_compression()) {
+      compressed=true;
+      os=new DeflaterOutputStream(os);
+    }
+    this.dataOut=new DataOutputStream(os);
+  }
+}

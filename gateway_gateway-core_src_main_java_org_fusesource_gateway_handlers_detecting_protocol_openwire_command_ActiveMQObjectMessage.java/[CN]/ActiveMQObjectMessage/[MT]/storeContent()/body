@@ -1,0 +1,23 @@
+{
+  Buffer bodyAsBytes=getContent();
+  if (bodyAsBytes == null && object != null) {
+    try {
+      ByteArrayOutputStream bytesOut=new ByteArrayOutputStream();
+      OutputStream os=bytesOut;
+      if (Settings.enable_compression()) {
+        compressed=true;
+        os=new DeflaterOutputStream(os);
+      }
+      DataOutputStream dataOut=new DataOutputStream(os);
+      ObjectOutputStream objOut=new ObjectOutputStream(dataOut);
+      objOut.writeObject(object);
+      objOut.flush();
+      objOut.reset();
+      objOut.close();
+      setContent(bytesOut.toBuffer());
+    }
+ catch (    IOException ioe) {
+      throw new RuntimeException(ioe.getMessage(),ioe);
+    }
+  }
+}

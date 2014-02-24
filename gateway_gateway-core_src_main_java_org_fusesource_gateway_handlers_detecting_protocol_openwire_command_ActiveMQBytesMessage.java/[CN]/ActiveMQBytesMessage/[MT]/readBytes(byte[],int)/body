@@ -1,0 +1,23 @@
+{
+  initializeReading();
+  try {
+    int n=0;
+    while (n < length) {
+      int count=this.dataIn.read(value,n,length - n);
+      if (count < 0) {
+        break;
+      }
+      n+=count;
+    }
+    if (n == 0 && length > 0) {
+      n=-1;
+    }
+    return n;
+  }
+ catch (  EOFException e) {
+    throw new OpenwireException(e);
+  }
+catch (  IOException e) {
+    throw new OpenwireException(e);
+  }
+}

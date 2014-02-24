@@ -1,0 +1,11 @@
+{
+  ConnectionInfo info=(ConnectionInfo)o;
+  super.looseMarshal(wireFormat,o,dataOut);
+  looseMarshalCachedObject(wireFormat,(DataStructure)info.getConnectionId(),dataOut);
+  looseMarshalString(info.getClientId(),dataOut);
+  looseMarshalString(info.getPassword(),dataOut);
+  looseMarshalString(info.getUserName(),dataOut);
+  looseMarshalObjectArray(wireFormat,info.getBrokerPath(),dataOut);
+  dataOut.writeBoolean(info.isBrokerMasterConnector());
+  dataOut.writeBoolean(info.isManageable());
+}

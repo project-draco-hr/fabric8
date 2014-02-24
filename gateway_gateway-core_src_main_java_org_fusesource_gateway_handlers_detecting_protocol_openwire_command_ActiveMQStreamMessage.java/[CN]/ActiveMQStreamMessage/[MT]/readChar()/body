@@ -1,0 +1,36 @@
+{
+  initializeReading();
+  try {
+    this.dataIn.mark(17);
+    int type=this.dataIn.read();
+    if (type == -1) {
+      throw new OpenwireException("reached end of data");
+    }
+    if (type == MarshallingSupport.CHAR_TYPE) {
+      return this.dataIn.readChar();
+    }
+    if (type == MarshallingSupport.NULL) {
+      this.dataIn.reset();
+      throw new NullPointerException("Cannot convert NULL value to char.");
+    }
+ else {
+      this.dataIn.reset();
+      throw new OpenwireException(" not a char type");
+    }
+  }
+ catch (  NumberFormatException mfe) {
+    try {
+      this.dataIn.reset();
+    }
+ catch (    IOException ioe) {
+      throw new OpenwireException(ioe);
+    }
+    throw mfe;
+  }
+catch (  EOFException e) {
+    throw new OpenwireException(e);
+  }
+catch (  IOException e) {
+    throw new OpenwireException(e);
+  }
+}

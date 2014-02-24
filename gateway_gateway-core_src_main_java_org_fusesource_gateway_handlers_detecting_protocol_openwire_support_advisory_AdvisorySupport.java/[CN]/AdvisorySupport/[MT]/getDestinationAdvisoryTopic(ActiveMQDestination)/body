@@ -1,0 +1,14 @@
+{
+switch (destination.getDestinationType()) {
+case ActiveMQDestination.QUEUE_TYPE:
+    return QUEUE_ADVISORY_TOPIC;
+case ActiveMQDestination.TOPIC_TYPE:
+  return TOPIC_ADVISORY_TOPIC;
+case ActiveMQDestination.TEMP_QUEUE_TYPE:
+return TEMP_QUEUE_ADVISORY_TOPIC;
+case ActiveMQDestination.TEMP_TOPIC_TYPE:
+return TEMP_TOPIC_ADVISORY_TOPIC;
+default :
+throw new RuntimeException("Unknown destination type: " + destination.getDestinationType());
+}
+}

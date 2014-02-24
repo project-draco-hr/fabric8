@@ -1,0 +1,15 @@
+{
+  if (wireFormat.isCacheEnabled()) {
+    Short index=wireFormat.getMarshallCacheIndex(o);
+    if (bs.readBoolean()) {
+      dataOut.writeShort(index.shortValue());
+      wireFormat.tightMarshalNestedObject2(o,dataOut,bs);
+    }
+ else {
+      dataOut.writeShort(index.shortValue());
+    }
+  }
+ else {
+    wireFormat.tightMarshalNestedObject2(o,dataOut,bs);
+  }
+}

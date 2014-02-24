@@ -1,0 +1,9 @@
+{
+  DestinationInfo info=(DestinationInfo)o;
+  super.looseMarshal(wireFormat,o,dataOut);
+  looseMarshalCachedObject(wireFormat,(DataStructure)info.getConnectionId(),dataOut);
+  looseMarshalCachedObject(wireFormat,(DataStructure)info.getDestination(),dataOut);
+  dataOut.writeByte(info.getOperationType());
+  looseMarshalLong(wireFormat,info.getTimeout(),dataOut);
+  looseMarshalObjectArray(wireFormat,info.getBrokerPath(),dataOut);
+}

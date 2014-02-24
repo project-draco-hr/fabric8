@@ -1,0 +1,15 @@
+{
+  if (dis.readBoolean()) {
+    byte dataType=dis.readByte();
+    DataStreamMarshaller dsm=(DataStreamMarshaller)dataMarshallers[dataType & 0xFF];
+    if (dsm == null) {
+      throw new IOException("Unknown data type: " + dataType);
+    }
+    DataStructure data=dsm.createObject();
+    dsm.looseUnmarshal(this,data,dis);
+    return data;
+  }
+ else {
+    return null;
+  }
+}

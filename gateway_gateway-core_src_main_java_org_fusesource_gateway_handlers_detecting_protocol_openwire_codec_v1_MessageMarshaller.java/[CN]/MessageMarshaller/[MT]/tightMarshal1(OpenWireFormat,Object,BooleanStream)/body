@@ -1,0 +1,28 @@
+{
+  Message info=(Message)o;
+  info.beforeMarshall(wireFormat);
+  int rc=super.tightMarshal1(wireFormat,o,bs);
+  rc+=tightMarshalCachedObject1(wireFormat,(DataStructure)info.getProducerId(),bs);
+  rc+=tightMarshalCachedObject1(wireFormat,(DataStructure)info.getDestination(),bs);
+  rc+=tightMarshalCachedObject1(wireFormat,(DataStructure)info.getTransactionId(),bs);
+  rc+=tightMarshalCachedObject1(wireFormat,(DataStructure)info.getOriginalDestination(),bs);
+  rc+=tightMarshalNestedObject1(wireFormat,(DataStructure)info.getMessageId(),bs);
+  rc+=tightMarshalCachedObject1(wireFormat,(DataStructure)info.getOriginalTransactionId(),bs);
+  rc+=tightMarshalString1(info.getGroupID(),bs);
+  rc+=tightMarshalString1(info.getCorrelationId(),bs);
+  bs.writeBoolean(info.isPersistent());
+  rc+=tightMarshalLong1(wireFormat,info.getExpiration(),bs);
+  rc+=tightMarshalNestedObject1(wireFormat,(DataStructure)info.getReplyTo(),bs);
+  rc+=tightMarshalLong1(wireFormat,info.getTimestamp(),bs);
+  rc+=tightMarshalString1(info.getType(),bs);
+  rc+=tightMarshalBuffer1(info.getContent(),bs);
+  rc+=tightMarshalBuffer1(info.getMarshalledProperties(),bs);
+  rc+=tightMarshalNestedObject1(wireFormat,(DataStructure)info.getDataStructure(),bs);
+  rc+=tightMarshalCachedObject1(wireFormat,(DataStructure)info.getTargetConsumerId(),bs);
+  bs.writeBoolean(info.isCompressed());
+  rc+=tightMarshalObjectArray1(wireFormat,info.getBrokerPath(),bs);
+  rc+=tightMarshalLong1(wireFormat,info.getArrival(),bs);
+  rc+=tightMarshalString1(info.getUserID(),bs);
+  bs.writeBoolean(info.isRecievedByDFBridge());
+  return rc + 9;
+}

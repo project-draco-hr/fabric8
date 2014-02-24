@@ -1,0 +1,11 @@
+{
+  super.tightMarshal2(wireFormat,o,dataOut,bs);
+  BrokerInfo info=(BrokerInfo)o;
+  tightMarshalCachedObject2(wireFormat,(DataStructure)info.getBrokerId(),dataOut,bs);
+  tightMarshalString2(info.getBrokerURL(),dataOut,bs);
+  tightMarshalObjectArray2(wireFormat,info.getPeerBrokerInfos(),dataOut,bs);
+  tightMarshalString2(info.getBrokerName(),dataOut,bs);
+  bs.readBoolean();
+  bs.readBoolean();
+  bs.readBoolean();
+}

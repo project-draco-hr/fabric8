@@ -1,0 +1,21 @@
+{
+  super.tightMarshal2(wireFormat,o,dataOut,bs);
+  ConsumerInfo info=(ConsumerInfo)o;
+  tightMarshalCachedObject2(wireFormat,(DataStructure)info.getConsumerId(),dataOut,bs);
+  bs.readBoolean();
+  tightMarshalCachedObject2(wireFormat,(DataStructure)info.getDestination(),dataOut,bs);
+  dataOut.writeInt(info.getPrefetchSize());
+  dataOut.writeInt(info.getMaximumPendingMessageLimit());
+  bs.readBoolean();
+  tightMarshalString2(info.getSelector(),dataOut,bs);
+  tightMarshalString2(info.getSubscriptionName(),dataOut,bs);
+  bs.readBoolean();
+  bs.readBoolean();
+  bs.readBoolean();
+  dataOut.writeByte(info.getPriority());
+  tightMarshalObjectArray2(wireFormat,info.getBrokerPath(),dataOut,bs);
+  tightMarshalNestedObject2(wireFormat,(DataStructure)info.getAdditionalPredicate(),dataOut,bs);
+  bs.readBoolean();
+  bs.readBoolean();
+  bs.readBoolean();
+}

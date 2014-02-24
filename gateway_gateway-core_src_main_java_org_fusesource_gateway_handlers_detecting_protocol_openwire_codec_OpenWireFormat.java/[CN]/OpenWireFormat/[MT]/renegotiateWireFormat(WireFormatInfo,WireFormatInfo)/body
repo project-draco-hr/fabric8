@@ -1,0 +1,38 @@
+{
+  if (preferedWireFormatInfo == null || info == null) {
+    throw new IllegalStateException("Wireformat cannot not be renegotiated.");
+  }
+  this.setVersion(min(preferedWireFormatInfo.getVersion(),info.getVersion()));
+  info.setVersion(this.getVersion());
+  this.setMaxFrameSize(min(preferedWireFormatInfo.getMaxFrameSize(),info.getMaxFrameSize()));
+  info.setMaxFrameSize(this.getMaxFrameSize());
+  this.stackTraceEnabled=info.isStackTraceEnabled() && preferedWireFormatInfo.isStackTraceEnabled();
+  info.setStackTraceEnabled(this.stackTraceEnabled);
+  this.tcpNoDelayEnabled=info.isTcpNoDelayEnabled() && preferedWireFormatInfo.isTcpNoDelayEnabled();
+  info.setTcpNoDelayEnabled(this.tcpNoDelayEnabled);
+  this.cacheEnabled=info.isCacheEnabled() && preferedWireFormatInfo.isCacheEnabled();
+  info.setCacheEnabled(this.cacheEnabled);
+  this.tightEncodingEnabled=info.isTightEncodingEnabled() && preferedWireFormatInfo.isTightEncodingEnabled();
+  info.setTightEncodingEnabled(this.tightEncodingEnabled);
+  this.sizePrefixDisabled=info.isSizePrefixDisabled() && preferedWireFormatInfo.isSizePrefixDisabled();
+  info.setSizePrefixDisabled(this.sizePrefixDisabled);
+  if (cacheEnabled) {
+    int size=Math.min(preferedWireFormatInfo.getCacheSize(),info.getCacheSize());
+    info.setCacheSize(size);
+    if (size == 0) {
+      size=MARSHAL_CACHE_SIZE;
+    }
+    marshallCache=new DataStructure[size];
+    unmarshallCache=new DataStructure[size];
+    nextMarshallCacheIndex=0;
+    nextMarshallCacheEvictionIndex=0;
+    marshallCacheMap=new HashMap<DataStructure,Short>();
+  }
+ else {
+    marshallCache=null;
+    unmarshallCache=null;
+    nextMarshallCacheIndex=0;
+    nextMarshallCacheEvictionIndex=0;
+    marshallCacheMap=null;
+  }
+}

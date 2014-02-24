@@ -1,0 +1,17 @@
+{
+  if (wireFormat.isCacheEnabled()) {
+    Short index=wireFormat.getMarshallCacheIndex(o);
+    dataOut.writeBoolean(index == null);
+    if (index == null) {
+      index=wireFormat.addToMarshallCache(o);
+      dataOut.writeShort(index.shortValue());
+      wireFormat.looseMarshalNestedObject(o,dataOut);
+    }
+ else {
+      dataOut.writeShort(index.shortValue());
+    }
+  }
+ else {
+    wireFormat.looseMarshalNestedObject(o,dataOut);
+  }
+}

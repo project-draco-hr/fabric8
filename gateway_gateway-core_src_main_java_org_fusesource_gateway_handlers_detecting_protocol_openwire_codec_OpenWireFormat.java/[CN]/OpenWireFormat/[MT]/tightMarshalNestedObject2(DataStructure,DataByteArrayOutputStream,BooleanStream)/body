@@ -1,0 +1,17 @@
+{
+  if (!bs.readBoolean()) {
+    return;
+  }
+  byte type=o.getDataStructureType();
+  ds.writeByte(type);
+  if (o.isMarshallAware() && bs.readBoolean()) {
+    throw new IOException("Corrupted stream");
+  }
+ else {
+    DataStreamMarshaller dsm=(DataStreamMarshaller)dataMarshallers[type & 0xFF];
+    if (dsm == null) {
+      throw new IOException("Unknown data type: " + type);
+    }
+    dsm.tightMarshal2(this,o,ds,bs);
+  }
+}

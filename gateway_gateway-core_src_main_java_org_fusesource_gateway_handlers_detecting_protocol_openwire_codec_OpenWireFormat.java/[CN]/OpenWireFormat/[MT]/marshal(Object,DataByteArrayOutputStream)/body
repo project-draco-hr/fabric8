@@ -1,0 +1,45 @@
+{
+  if (cacheEnabled) {
+    runMarshallCacheEvictionSweep();
+  }
+  int size=1;
+  if (o != null) {
+    DataStructure c=(DataStructure)o;
+    byte type=c.getDataStructureType();
+    DataStreamMarshaller dsm=(DataStreamMarshaller)dataMarshallers[type & 0xFF];
+    if (dsm == null) {
+      throw new IOException("Unknown data type: " + type);
+    }
+    if (tightEncodingEnabled) {
+      BooleanStream bs=new BooleanStream();
+      size+=dsm.tightMarshal1(this,c,bs);
+      size+=bs.marshalledSize();
+      if (!sizePrefixDisabled) {
+        dataOut.writeInt(size);
+      }
+      dataOut.writeByte(type);
+      bs.marshal(dataOut);
+      dsm.tightMarshal2(this,c,dataOut,bs);
+    }
+ else {
+      DataByteArrayOutputStream looseOut=dataOut;
+      if (!sizePrefixDisabled) {
+        bytesOut.restart();
+        looseOut=bytesOut;
+      }
+      looseOut.writeByte(type);
+      dsm.looseMarshal(this,c,looseOut);
+      if (!sizePrefixDisabled) {
+        Buffer sequence=bytesOut.toBuffer();
+        dataOut.writeInt(sequence.getLength());
+        dataOut.write(sequence.getData(),sequence.getOffset(),sequence.getLength());
+      }
+    }
+  }
+ else {
+    if (!sizePrefixDisabled) {
+      dataOut.writeInt(size);
+    }
+    dataOut.writeByte(NULL_TYPE);
+  }
+}

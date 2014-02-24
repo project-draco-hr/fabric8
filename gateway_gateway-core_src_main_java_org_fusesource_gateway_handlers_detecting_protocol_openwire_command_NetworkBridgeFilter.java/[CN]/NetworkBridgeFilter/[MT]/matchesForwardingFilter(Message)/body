@@ -1,0 +1,17 @@
+{
+  if (contains(message.getBrokerPath(),networkBrokerId)) {
+    return false;
+  }
+  int hops=message.getBrokerPath() == null ? 0 : message.getBrokerPath().length;
+  if (hops >= networkTTL) {
+    return false;
+  }
+  if (message.isAdvisory() && message.getDataStructure() != null && message.getDataStructure().getDataStructureType() == CommandTypes.CONSUMER_INFO) {
+    ConsumerInfo info=(ConsumerInfo)message.getDataStructure();
+    hops=info.getBrokerPath() == null ? 0 : info.getBrokerPath().length;
+    if (hops >= networkTTL) {
+      return false;
+    }
+  }
+  return true;
+}

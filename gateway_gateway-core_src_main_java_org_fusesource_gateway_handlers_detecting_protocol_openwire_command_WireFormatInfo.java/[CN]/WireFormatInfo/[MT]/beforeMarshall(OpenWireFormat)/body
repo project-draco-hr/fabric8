@@ -1,0 +1,9 @@
+{
+  if (marshalledProperties == null && properties != null) {
+    ByteArrayOutputStream baos=new ByteArrayOutputStream();
+    DataOutputStream os=new DataOutputStream(baos);
+    MarshallingSupport.marshalPrimitiveMap(properties,os);
+    os.close();
+    marshalledProperties=baos.toBuffer();
+  }
+}
