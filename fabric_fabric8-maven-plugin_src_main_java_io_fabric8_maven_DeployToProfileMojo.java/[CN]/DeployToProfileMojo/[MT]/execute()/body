@@ -4,9 +4,60 @@
     ProjectRequirements requirements=new ProjectRequirements();
     requirements.setRootDependency(rootDependency);
     configureRequirements(requirements);
-    fabricServer=mavenSettings.getServer(fabricServerId);
+    fabricServer=mavenSettings.getServer(serverId);
     if (fabricServer == null) {
-      String message="No <server> element can be found in ~/.m2/settings.xml for the server <id>" + fabricServerId + "</id> so we cannot connect to fabric8!\n\n"+ "Please add the following to your ~/.m2/settings.xml file (using the correct user/password values):\n\n"+ "<servers>\n"+ "  <server>\n"+ "    <id>"+ fabricServerId+ "</id>\n"+ "    <username>admin</username>\n"+ "    <password>admin</password>\n"+ "  </server>\n"+ "</servers>\n";
+      boolean create=false;
+      if (mavenSettings.isInteractiveMode() && mavenSettingsWriter != null) {
+        System.out.println("Maven settings file: " + mavenSettingsFile.getAbsolutePath());
+        System.out.println();
+        System.out.println();
+        System.out.println("There is no <server> section in your ~/.m2/settings.xml file for the server id: " + serverId);
+        System.out.println();
+        System.out.println("You can enter the username/password now and have the settings.xml updated or you can do this by hand if you prefer.");
+        System.out.println();
+        while (true) {
+          String value=readInput("Would you like to update the settings.xml file now? (y/n): ").toLowerCase();
+          if (value.startsWith("n")) {
+            System.out.println();
+            System.out.println();
+            break;
+          }
+ else           if (value.startsWith("y")) {
+            create=true;
+            break;
+          }
+        }
+        if (create) {
+          System.out.println("Please let us know the login details for this server: " + serverId);
+          System.out.println();
+          String userName=readInput("User name: ");
+          String password=readInput("Password: ");
+          System.out.println();
+          fabricServer=new Server();
+          fabricServer.setId(serverId);
+          fabricServer.setUsername(userName);
+          fabricServer.setPassword(password);
+          mavenSettings.addServer(fabricServer);
+          if (mavenSettingsFile.exists()) {
+            int counter=1;
+            while (true) {
+              File backupFile=new File(mavenSettingsFile.getAbsolutePath() + ".backup-" + counter+++ ".xml");
+              if (!backupFile.exists()) {
+                System.out.println("Copied original: " + mavenSettingsFile.getAbsolutePath() + " to: "+ backupFile.getAbsolutePath());
+                Files.copy(mavenSettingsFile,backupFile);
+                break;
+              }
+            }
+          }
+          Map<String,Object> config=new HashMap<String,Object>();
+          mavenSettingsWriter.write(mavenSettingsFile,config,mavenSettings);
+          System.out.println("Updated settings file: " + mavenSettingsFile.getAbsolutePath());
+          System.out.println();
+        }
+      }
+    }
+    if (fabricServer == null) {
+      String message="No <server> element can be found in ~/.m2/settings.xml for the server <id>" + serverId + "</id> so we cannot connect to fabric8!\n\n"+ "Please add the following to your ~/.m2/settings.xml file (using the correct user/password values):\n\n"+ "<servers>\n"+ "  <server>\n"+ "    <id>"+ serverId+ "</id>\n"+ "    <username>admin</username>\n"+ "    <password>admin</password>\n"+ "  </server>\n"+ "</servers>\n";
       getLog().error(message);
       throw new MojoExecutionException(message);
     }
