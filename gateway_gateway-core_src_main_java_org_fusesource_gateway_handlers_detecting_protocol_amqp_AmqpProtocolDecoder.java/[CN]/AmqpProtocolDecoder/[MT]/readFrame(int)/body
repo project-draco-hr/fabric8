@@ -1,10 +1,10 @@
 {
   return new Action<AmqpEvent>(){
     public AmqpEvent apply() throws IOException {
-      Buffer magic=readBytes(8);
-      if (magic != null) {
+      Buffer frameData=readBytes(size);
+      if (frameData != null) {
         nextDecodeAction=readFrameSize;
-        return new AmqpEvent(AmqpEvent.Type.HEADER,magic,new AmqpHeader(magic));
+        return new AmqpEvent(AmqpEvent.Type.FRAME,frameData,null);
       }
  else {
         return null;

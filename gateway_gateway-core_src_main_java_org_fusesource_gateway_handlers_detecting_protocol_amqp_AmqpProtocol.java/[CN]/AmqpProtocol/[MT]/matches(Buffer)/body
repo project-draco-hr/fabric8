@@ -1,8 +1,8 @@
 {
-  if (header.length() < 10) {
+  if (header.length() < PROTOCOL_MAGIC.length()) {
     return false;
   }
  else {
-    return startsWith(header,HEAD_MAGIC) && (indexOf(header,2,MQTT31_TAIL_MAGIC) < 6 || indexOf(header,2,MQTT311_TAIL_MAGIC) < 6);
+    return startsWith(header,PROTOCOL_MAGIC);
   }
 }
