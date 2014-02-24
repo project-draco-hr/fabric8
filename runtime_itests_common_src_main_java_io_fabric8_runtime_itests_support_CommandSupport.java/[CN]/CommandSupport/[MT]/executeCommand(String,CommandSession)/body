@@ -1,12 +1,9 @@
 {
   List<String> tokens=Arrays.asList(cmdstr.split("\\s"));
   String[] header=tokens.get(0).split(":");
-  Assert.assertTrue("Two tokens",header.length == 2);
+  Assert.assertTrue("Two tokens in: " + tokens.get(0),header.length == 2);
   String filter="(&(osgi.command.scope=" + header[0] + ")(osgi.command.function="+ header[1]+ "))";
-  ModuleContext moduleContext=RuntimeLocator.getRequiredRuntime().getModuleContext();
-  AbstractCommand command=(AbstractCommand)ServiceLocator.awaitService(moduleContext,Function.class,filter);
-  List<Object> args=new ArrayList<Object>(tokens);
-  args.remove(0);
-  Object result=command.execute(session,args);
-  return result != null ? result.toString() : null;
+  AbstractCommand command=(AbstractCommand)ServiceLocator.awaitService(Function.class,filter);
+  commandSession.put(AbstractCommand.class.getName(),command);
+  commandSession.execute(cmdstr);
 }

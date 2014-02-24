@@ -1,7 +1,7 @@
 {
   final ArchiveBuilder archive=new ArchiveBuilder("container-upgrade-rollback-test");
   archive.addClasses(RuntimeType.TOMCAT,AnnotatedContextListener.class);
-  archive.addPackage(FabricTestSupport.class.getPackage());
+  archive.addPackage(CommandSupport.class.getPackage());
   archive.setManifest(new Asset(){
     @Override public InputStream openStream(){
       if (ArchiveBuilder.getTargetContainer() == RuntimeType.KARAF) {
@@ -13,7 +13,7 @@
         builder.addImportPackages(RuntimeLocator.class,FabricService.class);
         builder.addImportPackages(AbstractCommand.class,Action.class);
         builder.addImportPackage("org.apache.felix.service.command;status=provisional");
-        builder.addImportPackages(ConfigurationAdmin.class,ServiceTracker.class);
+        builder.addImportPackages(ConfigurationAdmin.class);
         return builder.openStream();
       }
  else {
@@ -25,7 +25,5 @@
     }
   }
 );
-  Archive<?> archive2=archive.getArchive();
-  archive2.toString(true);
-  return archive2;
+  return archive.getArchive();
 }

@@ -1,5 +1,5 @@
 {
-  System.err.println(CommandSupport.executeCommand("fabric:create -n"));
+  System.err.println(CommandSupport.executeCommand("fabric:create --clean -n"));
   ModuleContext moduleContext=RuntimeLocator.getRequiredRuntime().getModuleContext();
   ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(moduleContext,FabricService.class);
   try {
@@ -22,7 +22,7 @@
         List<String> ensembleContainersResult=zooKeeperClusterService.getEnsembleContainers();
         Assert.assertTrue(ensembleContainersResult.contains(cnt1.getId()));
         Assert.assertTrue(ensembleContainersResult.contains(cnt2.getId()));
-        Provision.provisioningSuccess(Arrays.asList(fabricService.getContainers()),FabricTestSupport.PROVISION_TIMEOUT);
+        Provision.provisioningSuccess(Arrays.asList(fabricService.getContainers()),FabricEnsembleSupport.PROVISION_TIMEOUT);
       }
       for (int e=0; e < 3 && addedContainers.size() >= 2 && addedContainers.size() % 2 == 0; e++) {
         Container cnt1=addedContainers.removeFirst();
@@ -38,7 +38,7 @@
         List<String> ensembleContainersResult=zooKeeperClusterService.getEnsembleContainers();
         Assert.assertFalse(ensembleContainersResult.contains(cnt1.getId()));
         Assert.assertFalse(ensembleContainersResult.contains(cnt2.getId()));
-        Provision.provisioningSuccess(Arrays.asList(fabricService.getContainers()),FabricTestSupport.PROVISION_TIMEOUT);
+        Provision.provisioningSuccess(Arrays.asList(fabricService.getContainers()),FabricEnsembleSupport.PROVISION_TIMEOUT);
       }
     }
   finally {

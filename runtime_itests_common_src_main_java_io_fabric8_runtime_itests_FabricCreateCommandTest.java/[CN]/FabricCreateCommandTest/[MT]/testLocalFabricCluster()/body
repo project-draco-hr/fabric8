@@ -1,10 +1,10 @@
 {
-  System.out.println(CommandSupport.executeCommand("fabric:create --clean -n"));
-  FabricService fabricService=FabricTestSupport.getService(FabricService.class);
+  CommandSupport.executeCommand("fabric:create --clean -n");
+  FabricService fabricService=ServiceLocator.getRequiredService(FabricService.class);
   Container[] containers=fabricService.getContainers();
   Assert.assertNotNull("Containers not null",containers);
-  ConfigurationAdmin configurationAdmin=FabricTestSupport.getRequiredService(ConfigurationAdmin.class);
+  ConfigurationAdmin configurationAdmin=ServiceLocator.getRequiredService(ConfigurationAdmin.class);
   org.osgi.service.cm.Configuration configuration=configurationAdmin.getConfiguration(io.fabric8.api.Constants.ZOOKEEPER_CLIENT_PID);
   Dictionary<String,Object> dictionary=configuration.getProperties();
-  Assert.assertEquals("Expected provided zookeeper password","systempassword",dictionary.get("zookeeper.password"));
+  Assert.assertEquals("Expected provided zookeeper password","admin",dictionary.get("zookeeper.password"));
 }

@@ -1,0 +1,24 @@
+{
+  CommandSession commandSession;
+  if (RuntimeType.getRuntimeType() == RuntimeType.KARAF) {
+    ModuleContext moduleContext=RuntimeLocator.getRequiredRuntime().getModuleContext();
+    CommandProcessor commandProcessor=ServiceLocator.awaitService(moduleContext,CommandProcessor.class);
+    commandSession=commandProcessor.createSession(System.in,printStream,printStream);
+    commandSession.put("APPLICATION",System.getProperty("karaf.name"));
+    commandSession.put("USER","karaf");
+  }
+ else {
+    commandSession=new SessionSupport(System.in,printStream){
+      @Override public Object execute(      CharSequence cmdstr) throws Exception {
+        List<String> tokens=Arrays.asList(cmdstr.toString().split("\\s"));
+        List<Object> args=new ArrayList<Object>(tokens);
+        args.remove(0);
+        AbstractCommand command=(AbstractCommand)get(AbstractCommand.class.getName());
+        command.execute(this,args);
+        return null;
+      }
+    }
+;
+  }
+  return commandSession;
+}

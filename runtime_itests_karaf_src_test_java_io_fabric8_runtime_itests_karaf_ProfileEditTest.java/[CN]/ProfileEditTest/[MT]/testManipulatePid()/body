@@ -1,5 +1,5 @@
 {
-  System.err.println(CommandSupport.executeCommand("fabric:create -n"));
+  System.err.println(CommandSupport.executeCommand("fabric:create --clean -n"));
   ModuleContext moduleContext=RuntimeLocator.getRequiredRuntime().getModuleContext();
   ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(moduleContext,FabricService.class);
   try {
@@ -59,6 +59,7 @@
     Assert.assertNotNull(configurations);
     Assert.assertTrue(configurations.containsKey("my.pid2"));
     Map<String,String> myPid2=configurations.get("my.pid2");
+    System.out.println("my.pid2 => " + myPid2);
     Assert.assertNotNull(myPid2);
     Assert.assertTrue(myPid2.containsKey("key1"));
     Assert.assertEquals("value1",myPid2.get("key1"));

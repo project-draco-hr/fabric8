@@ -1,3 +1,11 @@
 {
-  return executeCommand(cmdstr,new DummyCommandSession());
+  ByteArrayOutputStream baos=new ByteArrayOutputStream();
+  PrintStream printStream=new PrintStream(baos);
+  System.out.println(cmdstr);
+  CommandSession commandSession=getCommandSession(printStream);
+  executeCommand(cmdstr,commandSession);
+  printStream.flush();
+  String result=baos.toString();
+  System.out.println(result);
+  return result;
 }

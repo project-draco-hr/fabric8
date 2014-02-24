@@ -1,11 +1,13 @@
 {
-  StringBuffer aggregated=new StringBuffer();
+  ByteArrayOutputStream baos=new ByteArrayOutputStream();
+  PrintStream printStream=new PrintStream(baos);
+  CommandSession commandSession=getCommandSession(printStream);
   for (  String cmdstr : commands) {
-    String result=executeCommand(cmdstr,new DummyCommandSession());
-    if (result != null) {
-      aggregated.append(result);
-    }
-    return result;
+    System.out.println(cmdstr);
+    executeCommand(cmdstr,commandSession);
   }
-  return aggregated.length() > 0 ? aggregated.toString() : null;
+  printStream.flush();
+  String result=baos.toString();
+  System.out.println(result);
+  return result;
 }
