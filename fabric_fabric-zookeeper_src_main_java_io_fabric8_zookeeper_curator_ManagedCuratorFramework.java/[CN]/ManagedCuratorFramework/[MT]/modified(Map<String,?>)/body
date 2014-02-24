@@ -1,10 +1,12 @@
 {
+  CuratorConfig config=new CuratorConfig();
   configurer.configure(configuration,this);
-  if (!Strings.isNullOrEmpty(zookeeperUrl)) {
+  configurer.configure(configuration,config);
+  if (!Strings.isNullOrEmpty(config.getZookeeperUrl())) {
     State prev=state.get();
-    Map<String,?> oldConfiguration=prev != null ? prev.configuration : null;
-    if (isRestartRequired(oldConfiguration,configuration)) {
-      State next=new State(configuration);
+    CuratorConfig oldConfiguration=prev != null ? prev.configuration : null;
+    if (!config.equals(oldConfiguration)) {
+      State next=new State(config);
       if (state.compareAndSet(prev,next)) {
         executor.submit(next);
         if (prev != null) {

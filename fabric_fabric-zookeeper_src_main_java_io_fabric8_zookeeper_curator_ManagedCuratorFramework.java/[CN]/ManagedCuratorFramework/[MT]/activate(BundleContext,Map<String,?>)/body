@@ -1,8 +1,9 @@
 {
   this.bundleContext=bundleContext;
-  configurer.configure(configuration,this);
-  if (!Strings.isNullOrEmpty(zookeeperUrl)) {
-    State next=new State(configuration);
+  CuratorConfig config=new CuratorConfig();
+  configurer.configure(configuration,config);
+  if (!Strings.isNullOrEmpty(config.getZookeeperUrl())) {
+    State next=new State(config);
     if (state.compareAndSet(null,next)) {
       executor.submit(next);
     }
