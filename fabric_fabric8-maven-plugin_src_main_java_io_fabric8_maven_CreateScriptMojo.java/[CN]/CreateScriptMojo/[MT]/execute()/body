@@ -1,0 +1,16 @@
+{
+  try {
+    DependencyDTO rootDependency=loadRootDependency();
+    ProjectRequirements requirements=new ProjectRequirements();
+    requirements.setRootDependency(rootDependency);
+    configureRequirements(requirements);
+    generateScript(requirements,outputFile);
+    projectHelper.attachArtifact(project,artifactType,artifactClassifier,outputFile);
+  }
+ catch (  MojoExecutionException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new MojoExecutionException("Error executing",e);
+  }
+}
