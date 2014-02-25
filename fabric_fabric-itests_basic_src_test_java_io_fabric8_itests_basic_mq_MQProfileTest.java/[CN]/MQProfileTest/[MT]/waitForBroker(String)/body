@@ -10,6 +10,12 @@
       @Override public void onServiceAdd(      DiscoveryEvent discoveryEvent){
         System.out.println("Service added:" + discoveryEvent.getServiceName());
         serviceLatch.countDown();
+        try {
+          discoveryAgent.stop();
+        }
+ catch (        Exception e) {
+          e.printStackTrace();
+        }
       }
       @Override public void onServiceRemove(      DiscoveryEvent discoveryEvent){
         System.out.println("Service removed:" + discoveryEvent.getServiceName());
