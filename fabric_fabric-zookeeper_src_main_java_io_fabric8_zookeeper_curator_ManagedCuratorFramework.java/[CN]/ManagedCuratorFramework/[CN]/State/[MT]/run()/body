@@ -16,9 +16,7 @@
     if (!closed.get()) {
       curator=buildCuratorFramework(configuration);
       curator.getConnectionStateListenable().addListener(this,executor);
-      if (curator.getZookeeperClient().isConnected()) {
-        stateChanged(curator,ConnectionState.CONNECTED);
-      }
+      curator.start();
       CuratorFrameworkLocator.bindCurator(curator);
     }
   }
