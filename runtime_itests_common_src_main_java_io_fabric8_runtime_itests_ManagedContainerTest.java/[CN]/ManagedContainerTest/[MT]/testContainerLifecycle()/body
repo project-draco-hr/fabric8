@@ -1,0 +1,14 @@
+{
+  RuntimeType runtimeType=RuntimeType.getRuntimeType(System.getProperty("target.container"));
+  ContainerConfigurationBuilder builder=ContainerConfigurationBuilder.create(runtimeType);
+  ContainerConfiguration configuration=builder.setTargetDirectory("target/managed-container").getConfiguration();
+  ManagedContainer<?> container=ManagedContainer.Factory.create(configuration);
+  Assert.assertNotNull("ManagedContainer not null",container);
+  try {
+    Assert.assertNotNull("Container home not null",container.getContainerHome());
+    container.start();
+  }
+  finally {
+    container.destroy();
+  }
+}

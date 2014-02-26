@@ -1,0 +1,12 @@
+{
+  ServiceLoader<ContainerConfigurationBuilder> loader=ServiceLoader.load(ContainerConfigurationBuilder.class);
+  Iterator<ContainerConfigurationBuilder> iterator=loader.iterator();
+  while (iterator.hasNext()) {
+    ContainerConfigurationBuilder configurationBuilder=iterator.next();
+    ContainerConfiguration auxconfig=configurationBuilder.internalConfiguration();
+    if (auxconfig.getRuntimeType() == type) {
+      return configurationBuilder;
+    }
+  }
+  throw new IllegalStateException("Cannot obtain container configuration service for: " + type);
+}

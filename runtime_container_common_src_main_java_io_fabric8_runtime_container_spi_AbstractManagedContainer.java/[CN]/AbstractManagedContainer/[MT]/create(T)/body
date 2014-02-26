@@ -1,0 +1,28 @@
+{
+  if (state != null)   throw new IllegalStateException("Cannot create container in state: " + state);
+  this.configuration=configuration;
+  boolean useShrinkwrap=System.getProperty("shrinkwrap.resolver") != null;
+  for (  MavenCoordinates artefact : configuration.getMavenCoordinates()) {
+    File zipfile=useShrinkwrap ? shrinkwrapResolve(artefact) : localResolve(artefact);
+    GenericArchive archive=ShrinkWrap.createFromZipFile(GenericArchive.class,zipfile);
+    ExplodedExporter exporter=archive.as(ExplodedExporter.class);
+    File targetdir=configuration.getTargetDirectory();
+    if (!targetdir.isDirectory() && !targetdir.mkdirs())     throw new IllegalStateException("Cannot create target dir: " + targetdir);
+    if (containerHome == null) {
+      exporter.exportExploded(targetdir,"");
+      File[] childDirs=targetdir.listFiles();
+      if (childDirs.length != 1)       throw new IllegalStateException("Expected one child directory, but was: " + Arrays.asList(childDirs));
+      containerHome=childDirs[0];
+    }
+ else {
+      exporter.exportExploded(containerHome,"");
+    }
+  }
+  state=State.CREATED;
+  try {
+    doConfigure(configuration);
+  }
+ catch (  Exception ex) {
+    throw new LifecycleException("Cannot configure container",ex);
+  }
+}

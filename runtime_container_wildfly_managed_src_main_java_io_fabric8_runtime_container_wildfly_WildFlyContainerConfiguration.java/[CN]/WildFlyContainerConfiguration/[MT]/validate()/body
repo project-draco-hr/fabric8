@@ -1,0 +1,16 @@
+{
+  if (getMavenCoordinates().isEmpty()) {
+    Properties properties=new Properties();
+    try {
+      properties.load(getClass().getResourceAsStream("version.properties"));
+    }
+ catch (    IOException ex) {
+      throw new IllegalStateException("Cannot load version.properties",ex);
+    }
+    String wildflyVersion=properties.getProperty("wildfly.version");
+    String projectVersion=properties.getProperty("project.version");
+    addMavenCoordinates(MavenCoordinates.create("org.wildfly","wildfly-dist",wildflyVersion,"zip",null));
+    addMavenCoordinates(MavenCoordinates.create("io.fabric8.runtime","fabric-runtime-container-wildfly-patch",projectVersion,"zip",null));
+  }
+  super.validate();
+}

@@ -1,0 +1,7 @@
+{
+  File userHome=new File(System.getProperty("user.home"));
+  File repodir=new File(userHome,".m2/repository");
+  File artefactPath=new File(repodir,artefact.getArtifactPath());
+  if (!artefactPath.isFile())   throw new IllegalStateException("Cannot obtain maven artefact: " + artefact);
+  return artefactPath;
+}

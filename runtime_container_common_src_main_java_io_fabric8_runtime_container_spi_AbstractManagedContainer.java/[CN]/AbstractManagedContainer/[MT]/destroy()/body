@@ -1,0 +1,19 @@
+{
+  assertNotDestroyed();
+  if (state == State.STARTED) {
+    try {
+      stop();
+    }
+ catch (    Exception ex) {
+    }
+  }
+  try {
+    doDestroy(configuration);
+  }
+ catch (  Exception ex) {
+    throw new LifecycleException("Cannot destroy container",ex);
+  }
+ finally {
+    state=State.DESTROYED;
+  }
+}
