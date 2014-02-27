@@ -1,21 +1,7 @@
 {
   if (startCounter.addAndGet(1) == 1) {
     running.set(true);
-    if (curator == null) {
-      LOG.info("Using local ZKClient");
-      managedZkClient=true;
-      CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().connectString(System.getProperty("zookeeper.url","localhost:2181")).retryPolicy(new RetryOneTime(1000)).connectionTimeoutMs(10000);
-      String password=System.getProperty("zookeeper.password","admin");
-      if (password != null && !password.isEmpty()) {
-        builder.aclProvider(new CuratorACLManager());
-        builder.authorization("digest",("fabric:" + password).getBytes());
-      }
-      CuratorFramework client=builder.build();
-      client.start();
-      client.getZookeeperClient().blockUntilConnectedOrTimedOut();
-      curator=client;
-    }
- else {
+    if (curator != null) {
       managedZkClient=false;
     }
     getGroup().add(new GroupListener<ActiveMQNode>(){

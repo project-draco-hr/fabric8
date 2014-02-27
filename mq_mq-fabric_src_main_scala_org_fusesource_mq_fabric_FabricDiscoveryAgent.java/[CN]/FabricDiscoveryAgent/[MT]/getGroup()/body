@@ -1,6 +1,7 @@
 {
   if (group == null) {
-    group=new ZooKeeperMultiGroup<ActiveMQNode>(curator,"/fabric/registry/clusters/fusemq/" + groupName,ActiveMQNode.class);
+    factory=ManagedGroupFactoryBuilder.create(curator,getClass().getClassLoader(),this);
+    group=(MultiGroup)factory.createMultiGroup("/fabric/registry/clusters/fusemq/" + groupName,ActiveMQNode.class);
   }
   return group;
 }

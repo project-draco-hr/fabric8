@@ -4,7 +4,7 @@
     closeQuietly(group);
   }
   if (curator != null) {
-    group=new ZooKeeperGroup<T>(curator,path,clazz);
+    group=createGroup(curator,path,clazz);
     group.update(state);
     for (    GroupListener<T> listener : listeners) {
       group.add(listener);
