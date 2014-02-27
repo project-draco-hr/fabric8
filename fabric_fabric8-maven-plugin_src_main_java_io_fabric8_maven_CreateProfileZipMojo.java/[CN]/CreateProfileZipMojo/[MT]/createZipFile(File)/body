@@ -1,0 +1,17 @@
+{
+  outputFile.getParentFile().mkdirs();
+  OutputStream os=new FileOutputStream(outputFile);
+  ZipOutputStream zos=new ZipOutputStream(os);
+  try {
+    String path="";
+    FileFilter filter=null;
+    zipDir(profileBuildDir,zos,path,filter);
+  }
+  finally {
+    try {
+      zos.close();
+    }
+ catch (    Exception e) {
+    }
+  }
+}

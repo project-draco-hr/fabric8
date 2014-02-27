@@ -1,0 +1,15 @@
+{
+  File[] files=profileBuildDir.listFiles();
+  if (files != null) {
+    profileConfigDir.mkdirs();
+    for (    File file : files) {
+      File outFile=new File(profileConfigDir,file.getName());
+      if (file.isDirectory()) {
+        copyProfileConfigFiles(file,outFile);
+      }
+ else {
+        Files.copy(file,outFile);
+      }
+    }
+  }
+}
