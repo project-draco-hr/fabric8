@@ -1,0 +1,24 @@
+{
+  if (containers.isEmpty()) {
+    return;
+  }
+  StringBuilder sb=new StringBuilder();
+  sb.append(" ");
+  for (  Container c : containers) {
+    sb.append(c.getId()).append(" ");
+  }
+  System.out.println("Waiting for containers: [" + sb.toString() + "] to successfully provision");
+  for (int i=0; i < 3; i++) {
+    if (!containerStatus(containers,timeout)) {
+      StringBuilder error=new StringBuilder();
+      for (      Container container : containers) {
+        if (!container.isAliveAndOK()) {
+          onFailed.call(container);
+          error.append("Container " + container.getId() + " failed to provision. Status:"+ container.getProvisionStatus()+ " Exception:"+ container.getProvisionException()).append("\n");
+        }
+      }
+      throw new Exception(error.toString());
+    }
+    Thread.sleep(1000);
+  }
+}
