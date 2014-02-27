@@ -1,0 +1,21 @@
+{
+  ProcessBuilder builder=new ProcessBuilder(commands).directory(workDir).redirectErrorStream(true);
+  Process process=builder.start();
+  BufferedReader reader=new BufferedReader(new InputStreamReader(process.getInputStream()));
+  try {
+    while (true) {
+      String line=reader.readLine();
+      if (line == null)       break;
+      System.out.println(line);
+    }
+  }
+ catch (  Exception e) {
+    LOG.error("Failed to process results of " + commands + ": "+ e,e);
+  }
+ finally {
+    Closeables.closeQuitely(reader);
+  }
+  int exitCode=process.waitFor();
+  System.out.println("command exit code: " + exitCode);
+  assertEquals("process exit code for " + commands,0,exitCode);
+}
