@@ -1,10 +1,6 @@
 {
+  if (value == null)   throw new IllegalArgumentException("Null value");
   LOG.debug("unbind: {}",value);
-  if (value != null) {
-    ref.compareAndSet(value,null);
-  }
- else {
-    ref.set(null);
-  }
+  ref.compareAndSet(value,null);
   latch.countDown();
 }

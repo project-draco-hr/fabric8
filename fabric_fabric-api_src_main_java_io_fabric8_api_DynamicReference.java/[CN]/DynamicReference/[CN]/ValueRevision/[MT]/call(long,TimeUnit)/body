@@ -1,0 +1,13 @@
+{
+  try {
+    if (!latch.await(timeout,unit)) {
+      throw new TimeoutException(String.format(TIMEOUT_MESSAGE_FORMAT,name));
+    }
+ else {
+      return ref.get();
+    }
+  }
+ catch (  InterruptedException ex) {
+    return null;
+  }
+}

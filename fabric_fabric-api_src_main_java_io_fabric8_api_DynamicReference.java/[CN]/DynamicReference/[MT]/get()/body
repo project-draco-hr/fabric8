@@ -1,8 +1,8 @@
 {
-  T value=currentRevision().get(timeout,unit);
-  while (value == null) {
-    LOG.warn("Unbound while waiting for: {}",name);
-    value=currentRevision().get(timeout,unit);
+  try {
+    return callInternal();
   }
-  return value;
+ catch (  TimeoutException ex) {
+    throw new DynamicReferenceException(String.format(TIMEOUT_MESSAGE_FORMAT,name));
+  }
 }
