@@ -2,7 +2,9 @@
   if (startCounter.decrementAndGet() == 0) {
     running.set(false);
     try {
-      getGroup().close();
+      if (group != null) {
+        group.close();
+      }
     }
  catch (    Throwable ignore) {
     }
