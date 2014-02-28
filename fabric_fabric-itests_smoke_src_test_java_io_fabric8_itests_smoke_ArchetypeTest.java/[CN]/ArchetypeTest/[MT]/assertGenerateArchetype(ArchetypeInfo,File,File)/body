@@ -23,11 +23,12 @@
   File projectDir=new File(workDir,artifactId);
   assertFolderExists(projectDir);
   commands=new ArrayList<String>();
-  commands.addAll(Arrays.asList(mvn,"clean","install"));
+  commands.addAll(Arrays.asList(mvn,"--settings",mavenSettingsFile.getCanonicalPath(),"clean","fabric8:deploy"));
   System.out.println();
   System.out.println();
   System.out.println("======================================================================================");
   System.out.println("building with maven in dir: " + projectDir.getCanonicalPath());
+  System.out.println(commands);
   System.out.println("======================================================================================");
   System.out.println();
   System.out.println();

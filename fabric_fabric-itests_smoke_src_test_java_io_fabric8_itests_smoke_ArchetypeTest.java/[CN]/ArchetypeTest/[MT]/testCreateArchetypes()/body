@@ -1,25 +1,41 @@
 {
   List<ArchetypeInfo> archetypes=findArchetypes();
-  System.out.println("Archetypes: " + archetypes);
-  System.out.println();
-  for (  ArchetypeInfo archetype : archetypes) {
-    File workDir=new File(System.getProperty("basedir","."),"target/generated-projects");
-    workDir.mkdirs();
-    assertGenerateArchetype(archetype,workDir);
-  }
-  SortedMap<String,String> sorted=new TreeMap<String,String>(System.getenv());
-  Set<Map.Entry<String,String>> entries=sorted.entrySet();
-  for (  Map.Entry<String,String> entry : entries) {
-    System.out.println("   env:  " + entry.getKey() + " = "+ entry.getValue());
-  }
+  File mavenSettingsFile=getMavenSettingsFile();
+  assertFileExists(mavenSettingsFile);
   System.err.println(executeCommand("fabric:create -n"));
-  String jvmopts="-Xms512m -XX:MaxPermSize=512m -Xmx2048m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5008";
-  Set<Container> containers=ContainerBuilder.child(1).withName("child").withJvmOpts(jvmopts).assertProvisioningResult().build();
+  Set<Container> containers=new HashSet<Container>();
   try {
-    assertEquals("One container",1,containers.size());
-    Container child=containers.iterator().next();
-    assertEquals("child1",child.getId());
-    assertEquals("root",child.getParent().getId());
+    ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+    try {
+      FabricService fabricService=fabricProxy.getService();
+      String wrongUrl="https://repo.fusesource.com/nexus/content/groups/public/";
+      boolean isWrong=true;
+      for (int i=0; i < 10; i++) {
+        String mavenUploadUrl=fabricService.getMavenRepoUploadURI().toString();
+        System.out.println("Maven upload URL: " + mavenUploadUrl);
+        isWrong=mavenUploadUrl.equals(wrongUrl);
+        if (isWrong) {
+          Thread.sleep(500);
+        }
+ else {
+          break;
+        }
+      }
+      assertFalse("maven upload URL should not be: " + wrongUrl,isWrong);
+    }
+  finally {
+      fabricProxy.close();
+    }
+    for (    ArchetypeInfo archetype : archetypes) {
+      File workDir=new File(System.getProperty("basedir","."),"target/generated-projects");
+      workDir.mkdirs();
+      assertGenerateArchetype(archetype,workDir,mavenSettingsFile);
+    }
+    SortedMap<String,String> sorted=new TreeMap<String,String>(System.getenv());
+    Set<Map.Entry<String,String>> entries=sorted.entrySet();
+    for (    Map.Entry<String,String> entry : entries) {
+      System.out.println("   env:  " + entry.getKey() + " = "+ entry.getValue());
+    }
   }
   finally {
     ContainerBuilder.destroy(containers);
