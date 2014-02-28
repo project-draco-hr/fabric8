@@ -8,8 +8,8 @@
   System.out.println();
   System.out.println("in folder: " + workDir.getCanonicalPath() + " from "+ archetype);
   List<String> commands=new ArrayList<String>();
-  String groupId="cheese";
-  String artifactId="my-" + archetype.artifactId;
+  String groupId="dummy.itest";
+  String artifactId="mytest-" + archetype.artifactId;
   String archetypePostfix="-archetype";
   if (artifactId.endsWith(archetypePostfix)) {
     artifactId=artifactId.substring(0,artifactId.length() - archetypePostfix.length());
@@ -18,12 +18,14 @@
   String packageName=(groupId + "." + artifactId).replace('-','.');
   String mvn="mvn";
   commands.addAll(Arrays.asList(mvn,"org.apache.maven.plugins:maven-archetype-plugin:2.2:generate",property("interactiveMode","false"),property("archetypeGroupId",archetype.groupId),property("archetypeArtifactId",archetype.artifactId),property("archetypeVersion",archetype.version),property("groupId",groupId),property("artifactId",artifactId),property("version",version),property("package",packageName)));
-  String repository=archetype.repository;
   assertExecuteCommand(commands,workDir);
   File projectDir=new File(workDir,artifactId);
   assertFolderExists(projectDir);
+  File projectPom=new File(projectDir,"pom.xml");
+  assertValidGeneratedArchetypePom(projectPom);
   commands=new ArrayList<String>();
-  commands.addAll(Arrays.asList(mvn,"--settings",mavenSettingsFile.getCanonicalPath(),"clean","fabric8:deploy"));
+  String profileId=artifactId;
+  commands.addAll(Arrays.asList(mvn,"--settings",mavenSettingsFile.getCanonicalPath(),"clean","fabric8:deploy",property("fabric8.profile",profileId)));
   System.out.println();
   System.out.println();
   System.out.println("======================================================================================");
@@ -33,4 +35,5 @@
   System.out.println();
   System.out.println();
   assertExecuteCommand(commands,projectDir);
+  createContainer(containers,profileId);
 }

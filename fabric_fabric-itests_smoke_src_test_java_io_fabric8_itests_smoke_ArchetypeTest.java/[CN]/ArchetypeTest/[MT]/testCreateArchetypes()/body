@@ -5,12 +5,13 @@
   System.err.println(executeCommand("fabric:create -n"));
   Set<Container> containers=new HashSet<Container>();
   try {
+    createContainer(containers,"fabric");
     ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
     try {
       FabricService fabricService=fabricProxy.getService();
       String wrongUrl="https://repo.fusesource.com/nexus/content/groups/public/";
       boolean isWrong=true;
-      for (int i=0; i < 10; i++) {
+      for (int i=0; i < 100; i++) {
         String mavenUploadUrl=fabricService.getMavenRepoUploadURI().toString();
         System.out.println("Maven upload URL: " + mavenUploadUrl);
         isWrong=mavenUploadUrl.equals(wrongUrl);
@@ -26,10 +27,11 @@
   finally {
       fabricProxy.close();
     }
+    createContainer(containers,"mq-default");
     for (    ArchetypeInfo archetype : archetypes) {
-      File workDir=new File(System.getProperty("basedir","."),"target/generated-projects");
+      File workDir=new File(System.getProperty("basedir","."),"generated-projects");
       workDir.mkdirs();
-      assertGenerateArchetype(archetype,workDir,mavenSettingsFile);
+      assertGenerateArchetype(archetype,workDir,mavenSettingsFile,containers);
     }
     SortedMap<String,String> sorted=new TreeMap<String,String>(System.getenv());
     Set<Map.Entry<String,String>> entries=sorted.entrySet();
