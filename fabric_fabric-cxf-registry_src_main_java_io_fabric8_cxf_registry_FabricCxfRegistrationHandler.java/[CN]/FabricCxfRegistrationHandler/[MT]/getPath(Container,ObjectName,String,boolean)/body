@@ -29,6 +29,13 @@
     String prefix=endpointPath.startsWith("/") ? "" : "/";
     fullName+=prefix + endpointPath;
   }
+  fullName=fullName.replaceAll("//","/");
+  while (fullName.startsWith("/")) {
+    fullName=fullName.substring(1);
+  }
+  while (fullName.endsWith("/")) {
+    fullName=fullName.substring(0,fullName.length() - 1);
+  }
   if (restApi) {
     return ZkPath.API_REST_ENDPOINTS.getPath(fullName,version,containerId);
   }
