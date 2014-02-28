@@ -1,0 +1,12 @@
+{
+  configurer.configure(configuration,this);
+  Objects.notNull(getVertxService(),"vertxService");
+  Objects.notNull(getZooKeeperPath(),"zooKeeperPath");
+  activateComponent();
+  detectingGateway=createDetectingGateway();
+  if (detectingGateway != null) {
+    cache=new GatewayServiceTreeCache(getCurator(),getZooKeeperPath(),serviceMap);
+    cache.init();
+    detectingGateway.init();
+  }
+}

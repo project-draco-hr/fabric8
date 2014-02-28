@@ -5,9 +5,6 @@
   final ActiveMQConnectionFactory factory=new ActiveMQConnectionFactory(url);
   Connection connection=factory.createConnection();
   connection.start();
-  assertEquals(1,getConnectionsOnBroker(0));
-  for (int i=1; i < brokers.size(); i++) {
-    assertEquals(0,getConnectionsOnBroker(i));
-  }
+  assertConnectedToBroker(0);
   connection.close();
 }

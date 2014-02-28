@@ -1,8 +1,15 @@
 {
   NetClient client=null;
   String host=params.protocolVirtualHost;
+  if (host == null) {
+    host=defaultVirtualHost;
+  }
   if (host != null) {
     List<ServiceDetails> services=serviceMap.getServices(host);
+    if (services.isEmpty() && defaultVirtualHost != null) {
+      host=defaultVirtualHost;
+      services=serviceMap.getServices(host);
+    }
     if (!services.isEmpty()) {
       ClientRequestFacade clientRequestFacade=clientRequestFacadeFactory.create(socket,params);
       ServiceDetails serviceDetails=serviceLoadBalancer.choose(services,clientRequestFacade);
@@ -14,16 +21,8 @@
               URI uri=new URI(urlString);
               String urlProtocol=uri.getScheme();
               if (Objects.equal(params.protocol,urlProtocol)) {
-                Handler<AsyncResult<NetSocket>> handler=new Handler<AsyncResult<NetSocket>>(){
-                  public void handle(                  final AsyncResult<NetSocket> asyncSocket){
-                    NetSocket clientSocket=asyncSocket.result();
-                    clientSocket.write(received);
-                    Pump.createPump(clientSocket,socket).start();
-                    Pump.createPump(socket,clientSocket).start();
-                  }
-                }
-;
-                client=createClient(socket,uri,handler,clientRequestFacade,params);
+                LOG.info(String.format("Connecting '%s' requesting virtual host '%s' with client key '%s' to '%s:%d' using the %s protocol",socket.remoteAddress(),params.protocolVirtualHost,clientRequestFacade.getClientRequestKey(),uri.getHost(),uri.getPort(),params.protocol));
+                client=createClient(socket,uri,received);
                 break;
               }
             }
@@ -36,7 +35,7 @@
     }
   }
   if (client == null) {
-    LOG.info("No service available for protocol " + params.protocol + " for service "+ host);
+    LOG.info(String.format("No endpoint available for virtual host '%s' and protocol %s",params.protocolVirtualHost,params.protocol));
     socket.close();
   }
 }

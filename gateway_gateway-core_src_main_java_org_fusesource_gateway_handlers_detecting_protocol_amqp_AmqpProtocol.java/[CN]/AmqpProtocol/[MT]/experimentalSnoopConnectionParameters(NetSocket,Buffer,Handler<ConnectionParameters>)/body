@@ -1,0 +1,78 @@
+{
+  final AmqpProtocolDecoder h=new AmqpProtocolDecoder(this);
+  final ConnectionParameters parameters=new ConnectionParameters();
+  parameters.protocol=getProtocolName();
+  h.errorHandler(new Handler<String>(){
+    @Override public void handle(    String error){
+      LOG.info("STOMP protocol decoding error: " + error);
+      socket.close();
+    }
+  }
+);
+  h.codecHandler(new Handler<AmqpEvent>(){
+    EngineFactory engineFactory=new EngineFactoryImpl();
+    Transport protonTransport=engineFactory.createTransport();
+    Connection protonConnection=engineFactory.createConnection();
+    Sasl sasl;
+    @Override public void handle(    AmqpEvent event){
+switch (event.type) {
+case HEADER:
+        AmqpHeader header=(AmqpHeader)event.decodedFrame;
+switch (header.getProtocolId()) {
+case 0:
+        break;
+case 3:
+      sasl=protonTransport.sasl();
+    sasl.server();
+  break;
+default :
+}
+processEvent(event);
+Buffer buffer=toBuffer(protonTransport.getOutputBuffer());
+protonTransport.outputConsumed();
+socket.write(buffer);
+break;
+default :
+processEvent(event);
+}
+}
+private void processEvent(AmqpEvent event){
+byte[] buffer=event.encodedFrame.getBytes();
+int offset=0;
+int remaining=buffer.length;
+while (remaining > 0) {
+try {
+int count=protonTransport.input(buffer,offset,remaining);
+offset+=count;
+remaining-=count;
+}
+ catch (Throwable e) {
+LOG.info("Could not decode AMQP frame: " + e,e);
+socket.close();
+return;
+}
+if (sasl != null) {
+if (sasl.getRemoteMechanisms().length > 0) {
+parameters.protocolVirtualHost=getHostname(sasl);
+if ("PLAIN".equals(sasl.getRemoteMechanisms()[0])) {
+byte[] data=new byte[sasl.pending()];
+sasl.recv(data,0,data.length);
+Buffer[] parts=split(new Buffer(data),(byte)0);
+if (parts.length > 0) {
+parameters.protocolUser=parts[0].toString();
+}
+handler.handle(parameters);
+}
+}
+}
+if (protonConnection.getLocalState() == EndpointState.UNINITIALIZED && protonConnection.getRemoteState() != EndpointState.UNINITIALIZED) {
+parameters.protocolVirtualHost=protonConnection.getRemoteHostname();
+handler.handle(parameters);
+}
+}
+}
+}
+);
+socket.dataHandler(h);
+h.handle(received);
+}

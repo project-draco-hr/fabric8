@@ -1,0 +1,23 @@
+{
+  ArrayList<Protocol> protocols=new ArrayList<Protocol>();
+  if (isStompEnabled()) {
+    protocols.add(new StompProtocol());
+  }
+  if (isMqttEnabled()) {
+    protocols.add(new MqttProtocol());
+  }
+  if (isAmqpEnabled()) {
+    protocols.add(new AmqpProtocol());
+  }
+  if (isOpenWireEnabled()) {
+    protocols.add(new OpenwireProtocol());
+  }
+  if (protocols.isEmpty()) {
+    return null;
+  }
+  VertxService vertxService=getVertxService();
+  Vertx vertx=vertxService.getVertx();
+  LoadBalancer<ServiceDetails> serviceLoadBalancer=LoadBalancers.createLoadBalancer(loadBalancerType,stickyLoadBalancerCacheSize);
+  DetectingGatewayProtocolHandler handler=new DetectingGatewayProtocolHandler(vertx,serviceMap,protocols,serviceLoadBalancer,defaultVirtualHost);
+  return new DetectingGateway(vertx,0,handler);
+}
