@@ -3,7 +3,7 @@
   File mavenSettingsFile=getMavenSettingsFile();
   assertFileExists(mavenSettingsFile);
   System.err.println(executeCommand("fabric:create -n"));
-  Set<Container> containers=new HashSet<Container>();
+  Set<Container> containers=new LinkedHashSet<Container>();
   try {
     createContainer(containers,"fabric");
     ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
@@ -31,15 +31,22 @@
     for (    ArchetypeInfo archetype : archetypes) {
       File workDir=new File(System.getProperty("basedir","."),"generated-projects");
       workDir.mkdirs();
-      assertGenerateArchetype(archetype,workDir,mavenSettingsFile,containers);
+      Set<Container> tmpContainers=new LinkedHashSet<Container>();
+      assertGenerateArchetype(archetype,workDir,mavenSettingsFile,tmpContainers);
+      stopAndDestroyContainers(tmpContainers);
     }
     SortedMap<String,String> sorted=new TreeMap<String,String>(System.getenv());
     Set<Map.Entry<String,String>> entries=sorted.entrySet();
     for (    Map.Entry<String,String> entry : entries) {
       System.out.println("   env:  " + entry.getKey() + " = "+ entry.getValue());
     }
+    stopAndDestroyContainers(containers);
   }
-  finally {
+ catch (  Exception e) {
+    LOG.error("Caught: " + e,e);
+    throw e;
+  }
+ finally {
     ContainerBuilder.destroy(containers);
   }
 }
