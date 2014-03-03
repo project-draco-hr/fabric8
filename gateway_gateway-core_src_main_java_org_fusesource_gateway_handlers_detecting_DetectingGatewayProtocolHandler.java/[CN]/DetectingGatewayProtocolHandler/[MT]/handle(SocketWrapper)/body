@@ -26,6 +26,8 @@
  else {
             protocol.snoopConnectionParameters(socket,received,new Handler<ConnectionParameters>(){
               @Override public void handle(              ConnectionParameters connectionParameters){
+                if (connectionParameters.protocol == null)                 connectionParameters.protocol=protocol.getProtocolName();
+                if (connectionParameters.protocolSchemes == null)                 connectionParameters.protocolSchemes=protocol.getProtocolSchemes();
                 route(socket,connectionParameters,received);
               }
             }

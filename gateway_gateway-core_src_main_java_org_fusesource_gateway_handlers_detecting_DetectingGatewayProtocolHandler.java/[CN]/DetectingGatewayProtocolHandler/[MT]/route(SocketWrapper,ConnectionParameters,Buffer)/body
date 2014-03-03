@@ -4,6 +4,7 @@
   if (host == null) {
     host=defaultVirtualHost;
   }
+  HashSet<String> schemes=new HashSet<String>(Arrays.asList(params.protocolSchemes));
   if (host != null) {
     List<ServiceDetails> services=serviceMap.getServices(host);
     if (services.isEmpty() && defaultVirtualHost != null) {
@@ -20,7 +21,7 @@
             try {
               URI uri=new URI(urlString);
               String urlProtocol=uri.getScheme();
-              if (Objects.equal(params.protocol,urlProtocol)) {
+              if (schemes.contains(urlProtocol)) {
                 LOG.info(String.format("Connecting '%s' requesting virtual host '%s' with client key '%s' to '%s:%d' using the %s protocol",socket.remoteAddress(),params.protocolVirtualHost,clientRequestFacade.getClientRequestKey(),uri.getHost(),uri.getPort(),params.protocol));
                 client=createClient(socket,uri,received);
                 break;
