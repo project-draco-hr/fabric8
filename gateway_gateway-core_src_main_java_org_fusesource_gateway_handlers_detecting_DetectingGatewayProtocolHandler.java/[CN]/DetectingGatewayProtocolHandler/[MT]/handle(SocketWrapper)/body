@@ -1,0 +1,44 @@
+{
+  socket.readStream().dataHandler(new Handler<Buffer>(){
+    Buffer received=new Buffer();
+    @Override public void handle(    Buffer event){
+      received.appendBuffer(event);
+      LOG.info("Detecting protocol from: " + received.length() + " request bytes");
+      for (      final Protocol protocol : protocols) {
+        if (protocol.matches(received)) {
+          if ("http".equals(protocol.getProtocolName())) {
+            InetSocketAddress target=getHttpGateway();
+            if (target != null) {
+              try {
+                URI url=new URI("http://" + target.getHostString() + ":"+ target.getPort());
+                createClient(socket,url,received);
+              }
+ catch (              URISyntaxException e) {
+                LOG.warn("Could not build valid connect URI.",e);
+                socket.close();
+              }
+            }
+ else {
+              LOG.info("No http gateway available for the http protocol");
+              socket.close();
+            }
+          }
+ else {
+            protocol.snoopConnectionParameters(socket,received,new Handler<ConnectionParameters>(){
+              @Override public void handle(              ConnectionParameters connectionParameters){
+                route(socket,connectionParameters,received);
+              }
+            }
+);
+            return;
+          }
+        }
+      }
+      if (received.length() >= maxProtocolIdentificationLength) {
+        LOG.info("Connection did not use one of the enabled protocols " + getProtocolNames());
+        socket.close();
+      }
+    }
+  }
+);
+}

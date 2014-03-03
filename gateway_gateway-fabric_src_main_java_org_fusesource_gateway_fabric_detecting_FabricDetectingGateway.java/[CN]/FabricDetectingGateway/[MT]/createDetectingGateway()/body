@@ -12,12 +12,19 @@
   if (isOpenWireEnabled()) {
     protocols.add(new OpenwireProtocol());
   }
+  if (isHttpEnabled()) {
+    protocols.add(new HttpProtocol());
+  }
   if (protocols.isEmpty()) {
     return null;
   }
   VertxService vertxService=getVertxService();
   Vertx vertx=vertxService.getVertx();
   LoadBalancer<ServiceDetails> serviceLoadBalancer=LoadBalancers.createLoadBalancer(loadBalancerType,stickyLoadBalancerCacheSize);
-  DetectingGatewayProtocolHandler handler=new DetectingGatewayProtocolHandler(vertx,serviceMap,protocols,serviceLoadBalancer,defaultVirtualHost);
+  handler.setVertx(vertx);
+  handler.setServiceMap(serviceMap);
+  handler.setProtocols(protocols);
+  handler.setServiceLoadBalancer(serviceLoadBalancer);
+  handler.setDefaultVirtualHost(defaultVirtualHost);
   return new DetectingGateway(vertx,0,handler);
 }

@@ -1,0 +1,8 @@
+{
+  DetectingGatewayProtocolHandler handler=this.handler.get();
+  if (handler == null || !socket.path().startsWith(pathPrefix)) {
+    socket.reject();
+    return;
+  }
+  handler.handle(SocketWrapper.wrap(socket));
+}

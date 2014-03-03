@@ -1,5 +1,5 @@
 {
-  server=vertx.createNetServer().connectHandler(handler);
+  server=vertx.createNetServer().connectHandler(new DetectingGatewayNetSocketHandler(handler));
   if (host != null) {
     server=server.listen(port,host,listenFuture);
   }

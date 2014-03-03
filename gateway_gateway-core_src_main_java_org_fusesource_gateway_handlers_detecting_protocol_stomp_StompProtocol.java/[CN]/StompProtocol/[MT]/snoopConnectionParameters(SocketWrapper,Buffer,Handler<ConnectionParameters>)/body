@@ -1,0 +1,29 @@
+{
+  StompProtocolDecoder h=new StompProtocolDecoder(this);
+  h.errorHandler(new Handler<String>(){
+    @Override public void handle(    String error){
+      LOG.info("STOMP protocol decoding error: " + error);
+      socket.close();
+    }
+  }
+);
+  h.codecHandler(new Handler<StompFrame>(){
+    @Override public void handle(    StompFrame event){
+      if (event.action().equals(CONNECT) || event.action().equals(STOMP)) {
+        ConnectionParameters parameters=new ConnectionParameters();
+        parameters.protocol=getProtocolName();
+        parameters.protocolVirtualHost=event.getHeaderAsString(HOST);
+        parameters.protocolUser=event.getHeaderAsString(USERID);
+        parameters.protocolClientId=event.getHeaderAsString(CLIENT_ID);
+        handler.handle(parameters);
+      }
+ else {
+        LOG.info("Expected a CONNECT or STOMP frame");
+        socket.close();
+      }
+    }
+  }
+);
+  socket.readStream().dataHandler(h);
+  h.handle(received);
+}
