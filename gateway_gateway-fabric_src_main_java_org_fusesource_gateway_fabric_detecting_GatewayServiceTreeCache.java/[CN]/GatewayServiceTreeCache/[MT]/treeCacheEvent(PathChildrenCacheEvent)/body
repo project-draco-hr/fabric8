@@ -12,6 +12,7 @@
   if (path.startsWith(zkPath)) {
     path=path.substring(zkPath.length());
   }
+  path=Strings.splitAndTrimAsList(path,"/").get(0);
   boolean remove=false;
 switch (type) {
 case CHILD_ADDED:
@@ -28,9 +29,11 @@ try {
 dto=mapper.readValue(data,ServiceDTO.class);
 expandPropertyResolvers(dto);
 if (remove) {
+LOG.info("Removed gateway service: " + path + ": "+ new String(data,"UTF-8"));
 serviceMap.serviceRemoved(path,dto);
 }
  else {
+LOG.info("Updated gateway service: " + path + ": "+ new String(data,"UTF-8"));
 serviceMap.serviceUpdated(path,dto);
 }
 }
