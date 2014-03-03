@@ -9,7 +9,13 @@
     try {
       FabricService fabricService=fabricProxy.getService();
       CuratorFramework curator=curatorProxy.getService();
-      final ZooKeeperMultiGroup group=new ZooKeeperMultiGroup<FabricDiscoveryAgent.ActiveMQNode>(curator,"/fabric/registry/clusters/fusemq/default",FabricDiscoveryAgent.ActiveMQNode.class);
+      ManagedGroupFactory factory=ManagedGroupFactoryBuilder.create(curator,getClass().getClassLoader(),new Callable<CuratorFramework>(){
+        @Override public CuratorFramework call() throws Exception {
+          throw new Exception("Shouldn't be called");
+        }
+      }
+);
+      final MultiGroup group=(MultiGroup)factory.createMultiGroup("/fabric/registry/clusters/fusemq/default",FabricDiscoveryAgent.ActiveMQNode.class);
       group.start();
       FabricDiscoveryAgent.ActiveMQNode master=null;
       Provision.waitForCondition(new Callable<Boolean>(){
