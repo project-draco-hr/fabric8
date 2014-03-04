@@ -22,30 +22,32 @@
   if (options.getManualIp() != null && !options.getManualIp().isEmpty()) {
     jvmOptsBuilder.append(" -D" + ZkDefs.MANUAL_IP + "="+ options.getManualIp());
   }
+  FabricService fservice=fabricService.get();
   Map<String,String> dataStoreProperties=new HashMap<String,String>(options.getDataStoreProperties());
-  dataStoreProperties.put(DataStore.DATASTORE_TYPE_PROPERTY,fabricService.get().getDataStore().getType());
+  dataStoreProperties.put(DataStore.DATASTORE_TYPE_PROPERTY,fservice.getDataStore().getType());
   for (  Map.Entry<String,String> dataStoreEntries : options.getDataStoreProperties().entrySet()) {
     String key=dataStoreEntries.getKey();
     String value=dataStoreEntries.getValue();
     jvmOptsBuilder.append(" -D" + Constants.DATASTORE_TYPE_PID + "."+ key+ "="+ value);
   }
-  Profile defaultProfile=new ProfileOverlayImpl(parent.getVersion().getProfile("default"),true,fabricService.get().getDataStore(),fabricService.get().getEnvironment());
+  Profile profile=parent.getVersion().getProfile("default");
+  Profile defaultProfile=new ProfileOverlayImpl(profile,fservice.getEnvironment(),true,fservice);
   String featuresUrls=collectionAsString(defaultProfile.getRepositories());
   Set<String> features=new LinkedHashSet<String>();
   features.add("fabric-agent");
   features.add("fabric-git");
   String containerName=options.getName();
-  PortService portService=fabricService.get().getPortService();
+  PortService portService=fservice.getPortService();
   Set<Integer> usedPorts=portService.findUsedPortByHost(parent);
   CreateChildContainerMetadata metadata=new CreateChildContainerMetadata();
   metadata.setCreateOptions(options);
   metadata.setContainerName(containerName);
   int minimumPort=parent.getMinimumPort();
   int maximumPort=parent.getMaximumPort();
-  fabricService.get().getDataStore().setContainerAttribute(containerName,DataStore.ContainerAttribute.PortMin,String.valueOf(minimumPort));
-  fabricService.get().getDataStore().setContainerAttribute(containerName,DataStore.ContainerAttribute.PortMax,String.valueOf(maximumPort));
-  inheritAddresses(fabricService.get(),parent.getId(),containerName,options);
-  Container child=new ContainerImpl(parent,containerName,fabricService.get()){
+  fservice.getDataStore().setContainerAttribute(containerName,DataStore.ContainerAttribute.PortMin,String.valueOf(minimumPort));
+  fservice.getDataStore().setContainerAttribute(containerName,DataStore.ContainerAttribute.PortMax,String.valueOf(maximumPort));
+  inheritAddresses(fservice,parent.getId(),containerName,options);
+  Container child=new ContainerImpl(parent,containerName,fservice){
     @Override public String getIp(){
       return parent.getIp();
     }

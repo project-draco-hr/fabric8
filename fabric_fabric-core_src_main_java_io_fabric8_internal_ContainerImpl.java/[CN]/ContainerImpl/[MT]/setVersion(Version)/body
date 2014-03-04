@@ -2,8 +2,8 @@
   if (version.compareTo(getVersion()) != 0) {
     if (requiresUpgrade(version) && isManaged()) {
       String status=version.compareTo(getVersion()) > 0 ? "upgrading" : "downgrading";
-      service.getDataStore().setContainerAttribute(id,DataStore.ContainerAttribute.ProvisionStatus,status);
+      fabricService.getDataStore().setContainerAttribute(id,DataStore.ContainerAttribute.ProvisionStatus,status);
     }
-    service.getDataStore().setContainerVersion(id,version.getId());
+    fabricService.getDataStore().setContainerVersion(id,version.getId());
   }
 }

@@ -1,13 +1,13 @@
 {
   Container[] containers=getAssociatedContainers();
   if (containers.length == 0) {
-    service.getDataStore().deleteProfile(version,id);
+    fabricService.getDataStore().deleteProfile(version,id);
   }
  else   if (force) {
     for (    Container container : containers) {
       container.removeProfiles(this);
     }
-    service.getDataStore().deleteProfile(version,id);
+    fabricService.getDataStore().deleteProfile(version,id);
   }
  else {
     StringBuilder sb=new StringBuilder();
@@ -19,10 +19,10 @@
     sb.append(". Use force option to also remove the profile from the containers.");
     throw new FabricException(sb.toString());
   }
-  FabricRequirements requirements=service.getRequirements();
+  FabricRequirements requirements=fabricService.getRequirements();
   if (requirements.removeProfileRequirements(id)) {
     try {
-      service.setRequirements(requirements);
+      fabricService.setRequirements(requirements);
     }
  catch (    IOException e) {
       throw new FabricException("Failed to update requirements after deleting profile " + id + ". "+ e,e);

@@ -1,16 +1,17 @@
 {
   ServiceStatusDTO rc=new ServiceStatusDTO();
+  CuratorFramework curator=getFabricService().adapt(CuratorFramework.class);
   try {
-    rc.setClientValid(getFabricService().getCurator() != null);
+    rc.setClientValid(curator != null);
   }
  catch (  Throwable t) {
     rc.setClientValid(false);
   }
   if (rc.isClientValid()) {
     try {
-      rc.setClientConnected(getFabricService().getCurator().getZookeeperClient().isConnected());
+      rc.setClientConnected(curator.getZookeeperClient().isConnected());
       if (!rc.isClientConnected()) {
-        rc.setClientConnectionError(getFabricService().getCurator().getState().toString());
+        rc.setClientConnectionError(curator.getState().toString());
       }
     }
  catch (    Throwable t) {

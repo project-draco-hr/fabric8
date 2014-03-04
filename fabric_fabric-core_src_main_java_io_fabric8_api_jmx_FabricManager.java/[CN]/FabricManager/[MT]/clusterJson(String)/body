@@ -13,7 +13,7 @@
     }
   }
   Map<String,Object> answer=new HashMap<String,Object>();
-  CuratorFramework curator=getFabricService().getCurator();
+  CuratorFramework curator=getFabricService().adapt(CuratorFramework.class);
   ObjectMapper mapper=new ObjectMapper();
   addChildrenToMap(answer,path,curator,mapper);
   return mapper.writeValueAsString(answer);

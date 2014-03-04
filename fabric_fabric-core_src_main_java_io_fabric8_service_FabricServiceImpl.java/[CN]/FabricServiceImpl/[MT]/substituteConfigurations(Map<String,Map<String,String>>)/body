@@ -1,0 +1,24 @@
+{
+  Set<String> requiredSchemes=getSchemesForProfileConfigurations(configs);
+  final Map<String,PlaceholderResolver> availableResolvers=waitForPlaceHolderResolvers(requiredSchemes);
+  for (  Map.Entry<String,Map<String,String>> entry : configs.entrySet()) {
+    final String pid=entry.getKey();
+    Map<String,String> props=entry.getValue();
+    for (    Map.Entry<String,String> e : props.entrySet()) {
+      final String key=e.getKey();
+      final String value=e.getValue();
+      props.put(key,InterpolationHelper.substVars(value,key,null,props,new InterpolationHelper.SubstitutionCallback(){
+        public String getValue(        String toSubstitute){
+          if (toSubstitute != null && toSubstitute.contains(":")) {
+            String scheme=toSubstitute.substring(0,toSubstitute.indexOf(":"));
+            if (availableResolvers.containsKey(scheme)) {
+              return availableResolvers.get(scheme).resolve(configs,pid,key,toSubstitute);
+            }
+          }
+          return substituteBundleProperty(toSubstitute,bundleContext);
+        }
+      }
+));
+    }
+  }
+}

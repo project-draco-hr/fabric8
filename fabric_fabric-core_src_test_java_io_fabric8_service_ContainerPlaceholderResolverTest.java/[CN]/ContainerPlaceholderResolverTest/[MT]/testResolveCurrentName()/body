@@ -5,9 +5,7 @@
   expect(fabricService.getContainer(EasyMock.<String>anyObject())).andReturn(new ContainerImpl(null,"root",fabricService));
   replay(fabricService);
   replay(dataStore);
-  ContainerPlaceholderResolver resolver=new ContainerPlaceholderResolver();
-  resolver.bindFabricService(fabricService);
-  resolver.activate();
+  PlaceholderResolver resolver=getContainerPlaceholderResolver(fabricService);
   assertEquals("root",resolver.resolve(null,null,null,"container:name"));
   verify(fabricService);
   verify(dataStore);
