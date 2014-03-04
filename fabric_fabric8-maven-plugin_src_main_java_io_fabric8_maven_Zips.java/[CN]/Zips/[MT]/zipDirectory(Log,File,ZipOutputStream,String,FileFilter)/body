@@ -7,7 +7,7 @@
       if (f.isDirectory()) {
         String prefix=path + f.getName() + "/";
         zos.putNextEntry(new ZipEntry(prefix));
-        zipDir(f,zos,prefix,filter);
+        zipDirectory(log,f,zos,prefix,filter);
       }
  else {
         String entry=path + f.getName();
@@ -25,7 +25,7 @@
   finally {
             fis.close();
           }
-          getLog().info("zipping file " + entry);
+          log.info("zipping file " + entry);
         }
       }
       zos.closeEntry();

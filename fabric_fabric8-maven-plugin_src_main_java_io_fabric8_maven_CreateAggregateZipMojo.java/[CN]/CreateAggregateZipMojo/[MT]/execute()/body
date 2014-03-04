@@ -1,0 +1,27 @@
+{
+  try {
+    if (!project.isExecutionRoot()) {
+      getLog().info("Not the execution root so ignoring this project");
+      return;
+    }
+    buildDir.mkdirs();
+    for (    MavenProject reactorProject : reactorProjects) {
+      if (!reactorProject.isExecutionRoot()) {
+        combineProfilesTo(reactorProject,buildDir);
+      }
+    }
+    Zips.createZipFile(getLog(),buildDir,outputFile);
+    projectHelper.attachArtifact(project,artifactType,artifactClassifier,outputFile);
+    String relativePath=Files.getRelativePath(project.getBasedir(),outputFile);
+    while (relativePath.startsWith("/")) {
+      relativePath=relativePath.substring(1);
+    }
+    getLog().info("Created profile zip file: " + relativePath);
+  }
+ catch (  MojoExecutionException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new MojoExecutionException("Error executing",e);
+  }
+}
