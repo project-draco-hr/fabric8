@@ -1,9 +1,9 @@
 {
-  PlaceholderResolver resolver=getContainerPlaceholderResolver(fabricService);
-  assertEquals(ip,resolver.resolve(null,null,null,"container:ip"));
-  assertEquals(localhostname,resolver.resolve(null,null,null,"container:localhostname"));
-  assertEquals(bindaddress,resolver.resolve(null,null,null,"container:bindaddress"));
-  assertEquals(containerResolver,resolver.resolve(null,null,null,"container:resolver"));
+  PlaceholderResolver resolver=getContainerPlaceholderResolver();
+  assertEquals(ip,resolver.resolve(fabricService,null,null,null,"container:ip"));
+  assertEquals(localhostname,resolver.resolve(fabricService,null,null,null,"container:localhostname"));
+  assertEquals(bindaddress,resolver.resolve(fabricService,null,null,null,"container:bindaddress"));
+  assertEquals(containerResolver,resolver.resolve(fabricService,null,null,null,"container:resolver"));
   verify(fabricService);
   verify(dataStore);
 }

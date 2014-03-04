@@ -1,6 +1,18 @@
 {
+  final Map<String,PlaceholderResolver> resolversSnapshot=new HashMap<String,PlaceholderResolver>(placeholderResolvers);
   Set<String> requiredSchemes=getSchemesForProfileConfigurations(configs);
-  final Map<String,PlaceholderResolver> availableResolvers=waitForPlaceHolderResolvers(requiredSchemes);
+  Set<String> availableSchemes=resolversSnapshot.keySet();
+  if (!availableSchemes.containsAll(requiredSchemes)) {
+    StringBuilder sb=new StringBuilder();
+    sb.append("Missing Placeholder Resolvers:");
+    for (    String scheme : requiredSchemes) {
+      if (!availableSchemes.contains(scheme)) {
+        sb.append(" ").append(scheme);
+      }
+    }
+    throw new FabricException(sb.toString());
+  }
+  final FabricService fabricService=this;
   for (  Map.Entry<String,Map<String,String>> entry : configs.entrySet()) {
     final String pid=entry.getKey();
     Map<String,String> props=entry.getValue();
@@ -11,9 +23,7 @@
         public String getValue(        String toSubstitute){
           if (toSubstitute != null && toSubstitute.contains(":")) {
             String scheme=toSubstitute.substring(0,toSubstitute.indexOf(":"));
-            if (availableResolvers.containsKey(scheme)) {
-              return availableResolvers.get(scheme).resolve(configs,pid,key,toSubstitute);
-            }
+            return resolversSnapshot.get(scheme).resolve(fabricService,configs,pid,key,toSubstitute);
           }
           return substituteBundleProperty(toSubstitute,bundleContext);
         }
