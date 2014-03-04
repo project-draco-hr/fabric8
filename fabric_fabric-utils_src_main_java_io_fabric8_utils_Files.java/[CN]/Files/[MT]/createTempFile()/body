@@ -4,5 +4,5 @@
   if (!tmpDir.exists() && !tmpDir.mkdirs()) {
     throw new IOException("Failed to create tmp dir:" + tmpDir.getAbsolutePath());
   }
-  return File.createTempFile(String.valueOf(System.currentTimeMillis()),".tmp",tmpDir);
+  return File.createTempFile(String.valueOf(lastTmpFileId.incrementAndGet()),".tmp",tmpDir);
 }
