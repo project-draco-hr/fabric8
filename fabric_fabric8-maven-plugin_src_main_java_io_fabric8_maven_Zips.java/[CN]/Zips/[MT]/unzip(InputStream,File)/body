@@ -1,0 +1,29 @@
+{
+  ZipInputStream zis=new ZipInputStream(new BufferedInputStream(in));
+  try {
+    ZipEntry entry=zis.getNextEntry();
+    while (entry != null) {
+      if (!entry.isDirectory()) {
+        String entryName=entry.getName();
+        File toFile=new File(toDir,entryName);
+        toFile.getParentFile().mkdirs();
+        OutputStream os=new FileOutputStream(toFile);
+        try {
+          try {
+            copy(zis,os);
+          }
+  finally {
+            zis.closeEntry();
+          }
+        }
+  finally {
+          close(os,true);
+        }
+      }
+      entry=zis.getNextEntry();
+    }
+  }
+  finally {
+    close(zis,true);
+  }
+}

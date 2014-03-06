@@ -1,0 +1,43 @@
+{
+  buildDir.mkdirs();
+  File gitDir=new File(buildDir,".git");
+  if (!gitDir.exists()) {
+    String repo=gitUrl;
+    if (Strings.isNotBlank(repo)) {
+      getLog().info("Cloning git repo " + repo + " into directory "+ getGitBuildPathDescription()+ " cloneAllBranches: "+ cloneAll);
+      CloneCommand command=Git.cloneRepository().setCloneAllBranches(cloneAll).setURI(repo).setDirectory(buildDir).setRemote(remoteName);
+      try {
+        git=command.call();
+        return;
+      }
+ catch (      Throwable e) {
+        getLog().error("Failed to command remote repo " + repo + " due: "+ e.getMessage(),e);
+      }
+    }
+ else {
+      InitCommand initCommand=Git.init();
+      initCommand.setDirectory(buildDir);
+      git=initCommand.call();
+      getLog().info("Initialised an empty git configuration repo at " + getGitBuildPathDescription());
+      File readMe=new File(buildDir,"ReadMe.md");
+      getLog().info("Generating " + readMe);
+      Files.writeToFile(readMe,"fabric8 git repository created by fabric8-maven-plugin at " + new Date(),Charset.forName("UTF-8"));
+      git.add().addFilepattern("ReadMe.md").call();
+      commit("Initial commit");
+    }
+    String branch=git.getRepository().getBranch();
+    configureBranch(branch);
+  }
+ else {
+    getLog().info("Reusing existing git repository at " + getGitBuildPathDescription());
+    FileRepositoryBuilder builder=new FileRepositoryBuilder();
+    Repository repository=builder.setGitDir(gitDir).readEnvironment().findGitDir().build();
+    git=new Git(repository);
+    if (pullOnStartup) {
+      doPull();
+    }
+ else {
+      getLog().info("git pull from remote config repo on startup is disabled");
+    }
+  }
+}

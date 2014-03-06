@@ -1,0 +1,13 @@
+{
+  if (file == null || !file.exists() || !file.isFile()) {
+    throw new MojoExecutionException("Zip file does not exist: " + file);
+  }
+  File unzipDir=new File(buildDir,"fabric/profiles");
+  unzipDir.mkdirs();
+  try {
+    Zips.unzip(new FileInputStream(file),unzipDir);
+  }
+ catch (  IOException e) {
+    throw new MojoExecutionException("Failed to unzip file " + file.getCanonicalPath() + " to "+ getGitBuildPathDescription()+ ". "+ e,e);
+  }
+}

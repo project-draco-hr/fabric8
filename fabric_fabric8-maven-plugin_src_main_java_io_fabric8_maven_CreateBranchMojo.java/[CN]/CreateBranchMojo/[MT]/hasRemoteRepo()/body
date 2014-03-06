@@ -1,0 +1,12 @@
+{
+  if (Strings.isNotBlank(gitUrl)) {
+    return true;
+  }
+  Repository repository=git.getRepository();
+  StoredConfig config=repository.getConfig();
+  String url=config.getString("remote",remoteName,"url");
+  if (Strings.isNotBlank(url)) {
+    return true;
+  }
+  return false;
+}

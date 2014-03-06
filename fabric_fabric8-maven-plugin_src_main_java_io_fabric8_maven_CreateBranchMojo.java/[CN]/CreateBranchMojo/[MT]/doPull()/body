@@ -1,0 +1,28 @@
+{
+  CredentialsProvider cp=null;
+  try {
+    Repository repository=git.getRepository();
+    StoredConfig config=repository.getConfig();
+    String url=config.getString("remote","origin","url");
+    if (Strings.isNullOrBlank(url)) {
+      getLog().info("No remote repository defined for the git repository at " + getGitBuildPathDescription() + " so not doing a pull");
+      return;
+    }
+    String branch=repository.getBranch();
+    String mergeUrl=config.getString("branch",branch,"merge");
+    if (Strings.isNullOrBlank(mergeUrl)) {
+      getLog().info("No merge spec for branch." + branch + ".merge in the git repository at "+ getGitBuildPathDescription()+ " so not doing a pull");
+      return;
+    }
+    getLog().info("Performing a pull in git repository " + getGitBuildPathDescription() + " on remote URL: "+ url);
+    git.pull().setCredentialsProvider(cp).setRebase(true).call();
+  }
+ catch (  Throwable e) {
+    String credText="";
+    if (cp instanceof UsernamePasswordCredentialsProvider) {
+    }
+    String message="Failed to pull from the remote git repo with credentials " + cp + " due: "+ e.getMessage()+ ". This exception is ignored.";
+    getLog().error(message,e);
+    throw new MojoExecutionException(message,e);
+  }
+}

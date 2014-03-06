@@ -1,0 +1,15 @@
+{
+  try {
+    initGitRepo();
+    createAndCheckoutBranch();
+    addProfileZips();
+    removeSelectedFiles();
+    commit("Branch created by fabric8 maven plugin");
+  }
+ catch (  MojoExecutionException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new MojoExecutionException("Error executing",e);
+  }
+}
