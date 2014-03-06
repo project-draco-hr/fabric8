@@ -1,0 +1,13 @@
+{
+  if (buffer.length() >= 6) {
+    if (buffer.getByte(0) == 0x16) {
+      return (buffer.getByte(5) == 1) && ((buffer.getByte(1) == 2) || (buffer.getByte(1) == 3 && isSSLVerions(buffer.getByte(2))));
+    }
+ else {
+      return ((buffer.getByte(0) & 0xC0) == 0x80) && (buffer.getByte(2) == 1) && ((buffer.getByte(3) == 2) || ((buffer.getByte(3) == 3) && isSSLVerions(buffer.getByte(4))));
+    }
+  }
+ else {
+    return false;
+  }
+}

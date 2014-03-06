@@ -7,8 +7,13 @@
   protocols.add(new MqttProtocol());
   protocols.add(new AmqpProtocol());
   protocols.add(new OpenwireProtocol());
+  protocols.add(new HttpProtocol());
+  protocols.add(new SslProtocol());
   DetectingGatewayProtocolHandler handler=new DetectingGatewayProtocolHandler();
   handler.setVertx(vertx);
+  SslConfig sslConfig=new SslConfig(new File(basedir(),"src/test/resources/server.ks"),"password");
+  sslConfig.setKeyPassword("password");
+  handler.setSslConfig(sslConfig);
   handler.setServiceMap(serviceMap);
   handler.setProtocols(protocols);
   handler.setServiceLoadBalancer(serviceLoadBalancer);

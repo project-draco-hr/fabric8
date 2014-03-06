@@ -1,0 +1,13 @@
+{
+  System.setProperty("javax.net.ssl.trustStore",new File(basedir(),"src/test/resources/client.ks").getCanonicalPath());
+  System.setProperty("javax.net.ssl.trustStorePassword","password");
+  System.setProperty("javax.net.ssl.trustStoreType","jks");
+  DetectingGateway gateway=createGateway();
+  gateway.init();
+  String url="ssl://localhost:" + gateway.getBoundPort() + "?wireFormat.host=broker0";
+  final ActiveMQConnectionFactory factory=new ActiveMQConnectionFactory(url);
+  Connection connection=factory.createConnection();
+  connection.start();
+  assertConnectedToBroker(0);
+  connection.close();
+}

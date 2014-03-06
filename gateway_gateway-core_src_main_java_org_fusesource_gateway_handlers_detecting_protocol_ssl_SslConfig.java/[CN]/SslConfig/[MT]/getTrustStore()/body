@@ -1,0 +1,17 @@
+{
+  if (trustStoreFile == null) {
+    return getKeyStore();
+  }
+  if (trustStore == null) {
+    if (storeType == null) {
+      storeType="JKS";
+    }
+    if (trustStorePassword == null) {
+      trustStorePassword="";
+    }
+    KeyStore store=KeyStore.getInstance(storeType);
+    store.load(new FileInputStream(trustStoreFile),trustStorePassword.toCharArray());
+    trustStore=store;
+  }
+  return trustStore;
+}

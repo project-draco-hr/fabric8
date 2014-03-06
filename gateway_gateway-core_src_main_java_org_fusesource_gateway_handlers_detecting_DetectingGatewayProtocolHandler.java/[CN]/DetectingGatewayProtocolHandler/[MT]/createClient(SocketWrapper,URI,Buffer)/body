@@ -1,10 +1,28 @@
 {
   return vertx.createNetClient().connect(url.getPort(),url.getHost(),new Handler<AsyncResult<NetSocket>>(){
     public void handle(    final AsyncResult<NetSocket> asyncSocket){
-      NetSocket clientSocket=asyncSocket.result();
-      clientSocket.write(received);
-      Pump.createPump(clientSocket,socket.writeStream()).start();
-      Pump.createPump(socket.readStream(),clientSocket).start();
+      final NetSocket socketToServer=asyncSocket.result();
+      Handler<Void> endHandler=new Handler<Void>(){
+        @Override public void handle(        Void event){
+          socketFromClient.close();
+          socketToServer.close();
+        }
+      }
+;
+      Handler<Throwable> exceptionHandler=new Handler<Throwable>(){
+        @Override public void handle(        Throwable event){
+          socketFromClient.close();
+          socketToServer.close();
+        }
+      }
+;
+      socketFromClient.readStream().endHandler(endHandler);
+      socketFromClient.readStream().exceptionHandler(exceptionHandler);
+      socketToServer.endHandler(endHandler);
+      socketToServer.exceptionHandler(exceptionHandler);
+      socketToServer.write(received);
+      Pump.createPump(socketToServer,socketFromClient.writeStream()).start();
+      Pump.createPump(socketFromClient.readStream(),socketToServer).start();
     }
   }
 );

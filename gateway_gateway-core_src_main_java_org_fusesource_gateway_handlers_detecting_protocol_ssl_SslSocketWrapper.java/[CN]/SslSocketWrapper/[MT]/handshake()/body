@@ -1,0 +1,43 @@
+{
+  if (failed)   return;
+  try {
+    while (true) {
+      SSLEngineResult.HandshakeStatus status=engine.getHandshakeStatus();
+switch (status) {
+case FINISHED:
+case NOT_HANDSHAKING:
+        return;
+case NEED_TASK:
+      final Runnable task=engine.getDelegatedTask();
+    if (task != null) {
+      task.run();
+    }
+  break;
+case NEED_WRAP:
+if (plainWriteBuffer == null) {
+  plainWriteBuffer=new Buffer();
+}
+pumpWrites(false);
+break;
+case NEED_UNWRAP:
+if (encryptedReadBuffer != null) {
+pumpReads(false);
+break;
+}
+ else {
+return;
+}
+default :
+System.err.println("Unexpected ssl engine handshake status: " + status);
+break;
+}
+}
+}
+  finally {
+SSLEngineResult.HandshakeStatus status=engine.getHandshakeStatus();
+if (status == NOT_HANDSHAKING) {
+pumpWrites(false);
+pumpReads(false);
+}
+}
+}

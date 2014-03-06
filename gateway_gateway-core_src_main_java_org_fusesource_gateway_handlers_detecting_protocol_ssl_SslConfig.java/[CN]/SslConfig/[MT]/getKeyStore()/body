@@ -1,0 +1,14 @@
+{
+  if (keyStore == null) {
+    if (storeType == null) {
+      storeType="JKS";
+    }
+    if (keyStorePassword == null) {
+      keyStorePassword="";
+    }
+    KeyStore store=KeyStore.getInstance(storeType);
+    store.load(new FileInputStream(keyStoreFile),keyStorePassword.toCharArray());
+    keyStore=store;
+  }
+  return keyStore;
+}

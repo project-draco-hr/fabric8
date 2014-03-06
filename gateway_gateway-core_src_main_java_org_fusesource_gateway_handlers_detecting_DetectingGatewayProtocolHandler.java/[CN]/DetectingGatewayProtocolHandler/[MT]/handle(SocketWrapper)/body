@@ -1,11 +1,50 @@
 {
-  socket.readStream().dataHandler(new Handler<Buffer>(){
+  ReadStream<ReadStream> readStream=socket.readStream();
+  readStream.exceptionHandler(new Handler<Throwable>(){
+    @Override public void handle(    Throwable e){
+      LOG.info(String.format("Failed to route gateway client '%s' due to: %s",socket.remoteAddress(),e),e);
+      socket.close();
+    }
+  }
+);
+  readStream.endHandler(new Handler<Void>(){
+    @Override public void handle(    Void event){
+      LOG.info(String.format("Gateway client '%s' closed the connection before it could be routed.",socket.remoteAddress()));
+      socket.close();
+    }
+  }
+);
+  readStream.dataHandler(new Handler<Buffer>(){
     Buffer received=new Buffer();
     @Override public void handle(    Buffer event){
       received.appendBuffer(event);
       for (      final Protocol protocol : protocols) {
         if (protocol.matches(received)) {
-          if ("http".equals(protocol.getProtocolName())) {
+          if ("ssl".equals(protocol.getProtocolName())) {
+            LOG.info(String.format("SSL Connection from '%s'",socket.remoteAddress()));
+            if (sslContext == null) {
+              try {
+                if (sslConfig != null) {
+                  sslContext=SSLContext.getInstance(sslConfig.getProtocol());
+                  sslContext.init(sslConfig.getKeyManagers(),sslConfig.getTrustManagers(),null);
+                }
+ else {
+                  sslContext=SSLContext.getDefault();
+                }
+              }
+ catch (              Exception e) {
+                LOG.warn("Could initialize SSL: " + e,e);
+                socket.close();
+                return;
+              }
+            }
+            SslSocketWrapper sslSocketWrapper=new SslSocketWrapper(socket);
+            sslSocketWrapper.putBackHeader(received);
+            sslSocketWrapper.initServer(sslContext,clientAuth,disabledCypherSuites,enabledCipherSuites);
+            DetectingGatewayProtocolHandler.this.handle(sslSocketWrapper);
+            return;
+          }
+ else           if ("http".equals(protocol.getProtocolName())) {
             InetSocketAddress target=getHttpGateway();
             if (target != null) {
               try {

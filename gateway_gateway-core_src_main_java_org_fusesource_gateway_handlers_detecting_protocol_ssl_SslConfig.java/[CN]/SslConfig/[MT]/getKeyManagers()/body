@@ -1,0 +1,22 @@
+{
+  if (keyManagers == null) {
+    if (algorithm == null) {
+      algorithm="SunX509";
+    }
+    if (keyPassword == null) {
+      keyPassword="";
+    }
+    KeyManagerFactory factory=KeyManagerFactory.getInstance(algorithm);
+    factory.init(getKeyStore(),keyPassword.toCharArray());
+    keyManagers=factory.getKeyManagers();
+    if (keyAlias != null) {
+      for (int i=0; i < keyManagers.length; i++) {
+        KeyManager keyManager=keyManagers[i];
+        if (keyManager instanceof X509ExtendedKeyManager) {
+          keyManagers[i]=new AliasFilteringKeyManager(keyAlias,(X509ExtendedKeyManager)keyManager);
+        }
+      }
+    }
+  }
+  return keyManagers;
+}

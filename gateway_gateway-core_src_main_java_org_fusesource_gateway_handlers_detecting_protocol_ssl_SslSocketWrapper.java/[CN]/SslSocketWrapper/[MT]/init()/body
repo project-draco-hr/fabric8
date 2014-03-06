@@ -1,0 +1,27 @@
+{
+  this.next.readStream().dataHandler(new Handler<Buffer>(){
+    @Override public void handle(    Buffer buffer){
+      if (encryptedReadBuffer == null) {
+        encryptedReadBuffer=buffer;
+      }
+ else {
+        encryptedReadBuffer.appendBuffer(buffer);
+      }
+      encryptedReadBufferUnderflow=false;
+      pumpReads();
+    }
+  }
+);
+  this.next.readStream().endHandler(new Handler<Void>(){
+    @Override public void handle(    Void x){
+      encryptedReadEOF=true;
+    }
+  }
+);
+  this.next.readStream().exceptionHandler(new Handler<Throwable>(){
+    @Override public void handle(    Throwable error){
+      onFailure(error);
+    }
+  }
+);
+}
