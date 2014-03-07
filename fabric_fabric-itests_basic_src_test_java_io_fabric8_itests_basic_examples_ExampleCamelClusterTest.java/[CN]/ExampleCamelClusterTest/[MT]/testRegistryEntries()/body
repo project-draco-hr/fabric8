@@ -20,11 +20,12 @@
       CuratorFramework curator=curatorProxy.getService();
       Assert.assertNotNull(exists(curator,"/fabric/registry/camel/endpoints"));
       Assert.assertEquals(1,getChildren(curator,"/fabric/registry/camel/endpoints").size());
-      System.err.println(executeCommand("fabric:container-connect -u admin -p admin " + client.getId() + " camel:route-list"));
-      String response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin " + client.getId() + " camel:route-info fabric-client | grep Failed")).getPlain().toString();
-      System.err.println(response);
-      int failed=Integer.parseInt(response.replaceAll("[^0-9]",""));
-      Assert.assertEquals("Failed exchanges found on client",0,failed);
+      Assert.assertTrue(Provision.waitForCondition(Arrays.asList(client),new ContainerCondition(){
+        @Override public Boolean checkConditionOnContainer(        final Container c){
+          return getCompletedExchangesCount(c) > 0;
+        }
+      }
+,60000L));
       Container lastActiveServerContainer=servers.removeLast();
       for (      Container c : servers) {
         try {
@@ -32,13 +33,13 @@
         }
  catch (        Exception ex) {
         }
-        Thread.sleep(5000);
-        response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin " + client.getId() + " camel:route-info fabric-client | grep Completed")).getPlain().toString();
-        System.err.println(response);
-        response=new AnsiString(executeCommand("fabric:container-connect -u admin -p admin " + client.getId() + " camel:route-info fabric-client | grep Failed")).getPlain().toString();
-        System.err.println(response);
-        failed=Integer.parseInt(response.replaceAll("[^0-9]",""));
-        Assert.assertEquals("Failed exchanges found after container:" + c.getId() + " shut down",0,failed);
+        final int completed=getCompletedExchangesCount(client);
+        Assert.assertTrue(Provision.waitForCondition(Arrays.asList(client),new ContainerCondition(){
+          @Override public Boolean checkConditionOnContainer(          final Container c){
+            return getCompletedExchangesCount(c) > completed + 3;
+          }
+        }
+,60000L));
       }
       System.err.println(new AnsiString(executeCommand("fabric:container-connect -u admin -p admin " + client.getId() + " camel:route-info fabric-client")).getPlain().toString());
     }
