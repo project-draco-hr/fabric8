@@ -4,7 +4,12 @@
   try {
     if (masterUrl != null) {
       GitService gitservice=gitService.get();
-      gitservice.notifyRemoteChanged(getSubstitutedData(curator.get(),masterUrl));
+      String substitutedUrl=getSubstitutedData(curator.get(),masterUrl);
+      if (!Strings.isNotBlank(substitutedUrl)) {
+        LOGGER.warn("Could not render git master URL {}.",masterUrl);
+      }
+      URL url=new URL(substitutedUrl);
+      gitservice.notifyRemoteChanged(substitutedUrl);
     }
   }
  catch (  Exception e) {
