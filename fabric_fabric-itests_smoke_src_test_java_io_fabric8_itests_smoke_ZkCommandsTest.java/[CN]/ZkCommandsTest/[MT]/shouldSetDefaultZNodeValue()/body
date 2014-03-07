@@ -1,0 +1,6 @@
+{
+  err.print(executeCommand("fabric:create -n"));
+  err.print(executeCommand("zk:create /fabric/foo"));
+  String defaultZNodeValue=executeCommand("zk:get /fabric/foo").trim();
+  assertEquals(getLocalHost().getHostAddress(),defaultZNodeValue);
+}
