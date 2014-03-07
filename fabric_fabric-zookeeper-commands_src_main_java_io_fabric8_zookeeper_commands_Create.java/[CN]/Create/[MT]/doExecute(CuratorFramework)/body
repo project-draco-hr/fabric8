@@ -18,17 +18,16 @@
     nodeData=loadUrl(new URL(data));
   }
   try {
+    CreateBuilder createBuilder=curator.create();
     if (recursive) {
-      curator.create().creatingParentsIfNeeded().withMode(mode).withACL(acls).forPath(path,nodeData.getBytes());
+      createBuilder.creatingParentsIfNeeded();
+    }
+    BackgroundPathAndBytesable<String> create=createBuilder.withMode(mode).withACL(acls);
+    if (nodeData == null) {
+      create.forPath(path);
     }
  else {
-      BackgroundPathAndBytesable<String> create=curator.create().withMode(mode).withACL(acls);
-      if (nodeData == null) {
-        create.forPath(path);
-      }
- else {
-        create.forPath(path,nodeData.getBytes());
-      }
+      create.forPath(path,nodeData.getBytes());
     }
   }
  catch (  KeeperException.NodeExistsException e) {
