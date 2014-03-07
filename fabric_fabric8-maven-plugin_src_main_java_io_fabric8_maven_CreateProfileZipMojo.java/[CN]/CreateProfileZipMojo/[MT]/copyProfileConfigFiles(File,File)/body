@@ -3,12 +3,14 @@
   if (files != null) {
     profileBuildDir.mkdirs();
     for (    File file : files) {
-      File outFile=new File(profileBuildDir,file.getName());
-      if (file.isDirectory()) {
-        copyProfileConfigFiles(file,outFile);
-      }
+      if (!toBeExclude(file.getName())) {
+        File outFile=new File(profileBuildDir,file.getName());
+        if (file.isDirectory()) {
+          copyProfileConfigFiles(file,outFile);
+        }
  else {
-        Files.copy(file,outFile);
+          Files.copy(file,outFile);
+        }
       }
     }
   }
