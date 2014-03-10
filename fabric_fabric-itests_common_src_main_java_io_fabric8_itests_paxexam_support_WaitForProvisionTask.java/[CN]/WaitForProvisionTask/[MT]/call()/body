@@ -1,16 +1,26 @@
 {
   for (long t=0; (!isDone(container,status) && t < provisionTimeOut); t+=2000L) {
-    if (container.getProvisionException() != null) {
-      return false;
+    try {
+      if (container.getProvisionException() != null) {
+        System.out.println("Container:" + container.getId() + " Exception:"+ container.getProvisionException());
+        return false;
+      }
+      System.out.println("Container:" + container.getId() + " Alive:"+ container.isAlive()+ " Status:"+ container.getProvisionStatus()+ " SSH URL:"+ container.getSshUrl());
     }
-    Thread.sleep(2000L);
-    System.out.println("Container:" + container.getId() + " Alive:"+ container.isAlive()+ " Status:"+ container.getProvisionStatus()+ " SSH URL:"+ container.getSshUrl());
+ catch (    Throwable tr) {
+    }
+ finally {
+      Thread.sleep(2000L);
+    }
   }
-  if (!isComplete(container,status)) {
+  if (isFailed(container,status)) {
+    System.out.println("Container:" + container.getId() + " Alive:"+ container.isAlive()+ " Status:"+ container.getProvisionStatus()+ " Exception:"+ container.getProvisionException()+ " SSH URL:"+ container.getSshUrl());
     return false;
   }
- else   if (isFatal(container,status)) {
+ else   if (!isSuccessful(container,status)) {
+    System.out.println("Container:" + container.getId() + " Alive:"+ container.isAlive()+ " Status:"+ container.getProvisionStatus()+ " SSH URL:"+ container.getSshUrl()+ " - Timed Out");
     return false;
   }
+  System.out.println("Container:" + container.getId() + " Alive:"+ container.isAlive()+ " Status:"+ container.getProvisionStatus()+ " SSH URL:"+ container.getSshUrl());
   return true;
 }

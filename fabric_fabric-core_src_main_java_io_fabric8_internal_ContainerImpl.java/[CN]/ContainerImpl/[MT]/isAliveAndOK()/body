@@ -1,4 +1,4 @@
 {
   String status=getProvisionStatus();
-  return isAlive() && (status == null || status.length() == 0 || status.toLowerCase().startsWith("success"));
+  return isAlive() && !Strings.isNotBlank(getProvisionException()) && (status == null || status.length() == 0 || status.toLowerCase().startsWith(PROVISION_SUCCESS));
 }
