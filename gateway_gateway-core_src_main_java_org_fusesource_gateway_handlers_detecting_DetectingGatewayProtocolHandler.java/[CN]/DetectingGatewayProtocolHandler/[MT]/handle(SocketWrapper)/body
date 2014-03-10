@@ -22,6 +22,12 @@
         if (protocol.matches(received)) {
           if ("ssl".equals(protocol.getProtocolName())) {
             LOG.info(String.format("SSL Connection from '%s'",socket.remoteAddress()));
+            String disabledCypherSuites=null;
+            String enabledCipherSuites=null;
+            if (sslConfig != null) {
+              disabledCypherSuites=sslConfig.getDisabledCypherSuites();
+              enabledCipherSuites=sslConfig.getEnabledCipherSuites();
+            }
             if (sslContext == null) {
               try {
                 if (sslConfig != null) {

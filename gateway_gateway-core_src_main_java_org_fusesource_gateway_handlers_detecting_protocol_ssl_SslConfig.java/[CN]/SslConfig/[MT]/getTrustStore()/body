@@ -1,5 +1,5 @@
 {
-  if (trustStoreFile == null) {
+  if (trustStoreURL == null) {
     return getKeyStore();
   }
   if (trustStore == null) {
@@ -10,7 +10,13 @@
       trustStorePassword="";
     }
     KeyStore store=KeyStore.getInstance(storeType);
-    store.load(new FileInputStream(trustStoreFile),trustStorePassword.toCharArray());
+    InputStream stream=trustStoreURL.openStream();
+    try {
+      store.load(stream,trustStorePassword.toCharArray());
+    }
+  finally {
+      stream.close();
+    }
     trustStore=store;
   }
   return trustStore;

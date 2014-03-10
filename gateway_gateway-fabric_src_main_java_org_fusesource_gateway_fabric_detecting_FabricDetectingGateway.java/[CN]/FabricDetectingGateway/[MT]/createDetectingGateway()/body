@@ -15,6 +15,44 @@
   if (isHttpEnabled()) {
     protocols.add(new HttpProtocol());
   }
+  if (isSslEnabled()) {
+    SslConfig sslConfig=new SslConfig();
+    if (Strings.isNotBlank(sslAlgorithm)) {
+      sslConfig.setAlgorithm(sslAlgorithm);
+    }
+    if (Strings.isNotBlank(keyAlias)) {
+      sslConfig.setKeyAlias(keyAlias);
+    }
+    if (Strings.isNotBlank(keyPassword)) {
+      sslConfig.setKeyPassword(keyPassword);
+    }
+    if (Strings.isNotBlank(keyStorePassword)) {
+      sslConfig.setKeyStorePassword(keyStorePassword);
+    }
+    if (keyStoreURL != null) {
+      sslConfig.setKeyStoreURL(keyStoreURL);
+    }
+    if (Strings.isNotBlank(sslProtocol)) {
+      sslConfig.setProtocol(sslProtocol);
+    }
+    if (Strings.isNotBlank(sslStoreType)) {
+      sslConfig.setStoreType(sslStoreType);
+    }
+    if (Strings.isNotBlank(trustStorePassword)) {
+      sslConfig.setTrustStorePassword(trustStorePassword);
+    }
+    if (trustStoreURL != null) {
+      sslConfig.setTrustStoreURL(trustStoreURL);
+    }
+    if (Strings.isNotBlank(enabledCipherSuites)) {
+      sslConfig.setEnabledCipherSuites(enabledCipherSuites);
+    }
+    if (Strings.isNotBlank(disabledCypherSuites)) {
+      sslConfig.setDisabledCypherSuites(disabledCypherSuites);
+    }
+    handler.setSslConfig(sslConfig);
+    protocols.add(new SslProtocol());
+  }
   if (protocols.isEmpty()) {
     return null;
   }
