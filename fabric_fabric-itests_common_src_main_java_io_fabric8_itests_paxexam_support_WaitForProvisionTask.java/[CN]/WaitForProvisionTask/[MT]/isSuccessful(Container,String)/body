@@ -1,6 +1,6 @@
 {
   try {
-    return container.isAlive() && (container.getProvisionStatus().equals(status) || !container.isManaged()) && container.getSshUrl() != null;
+    return container.isAlive() && container.getProvisionException() == null && (container.getProvisionStatus().equals(status) || !container.isManaged()) && container.getSshUrl() != null;
   }
  catch (  Throwable t) {
     return false;

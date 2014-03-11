@@ -1,26 +1,30 @@
 {
-  for (long t=0; (!isDone(container,status) && t < provisionTimeOut); t+=2000L) {
+  long start=System.currentTimeMillis();
+  while (System.currentTimeMillis() - start < provisionTimeOut) {
+    StringBuilder sb=new StringBuilder();
     try {
+      sb.append("Container: ").append(container.getId()).append(" ");
+      sb.append("Alive:").append(container.isAlive()).append(" ");
       if (container.getProvisionException() != null) {
-        System.out.println("Container:" + container.getId() + " Exception:"+ container.getProvisionException());
+        sb.append("Exception:").append(container.getProvisionException()).append(" ");
         return false;
       }
-      System.out.println("Container:" + container.getId() + " Alive:"+ container.isAlive()+ " Status:"+ container.getProvisionStatus()+ " SSH URL:"+ container.getSshUrl());
+      sb.append("Status:").append(container.getProvisionStatus()).append(" ");
+      sb.append("SSH URL:").append(container.getSshUrl()).append(" ");
+      if (isSuccessful(container,status)) {
+        return true;
+      }
+ else       if (isFailed(container,status)) {
+        return false;
+      }
     }
  catch (    Throwable tr) {
     }
  finally {
-      Thread.sleep(2000L);
+      System.out.println(sb.toString());
+      Thread.sleep(1000L);
     }
   }
-  if (isFailed(container,status)) {
-    System.out.println("Container:" + container.getId() + " Alive:"+ container.isAlive()+ " Status:"+ container.getProvisionStatus()+ " Exception:"+ container.getProvisionException()+ " SSH URL:"+ container.getSshUrl());
-    return false;
-  }
- else   if (!isSuccessful(container,status)) {
-    System.out.println("Container:" + container.getId() + " Alive:"+ container.isAlive()+ " Status:"+ container.getProvisionStatus()+ " SSH URL:"+ container.getSshUrl()+ " - Timed Out");
-    return false;
-  }
-  System.out.println("Container:" + container.getId() + " Alive:"+ container.isAlive()+ " Status:"+ container.getProvisionStatus()+ " SSH URL:"+ container.getSshUrl());
-  return true;
+  System.out.println("Container:" + container.getId() + " Alive:"+ container.isAlive()+ " Status:"+ container.getProvisionStatus()+ " SSH URL:"+ container.getSshUrl()+ " - Timed Out");
+  return false;
 }
