@@ -15,12 +15,12 @@
     assertHasVersion(defaultVersion);
   }
   remote.checkout().setName("1.0").call();
-  String importedProfile="example-camel-twitter";
+  String importedProfile="example-dozer";
   String profile=importedProfile;
   assertProfileExists(defaultVersion,profile);
   String version="1.1";
   assertCreateVersion("1.0",version);
-  assertProfileConfiguration(version,importedProfile,Constants.AGENT_PID,"attribute.parents","feature-camel insight-camel");
+  assertProfileConfiguration(version,importedProfile,Constants.AGENT_PID,"attribute.parents","feature-camel");
   assertProfileTextFileConfigurationContains(version,"example-camel-mq","camel.xml","http://camel.apache.org/schema/blueprint");
   List<String> fileNames=dataStore.getConfigurationFileNames(version,"example-camel-mq");
   assertNotNull("Should have some file names",fileNames);
@@ -29,7 +29,7 @@
   assertCollectionContains("configurationFileNames",fileNames,"camel.xml");
   Map<String,String> profileAttributes=dataStore.getProfileAttributes(version,importedProfile);
   String parent=profileAttributes.get("parents");
-  assertEquals(importedProfile + ".profileAttributes[parent]","feature-camel insight-camel",parent);
+  assertEquals(importedProfile + ".profileAttributes[parent]","feature-camel",parent);
   System.out.println("Profile attributes: " + profileAttributes);
   String profileAttributeKey="myKey";
   String expectedProfileAttributeValue="myValue";
@@ -51,9 +51,9 @@
   assertEquals("should have found the updated hawtio repo key","mvn:io.hawt/hawtio-karaf/myNewVersion/xml/features",actual);
   Map<String,byte[]> tomcatFileConfigurations=dataStore.getFileConfigurations("1.0","controller-tomcat");
   assertHasFileConfiguration(tomcatFileConfigurations,"tomcat/conf/server.xml.mvel");
-  Collection<String> files=dataStore.listFiles("1.0",Arrays.asList("example-camel-twitter"),".");
-  assertNotNull(files);
-  assertCollectionContains("Should contain file: io.fabric8.examples.camel.twitter.properties",files,"io.fabric8.examples.camel.twitter.properties");
+  Collection<String> schemas=dataStore.listFiles("1.0",Arrays.asList("example-dozer"),"schemas");
+  assertNotNull(schemas);
+  assertContainerEquals("schemas for example-dozer",Arrays.asList("invoice.xsd"),new ArrayList<String>(schemas));
   String profileNotCreated="shouldNotBeCreated";
   assertEquals("Should not create profile: " + profileNotCreated,null,dataStore.getProfile(version,profileNotCreated,false));
   assertProfileNotExists(defaultVersion,profileNotCreated);
