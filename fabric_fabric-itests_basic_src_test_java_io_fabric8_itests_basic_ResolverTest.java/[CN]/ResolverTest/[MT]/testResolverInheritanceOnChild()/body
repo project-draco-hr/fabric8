@@ -5,7 +5,7 @@
   try {
     FabricService fabricService=fabricProxy.getService();
     CuratorFramework curator=curatorProxy.getService();
-    Set<Container> containers=ContainerBuilder.create(1,1).withName("child").withProfiles("default").assertProvisioningResult().build();
+    Set<Container> containers=ContainerBuilder.create(fabricProxy,1,1).withName("child").withProfiles("default").assertProvisioningResult().build();
     try {
       Container child=containers.iterator().next();
       Assert.assertEquals("manualip",getSubstitutedPath(curator,ZkPath.CONTAINER_RESOLVER.getPath(child.getId())));

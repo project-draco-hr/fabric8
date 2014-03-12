@@ -2,18 +2,14 @@
   System.out.println(executeCommand("fabric:create -n"));
   waitForFabricCommands();
   System.out.println(executeCommand("fabric:version-create --parent 1.0 1.1"));
-  Set<Container> containers=ContainerBuilder.create().withName("camel").withProfiles("feature-camel").assertProvisioningResult().build();
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  Set<Container> containers=null;
   try {
-    ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
-    try {
-      FabricService fabricService=fabricProxy.getService();
-      CountDownLatch latch=WaitForConfigurationChange.on(fabricService);
-      System.out.println(executeCommand("fabric:profile-edit --features camel-hazelcast feature-camel 1.1"));
-      Assert.assertTrue(latch.await(5,TimeUnit.SECONDS));
-    }
-  finally {
-      fabricProxy.close();
-    }
+    containers=ContainerBuilder.create(fabricProxy).withName("camel").withProfiles("feature-camel").assertProvisioningResult().build();
+    FabricService fabricService=fabricProxy.getService();
+    CountDownLatch latch=WaitForConfigurationChange.on(fabricService);
+    System.out.println(executeCommand("fabric:profile-edit --features camel-hazelcast feature-camel 1.1"));
+    Assert.assertTrue(latch.await(5,TimeUnit.SECONDS));
     System.out.println(executeCommand("fabric:container-upgrade --all 1.1"));
     Provision.provisioningSuccess(containers,PROVISION_TIMEOUT);
     System.out.println(executeCommand("fabric:container-list"));
@@ -37,5 +33,6 @@
   }
   finally {
     ContainerBuilder.destroy(containers);
+    fabricProxy.close();
   }
 }

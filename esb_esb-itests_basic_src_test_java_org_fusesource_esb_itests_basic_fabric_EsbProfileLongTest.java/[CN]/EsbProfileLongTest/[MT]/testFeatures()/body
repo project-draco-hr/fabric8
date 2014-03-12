@@ -1,24 +1,21 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Set<Container> containers=ContainerBuilder.create().withName("esb").withProfiles("jboss-fuse-minimal").assertProvisioningResult().build();
+  Set<ContainerProxy> containers=null;
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  ServiceProxy<CuratorFramework> curatorProxy=ServiceProxy.createServiceProxy(bundleContext,CuratorFramework.class);
   try {
-    ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
-    ServiceProxy<CuratorFramework> curatorProxy=ServiceProxy.createServiceProxy(bundleContext,CuratorFramework.class);
-    try {
-      FabricService fabricService=fabricProxy.getService();
-      CuratorFramework curator=curatorProxy.getService();
-      prepareFeaturesForTesting(containers,"connector","jboss-fuse-minimal","geronimo-connector");
-      prepareFeaturesForTesting(containers,"saaj","jboss-fuse-minimal","saaj-impl");
-      prepareFeaturesForTesting(containers,"cxf-nmr","jboss-fuse-minimal","org.apache.servicemix.cxf.binding.nmr");
-      prepareFeaturesForTesting(containers,"camel-nmr","jboss-fuse-minimal","org.apache.servicemix.camel.component");
-      assertFeatures(fabricService,curator);
-    }
-  finally {
-      fabricProxy.close();
-      curatorProxy.close();
-    }
+    containers=ContainerBuilder.create(fabricProxy).withName("esb").withProfiles("jboss-fuse-minimal").assertProvisioningResult().build();
+    FabricService fabricService=fabricProxy.getService();
+    CuratorFramework curator=curatorProxy.getService();
+    prepareFeaturesForTesting(containers,"connector","jboss-fuse-minimal","geronimo-connector");
+    prepareFeaturesForTesting(containers,"saaj","jboss-fuse-minimal","saaj-impl");
+    prepareFeaturesForTesting(containers,"cxf-nmr","jboss-fuse-minimal","org.apache.servicemix.cxf.binding.nmr");
+    prepareFeaturesForTesting(containers,"camel-nmr","jboss-fuse-minimal","org.apache.servicemix.camel.component");
+    assertFeatures(fabricService,curator);
   }
   finally {
     ContainerBuilder.destroy(containers);
+    curatorProxy.close();
+    fabricProxy.close();
   }
 }

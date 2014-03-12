@@ -1,0 +1,6 @@
+{
+  System.out.println(executeCommand("fabric:mq-create --group " + groupName + " "+ brokerName));
+  String profileName="mq-broker-" + groupName + "."+ brokerName;
+  System.out.println(executeCommand("fabric:profile-edit --features fabric-zookeeper-commands " + profileName));
+  return ContainerBuilder.child(fabricProxy,2).withName("child").withProfiles(profileName).assertProvisioningResult().build();
+}

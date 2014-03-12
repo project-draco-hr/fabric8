@@ -1,12 +1,5 @@
 {
-  BundleContext bundleContext=getBundleContext();
-  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
-  try {
-    FabricService fabricService=fabricProxy.getService();
-    CompletionService<Set<Container>> completionService=new ExecutorCompletionService<Set<Container>>(executorService);
-    return completionService.submit(new CreateContainerTask(fabricService,builder));
-  }
-  finally {
-    fabricProxy.close();
-  }
+  FabricService fabricService=fabricServiceServiceProxy.getService();
+  CompletionService<Set<ContainerProxy>> completionService=new ExecutorCompletionService<Set<ContainerProxy>>(executorService);
+  return completionService.submit(new CreateContainerTask(fabricServiceServiceProxy,builder));
 }

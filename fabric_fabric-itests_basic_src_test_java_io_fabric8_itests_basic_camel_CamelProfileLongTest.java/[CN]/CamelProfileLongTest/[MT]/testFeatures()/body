@@ -1,8 +1,9 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Set<Container> containers=ContainerBuilder.create().withName("feautre-camel").withProfiles("default").assertProvisioningResult().build();
+  Set<ContainerProxy> containers=null;
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
   try {
-    ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+    containers=ContainerBuilder.create(fabricProxy).withName("feautre-camel").withProfiles("default").assertProvisioningResult().build();
     ServiceProxy<CuratorFramework> curatorProxy=ServiceProxy.createServiceProxy(bundleContext,CuratorFramework.class);
     try {
       FabricService fabricService=fabricProxy.getService();

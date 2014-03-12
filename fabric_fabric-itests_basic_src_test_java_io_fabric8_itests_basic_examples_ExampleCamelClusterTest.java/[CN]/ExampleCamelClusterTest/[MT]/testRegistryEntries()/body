@@ -1,7 +1,9 @@
 {
   System.err.println(executeCommand("fabric:create -n root"));
-  Set<Container> containers=ContainerBuilder.create(3).withName("fabric-camel").withProfiles("feature-camel").assertProvisioningResult().build();
+  Set<ContainerProxy> containers=null;
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
   try {
+    containers=ContainerBuilder.create(fabricProxy,3).withName("fabric-camel").withProfiles("feature-camel").assertProvisioningResult().build();
     LinkedList<Container> containerList=new LinkedList<Container>(containers);
     Container client=containerList.removeLast();
     LinkedList<Container> servers=new LinkedList<Container>(containerList);
@@ -49,5 +51,6 @@
   }
   finally {
     ContainerBuilder.destroy(containers);
+    fabricProxy.close();
   }
 }

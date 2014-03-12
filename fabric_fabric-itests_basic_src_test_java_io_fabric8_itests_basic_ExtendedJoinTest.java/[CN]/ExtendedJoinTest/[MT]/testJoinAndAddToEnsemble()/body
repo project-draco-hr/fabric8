@@ -26,8 +26,8 @@
       System.err.println(executeCommand("ssh -l admin -P admin -p " + adminService.getInstance("child1").getSshPort() + " localhost "+ joinCommand));
       System.err.println(executeCommand("ssh -l admin -P admin -p " + adminService.getInstance("child2").getSshPort() + " localhost "+ joinCommand));
       Provision.containersExist(bundleContext,Arrays.asList("child1","child2"),PROVISION_TIMEOUT);
-      Container child1=fabricService.getContainer("child1");
-      Container child2=fabricService.getContainer("child2");
+      Container child1=ContainerProxy.wrap(fabricService.getContainer("child1"),fabricProxy);
+      Container child2=ContainerProxy.wrap(fabricService.getContainer("child2"),fabricProxy);
       Provision.containersStatus(Arrays.asList(child1,child2),"success",PROVISION_TIMEOUT);
       addToEnsemble(fabricService,child1,child2);
       System.err.println(tryCommand("fabric:container-list"));

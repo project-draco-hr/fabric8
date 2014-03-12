@@ -2,8 +2,10 @@
   String featureLocation=System.getProperty("feature.location");
   System.out.println("Testing with feature from:" + featureLocation);
   System.err.println(executeCommand("fabric:create -n"));
-  Set<Container> containers=ContainerBuilder.create(2).withName("maven").withProfiles("fabric").assertProvisioningResult().build();
+  Set<ContainerProxy> containers=null;
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
   try {
+    containers=ContainerBuilder.create(fabricProxy,2).withName("maven").withProfiles("fabric").assertProvisioningResult().build();
     List<String> uploadUrls=new ArrayList<String>();
     ServiceProxy<CuratorFramework> curatorProxy=ServiceProxy.createServiceProxy(bundleContext,CuratorFramework.class);
     try {

@@ -1,7 +1,9 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Set<Container> containers=ContainerBuilder.create(2).withName("child").withProfiles("default").assertProvisioningResult().build();
+  Set<ContainerProxy> containers=null;
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
   try {
+    containers=ContainerBuilder.create(fabricProxy,2).withName("child").withProfiles("default").assertProvisioningResult().build();
     LinkedList<Container> containerList=new LinkedList<Container>(containers);
     Container broker=containerList.removeLast();
     Profile brokerProfile=broker.getVersion().getProfile("mq-default");
@@ -30,5 +32,6 @@
   }
   finally {
     ContainerBuilder.destroy(containers);
+    fabricProxy.close();
   }
 }

@@ -1,43 +1,37 @@
 {
-  Set<Container> containers=new HashSet<Container>();
+  Set<ContainerProxy> containers=new HashSet<ContainerProxy>();
   BundleContext bundleContext=getBundleContext();
-  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  FabricService fabricService=fabricServiceServiceProxy.getService();
+  CompletionService<Set<ContainerProxy>> completionService=new ExecutorCompletionService<Set<ContainerProxy>>(executorService);
+  int tasks=0;
+  for (  B options : buildersList) {
+    options.profiles(profileNames);
+    if (!options.isEnsembleServer()) {
+      options.zookeeperUrl(fabricService.getZookeeperUrl());
+      completionService.submit(new CreateContainerTask(fabricServiceServiceProxy,options));
+      tasks++;
+    }
+  }
   try {
-    FabricService fabricService=fabricProxy.getService();
-    CompletionService<Set<Container>> completionService=new ExecutorCompletionService<Set<Container>>(executorService);
-    int tasks=0;
-    for (    B options : buildersList) {
-      options.profiles(profileNames);
-      if (!options.isEnsembleServer()) {
-        options.zookeeperUrl(fabricService.getZookeeperUrl());
-        completionService.submit(new CreateContainerTask(fabricService,options));
-        tasks++;
-      }
+    for (int i=0; i < tasks; i++) {
+      Future<Set<ContainerProxy>> futureContainerSet=completionService.poll(CREATE_TIMEOUT,TimeUnit.MILLISECONDS);
+      Set<ContainerProxy> containerSet=futureContainerSet.get();
+      containers.addAll(containerSet);
     }
     try {
-      for (int i=0; i < tasks; i++) {
-        Future<Set<Container>> futureContainerSet=completionService.poll(CREATE_TIMEOUT,TimeUnit.MILLISECONDS);
-        Set<Container> containerSet=futureContainerSet.get();
-        containers.addAll(containerSet);
+      if (waitForProvisioning) {
+        Provision.containerStatus(containers,provisionTimeOut);
       }
-      try {
-        if (waitForProvisioning) {
-          Provision.containerStatus(containers,provisionTimeOut);
-        }
-        if (assertProvisioningResult) {
-          Provision.provisioningSuccess(containers,provisionTimeOut,ContainerCallback.DISPLAY_ALL);
-        }
-      }
- catch (      Exception e) {
-        throw FabricException.launderThrowable(e);
+      if (assertProvisioningResult) {
+        Provision.provisioningSuccess(containers,provisionTimeOut,ContainerCallback.DISPLAY_ALL);
       }
     }
  catch (    Exception e) {
       throw FabricException.launderThrowable(e);
     }
   }
-  finally {
-    fabricProxy.close();
+ catch (  Exception e) {
+    throw FabricException.launderThrowable(e);
   }
   return Collections.unmodifiableSet(containers);
 }

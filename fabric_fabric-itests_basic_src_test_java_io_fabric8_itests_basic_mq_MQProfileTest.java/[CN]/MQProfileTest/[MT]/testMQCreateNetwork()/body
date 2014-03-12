@@ -2,8 +2,10 @@
   System.err.println(executeCommand("fabric:create -n"));
   executeCommand("mq-create --group us-east --networks us-west --jmx-user admin --jmx-password admin --networks-username admin --networks-password admin --minimumInstances 1 us-east");
   executeCommand("mq-create --group us-west --networks us-east --jmx-user admin --jmx-password admin --networks-username admin --networks-password admin --minimumInstances 1 us-west");
-  Set<Container> containers=ContainerBuilder.create(4).withName("child").withProfiles("default").assertProvisioningResult().build();
+  Set<ContainerProxy> containers=null;
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
   try {
+    containers=ContainerBuilder.create(fabricProxy,4).withName("child").withProfiles("default").assertProvisioningResult().build();
     LinkedList<Container> containerList=new LinkedList<Container>(containers);
     Container eastBroker=containerList.removeLast();
     Container westBroker=containerList.removeLast();
@@ -38,5 +40,6 @@
   }
   finally {
     ContainerBuilder.destroy(containers);
+    fabricProxy.close();
   }
 }

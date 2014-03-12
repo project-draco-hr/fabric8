@@ -1,7 +1,9 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Set<Container> containers=ContainerBuilder.create().withName("child").withProfiles("example-camel-cxf").assertProvisioningResult().build();
+  Set<ContainerProxy> containers=null;
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
   try {
+    containers=ContainerBuilder.create(fabricProxy).withName("child").withProfiles("example-camel-cxf").assertProvisioningResult().build();
     System.err.println(executeCommand("fabric:container-list"));
     Assert.assertTrue(Provision.waitForCondition(containers,new ContainerCondition(){
       @Override public Boolean checkConditionOnContainer(      final Container c){
@@ -19,5 +21,6 @@
   }
   finally {
     ContainerBuilder.destroy(containers);
+    fabricProxy.close();
   }
 }

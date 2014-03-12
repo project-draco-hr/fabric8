@@ -1,7 +1,9 @@
 {
   executeCommand("fabric:create -n");
-  Set<Container> containers=ContainerBuilder.child(1).withName("child").assertProvisioningResult().build();
+  Set<ContainerProxy> containers=null;
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
   try {
+    containers=ContainerBuilder.child(fabricProxy,1).withName("child").assertProvisioningResult().build();
     Container childContainer=containers.iterator().next();
     Assert.assertEquals("Expected to find the child container","child1",childContainer.getId());
     executeCommand("container-add-profile child1 controller-wildfly");
@@ -38,5 +40,6 @@
   }
   finally {
     ContainerBuilder.destroy(containers);
+    fabricProxy.close();
   }
 }

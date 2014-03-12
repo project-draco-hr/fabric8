@@ -1,7 +1,9 @@
 {
   System.err.println("creating the cxf-server container.");
-  Set<Container> containers=ContainerBuilder.create().withName("child").withProfiles("example-cxf").assertProvisioningResult().build();
+  Set<ContainerProxy> containers=null;
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
   try {
+    containers=ContainerBuilder.create(fabricProxy).withName("child").withProfiles("example-cxf").assertProvisioningResult().build();
     assertTrue("We should create the cxf-server container.",containers.size() == 1);
     System.err.println("created the cxf-server container.");
     Thread.sleep(2000);
@@ -15,5 +17,6 @@
   }
   finally {
     ContainerBuilder.destroy(containers);
+    fabricProxy.close();
   }
 }
