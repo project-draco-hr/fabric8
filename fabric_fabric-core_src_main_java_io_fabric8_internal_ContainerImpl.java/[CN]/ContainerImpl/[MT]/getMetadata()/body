@@ -1,17 +1,12 @@
 {
-  try {
-    if (metadata == getMetadata(getClass().getClassLoader())) {
-      for (      Class type : fabricService.getSupportedCreateContainerMetadataTypes()) {
-        metadata=getMetadata(type.getClassLoader());
-        if (metadata != null) {
-          return metadata;
-        }
+  CreateContainerMetadata<?> metadata=getMetadata(getClass().getClassLoader());
+  if (metadata == null) {
+    for (    Class<?> type : fabricService.getSupportedCreateContainerMetadataTypes()) {
+      metadata=getMetadata(type.getClassLoader());
+      if (metadata != null) {
+        break;
       }
     }
-    return metadata;
   }
- catch (  Exception e) {
-    logger.warn("Error while retrieving metadata. This exception will be ignored.",e);
-    return null;
-  }
+  return metadata;
 }
