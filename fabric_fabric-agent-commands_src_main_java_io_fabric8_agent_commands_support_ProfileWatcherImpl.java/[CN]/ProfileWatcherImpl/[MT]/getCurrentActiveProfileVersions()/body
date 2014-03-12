@@ -1,0 +1,14 @@
+{
+  SortedSet<String> answer=new TreeSet<String>();
+  Container[] containers=fabricService.get().getContainers();
+  for (  Container container : containers) {
+    container.getProvisionList();
+    Profile[] profiles=container.getProfiles();
+    for (    Profile profile : profiles) {
+      String id=profile.getId();
+      String version=profile.getVersion();
+      answer.add(id + "/" + version);
+    }
+  }
+  return answer;
+}

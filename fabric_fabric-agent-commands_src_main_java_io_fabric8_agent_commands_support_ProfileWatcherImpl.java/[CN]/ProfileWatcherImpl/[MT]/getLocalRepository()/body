@@ -1,0 +1,12 @@
+{
+  assertValid();
+  MavenConfiguration configuration=retrieveMavenConfiguration();
+  if (configuration != null) {
+    MavenRepositoryURL localRepositoryURL=configuration.getLocalRepository();
+    if (localRepositoryURL != null) {
+      return localRepositoryURL.getFile().getAbsoluteFile();
+    }
+  }
+  String localRepo=System.getProperty("user.home") + File.separator + ".m2"+ File.separator+ "repository";
+  return new File(localRepo).getAbsoluteFile();
+}

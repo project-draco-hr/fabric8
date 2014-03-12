@@ -1,0 +1,17 @@
+{
+  MavenConfiguration mavenConfiguration=null;
+  try {
+    Configuration configuration=configurationAdmin.get().getConfiguration(ServiceConstants.PID);
+    if (configuration != null) {
+      Dictionary dictonary=configuration.getProperties();
+      if (dictonary != null) {
+        DictionaryPropertyResolver resolver=new DictionaryPropertyResolver(dictonary);
+        mavenConfiguration=new MavenConfigurationImpl(resolver,ServiceConstants.PID);
+      }
+    }
+  }
+ catch (  IOException e) {
+    LOG.error("Error retrieving maven configuration",e);
+  }
+  return mavenConfiguration;
+}
