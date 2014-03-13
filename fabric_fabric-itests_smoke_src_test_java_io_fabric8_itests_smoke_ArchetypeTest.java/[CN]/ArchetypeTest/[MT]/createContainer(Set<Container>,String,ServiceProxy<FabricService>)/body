@@ -7,7 +7,7 @@
   System.out.println();
   String containerName=profileId;
   String expectedContainerName=containerName + "1";
-  Set<Container> containers=ContainerBuilder.child(1).withName(containerName).withProfiles(profileId).assertProvisioningResult().build();
+  Set<ContainerProxy> containers=ContainerBuilder.child(fabricProxy,1).withName(containerName).withProfiles(profileId).assertProvisioningResult().build();
   allContainers.addAll(containers);
   assertEquals("One container",1,containers.size());
   Container child=containers.iterator().next();
