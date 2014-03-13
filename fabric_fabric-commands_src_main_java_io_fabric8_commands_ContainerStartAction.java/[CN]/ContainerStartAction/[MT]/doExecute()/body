@@ -1,0 +1,15 @@
+{
+  Collection<String> expandedNames=super.expandGlobNames(containers);
+  for (  String containerName : expandedNames) {
+    validateContainersName(containerName);
+    Container found=FabricCommand.getContainer(fabricService,containerName);
+    applyUpdatedCredentials(found);
+    if (force || !found.isAlive()) {
+      found.start(force);
+    }
+ else {
+      System.err.println("Container " + containerName + " is already started");
+    }
+  }
+  return null;
+}

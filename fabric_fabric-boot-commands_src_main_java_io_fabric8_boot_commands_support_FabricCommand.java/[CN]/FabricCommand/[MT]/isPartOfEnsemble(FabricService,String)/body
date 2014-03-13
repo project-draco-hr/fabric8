@@ -1,0 +1,14 @@
+{
+  boolean result=false;
+  CuratorFramework curator=fabricService.adapt(CuratorFramework.class);
+  try {
+    List<String> containerList=new ArrayList<String>();
+    String clusterId=getStringData(curator,ZkPath.CONFIG_ENSEMBLES.getPath());
+    String containers=getStringData(curator,ZkPath.CONFIG_ENSEMBLE.getPath(clusterId));
+    Collections.addAll(containerList,containers.split(","));
+    result=containerList.contains(containerName);
+  }
+ catch (  Throwable t) {
+  }
+  return result;
+}
