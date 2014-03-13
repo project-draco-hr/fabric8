@@ -1,10 +1,12 @@
 {
-  CreateContainerMetadata<?> metadata=getMetadata(getClass().getClassLoader());
   if (metadata == null) {
-    for (    Class<?> type : fabricService.getSupportedCreateContainerMetadataTypes()) {
-      metadata=getMetadata(type.getClassLoader());
-      if (metadata != null) {
-        break;
+    metadata=getMetadata(getClass().getClassLoader());
+    if (metadata == null) {
+      for (      Class<?> type : fabricService.getSupportedCreateContainerMetadataTypes()) {
+        metadata=getMetadata(type.getClassLoader());
+        if (metadata != null) {
+          break;
+        }
       }
     }
   }
