@@ -1,0 +1,27 @@
+{
+  validateContainersName(containers);
+  if (EnsembleCommandSupport.checkIfShouldModify(session,force)) {
+    if (containers != null && !containers.isEmpty()) {
+      StringBuilder sb=new StringBuilder();
+      sb.append("Adding containers:");
+      for (      String container : containers) {
+        sb.append(" ").append(container);
+      }
+      sb.append(" to the ensemble. This may take a while.");
+      CreateEnsembleOptions.Builder builder=CreateEnsembleOptions.builder();
+      applyEnsembleConfiguration();
+      builder=builder.zooKeeperServerTickTime(zooKeeperTickTime).zooKeeperServerInitLimit(zooKeeperInitLimit).zooKeeperServerSyncLimit(zooKeeperSyncLimit).zooKeeperServerDataDir(zooKeeperDataDir).migrationTimeout(migrationTimeout);
+      if (generateZookeeperPassword) {
+      }
+ else       if (zookeeperPassword == null || zookeeperPassword.isEmpty()) {
+        builder=builder.zookeeperPassword(clusterService.getZookeeperPassword());
+      }
+ else {
+        builder=builder.zookeeperPassword(zookeeperPassword);
+      }
+      clusterService.addToCluster(containers,builder.build());
+      System.out.println("Updated Zookeeper connection string: " + clusterService.getZooKeeperUrl());
+    }
+  }
+  return null;
+}
