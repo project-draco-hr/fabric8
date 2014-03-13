@@ -1,26 +1,29 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  System.err.println(executeCommand("fabric:version-create"));
-  Set<ContainerProxy> containers=null;
   ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
   try {
-    containers=ContainerBuilder.child(fabricProxy,1).withName("child").assertProvisioningResult().build();
-    CuratorFramework curator=ServiceLocator.awaitService(bundleContext,CuratorFramework.class);
-    for (    Container c : containers) {
-      try {
-        c.destroy();
-        Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.1",c.getId())));
-        Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.0",c.getId())));
-        Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONTAINER.getPath(c.getId())));
-        Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONTAINER_DOMAINS.getPath(c.getId())));
-        Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONTAINER_PROVISION.getPath(c.getId())));
+    System.err.println(executeCommand("fabric:version-create"));
+    Set<ContainerProxy> containers=ContainerBuilder.child(fabricProxy,1).withName("child").assertProvisioningResult().build();
+    try {
+      CuratorFramework curator=ServiceLocator.awaitService(bundleContext,CuratorFramework.class);
+      for (      Container c : containers) {
+        try {
+          c.destroy();
+          Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.1",c.getId())));
+          Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.0",c.getId())));
+          Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONTAINER.getPath(c.getId())));
+          Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONTAINER_DOMAINS.getPath(c.getId())));
+          Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONTAINER_PROVISION.getPath(c.getId())));
+        }
+ catch (        Exception ex) {
+        }
       }
- catch (      Exception ex) {
-      }
+    }
+  finally {
+      ContainerBuilder.destroy(containers);
     }
   }
   finally {
-    ContainerBuilder.destroy(containers);
     fabricProxy.close();
   }
 }

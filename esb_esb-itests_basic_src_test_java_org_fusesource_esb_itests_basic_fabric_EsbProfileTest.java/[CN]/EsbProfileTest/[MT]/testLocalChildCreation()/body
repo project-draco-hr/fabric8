@@ -1,12 +1,15 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Set<ContainerProxy> containers=null;
   ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
   try {
-    containers=ContainerBuilder.create(fabricProxy).withName("esb").withProfiles("jboss-fuse-minimal").assertProvisioningResult().build();
+    Set<ContainerProxy> containers=ContainerBuilder.create(fabricProxy).withName("esb").withProfiles("jboss-fuse-minimal").assertProvisioningResult().build();
+    try {
+    }
+  finally {
+      ContainerBuilder.destroy(containers);
+    }
   }
   finally {
-    ContainerBuilder.destroy(containers);
     fabricProxy.close();
   }
 }

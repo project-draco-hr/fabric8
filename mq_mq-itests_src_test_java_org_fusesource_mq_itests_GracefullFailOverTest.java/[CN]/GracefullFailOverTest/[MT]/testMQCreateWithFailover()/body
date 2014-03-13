@@ -4,10 +4,9 @@
   final Semaphore semaphore=new Semaphore(0);
   System.out.println(executeCommand("fabric:create -n"));
   ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
-  ServiceProxy<CuratorFramework> curatorProxy=ServiceProxy.createServiceProxy(bundleContext,CuratorFramework.class);
   try {
     FabricService fabricService=fabricProxy.getService();
-    CuratorFramework curator=curatorProxy.getService();
+    CuratorFramework curator=fabricService.adapt(CuratorFramework.class);
     final FabricDiscoveryAgent discoveryAgent=new FabricDiscoveryAgent();
     discoveryAgent.setCurator(curator);
     discoveryAgent.setGroupName(groupName);
@@ -52,6 +51,5 @@
   }
   finally {
     fabricProxy.close();
-    curatorProxy.close();
   }
 }

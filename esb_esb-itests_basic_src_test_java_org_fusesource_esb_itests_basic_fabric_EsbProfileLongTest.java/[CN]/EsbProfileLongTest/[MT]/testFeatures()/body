@@ -1,21 +1,22 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Set<ContainerProxy> containers=null;
   ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
-  ServiceProxy<CuratorFramework> curatorProxy=ServiceProxy.createServiceProxy(bundleContext,CuratorFramework.class);
   try {
-    containers=ContainerBuilder.create(fabricProxy).withName("esb").withProfiles("jboss-fuse-minimal").assertProvisioningResult().build();
     FabricService fabricService=fabricProxy.getService();
-    CuratorFramework curator=curatorProxy.getService();
-    prepareFeaturesForTesting(containers,"connector","jboss-fuse-minimal","geronimo-connector");
-    prepareFeaturesForTesting(containers,"saaj","jboss-fuse-minimal","saaj-impl");
-    prepareFeaturesForTesting(containers,"cxf-nmr","jboss-fuse-minimal","org.apache.servicemix.cxf.binding.nmr");
-    prepareFeaturesForTesting(containers,"camel-nmr","jboss-fuse-minimal","org.apache.servicemix.camel.component");
-    assertFeatures(fabricService,curator);
+    CuratorFramework curator=fabricService.adapt(CuratorFramework.class);
+    Set<ContainerProxy> containers=ContainerBuilder.create(fabricProxy).withName("esb").withProfiles("jboss-fuse-minimal").assertProvisioningResult().build();
+    try {
+      prepareFeaturesForTesting(containers,"connector","jboss-fuse-minimal","geronimo-connector");
+      prepareFeaturesForTesting(containers,"saaj","jboss-fuse-minimal","saaj-impl");
+      prepareFeaturesForTesting(containers,"cxf-nmr","jboss-fuse-minimal","org.apache.servicemix.cxf.binding.nmr");
+      prepareFeaturesForTesting(containers,"camel-nmr","jboss-fuse-minimal","org.apache.servicemix.camel.component");
+      assertFeatures(fabricService,curator);
+    }
+  finally {
+      ContainerBuilder.destroy(containers);
+    }
   }
   finally {
-    ContainerBuilder.destroy(containers);
-    curatorProxy.close();
     fabricProxy.close();
   }
 }

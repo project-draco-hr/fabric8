@@ -5,7 +5,7 @@
     FabricService fabricService=fabricProxy.getService();
     System.err.println(executeCommand("fabric:version-create"));
     System.err.println(executeCommand("fabric:container-upgrade --all 1.1"));
-    Set containers=ContainerBuilder.create(fabricProxy,2).withName("ens").withProfiles("fabric").assertProvisioningResult().build();
+    Set<ContainerProxy> containers=ContainerBuilder.create(fabricProxy,2).withName("ens").withProfiles("fabric").assertProvisioningResult().build();
     try {
       LinkedList<Container> containerQueue=new LinkedList<Container>(containers);
       LinkedList<Container> addedContainers=new LinkedList<Container>();

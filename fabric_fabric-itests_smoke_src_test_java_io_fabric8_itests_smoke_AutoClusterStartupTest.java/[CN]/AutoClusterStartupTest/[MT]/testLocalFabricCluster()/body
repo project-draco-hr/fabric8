@@ -1,9 +1,8 @@
 {
   ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
-  ServiceProxy<CuratorFramework> curatorProxy=ServiceProxy.createServiceProxy(bundleContext,CuratorFramework.class);
   try {
     FabricService fabricService=fabricProxy.getService();
-    CuratorFramework curator=curatorProxy.getService();
+    CuratorFramework curator=fabricService.adapt(CuratorFramework.class);
     curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
     Provision.containerAlive(Arrays.<Container>asList(new ContainerImpl(null,"root",fabricService)),PROVISION_TIMEOUT);
     Container[] containers=fabricService.getContainers();
@@ -13,7 +12,6 @@
   }
   finally {
     fabricProxy.close();
-    curatorProxy.close();
   }
   ConfigurationAdmin configurationAdmin=ServiceLocator.awaitService(bundleContext,ConfigurationAdmin.class);
   org.osgi.service.cm.Configuration configuration=configurationAdmin.getConfiguration(Constants.ZOOKEEPER_CLIENT_PID);

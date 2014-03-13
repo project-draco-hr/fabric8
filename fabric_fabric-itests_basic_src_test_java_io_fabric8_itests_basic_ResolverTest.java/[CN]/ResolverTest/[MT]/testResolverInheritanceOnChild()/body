@@ -1,10 +1,9 @@
 {
   System.err.println(executeCommand("fabric:create -n -g localip -r manualip --manual-ip localhost -b localhost"));
   ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
-  ServiceProxy<CuratorFramework> curatorProxy=ServiceProxy.createServiceProxy(bundleContext,CuratorFramework.class);
   try {
     FabricService fabricService=fabricProxy.getService();
-    CuratorFramework curator=curatorProxy.getService();
+    CuratorFramework curator=fabricService.adapt(CuratorFramework.class);
     Set<Container> containers=ContainerBuilder.create(fabricProxy,1,1).withName("child").withProfiles("default").assertProvisioningResult().build();
     try {
       Container child=containers.iterator().next();
@@ -21,6 +20,5 @@
   }
   finally {
     fabricProxy.close();
-    curatorProxy.close();
   }
 }

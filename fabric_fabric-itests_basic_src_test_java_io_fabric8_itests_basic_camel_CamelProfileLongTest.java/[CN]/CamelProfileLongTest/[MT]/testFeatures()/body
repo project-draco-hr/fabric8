@@ -1,13 +1,11 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
-  Set<ContainerProxy> containers=null;
   ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
   try {
-    containers=ContainerBuilder.create(fabricProxy).withName("feautre-camel").withProfiles("default").assertProvisioningResult().build();
-    ServiceProxy<CuratorFramework> curatorProxy=ServiceProxy.createServiceProxy(bundleContext,CuratorFramework.class);
+    FabricService fabricService=fabricProxy.getService();
+    CuratorFramework curator=fabricService.adapt(CuratorFramework.class);
+    Set<ContainerProxy> containers=ContainerBuilder.create(fabricProxy).withName("feautre-camel").withProfiles("default").assertProvisioningResult().build();
     try {
-      FabricService fabricService=fabricProxy.getService();
-      CuratorFramework curator=curatorProxy.getService();
       prepareFeaturesForTesting(containers,"camel-blueprint","feautre-camel","camel-blueprint");
       prepareFeaturesForTesting(containers,"camel-jms","feautre-camel","camel-jms");
       prepareFeaturesForTesting(containers,"camel-http","feautre-camel","camel-http");
@@ -106,11 +104,10 @@
       assertFeatures(fabricService,curator);
     }
   finally {
-      fabricProxy.close();
-      curatorProxy.close();
+      ContainerBuilder.destroy(containers);
     }
   }
   finally {
-    ContainerBuilder.destroy(containers);
+    fabricProxy.close();
   }
 }
