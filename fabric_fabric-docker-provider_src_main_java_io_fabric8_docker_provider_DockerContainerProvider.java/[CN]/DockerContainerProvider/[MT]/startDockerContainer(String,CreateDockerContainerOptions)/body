@@ -1,0 +1,19 @@
+{
+  if (!Strings.isEmpty(id)) {
+    HostConfig hostConfig=new HostConfig();
+    Map<String,List<Map<String,String>>> portBindings=new HashMap<String,List<Map<String,String>>>();
+    Map<String,Integer> externalPorts=options.getExternalPorts();
+    Map<String,Integer> internalPorts=options.getInternalPorts();
+    for (    Map.Entry<String,Integer> entry : internalPorts.entrySet()) {
+      String portName=entry.getKey();
+      Integer internalPort=entry.getValue();
+      Integer externalPort=externalPorts.get(portName);
+      if (internalPort != null && externalPort != null) {
+        portBindings.put("" + internalPort + "/tcp",createNewPortConfig(externalPort));
+      }
+    }
+    hostConfig.setPortBindings(portBindings);
+    LOG.info("starting container " + id + " with ports "+ portBindings);
+    docker.containerStart(id,hostConfig);
+  }
+}

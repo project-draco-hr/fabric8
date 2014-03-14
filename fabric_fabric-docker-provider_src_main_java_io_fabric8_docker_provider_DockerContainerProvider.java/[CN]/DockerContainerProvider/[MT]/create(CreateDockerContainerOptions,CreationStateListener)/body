@@ -1,13 +1,16 @@
 {
   assertValid();
+  String containerId=options.getName();
   ContainerConfig containerConfig=options.createContainerConfig();
   Set<String> profiles=options.getProfiles();
   String versionId=options.getVersion();
   FabricService service=fabricService.get();
   Map<String,String> configOverlay=new HashMap<String,String>();
   Map<String,String> envVarsOverlay=new HashMap<String,String>();
+  Map<String,String> ports=null;
+  Version version=null;
   if (profiles != null && versionId != null) {
-    Version version=service.getVersion(versionId);
+    version=service.getVersion(versionId);
     if (version != null) {
       for (      String profileId : profiles) {
         Profile profile=version.getProfile(profileId);
@@ -21,10 +24,25 @@
           if (envVars != null) {
             envVarsOverlay.putAll(envVars);
           }
+          if (ports == null || ports.size() == 0) {
+            ports=overlay.getConfiguration(DockerConstants.PORTS_PID);
+          }
         }
       }
     }
   }
+  if (ports == null || ports.size() == 0) {
+    if (version == null) {
+      version=service.getDefaultVersion();
+    }
+    Profile dockerProfile=version.getProfile("docker");
+    ports=dockerProfile.getConfiguration(DockerConstants.PORTS_PID);
+    if (ports == null || ports.size() == 0) {
+      LOG.warn("Could not a docker ports configuration for: " + DockerConstants.PORTS_PID);
+      ports=new HashMap<String,String>();
+    }
+  }
+  LOG.info("Got port configuration: " + ports);
   String image=containerConfig.getImage();
   if (Strings.isEmpty(image)) {
     image=configOverlay.get(DockerConstants.PROPERTIES.IMAGE);
@@ -75,12 +93,51 @@
       env.add(key + "=" + value);
     }
   }
+  Map<String,Object> exposedPorts=new HashMap<String,Object>();
+  Set<Integer> usedPortByHost=findUsedPortByHost();
+  Map<String,Integer> internalPorts=options.getInternalPorts();
+  Map<String,Integer> externalPorts=options.getExternalPorts();
+  Map<String,String> emptyMap=new HashMap<String,String>();
+  for (  Map.Entry<String,String> portEntry : ports.entrySet()) {
+    String portName=portEntry.getKey();
+    String portText=portEntry.getValue();
+    if (portText != null && !Strings.isEmpty(portText)) {
+      Integer port=null;
+      try {
+        port=Integer.parseInt(portText);
+      }
+ catch (      NumberFormatException e) {
+        LOG.warn("Ignoring bad port number for " + portName + " value '"+ portText+ "' in PID: "+ DockerConstants.PORTS_PID);
+      }
+      if (port != null) {
+        internalPorts.put(portName,port);
+        exposedPorts.put(portText + "/tcp",emptyMap);
+        int externalPort=createExternalPort(containerId,portName,usedPortByHost,options);
+        externalPorts.put(portName,externalPort);
+        env.add("FABRIC8_" + portName + "_PORT="+ port);
+        env.add("FABRIC8_" + portName + "_PROXY_PORT="+ externalPort);
+      }
+ else {
+        LOG.info("No port for " + portName);
+      }
+    }
+  }
+  String dockerHost=dockerFactory.getDockerHost();
+  LOG.info("Passing in manual ip: " + dockerHost);
+  env.add(DockerConstants.ENV_VARS.FABRIC8_MANUALIP + "=" + dockerHost);
+  env.add(DockerConstants.ENV_VARS.FABRIC8_GLOBAL_RESOLVER + "=" + ZkDefs.MANUAL_IP);
+  env.add(DockerConstants.ENV_VARS.FABRIC8_FABRIC_ENVIRONMENT + "=" + DockerConstants.SCHEME);
+  containerConfig.setExposedPorts(exposedPorts);
   containerConfig.setEnv(env);
-  LOG.info("Creating container: " + containerConfig + " on docker "+ getDockerAddress()+ " with env vars: "+ envVarsOverlay);
+  LOG.info("Creating container on docker " + getDockerAddress() + " with env vars: "+ env);
+  LOG.info("Creating container with config: " + containerConfig);
   ContainerCreateStatus status=docker.containerCreate(containerConfig);
   LOG.info("Got status: " + status);
   CreateDockerContainerMetadata metadata=CreateDockerContainerMetadata.newInstance(containerConfig,status);
+  metadata.setContainerName(containerId);
+  metadata.setOverridenResolver(ZkDefs.MANUAL_IP);
+  options=options.updateManualIp(dockerHost);
   metadata.setCreateOptions(options);
-  startDockerContainer(status.getId());
+  startDockerContainer(status.getId(),options);
   return metadata;
 }
