@@ -1,6 +1,6 @@
 {
   Objects.notNull(fabricService,"fabricService");
-  Map<String,Profile> profileMap=new HashMap<String,Profile>();
+  List<Profile> answer=new ArrayList<Profile>();
   if (version != null) {
     Profile[] profiles=version.getProfiles();
     for (    Profile profile : profiles) {
@@ -12,12 +12,11 @@
         for (        Map.Entry<String,Map<String,String>> entry : entries) {
           String key=entry.getKey();
           if (isBrokerConfigPid(key)) {
-            String brokerName=getBrokerNameFromPID(key);
-            profileMap.put(brokerName,overlay);
+            answer.add(overlay);
           }
         }
       }
     }
   }
-  return profileMap;
+  return answer;
 }

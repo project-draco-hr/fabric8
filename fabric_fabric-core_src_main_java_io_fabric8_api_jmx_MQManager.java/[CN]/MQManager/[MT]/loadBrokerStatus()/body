@@ -3,8 +3,7 @@
   List<MQBrokerStatusDTO> answer=new ArrayList<MQBrokerStatusDTO>();
   Version defaultVersion=fabricService.getDefaultVersion();
   Container[] containers=fabricService.getContainers();
-  Map<String,Profile> profileMap=getActiveOrRequiredBrokerProfileMap(defaultVersion,requirements);
-  Collection<Profile> values=profileMap.values();
+  List<Profile> values=getActiveOrRequiredBrokerProfileMap(defaultVersion,requirements);
   for (  Profile profile : values) {
     List<MQBrokerConfigDTO> list=createConfigDTOs(mqService,profile);
     for (    MQBrokerConfigDTO configDTO : list) {
