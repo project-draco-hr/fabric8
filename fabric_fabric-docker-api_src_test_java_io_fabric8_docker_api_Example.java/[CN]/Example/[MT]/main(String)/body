@@ -4,35 +4,40 @@
     dockerFactory.setAddress(args[0]);
   }
   System.out.println("Connecting to docker on: " + dockerFactory.getAddress());
-  Docker docker=dockerFactory.createDocker();
-  displayVersion(docker);
-  displayInfo(docker);
-  displayContainers(docker);
-  displayImages(docker);
-  String newContainer=createContainer(docker);
-  System.out.println("Working on new container id: " + newContainer);
-  containerStart(docker,newContainer);
-  inspectContainer(docker,newContainer);
-  if (useTop) {
-    containerTop(docker,newContainer);
-  }
-  containerChanges(docker,newContainer);
-  if (pauseBeforeStopping) {
-    System.out.println("Press enter to kill the container: ");
-    try {
-      System.in.read();
+  try {
+    Docker docker=dockerFactory.createDocker();
+    displayVersion(docker);
+    displayInfo(docker);
+    displayContainers(docker);
+    displayImages(docker);
+    String name="cheese";
+    String newContainer=createContainer(docker);
+    System.out.println("Working on new container id: " + newContainer);
+    containerStart(docker,newContainer,name);
+    inspectContainer(docker,newContainer);
+    if (useTop) {
+      containerTop(docker,newContainer);
     }
- catch (    IOException e) {
+    containerChanges(docker,newContainer);
+    if (pauseBeforeStopping) {
+      System.out.println("Press enter to kill the container: ");
+      try {
+        System.in.read();
+      }
+ catch (      IOException e) {
+      }
     }
-  }
-  if (stopContainer) {
     System.out.println("Now stopping the container");
     containerStop(docker,newContainer);
+    if (killContainer) {
+      Thread.sleep(2000);
+      System.out.println("Now killing the container");
+      containerKill(docker,newContainer);
+    }
+    deleteContainer(docker,newContainer);
+    displayContainers(docker);
   }
- else {
-    System.out.println("Now stopping the container");
-    containerKill(docker,newContainer);
+ catch (  Exception e) {
+    handleException(e);
   }
-  deleteContainer(docker,newContainer);
-  displayContainers(docker);
 }

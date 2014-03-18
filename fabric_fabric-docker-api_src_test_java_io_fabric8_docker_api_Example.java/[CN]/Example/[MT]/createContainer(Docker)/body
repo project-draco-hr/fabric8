@@ -4,6 +4,8 @@
   if (!Strings.isNullOrEmpty(cmd)) {
     config.setCmd(new String[]{cmd});
   }
+  config.setAttachStdout(true);
+  config.setAttachStderr(true);
   System.out.println("Creating container: " + config);
   ContainerCreateStatus status=docker.containerCreate(config);
   System.out.println(status);
