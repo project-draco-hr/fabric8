@@ -1,0 +1,14 @@
+{
+  String value=null;
+  try {
+    value=System.getenv(envVar);
+  }
+ catch (  Exception e) {
+    LOG.debug("Could not access env var " + envVar + ". "+ e,e);
+  }
+  if (value != null) {
+    value=value.trim().toLowerCase();
+    return value.equals("true") || value.equals("yes");
+  }
+  return false;
+}

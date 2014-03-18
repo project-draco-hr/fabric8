@@ -3,7 +3,13 @@
   answer.setImage(image);
   answer.setCmd(cmd);
   answer.setEntrypoint(entrypoint);
-  answer.setUser(user);
-  answer.setWorkingDir(workingDir);
+  if (workingDir != null) {
+    answer.setWorkingDir(workingDir);
+  }
+  answer.setAttachStdout(true);
+  answer.setAttachStderr(true);
+  if (DockerConstants.ENABLE_SSHD) {
+    answer.setTty(true);
+  }
   return answer;
 }
