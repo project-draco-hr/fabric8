@@ -1,4 +1,10 @@
 {
   assertValid();
-  return getZookeeperInfo("zookeeper.password");
+  String rawZookeeperPassword=getZookeeperInfo("zookeeper.password");
+  if (rawZookeeperPassword != null) {
+    return PasswordEncoder.decode(rawZookeeperPassword);
+  }
+ else {
+    return null;
+  }
 }

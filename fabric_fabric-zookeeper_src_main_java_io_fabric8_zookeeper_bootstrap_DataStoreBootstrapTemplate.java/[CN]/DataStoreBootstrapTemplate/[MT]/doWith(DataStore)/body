@@ -20,7 +20,7 @@
     setData(curator,ZkPath.CONFIG_DEFAULT_VERSION.getPath(),version);
     String defaultProfile=dataStore.getProfile(version,"default",true);
     setData(curator,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),"${zk:" + name + "/ip}:"+ zooKeeperServerConnectionPort);
-    setData(curator,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
+    setData(curator,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),PasswordEncoder.encode(options.getZookeeperPassword()));
     Properties zkProps=new Properties();
     zkProps.setProperty("zookeeper.url","${zk:" + ZkPath.CONFIG_ENSEMBLE_URL.getPath() + "}");
     zkProps.setProperty("zookeeper.password","${zk:" + ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath() + "}");
@@ -66,7 +66,7 @@
     createDefault(curator,"/fabric/authentication/encryption.enabled",Boolean.valueOf(encryption != null).toString());
     createDefault(curator,"/fabric/authentication/domain","karaf");
     createDefault(curator,ZkPath.AUTHENTICATION_CRYPT_ALGORITHM.getPath(),"PBEWithMD5AndDES");
-    createDefault(curator,ZkPath.AUTHENTICATION_CRYPT_PASSWORD.getPath(),options.getZookeeperPassword());
+    createDefault(curator,ZkPath.AUTHENTICATION_CRYPT_PASSWORD.getPath(),PasswordEncoder.encode(options.getZookeeperPassword()));
     aclManager.fixAcl(curator,"/fabric",true);
   }
  catch (  Exception ex) {

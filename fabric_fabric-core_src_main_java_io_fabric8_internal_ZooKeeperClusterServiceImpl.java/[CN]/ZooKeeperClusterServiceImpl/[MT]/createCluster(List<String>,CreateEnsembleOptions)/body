@@ -150,9 +150,9 @@ synchronized (result) {
           }
         }
 );
-        setData(dst,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
+        setData(dst,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),PasswordEncoder.encode(options.getZookeeperPassword()));
         setData(dst,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl);
-        setData(curator.get(),ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),options.getZookeeperPassword());
+        setData(curator.get(),ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),PasswordEncoder.encode(options.getZookeeperPassword()));
         setData(curator.get(),ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl);
         boolean allStarted=false;
         while (!allStarted && System.currentTimeMillis() - t0 < options.getMigrationTimeout()) {
