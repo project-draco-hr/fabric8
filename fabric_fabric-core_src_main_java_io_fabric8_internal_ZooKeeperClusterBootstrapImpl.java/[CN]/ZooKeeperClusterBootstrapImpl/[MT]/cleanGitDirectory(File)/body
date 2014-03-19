@@ -1,6 +1,7 @@
 {
   File gitdir=new File(karafData,"git");
   if (gitdir.isDirectory()) {
+    LOGGER.debug("cleanGitDirectory: {}",gitdir);
     File renamed=new File(karafData,"git." + System.currentTimeMillis());
     if (!gitdir.renameTo(renamed)) {
       throw new IOException("Cannot rename git data dir for removal: " + gitdir);

@@ -1,9 +1,14 @@
 {
+  String branch=null;
+  Exception gitException=null;
   try {
-    return git.getRepository().getBranch();
+    branch=git.getRepository().getBranch();
   }
- catch (  IOException e) {
-    LOG.warn("Failed to get the current branch: " + e,e);
-    return null;
+ catch (  Exception ex) {
+    gitException=ex;
   }
+  if (branch == null || gitException != null) {
+    throw new IllegalStateException("Failed to get the current branch",gitException);
+  }
+  return branch;
 }
