@@ -148,7 +148,12 @@
     for (    String key : newCheckums.keySet()) {
       bundleChecksums.put(key,newCheckums.get(key));
     }
-    bundleChecksums.save();
+    try {
+      bundleChecksums.save();
+    }
+ catch (    IOException e) {
+      LOGGER.warn("We failed to write the agent checksums which is probably due to the fabric-agent bundle being uninstalled so it can be replaced with a different version. Exception: " + e,e);
+    }
   }
   findBundlesWithOptionalPackagesToRefresh(toRefresh);
   findBundlesWithFragmentsToRefresh(toRefresh);
