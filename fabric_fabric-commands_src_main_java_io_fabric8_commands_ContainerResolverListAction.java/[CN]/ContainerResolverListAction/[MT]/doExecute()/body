@@ -1,12 +1,11 @@
 {
-  checkFabricAvailable();
   if (containerIds == null || containerIds.isEmpty()) {
     containerIds=new ArrayList<String>();
     for (    Container container : fabricService.getContainers()) {
       containerIds.add(container.getId());
     }
   }
-  System.out.println(String.format(FORMAT,HEADERS));
+  System.out.println(String.format(FORMAT,(Object[])HEADERS));
   for (  String containerId : containerIds) {
     Container container=fabricService.getContainer(containerId);
     String localHostName=container.getLocalHostname();
