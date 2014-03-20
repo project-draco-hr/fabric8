@@ -1,7 +1,7 @@
 {
   assertValid();
   String containerId=options.getName();
-  ContainerConfig containerConfig=options.createContainerConfig();
+  ContainerConfig containerConfig=createContainerConfig(options);
   Set<String> profiles=options.getProfiles();
   String versionId=options.getVersion();
   FabricService service=fabricService.get();
@@ -156,10 +156,10 @@
   LOG.info("Creating container with config: " + containerConfig);
   ContainerCreateStatus status=docker.containerCreate(containerConfig,name);
   LOG.info("Got status: " + status);
-  CreateDockerContainerMetadata metadata=CreateDockerContainerMetadata.newInstance(containerConfig,status);
+  options=options.updateManualIp(dockerHost);
+  CreateDockerContainerMetadata metadata=newInstance(containerConfig,status);
   metadata.setContainerName(containerId);
   metadata.setOverridenResolver(ZkDefs.MANUAL_IP);
-  options=options.updateManualIp(dockerHost);
   metadata.setCreateOptions(options);
   startDockerContainer(status.getId(),options);
   return metadata;
