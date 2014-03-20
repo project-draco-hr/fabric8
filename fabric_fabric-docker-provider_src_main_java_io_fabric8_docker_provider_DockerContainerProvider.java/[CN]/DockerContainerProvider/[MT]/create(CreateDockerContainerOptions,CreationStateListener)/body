@@ -151,9 +151,10 @@
   env.add(DockerConstants.ENV_VARS.FABRIC8_FABRIC_ENVIRONMENT + "=" + DockerConstants.SCHEME);
   containerConfig.setExposedPorts(exposedPorts);
   containerConfig.setEnv(env);
-  LOG.info("Creating container on docker " + getDockerAddress() + " with env vars: "+ env);
+  String name=options.getName();
+  LOG.info("Creating container on docker: " + getDockerAddress() + " name: "+ name+ " env vars: "+ env);
   LOG.info("Creating container with config: " + containerConfig);
-  ContainerCreateStatus status=docker.containerCreate(containerConfig);
+  ContainerCreateStatus status=docker.containerCreate(containerConfig,name);
   LOG.info("Got status: " + status);
   CreateDockerContainerMetadata metadata=CreateDockerContainerMetadata.newInstance(containerConfig,status);
   metadata.setContainerName(containerId);

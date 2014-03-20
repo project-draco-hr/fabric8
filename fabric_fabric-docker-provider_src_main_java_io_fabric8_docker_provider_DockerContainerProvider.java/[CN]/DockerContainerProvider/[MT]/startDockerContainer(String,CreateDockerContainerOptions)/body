@@ -19,8 +19,7 @@
       portBindings.put("" + internalPort + "/tcp",value);
     }
     hostConfig.setPortBindings(portBindings);
-    String name=options.getName();
-    LOG.info("starting container " + id + " with name "+ name+ " with "+ hostConfig);
-    docker.containerStart(id,hostConfig,name);
+    LOG.info("starting container " + id + " with "+ hostConfig);
+    docker.containerStart(id,hostConfig);
   }
 }
