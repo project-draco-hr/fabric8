@@ -1,16 +1,22 @@
 {
   if (!Strings.isEmpty(id)) {
     HostConfig hostConfig=new HostConfig();
-    Map<String,List<Map<String,String>>> portBindings=new HashMap<String,List<Map<String,String>>>();
     Map<String,Integer> externalPorts=options.getExternalPorts();
     Map<String,Integer> internalPorts=options.getInternalPorts();
+    SortedMap<Integer,List<Map<String,String>>> sortedPortsToBinding=new TreeMap<Integer,List<Map<String,String>>>();
     for (    Map.Entry<String,Integer> entry : internalPorts.entrySet()) {
       String portName=entry.getKey();
       Integer internalPort=entry.getValue();
       Integer externalPort=externalPorts.get(portName);
       if (internalPort != null && externalPort != null) {
-        portBindings.put("" + internalPort + "/tcp",createNewPortConfig(externalPort));
+        sortedPortsToBinding.put(internalPort,createNewPortConfig(externalPort));
       }
+    }
+    Map<String,List<Map<String,String>>> portBindings=new LinkedHashMap<String,List<Map<String,String>>>();
+    for (    Map.Entry<Integer,List<Map<String,String>>> entry : sortedPortsToBinding.entrySet()) {
+      Integer internalPort=entry.getKey();
+      List<Map<String,String>> value=entry.getValue();
+      portBindings.put("" + internalPort + "/tcp",value);
     }
     hostConfig.setPortBindings(portBindings);
     String name=options.getName();

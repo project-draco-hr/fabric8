@@ -110,10 +110,11 @@
     }
   }
   Map<String,Object> exposedPorts=new HashMap<String,Object>();
-  Set<Integer> usedPortByHost=findUsedPortByHost();
+  Set<Integer> usedPortByHost=findUsedPortByHostAndDocker();
   Map<String,Integer> internalPorts=options.getInternalPorts();
   Map<String,Integer> externalPorts=options.getExternalPorts();
   Map<String,String> emptyMap=new HashMap<String,String>();
+  SortedMap<Integer,String> sortedInternalPorts=new TreeMap<Integer,String>();
   for (  Map.Entry<String,String> portEntry : ports.entrySet()) {
     String portName=portEntry.getKey();
     String portText=portEntry.getValue();
@@ -126,17 +127,22 @@
         LOG.warn("Ignoring bad port number for " + portName + " value '"+ portText+ "' in PID: "+ DockerConstants.PORTS_PID);
       }
       if (port != null) {
+        sortedInternalPorts.put(port,portName);
         internalPorts.put(portName,port);
         exposedPorts.put(portText + "/tcp",emptyMap);
-        int externalPort=createExternalPort(containerId,portName,usedPortByHost,options);
-        externalPorts.put(portName,externalPort);
-        env.add("FABRIC8_" + portName + "_PORT="+ port);
-        env.add("FABRIC8_" + portName + "_PROXY_PORT="+ externalPort);
       }
  else {
         LOG.info("No port for " + portName);
       }
     }
+  }
+  for (  Map.Entry<Integer,String> entry : sortedInternalPorts.entrySet()) {
+    Integer port=entry.getKey();
+    String portName=entry.getValue();
+    int externalPort=createExternalPort(containerId,portName,usedPortByHost,options);
+    externalPorts.put(portName,externalPort);
+    env.add("FABRIC8_" + portName + "_PORT="+ port);
+    env.add("FABRIC8_" + portName + "_PROXY_PORT="+ externalPort);
   }
   String dockerHost=dockerFactory.getDockerHost();
   LOG.info("Passing in manual ip: " + dockerHost);

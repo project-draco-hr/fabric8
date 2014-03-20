@@ -1,0 +1,8 @@
+{
+  FabricService fabric=getFabricService();
+  Container currentContainer=fabric.getCurrentContainer();
+  Set<Integer> usedPorts=fabric.getPortService().findUsedPortByHost(currentContainer);
+  Set<Integer> dockerPorts=Dockers.getUsedPorts(docker);
+  usedPorts.addAll(dockerPorts);
+  return usedPorts;
+}
