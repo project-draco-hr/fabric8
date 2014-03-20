@@ -1,8 +1,8 @@
 {
-  checkFabricAvailable();
-  validateContainerName(container);
+  FabricValidations.validateContainerName(container);
+  FabricValidations.validateProfileNames(profiles);
   Container cont=FabricCommand.getContainer(fabricService,container);
   Profile[] profs=FabricCommand.getProfiles(fabricService,cont.getVersion(),profiles);
-  cont.removeProfiles(profs);
+  cont.setProfiles(profs);
   return null;
 }
