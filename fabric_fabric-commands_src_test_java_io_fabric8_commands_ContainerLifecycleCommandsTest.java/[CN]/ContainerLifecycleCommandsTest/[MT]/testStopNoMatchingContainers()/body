@@ -1,12 +1,13 @@
 {
   containers("c1","c2");
-  expect(this.fabricService.getContainer("c1")).andThrow(new FabricException("Container 'c1' does not exist"));
+  expect(this.fabricService.adapt(CuratorFramework.class)).andReturn(this.curatorFramework);
+  expect(this.fabricService.getContainers()).andReturn(new Container[0]).once();
   replay(this.fabricService,this.commandSession);
   try {
     this.stop.execute(this.commandSession);
     fail("Should throw FabricException");
   }
- catch (  FabricException e) {
+ catch (  IllegalArgumentException e) {
   }
   verify(this.fabricService);
 }
