@@ -1,9 +1,0 @@
-{
-  if (getEndpoint().isTransacted()) {
-    SAPDestinationTransaction transaction=new SAPDestinationTransaction(getEndpoint().getDestinationName(),getEndpoint().getDestination());
-    if (!exchange.getUnitOfWork().containsSynchronization(transaction)) {
-      transaction.begin();
-      exchange.getUnitOfWork().addSynchronization(transaction);
-    }
-  }
-}
