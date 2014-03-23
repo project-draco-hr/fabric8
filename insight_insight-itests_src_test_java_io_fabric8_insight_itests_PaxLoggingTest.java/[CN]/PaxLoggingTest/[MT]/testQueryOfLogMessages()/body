@@ -1,0 +1,14 @@
+{
+  MBeanServer mbs=ManagementFactory.getPlatformMBeanServer();
+  LogQueryMBean logQuery=JMX.newMBeanProxy(mbs,new ObjectName("io.fabric8.insight:type=LogQuery"),LogQueryMBean.class);
+  Logger LOG=LoggerFactory.getLogger(PaxLoggingTest.class);
+  LOG.info(info1);
+  LOG.debug(debug1);
+  LOG.warn(warn1);
+  LOG.error(error1);
+  LOG.info(info2);
+  LOG.debug(debug2);
+  LOG.warn(warn2);
+  LOG.error(error2);
+  assertLogQuery(logQuery);
+}

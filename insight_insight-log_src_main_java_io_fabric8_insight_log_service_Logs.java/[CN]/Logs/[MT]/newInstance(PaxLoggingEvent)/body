@@ -1,0 +1,31 @@
+{
+  LogEvent answer=new LogEvent();
+  answer.setLevel(toString(event.getLevel()));
+  answer.setMessage(event.getMessage());
+  answer.setLogger(event.getLoggerName());
+  answer.setTimestamp(new Date(event.getTimeStamp()));
+  answer.setThread(event.getThreadName());
+  answer.setException(addMavenCoord(event.getThrowableStrRep()));
+  Map eventProperties=event.getProperties();
+  if (eventProperties != null && eventProperties.size() > 0) {
+    Map<String,String> properties=new HashMap<String,String>();
+    Set<Map.Entry> set=eventProperties.entrySet();
+    for (    Map.Entry entry : set) {
+      Object key=entry.getKey();
+      Object value=entry.getValue();
+      if (key != null && value != null) {
+        properties.put(toString(key),toString(value));
+      }
+    }
+    MavenCoordinates.addMavenCoord(properties);
+    answer.setProperties(properties);
+  }
+  PaxLocationInfo locationInformation=event.getLocationInformation();
+  if (locationInformation != null) {
+    answer.setClassName(locationInformation.getClassName());
+    answer.setFileName(locationInformation.getFileName());
+    answer.setMethodName(locationInformation.getMethodName());
+    answer.setLineNumber(locationInformation.getLineNumber());
+  }
+  return answer;
+}

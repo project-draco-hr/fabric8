@@ -1,0 +1,22 @@
+{
+  String source=sources.get(set);
+  if (source == null) {
+    if (set.getTemplate() != null) {
+      source=IoUtils.loadFully(new URL(set.getTemplate()));
+    }
+    if (source == null) {
+      URL url=getClass().getResource("/org/fusesource/insight/metrics/" + set.getName() + ".mvel");
+      if (url == null) {
+        url=getClass().getResource("/io/fabric8/insight/metrics/default.mvel");
+      }
+      if (url != null) {
+        source=IoUtils.loadFully(url);
+      }
+ else {
+        throw new IllegalStateException("Could not find default template");
+      }
+    }
+    sources.put(set,source);
+  }
+  return source;
+}
