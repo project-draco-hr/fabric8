@@ -17,10 +17,6 @@
   if (!c.equals(old)) {
     LOGGER.info("Updating configuration {}",config.getPid());
     c.put(FABRIC_ZOOKEEPER_PID,pid);
-    Object password=c.get(ZOOKEEPER_PASSWORD);
-    if (password != null) {
-      c.put(ZOOKEEPER_PASSWORD,PasswordEncoder.decode(password.toString()));
-    }
     if (config.getBundleLocation() != null) {
       config.setBundleLocation(null);
     }

@@ -42,6 +42,7 @@
       }
       Class cl=options.getClass().getClassLoader().loadClass(options.getClass().getName() + "$Builder");
       CreateContainerBasicOptions.Builder builder=(CreateContainerBasicOptions.Builder)mapper.readValue(mapper.writeValueAsString(optionsMap),cl);
+      builder=(CreateContainerBasicOptions.Builder)builder.zookeeperPassword(PasswordEncoder.encode(getZookeeperPassword()));
       final CreateContainerOptions containerOptions=builder.build();
       final CreationStateListener containerListener=listener;
       new Thread("Creating container " + containerName){
