@@ -1,0 +1,63 @@
+{
+  final Ascii[] contentLengthValue=new Ascii[1];
+  final ArrayList<StompFrame.HeaderEntry> headers=new ArrayList<StompFrame.HeaderEntry>(10);
+  return new Action<StompFrame>(){
+    public StompFrame apply() throws IOException {
+      Buffer line=readUntil((byte)'\n',protocol.maxHeaderLength,"The maximum header length was exceeded");
+      while (line != null) {
+        line=chomp(line);
+        if (line.length() > 0) {
+          if (protocol.maxHeaders != -1 && headers.size() > protocol.maxHeaders) {
+            throw new IOException("The maximum number of headers was exceeded");
+          }
+          try {
+            int seperatorIndex=indexOf(line,COLON_BYTE);
+            if (seperatorIndex < 0) {
+              throw new IOException("Header line missing separator [" + Ascii.ascii(line) + "]");
+            }
+            Buffer name=line.getBuffer(0,seperatorIndex);
+            if (trim) {
+              name=trim(name);
+            }
+            Buffer value=line.getBuffer(seperatorIndex + 1,line.length());
+            if (trim) {
+              value=trim(value);
+            }
+            StompFrame.HeaderEntry entry=new StompFrame.HeaderEntry(Ascii.ascii(name),Ascii.ascii(value));
+            if (entry.key.equals(CONTENT_LENGTH)) {
+              contentLengthValue[0]=entry.value;
+            }
+            headers.add(entry);
+          }
+ catch (          Exception e) {
+            throw new IOException("Unable to parser header line [" + line + "]");
+          }
+        }
+ else {
+          frame.setHeaders(headers);
+          Ascii contentLength=contentLengthValue[0];
+          if (contentLength != null) {
+            int length=0;
+            try {
+              length=Integer.parseInt(contentLength.toString());
+            }
+ catch (            NumberFormatException e) {
+              throw new IOException("Specified content-length is not a valid integer");
+            }
+            if (protocol.maxDataLength != -1 && length > protocol.maxDataLength) {
+              throw new IOException("The maximum data length was exceeded");
+            }
+            nextDecodeAction=read_binary_body(frame,length);
+          }
+ else {
+            nextDecodeAction=read_text_body(frame);
+          }
+          return nextDecodeAction.apply();
+        }
+        line=readUntil((byte)'\n',protocol.maxHeaderLength,"The maximum header length was exceeded");
+      }
+      return null;
+    }
+  }
+;
+}

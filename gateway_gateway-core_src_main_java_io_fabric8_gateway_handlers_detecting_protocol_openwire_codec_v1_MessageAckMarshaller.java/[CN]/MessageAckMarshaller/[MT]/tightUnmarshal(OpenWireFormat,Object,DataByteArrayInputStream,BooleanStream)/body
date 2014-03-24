@@ -1,0 +1,11 @@
+{
+  super.tightUnmarshal(wireFormat,o,dataIn,bs);
+  MessageAck info=(MessageAck)o;
+  info.setDestination((ActiveMQDestination)tightUnmarsalCachedObject(wireFormat,dataIn,bs));
+  info.setTransactionId((TransactionId)tightUnmarsalCachedObject(wireFormat,dataIn,bs));
+  info.setConsumerId((ConsumerId)tightUnmarsalCachedObject(wireFormat,dataIn,bs));
+  info.setAckType(dataIn.readByte());
+  info.setFirstMessageId((MessageId)tightUnmarsalNestedObject(wireFormat,dataIn,bs));
+  info.setLastMessageId((MessageId)tightUnmarsalNestedObject(wireFormat,dataIn,bs));
+  info.setMessageCount(dataIn.readInt());
+}

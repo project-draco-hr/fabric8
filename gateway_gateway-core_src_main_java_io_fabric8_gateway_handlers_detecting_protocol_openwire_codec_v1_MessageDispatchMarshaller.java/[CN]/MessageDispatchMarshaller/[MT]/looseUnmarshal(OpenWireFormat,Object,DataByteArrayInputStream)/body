@@ -1,0 +1,8 @@
+{
+  super.looseUnmarshal(wireFormat,o,dataIn);
+  MessageDispatch info=(MessageDispatch)o;
+  info.setConsumerId((ConsumerId)looseUnmarsalCachedObject(wireFormat,dataIn));
+  info.setDestination((ActiveMQDestination)looseUnmarsalCachedObject(wireFormat,dataIn));
+  info.setMessage((Message)looseUnmarsalNestedObject(wireFormat,dataIn));
+  info.setRedeliveryCounter(dataIn.readInt());
+}
