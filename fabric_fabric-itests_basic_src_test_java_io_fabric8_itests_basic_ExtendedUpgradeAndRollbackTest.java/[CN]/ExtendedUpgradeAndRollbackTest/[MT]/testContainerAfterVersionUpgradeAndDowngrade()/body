@@ -8,7 +8,7 @@
     Set<Container> containers=ContainerBuilder.create(fabricProxy).withName("camel").withProfiles("feature-camel").assertProvisioningResult().build();
     try {
       CountDownLatch latch=WaitForConfigurationChange.on(fabricService);
-      System.out.println(executeCommand("fabric:profile-edit --features camel-hazelcast feature-camel 1.1"));
+      System.out.println(executeCommand("fabric:profile-edit --features camel-script --features camel-hazelcast feature-camel 1.1"));
       Assert.assertTrue(latch.await(5,TimeUnit.SECONDS));
       System.out.println(executeCommand("fabric:container-upgrade --all 1.1"));
       Provision.provisioningSuccess(containers,PROVISION_TIMEOUT);

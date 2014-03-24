@@ -6,7 +6,7 @@
     try {
       System.out.println(executeCommand("fabric:version-create --parent 1.0 1.1"));
       CountDownLatch latch=WaitForConfigurationChange.on(fabricProxy.getService());
-      System.out.println(executeCommand("fabric:profile-edit --features camel-hazelcast feature-camel 1.1"));
+      System.out.println(executeCommand("fabric:profile-edit --features camel-script --features camel-hazelcast feature-camel 1.1"));
       Assert.assertTrue(latch.await(5,TimeUnit.SECONDS));
       System.out.println(executeCommand("fabric:profile-display --version 1.1 feature-camel"));
       System.out.println(executeCommand("fabric:container-upgrade --all 1.1"));
