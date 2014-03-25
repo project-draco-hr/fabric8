@@ -1,8 +1,0 @@
-{
-  return combine(Helper.getDefaultOptions(Helper.setLogLevel("INFO")),Helper.loadKarafStandardFeatures("obr","wrapper"),new Customizer(){
-    @Override public InputStream customizeTestProbe(    InputStream testProbe){
-      return modifyBundle(testProbe).set(Constants.DYNAMICIMPORT_PACKAGE,"*,org.apache.felix.service.*;status=provisional").build();
-    }
-  }
-,scanFeatures(maven().groupId("io.fabric8").artifactId("fuse-fabric").type("xml").classifier("features").versionAsInProject(),"fabric-commands","fabric-bridge-zookeeper"),workingDirectory("target/paxrunner/features/"),System.getProperty("pax-runner-vm-options") != null ? vmOption(System.getProperty("pax-runner-vm-options")) : null,waitForFrameworkStartup(),felix().version("3.0.2"));
-}

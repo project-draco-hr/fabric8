@@ -1,9 +1,0 @@
-{
-  PooledConnectionFactory connectionFactory=new PooledConnectionFactory(brokerUrl);
-  JmsTemplate jmsTemplate=new JmsTemplate(connectionFactory);
-  MessageCreator msgCreator=creator != null ? creator : DEFAULT_MESSAGE_CREATOR;
-  for (int i=0; i < numMessages; i++) {
-    jmsTemplate.send(destinationName,msgCreator);
-  }
-  connectionFactory.stop();
-}

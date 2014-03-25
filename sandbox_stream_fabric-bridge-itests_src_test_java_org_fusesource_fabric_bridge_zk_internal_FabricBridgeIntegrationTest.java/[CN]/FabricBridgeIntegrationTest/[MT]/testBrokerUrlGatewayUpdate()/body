@@ -1,8 +1,0 @@
-{
-  Hashtable<String,String> properties=getDefaultGatewayConfig();
-  properties.put("localBroker.brokerUrl",TEST_REMOTE_BROKER_URL);
-  properties.put("exportedBroker.brokerUrl",TEST_REMOTE_BROKER_URL);
-  updateConfig(TEST_GATEWAY_PID,properties);
-  Thread.sleep(DEFAULT_TIMEOUT);
-  assertNotNull("Gateway not started",configurationAdmin.listConfigurations("(" + Constants.SERVICE_PID + "="+ configuration.getPid()+ ")"));
-}

@@ -1,9 +1,0 @@
-{
-  testBrokerUrlGatewayUpdate();
-  Hashtable<String,String> properties=getDefaultBridgeConfig();
-  properties.put("localBroker.brokerUrl",TEST_LOCAL_BROKER_URL);
-  properties.put("exportedBroker.brokerUrl",TEST_LOCAL_BROKER_URL);
-  updateConfig(TEST_BRIDGE_PID,properties);
-  Thread.sleep(DEFAULT_TIMEOUT);
-  assertNotNull("Bridge not started",configurationAdmin.listConfigurations("(" + Constants.SERVICE_PID + "="+ configuration.getPid()+ ")"));
-}

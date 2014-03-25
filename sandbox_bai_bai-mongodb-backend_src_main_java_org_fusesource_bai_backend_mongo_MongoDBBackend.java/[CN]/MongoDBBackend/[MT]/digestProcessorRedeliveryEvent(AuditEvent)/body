@@ -1,5 +1,0 @@
-{
-  DBObject filter=new BasicDBObject("_id",ev.getBreadCrumbId());
-  DBObject toPush=BasicDBObjectBuilder.start().push("$push").push("processorRedeliveries").append("exchangeId",ev.getExchange().getExchangeId()).append("timestamp",ev.getTimestamp()).append("exception",ev.getException().toString()).append("attempt",ev.getExchange().getProperty(Exchange.REDELIVERY_COUNTER)).get();
-  collectionFor(ev).update(filter,toPush);
-}

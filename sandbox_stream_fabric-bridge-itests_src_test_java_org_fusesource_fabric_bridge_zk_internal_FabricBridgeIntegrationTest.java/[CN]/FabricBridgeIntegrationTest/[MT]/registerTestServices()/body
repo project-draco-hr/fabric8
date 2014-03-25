@@ -1,9 +1,0 @@
-{
-  Hashtable<String,String> serviceProps=new Hashtable<String,String>();
-  serviceProps.put(Constants.SERVICE_PID,"localCF");
-  bundleContext.registerService(ConnectionFactory.class.getName(),new AmqJNDIPooledConnectionFactory(TEST_LOCAL_BROKER_URL),serviceProps);
-  serviceProps.put(Constants.SERVICE_PID,"remoteCF");
-  bundleContext.registerService(ConnectionFactory.class.getName(),new AmqJNDIPooledConnectionFactory(TEST_REMOTE_BROKER_URL),serviceProps);
-  serviceProps.put(Constants.SERVICE_PID,"localResolver");
-  bundleContext.registerService(DestinationResolver.class.getName(),new DynamicDestinationResolver(),serviceProps);
-}

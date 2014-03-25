@@ -1,9 +1,0 @@
-{
-  Exchange exchange=item.getItem();
-  long timeStamp=item.getTimestamp();
-  ObjectNode exchangeNode=root.putObject(exchange.getExchangeId());
-  exchangeNode.put("timestamp",timeStamp);
-  Object payload=exchange.getIn().getBody();
-  String payloadString=mapper.writeValueAsString(payload);
-  exchangeNode.put("payload",payloadString);
-}
