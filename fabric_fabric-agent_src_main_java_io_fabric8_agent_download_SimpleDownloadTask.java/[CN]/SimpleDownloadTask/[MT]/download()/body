@@ -1,6 +1,9 @@
 {
+  LOG.trace("Downloading [" + url + "]");
+  if (url.startsWith(BLUEPRINT_PREFIX) || url.startsWith(SPRING_PREFIX)) {
+    return downloadBlueprintOrSpring();
+  }
   try {
-    LOG.trace("Downloading [" + url + "]");
     URL urlObj=new URL(url);
     File file=new File(getFileName(urlObj.getFile()));
     if (file.exists()) {
