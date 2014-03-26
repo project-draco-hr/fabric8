@@ -6,5 +6,5 @@
   ConfigurationAdmin configurationAdmin=ServiceLocator.getRequiredService(ConfigurationAdmin.class);
   org.osgi.service.cm.Configuration configuration=configurationAdmin.getConfiguration(io.fabric8.api.Constants.ZOOKEEPER_CLIENT_PID);
   Dictionary<String,Object> dictionary=configuration.getProperties();
-  Assert.assertEquals("Expected provided zookeeper password","admin",dictionary.get("zookeeper.password"));
+  Assert.assertEquals("Expected provided zookeeper password",PasswordEncoder.encode(ADMIN_PASSWORD),dictionary.get("zookeeper.password"));
 }
