@@ -5,5 +5,24 @@
   String filter="(&(osgi.command.scope=" + header[0] + ")(osgi.command.function="+ header[1]+ "))";
   AbstractCommand command=(AbstractCommand)ServiceLocator.awaitService(Function.class,filter);
   commandSession.put(AbstractCommand.class.getName(),command);
-  commandSession.execute(cmdstr);
+  boolean keepRunning=true;
+  while (!Thread.currentThread().isInterrupted() && keepRunning) {
+    try {
+      commandSession.execute(cmdstr);
+      keepRunning=false;
+    }
+ catch (    Exception ex) {
+      if (retryException(ex)) {
+        try {
+          Thread.sleep(1000);
+        }
+ catch (        InterruptedException iex) {
+          Thread.currentThread().interrupt();
+        }
+      }
+ else {
+        throw new CommandExecutionException(ex);
+      }
+    }
+  }
 }
