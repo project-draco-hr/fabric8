@@ -1,0 +1,15 @@
+{
+  try {
+    apiCache.close();
+  }
+ catch (  IOException e) {
+    LOG.warn("Failed to close apiCache " + e,e);
+  }
+  deactivateComponent();
+  try {
+    registerMBean();
+  }
+ catch (  Exception e) {
+    LOG.warn("Caught while unregistering mbean on deactivate: " + e,e);
+  }
+}

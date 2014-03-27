@@ -1,0 +1,23 @@
+{
+  String text=new String(data).trim();
+  if (!text.isEmpty()) {
+    ObjectMapper mapper=new ObjectMapper();
+    Map<String,Object> map=mapper.readValue(data,HashMap.class);
+    String id=stringValue(map,"id","container");
+    if (id != null) {
+      String container=stringValue(map,"container","agent");
+      List services=listValue(map,"services");
+      if (services != null && !services.isEmpty()) {
+        Object service=services.get(0);
+        if (service != null) {
+          String serviceText=getSubstitutedData(curatorFramework,service.toString());
+          if (serviceText != null && serviceText.length() > 0) {
+            String url=serviceText + "/dockerapi";
+            return new ContainerApiDTO(container,url);
+          }
+        }
+      }
+    }
+  }
+  return null;
+}

@@ -1,0 +1,18 @@
+{
+  ContainerApiDTO containerApiDTO=loadContainerApiDto(curatorFramework,data);
+  if (containerApiDTO != null) {
+    String key=containerApiDTO.getContainer();
+    if (eventType.equals(PathChildrenCacheEvent.Type.CHILD_ADDED)) {
+      containersMap.put(key,containerApiDTO);
+    }
+ else     if (eventType.equals(PathChildrenCacheEvent.Type.CHILD_REMOVED)) {
+      containersMap.remove(key);
+    }
+    if (containersMap.isEmpty()) {
+      unregisterMBean();
+    }
+ else {
+      registerMBean();
+    }
+  }
+}
