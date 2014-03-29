@@ -5,7 +5,7 @@
     public CommitInfo call(    Git git,    GitContext context) throws Exception {
       checkoutBranch(git,branch);
       File rootDir=getRootGitDirectory(git);
-      byte[] data=contents.getBytes();
+      byte[] data=Base64.decode(contents);
       CommitInfo answer=doWrite(git,rootDir,branch,path,data,personIdent,commitMessage);
       context.commit(commitMessage);
       return answer;
