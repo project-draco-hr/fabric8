@@ -1,8 +1,10 @@
 {
   try {
-    DependencyDTO rootDependency=loadRootDependency();
     ProjectRequirements requirements=new ProjectRequirements();
-    requirements.setRootDependency(rootDependency);
+    if (includeArtifact) {
+      DependencyDTO rootDependency=loadRootDependency();
+      requirements.setRootDependency(rootDependency);
+    }
     configureRequirements(requirements);
     fabricServer=mavenSettings.getServer(serverId);
     if (fabricServer == null) {
@@ -62,7 +64,7 @@
       throw new MojoExecutionException(message);
     }
     J4pClient client=createJolokiaClient();
-    if (upload) {
+    if (upload && includeArtifact) {
       uploadDeploymentUnit(client);
     }
  else {
