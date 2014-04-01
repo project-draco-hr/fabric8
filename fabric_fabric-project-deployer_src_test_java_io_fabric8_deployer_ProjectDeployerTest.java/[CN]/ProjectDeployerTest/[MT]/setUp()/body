@@ -1,4 +1,8 @@
 {
+  basedir=System.getProperty("basedir",".");
+  String karafRoot=basedir + "/target/karaf";
+  System.setProperty("karaf.root",karafRoot);
+  System.setProperty("karaf.data",karafRoot + "/data");
   sfb=new ZKServerFactoryBean();
   delete(sfb.getDataDir());
   delete(sfb.getDataLogDir());
@@ -10,7 +14,6 @@
   curator=builder.build();
   curator.start();
   curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
-  basedir=System.getProperty("basedir",".");
   File root=new File(basedir + "/target/git").getCanonicalFile();
   delete(root);
   new File(root,"remote").mkdirs();
@@ -26,6 +29,7 @@
   config.save();
   DefaultRuntimeProperties runtimeProperties=new DefaultRuntimeProperties();
   runtimeProperties.setProperty(SystemProperties.KARAF_DATA,"target/data");
+  runtimeProperties.setProperty(SystemProperties.KARAF_NAME,"root");
   FabricGitServiceImpl gitService=new FabricGitServiceImpl();
   gitService.bindRuntimeProperties(runtimeProperties);
   gitService.activate();
