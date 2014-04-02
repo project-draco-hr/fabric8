@@ -1,6 +1,6 @@
 {
   ServletContext servletContext=event.getServletContext();
-  BoostrapLatch latch=(BoostrapLatch)servletContext.getAttribute(BoostrapLatch.class.getName());
+  FabricTomcatActivator.BoostrapLatch latch=(FabricTomcatActivator.BoostrapLatch)servletContext.getAttribute(FabricTomcatActivator.BoostrapLatch.class.getName());
   try {
     try {
       if (!latch.await(60,TimeUnit.SECONDS)) {
@@ -11,7 +11,7 @@
     }
   }
   finally {
-    servletContext.removeAttribute(BoostrapLatch.class.getName());
+    servletContext.removeAttribute(FabricTomcatActivator.BoostrapLatch.class.getName());
   }
   printFabricBanner(servletContext);
 }
