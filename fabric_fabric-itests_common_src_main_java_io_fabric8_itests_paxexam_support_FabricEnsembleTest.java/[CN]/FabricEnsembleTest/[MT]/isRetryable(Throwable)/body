@@ -1,6 +1,6 @@
 {
   if (t instanceof CommandExecutionException) {
-    return isRetriable(t.getCause());
+    return isRetryable(t.getCause());
   }
  else   if (t instanceof EnsembleModificationFailed) {
     return ((EnsembleModificationFailed)t).getReason() == EnsembleModificationFailed.Reason.CONTAINERS_NOT_ALIVE;

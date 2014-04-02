@@ -8,7 +8,7 @@
       keepRunning=false;
     }
  catch (    CommandExecutionException e) {
-      if (isRetriable(e)) {
+      if (isRetryable(e)) {
         System.err.println("Not ready for ensemble modification! Retrying...");
         Provision.provisioningSuccess(Arrays.asList(fabricService.getContainers()),PROVISION_TIMEOUT,ContainerCallback.DISPLAY_ALL);
         now=System.currentTimeMillis();

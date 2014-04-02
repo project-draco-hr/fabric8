@@ -1,13 +1,13 @@
 {
-  PathMatcher matcher=Matchers.parse("log:mvn:groupId:org.apache,org.fusesource and glob:**/*.jar and not **example**");
+  PathMatcher matcher=Matchers.parse("log:mvn:groupId:org.apache,org.foo and glob:**/*.jar and not **example**");
   assertFalse(matcher.matches(Paths.get("org")));
   assertFalse(matcher.matches(Paths.get("org/apache")));
   assertTrue(matcher.matches(Paths.get("org/apache/foo.jar")));
-  assertFalse(matcher.matches(Paths.get("org/fusesource")));
-  assertTrue(matcher.matches(Paths.get("org/fusesource/foo/bar.jar")));
-  assertFalse(matcher.matches(Paths.get("org/fusesource/foo/bar.xml")));
-  assertFalse(matcher.matches(Paths.get("org/fusesource/example/bar.jar")));
-  assertFalse(matcher.matches(Paths.get("org/jboss")));
-  assertFalse(matcher.matches(Paths.get("org/jboss/foo.jar")));
-  assertFalse(matcher.matches(Paths.get("com/jboss/foo.jar")));
+  assertFalse(matcher.matches(Paths.get("org/foo")));
+  assertTrue(matcher.matches(Paths.get("org/foo/foo/bar.jar")));
+  assertFalse(matcher.matches(Paths.get("org/foo/foo/bar.xml")));
+  assertFalse(matcher.matches(Paths.get("org/foo/example/bar.jar")));
+  assertFalse(matcher.matches(Paths.get("io/fabric8")));
+  assertFalse(matcher.matches(Paths.get("io/fabric8/foo.jar")));
+  assertFalse(matcher.matches(Paths.get("io/fabric8/foo.jar")));
 }
