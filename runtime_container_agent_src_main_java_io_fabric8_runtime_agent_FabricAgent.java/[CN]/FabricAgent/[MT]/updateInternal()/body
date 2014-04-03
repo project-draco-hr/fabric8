@@ -1,0 +1,28 @@
+{
+  Profile profile=null;
+  FabricService fabric=null;
+  Provisioner provisionService=null;
+  try {
+    fabric=fabricService.get();
+    Container container=fabric.getCurrentContainer();
+    profile=container.getOverlayProfile();
+    provisionService=provisioner.get();
+  }
+ catch (  Exception ex) {
+    LOGGER.debug("Failed to read container profile. This exception will be ignored..",ex);
+    return;
+  }
+  if (profile != null && fabric != null && provisionService != null) {
+    try {
+      updateProvisioning(fabric,profile,provisionService);
+    }
+ catch (    Throwable e) {
+      if (isValid()) {
+        LOGGER.warn("Exception updating provisioning: " + e,e);
+      }
+ else {
+        LOGGER.debug("Exception updating provisioning: " + e,e);
+      }
+    }
+  }
+}

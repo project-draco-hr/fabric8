@@ -1,0 +1,17 @@
+{
+  Map<ResourceIdentity,Resource> installedResources=new HashMap<ResourceIdentity,Resource>();
+  for (  Map.Entry<ResourceIdentity,ResourceHandle> entry : resourcehandleMap.entrySet()) {
+    installedResources.put(entry.getKey(),entry.getValue().getResource());
+  }
+  try {
+    Iterator<Resource> resources=provisionService.getEnvironment().getResources();
+    while (resources.hasNext()) {
+      Resource resource=resources.next();
+      installedResources.put(resource.getIdentity(),resource);
+    }
+  }
+ catch (  Throwable e) {
+    LOGGER.warn("Ignoring error finding current resources: " + e,e);
+  }
+  return installedResources;
+}

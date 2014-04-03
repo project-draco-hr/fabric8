@@ -1,0 +1,21 @@
+{
+  LOGGER.info("Activating");
+  fabricService.get().trackConfiguration(onConfigurationChange);
+  activateComponent();
+  submitUpdateJob();
+  try {
+    MBeanServer anMBeanServer=mbeanServer.get();
+    if (anMBeanServer != null) {
+      if (objectName == null) {
+        objectName=new ObjectName("io.fabric8:type=RuntimeAgent");
+      }
+      anMBeanServer.registerMBean(this,objectName);
+    }
+ else {
+      LOGGER.warn("No MBeanServer");
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.warn("Failed to register MBean " + objectName + ": "+ e,e);
+  }
+}
