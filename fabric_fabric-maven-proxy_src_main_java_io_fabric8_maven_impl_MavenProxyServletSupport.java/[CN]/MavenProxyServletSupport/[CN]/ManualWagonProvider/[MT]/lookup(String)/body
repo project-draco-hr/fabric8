@@ -3,10 +3,14 @@
     return new FileWagon();
   }
  else   if ("http".equals(roleHint)) {
-    return new LightweightHttpWagon();
+    LightweightHttpWagon wagon=new LightweightHttpWagon();
+    wagon.setAuthenticator(new LightweightHttpWagonAuthenticator());
+    return wagon;
   }
  else   if ("https".equals(roleHint)) {
-    return new LightweightHttpsWagon();
+    LightweightHttpsWagon wagon=new LightweightHttpsWagon();
+    wagon.setAuthenticator(new LightweightHttpWagonAuthenticator());
+    return wagon;
   }
   return null;
 }

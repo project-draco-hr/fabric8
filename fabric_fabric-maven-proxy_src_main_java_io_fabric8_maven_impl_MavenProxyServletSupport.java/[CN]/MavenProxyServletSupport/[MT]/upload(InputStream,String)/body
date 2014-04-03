@@ -15,9 +15,10 @@
       request.addMetadata(metadata);
       system.install(session,request);
       success=true;
+      LOGGER.log(Level.INFO,"Maven metadata installed: " + request.toString());
     }
  catch (    Exception e) {
-      LOGGER.log(Level.WARNING,String.format("Failed to upload metadata: %s due to %s",path,e));
+      LOGGER.log(Level.WARNING,String.format("Failed to upload metadata: %s due to %s",path,e),e);
       success=false;
     }
   }
