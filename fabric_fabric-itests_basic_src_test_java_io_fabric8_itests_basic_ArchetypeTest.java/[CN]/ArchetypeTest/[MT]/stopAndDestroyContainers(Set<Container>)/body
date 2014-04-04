@@ -1,0 +1,70 @@
+{
+  List<Container> list=new ArrayList<Container>();
+  list.addAll(containers);
+  Collections.reverse(list);
+  System.out.println();
+  System.out.println();
+  System.out.println("======================================================================================");
+  System.out.println("Stopping containers");
+  System.out.println("Containers: " + containers);
+  System.out.println("======================================================================================");
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  try {
+    final FabricService fabricService=fabricProxy.getService();
+    for (    Container containerObject : list) {
+      System.out.println();
+      final String containerId=containerObject.getId();
+      System.out.println("Stopping container " + containerId);
+      Container container=fabricService.getContainer(containerId);
+      if (container == null) {
+        System.out.println("Warning: Container is already stoped? " + containerId);
+        continue;
+      }
+      try {
+        container.stop(true);
+      }
+ catch (      Exception e) {
+        handleException(e);
+      }
+      container=fabricService.getContainer(containerId);
+      if (container != null) {
+        try {
+          container.destroy(true);
+        }
+ catch (        Exception e) {
+          handleException(e);
+        }
+      }
+      try {
+        Provision.waitForCondition(new Callable<Boolean>(){
+          @Override public Boolean call() throws Exception {
+            try {
+              Container c=fabricService.getContainer(containerId);
+              if (c != null) {
+                System.out.println("Container " + containerId + " still exists! "+ c.getProvisionStatus());
+                return false;
+              }
+ else {
+                return true;
+              }
+            }
+ catch (            FabricException e) {
+              return true;
+            }
+          }
+        }
+,PROVISION_TIMEOUT);
+      }
+ catch (      Exception e) {
+        handleException(e);
+      }
+    }
+  }
+ catch (  Exception e) {
+    handleException(e);
+    throw e;
+  }
+ finally {
+    fabricProxy.close();
+  }
+}
