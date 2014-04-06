@@ -13,7 +13,8 @@
     throw new BundleException("Bundle manifest must include bundle symbolic name");
   }
   bundleSymbolicName=(String)bundleCap.attrs.get(BundleRevision.BUNDLE_NAMESPACE);
-  ResourceImpl resource=new ResourceImpl(bundleSymbolicName,bundleVersion);
+  String type=headerMap.get(Constants.FRAGMENT_HOST) == null ? IdentityNamespace.TYPE_BUNDLE : IdentityNamespace.TYPE_FRAGMENT;
+  ResourceImpl resource=new ResourceImpl(bundleSymbolicName,type,bundleVersion);
   if (uri != null) {
     Map<String,Object> attrs=new HashMap<String,Object>();
     attrs.put(UriNamespace.URI_NAMESPACE,uri);
