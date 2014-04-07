@@ -1,7 +1,7 @@
 {
   GetCustomerByName searchCustomer=new GetCustomerByName();
-  searchCustomer.setName("Fuse");
+  searchCustomer.setName("John Doe");
   MessageContentsList reply=(MessageContentsList)template.requestBodyAndHeader("cxf:bean:WS",searchCustomer,"operationName","getCustomerByName");
   GetCustomerByNameResponse customer=(GetCustomerByNameResponse)reply.get(0);
-  assertEquals(customer.getReturn().get(0).getName(),"Fuse");
+  assertEquals(customer.getReturn().get(0).getName(),"John Doe");
 }
