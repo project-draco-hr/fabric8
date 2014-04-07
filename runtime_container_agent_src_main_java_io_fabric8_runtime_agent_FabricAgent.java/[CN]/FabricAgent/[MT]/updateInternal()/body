@@ -13,12 +13,15 @@
     return;
   }
   if (profile != null && fabric != null && provisionService != null) {
+    List<String> resources=null;
     try {
-      updateProvisioning(fabric,profile,provisionService);
+      resources=updateProvisioning(fabric,profile,provisionService);
+      updateStatus(Container.PROVISION_SUCCESS,null,resources);
     }
  catch (    Throwable e) {
       if (isValid()) {
         LOGGER.warn("Exception updating provisioning: " + e,e);
+        updateStatus(Container.PROVISION_ERROR,e,resources);
       }
  else {
         LOGGER.debug("Exception updating provisioning: " + e,e);
