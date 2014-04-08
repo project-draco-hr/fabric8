@@ -80,6 +80,9 @@
   }
   String zookeeperUrl=service.getZookeeperUrl();
   String zookeeperPassword=service.getZookeeperPassword();
+  if (zookeeperPassword != null) {
+    zookeeperPassword=PasswordEncoder.encode(zookeeperPassword);
+  }
   String localIp=service.getCurrentContainer().getLocalIp();
   if (!Strings.isEmpty(localIp)) {
     int idx=zookeeperUrl.lastIndexOf(':');
