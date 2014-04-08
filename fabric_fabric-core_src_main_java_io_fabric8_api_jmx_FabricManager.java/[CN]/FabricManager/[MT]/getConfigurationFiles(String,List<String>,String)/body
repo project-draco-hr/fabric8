@@ -7,9 +7,9 @@
     if (profile != null) {
       Map<String,String> files=new HashMap<String,String>();
       Map<String,byte[]> configs=profile.getFileConfigurations();
-      for (      String key : configs.keySet()) {
-        if (pattern.matcher(key).matches()) {
-          files.put(key,Base64.encodeBase64String(configs.get(key)));
+      for (      Map.Entry<String,byte[]> configEntry : configs.entrySet()) {
+        if (pattern.matcher(configEntry.getKey()).matches()) {
+          files.put(configEntry.getKey(),Base64.encodeBase64String(configEntry.getValue()));
         }
       }
       answer.put(profileId,files);

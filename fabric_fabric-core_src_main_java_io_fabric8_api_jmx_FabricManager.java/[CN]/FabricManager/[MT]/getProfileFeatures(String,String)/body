@@ -12,10 +12,10 @@
   }
   Map<String,Object> rc=new HashMap<String,Object>();
   List<Map<String,Object>> featureDefs=new ArrayList<Map<String,Object>>();
-  for (  String feature : isParentFeature.keySet()) {
+  for (  Map.Entry<String,Boolean> featureEntry : isParentFeature.entrySet()) {
     Map<String,Object> featureDef=new HashMap<String,Object>();
-    featureDef.put("id",feature);
-    featureDef.put("isParentFeature",isParentFeature.get(feature));
+    featureDef.put("id",featureEntry.getKey());
+    featureDef.put("isParentFeature",featureEntry.getValue());
     featureDefs.add(featureDef);
   }
   rc.put("featureDefinitions",featureDefs);
@@ -23,13 +23,17 @@
   for (  String repo : overlay.getRepositories()) {
     Map<String,Object> repoDef=new HashMap<String,Object>();
     repoDef.put("id",repo);
-    InputStream is=null;
+    Closeable closeable=null;
     try {
       URL url=new URL(repo);
-      is=new BufferedInputStream(url.openStream());
+      InputStream os=url.openStream();
+      closeable=os;
+      InputStream is=new BufferedInputStream(url.openStream());
+      closeable=is;
       char[] buffer=new char[8192];
       StringBuilder data=new StringBuilder();
       Reader in=new InputStreamReader(is,"UTF-8");
+      closeable=in;
       for (; ; ) {
         int stat=in.read(buffer,0,buffer.length);
         if (stat < 0) {
@@ -44,8 +48,8 @@
     }
  finally {
       try {
-        if (is != null) {
-          is.close();
+        if (closeable != null) {
+          closeable.close();
         }
       }
  catch (      Throwable t) {

@@ -1,8 +1,8 @@
 {
   Map<String,ContainerProvider> providers=getFabricService().getProviders();
   Map<String,String> answer=new HashMap<String,String>();
-  for (  String name : providers.keySet()) {
-    answer.put(name,providers.get(name).getOptionsType().getName());
+  for (  Map.Entry<String,ContainerProvider> providerEntry : providers.entrySet()) {
+    answer.put(providerEntry.getKey(),providerEntry.getValue().getOptionsType().getName());
   }
   return answer;
 }

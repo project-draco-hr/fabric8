@@ -9,7 +9,7 @@
       LOG.warn("Patch file does not exist, skipping: {}",fileName);
     }
   }
-  if (patchFiles.size() == 0) {
+  if (patchFiles.isEmpty()) {
     LOG.warn("No valid patches to apply");
     throw new FabricException("No valid patches to apply");
   }
@@ -42,7 +42,10 @@
   for (  File file : patchFiles) {
     try {
       LOG.info("Deleting patch file {}",file);
-      file.delete();
+      boolean deleted=file.delete();
+      if (!deleted) {
+        LOG.warn("Failed to delete patch file {}",file);
+      }
     }
  catch (    Throwable t) {
       LOG.warn("Failed to delete patch file {} due to {}",file,t);
