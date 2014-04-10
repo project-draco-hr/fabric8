@@ -1,0 +1,57 @@
+{
+  String libDir=options.getJavaLibraryPath();
+  String libDirPrefix=libDir;
+  if (!libDir.endsWith("/") && !libDir.endsWith(File.separator)) {
+    libDirPrefix+=File.separator;
+  }
+  Map<String,Parser> artifacts=new TreeMap<String,Parser>();
+  for (  Profile profile : profileList) {
+    DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,profile,downloadExecutor);
+    Map<String,Parser> profileArtifacts=AgentUtils.getProfileArtifacts(downloadManager,profile);
+    artifacts.putAll(profileArtifacts);
+  }
+  URI mavenRepoURI=fabric.getMavenRepoURI();
+  String repoTextPrefix=mavenRepoURI.toString();
+  int idx=repoTextPrefix.indexOf("://");
+  if (idx > 0) {
+    repoTextPrefix=repoTextPrefix.substring(idx + 3);
+  }
+  repoTextPrefix="http://" + fabric.getZooKeeperUser() + ":"+ fabric.getZookeeperPassword()+ "@"+ repoTextPrefix;
+  String baseImage=options.getBaseImage();
+  String tag=options.getNewImageTag();
+  StringBuilder buffer=new StringBuilder();
+  buffer.append("FROM " + baseImage + "\n\n");
+  Map<String,String> files=new HashMap<String,String>();
+  Set<Map.Entry<String,Parser>> entries=artifacts.entrySet();
+  for (  Map.Entry<String,Parser> entry : entries) {
+    Parser parser=entry.getValue();
+    String path=parser.getArtifactPath();
+    String url=repoTextPrefix + path;
+    String fileName=parser.getArtifact() + "-" + parser.getVersion()+ "."+ parser.getType();
+    String filePath=libDirPrefix + fileName;
+    buffer.append("ADD " + url + " "+ filePath+ "\n");
+  }
+  String source=buffer.toString();
+  File tmpFile=File.createTempFile("fabric-",".dockerfiledir");
+  tmpFile.delete();
+  tmpFile.mkdirs();
+  File dockerFile=new File(tmpFile,"Dockerfile");
+  Files.writeToFile(dockerFile,source.getBytes());
+  String commands="docker build -t " + tag + " "+ tmpFile.getCanonicalPath();
+  Process process=null;
+  Runtime runtime=Runtime.getRuntime();
+  String message=commands;
+  LOGGER.info("Executing commands: " + message);
+  String answer=null;
+  try {
+    process=runtime.exec(commands);
+    answer=parseCreatedImage(process.getInputStream(),message);
+    processErrors(process.getErrorStream(),message);
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to execute process " + "stdin" + " for " + message + ": "+ e,e);
+    throw e;
+  }
+  LOGGER.info("Created Image: " + answer);
+  return answer;
+}
