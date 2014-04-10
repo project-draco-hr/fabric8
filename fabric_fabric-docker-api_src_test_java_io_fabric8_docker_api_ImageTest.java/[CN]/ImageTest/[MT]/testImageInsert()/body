@@ -4,7 +4,6 @@
   server.enqueue(new MockResponse().setBody(json));
   server.play();
   Docker docker=createDockerForMock(server);
-  Progress response=docker.imageInsert("base","somepath","http://someurl");
+  String response=docker.imageInsert("base","somepath","http://someurl");
   assertNotNull(response);
-  assertEquals(response.getError(),"Invalid...");
 }
