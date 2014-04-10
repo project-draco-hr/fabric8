@@ -19,9 +19,14 @@
  else {
         builder=builder.zookeeperPassword(zookeeperPassword);
       }
-      String zookeeperUrl=clusterService.getZooKeeperUrl();
       clusterService.removeFromCluster(containers,builder.build());
-      System.out.println("Updated Zookeeper connection string: " + zookeeperUrl);
+      ServiceProxy<ZooKeeperClusterService> serviceProxy=ServiceProxy.createServiceProxy(bundleContext,ZooKeeperClusterService.class);
+      try {
+        System.out.println("Updated Zookeeper connection string: " + serviceProxy.getService().getZooKeeperUrl());
+      }
+  finally {
+        serviceProxy.close();
+      }
     }
   }
   return null;
