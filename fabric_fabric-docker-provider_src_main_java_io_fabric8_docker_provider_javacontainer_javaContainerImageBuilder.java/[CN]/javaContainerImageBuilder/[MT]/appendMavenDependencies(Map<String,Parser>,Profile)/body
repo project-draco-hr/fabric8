@@ -1,0 +1,21 @@
+{
+  List<String> configurationFileNames=profile.getConfigurationFileNames();
+  for (  String configurationFileName : configurationFileNames) {
+    if (configurationFileName.startsWith("modules/") && configurationFileName.endsWith("-requirements.json")) {
+      System.out.println("Found requirements JSON: " + configurationFileName);
+      byte[] data=profile.getFileConfiguration(configurationFileName);
+      try {
+        ProjectRequirements requirements=DtoHelper.getMapper().readValue(data,ProjectRequirements.class);
+        if (requirements != null) {
+          DependencyDTO rootDependency=requirements.getRootDependency();
+          if (rootDependency != null) {
+            addMavenDependencies(artifacts,rootDependency);
+          }
+        }
+      }
+ catch (      IOException e) {
+        LOGGER.error("Failed to parse project requirements from " + configurationFileName + ". "+ e,e);
+      }
+    }
+  }
+}

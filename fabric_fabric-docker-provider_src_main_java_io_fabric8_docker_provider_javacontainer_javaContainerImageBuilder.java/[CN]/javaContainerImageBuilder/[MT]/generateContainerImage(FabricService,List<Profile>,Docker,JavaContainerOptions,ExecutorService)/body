@@ -9,6 +9,7 @@
     DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,profile,downloadExecutor);
     Map<String,Parser> profileArtifacts=AgentUtils.getProfileArtifacts(downloadManager,profile);
     artifacts.putAll(profileArtifacts);
+    appendMavenDependencies(artifacts,profile);
   }
   URI mavenRepoURI=fabric.getMavenRepoURI();
   String repoTextPrefix=mavenRepoURI.toString();
@@ -21,7 +22,6 @@
   String tag=options.getNewImageTag();
   StringBuilder buffer=new StringBuilder();
   buffer.append("FROM " + baseImage + "\n\n");
-  Map<String,String> files=new HashMap<String,String>();
   Set<Map.Entry<String,Parser>> entries=artifacts.entrySet();
   for (  Map.Entry<String,Parser> entry : entries) {
     Parser parser=entry.getValue();
