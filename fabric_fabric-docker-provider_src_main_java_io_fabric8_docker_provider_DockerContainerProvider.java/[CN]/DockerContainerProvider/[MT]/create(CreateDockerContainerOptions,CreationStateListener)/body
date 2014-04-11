@@ -157,6 +157,8 @@
       }
     }
   }
+  String dockerHost=dockerFactory.getDockerHost();
+  String jolokiaUrl=null;
   for (  Map.Entry<Integer,String> entry : sortedInternalPorts.entrySet()) {
     Integer port=entry.getKey();
     String portName=entry.getValue();
@@ -164,8 +166,11 @@
     externalPorts.put(portName,externalPort);
     env.add("FABRIC8_" + portName + "_PORT="+ port);
     env.add("FABRIC8_" + portName + "_PROXY_PORT="+ externalPort);
+    if (portName.equals(DockerConstants.JOLOKIA_PORT_NAME)) {
+      jolokiaUrl="http://" + dockerHost + ":"+ externalPort+ "/jolokia/";
+      LOG.info("Found Jolokia URL: " + jolokiaUrl);
+    }
   }
-  String dockerHost=dockerFactory.getDockerHost();
   LOG.info("Passing in manual ip: " + dockerHost);
   env.add(DockerConstants.ENV_VARS.FABRIC8_MANUALIP + "=" + dockerHost);
   env.add(DockerConstants.ENV_VARS.FABRIC8_GLOBAL_RESOLVER + "=" + ZkDefs.MANUAL_IP);
@@ -182,6 +187,10 @@
   metadata.setContainerName(containerId);
   metadata.setOverridenResolver(ZkDefs.MANUAL_IP);
   metadata.setCreateOptions(options);
+  if (jolokiaUrl != null) {
+    metadata.setJolokiaUrl(jolokiaUrl);
+    startJolokiaKeepAlive(metadata);
+  }
   startDockerContainer(status.getId(),options);
   return metadata;
 }

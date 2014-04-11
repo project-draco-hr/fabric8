@@ -3,6 +3,10 @@
   String id=getDockerContainerId(container);
   if (!Strings.isNullOrBlank(id)) {
     LOG.info("stopping container " + id);
+    CreateDockerContainerMetadata metadata=getContainerMetadata(container);
+    if (metadata != null) {
+      stopJolokiaKeepAlive(metadata);
+    }
     Integer timeToWait=null;
     docker.containerStop(id,timeToWait);
   }

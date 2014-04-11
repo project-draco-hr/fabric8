@@ -1,0 +1,22 @@
+{
+  LOG.info("Starting Jolokia Keep Alive for " + metadata.getId());
+  jolokiaKeepAliveContainers.put(metadata.getId(),metadata);
+  if (keepAliveTimer == null) {
+    keepAliveTimer=new Timer("fabric8-docker-container-keepalive");
+    TimerTask timerTask=new TimerTask(){
+      @Override public void run(){
+        List<CreateDockerContainerMetadata> list=new ArrayList<CreateDockerContainerMetadata>(jolokiaKeepAliveContainers.values());
+        for (        CreateDockerContainerMetadata containerMetadata : list) {
+          try {
+            jolokiaKeepAliveCheck(getFabricService(),containerMetadata);
+          }
+ catch (          Exception e) {
+            LOG.warn("Jolokia keep alive check failed for container " + containerMetadata.getId() + ". "+ e,e);
+          }
+        }
+      }
+    }
+;
+    keepAliveTimer.schedule(timerTask,jolokiaKeepAlivePollTime,jolokiaKeepAlivePollTime);
+  }
+}

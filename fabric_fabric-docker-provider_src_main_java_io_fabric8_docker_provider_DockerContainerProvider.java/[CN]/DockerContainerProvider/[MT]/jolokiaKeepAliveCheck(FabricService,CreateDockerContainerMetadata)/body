@@ -1,0 +1,59 @@
+{
+  String jolokiaUrl=metadata.getJolokiaUrl();
+  String containerName=metadata.getContainerName();
+  LOG.debug("Performing keep alive jolokia check on " + containerName + " URL: "+ jolokiaUrl);
+  Container container=fabric.getContainer(containerName);
+  if (Strings.isNullOrBlank(jolokiaUrl) || container == null)   return;
+  String user=fabric.getZooKeeperUser();
+  String password=fabric.getZookeeperPassword();
+  String url=jolokiaUrl;
+  int idx=jolokiaUrl.indexOf("://");
+  if (idx > 0) {
+    url="http://" + user + ":"+ password+ "@"+ jolokiaUrl.substring(idx + 3);
+  }
+  if (!url.endsWith("/")) {
+    url+="/";
+  }
+  url+="list/?maxDepth=1";
+  List<String> jmxDomains=new ArrayList<String>();
+  boolean valid=false;
+  try {
+    URL theUrl=new URL(url);
+    JsonNode jsonNode=jolokiaMapper.readTree(theUrl);
+    if (jsonNode != null) {
+      JsonNode value=jsonNode.get("value");
+      if (value != null) {
+        Iterator<String> iter=value.getFieldNames();
+        while (iter.hasNext()) {
+          jmxDomains.add(iter.next());
+        }
+        LOG.info("Container " + containerName + " has JMX Domains: "+ jmxDomains);
+        valid=jmxDomains.size() > 0;
+      }
+    }
+  }
+ catch (  IOException e) {
+    LOG.warn("Failed to query: " + url + ". "+ e,e);
+  }
+  String provisionResult=container.getProvisionResult();
+  LOG.info("Current provision result: " + provisionResult + " valid: "+ valid);
+  if (valid) {
+    if (!Objects.equal(Container.PROVISION_SUCCESS,provisionResult) || !container.isAlive()) {
+      container.setProvisionResult(Container.PROVISION_SUCCESS);
+      container.setProvisionException(null);
+      container.setAlive(true);
+      registerJolokiaUrl(metadata,container,jolokiaUrl);
+    }
+    if (Objects.equal(jmxDomains,container.getJmxDomains())) {
+      container.setJmxDomains(jmxDomains);
+    }
+  }
+ else {
+    if (container.isAlive()) {
+      container.setAlive(true);
+    }
+    if (!Objects.equal(Container.PROVISION_FAILED,provisionResult)) {
+      container.setProvisionResult(Container.PROVISION_FAILED);
+    }
+  }
+}
