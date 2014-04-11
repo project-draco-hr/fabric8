@@ -17,7 +17,7 @@
   System.out.println("About to update the pom " + pom + " with artifacts: "+ Arrays.asList(artifactUrls));
   List<Parser> artifacts=new ArrayList<Parser>();
   for (  String artifactUrl : artifactUrls) {
-    artifacts.add(new Parser(artifactUrl));
+    artifacts.add(Parser.parsePathWithSchemePrefix(artifactUrl));
   }
   List<MavenRepositoryURL> repos=new ArrayList<MavenRepositoryURL>();
   for (  String repoUrl : repoUrls) {
