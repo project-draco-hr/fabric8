@@ -1,0 +1,24 @@
+{
+  ObjectName endpointName=null;
+  ObjectName queryEndpointName;
+  String ret="";
+  Object[] jmxPara=null;
+  String[] jmxSig=null;
+  if (operationPara != null) {
+    jmxPara=new Object[]{operationPara};
+    jmxSig=new String[]{String.class.getName()};
+  }
+ else {
+    jmxPara=new Object[0];
+    jmxSig=new String[0];
+  }
+  queryEndpointName=getEndpointObjectName();
+  Set<ObjectName> endpointNames=CastUtils.cast(mbsc.queryNames(queryEndpointName,null));
+  Iterator<ObjectName> it=endpointNames.iterator();
+  if (it.hasNext()) {
+    endpointName=it.next();
+    ret=(String)mbsc.invoke(endpointName,operation,jmxPara,jmxSig);
+    LOG.info("invoke endpoint " + endpointName + " operation "+ operation+ " succeed!");
+  }
+  return ret;
+}

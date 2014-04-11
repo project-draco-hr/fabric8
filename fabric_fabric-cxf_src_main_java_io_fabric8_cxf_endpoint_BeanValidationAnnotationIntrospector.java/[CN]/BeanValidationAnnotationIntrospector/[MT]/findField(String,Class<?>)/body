@@ -1,0 +1,14 @@
+{
+  try {
+    return declaringClass.getDeclaredField(fieldName);
+  }
+ catch (  NoSuchFieldException e) {
+    Class<?> superclass=declaringClass.getSuperclass();
+    if (superclass != null && superclass != declaringClass) {
+      return findField(fieldName,superclass);
+    }
+ else {
+      return null;
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  if (value instanceof IgnorePropertiesBackedByTransientFields) {
+    return (IgnorePropertiesBackedByTransientFields)value;
+  }
+ else {
+    if (value != null) {
+      if (value instanceof VisibilityChecker<?>) {
+        return new IgnorePropertiesBackedByTransientFields((VisibilityChecker<?>)value);
+      }
+      LOG.warning("Could not convert value to " + "IgnorePropertiesBackedByTransientFields as was " + value.getClass().getName() + " "+ value);
+    }
+    return null;
+  }
+}

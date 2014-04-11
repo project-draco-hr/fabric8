@@ -1,0 +1,42 @@
+{
+  if (!isWSDL()) {
+    Set<Class<?>> resourceTypes=getRESTResourceTypes();
+    if (resourceTypes != null) {
+      try {
+        for (        Class<?> cls : resourceTypes) {
+          if (cls.getName().endsWith(clsName)) {
+            return cls;
+          }
+        }
+      }
+ catch (      Throwable e) {
+        LOG.log(Level.WARNING,"findClass failed.",e);
+      }
+    }
+  }
+ else {
+    for (    ServiceInfo serviceInfo : endpoint.getService().getServiceInfos()) {
+      for (      BindingInfo bindingInfo : serviceInfo.getBindings()) {
+        for (        BindingOperationInfo boi : bindingInfo.getOperations()) {
+          if (boi.getInput() != null && boi.getInput().getMessageParts() != null) {
+            for (            MessagePartInfo mpi : boi.getInput().getMessageParts()) {
+              Class<?> partClass=mpi.getTypeClass();
+              if (partClass != null && partClass.getName().endsWith(clsName)) {
+                return partClass;
+              }
+            }
+          }
+          if (boi.getOutput() != null && boi.getOutput().getMessageParts() != null) {
+            for (            MessagePartInfo mpi : boi.getOutput().getMessageParts()) {
+              Class<?> partClass=mpi.getTypeClass();
+              if (partClass != null && partClass.getName().endsWith(clsName)) {
+                return partClass;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return null;
+}

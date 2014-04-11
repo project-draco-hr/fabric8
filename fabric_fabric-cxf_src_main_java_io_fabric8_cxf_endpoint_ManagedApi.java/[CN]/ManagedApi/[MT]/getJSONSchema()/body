@@ -1,0 +1,80 @@
+{
+  String ret="";
+  if (!isWSDL()) {
+    Set<Class<?>> resourceTypes=getRESTResourceTypes();
+    if (resourceTypes != null) {
+      try {
+        ret=ret + getBeginIndentionWithReturn(1) + "\""+ "definitions"+ "\" "+ " : {"+ getEol();
+        for (        Class<?> cls : resourceTypes) {
+          if (JsonSchemaLookup.getSingleton().getSchemaForClass(cls).length() > 0) {
+            ret=ret + getIndention(2) + "\""+ cls.getName()+ "\" : "+ getEol();
+            ret=ret + rollbackEol(reformatIndent(JsonSchemaLookup.getSingleton().getSchemaForClass(cls),3)) + ","+ getEol();
+          }
+        }
+        ret=rollbackColon(rollbackEol(ret)) + getEndIndentionWithReturn(1);
+        ret=ret + getEndIndentionWithReturn(0);
+      }
+ catch (      Throwable e) {
+        LOG.log(Level.WARNING,"getJSONSchema failed.",e);
+      }
+    }
+  }
+ else {
+    try {
+      for (      ServiceInfo serviceInfo : endpoint.getService().getServiceInfos()) {
+        for (        BindingInfo bindingInfo : serviceInfo.getBindings()) {
+          ret=ret + getBeginIndentionWithReturn(1) + "\"operations\" : "+ getBeginIndentionWithReturn(0);
+          for (          BindingOperationInfo boi : bindingInfo.getOperations()) {
+            ret=ret + getIndention(2) + "\""+ boi.getOperationInfo().getName().getLocalPart()+ "\" "+ " : "+ getBeginIndentionWithReturn(3);
+            if (boi.getInput() != null && boi.getInput().getMessageParts() != null) {
+              ret=ret + "\"input\" : " + getBeginIndentionWithReturn(4)+ "\"type\" : \""+ boi.getOperationInfo().getInput().getName().getLocalPart()+ "\""+ getEndIndentionWithReturn(3)+ ","+ getEol();
+            }
+            if (boi.getOutput() != null && boi.getOutput().getMessageParts() != null) {
+              ret=ret + getIndention(3) + "\"output\" : "+ getBeginIndentionWithReturn(4)+ "\"type\" : \""+ boi.getOperationInfo().getOutput().getName().getLocalPart()+ "\""+ getEndIndentionWithReturn(3);
+            }
+            ret=rollbackColon(rollbackEol(ret)) + getEndIndentionWithReturn(2) + ","+ getEol();
+          }
+          if (ret.length() > 0) {
+            ret=rollbackColon(rollbackEol(ret)) + getEndIndentionWithReturn(1) + ",";
+          }
+          Set<String> addedType=new HashSet<String>();
+          ret=ret + getEol() + getIndention(1)+ "\"definitions\" : "+ getBeginIndentionWithReturn(0);
+          for (          BindingOperationInfo boi : bindingInfo.getOperations()) {
+            if (boi.getInput() != null && boi.getInput().getMessageParts() != null && !addedType.contains(boi.getOperationInfo().getInput().getName().getLocalPart())) {
+              ret=ret + getIndention(2) + "\""+ boi.getOperationInfo().getInput().getName().getLocalPart()+ "\" : "+ getBeginIndentionWithReturnForList(0);
+              for (              MessagePartInfo mpi : boi.getInput().getMessageParts()) {
+                Class<?> partClass=mpi.getTypeClass();
+                if (partClass != null) {
+                  ret=ret + rollbackEol(reformatIndent(JsonSchemaLookup.getSingleton().getSchemaForClass(partClass),3)) + ","+ getEol();
+                }
+              }
+              ret=rollbackColon(rollbackEol(ret)) + getEndIndentionWithReturnForList(2) + ","+ getEol();
+              addedType.add(boi.getOperationInfo().getInput().getName().getLocalPart());
+            }
+            if (boi.getOutput() != null && boi.getOutput().getMessageParts() != null && !addedType.contains(boi.getOperationInfo().getOutput().getName().getLocalPart())) {
+              ret=ret + getIndention(2) + "\""+ boi.getOperationInfo().getOutput().getName().getLocalPart()+ "\" : "+ getBeginIndentionWithReturnForList(0);
+              for (              MessagePartInfo mpi : boi.getOutput().getMessageParts()) {
+                Class<?> partClass=mpi.getTypeClass();
+                if (partClass != null) {
+                  ret=ret + rollbackEol(reformatIndent(JsonSchemaLookup.getSingleton().getSchemaForClass(partClass),3)) + ","+ getEol();
+                }
+              }
+              ret=rollbackColon(rollbackEol(ret)) + getEndIndentionWithReturnForList(2) + ","+ getEol();
+              addedType.add(boi.getOperationInfo().getOutput().getName().getLocalPart());
+            }
+          }
+          if (ret.length() > 0) {
+            ret=rollbackColon(rollbackEol(ret)) + getEndIndentionWithReturn(1);
+          }
+          if (ret.length() > 0) {
+            ret=rollbackColon(ret) + getEndIndentionWithReturn(0);
+          }
+        }
+      }
+    }
+ catch (    Throwable e) {
+      LOG.log(Level.WARNING,"getJSONSchema failed.",e);
+    }
+  }
+  return ret;
+}

@@ -1,0 +1,25 @@
+{
+  if (!isInOSGi()) {
+    LOG.log(Level.FINE,"Not In OSGi.");
+    return null;
+  }
+  String ret="/cxf";
+  if (getConfigurationAdmin() != null) {
+    try {
+      Configuration configuration=getConfigurationAdmin().getConfiguration("org.apache.cxf.osgi");
+      if (configuration != null) {
+        Dictionary properties=configuration.getProperties();
+        if (properties != null) {
+          String servletContext=(String)configuration.getProperties().get("org.apache.cxf.servlet.context");
+          if (servletContext != null) {
+            ret=servletContext;
+          }
+        }
+      }
+    }
+ catch (    IOException e) {
+      LOG.log(Level.WARNING,"getServletContext failed.",e);
+    }
+  }
+  return ret;
+}

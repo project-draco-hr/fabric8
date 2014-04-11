@@ -1,0 +1,14 @@
+{
+  String json="";
+  try {
+    connectToMBserver();
+    json=invokeEndpoint("getJSONSchema",null);
+    parseJson(json);
+    json=invokeEndpoint("getJSONSchemaForClass","io.fabric8.cxf.endpoint.jaxrs.Book");
+    parseJson(json);
+  }
+ catch (  Throwable e) {
+    e.printStackTrace();
+    fail("invalid json for " + json);
+  }
+}

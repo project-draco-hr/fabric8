@@ -1,0 +1,18 @@
+{
+  LOG.log(Level.INFO,"Creating JsonSchemaLookup instance");
+  try {
+    if (mapper == null) {
+      mapper=new ObjectMapper();
+      mapper.setVisibilityChecker(new IgnorePropertiesBackedByTransientFields(mapper.getVisibilityChecker()));
+      JaxbAnnotationModule module1=new JaxbAnnotationModule();
+      mapper.registerModule(module1);
+      BeanValidationAnnotationModule module2=new BeanValidationAnnotationModule();
+      mapper.registerModule(module2);
+    }
+    singleton=this;
+  }
+ catch (  Exception e) {
+    LOG.log(Level.WARNING,"Exception during initialization: ",e);
+    throw new RuntimeException(e);
+  }
+}

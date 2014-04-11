@@ -1,0 +1,14 @@
+{
+  if (provider instanceof Endpoint) {
+    EndpointImpl endpointImpl=(EndpointImpl)provider;
+    List<Feature> features=endpointImpl.getActiveFeatures();
+    if (features == null) {
+      features=new ArrayList<Feature>();
+      features.add(this);
+      endpointImpl.initializeActiveFeatures(features);
+    }
+ else {
+      features.add(this);
+    }
+  }
+}

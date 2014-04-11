@@ -1,0 +1,13 @@
+{
+  Field field=findField(fieldName,declaringClass);
+  if (field != null) {
+    int fieldModifiers=field.getModifiers();
+    if (Modifier.isTransient(fieldModifiers)) {
+      if (LOG.isLoggable(Level.FINE)) {
+        LOG.fine("Ignoring getter " + method + " due to transient field called "+ fieldName);
+      }
+      return false;
+    }
+  }
+  return true;
+}

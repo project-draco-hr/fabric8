@@ -1,0 +1,13 @@
+{
+  ManagedApi mApi=new ManagedApi(bus,server.getEndpoint(),server);
+  InstrumentationManager iMgr=bus.getExtension(InstrumentationManager.class);
+  if (iMgr != null) {
+    try {
+      iMgr.register(mApi);
+    }
+ catch (    JMException jmex) {
+      jmex.printStackTrace();
+      LOG.log(Level.WARNING,"Registering ManagedApi failed.",jmex);
+    }
+  }
+}

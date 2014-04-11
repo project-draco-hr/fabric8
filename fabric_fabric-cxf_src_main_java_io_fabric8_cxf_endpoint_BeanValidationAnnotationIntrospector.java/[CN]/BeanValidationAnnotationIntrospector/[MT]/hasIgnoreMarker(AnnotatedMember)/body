@@ -1,0 +1,27 @@
+{
+  Member member=m.getMember();
+  int modifiers=member.getModifiers();
+  if (Modifier.isTransient(modifiers)) {
+    if (LOG.isLoggable(Level.FINE)) {
+      LOG.fine("Ignoring transient member " + m);
+    }
+    return true;
+  }
+ else   if (m instanceof AnnotatedMethod) {
+    AnnotatedMethod method=(AnnotatedMethod)m;
+    String methodName=method.getName();
+    if (methodName.startsWith("get") && method.getParameterCount() == 0) {
+      String fieldName=Introspector.decapitalize(methodName.substring(3));
+      Class<?> declaringClass=method.getDeclaringClass();
+      Field field=findField(fieldName,declaringClass);
+      if (field != null) {
+        int fieldModifiers=field.getModifiers();
+        if (Modifier.isTransient(fieldModifiers)) {
+          LOG.fine("Ignoring member " + m + " due to transient field called "+ fieldName);
+          return true;
+        }
+      }
+    }
+  }
+  return super.hasIgnoreMarker(m);
+}

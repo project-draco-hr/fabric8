@@ -1,0 +1,15 @@
+{
+  ObjectMapper objectMapper=new ObjectMapper();
+  StringWriter sw=new StringWriter();
+  try {
+    Object pojo=objectMapper.readValue(jsonText,findClass(pojoType));
+    JAXBContext jc=JAXBContext.newInstance(findClass(pojoType));
+    Marshaller marshaller=jc.createMarshaller();
+    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,true);
+    marshaller.marshal(pojo,sw);
+  }
+ catch (  Exception e) {
+    LOG.log(Level.WARNING,"jsonToXml failed.",e);
+  }
+  return sw.toString();
+}

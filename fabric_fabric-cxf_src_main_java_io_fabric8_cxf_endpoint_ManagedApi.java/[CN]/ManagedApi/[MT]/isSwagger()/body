@@ -1,0 +1,14 @@
+{
+  if (!isWADL()) {
+    return false;
+  }
+  List<Feature> features=server.getEndpoint().getActiveFeatures();
+  if (features != null) {
+    for (    Feature feature : features) {
+      if (feature.getClass().getName().endsWith("SwaggerFeature")) {
+        return true;
+      }
+    }
+  }
+  return false;
+}

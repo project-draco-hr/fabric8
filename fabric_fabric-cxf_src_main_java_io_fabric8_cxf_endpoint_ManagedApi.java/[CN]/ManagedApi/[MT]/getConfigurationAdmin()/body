@@ -1,0 +1,17 @@
+{
+  try {
+    if (isInOSGi() && (configurationAdmin == null)) {
+      BundleContext bundleContext=FrameworkUtil.getBundle(ManagedApi.class).getBundleContext();
+      if (bundleContext != null) {
+        ServiceReference serviceReference=bundleContext.getServiceReference(ConfigurationAdmin.class.getName());
+        if (serviceReference != null) {
+          configurationAdmin=(ConfigurationAdmin)bundleContext.getService(serviceReference);
+        }
+      }
+    }
+  }
+ catch (  Exception e) {
+    LOG.log(Level.WARNING,"getConfigurationAdmin failed.",e);
+  }
+  return configurationAdmin;
+}

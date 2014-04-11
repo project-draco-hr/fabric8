@@ -1,0 +1,53 @@
+{
+  String ret="";
+  if (!isWSDL()) {
+    Set<Class<?>> resourceTypes=getRESTResourceTypes();
+    if (resourceTypes != null) {
+      try {
+        ret=ret + getBeginIndentionWithReturn(1) + "\""+ "definitions"+ "\" "+ " : {"+ getEol();
+        for (        Class<?> cls : resourceTypes) {
+          if (cls.getName().endsWith(clsName) && JsonSchemaLookup.getSingleton().getSchemaForClass(cls).length() > 0) {
+            ret=ret + getIndention(2) + "\""+ cls.getName()+ "\" : "+ getEol();
+            ret=ret + reformatIndent(JsonSchemaLookup.getSingleton().getSchemaForClass(cls),3);
+            ret=ret + getEol();
+          }
+        }
+        ret=ret + getEndIndentionWithReturn(1);
+        ret=ret + getEndIndentionWithReturn(0);
+      }
+ catch (      Throwable e) {
+        LOG.log(Level.WARNING,"getJSONSchemaForClass failed.",e);
+      }
+    }
+  }
+ else {
+    for (    ServiceInfo serviceInfo : endpoint.getService().getServiceInfos()) {
+      for (      BindingInfo bindingInfo : serviceInfo.getBindings()) {
+        ret=ret + getBeginIndentionWithReturn(1) + "\""+ "definitions"+ "\" "+ " : {"+ getEol();
+        for (        BindingOperationInfo boi : bindingInfo.getOperations()) {
+          if (boi.getInput() != null && boi.getInput().getMessageParts() != null) {
+            for (            MessagePartInfo mpi : boi.getInput().getMessageParts()) {
+              Class<?> partClass=mpi.getTypeClass();
+              if (partClass != null && partClass.getName().endsWith(clsName)) {
+                ret=ret + getIndention(2) + "\""+ partClass.getName()+ "\" : "+ getEol();
+                ret=ret + reformatIndent(JsonSchemaLookup.getSingleton().getSchemaForClass(partClass),3);
+              }
+            }
+          }
+          if (boi.getOutput() != null && boi.getOutput().getMessageParts() != null) {
+            for (            MessagePartInfo mpi : boi.getOutput().getMessageParts()) {
+              Class<?> partClass=mpi.getTypeClass();
+              if (partClass != null && partClass.getName().endsWith(clsName)) {
+                ret=ret + getIndention(2) + "\""+ partClass.getName()+ "\" : "+ getEol();
+                ret=ret + reformatIndent(JsonSchemaLookup.getSingleton().getSchemaForClass(partClass),3);
+              }
+            }
+          }
+        }
+        ret=ret + getEndIndentionWithReturn(1);
+        ret=ret + getEndIndentionWithReturn(0);
+      }
+    }
+  }
+  return ret;
+}
