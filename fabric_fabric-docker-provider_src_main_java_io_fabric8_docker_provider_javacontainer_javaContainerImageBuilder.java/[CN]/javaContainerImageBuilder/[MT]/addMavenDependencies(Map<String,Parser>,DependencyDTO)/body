@@ -3,7 +3,7 @@
   Parser parser=Parser.parsePathWithSchemePrefix(url);
   String scope=dependency.getScope();
   if (!artifacts.containsKey(url) && !artifacts.containsValue(parser) && !(Objects.equal("test",scope))) {
-    System.out.println("Adding url: " + url + " parser: "+ parser);
+    LOGGER.debug("Adding url: " + url + " parser: "+ parser);
     artifacts.put(url,parser);
   }
   List<DependencyDTO> children=dependency.getChildren();
