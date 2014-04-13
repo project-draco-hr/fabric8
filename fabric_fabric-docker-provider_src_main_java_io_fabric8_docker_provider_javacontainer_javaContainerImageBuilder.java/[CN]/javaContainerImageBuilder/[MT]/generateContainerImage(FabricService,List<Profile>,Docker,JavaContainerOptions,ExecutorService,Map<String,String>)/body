@@ -31,6 +31,13 @@
     String filePath=libDirPrefix + fileName;
     buffer.append("ADD " + url + " "+ filePath+ "\n");
   }
+  String[] copiedEnvVars=DockerConstants.JAVA_CONTAINER_ENV_VARS.ALL_ENV_VARS;
+  for (  String envVarName : copiedEnvVars) {
+    String value=envVars.get(envVarName);
+    if (value != null) {
+      buffer.append("ENV " + envVarName + " "+ value+ " \n");
+    }
+  }
   String source=buffer.toString();
   File tmpFile=File.createTempFile("fabric-",".dockerfiledir");
   tmpFile.delete();
