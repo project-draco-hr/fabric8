@@ -45,7 +45,10 @@
       buffer.append("ENV " + envVarName + " "+ value+ " \n");
     }
   }
-  buffer.append("CMD /home/fabric8/startup.sh\n");
+  String entryPoint=options.getEntryPoint();
+  if (Strings.isNotBlank(entryPoint)) {
+    buffer.append("CMD " + entryPoint + "\n");
+  }
   String source=buffer.toString();
   File tmpFile=File.createTempFile("fabric-",".dockerfiledir");
   tmpFile.delete();
