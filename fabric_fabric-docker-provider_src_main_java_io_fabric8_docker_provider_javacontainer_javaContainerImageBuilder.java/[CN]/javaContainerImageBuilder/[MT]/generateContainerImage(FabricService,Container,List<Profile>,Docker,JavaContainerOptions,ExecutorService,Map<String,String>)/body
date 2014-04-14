@@ -38,6 +38,17 @@
     String filePath=libDirPrefix + fileName;
     buffer.append("ADD " + url + " "+ filePath+ "\n");
   }
+  if (container != null) {
+    List<String> bundles=new ArrayList<String>();
+    for (    String name : artifacts.keySet()) {
+      if (name.startsWith("fab:")) {
+        name=name.substring(4);
+      }
+      bundles.add(name);
+    }
+    Collections.sort(bundles);
+    container.setProvisionList(bundles);
+  }
   String[] copiedEnvVars=DockerConstants.JAVA_CONTAINER_ENV_VARS.ALL_ENV_VARS;
   for (  String envVarName : copiedEnvVars) {
     String value=envVars.get(envVarName);
