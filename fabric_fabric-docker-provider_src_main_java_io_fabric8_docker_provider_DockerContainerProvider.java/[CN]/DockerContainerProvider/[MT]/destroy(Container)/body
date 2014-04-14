@@ -4,6 +4,11 @@
   if (!Strings.isNullOrBlank(id)) {
     LOG.info("destroying container " + id);
     Integer removeVolumes=1;
-    docker.containerRemove(id,removeVolumes);
+    try {
+      docker.containerRemove(id,removeVolumes);
+    }
+ catch (    Exception e) {
+      LOG.info("Docker container probably does not exist: " + e,e);
+    }
   }
 }
