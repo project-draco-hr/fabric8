@@ -1,4 +1,14 @@
 {
   assertValid();
-  return "admin";
+  String answer=null;
+  try {
+    answer=getZookeeperInfo("zookeeper.user");
+  }
+ catch (  Exception e) {
+    LOGGER.warn("could not find zookeeper.user: " + e,e);
+  }
+  if (Strings.isNullOrEmpty(answer)) {
+    answer="admin";
+  }
+  return answer;
 }
