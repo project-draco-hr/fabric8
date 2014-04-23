@@ -18,6 +18,7 @@
 ;
   syscontext.addServiceListener(listener,"(objectClass=" + ZooKeeperClusterBootstrap.class.getName() + ")");
   servletContext.setAttribute(BoostrapLatch.class.getName(),latch);
+  servletContext.setAttribute(BundleContext.class.getName(),new BundleContextAdaptor(syscontext));
   WebAppContextListener webappInstaller=new WebAppContextListener();
   Module module=webappInstaller.installWebappModule(servletContext);
   servletContext.setAttribute(Module.class.getName(),module);
