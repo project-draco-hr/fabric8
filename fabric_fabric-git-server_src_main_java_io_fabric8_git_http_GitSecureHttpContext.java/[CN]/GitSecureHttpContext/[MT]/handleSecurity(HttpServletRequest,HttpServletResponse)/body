@@ -12,6 +12,19 @@
           int i=srcString.indexOf(':');
           String username=srcString.substring(0,i);
           String password=srcString.substring(i + 1);
+          if (isContainerLogin(username)) {
+            Properties containers=getContainerTokens(curator);
+            String token=containers.getProperty(username);
+            if (token == null) {
+              throw new FailedLoginException("Container doesn't exist");
+            }
+ else             if (!password.equals(token)) {
+              throw new FailedLoginException("Tokens do not match");
+            }
+ else {
+              return true;
+            }
+          }
           Subject subject=doAuthenticate(username,password);
           if (subject != null) {
             request.setAttribute(HttpContext.AUTHENTICATION_TYPE,HttpServletRequest.BASIC_AUTH);
