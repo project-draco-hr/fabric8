@@ -1,0 +1,6 @@
+{
+  ConfigurableApplicationContext parent=new AnnotationConfigApplicationContext(getClass());
+  ApplicationContext embeddedFabricContext=parent.getBean(EmbeddedFabricSpringApplication.class).context();
+  String testScopedBean=embeddedFabricContext.getBean(String.class);
+  assertNotNull(testScopedBean);
+}
