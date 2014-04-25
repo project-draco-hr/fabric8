@@ -1,0 +1,10 @@
+{
+  String message="message";
+  String seda="seda:test";
+  ApplicationContext applicationContext=new FabricSpringApplication().run();
+  ProducerTemplate producerTemplate=applicationContext.getBean(ProducerTemplate.class);
+  ConsumerTemplate consumerTemplate=applicationContext.getBean(ConsumerTemplate.class);
+  producerTemplate.sendBody(seda,message);
+  String receivedBody=consumerTemplate.receiveBody(seda,String.class);
+  assertEquals(message,receivedBody);
+}
