@@ -1,0 +1,7 @@
+{
+  Long hundred=100L;
+  ApplicationContext applicationContext=new FabricSpringApplication().run();
+  TypeConverter typeConverter=applicationContext.getBean(TypeConverter.class);
+  Long convertedLong=typeConverter.convertTo(Long.class,hundred.toString());
+  assertEquals(hundred,convertedLong);
+}
