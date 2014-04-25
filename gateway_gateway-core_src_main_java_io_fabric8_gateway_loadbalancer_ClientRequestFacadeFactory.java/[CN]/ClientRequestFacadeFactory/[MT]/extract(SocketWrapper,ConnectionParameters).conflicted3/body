@@ -1,6 +1,9 @@
 {
-  if (connectionParameters != null) {
-    return connectionParameters.protocolVirtualHost;
+  if (socket != null) {
+    InetSocketAddress address=socket.remoteAddress();
+    if (address != null) {
+      return address.toString();
+    }
   }
   return null;
 }
