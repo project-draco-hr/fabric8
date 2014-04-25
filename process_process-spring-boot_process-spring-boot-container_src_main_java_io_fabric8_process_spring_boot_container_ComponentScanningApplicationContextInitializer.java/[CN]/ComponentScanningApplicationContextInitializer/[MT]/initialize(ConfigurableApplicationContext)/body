@@ -1,8 +1,13 @@
 {
+  LOG.debug("Initializing Fabric Spring Boot component scanner...");
   String basePackage=System.getProperty(BASE_PACKAGE_PROPERTY_KEY);
   if (basePackage != null) {
+    LOG.debug("Found base package definition: {}={}",BASE_PACKAGE_PROPERTY_KEY,basePackage);
     ClassPathBeanDefinitionScanner scanner=new ClassPathBeanDefinitionScanner((BeanDefinitionRegistry)applicationContext,true);
     scanner.setResourceLoader(applicationContext);
     scanner.scan(basePackage);
+  }
+ else {
+    LOG.debug("No base package definition ({}) found.",BASE_PACKAGE_PROPERTY_KEY);
   }
 }
