@@ -1,11 +1,5 @@
 {
   SpringApplicationBuilder applicationBuilder=new SpringApplicationBuilder().sources(FabricSpringApplicationConfiguration.class);
-  String webSystemProperty=System.getProperty(WEB_PROPERTY_KEY);
-  if (webSystemProperty != null) {
-    applicationBuilder.web(parseBoolean(webSystemProperty));
-  }
- else   if (web != null) {
-    applicationBuilder.web(web);
-  }
+  resolveWebEnvironment(applicationBuilder);
   return applicationBuilder.run(args);
 }
