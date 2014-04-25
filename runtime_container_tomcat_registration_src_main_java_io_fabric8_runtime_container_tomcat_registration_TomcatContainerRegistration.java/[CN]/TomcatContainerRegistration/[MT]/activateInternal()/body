@@ -1,0 +1,43 @@
+{
+  RuntimeProperties sysprops=runtimeProperties.get();
+  String karafName=sysprops.getProperty(SystemProperties.KARAF_NAME);
+  String version=sysprops.getProperty("fabric.version",ZkDefs.DEFAULT_VERSION);
+  String profiles=sysprops.getProperty("fabric.profiles");
+  try {
+    server=getServer();
+    if (profiles != null) {
+      String versionNode=CONFIG_CONTAINER.getPath(karafName);
+      String profileNode=CONFIG_VERSIONS_CONTAINER.getPath(version,karafName);
+      ZooKeeperUtils.createDefault(curator.get(),versionNode,version);
+      ZooKeeperUtils.createDefault(curator.get(),profileNode,profiles);
+    }
+    checkAlive();
+    String domainsNode=CONTAINER_DOMAINS.getPath(karafName);
+    Stat stat=ZooKeeperUtils.exists(curator.get(),domainsNode);
+    if (stat != null) {
+      ZooKeeperUtils.deleteSafe(curator.get(),domainsNode);
+    }
+    ZooKeeperUtils.createDefault(curator.get(),CONTAINER_BINDADDRESS.getPath(karafName),sysprops.getProperty(ZkDefs.BIND_ADDRESS,"0.0.0.0"));
+    ZooKeeperUtils.createDefault(curator.get(),CONTAINER_RESOLVER.getPath(karafName),getContainerResolutionPolicy(sysprops,curator.get(),karafName));
+    ZooKeeperUtils.setData(curator.get(),CONTAINER_LOCAL_HOSTNAME.getPath(karafName),HostUtils.getLocalHostName());
+    ZooKeeperUtils.setData(curator.get(),CONTAINER_LOCAL_IP.getPath(karafName),HostUtils.getLocalIp());
+    ZooKeeperUtils.setData(curator.get(),CONTAINER_IP.getPath(karafName),getContainerPointer(curator.get(),karafName));
+    ZooKeeperUtils.createDefault(curator.get(),CONTAINER_GEOLOCATION.getPath(karafName),geoLocationService.get().getGeoLocation());
+    for (    String resolver : ZkDefs.VALID_RESOLVERS) {
+      String address=sysprops.getProperty(resolver);
+      if (address != null && !address.isEmpty() && ZooKeeperUtils.exists(curator.get(),CONTAINER_ADDRESS.getPath(karafName,resolver)) == null) {
+        ZooKeeperUtils.setData(curator.get(),CONTAINER_ADDRESS.getPath(karafName,resolver),address);
+      }
+    }
+    Container current=getContainer();
+    initializeConnectors();
+    registerHttp(current);
+    String minimumPort=sysprops.getProperty(ZkDefs.MINIMUM_PORT);
+    String maximumPort=sysprops.getProperty(ZkDefs.MAXIMUM_PORT);
+    ZooKeeperUtils.createDefault(curator.get(),CONTAINER_PORT_MIN.getPath(karafName),minimumPort);
+    ZooKeeperUtils.createDefault(curator.get(),CONTAINER_PORT_MAX.getPath(karafName),maximumPort);
+  }
+ catch (  Exception e) {
+    LOGGER.warn("Error updating Fabric Container information. This exception will be ignored.",e);
+  }
+}

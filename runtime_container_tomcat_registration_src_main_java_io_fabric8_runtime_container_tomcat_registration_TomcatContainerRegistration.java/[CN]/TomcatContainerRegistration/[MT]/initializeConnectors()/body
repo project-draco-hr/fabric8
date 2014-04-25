@@ -1,0 +1,13 @@
+{
+  org.apache.catalina.Service[] services=server.findServices();
+  for (  org.apache.catalina.Service service : services) {
+    for (    Connector connector : service.findConnectors()) {
+      if (connector.getScheme().equals("http")) {
+        httpConnectors.add(connector);
+      }
+ else       if (connector.getScheme().equals("https")) {
+        httpsConnectors.add(connector);
+      }
+    }
+  }
+}

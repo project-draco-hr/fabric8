@@ -1,0 +1,17 @@
+{
+  String policy=null;
+  List<String> validResolverList=Arrays.asList(ZkDefs.VALID_RESOLVERS);
+  if (ZooKeeperUtils.exists(zooKeeper,CONTAINER_RESOLVER.getPath(container)) != null) {
+    policy=ZooKeeperUtils.getStringData(zooKeeper,CONTAINER_RESOLVER.getPath(container));
+  }
+ else   if (sysprops.getProperty(ZkDefs.LOCAL_RESOLVER_PROPERTY) != null && validResolverList.contains(sysprops.getProperty(ZkDefs.LOCAL_RESOLVER_PROPERTY))) {
+    policy=sysprops.getProperty(ZkDefs.LOCAL_RESOLVER_PROPERTY);
+  }
+  if (policy == null) {
+    policy=getGlobalResolutionPolicy(sysprops,zooKeeper);
+  }
+  if (policy != null && ZooKeeperUtils.exists(zooKeeper,CONTAINER_RESOLVER.getPath(container)) == null) {
+    ZooKeeperUtils.setData(zooKeeper,CONTAINER_RESOLVER.getPath(container),policy);
+  }
+  return policy;
+}

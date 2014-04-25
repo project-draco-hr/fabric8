@@ -1,0 +1,8 @@
+{
+  boolean httpEnabled=isHttpEnabled();
+  boolean httpsEnabled=isHttpsEnabled();
+  String protocol=httpsEnabled && !httpEnabled ? "https" : "http";
+  int httpPort=httpsEnabled && !httpEnabled ? getHttpsPort() : getHttpPort();
+  String httpUrl=getHttpUrl(protocol,container.getId(),httpPort);
+  ZooKeeperUtils.setData(curator.get(),CONTAINER_HTTP.getPath(container.getId()),httpUrl);
+}
