@@ -1,0 +1,42 @@
+{
+  return new ChildContainerController(){
+    @Override public CreateChildContainerMetadata create(    final CreateChildContainerOptions options,    final CreationStateListener listener){
+      final Container parent=fabricService.get().getContainer(options.getParent());
+      ContainerTemplate containerTemplate=new ContainerTemplate(parent,options.getJmxUser(),options.getJmxPassword(),false);
+      return containerTemplate.execute(new ContainerTemplate.AdminServiceCallback<CreateChildContainerMetadata>(){
+        public CreateChildContainerMetadata doWithAdminService(        AdminServiceMBean adminService) throws Exception {
+          return doCreateKaraf(adminService,options,listener,parent);
+        }
+      }
+);
+    }
+    @Override public void start(    final Container container){
+      getContainerTemplateForChild(container).execute(new ContainerTemplate.AdminServiceCallback<Object>(){
+        public Object doWithAdminService(        AdminServiceMBean adminService) throws Exception {
+          adminService.startInstance(container.getId(),null);
+          return null;
+        }
+      }
+);
+    }
+    @Override public void stop(    final Container container){
+      getContainerTemplateForChild(container).execute(new ContainerTemplate.AdminServiceCallback<Object>(){
+        public Object doWithAdminService(        AdminServiceMBean adminService) throws Exception {
+          adminService.stopInstance(container.getId());
+          return null;
+        }
+      }
+);
+    }
+    @Override public void destroy(    final Container container){
+      getContainerTemplateForChild(container).execute(new ContainerTemplate.AdminServiceCallback<Object>(){
+        public Object doWithAdminService(        AdminServiceMBean adminService) throws Exception {
+          adminService.destroyInstance(container.getId());
+          return null;
+        }
+      }
+);
+    }
+  }
+;
+}

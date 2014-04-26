@@ -1,0 +1,71 @@
+{
+  String containerId=options.getName();
+  Set<String> profiles=options.getProfiles();
+  String versionId=options.getVersion();
+  FabricService service=getFabricService();
+  Map<String,String> configOverlay=new HashMap<String,String>();
+  Map<String,String> envVarsOverlay=new HashMap<String,String>();
+  Map<String,String> ports=null;
+  Map<String,String> dockerProviderConfig=new HashMap<String,String>();
+  List<Profile> profileOverlays=new ArrayList<Profile>();
+  Version version=null;
+  if (profiles != null && versionId != null) {
+    version=service.getVersion(versionId);
+    if (version != null) {
+      for (      String profileId : profiles) {
+        Profile profile=version.getProfile(profileId);
+        if (profile != null) {
+          Profile overlay=profile.getOverlay();
+          profileOverlays.add(overlay);
+          Map<String,String> dockerConfig=overlay.getConfiguration(DockerConstants.DOCKER_PROVIDER_PID);
+          if (dockerConfig != null) {
+            configOverlay.putAll(dockerConfig);
+          }
+          Map<String,String> envVars=overlay.getConfiguration(DockerConstants.ENVIRONMENT_VARIABLES_PID);
+          if (envVars != null) {
+            envVarsOverlay.putAll(envVars);
+          }
+          if (ports == null || ports.size() == 0) {
+            ports=overlay.getConfiguration(DockerConstants.PORTS_PID);
+          }
+        }
+      }
+      if (version.hasProfile(DockerConstants.DOCKER_PROVIDER_PROFILE_ID)) {
+        Profile profile=version.getProfile(DockerConstants.DOCKER_PROVIDER_PROFILE_ID);
+        if (profile != null) {
+          Map<String,String> dockerConfig=profile.getOverlay().getConfiguration(DockerConstants.DOCKER_PROVIDER_PID);
+          if (dockerConfig != null) {
+            dockerProviderConfig.putAll(dockerConfig);
+          }
+        }
+      }
+    }
+  }
+  if (ports == null || ports.size() == 0) {
+    if (version == null) {
+      version=service.getDefaultVersion();
+    }
+    Profile dockerProfile=version.getProfile("docker");
+    ports=dockerProfile.getConfiguration(DockerConstants.PORTS_PID);
+    if (ports == null || ports.size() == 0) {
+      LOG.warn("Could not a docker ports configuration for: " + DockerConstants.PORTS_PID);
+      ports=new HashMap<String,String>();
+    }
+  }
+  LOG.info("Got port configuration: " + ports);
+  String image=containerConfig.getImage();
+  if (Strings.isNullOrBlank(image)) {
+    image=configOverlay.get(DockerConstants.PROPERTIES.IMAGE);
+    if (Strings.isNullOrBlank(image)) {
+      image=System.getenv(DockerConstants.ENV_VARS.FABRIC8_DOCKER_DEFAULT_IMAGE);
+    }
+    if (Strings.isNullOrBlank(image)) {
+      image=dockerProviderConfig.get(DockerConstants.PROPERTIES.IMAGE);
+    }
+    if (Strings.isNullOrBlank(image)) {
+      image=DockerConstants.DEFAULT_IMAGE;
+    }
+    containerConfig.setImage(image);
+  }
+  return createKarafContainerController();
+}
