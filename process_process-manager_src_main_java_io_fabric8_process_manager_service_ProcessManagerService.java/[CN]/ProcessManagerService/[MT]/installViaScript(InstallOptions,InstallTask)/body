@@ -3,6 +3,11 @@
   File installDir=createInstallDir(id);
   installDir.mkdirs();
   ProcessConfig config=loadControllerJson(options);
+  Map<String,String> configEnv=config.getEnvironment();
+  Map<String,String> optionsEnv=options.getEnvironment();
+  if (optionsEnv != null) {
+    configEnv.putAll(optionsEnv);
+  }
   installTask.install(config,id,installDir);
   JsonHelper.saveProcessConfig(config,installDir);
   Installation installation=createInstallation(id,installDir,config);

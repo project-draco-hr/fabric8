@@ -3,15 +3,17 @@
   CreateChildContainerMetadata metadata=new CreateChildContainerMetadata();
   metadata.setCreateOptions(options);
   metadata.setContainerName(containerName);
+  Map<String,String> environmentVariables=ChildContainers.getEnvironmentVariables(fabricService,options);
+  LOG.info("Creating process container with environment vars: " + environmentVariables);
   Installation installation=null;
   try {
     if (ChildContainers.isJavaContainer(fabricService,options)) {
-      InstallOptions parameters=createJavaInstallOptions(options);
+      InstallOptions parameters=createJavaInstallOptions(options,environmentVariables);
       Objects.notNull(parameters,"JavaInstall parameters");
       installation=processManager.installJar(parameters);
     }
  else {
-      InstallOptions parameters=createProcessInstallOptions(options);
+      InstallOptions parameters=createProcessInstallOptions(options,environmentVariables);
       InstallTask postInstall=createProcessPostInstall(options);
       Objects.notNull(parameters,"process parameters");
       installation=processManager.install(parameters,postInstall);
