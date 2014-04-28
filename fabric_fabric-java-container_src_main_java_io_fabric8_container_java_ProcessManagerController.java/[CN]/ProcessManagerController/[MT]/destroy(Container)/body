@@ -1,0 +1,12 @@
+{
+  Installation installation=installations.remove(container);
+  if (installation != null) {
+    try {
+      installation.getController().stop();
+    }
+ catch (    Exception e) {
+      LOG.info("Failed to stop process for container " + container.getId() + ". "+ e,e);
+    }
+    installation.getController().uninstall();
+  }
+}

@@ -1,6 +1,15 @@
 {
   assertValid();
   ChildContainerController answer=null;
+  try {
+    ChildContainerControllerFactory factory=childContainerControllerFactory;
+    if (factory != null) {
+      answer=factory.getControllerForContainer(container);
+    }
+  }
+ catch (  Exception e) {
+    LOG.warn("Caught: " + e,e);
+  }
   if (answer == null) {
     answer=createKarafContainerController();
   }

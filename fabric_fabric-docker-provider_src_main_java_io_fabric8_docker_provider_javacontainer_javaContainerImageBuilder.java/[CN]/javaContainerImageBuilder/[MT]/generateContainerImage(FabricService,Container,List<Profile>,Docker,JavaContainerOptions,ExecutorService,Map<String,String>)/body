@@ -4,13 +4,7 @@
   if (!libDir.endsWith("/") && !libDir.endsWith(File.separator)) {
     libDirPrefix+=File.separator;
   }
-  Map<String,Parser> artifacts=new TreeMap<String,Parser>();
-  for (  Profile profile : profileList) {
-    DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,profile,downloadExecutor);
-    Map<String,Parser> profileArtifacts=AgentUtils.getProfileArtifacts(downloadManager,profile);
-    artifacts.putAll(profileArtifacts);
-    appendMavenDependencies(artifacts,profile);
-  }
+  Map<String,Parser> artifacts=JavaContainers.getJavaContainerArtifacts(fabric,profileList,downloadExecutor);
   URI mavenRepoURI=fabric.getMavenRepoURI();
   String repoTextPrefix=mavenRepoURI.toString();
   int idx=repoTextPrefix.indexOf("://");

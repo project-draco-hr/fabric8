@@ -1,0 +1,23 @@
+{
+  Map<String,String> overlayConfig=new HashMap<String,String>();
+  Version version=null;
+  if (versionId == null) {
+    version=fabricService.getDefaultVersion();
+  }
+ else {
+    version=fabricService.getVersion(versionId);
+  }
+  if (profileIds != null && version != null) {
+    for (    String profileId : profileIds) {
+      Profile profile=version.getProfile(profileId);
+      if (profile != null) {
+        Profile overlay=profile.getOverlay();
+        Map<String,String> profileConfig=overlay.getConfiguration(pid);
+        if (profileConfig != null) {
+          overlayConfig.putAll(profileConfig);
+        }
+      }
+    }
+  }
+  return overlayConfig;
+}

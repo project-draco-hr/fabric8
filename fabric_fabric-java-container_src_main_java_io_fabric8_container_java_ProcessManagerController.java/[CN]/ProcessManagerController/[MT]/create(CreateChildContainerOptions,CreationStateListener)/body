@@ -1,0 +1,15 @@
+{
+  String containerName=options.getName();
+  CreateChildContainerMetadata metadata=new CreateChildContainerMetadata();
+  metadata.setCreateOptions(options);
+  metadata.setContainerName(containerName);
+  try {
+    InstallOptions parameters=createInstallOptions(options);
+    Installation installation=processManager.installJar(parameters);
+    installations.add(containerName,installation);
+  }
+ catch (  Exception e) {
+    handleException("Creating container " + containerName,e);
+  }
+  return metadata;
+}

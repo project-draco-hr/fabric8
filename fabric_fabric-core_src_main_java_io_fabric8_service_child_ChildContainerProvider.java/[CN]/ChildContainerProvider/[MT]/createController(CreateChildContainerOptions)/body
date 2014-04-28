@@ -1,32 +1,16 @@
 {
-  String containerId=options.getName();
-  Set<String> profiles=options.getProfiles();
-  String versionId=options.getVersion();
-  FabricService service=getFabricService();
-  Map<String,String> configOverlay=new HashMap<String,String>();
-  Map<String,String> envVarsOverlay=new HashMap<String,String>();
-  List<Profile> profileOverlays=new ArrayList<Profile>();
-  Version version=null;
-  if (profiles != null && versionId != null) {
-    version=service.getVersion(versionId);
-    if (version != null) {
-      for (      String profileId : profiles) {
-        Profile profile=version.getProfile(profileId);
-        if (profile != null) {
-          Profile overlay=profile.getOverlay();
-          profileOverlays.add(overlay);
-          Map<String,String> containerConfig=overlay.getConfiguration(ChildConstants.CONTAINER_TYPE_PID);
-          if (containerConfig != null) {
-            configOverlay.putAll(containerConfig);
-          }
-          Map<String,String> envVars=overlay.getConfiguration(ChildConstants.ENVIRONMENT_VARIABLES_PID);
-          if (envVars != null) {
-            envVarsOverlay.putAll(envVars);
-          }
-        }
-      }
+  ChildContainerController answer=null;
+  try {
+    ChildContainerControllerFactory factory=childContainerControllerFactory;
+    if (factory != null) {
+      answer=factory.createController(options);
     }
   }
-  String containerType=configOverlay.get(ChildConstants.PROPERTIES.CONTAINER_TYPE);
-  return createKarafContainerController();
+ catch (  Exception e) {
+    LOG.warn("Caught: " + e,e);
+  }
+  if (answer == null) {
+    answer=createKarafContainerController();
+  }
+  return answer;
 }

@@ -1,0 +1,10 @@
+{
+  Map<String,Parser> artifacts=new TreeMap<String,Parser>();
+  for (  Profile profile : profileList) {
+    DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,profile,downloadExecutor);
+    Map<String,Parser> profileArtifacts=AgentUtils.getProfileArtifacts(downloadManager,profile);
+    artifacts.putAll(profileArtifacts);
+    appendMavenDependencies(artifacts,profile);
+  }
+  return artifacts;
+}
