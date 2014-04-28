@@ -2,8 +2,9 @@
   Set<String> profileIds=options.getProfiles();
   String versionId=options.getVersion();
   List<Profile> profiles=Profiles.getProfiles(fabricService,profileIds,versionId);
-  Map<String,Parser> javaArtifacts=JavaContainers.getJavaContainerArtifacts(fabricService,profiles,downloadExecutor);
+  Map<String,File> javaArtifacts=JavaContainers.getJavaContainerArtifactsFiles(fabricService,profiles,downloadExecutor);
   InstallOptions.InstallOptionsBuilder builder=InstallOptions.builder();
+  builder.jarFiles(javaArtifacts.values());
   builder.id(options.getName());
   builder.environment(environmentVariables);
   builder.mainClass(environmentVariables.get(ChildConstants.JAVA_CONTAINER_ENV_VARS.FABRIC8_JAVA_MAIN));

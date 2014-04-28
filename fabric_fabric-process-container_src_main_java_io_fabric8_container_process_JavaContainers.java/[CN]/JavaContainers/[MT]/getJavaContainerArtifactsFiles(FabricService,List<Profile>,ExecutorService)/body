@@ -1,0 +1,13 @@
+{
+  Map<String,File> answer=new HashMap<String,File>();
+  for (  Profile profile : profileList) {
+    DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,profile,downloadExecutor);
+    Map<String,Parser> profileArtifacts=AgentUtils.getProfileArtifacts(downloadManager,profile);
+    appendMavenDependencies(profileArtifacts,profile);
+    Map<String,File> profileFiles=AgentUtils.downloadLocations(downloadManager,profileArtifacts.keySet());
+    if (profileFiles != null) {
+      answer.putAll(profileFiles);
+    }
+  }
+  return answer;
+}

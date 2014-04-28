@@ -1,5 +1,9 @@
 {
   String mvnUrl=stripUrl(url);
+  int idx=mvnUrl.indexOf(":mvn:");
+  if (idx > 0) {
+    mvnUrl=mvnUrl.substring(idx + 1);
+  }
   if (mvnUrl.startsWith("mvn:")) {
     MavenDownloadTask task=new MavenDownloadTask(mvnUrl,cache,system,configuration,executor);
     executor.submit(task);

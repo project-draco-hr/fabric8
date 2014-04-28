@@ -1,0 +1,21 @@
+{
+  URL artifactUrl=parameters.getUrl();
+  Filter<Dependency> optionalFilter=DependencyFilters.parseExcludeOptionalFilter(join(Arrays.asList(parameters.getOptionalDependencyPatterns())," "));
+  Filter<Dependency> excludeFilter=DependencyFilters.parseExcludeFilter(join(Arrays.asList(parameters.getExcludeDependencyFilterPatterns())," "),optionalFilter);
+  DependencyTreeResult result=mavenResolver.collectDependenciesForJar(getArtifactFile(artifactUrl),parameters.isOffline(),excludeFilter);
+  DependencyNode mainJarDependency=result.getRootNode();
+  Artifact mainPomArtifact=mainJarDependency.getDependency().getArtifact();
+  File mainJar=mavenResolver.resolveArtifact(parameters.isOffline(),mainPomArtifact.getGroupId(),mainPomArtifact.getArtifactId(),mainPomArtifact.getVersion(),mainPomArtifact.getClassifier(),"jar").getFile();
+  if (mainJar == null) {
+    System.out.println("Cannot find file for main jar " + mainJarDependency);
+  }
+ else {
+    File newMain=new File(libDir,"main.jar");
+    Files.copy(mainJar,newMain);
+    String mainClass=parameters.getMainClass();
+    if (mainClass != null) {
+      setMainClass(config,installDir,newMain,id,mainClass);
+    }
+  }
+  copyDependencies(mainJarDependency,libDir);
+}
