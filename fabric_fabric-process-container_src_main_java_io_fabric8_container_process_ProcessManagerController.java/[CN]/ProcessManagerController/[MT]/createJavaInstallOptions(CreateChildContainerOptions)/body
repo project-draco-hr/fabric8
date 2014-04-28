@@ -1,0 +1,11 @@
+{
+  Set<String> profileIds=options.getProfiles();
+  String versionId=options.getVersion();
+  Map<String,String> containerTypeConfig=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.CONTAINER_TYPE_PID);
+  Map<String,String> envVars=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.ENVIRONMENT_VARIABLES_PID);
+  List<Profile> profiles=Profiles.getProfiles(fabricService,profileIds,versionId);
+  Map<String,Parser> javaArtifacts=JavaContainers.getJavaContainerArtifacts(fabricService,profiles,downloadExecutor);
+  InstallOptions.InstallOptionsBuilder builder=InstallOptions.builder();
+  builder.mainClass(envVars.get(ChildConstants.JAVA_CONTAINER_ENV_VARS.FABRIC8_JAVA_MAIN));
+  return builder.build();
+}

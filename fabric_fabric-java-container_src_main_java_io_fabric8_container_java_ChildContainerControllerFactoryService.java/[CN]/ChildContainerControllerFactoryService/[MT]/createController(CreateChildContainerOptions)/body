@@ -1,9 +1,0 @@
-{
-  Map<String,String> containerTypeConfig=Profiles.getOverlayConfiguration(getFabricService(),options.getProfiles(),options.getVersion(),ChildConstants.CONTAINER_TYPE_PID);
-  Map<String,?> javaContainerConfig=Profiles.getOverlayConfiguration(getFabricService(),options.getProfiles(),options.getVersion(),ChildConstants.JAVA_CONTAINER_CONFIG_PID);
-  String containerType=containerTypeConfig.get(ChildConstants.PROPERTIES.CONTAINER_TYPE);
-  if ((containerType != null && !containerType.equals("karaf")) || !javaContainerConfig.isEmpty()) {
-    return createProcessManagerController();
-  }
-  return null;
-}

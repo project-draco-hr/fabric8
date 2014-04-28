@@ -1,0 +1,27 @@
+{
+  String containerName=options.getName();
+  CreateChildContainerMetadata metadata=new CreateChildContainerMetadata();
+  metadata.setCreateOptions(options);
+  metadata.setContainerName(containerName);
+  Installation installation=null;
+  try {
+    if (ChildContainers.isJavaContainer(fabricService,options)) {
+      InstallOptions parameters=createJavaInstallOptions(options);
+      Objects.notNull(parameters,"JavaInstall parameters");
+      installation=processManager.installJar(parameters);
+    }
+ else {
+      InstallOptions parameters=createProcessInstallOptions(options);
+      InstallTask postInstall=createProcessPostInstall(options);
+      Objects.notNull(parameters,"process parameters");
+      installation=processManager.install(parameters,postInstall);
+    }
+  }
+ catch (  Exception e) {
+    handleException("Creating container " + containerName,e);
+  }
+  if (installation != null) {
+    installations.add(containerName,installation);
+  }
+  return metadata;
+}
