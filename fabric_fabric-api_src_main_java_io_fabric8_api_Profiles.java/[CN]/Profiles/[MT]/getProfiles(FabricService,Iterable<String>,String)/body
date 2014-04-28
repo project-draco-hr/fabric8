@@ -1,0 +1,19 @@
+{
+  Version version=null;
+  if (versionId == null) {
+    version=fabricService.getDefaultVersion();
+  }
+ else {
+    version=fabricService.getVersion(versionId);
+  }
+  List<Profile> answer=new ArrayList<Profile>();
+  if (profileIds != null && version != null) {
+    for (    String profileId : profileIds) {
+      Profile profile=version.getProfile(profileId);
+      if (profile != null) {
+        answer.add(profile);
+      }
+    }
+  }
+  return answer;
+}

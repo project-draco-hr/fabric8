@@ -1,16 +1,17 @@
 {
   ChildContainerController answer=null;
-  try {
-    ChildContainerControllerFactory factory=childContainerControllerFactory;
-    if (factory != null) {
-      answer=factory.createController(options);
-    }
+  boolean isJavaContainer=ChildContainers.isJavaContainer(getFabricService(),options);
+  boolean isProcessContainer=ChildContainers.isProcessContainer(getFabricService(),options);
+  ProcessControllerFactory factory=processControllerFactory;
+  if (factory != null) {
+    answer=factory.createController(options);
   }
- catch (  Exception e) {
-    LOG.warn("Caught: " + e,e);
+ else   if (isJavaContainer || isProcessContainer) {
+    throw new Exception("No ProcessControllerFactory is available to create a ProcessManager based child container");
   }
   if (answer == null) {
     answer=createKarafContainerController();
   }
+  LOG.info("Using container controller " + answer);
   return answer;
 }

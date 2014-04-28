@@ -2,7 +2,7 @@
   assertValid();
   ChildContainerController answer=null;
   try {
-    ChildContainerControllerFactory factory=childContainerControllerFactory;
+    ProcessControllerFactory factory=processControllerFactory;
     if (factory != null) {
       answer=factory.getControllerForContainer(container);
     }
@@ -13,5 +13,6 @@
   if (answer == null) {
     answer=createKarafContainerController();
   }
+  LOG.info("Using container controller " + answer);
   return answer;
 }
