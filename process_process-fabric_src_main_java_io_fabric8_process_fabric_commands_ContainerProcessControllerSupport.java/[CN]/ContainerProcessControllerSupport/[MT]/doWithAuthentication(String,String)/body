@@ -1,8 +1,8 @@
 {
 {
     ContainerInstallOptions options=ContainerInstallOptions.builder().container(container).user(jmxUser).password(jmxPassword).build();
-    Map<Integer,Installation> map=getContainerProcessManager().listInstallationMap(options);
-    for (    int id : ids) {
+    ImmutableMap<String,Installation> map=getContainerProcessManager().listInstallationMap(options);
+    for (    String id : ids) {
       Installation installation=map.get(id);
       if (installation == null) {
         System.out.println("No such process number: " + id);

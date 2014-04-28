@@ -1,8 +1,8 @@
 {
   Container container=fabricService.getContainer(options.getContainer());
   ProcessManagerJmxTemplate jmxTemplate=getJmxTemplate(container,options.getUser(),options.getPassword());
-  return jmxTemplate.execute(new ProcessManagerCallback<ImmutableMap<Integer,Installation>>(){
-    @Override public ImmutableMap<Integer,Installation> doWithProcessManager(    ProcessManagerServiceMBean processManagerService) throws Exception {
+  return jmxTemplate.execute(new ProcessManagerCallback<ImmutableMap<String,Installation>>(){
+    @Override public ImmutableMap<String,Installation> doWithProcessManager(    ProcessManagerServiceMBean processManagerService) throws Exception {
       return processManagerService.listInstallationMap();
     }
   }

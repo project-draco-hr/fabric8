@@ -5,8 +5,8 @@
   String version=FabricConstants.FABRIC_VERSION;
   InstallOptions options=InstallOptions.builder().name("camel-sample").url(new URL(null,"mvn:io.fabric8.samples/process-sample-camel-spring/" + version + "/tar.gz",new Handler())).build();
   Installation install=processManager.install(options,postInstall);
-  int id=install.getId();
-  assertTrue("ID should be > 0 but was " + id,id > 0);
+  String id=install.getId();
+  assertTrue("ID should not be blank " + id,Strings.isNotBlank(id));
   File installDir=install.getInstallDir();
   if (!installDir.exists()) {
     fail("Installation does not exist: " + installDir);
