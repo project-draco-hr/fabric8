@@ -69,7 +69,11 @@
   if (container != null) {
     container.setType(containerType);
   }
-  Map<String,String> envVarsOverlay=ChildContainers.getEnvironmentVariables(service,options);
+  Map<String,String> environmentVariables=ChildContainers.getEnvironmentVariables(service,options);
+  Map<String,?> javaContainerConfig=Profiles.getOverlayConfiguration(service,profileIds,versionId,ChildConstants.JAVA_CONTAINER_PID);
+  JavaContainerConfig javaConfig=new JavaContainerConfig();
+  configurer.configure(javaContainerConfig,javaConfig);
+  javaConfig.updateEnvironmentVariables(environmentVariables);
   String libDir=configOverlay.get(DockerConstants.PROPERTIES.JAVA_LIBRARY_PATH);
   if (!Strings.isNullOrBlank(libDir)) {
     if (container != null) {
@@ -83,7 +87,7 @@
     String tag="fabric8-" + Strings.join(names,"-").replace('.','-');
     javaContainerImageBuilder builder=new javaContainerImageBuilder();
     JavaContainerOptions javaContainerOptions=new JavaContainerOptions(image,imageRepository,tag,libDir,entryPoint);
-    String actualImage=builder.generateContainerImage(service,container,profileOverlays,docker,javaContainerOptions,downloadExecutor,envVarsOverlay);
+    String actualImage=builder.generateContainerImage(service,container,profileOverlays,docker,javaContainerOptions,downloadExecutor,environmentVariables);
     containerConfig.setImage(actualImage);
   }
   String[] cmd=containerConfig.getCmd();
@@ -101,7 +105,7 @@
   if (env == null) {
     env=new ArrayList<String>();
   }
-  Set<Map.Entry<String,String>> entries=envVarsOverlay.entrySet();
+  Set<Map.Entry<String,String>> entries=environmentVariables.entrySet();
   for (  Map.Entry<String,String> entry : entries) {
     String key=entry.getKey();
     String value=entry.getValue();
