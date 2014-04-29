@@ -12,11 +12,12 @@
   builder.id(options.getName());
   builder.environment(environmentVariables);
   String mainClass=environmentVariables.get(ChildConstants.JAVA_CONTAINER_ENV_VARS.FABRIC8_JAVA_MAIN);
-  String name=mainClass;
-  if (Strings.isNullOrBlank(name)) {
-    name="java";
+  String name="java";
+  if (!Strings.isNullOrBlank(mainClass)) {
+    name+=" " + mainClass;
   }
   builder.name(name);
+  metadata.setContainerType(name);
   builder.mainClass(mainClass);
   return builder.build();
 }

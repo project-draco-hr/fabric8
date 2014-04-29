@@ -8,12 +8,12 @@
   Installation installation=null;
   try {
     if (ChildContainers.isJavaContainer(fabricService,options)) {
-      InstallOptions parameters=createJavaInstallOptions(options,environmentVariables);
+      InstallOptions parameters=createJavaInstallOptions(metadata,options,environmentVariables);
       Objects.notNull(parameters,"JavaInstall parameters");
       installation=processManager.installJar(parameters);
     }
  else {
-      InstallOptions parameters=createProcessInstallOptions(options,environmentVariables);
+      InstallOptions parameters=createProcessInstallOptions(metadata,options,environmentVariables);
       InstallTask postInstall=createProcessPostInstall(options);
       Objects.notNull(parameters,"process parameters");
       installation=processManager.install(parameters,postInstall);
