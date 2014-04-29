@@ -1,8 +1,3 @@
 {
-  File dataDir=new File(System.getProperty(SystemProperties.KARAF_DATA));
-  File tmpDir=new File(dataDir,"tmp");
-  if (!tmpDir.exists() && !tmpDir.mkdirs()) {
-    throw new IOException("Failed to create tmp dir:" + tmpDir.getAbsolutePath());
-  }
-  return File.createTempFile(String.valueOf(lastTmpFileId.incrementAndGet()),".tmp",tmpDir);
+  return io.fabric8.common.util.Files.createTempFile(System.getProperty(SystemProperties.KARAF_DATA));
 }

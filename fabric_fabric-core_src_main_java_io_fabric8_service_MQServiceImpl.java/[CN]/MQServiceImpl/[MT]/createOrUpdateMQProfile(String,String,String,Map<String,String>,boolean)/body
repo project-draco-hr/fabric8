@@ -41,7 +41,7 @@
             password=generatePassword(8);
             configs.put("keystore.password",password);
           }
-          File keystoreFile=Files.createTempFile();
+          File keystoreFile=io.fabric8.utils.Files.createTempFile();
           keystoreFile.delete();
           LOG.info("Generating ssl keystore...");
           int rc=system("keytool","-genkey","-storetype","JKS","-storepass",password,"-keystore",keystoreFile.getCanonicalPath(),"-keypass",password,"-alias",host,"-keyalg","RSA","-keysize","4096","-dname",String.format("cn=%s",host),"-validity","3650");
@@ -66,9 +66,9 @@
             password=configs.get("keystore.password");
             configs.put("truststore.password",password);
           }
-          File keystoreFile=Files.createTempFile();
+          File keystoreFile=io.fabric8.utils.Files.createTempFile();
           Files.writeToFile(keystoreFile,keystore);
-          File certFile=Files.createTempFile();
+          File certFile=io.fabric8.utils.Files.createTempFile();
           certFile.delete();
           LOG.info("Exporting broker certificate to create truststore.jks");
           int rc=system("keytool","-exportcert","-rfc","-keystore",keystoreFile.getCanonicalPath(),"-storepass",configs.get("keystore.password"),"-alias",configs.get("keystore.cn"),"--file",certFile.getCanonicalPath());
@@ -77,7 +77,7 @@
             throw new IOException("keytool failed with exit code: " + rc);
           }
           LOG.info("Creating truststore.jks");
-          File truststoreFile=Files.createTempFile();
+          File truststoreFile=io.fabric8.utils.Files.createTempFile();
           truststoreFile.delete();
           rc=system("keytool","-importcert","-noprompt","-keystore",truststoreFile.getCanonicalPath(),"-storepass",password,"--file",certFile.getCanonicalPath());
           certFile.delete();
