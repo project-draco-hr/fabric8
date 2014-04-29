@@ -1,0 +1,19 @@
+{
+  Container currentContainer=fabricService.getCurrentContainer();
+  Set<Integer> usedPortByHost=fabricService.getPortService().findUsedPortByHost(currentContainer);
+  while (true) {
+    if (externalPortCounter <= 0) {
+      externalPortCounter=DEFAULT_JOLOKIA_PORT;
+    }
+ else {
+      externalPortCounter++;
+    }
+    if (!usedPortByHost.contains(externalPortCounter)) {
+      Container container=fabricService.getCurrentContainer();
+      String pid=PORTS_PID;
+      String key=containerId;
+      fabricService.getPortService().registerPort(container,pid,key,externalPortCounter);
+      return externalPortCounter;
+    }
+  }
+}

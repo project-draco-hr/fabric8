@@ -5,6 +5,10 @@
   JavaContainerConfig javaConfig=new JavaContainerConfig();
   configurer.configure(javaContainerConfig,javaConfig);
   javaConfig.updateEnvironmentVariables(environmentVariables);
+  if (JolokiaAgentHelper.hasJolokiaAgent(environmentVariables)) {
+    int jolokiaPort=createJolokiaPort(container.getId());
+    JolokiaAgentHelper.updateJolokiaPort(javaConfig,environmentVariables,jolokiaPort);
+  }
   List<Profile> profiles=Profiles.getProfiles(fabricService,profileIds,versionId);
   Map<String,File> javaArtifacts=JavaContainers.getJavaContainerArtifactsFiles(fabricService,profiles,downloadExecutor);
   if (container != null) {
