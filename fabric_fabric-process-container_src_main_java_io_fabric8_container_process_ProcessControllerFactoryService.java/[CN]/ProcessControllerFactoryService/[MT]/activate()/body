@@ -1,3 +1,11 @@
 {
   activateComponent();
+  keepAliveTimer=new Timer("fabric8-process-container-monitor");
+  TimerTask timerTask=new TimerTask(){
+    @Override public void run(){
+      checkProcessesStatus();
+    }
+  }
+;
+  keepAliveTimer.schedule(timerTask,monitorPollTime,monitorPollTime);
 }

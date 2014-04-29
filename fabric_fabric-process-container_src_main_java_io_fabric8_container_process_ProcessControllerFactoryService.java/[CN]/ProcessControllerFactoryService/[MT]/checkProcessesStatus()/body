@@ -1,0 +1,37 @@
+{
+  ProcessManager manager=getProcessManager();
+  FabricService fabric=getFabricService();
+  if (manager != null && fabric != null) {
+    ImmutableMap<String,Installation> map=manager.listInstallationMap();
+    ImmutableSet<Map.Entry<String,Installation>> entries=map.entrySet();
+    for (    Map.Entry<String,Installation> entry : entries) {
+      String id=entry.getKey();
+      Installation installation=entry.getValue();
+      try {
+        Container container=fabric.getContainer(id);
+        if (container != null) {
+          Integer pid=installation.getController().getPid();
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("Polling container " + id + " for its PID");
+          }
+          if (pid == null) {
+            if (container.isAlive()) {
+              container.setAlive(false);
+            }
+          }
+ else           if (pid != null && pid != 0) {
+            if (!container.isAlive()) {
+              container.setAlive(true);
+            }
+            if (!Objects.equal(container.getProvisionResult(),Container.PROVISION_SUCCESS)) {
+              container.setProvisionResult(Container.PROVISION_SUCCESS);
+            }
+          }
+        }
+      }
+ catch (      Exception e) {
+        LOG.warn("Failed to get PID for process " + id + ". "+ e,e);
+      }
+    }
+  }
+}
