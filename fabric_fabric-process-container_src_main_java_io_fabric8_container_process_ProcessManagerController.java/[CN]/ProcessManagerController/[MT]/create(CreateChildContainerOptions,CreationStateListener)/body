@@ -1,27 +1,43 @@
 {
-  String containerName=options.getName();
   CreateChildContainerMetadata metadata=new CreateChildContainerMetadata();
+  String containerId=options.getName();
   metadata.setCreateOptions(options);
-  metadata.setContainerName(containerName);
+  metadata.setContainerName(containerId);
+  Container container=null;
+  try {
+    container=fabricService.getContainer(containerId);
+  }
+ catch (  Exception e) {
+    LOG.debug("Could nto find container: " + containerId);
+  }
   Map<String,String> environmentVariables=ChildContainers.getEnvironmentVariables(fabricService,options);
   Installation installation=null;
+  InstallOptions parameters=null;
   try {
     if (ChildContainers.isJavaContainer(fabricService,options)) {
-      InstallOptions parameters=createJavaInstallOptions(metadata,options,environmentVariables);
+      parameters=createJavaInstallOptions(container,metadata,options,environmentVariables);
       Objects.notNull(parameters,"JavaInstall parameters");
       installation=processManager.installJar(parameters);
     }
  else {
-      InstallOptions parameters=createProcessInstallOptions(metadata,options,environmentVariables);
+      parameters=createProcessInstallOptions(container,metadata,options,environmentVariables);
       InstallTask postInstall=createProcessPostInstall(options);
       Objects.notNull(parameters,"process parameters");
       installation=processManager.install(parameters,postInstall);
     }
   }
  catch (  Exception e) {
-    handleException("Creating container " + containerName,e);
+    handleException("Creating container " + containerId,e);
   }
   LOG.info("Creating process container with environment vars: " + environmentVariables);
+  String defaultHost=fabricService.getCurrentContainer().getLocalHostname();
+  if (Strings.isNullOrBlank(defaultHost)) {
+    defaultHost="localhost";
+  }
+  String jolokiaUrl=JolokiaAgentHelper.findJolokiaUrlFromEnvironmentVariables(environmentVariables,defaultHost);
+  if (!Strings.isNullOrBlank(jolokiaUrl)) {
+    JavaContainers.registerJolokiaUrl(container,jolokiaUrl);
+  }
   if (installation != null) {
     installation.getController().start();
   }

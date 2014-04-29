@@ -7,7 +7,6 @@
   javaConfig.updateEnvironmentVariables(environmentVariables);
   List<Profile> profiles=Profiles.getProfiles(fabricService,profileIds,versionId);
   Map<String,File> javaArtifacts=JavaContainers.getJavaContainerArtifactsFiles(fabricService,profiles,downloadExecutor);
-  Container container=fabricService.getContainer(options.getName());
   if (container != null) {
     List<String> provisionList=new ArrayList<String>();
     for (    String name : javaArtifacts.keySet()) {
@@ -24,7 +23,7 @@
   builder.jarFiles(javaArtifacts.values());
   builder.id(options.getName());
   builder.environment(environmentVariables);
-  String mainClass=environmentVariables.get(ChildConstants.JAVA_CONTAINER_ENV_VARS.FABRIC8_JAVA_MAIN);
+  String mainClass=environmentVariables.get(JavaContainerEnvironmentVariables.FABRIC8_JAVA_MAIN);
   String name="java";
   if (!Strings.isNullOrBlank(mainClass)) {
     name+=" " + mainClass;

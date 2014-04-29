@@ -1,0 +1,10 @@
+{
+  assertJolokiaUrl("-javaagent:jolokia-agent.jar","http://localhost:8778/jolokia/");
+  assertJolokiaUrl("-javaagent:jolokia-agent.jar=host=myhost","http://myhost:8778/jolokia/");
+  assertJolokiaUrl("-javaagent:jolokia-agent.jar=host=0.0.0.0","http://localhost:8778/jolokia/");
+  assertJolokiaUrl("-javaagent:jolokia-agent.jar=host=0.0.0.0,port=8999","http://localhost:8999/jolokia/");
+  assertJolokiaUrl("-javaagent:jolokia-agent.jar=host=myhost,port=8999","http://myhost:8999/jolokia/");
+  assertJolokiaUrl("-javaagent:jolokia-agent.jar=port=9000,host=myhost2","http://myhost2:9000/jolokia/");
+  assertJolokiaUrl("\"-javaagent:jolokia-agent.jar=host=myhost,port=8999\"","http://myhost:8999/jolokia/");
+  assertJolokiaUrl("\"-javaagent:jolokia-agent.jar=port=9000,host=myhost2\"","http://myhost2:9000/jolokia/");
+}
