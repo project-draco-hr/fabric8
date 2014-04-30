@@ -1,5 +1,6 @@
 {
-  Map<String,String> properties=container.getOverlayProfile().getConfiguration(HTTP_PID);
+  Configuration configuration=configAdmin.get().getConfiguration(HTTP_PID,null);
+  Dictionary properties=configuration.getProperties();
   if (properties != null && properties.get(HTTPS_ENABLED) != null) {
     return Boolean.parseBoolean(String.valueOf(properties.get(HTTPS_ENABLED)));
   }

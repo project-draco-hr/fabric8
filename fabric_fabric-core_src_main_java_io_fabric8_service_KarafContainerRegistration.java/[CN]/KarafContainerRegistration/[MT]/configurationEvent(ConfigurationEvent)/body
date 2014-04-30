@@ -17,8 +17,8 @@
       }
       if (event.getPid().equals(HTTP_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
         Configuration config=configAdmin.get().getConfiguration(HTTP_PID,null);
-        boolean httpEnabled=isHttpEnabled(current);
-        boolean httpsEnabled=isHttpsEnabled(current);
+        boolean httpEnabled=isHttpEnabled();
+        boolean httpsEnabled=isHttpsEnabled();
         String protocol=httpsEnabled && !httpEnabled ? "https" : "http";
         int httpPort=httpsEnabled && !httpEnabled ? Integer.parseInt((String)config.getProperties().get(HTTPS_BINDING_PORT_KEY)) : Integer.parseInt((String)config.getProperties().get(HTTP_BINDING_PORT_KEY));
         int httpConnectionPort=httpsEnabled && !httpEnabled ? getHttpsConnectionPort(current) : getHttpConnectionPort(current,httpPort);
