@@ -5,7 +5,19 @@
   ProjectRequirements oldRequirements=writeRequirementsJson(requirements,profile);
   updateProfileConfiguration(version,profile,requirements,oldRequirements);
   Profile overlay=profile.getOverlay();
-  DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,executorService);
+  Container container=null;
+  try {
+    container=fabric.getCurrentContainer();
+  }
+ catch (  Exception e) {
+  }
+  DownloadManager downloadManager=null;
+  if (container != null) {
+    downloadManager=DownloadManagers.createDownloadManager(fabric,executorService);
+  }
+ else {
+    downloadManager=DownloadManagers.createDownloadManager(fabric,overlay,executorService);
+  }
   Map<String,Parser> profileArtifacts=AgentUtils.getProfileArtifacts(downloadManager,overlay);
   return resolveProfileDeployments(requirements,profile,profileArtifacts);
 }
