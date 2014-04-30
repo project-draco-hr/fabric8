@@ -1,0 +1,12 @@
+{
+  ActiveMQConnectionFactory amqConnectionFactory=new ActiveMQConnectionFactory(brokerUrl);
+  if (!brokerUsername.isEmpty()) {
+    amqConnectionFactory.setUserName(brokerUsername);
+  }
+  if (!brokerPassword.isEmpty()) {
+    amqConnectionFactory.setPassword(brokerPassword);
+  }
+  PooledConnectionFactory pooledConnectionFactory=new PooledConnectionFactory();
+  pooledConnectionFactory.setConnectionFactory(amqConnectionFactory);
+  return pooledConnectionFactory;
+}

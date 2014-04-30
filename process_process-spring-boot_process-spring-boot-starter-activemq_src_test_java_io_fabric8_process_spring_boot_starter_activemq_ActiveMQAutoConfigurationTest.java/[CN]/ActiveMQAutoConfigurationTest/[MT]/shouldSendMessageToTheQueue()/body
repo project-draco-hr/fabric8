@@ -1,0 +1,7 @@
+{
+  Destination queue=new ActiveMQQueue("queue");
+  String message="message";
+  jmsTemplate.convertAndSend(queue,message);
+  String messageReceived=(String)jmsTemplate.receiveAndConvert(queue);
+  assertEquals(message,messageReceived);
+}
