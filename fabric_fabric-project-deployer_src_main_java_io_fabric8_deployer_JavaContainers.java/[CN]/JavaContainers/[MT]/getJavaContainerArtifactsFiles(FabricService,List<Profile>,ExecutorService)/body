@@ -1,10 +1,21 @@
 {
+  Profile rootContainerProfile=fabric.getCurrentContainer().getOverlayProfile();
+  DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,rootContainerProfile,downloadExecutor);
   Map<String,File> answer=new HashMap<String,File>();
   for (  Profile profile : profileList) {
-    DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,profile,downloadExecutor);
     Map<String,Parser> profileArtifacts=AgentUtils.getProfileArtifacts(downloadManager,profile);
     appendMavenDependencies(profileArtifacts,profile);
-    Map<String,File> profileFiles=AgentUtils.downloadLocations(downloadManager,profileArtifacts.keySet());
+    Set<String> rawUrls=profileArtifacts.keySet();
+    List<String> cleanUrlsToDownload=new ArrayList<String>();
+    for (    String rawUrl : rawUrls) {
+      String mvnUrl=rawUrl;
+      int idx=mvnUrl.indexOf(":mvn:");
+      if (idx > 0) {
+        mvnUrl=mvnUrl.substring(idx + 1);
+      }
+      cleanUrlsToDownload.add(mvnUrl);
+    }
+    Map<String,File> profileFiles=AgentUtils.downloadLocations(downloadManager,cleanUrlsToDownload);
     if (profileFiles != null) {
       answer.putAll(profileFiles);
     }
