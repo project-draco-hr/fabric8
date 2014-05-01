@@ -9,6 +9,9 @@
     requirements.setVersion(version);
   }
   List<String> bundleList=parameterToStringList(bundles);
+  if (parentProfiles == null || parentProfiles.length() <= 0) {
+    parentProfiles=defaultParentProfiles(requirements);
+  }
   List<String> profileParentList=parameterToStringList(parentProfiles);
   List<String> featureList=parameterToStringList(features);
   List<String> featureReposList=parameterToStringList(featureRepos);

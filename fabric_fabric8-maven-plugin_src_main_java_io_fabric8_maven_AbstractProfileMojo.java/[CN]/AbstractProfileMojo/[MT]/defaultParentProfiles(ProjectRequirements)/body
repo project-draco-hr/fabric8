@@ -1,0 +1,36 @@
+{
+  String packaging=project.getPackaging();
+  if ("jar".equals(packaging)) {
+    List<File> files=new ArrayList<File>();
+    Set<String> classNames=findMainClasses(files);
+    int classNameSize=classNames.size();
+    if (classNameSize > 0) {
+      if (classNameSize > 1) {
+        getLog().warn("We found more than one executable main: " + classNames);
+      }
+    }
+    List<URL> urls=new ArrayList<URL>();
+    try {
+      for (      File file : files) {
+        URL url=file.toURI().toURL();
+        urls.add(url);
+      }
+      URLClassLoader classLoader=new URLClassLoader(urls.toArray(new URL[urls.size()]));
+      Map<String,String> mainToProfileMap=getDefaultClassToProfileMap();
+      Set<Map.Entry<String,String>> entries=mainToProfileMap.entrySet();
+      for (      Map.Entry<String,String> entry : entries) {
+        String mainClass=entry.getKey();
+        String profileName=entry.getValue();
+        if (hasClass(classLoader,mainClass)) {
+          getLog().info("Found class: " + mainClass + " so defaulting the parent profile: "+ profileName);
+          return profileName;
+        }
+      }
+    }
+ catch (    MalformedURLException e) {
+      getLog().warn("Failed to create URLClassLoader from files: " + files);
+    }
+    return "containers-java";
+  }
+  return "karaf";
+}
