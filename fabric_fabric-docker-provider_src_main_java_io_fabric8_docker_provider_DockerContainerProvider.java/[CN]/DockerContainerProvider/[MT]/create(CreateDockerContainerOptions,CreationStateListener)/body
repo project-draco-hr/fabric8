@@ -142,7 +142,7 @@
     List<String> names=new ArrayList<String>(profileIds);
     names.add(versionId);
     String tag="fabric8-" + Strings.join(names,"-").replace('.','-');
-    javaContainerImageBuilder builder=new javaContainerImageBuilder();
+    JavaDockerContainerImageBuilder builder=new JavaDockerContainerImageBuilder();
     JavaContainerOptions javaContainerOptions=new JavaContainerOptions(image,imageRepository,tag,libDir,entryPoint);
     String actualImage=builder.generateContainerImage(service,container,profileOverlays,docker,javaContainerOptions,downloadExecutor,environmentVariables);
     containerConfig.setImage(actualImage);
