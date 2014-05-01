@@ -1,8 +1,8 @@
 {
-  String javaAgent=javaConfig.getJavaAgent();
-  if (Strings.isNotBlank(javaAgent)) {
-    javaAgent=javaAgent.replace("${env:FABRIC8_JOLOKIA_PROXY_PORT}","" + jolokiaPort);
+  updateJavaAgent(javaConfig,environmentVariables,new UpdateAction(){
+    public String go(    String javaAgent){
+      return javaAgent.replace("${env:FABRIC8_JOLOKIA_PROXY_PORT}","" + jolokiaPort);
+    }
   }
-  javaConfig.setJavaAgent(javaAgent);
-  javaConfig.updateEnvironmentVariables(environmentVariables);
+);
 }

@@ -1,0 +1,29 @@
+{
+  final Map<String,EnvironmentVariableOverride> overridesMap=getStringEnvironmentVariableOverrideMap(overrides);
+  final Map<String,EnvironmentVariableOverride> used=new HashMap<String,EnvironmentVariableOverride>();
+  final UpdateAction action=new UpdateAction(){
+    public String go(    String string){
+      String answer=string;
+      for (      String key : environmentVariables.keySet()) {
+        String value=environmentVariables.get(key);
+        if (overridesMap.containsKey(key)) {
+          EnvironmentVariableOverride override=overridesMap.remove(key);
+          value=override.getValue(value);
+          used.put(key,override);
+        }
+        answer=answer.replace("${env:" + key + "}",value);
+      }
+      for (      String key : overridesMap.keySet()) {
+        answer=answer.replace("${env:" + key + "}",overridesMap.get(key).getValue(null));
+      }
+      for (      String key : used.keySet()) {
+        overridesMap.put(key,used.get(key));
+      }
+      return answer;
+    }
+  }
+;
+  updateJavaAgent(javaConfig,environmentVariables,action);
+  updateArguments(javaConfig,environmentVariables,action);
+  updateJvmArguments(javaConfig,environmentVariables,action);
+}

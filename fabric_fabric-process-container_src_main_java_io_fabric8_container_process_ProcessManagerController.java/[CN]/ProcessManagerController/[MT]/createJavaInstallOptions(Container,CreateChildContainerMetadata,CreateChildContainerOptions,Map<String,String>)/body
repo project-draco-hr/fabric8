@@ -7,7 +7,10 @@
   javaConfig.updateEnvironmentVariables(environmentVariables);
   if (JolokiaAgentHelper.hasJolokiaAgent(environmentVariables)) {
     int jolokiaPort=owner.createJolokiaPort(container.getId());
-    JolokiaAgentHelper.updateJolokiaPort(javaConfig,environmentVariables,jolokiaPort);
+    JolokiaAgentHelper.substituteEnvironmentVariables(javaConfig,environmentVariables,JolokiaAgentHelper.getJolokiaPortOverride(jolokiaPort),JolokiaAgentHelper.getJolokiaAgentIdOverride(fabricService.getEnvironment()));
+  }
+ else {
+    JolokiaAgentHelper.substituteEnvironmentVariables(javaConfig,environmentVariables,JolokiaAgentHelper.getJolokiaAgentIdOverride(fabricService.getEnvironment()));
   }
   List<Profile> profiles=Profiles.getProfiles(fabricService,profileIds,versionId);
   Map<String,File> javaArtifacts=JavaContainers.getJavaContainerArtifactsFiles(fabricService,profiles,downloadExecutor);
