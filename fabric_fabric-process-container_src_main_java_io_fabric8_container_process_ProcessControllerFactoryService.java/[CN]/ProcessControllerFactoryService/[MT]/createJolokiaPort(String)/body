@@ -1,18 +1,20 @@
 {
+  FabricService fabricService=getFabricService();
   Container currentContainer=fabricService.getCurrentContainer();
   Set<Integer> usedPortByHost=fabricService.getPortService().findUsedPortByHost(currentContainer);
   while (true) {
     if (externalPortCounter <= 0) {
-      externalPortCounter=DEFAULT_JOLOKIA_PORT;
+      externalPortCounter=JolokiaAgentHelper.DEFAULT_JOLOKIA_PORT;
     }
  else {
       externalPortCounter++;
     }
     if (!usedPortByHost.contains(externalPortCounter)) {
       Container container=fabricService.getCurrentContainer();
-      String pid=PORTS_PID;
+      String pid=JolokiaAgentHelper.JOLOKIA_PORTS_PID;
       String key=containerId;
       fabricService.getPortService().registerPort(container,pid,key,externalPortCounter);
+      System.out.println("Creating port " + externalPortCounter + " for container: "+ containerId);
       return externalPortCounter;
     }
   }

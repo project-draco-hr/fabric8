@@ -6,7 +6,7 @@
   configurer.configure(javaContainerConfig,javaConfig);
   javaConfig.updateEnvironmentVariables(environmentVariables);
   if (JolokiaAgentHelper.hasJolokiaAgent(environmentVariables)) {
-    int jolokiaPort=createJolokiaPort(container.getId());
+    int jolokiaPort=owner.createJolokiaPort(container.getId());
     JolokiaAgentHelper.updateJolokiaPort(javaConfig,environmentVariables,jolokiaPort);
   }
   List<Profile> profiles=Profiles.getProfiles(fabricService,profileIds,versionId);
