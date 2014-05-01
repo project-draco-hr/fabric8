@@ -1,5 +1,4 @@
 {
-  checkFabricAvailable();
   Version ver=version != null ? fabricService.getVersion(version) : fabricService.getDefaultVersion();
   if (ver == null) {
     if (version != null) {
@@ -31,7 +30,7 @@
       executorService=Executors.newSingleThreadExecutor();
     }
   }
-  ProfileDownloader downloader=new ProfileDownloader(getFabricService(),target,force,executorService);
+  ProfileDownloader downloader=new ProfileDownloader(fabricService,target,force,executorService);
   if (profile != null) {
     Profile profileObject=null;
     if (ver.hasProfile(profile)) {
