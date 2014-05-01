@@ -1,0 +1,17 @@
+{
+  String commands="ps -e";
+  Process process=null;
+  Runtime runtime=Runtime.getRuntime();
+  String message=commands;
+  LOGGER.debug("Executing commands: " + message);
+  List<Long> answer=new ArrayList<Long>();
+  try {
+    process=runtime.exec(commands);
+    parseProcesses(process.getInputStream(),answer,message);
+    processErrors(process.getErrorStream(),message);
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to execute process " + "stdin" + " for " + message + ": "+ e,e);
+  }
+  return answer;
+}

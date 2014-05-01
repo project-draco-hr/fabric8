@@ -1,0 +1,13 @@
+{
+  ProcessController aController=getController();
+  Long answer=null;
+  if (aController != null) {
+    answer=aController.getPid();
+  }
+  if (answer != null) {
+    if (!ProcessUtils.isProcessAlive(answer)) {
+      answer=null;
+    }
+  }
+  return answer;
+}
