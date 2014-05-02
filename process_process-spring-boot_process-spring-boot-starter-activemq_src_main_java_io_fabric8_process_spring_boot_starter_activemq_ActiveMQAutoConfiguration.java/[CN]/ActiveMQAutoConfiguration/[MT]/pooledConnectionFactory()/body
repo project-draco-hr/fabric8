@@ -1,12 +1,5 @@
 {
-  String resolvedBrokerUrl;
-  if (!brokerUrl.isEmpty()) {
-    resolvedBrokerUrl=brokerUrl;
-  }
- else {
-    resolvedBrokerUrl=brokerUrlResolver.brokerUrl();
-  }
-  ActiveMQConnectionFactory amqConnectionFactory=new ActiveMQConnectionFactory(resolvedBrokerUrl);
+  ActiveMQConnectionFactory amqConnectionFactory=new ActiveMQConnectionFactory(resolveBrokerUrl());
   if (!brokerUsername.isEmpty()) {
     amqConnectionFactory.setUserName(brokerUsername);
   }
