@@ -1,5 +1,5 @@
 {
-  Container[] containers=service.getContainers();
+  Container[] containers=fabricService.getContainers();
   if (nameNode == null || dataNodes.isEmpty()) {
     throw new IllegalArgumentException("The name node and at least one data node must be specified");
   }
@@ -33,7 +33,7 @@
   for (  String p : Arrays.asList("hadoop-" + name,"hadoop-" + name + "-namenode","hadoop-" + name + "-secondary-namenode","hadoop-" + name + "-datanode","hadoop-" + name + "-job-tracker","hadoop-" + name + "-task-tracker","insight-hdfs-" + name)) {
     Profile profile=null;
     try {
-      profile=service.getDefaultVersion().getProfile(p);
+      profile=fabricService.getDefaultVersion().getProfile(p);
     }
  catch (    Throwable t) {
     }
@@ -46,7 +46,7 @@
       }
     }
   }
-  Version version=service.getDefaultVersion();
+  Version version=fabricService.getDefaultVersion();
   Profile hadoop=version.getProfile("hadoop");
   Map<String,Map<String,String>> configs;
   Profile cluster=version.createProfile("hadoop-" + name);
