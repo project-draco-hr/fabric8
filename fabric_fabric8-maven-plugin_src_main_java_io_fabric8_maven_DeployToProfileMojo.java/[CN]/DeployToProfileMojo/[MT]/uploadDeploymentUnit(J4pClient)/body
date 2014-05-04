@@ -1,7 +1,11 @@
 {
   String uri=getMavenUploadUri(client);
   Artifact artifact=project.getArtifact();
-  resolver.resolve(artifact,remoteRepositories,localRepository);
+  ArtifactResolutionRequest request=new ArtifactResolutionRequest();
+  request.setArtifact(artifact);
+  request.setRemoteRepositories(remoteRepositories);
+  request.setLocalRepository(localRepository);
+  resolver.resolve(request);
   String packaging=project.getPackaging();
   File pomFile=project.getFile();
   @SuppressWarnings("unchecked") List<Artifact> attachedArtifacts=project.getAttachedArtifacts();
