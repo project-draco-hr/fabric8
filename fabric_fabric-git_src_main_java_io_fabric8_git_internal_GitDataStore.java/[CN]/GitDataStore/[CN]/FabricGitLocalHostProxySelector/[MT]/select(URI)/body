@@ -1,0 +1,21 @@
+{
+  String nonProxy=System.getProperty("http.nonProxyHosts");
+  String host=uri.getHost();
+  LOG.trace("ProxySelector: Uri {}",uri);
+  LOG.trace("ProxySelector: Configured http.nonProxyHosts {}",nonProxy);
+  List<Proxy> answer;
+  if (localhost.contains(host)) {
+    LOG.trace("ProxySelector: Uri {} is localhost so not using proxy",uri);
+    answer=noProxy;
+  }
+ else   if (isLocalHost(host)) {
+    localhost.add(host);
+    LOG.trace("ProxySelector: Uri {} is localhost so not using proxy",uri);
+    answer=noProxy;
+  }
+ else {
+    answer=delegate.select(uri);
+  }
+  LOG.debug("ProxySelector uri: {} -> {}",uri,answer);
+  return answer;
+}
