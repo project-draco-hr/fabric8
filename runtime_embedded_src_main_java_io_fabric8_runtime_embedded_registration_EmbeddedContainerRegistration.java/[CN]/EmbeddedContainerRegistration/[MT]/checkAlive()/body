@@ -1,0 +1,15 @@
+{
+  RuntimeProperties sysprops=runtimeProperties.get();
+  String karafName=sysprops.getProperty(SystemProperties.KARAF_NAME);
+  String nodeAlive=CONTAINER_ALIVE.getPath(karafName);
+  Stat stat=ZooKeeperUtils.exists(curator.get(),nodeAlive);
+  if (stat != null) {
+    if (stat.getEphemeralOwner() != curator.get().getZookeeperClient().getZooKeeper().getSessionId()) {
+      ZooKeeperUtils.delete(curator.get(),nodeAlive);
+      ZooKeeperUtils.create(curator.get(),nodeAlive,CreateMode.EPHEMERAL);
+    }
+  }
+ else {
+    ZooKeeperUtils.create(curator.get(),nodeAlive,CreateMode.EPHEMERAL);
+  }
+}
