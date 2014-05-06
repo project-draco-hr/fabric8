@@ -1,10 +1,15 @@
 {
   String nonProxy=System.getProperty("http.nonProxyHosts");
   String host=uri.getHost();
+  String path=uri.getPath();
   LOG.trace("ProxySelector: Uri {}",uri);
   LOG.trace("ProxySelector: Configured http.nonProxyHosts {}",nonProxy);
   List<Proxy> answer;
-  if (localhost.contains(host)) {
+  if (path != null && path.startsWith("/git/fabric/")) {
+    LOG.trace("ProxySelector: Uri {} is /git/fabric/ so not using proxy",uri);
+    answer=noProxy;
+  }
+ else   if (localhost.contains(host)) {
     LOG.trace("ProxySelector: Uri {} is localhost so not using proxy",uri);
     answer=noProxy;
   }
