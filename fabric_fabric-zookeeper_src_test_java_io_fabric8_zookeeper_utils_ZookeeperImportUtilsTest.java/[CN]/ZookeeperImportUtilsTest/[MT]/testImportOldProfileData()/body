@@ -1,0 +1,9 @@
+{
+  String target="/fabric3/";
+  String source=this.getClass().getResource("/import3").getFile();
+  ZookeeperImportUtils.importFromFileSystem(curator,source,target,null,null,false,false,false);
+  assertThat(curator.getChildren().forPath("/fabric3/fabric/configs/versions/1.0/profiles/p1").size(),equalTo(1));
+  Properties properties=new Properties();
+  properties.load(new StringReader(new String(curator.getData().forPath("/fabric3/fabric/configs/versions/1.0/profiles/p1/io.fabric8.agent.properties"))));
+  assertThat(properties.getProperty("parents"),equalTo("x y z"));
+}

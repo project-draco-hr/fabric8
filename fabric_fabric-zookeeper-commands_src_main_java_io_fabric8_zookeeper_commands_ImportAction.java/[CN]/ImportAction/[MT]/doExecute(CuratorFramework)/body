@@ -1,0 +1,17 @@
+{
+  nregex=merge(ignore,nregex);
+  regex=merge(include,regex);
+  if (properties) {
+    filesystem=false;
+  }
+  if (filesystem) {
+    properties=false;
+  }
+  if (properties) {
+    ZookeeperImportUtils.importFromPropertiesFile(zk,source,target,regex,nregex,dryRun);
+  }
+  if (filesystem) {
+    ZookeeperImportUtils.importFromFileSystem(zk,source,target,regex,nregex,delete,dryRun,verbose);
+  }
+  System.out.println("imported ZK data from: " + source);
+}

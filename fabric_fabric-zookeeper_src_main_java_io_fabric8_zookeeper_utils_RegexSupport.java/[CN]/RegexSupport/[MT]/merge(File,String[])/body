@@ -1,0 +1,28 @@
+{
+  ArrayList<String> list=new ArrayList<String>();
+  if (regex != null) {
+    for (    String r : regex) {
+      list.add(r);
+    }
+  }
+  if (file.exists() && file.isFile()) {
+    BufferedReader reader=null;
+    try {
+      reader=new BufferedReader(new FileReader(file));
+      String s=reader.readLine();
+      while (s != null) {
+        list.add(s);
+        s=reader.readLine();
+      }
+    }
+ catch (    Exception e) {
+      throw new RuntimeException("Error reading from " + file + " : "+ e);
+    }
+ finally {
+      Closeables.closeQuitely(reader);
+    }
+  }
+  String rc[]=new String[list.size()];
+  list.toArray(rc);
+  return rc;
+}

@@ -1,0 +1,8 @@
+{
+  String target="/fabric2/";
+  String source=this.getClass().getResource("/import2").getFile();
+  ZookeeperImportUtils.importFromFileSystem(curator,source,target,null,null,false,false,false);
+  assertThat(curator.getChildren().forPath("/fabric2").size(),equalTo(1));
+  assertThat(curator.checkExists().forPath("/fabric2/directory"),nullValue());
+  assertThat(new String(curator.getData().forPath("/fabric2/directory.cfgx")),equalTo("property1=value1\n"));
+}
