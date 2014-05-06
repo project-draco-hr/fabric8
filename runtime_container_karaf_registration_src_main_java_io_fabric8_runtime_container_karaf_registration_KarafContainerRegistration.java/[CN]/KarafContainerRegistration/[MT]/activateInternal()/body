@@ -21,7 +21,7 @@
     setData(curator.get(),CONTAINER_LOCAL_HOSTNAME.getPath(karafName),HostUtils.getLocalHostName());
     setData(curator.get(),CONTAINER_LOCAL_IP.getPath(karafName),HostUtils.getLocalIp());
     setData(curator.get(),CONTAINER_IP.getPath(karafName),getContainerPointer(curator.get(),karafName));
-    createDefault(curator.get(),CONTAINER_GEOLOCATION.getPath(karafName),GeoUtils.getGeoLocation());
+    createDefault(curator.get(),CONTAINER_GEOLOCATION.getPath(karafName),geoLocationService.get().getGeoLocation());
     for (    String resolver : ZkDefs.VALID_RESOLVERS) {
       String address=sysprops.getProperty(resolver);
       if (address != null && !address.isEmpty() && exists(curator.get(),CONTAINER_ADDRESS.getPath(karafName,resolver)) == null) {

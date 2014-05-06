@@ -41,10 +41,6 @@
         }
         String httpUrl=getHttpUrl(protocol,karafName,httpConnectionPort);
         setData(curator.get(),CONTAINER_HTTP.getPath(karafName),httpUrl);
-        if (fabricService.get().getPortService().lookupPort(current,HTTP_PID,HTTP_BINDING_PORT_KEY) != httpPort) {
-          fabricService.get().getPortService().unregisterPort(current,HTTP_PID);
-          fabricService.get().getPortService().registerPort(current,HTTP_PID,HTTP_BINDING_PORT_KEY,httpPort);
-        }
       }
       if (event.getPid().equals(MANAGEMENT_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
         Configuration config=configAdmin.get().getConfiguration(MANAGEMENT_PID,null);
