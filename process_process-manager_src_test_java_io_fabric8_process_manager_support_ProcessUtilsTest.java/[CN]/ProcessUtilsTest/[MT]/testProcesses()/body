@@ -1,4 +1,6 @@
 {
-  List<Long> processIds=ProcessUtils.getProcessIds();
-  System.out.println("PIDS: " + processIds);
+  if (SystemUtils.IS_OS_UNIX) {
+    List<Long> processIds=ProcessUtils.getProcessIds();
+    assertFalse(processIds.isEmpty());
+  }
 }
