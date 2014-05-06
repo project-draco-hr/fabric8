@@ -4,10 +4,12 @@
   FabricService fabricService=fabricServiceServiceProxy.getService();
   CompletionService<Set<ContainerProxy>> completionService=new ExecutorCompletionService<Set<ContainerProxy>>(executorService);
   int tasks=0;
-  for (  B options : buildersList) {
-    options.profiles(profileNames);
-    if (!options.isEnsembleServer()) {
-      options.zookeeperUrl(fabricService.getZookeeperUrl());
+  for (  B builder : buildersList) {
+    builder.profiles(profileNames);
+    if (!builder.isEnsembleServer()) {
+      builder.zookeeperUrl(fabricService.getZookeeperUrl());
+      CreateContainerBasicOptions options=builder.build();
+      ServiceLocator.awaitService(bundleContext,ContainerProvider.class,"(fabric.container.protocol=" + options.getProviderType() + ")",CREATE_TIMEOUT,TimeUnit.MILLISECONDS);
       completionService.submit(new CreateContainerTask(fabricServiceServiceProxy,options));
       tasks++;
     }
