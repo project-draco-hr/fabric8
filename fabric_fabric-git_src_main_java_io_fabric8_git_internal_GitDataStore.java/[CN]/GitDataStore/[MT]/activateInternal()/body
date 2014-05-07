@@ -1,9 +1,10 @@
 {
   try {
     super.activateInternal();
-    delegate=ProxySelector.getDefault();
-    LOG.info("Setting up delegate ProxySelector: {}",delegate);
-    ProxySelector.setDefault(new FabricGitLocalHostProxySelector(delegate));
+    defaultProxySelector=ProxySelector.getDefault();
+    ProxySelector fabricProxySelector=new FabricGitLocalHostProxySelector(defaultProxySelector,gitProxyService.getOptional());
+    ProxySelector.setDefault(fabricProxySelector);
+    LOG.info("Setting up FabricProxySelector: {}",fabricProxySelector);
     GitService optionalService=gitService.getOptional();
     if (configuredUrl != null) {
       gitListener.onRemoteUrlChanged(configuredUrl);

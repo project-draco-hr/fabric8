@@ -1,26 +1,22 @@
 {
-  String nonProxy=System.getProperty("http.nonProxyHosts");
+  String nonProxy=DEFAULT_NON_PROXY;
+  if (proxyService.getNonProxyHosts() != null) {
+    nonProxy+="|" + proxyService.getNonProxyHosts();
+  }
   String host=uri.getHost();
   String path=uri.getPath();
-  LOG.trace("ProxySelector: Uri {}",uri);
-  LOG.trace("ProxySelector: Configured http.nonProxyHosts {}",nonProxy);
+  if (LOG.isTraceEnabled()) {
+    LOG.trace("ProxySelector uri: {}",uri);
+    LOG.trace("ProxySelector nonProxyHosts {}",nonProxy);
+    LOG.trace("ProxySelector proxyHost {}",proxyService.getProxyHost());
+  }
   List<Proxy> answer;
-  if (path != null && path.startsWith("/git/fabric/")) {
-    LOG.trace("ProxySelector: Uri {} is /git/fabric/ so not using proxy",uri);
-    answer=noProxy;
-  }
- else   if (localhost.contains(host)) {
-    LOG.trace("ProxySelector: Uri {} is localhost so not using proxy",uri);
-    answer=noProxy;
-  }
- else   if (isLocalHost(host)) {
-    localhost.add(host);
-    LOG.trace("ProxySelector: Uri {} is localhost so not using proxy",uri);
-    answer=noProxy;
+  if (path != null && path.startsWith(GIT_FABRIC_PATH)) {
+    answer=doSelect(host,nonProxy,proxyService.getProxyHost(),proxyService.getProxyPort());
   }
  else {
     answer=delegate.select(uri);
   }
-  LOG.debug("ProxySelector uri: {} -> {}",uri,answer);
+  LOG.info("ProxySelector uri: {} -> {}",uri,answer);
   return answer;
 }
