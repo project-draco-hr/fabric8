@@ -1,0 +1,12 @@
+{
+  super(url);
+  if (url.getPath() == null || url.getPath().trim().length() == 0) {
+    throw new MalformedURLException("Path can not be null or empty. Syntax: " + SYNTAX);
+  }
+  if ((url.getHost() != null && url.getHost().length() > 0) || url.getPort() != -1) {
+    throw new MalformedURLException("Unsupported host/port in " + SCHEME + " url");
+  }
+  if (url.getQuery() != null && url.getQuery().length() > 0) {
+    throw new MalformedURLException("Unsupported query in " + SCHEME + " url");
+  }
+}

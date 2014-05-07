@@ -1,4 +1,8 @@
 {
+  if (value.contains(":mvel:") || value.contains(":mvel\\:")) {
+    LOGGER.error("The checksum URL cannot contain mvel sub-URL");
+    throw new InvalidParameterException("The checksum URL cannot contain mvel sub-URL");
+  }
   InputStream is=null;
   try {
     URL url=new URL(value.substring("checksum:".length()));
