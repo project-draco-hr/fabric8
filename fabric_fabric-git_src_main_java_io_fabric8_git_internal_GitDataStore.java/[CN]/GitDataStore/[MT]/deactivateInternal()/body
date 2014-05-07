@@ -19,8 +19,11 @@ catch (      Exception ex) {
         throw FabricException.launderThrowable(ex);
       }
     }
-    LOG.info("Restoring ProxySelector to original: {}",defaultProxySelector);
-    ProxySelector.setDefault(defaultProxySelector);
+    if (defaultProxySelector != null) {
+      LOG.info("Restoring ProxySelector to original: {}",defaultProxySelector);
+      ProxySelector.setDefault(defaultProxySelector);
+      Authenticator.setDefault(null);
+    }
   }
   finally {
     super.deactivateInternal();

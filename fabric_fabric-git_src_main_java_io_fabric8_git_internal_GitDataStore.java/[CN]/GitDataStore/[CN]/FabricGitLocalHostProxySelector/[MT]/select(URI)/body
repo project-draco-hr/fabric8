@@ -1,22 +1,18 @@
 {
-  String nonProxy=DEFAULT_NON_PROXY;
-  if (proxyService.getNonProxyHosts() != null) {
-    nonProxy+="|" + proxyService.getNonProxyHosts();
-  }
   String host=uri.getHost();
   String path=uri.getPath();
   if (LOG.isTraceEnabled()) {
     LOG.trace("ProxySelector uri: {}",uri);
-    LOG.trace("ProxySelector nonProxyHosts {}",nonProxy);
+    LOG.trace("ProxySelector nonProxyHosts {}",proxyService.getNonProxyHosts());
     LOG.trace("ProxySelector proxyHost {}",proxyService.getProxyHost());
   }
   List<Proxy> answer;
   if (path != null && path.startsWith(GIT_FABRIC_PATH)) {
-    answer=doSelect(host,nonProxy,proxyService.getProxyHost(),proxyService.getProxyPort());
+    answer=doSelect(host,proxyService.getNonProxyHosts(),proxyService.getProxyHost(),proxyService.getProxyPort());
   }
  else {
     answer=delegate.select(uri);
   }
-  LOG.info("ProxySelector uri: {} -> {}",uri,answer);
+  LOG.debug("ProxySelector uri: {} -> {}",uri,answer);
   return answer;
 }

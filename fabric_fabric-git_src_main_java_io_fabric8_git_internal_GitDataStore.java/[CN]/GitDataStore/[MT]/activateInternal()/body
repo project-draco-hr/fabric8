@@ -1,10 +1,13 @@
 {
   try {
     super.activateInternal();
-    defaultProxySelector=ProxySelector.getDefault();
-    ProxySelector fabricProxySelector=new FabricGitLocalHostProxySelector(defaultProxySelector,gitProxyService.getOptional());
-    ProxySelector.setDefault(fabricProxySelector);
-    LOG.info("Setting up FabricProxySelector: {}",fabricProxySelector);
+    if (gitProxyService.getOptional() != null) {
+      Authenticator.setDefault(new FabricGitLocalHostAuthenticator(gitProxyService.getOptional()));
+      defaultProxySelector=ProxySelector.getDefault();
+      ProxySelector fabricProxySelector=new FabricGitLocalHostProxySelector(defaultProxySelector,gitProxyService.getOptional());
+      ProxySelector.setDefault(fabricProxySelector);
+      LOG.info("Setting up FabricProxySelector: {}",fabricProxySelector);
+    }
     GitService optionalService=gitService.getOptional();
     if (configuredUrl != null) {
       gitListener.onRemoteUrlChanged(configuredUrl);

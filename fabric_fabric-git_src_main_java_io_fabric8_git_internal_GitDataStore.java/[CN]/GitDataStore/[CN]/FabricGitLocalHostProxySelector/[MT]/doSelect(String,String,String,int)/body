@@ -1,9 +1,11 @@
 {
-  StringTokenizer st=new StringTokenizer(nonProxy,"|",false);
-  while (st.hasMoreTokens()) {
-    String token=st.nextToken();
-    if (host.matches(token)) {
-      return noProxy;
+  if (nonProxy != null) {
+    StringTokenizer st=new StringTokenizer(nonProxy,"|",false);
+    while (st.hasMoreTokens()) {
+      String token=st.nextToken();
+      if (host.matches(token)) {
+        return noProxy;
+      }
     }
   }
   if (proxyHost != null) {
