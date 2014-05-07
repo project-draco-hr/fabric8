@@ -1,7 +1,7 @@
 {
   final Map<String,EnvironmentVariableOverride> overridesMap=getStringEnvironmentVariableOverrideMap(overrides);
   final Map<String,EnvironmentVariableOverride> used=new HashMap<String,EnvironmentVariableOverride>();
-  final UpdateAction action=new UpdateAction(){
+  return new UpdateAction(){
     public String go(    String string){
       String answer=string;
       for (      String key : environmentVariables.keySet()) {
@@ -23,7 +23,4 @@
     }
   }
 ;
-  updateJavaAgent(javaConfig,environmentVariables,action);
-  updateArguments(javaConfig,environmentVariables,action);
-  updateJvmArguments(javaConfig,environmentVariables,action);
 }
