@@ -1,0 +1,6 @@
+{
+  System.setProperty("java.protocol.handler.pkgs","org.ops4j.pax.url");
+  InstallOptions installOptions=new InstallOptions.InstallOptionsBuilder().build();
+  String processId=new ProcessManagerService(installDir).installJar(installOptions).getId();
+  controller=new DefaultProcessController(processId,new ProcessConfig(),new File(installDir,processId));
+}
