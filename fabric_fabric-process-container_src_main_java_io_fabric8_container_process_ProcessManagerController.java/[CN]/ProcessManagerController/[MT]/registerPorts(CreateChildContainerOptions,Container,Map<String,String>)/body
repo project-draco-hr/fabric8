@@ -32,9 +32,9 @@
   }
   String jolokiaUrl=null;
   Container currentContainer=fabricService.getCurrentContainer();
-  String listenHost=currentContainer.getLocalHostname();
+  String listenHost=currentContainer.getLocalIp();
   if (Strings.isNullOrBlank(listenHost)) {
-    listenHost=currentContainer.getLocalIp();
+    listenHost=currentContainer.getLocalHostname();
   }
   if (Strings.isNullOrBlank(listenHost)) {
     listenHost="localhost";
