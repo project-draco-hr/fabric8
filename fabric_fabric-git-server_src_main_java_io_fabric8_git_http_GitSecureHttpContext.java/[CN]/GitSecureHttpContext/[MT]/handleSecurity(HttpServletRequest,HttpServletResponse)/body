@@ -1,6 +1,12 @@
 {
+  if (LOGGER.isTraceEnabled()) {
+    LOGGER.trace("handleSecurity: request={}",request);
+  }
   String authHeader=request.getHeader(HEADER_AUTHORIZATION);
   if (authHeader != null && authHeader.length() > 0) {
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("handleSecurity: Header[Authorization={}]",authHeader);
+    }
     authHeader=authHeader.trim();
     int blank=authHeader.indexOf(' ');
     if (blank > 0) {
@@ -12,6 +18,9 @@
           int i=srcString.indexOf(':');
           String username=srcString.substring(0,i);
           String password=srcString.substring(i + 1);
+          if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("handleSecurity: Username={}",username);
+          }
           if (isContainerLogin(username)) {
             Properties containers=getContainerTokens(curator);
             String token=containers.getProperty(username);
