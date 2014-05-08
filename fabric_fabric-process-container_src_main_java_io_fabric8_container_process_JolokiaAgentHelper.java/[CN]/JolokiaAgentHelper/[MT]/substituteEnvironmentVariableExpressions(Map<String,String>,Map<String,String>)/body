@@ -1,0 +1,17 @@
+{
+  Set<Map.Entry<String,String>> envEntries=environmentVariables.entrySet();
+  for (  String key : map.keySet()) {
+    String text=map.get(key);
+    String oldText=text;
+    if (Strings.isNotBlank(text)) {
+      for (      Map.Entry<String,String> envEntry : envEntries) {
+        String envKey=envEntry.getKey();
+        String envValue=envEntry.getValue();
+        text=text.replace("${env:" + envKey + "}",envValue);
+      }
+    }
+    if (!oldText.equals(text)) {
+      map.put(key,text);
+    }
+  }
+}

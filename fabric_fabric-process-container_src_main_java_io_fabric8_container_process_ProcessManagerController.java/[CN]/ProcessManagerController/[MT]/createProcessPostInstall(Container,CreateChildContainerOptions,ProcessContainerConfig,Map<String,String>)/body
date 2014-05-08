@@ -1,0 +1,19 @@
+{
+  Set<String> profileIds=options.getProfiles();
+  String versionId=options.getVersion();
+  List<Profile> profiles=Profiles.getProfiles(fabricService,profileIds,versionId);
+  String layout=configObject.getOverlayFolder();
+  if (layout != null) {
+    Map<String,String> configuration=ProcessUtils.getProcessLayout(profiles,layout);
+    if (configuration != null && !configuration.isEmpty()) {
+      Map variables=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.TEMPLATE_VARIABLES_PID);
+      if (variables == null) {
+        variables=new HashMap();
+      }
+      variables.putAll(environmentVariables);
+      LOG.info("Using template variables for MVEL: " + variables);
+      return new ApplyConfigurationTask(configuration,variables);
+    }
+  }
+  return null;
+}

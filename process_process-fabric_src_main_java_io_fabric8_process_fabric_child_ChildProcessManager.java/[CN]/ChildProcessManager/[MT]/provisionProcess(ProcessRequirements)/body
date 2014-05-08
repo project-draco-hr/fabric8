@@ -4,7 +4,7 @@
   InstallOptions installOptions=requirements.createInstallOptions();
   Profile processProfile=getProcessProfile(requirements,true);
   Profile deployProcessProfile=getProcessProfile(requirements,false);
-  Map<String,String> configuration=getProcessLayout(processProfile,requirements.getLayout());
+  Map<String,String> configuration=ProcessUtils.getProcessLayout(processProfile,requirements.getLayout());
   DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabricService,executorService);
   InstallTask applyConfiguration=new ApplyConfigurationTask(configuration,installOptions.getProperties());
   InstallTask applyProfile=new DeploymentTask(downloadManager,deployProcessProfile);

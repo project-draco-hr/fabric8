@@ -11,6 +11,10 @@
     LOG.debug("Could nto find container: " + containerId);
   }
   Map<String,String> environmentVariables=ChildContainers.getEnvironmentVariables(fabricService,options);
+  if (container != null) {
+    registerPorts(options,container,environmentVariables);
+  }
+  JolokiaAgentHelper.substituteEnvironmentVariableExpressions(environmentVariables,environmentVariables);
   Installation installation=null;
   InstallOptions parameters=null;
   try {
@@ -20,8 +24,9 @@
       installation=processManager.installJar(parameters);
     }
  else {
-      parameters=createProcessInstallOptions(container,metadata,options,environmentVariables);
-      InstallTask postInstall=createProcessPostInstall(options);
+      ProcessContainerConfig configObject=createProcessContainerConfig(options);
+      parameters=createProcessInstallOptions(container,metadata,options,configObject,environmentVariables);
+      InstallTask postInstall=createProcessPostInstall(container,options,configObject,environmentVariables);
       Objects.notNull(parameters,"process parameters");
       installation=processManager.install(parameters,postInstall);
     }
