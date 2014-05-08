@@ -7,11 +7,13 @@
       for (      Map.Entry<String,String> envEntry : envEntries) {
         String envKey=envEntry.getKey();
         String envValue=envEntry.getValue();
-        text=text.replace("${env:" + envKey + "}",envValue);
+        if (Strings.isNotBlank(envKey) && Strings.isNotBlank(envValue)) {
+          text=text.replace("${env:" + envKey + "}",envValue);
+        }
       }
-    }
-    if (!oldText.equals(text)) {
-      map.put(key,text);
+      if (!Objects.equal(oldText,text)) {
+        map.put(key,text);
+      }
     }
   }
 }

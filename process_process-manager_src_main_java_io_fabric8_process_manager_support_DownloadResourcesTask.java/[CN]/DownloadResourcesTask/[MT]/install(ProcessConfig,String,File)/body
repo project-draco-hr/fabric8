@@ -1,0 +1,25 @@
+{
+  File baseDir=ProcessUtils.findInstallDir(installDir);
+  Set<Map.Entry<String,String>> entries=localPathToURLMap.entrySet();
+  for (  Map.Entry<String,String> entry : entries) {
+    String localPath=entry.getKey();
+    String urlText=entry.getValue();
+    if (Strings.isNotBlank(urlText)) {
+      URL url=null;
+      try {
+        url=new URL(urlText);
+      }
+ catch (      MalformedURLException e) {
+        LOG.warn("Ignoring invalid URL '" + urlText + "' for overlay resource "+ localPath+ ". "+ e,e);
+      }
+      if (url != null) {
+        File newFile=new File(baseDir,localPath);
+        newFile.getParentFile().mkdirs();
+        InputStream stream=url.openStream();
+        if (stream != null) {
+          Files.copy(stream,new BufferedOutputStream(new FileOutputStream(newFile)));
+        }
+      }
+    }
+  }
+}

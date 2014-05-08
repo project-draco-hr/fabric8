@@ -30,6 +30,18 @@
       }
     }
   }
+  String jolokiaUrl=null;
+  Container currentContainer=fabricService.getCurrentContainer();
+  String listenHost=currentContainer.getLocalHostname();
+  if (Strings.isNullOrBlank(listenHost)) {
+    listenHost=currentContainer.getLocalIp();
+  }
+  if (Strings.isNullOrBlank(listenHost)) {
+    listenHost="localhost";
+  }
+  if (!environmentVariables.containsKey(JavaContainerEnvironmentVariables.FABRIC8_LISTEN_ADDRESS)) {
+    environmentVariables.put(JavaContainerEnvironmentVariables.FABRIC8_LISTEN_ADDRESS,listenHost);
+  }
   for (  Map.Entry<Integer,String> entry : sortedInternalPorts.entrySet()) {
     Integer port=entry.getKey();
     String portName=entry.getValue();
@@ -37,5 +49,12 @@
     externalPorts.put(portName,externalPort);
     environmentVariables.put("FABRIC8_" + portName + "_PORT","" + port);
     environmentVariables.put("FABRIC8_" + portName + "_PROXY_PORT","" + externalPort);
+    if (portName.equals(JolokiaAgentHelper.JOLOKIA_PORT_NAME)) {
+      jolokiaUrl="http://" + listenHost + ":"+ externalPort+ "/jolokia/";
+      LOG.info("Found Jolokia URL: " + jolokiaUrl);
+    }
+  }
+  if (jolokiaUrl != null) {
+    registerJolokiaUrl(container,jolokiaUrl);
   }
 }
