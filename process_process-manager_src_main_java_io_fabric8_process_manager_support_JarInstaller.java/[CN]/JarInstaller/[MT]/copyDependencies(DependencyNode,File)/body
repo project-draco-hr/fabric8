@@ -2,6 +2,10 @@
   List<DependencyNode> children=dependency.getChildren();
   if (children != null) {
     for (    DependencyNode child : children) {
+      if (child.getDependency().getScope().equals("provided")) {
+        LOG.debug("Dependency {} has scope provided. Not copying.",child.getDependency());
+        continue;
+      }
       File file=getFile(child);
       if (file == null) {
         System.out.println("Cannot find file for dependent jar " + child);
