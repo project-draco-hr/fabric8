@@ -3,7 +3,7 @@
   Map<String,Object> exposedPorts=new HashMap<String,Object>();
   Map<String,Integer> internalPorts=new HashMap<String,Integer>();
   Map<String,Integer> externalPorts=new HashMap<String,Integer>();
-  Set<Integer> usedPortByHost=new HashSet<Integer>();
+  Set<Integer> usedPortByHost=fabricService.getPortService().findUsedPortByHost(fabricService.getCurrentContainer());
   Map<String,String> emptyMap=new HashMap<String,String>();
   Set<String> profileIds=options.getProfiles();
   String versionId=options.getVersion();
@@ -42,10 +42,18 @@
   if (!environmentVariables.containsKey(JavaContainerEnvironmentVariables.FABRIC8_LISTEN_ADDRESS)) {
     environmentVariables.put(JavaContainerEnvironmentVariables.FABRIC8_LISTEN_ADDRESS,listenHost);
   }
+  Set<String> disableDynamicPorts=new HashSet<String>();
+  String[] dynamicPortArray=processConfig.getDisableDynamicPorts();
+  if (dynamicPortArray != null) {
+    disableDynamicPorts.addAll(Arrays.asList(dynamicPortArray));
+  }
   for (  Map.Entry<Integer,String> entry : sortedInternalPorts.entrySet()) {
     Integer port=entry.getKey();
     String portName=entry.getValue();
-    int externalPort=owner.createExternalPort(containerId,portName,usedPortByHost,options);
+    int externalPort=port;
+    if (!disableDynamicPorts.contains(portName)) {
+      externalPort=owner.createExternalPort(containerId,portName,usedPortByHost,options);
+    }
     externalPorts.put(portName,externalPort);
     environmentVariables.put("FABRIC8_" + portName + "_PORT","" + port);
     environmentVariables.put("FABRIC8_" + portName + "_PROXY_PORT","" + externalPort);
@@ -54,6 +62,7 @@
       LOG.info("Found Jolokia URL: " + jolokiaUrl);
     }
   }
+  environmentVariables.put(JavaContainerEnvironmentVariables.FABRIC8_LOCAL_CONTAINER_ADDRESS,owner.createContainerLocalAddress(containerId,options));
   if (jolokiaUrl != null) {
     registerJolokiaUrl(container,jolokiaUrl);
   }
