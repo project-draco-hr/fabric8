@@ -1,17 +1,3 @@
 {
-  BufferedReader reader=new BufferedReader(new InputStreamReader(inputStream));
-  try {
-    while (true) {
-      String line=reader.readLine();
-      if (line == null)       break;
-      LOGGER.debug("Error from " + message + ": "+ line);
-    }
-  }
- catch (  Exception e) {
-    LOGGER.error("Failed to process stderr for " + message + ": "+ e,e);
-    throw e;
-  }
- finally {
-    Closeables.closeQuitely(reader);
-  }
+  readProcessOutput(inputStream,"stderr for ",message);
 }

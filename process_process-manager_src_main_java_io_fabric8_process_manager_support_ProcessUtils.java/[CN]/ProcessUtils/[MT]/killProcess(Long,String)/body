@@ -1,0 +1,18 @@
+{
+  if (pid == null || !isProcessAlive(pid)) {
+    return 0;
+  }
+  String commands="kill " + (params != null ? params + " " : "") + pid;
+  Process process=null;
+  Runtime runtime=Runtime.getRuntime();
+  LOGGER.debug("Executing commands: " + commands);
+  try {
+    process=runtime.exec(commands);
+    processInput(process.getInputStream(),commands);
+    processErrors(process.getErrorStream(),commands);
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to execute process " + "stdin" + " for " + commands + ": "+ e,e);
+  }
+  return process != null ? process.exitValue() : 1;
+}
