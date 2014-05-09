@@ -1,4 +1,5 @@
 {
+  initialPull=false;
   try {
     super.activateInternal();
     if (gitProxyService.getOptional() != null) {
@@ -18,12 +19,16 @@
       gitListener.onRemoteUrlChanged(remoteUrl);
     }
     forceGetVersions();
-    LOG.info("starting to pull from remote repository every {} millis",gitPullPeriod);
+    LOG.info("Starting to push to remote git repository every {} millis",gitPushInterval);
     threadPool.scheduleWithFixedDelay(new Runnable(){
       @Override public void run(){
         try {
-          LOG.trace("Performing timed pull");
-          pull();
+          if (!initialPull) {
+            LOG.trace("Performing initial pull");
+            pull();
+            initialPull=true;
+            LOG.debug("Performing initial pull done");
+          }
           LOG.trace("Performing timed push");
           push();
           LOG.debug("Performed timed pull and push done");
@@ -34,10 +39,28 @@
         }
       }
       @Override public String toString(){
-        return "TimedPullTask";
+        return "TimedPushTask";
       }
     }
-,gitPullPeriod,gitPullPeriod,TimeUnit.MILLISECONDS);
+,1000,gitPushInterval,TimeUnit.MILLISECONDS);
+    counter=new SharedCount(getCurator(),ZkPath.GIT_TRIGGER.getPath(),0);
+    counter.addListener(new SharedCountListener(){
+      @Override public void countHasChanged(      SharedCountReader sharedCountReader,      int value) throws Exception {
+        LOG.debug("Watch counter updated to " + value + ", doing a pull");
+        try {
+          Thread.sleep(1000);
+          pull();
+        }
+ catch (        Throwable e) {
+          LOG.debug("Error during pull due " + e.getMessage(),e);
+          LOG.warn("Error during pull due " + e.getMessage() + ". This exception is ignored.");
+        }
+      }
+      @Override public void stateChanged(      CuratorFramework curatorFramework,      ConnectionState connectionState){
+      }
+    }
+);
+    counter.start();
   }
  catch (  Exception ex) {
     throw new FabricException("Failed to start GitDataStore:",ex);

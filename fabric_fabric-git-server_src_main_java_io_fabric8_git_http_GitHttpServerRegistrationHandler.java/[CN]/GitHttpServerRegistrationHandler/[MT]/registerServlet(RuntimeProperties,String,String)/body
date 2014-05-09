@@ -13,7 +13,7 @@
     initParams.put("base-path",servletBasePath);
     initParams.put("repository-root",servletBasePath);
     initParams.put("export-all","true");
-    httpService.get().registerServlet("/git",new GitServlet(),initParams,secure);
+    httpService.get().registerServlet("/git",new FabricGitServlet(curator.get()),initParams,secure);
   }
  catch (  Throwable t) {
     throw FabricException.launderThrowable(t);

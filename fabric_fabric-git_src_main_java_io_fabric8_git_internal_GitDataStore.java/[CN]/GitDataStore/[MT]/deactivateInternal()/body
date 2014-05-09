@@ -23,6 +23,15 @@ catch (      Exception ex) {
       LOG.info("Restoring ProxySelector to original: {}",defaultProxySelector);
       ProxySelector.setDefault(defaultProxySelector);
     }
+    try {
+      if (counter != null) {
+        counter.close();
+        counter=null;
+      }
+    }
+ catch (    IOException e) {
+      LOG.warn("Error closing SharedCount due " + e.getMessage() + ". This exception is ignored.",e);
+    }
   }
   finally {
     super.deactivateInternal();
