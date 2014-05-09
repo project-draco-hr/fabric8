@@ -2,7 +2,6 @@
   try {
     super.activateInternal();
     if (gitProxyService.getOptional() != null) {
-      Authenticator.setDefault(new FabricGitLocalHostAuthenticator(gitProxyService.getOptional()));
       defaultProxySelector=ProxySelector.getDefault();
       ProxySelector fabricProxySelector=new FabricGitLocalHostProxySelector(defaultProxySelector,gitProxyService.getOptional());
       ProxySelector.setDefault(fabricProxySelector);
