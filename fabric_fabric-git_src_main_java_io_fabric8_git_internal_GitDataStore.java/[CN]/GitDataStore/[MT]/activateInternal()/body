@@ -29,9 +29,14 @@
             initialPull=true;
             LOG.debug("Performing initial pull done");
           }
+          if (gitPullOnPush) {
+            LOG.trace("Performing timed pull");
+            pull();
+            LOG.debug("Performed timed pull done");
+          }
           LOG.trace("Performing timed push");
           push();
-          LOG.debug("Performed timed pull and push done");
+          LOG.debug("Performed timed push done");
         }
  catch (        Throwable e) {
           LOG.debug("Error during performed timed pull/push due " + e.getMessage(),e);
@@ -43,24 +48,27 @@
       }
     }
 ,1000,gitPushInterval,TimeUnit.MILLISECONDS);
-    counter=new SharedCount(getCurator(),ZkPath.GIT_TRIGGER.getPath(),0);
-    counter.addListener(new SharedCountListener(){
-      @Override public void countHasChanged(      SharedCountReader sharedCountReader,      int value) throws Exception {
-        LOG.debug("Watch counter updated to " + value + ", doing a pull");
-        try {
-          Thread.sleep(1000);
-          pull();
+    if (!gitPullOnPush) {
+      LOG.info("Using ZooKeeper SharedCount to react when master git repo is changed, so we can do a git pull to the local git repo.");
+      counter=new SharedCount(getCurator(),ZkPath.GIT_TRIGGER.getPath(),0);
+      counter.addListener(new SharedCountListener(){
+        @Override public void countHasChanged(        SharedCountReader sharedCountReader,        int value) throws Exception {
+          LOG.debug("Watch counter updated to " + value + ", doing a pull");
+          try {
+            Thread.sleep(1000);
+            pull();
+          }
+ catch (          Throwable e) {
+            LOG.debug("Error during pull due " + e.getMessage(),e);
+            LOG.warn("Error during pull due " + e.getMessage() + ". This exception is ignored.");
+          }
         }
- catch (        Throwable e) {
-          LOG.debug("Error during pull due " + e.getMessage(),e);
-          LOG.warn("Error during pull due " + e.getMessage() + ". This exception is ignored.");
+        @Override public void stateChanged(        CuratorFramework curatorFramework,        ConnectionState connectionState){
         }
       }
-      @Override public void stateChanged(      CuratorFramework curatorFramework,      ConnectionState connectionState){
-      }
-    }
 );
-    counter.start();
+      counter.start();
+    }
   }
  catch (  Exception ex) {
     throw new FabricException("Failed to start GitDataStore:",ex);
