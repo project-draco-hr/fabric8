@@ -39,8 +39,8 @@
   if (Strings.isNullOrBlank(listenHost)) {
     listenHost="localhost";
   }
-  if (!environmentVariables.containsKey(JavaContainerEnvironmentVariables.FABRIC8_LISTEN_ADDRESS)) {
-    environmentVariables.put(JavaContainerEnvironmentVariables.FABRIC8_LISTEN_ADDRESS,listenHost);
+  if (!environmentVariables.containsKey(EnvironmentVariables.FABRIC8_LISTEN_ADDRESS)) {
+    environmentVariables.put(EnvironmentVariables.FABRIC8_LISTEN_ADDRESS,listenHost);
   }
   Set<String> disableDynamicPorts=new HashSet<String>();
   String[] dynamicPortArray=processConfig.getDisableDynamicPorts();
@@ -63,7 +63,7 @@
     }
   }
   if (processConfig.isCreateLocalContainerAddress()) {
-    environmentVariables.put(JavaContainerEnvironmentVariables.FABRIC8_LOCAL_CONTAINER_ADDRESS,owner.createContainerLocalAddress(containerId,options));
+    environmentVariables.put(EnvironmentVariables.FABRIC8_LOCAL_CONTAINER_ADDRESS,owner.createContainerLocalAddress(containerId,options));
   }
   if (jolokiaUrl != null) {
     registerJolokiaUrl(container,jolokiaUrl);

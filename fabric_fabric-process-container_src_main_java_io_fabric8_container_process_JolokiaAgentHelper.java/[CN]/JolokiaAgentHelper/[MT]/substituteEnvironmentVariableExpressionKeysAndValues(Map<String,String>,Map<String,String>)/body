@@ -1,0 +1,19 @@
+{
+  Map<String,String> answer=new HashMap<String,String>();
+  Set<Map.Entry<String,String>> envEntries=environmentVariables.entrySet();
+  for (  String key : map.keySet()) {
+    String text=key;
+    if (Strings.isNotBlank(text)) {
+      for (      Map.Entry<String,String> envEntry : envEntries) {
+        String envKey=envEntry.getKey();
+        String envValue=envEntry.getValue();
+        if (Strings.isNotBlank(envKey) && Strings.isNotBlank(envValue)) {
+          text=text.replace("${env:" + envKey + "}",envValue);
+        }
+      }
+      answer.put(text,map.get(key));
+    }
+  }
+  substituteEnvironmentVariableExpressions(answer,environmentVariables);
+  return answer;
+}

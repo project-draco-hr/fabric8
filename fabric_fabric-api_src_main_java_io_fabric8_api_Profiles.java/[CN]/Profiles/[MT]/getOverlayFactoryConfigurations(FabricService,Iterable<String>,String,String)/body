@@ -1,0 +1,37 @@
+{
+  Map<String,Map<String,String>> answer=new HashMap<String,Map<String,String>>();
+  Version version=null;
+  if (versionId == null) {
+    version=fabricService.getDefaultVersion();
+  }
+ else {
+    version=fabricService.getVersion(versionId);
+  }
+  String prefix=pid + "-";
+  String postfix=".properties";
+  if (profileIds != null && version != null) {
+    for (    String profileId : profileIds) {
+      Profile profile=version.getProfile(profileId);
+      if (profile != null) {
+        Profile overlay=profile.getOverlay();
+        List<String> configurationFileNames=overlay.getConfigurationFileNames();
+        for (        String fileName : configurationFileNames) {
+          if (fileName.startsWith(prefix) && fileName.endsWith(postfix)) {
+            String name=fileName.substring(prefix.length(),fileName.length() - postfix.length());
+            Map<String,String> overlayConfig=answer.get(name);
+            if (overlayConfig == null) {
+              overlayConfig=new HashMap<String,String>();
+              answer.put(name,overlayConfig);
+            }
+            String filePid=fileName.substring(0,fileName.length() - postfix.length());
+            Map<String,String> profileConfig=overlay.getConfiguration(filePid);
+            if (profileConfig != null) {
+              overlayConfig.putAll(profileConfig);
+            }
+          }
+        }
+      }
+    }
+  }
+  return answer;
+}
