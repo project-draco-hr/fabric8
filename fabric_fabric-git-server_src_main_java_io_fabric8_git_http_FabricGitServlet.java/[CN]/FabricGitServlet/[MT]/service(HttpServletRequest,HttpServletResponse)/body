@@ -1,10 +1,13 @@
 {
   String service=req.getParameter("service");
   boolean isPush=service != null && service.equals("git-receive-pack");
+  Lock lock=isPush ? rwLock.writeLock() : rwLock.readLock();
   try {
+    lock.lock();
     super.service(req,res);
   }
   finally {
+    lock.unlock();
     if (isPush) {
       int value=counter.getCount();
       int newValue=value + 1;
