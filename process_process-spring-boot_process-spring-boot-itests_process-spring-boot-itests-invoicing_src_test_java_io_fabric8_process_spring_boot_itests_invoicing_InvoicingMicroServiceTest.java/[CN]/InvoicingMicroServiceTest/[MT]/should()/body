@@ -1,0 +1,35 @@
+{
+  try {
+    System.setProperty("java.protocol.handler.pkgs","org.ops4j.pax.url");
+    ProcessManagerService processManagerService=new ProcessManagerService(new File("target",UUID.randomUUID().toString()));
+    Map<String,String> env=new HashMap<String,String>();
+    env.put("FABRIC8_JAVA_MAIN",FabricSpringApplication.class.getName());
+    InstallOptions installOptions=new InstallOptions.InstallOptionsBuilder().jvmOptions("-D" + ComponentScanningApplicationContextInitializer.BASE_PACKAGE_PROPERTY_KEY + "=io.fabric8.process.spring.boot.itests").url("mvn:io.fabric8/process-spring-boot-itests-service-invoicing/1.1.0-SNAPSHOT/jar").environment(env).mainClass(FabricSpringApplication.class.getName()).build();
+    processController=processManagerService.installJar(installOptions).getController();
+    processController.start();
+    waitAtMost(1,TimeUnit.MINUTES).until(new Callable<Boolean>(){
+      @Override public Boolean call() throws Exception {
+        try {
+          response=new TestRestTemplate().getForObject("http://localhost:8080/",String.class);
+        }
+ catch (        ResourceAccessException e) {
+          System.out.println(e.getMessage());
+          return false;
+        }
+        return true;
+      }
+    }
+);
+    assertTrue(response.contains("http://localhost:8080/invoice"));
+  }
+  finally {
+    if (processController != null) {
+      try {
+        processController.stop();
+      }
+ catch (      IllegalThreadStateException e) {
+        System.out.println("Ignoring <java.lang.IllegalThreadStateException: process hasn't exited> exception.");
+      }
+    }
+  }
+}
