@@ -20,6 +20,13 @@
     if (config.getBundleLocation() != null) {
       config.setBundleLocation(null);
     }
+    if ("true".equals(c.get(FABRIC_CONFIG_MERGE)) && old != null) {
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("");
+      }
+      old.putAll(c);
+      c=old;
+    }
     config.update(c);
   }
  else {
