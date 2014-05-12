@@ -1,0 +1,11 @@
+{
+  String profileId=results.getProfileId();
+  String versionId=results.getVersionId();
+  ObjectName mbeanName=new ObjectName(FABRIC_MBEAN);
+  if (!Strings.isNullOrBlank(profileId) && !Strings.isNullOrBlank(versionId)) {
+    getLog().info("Performing profile refresh on mbean: " + mbeanName + " version: "+ versionId+ " profile: "+ profileId);
+    J4pExecRequest request=new J4pExecRequest(mbeanName,"refreshProfile",versionId,profileId);
+    J4pResponse<J4pExecRequest> response=client.execute(request,"POST");
+    response.getValue();
+  }
+}
