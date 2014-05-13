@@ -38,7 +38,6 @@
   File file=new File(baseDir + "/../process-launcher/target/" + artifactId+ "-"+ version+ "-bin.tar.gz");
   assertNotNull("Cannot find the file for " + name + " using "+ file.getPath(),file);
   File newFile=new File(classesDir,"process-launcher.tar.gz");
-  Files.move(file,newFile);
-  Files.copy(newFile,file);
-  System.out.println("Moved process launch tarball to " + newFile);
+  Files.copy(file,newFile);
+  System.out.println("Copied process launch tarball to " + newFile);
 }
