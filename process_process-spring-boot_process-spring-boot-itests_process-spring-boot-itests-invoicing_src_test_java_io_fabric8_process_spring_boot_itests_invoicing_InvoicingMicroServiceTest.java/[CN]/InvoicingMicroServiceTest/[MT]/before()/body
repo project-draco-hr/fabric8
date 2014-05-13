@@ -1,7 +1,5 @@
 {
-  Map<String,String> env=new HashMap<String,String>();
-  env.put("FABRIC8_JAVA_MAIN",FabricSpringApplication.class.getName());
-  InstallOptions installOptions=new InstallOptions.InstallOptionsBuilder().jvmOptions("-D" + ComponentScanningApplicationContextInitializer.BASE_PACKAGE_PROPERTY_KEY + "=io.fabric8.process.spring.boot.itests").url("mvn:io.fabric8/process-spring-boot-itests-service-invoicing/" + projectVersion + "/jar").environment(env).mainClass(FabricSpringApplication.class.getName()).build();
+  InstallOptions installOptions=new InstallOptions.InstallOptionsBuilder().jvmOptions("-D" + ComponentScanningApplicationContextInitializer.BASE_PACKAGE_PROPERTY_KEY + "=io.fabric8.process.spring.boot.itests").url("mvn:io.fabric8/process-spring-boot-itests-service-invoicing/" + projectVersion + "/jar").environment(springBootProcessEnvironment()).mainClass(FabricSpringApplication.class.getName()).build();
   processController=processManagerService.installJar(installOptions).getController();
   processController.start();
   waitForRestResource("http://localhost:8080/");
