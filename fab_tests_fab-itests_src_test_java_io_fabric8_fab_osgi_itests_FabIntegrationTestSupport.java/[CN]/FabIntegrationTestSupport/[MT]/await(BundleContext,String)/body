@@ -1,0 +1,28 @@
+{
+  final Filter srvfilter=FrameworkUtil.createFilter(filter);
+  final CountDownLatch latch=new CountDownLatch(1);
+  final AtomicReference<URLStreamHandlerService> serviceRef=new AtomicReference<URLStreamHandlerService>();
+  ServiceTracker<URLStreamHandlerService,URLStreamHandlerService> tracker=new ServiceTracker<URLStreamHandlerService,URLStreamHandlerService>(bundleContext,URLStreamHandlerService.class,null){
+    @Override public URLStreamHandlerService addingService(    ServiceReference<URLStreamHandlerService> sref){
+      URLStreamHandlerService service=super.addingService(sref);
+      if (srvfilter == null || srvfilter.match(sref)) {
+        serviceRef.set(bundleContext.getService(sref));
+        latch.countDown();
+      }
+      return service;
+    }
+  }
+;
+  tracker.open();
+  try {
+    if (!latch.await(60000L,TimeUnit.MILLISECONDS)) {
+      throw new RuntimeException("Cannot obtain service: " + srvfilter);
+    }
+  }
+ catch (  InterruptedException ex) {
+    throw new IllegalStateException();
+  }
+ finally {
+    tracker.close();
+  }
+}

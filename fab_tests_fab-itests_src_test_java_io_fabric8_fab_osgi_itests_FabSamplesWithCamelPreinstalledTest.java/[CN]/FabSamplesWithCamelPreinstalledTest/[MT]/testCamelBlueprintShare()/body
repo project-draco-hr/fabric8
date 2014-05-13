@@ -1,0 +1,10 @@
+{
+  await(context,"(&(objectClass=org.osgi.service.url.URLStreamHandlerService)(url.handler.protocol=fab))");
+  Set<Bundle> stateBefore=new HashSet<Bundle>(Arrays.asList(context.getBundles()));
+  String url=fab("io.fabric8.fab.tests","fab-sample-camel-blueprint-share");
+  context.installBundle(url);
+  Set<Bundle> stateAfter=new HashSet<Bundle>(Arrays.asList(context.getBundles()));
+  stateAfter.removeAll(stateBefore);
+  assertTrue("Expected only the FAB itself to be added",stateAfter.size() == 1);
+  assertTrue("Expected only the FAB itself to be added",stateAfter.iterator().next().getLocation().equals(url));
+}

@@ -1,0 +1,22 @@
+{
+  await(context,"(&(objectClass=org.osgi.service.url.URLStreamHandlerService)(url.handler.protocol=fab))");
+  String url=fab("io.fabric8.fab.tests","fab-sample-camel-blueprint-share");
+  context.installBundle(url);
+  boolean foundCamelBlueprintShare=false;
+  boolean foundCamelCore=false;
+  boolean foundCamelBlueprint=false;
+  for (  Bundle b : context.getBundles()) {
+    System.out.println(">>>> " + b.getSymbolicName());
+    if (url.equals(b.getLocation())) {
+      foundCamelBlueprintShare=true;
+    }
+    if ("org.apache.camel.camel-core".equals(b.getSymbolicName())) {
+      foundCamelCore=true;
+    }
+    if ("org.apache.camel.camel-blueprint".equals(b.getSymbolicName())) {
+      foundCamelBlueprint=true;
+    }
+  }
+  assertTrue("Expected FAB itself to be added",foundCamelBlueprintShare);
+  assertTrue("Expected camel-core to be added",foundCamelCore);
+}
