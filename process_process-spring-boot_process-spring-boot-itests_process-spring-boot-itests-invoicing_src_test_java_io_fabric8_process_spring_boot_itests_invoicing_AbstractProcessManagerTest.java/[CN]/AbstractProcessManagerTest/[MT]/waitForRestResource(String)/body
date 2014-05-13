@@ -1,0 +1,15 @@
+{
+  waitAtMost(1,MINUTES).until(new Callable<Boolean>(){
+    @Override public Boolean call() throws Exception {
+      try {
+        restTemplate.getForObject(uri,String.class);
+      }
+ catch (      ResourceAccessException e) {
+        System.out.println(e.getMessage());
+        return false;
+      }
+      return true;
+    }
+  }
+);
+}
