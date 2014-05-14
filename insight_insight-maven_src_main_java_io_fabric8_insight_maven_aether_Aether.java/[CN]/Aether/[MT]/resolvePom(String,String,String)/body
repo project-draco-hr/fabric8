@@ -1,0 +1,30 @@
+{
+  AetherResult result=resolve(groupId,artifactId,version,"pom");
+  DependencyNode root=result.root();
+  File file=root.getDependency().getArtifact().getFile();
+  Model model=loadPom(file);
+  List<String> modules=model.getModules();
+  List<AetherJarOrPom> children=new LinkedList<AetherJarOrPom>();
+  for (  String moduleName : modules) {
+    System.out.println("Found module " + moduleName);
+    String pomGroupId=model.getGroupId();
+    if (pomGroupId == null || "".equals(pomGroupId.trim())) {
+      pomGroupId=groupId;
+    }
+    try {
+      AetherPomResult childPom=resolvePom(pomGroupId,moduleName,version);
+      children.add(childPom);
+    }
+ catch (    ArtifactResolutionException e) {
+      try {
+        AetherResult childPom=resolve(pomGroupId,moduleName,version);
+        children.add(childPom);
+      }
+ catch (      Throwable e2) {
+        System.out.println("Could be artifact id is not the same as the module name for " + e.getMessage());
+        e2.printStackTrace();
+      }
+    }
+  }
+  return new AetherPomResult(result,children);
+}

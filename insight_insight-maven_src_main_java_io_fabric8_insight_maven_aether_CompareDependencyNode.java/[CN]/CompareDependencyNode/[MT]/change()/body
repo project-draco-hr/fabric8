@@ -1,0 +1,25 @@
+{
+  String v1=getVersion1();
+  String v2=getVersion2();
+  if (v1 != null) {
+    if (v2 != null) {
+      if (v1.equals(v2)) {
+        return new SameVersion(v1);
+      }
+ else {
+        return new UpdateVersion(v1,v2);
+      }
+    }
+ else {
+      return new AddVersion(v1);
+    }
+  }
+ else {
+    if (v2 != null) {
+      return new RemoveVersion(v2);
+    }
+ else {
+      throw new IllegalArgumentException("Neither version has a value!");
+    }
+  }
+}

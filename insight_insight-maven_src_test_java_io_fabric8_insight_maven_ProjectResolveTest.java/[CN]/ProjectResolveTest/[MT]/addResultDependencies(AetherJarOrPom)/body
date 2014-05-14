@@ -1,0 +1,11 @@
+{
+  if (r instanceof AetherPomResult) {
+    addDependencies(r.root());
+    for (    AetherJarOrPom m : ((AetherPomResult)r).getModules()) {
+      addResultDependencies(m);
+    }
+  }
+ else   if (r instanceof AetherResult) {
+    addDependencies(r.root());
+  }
+}

@@ -1,0 +1,8 @@
+{
+  List<Repository> result=new ArrayList<Repository>(UNAUTHORIZED_REPOSITORIES.size() + 1);
+  if (AUTHORIZED) {
+    result.add(new Repository("proxy.fusesource.com","https://repo.fusesource.com/nexus/content/groups/m2-proxy",Authentications.getFuseRepoAuthentication()));
+  }
+  result.addAll(UNAUTHORIZED_REPOSITORIES);
+  return result;
+}

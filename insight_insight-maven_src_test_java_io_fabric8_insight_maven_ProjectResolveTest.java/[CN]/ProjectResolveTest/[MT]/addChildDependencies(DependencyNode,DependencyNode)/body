@@ -1,0 +1,21 @@
+{
+  Artifact artifact=node.getDependency().getArtifact();
+  String idNoVersion=idLessVersion(artifact);
+  String version=artifact.getVersion();
+  ArtifactVersions artifactVersions=idNoVersionMap.get(idNoVersion);
+  if (artifactVersions == null) {
+    artifactVersions=new ArtifactVersions(artifact);
+    idNoVersionMap.put(idNoVersion,artifactVersions);
+  }
+  Map<String,HashSet<DependencyNode>> versionMap=artifactVersions.versionsToUseSet;
+  HashSet<DependencyNode> useSet=versionMap.get(version);
+  if (useSet == null) {
+    useSet=new HashSet<DependencyNode>();
+    versionMap.put(version,useSet);
+  }
+  useSet.add(owner);
+  versionMap.put(version,useSet);
+  for (  DependencyNode child : node.getChildren()) {
+    addChildDependencies(child,owner);
+  }
+}

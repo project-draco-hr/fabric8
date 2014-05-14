@@ -1,0 +1,12 @@
+{
+  Map<String,DependencyNode> m1=toDependencyMap(node1);
+  Map<String,DependencyNode> m2=toDependencyMap(node2);
+  LinkedList<CompareDependencyNode> result=new LinkedList<CompareDependencyNode>();
+  Set<String> keySet=new HashSet<String>();
+  keySet.addAll(m1.keySet());
+  keySet.addAll(m2.keySet());
+  for (  String key : keySet) {
+    result.add(new CompareDependencyNode(m1.get(key),m2.get(key)));
+  }
+  return result;
+}

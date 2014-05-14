@@ -1,0 +1,10 @@
+{
+  for (int i=0; i < indentLevel; i++) {
+    System.out.print("  ");
+  }
+  System.out.println("" + node.groupId() + ":"+ node.artifactId()+ " "+ node.change().getSummary());
+  int nextIndent=indentLevel + 1;
+  for (  CompareDependencyNode c : node.createChildren()) {
+    dump(c,nextIndent);
+  }
+}
