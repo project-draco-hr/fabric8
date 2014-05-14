@@ -1,0 +1,11 @@
+{
+  String[] paths=Paths.splitPaths(requestURI);
+  MappingResult answer=null;
+  for (  HttpProxyRule mappingRule : mappingRules.getMappingRules()) {
+    answer=mappingRule.matches(paths);
+    if (answer != null) {
+      break;
+    }
+  }
+  return answer;
+}

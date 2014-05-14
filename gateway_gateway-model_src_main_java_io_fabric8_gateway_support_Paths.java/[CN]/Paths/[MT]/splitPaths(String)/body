@@ -1,0 +1,20 @@
+{
+  String[] paths=EMPTY_ARRAY;
+  if (requestURI != null && requestURI.length() > 0) {
+    String text=requestURI;
+    int idx=text.indexOf('?');
+    if (idx >= 0) {
+      text=text.substring(0,idx);
+    }
+    while (text.startsWith("/")) {
+      text=text.substring(1);
+    }
+    while (text.endsWith("/")) {
+      text=text.substring(0,text.length() - 1);
+    }
+    if (text.length() > 0) {
+      paths=text.split("/");
+    }
+  }
+  return paths;
+}

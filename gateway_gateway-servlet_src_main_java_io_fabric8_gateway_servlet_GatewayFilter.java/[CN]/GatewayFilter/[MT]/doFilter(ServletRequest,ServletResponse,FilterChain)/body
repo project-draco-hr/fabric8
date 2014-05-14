@@ -1,0 +1,10 @@
+{
+  if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
+    HttpServletRequest httpRequest=(HttpServletRequest)request;
+    HttpServletResponse httpResponse=(HttpServletResponse)response;
+    doHttpFilter(httpRequest,httpResponse,chain);
+  }
+ else {
+    chain.doFilter(request,response);
+  }
+}
