@@ -1,0 +1,11 @@
+{
+  ProxyDetails proxyDetails=createProxyDetails(httpServletRequest,httpServletResponse);
+  if (!proxyDetails.isValid()) {
+    httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST,"Context-Path should contain the proxy hostname to use");
+  }
+ else {
+    GetMethod getMethodProxyRequest=new GetMethod(proxyDetails.getStringProxyURL());
+    setProxyRequestHeaders(proxyDetails,httpServletRequest,getMethodProxyRequest);
+    this.executeProxyRequest(proxyDetails,getMethodProxyRequest,httpServletRequest,httpServletResponse);
+  }
+}

@@ -1,0 +1,47 @@
+{
+  httpMethodProxyRequest.setFollowRedirects(false);
+  HttpClient httpClient=proxyDetails.createHttpClient(httpMethodProxyRequest);
+  int intProxyResponseCode=httpClient.executeMethod(httpMethodProxyRequest);
+  if (intProxyResponseCode >= HttpServletResponse.SC_MULTIPLE_CHOICES && intProxyResponseCode < HttpServletResponse.SC_NOT_MODIFIED) {
+    String stringStatusCode=Integer.toString(intProxyResponseCode);
+    String stringLocation=httpMethodProxyRequest.getResponseHeader(STRING_LOCATION_HEADER).getValue();
+    if (stringLocation == null) {
+      throw new ServletException("Received status code: " + stringStatusCode + " but no "+ STRING_LOCATION_HEADER+ " header was found in the response");
+    }
+    String stringMyHostName=httpServletRequest.getServerName();
+    if (httpServletRequest.getServerPort() != 80) {
+      stringMyHostName+=":" + httpServletRequest.getServerPort();
+    }
+    stringMyHostName+=httpServletRequest.getContextPath();
+    httpServletResponse.sendRedirect(stringLocation.replace(proxyDetails.getProxyHostAndPort() + proxyDetails.getProxyPath(),stringMyHostName));
+    return;
+  }
+ else   if (intProxyResponseCode == HttpServletResponse.SC_NOT_MODIFIED) {
+    httpServletResponse.setIntHeader(STRING_CONTENT_LENGTH_HEADER_NAME,0);
+    httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+    return;
+  }
+  httpServletResponse.setStatus(intProxyResponseCode);
+  Header[] headerArrayResponse=httpMethodProxyRequest.getResponseHeaders();
+  for (  Header header : headerArrayResponse) {
+    httpServletResponse.setHeader(header.getName(),header.getValue());
+  }
+  int code=httpMethodProxyRequest.getStatusCode();
+  boolean noData=code == HttpStatus.SC_NO_CONTENT;
+  if (!noData) {
+    String length=httpServletRequest.getHeader(STRING_CONTENT_LENGTH_HEADER_NAME);
+    if (length != null && "0".equals(length.trim())) {
+      noData=true;
+    }
+  }
+  LOG.trace("Response has data? {}",!noData);
+  if (!noData) {
+    InputStream inputStreamProxyResponse=httpMethodProxyRequest.getResponseBodyAsStream();
+    BufferedInputStream bufferedInputStream=new BufferedInputStream(inputStreamProxyResponse);
+    OutputStream outputStreamClientResponse=httpServletResponse.getOutputStream();
+    int intNextByte;
+    while ((intNextByte=bufferedInputStream.read()) != -1) {
+      outputStreamClientResponse.write(intNextByte);
+    }
+  }
+}

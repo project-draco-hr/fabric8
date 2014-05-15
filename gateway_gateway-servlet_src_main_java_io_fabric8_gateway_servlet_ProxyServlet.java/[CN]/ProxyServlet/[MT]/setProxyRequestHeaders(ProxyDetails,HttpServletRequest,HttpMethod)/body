@@ -1,0 +1,16 @@
+{
+  Enumeration<?> enumerationOfHeaderNames=httpServletRequest.getHeaderNames();
+  while (enumerationOfHeaderNames.hasMoreElements()) {
+    String stringHeaderName=(String)enumerationOfHeaderNames.nextElement();
+    if (stringHeaderName.equalsIgnoreCase(STRING_CONTENT_LENGTH_HEADER_NAME) || stringHeaderName.equalsIgnoreCase("Authorization") || stringHeaderName.equalsIgnoreCase("Origin"))     continue;
+    Enumeration<?> enumerationOfHeaderValues=httpServletRequest.getHeaders(stringHeaderName);
+    while (enumerationOfHeaderValues.hasMoreElements()) {
+      String stringHeaderValue=(String)enumerationOfHeaderValues.nextElement();
+      if (stringHeaderName.equalsIgnoreCase(STRING_HOST_HEADER_NAME)) {
+        stringHeaderValue=proxyDetails.getProxyHostAndPort();
+      }
+      Header header=new Header(stringHeaderName,stringHeaderValue);
+      httpMethodProxyRequest.setRequestHeader(header);
+    }
+  }
+}

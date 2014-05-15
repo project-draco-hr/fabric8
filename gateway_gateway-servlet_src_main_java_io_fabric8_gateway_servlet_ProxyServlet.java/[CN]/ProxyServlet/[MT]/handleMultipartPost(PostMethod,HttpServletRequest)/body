@@ -1,0 +1,26 @@
+{
+  DiskFileItemFactory diskFileItemFactory=new DiskFileItemFactory();
+  diskFileItemFactory.setSizeThreshold(this.getMaxFileUploadSize());
+  diskFileItemFactory.setRepository(FILE_UPLOAD_TEMP_DIRECTORY);
+  ServletFileUpload servletFileUpload=new ServletFileUpload(diskFileItemFactory);
+  try {
+    List<FileItem> listFileItems=(List<FileItem>)servletFileUpload.parseRequest(httpServletRequest);
+    List<Part> listParts=new ArrayList<Part>();
+    for (    FileItem fileItemCurrent : listFileItems) {
+      if (fileItemCurrent.isFormField()) {
+        StringPart stringPart=new StringPart(fileItemCurrent.getFieldName(),fileItemCurrent.getString());
+        listParts.add(stringPart);
+      }
+ else {
+        FilePart filePart=new FilePart(fileItemCurrent.getFieldName(),new ByteArrayPartSource(fileItemCurrent.getName(),fileItemCurrent.get()));
+        listParts.add(filePart);
+      }
+    }
+    MultipartRequestEntity multipartRequestEntity=new MultipartRequestEntity(listParts.toArray(new Part[]{}),postMethodProxyRequest.getParams());
+    postMethodProxyRequest.setRequestEntity(multipartRequestEntity);
+    postMethodProxyRequest.setRequestHeader(STRING_CONTENT_TYPE_HEADER_NAME,multipartRequestEntity.getContentType());
+  }
+ catch (  FileUploadException fileUploadException) {
+    throw new ServletException(fileUploadException);
+  }
+}

@@ -1,0 +1,27 @@
+{
+  Map<String,String[]> mapPostParameters=(Map<String,String[]>)httpServletRequest.getParameterMap();
+  List<NameValuePair> listNameValuePairs=new ArrayList<NameValuePair>();
+  for (  String stringParameterName : mapPostParameters.keySet()) {
+    String[] stringArrayParameterValues=mapPostParameters.get(stringParameterName);
+    for (    String stringParamterValue : stringArrayParameterValues) {
+      NameValuePair nameValuePair=new NameValuePair(stringParameterName,stringParamterValue);
+      listNameValuePairs.add(nameValuePair);
+    }
+  }
+  RequestEntity entity=null;
+  String contentType=httpServletRequest.getContentType();
+  if (contentType != null) {
+    contentType=contentType.toLowerCase();
+    if (contentType.contains("json") || contentType.contains("xml") || contentType.contains("application")|| contentType.contains("text")) {
+      String body=IOHelpers.readFully(httpServletRequest.getReader());
+      entity=new StringRequestEntity(body,contentType,httpServletRequest.getCharacterEncoding());
+      postMethodProxyRequest.setRequestEntity(entity);
+    }
+  }
+  NameValuePair[] parameters=listNameValuePairs.toArray(new NameValuePair[]{});
+  if (entity != null) {
+  }
+ else {
+    postMethodProxyRequest.setRequestBody(parameters);
+  }
+}

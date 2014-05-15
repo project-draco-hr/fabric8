@@ -1,0 +1,17 @@
+{
+  ProxyDetails proxyDetails=createProxyDetails(httpServletRequest,httpServletResponse);
+  if (!proxyDetails.isValid()) {
+    httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST,"Context-Path should contain the proxy hostname to use");
+  }
+ else {
+    PostMethod postMethodProxyRequest=new PostMethod(proxyDetails.getStringProxyURL());
+    setProxyRequestHeaders(proxyDetails,httpServletRequest,postMethodProxyRequest);
+    if (ServletFileUpload.isMultipartContent(httpServletRequest)) {
+      this.handleMultipartPost(postMethodProxyRequest,httpServletRequest);
+    }
+ else {
+      this.handleStandardPost(postMethodProxyRequest,httpServletRequest);
+    }
+    this.executeProxyRequest(proxyDetails,postMethodProxyRequest,httpServletRequest,httpServletResponse);
+  }
+}

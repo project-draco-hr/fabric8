@@ -1,0 +1,10 @@
+{
+  HttpMappingResult mappingRule=getResolver().findMappingRule(httpServletRequest,httpServletResponse);
+  if (mappingRule != null) {
+    String destinationUrl=mappingRule.getDestinationUrl(new HttpClientRequestFacade(httpServletRequest,httpServletResponse));
+    if (destinationUrl != null) {
+      return new ProxyDetails(true,destinationUrl);
+    }
+  }
+  return new ProxyDetails(false,null);
+}
