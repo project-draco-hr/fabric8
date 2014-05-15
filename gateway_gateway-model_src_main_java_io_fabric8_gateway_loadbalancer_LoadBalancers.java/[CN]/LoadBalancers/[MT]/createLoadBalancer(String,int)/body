@@ -1,0 +1,17 @@
+{
+  if (RANDOM_LOAD_BALANCER.equals(loadBalancerType)) {
+    return new RandomLoadBalancer();
+  }
+ else   if (ROUND_ROBIN_LOAD_BALANCER.equals(loadBalancerType)) {
+    return new RoundRobinLoadBalancer();
+  }
+ else   if (STICKY_LOAD_BALANCER.equals(loadBalancerType)) {
+    return new StickyLoadBalancer(stickyLoadBalancerCacheSize);
+  }
+ else {
+    if (Strings.isNotBlank(loadBalancerType)) {
+      LOG.warn("Ignored invalid load balancer type: " + loadBalancerType);
+    }
+    return new RoundRobinLoadBalancer();
+  }
+}

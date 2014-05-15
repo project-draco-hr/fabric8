@@ -1,0 +1,8 @@
+{
+  T answer=loadBalancerReference.get();
+  if (answer == null) {
+    loadBalancerReference.compareAndSet(null,createLoadBalancer());
+    answer=loadBalancerReference.get();
+  }
+  return answer;
+}

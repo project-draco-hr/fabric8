@@ -1,0 +1,10 @@
+{
+  UriTemplateDefinition uriTemplateDefinition=proxyRule.chooseBackEndService(requestFacade);
+  if (uriTemplateDefinition != null) {
+    UriTemplate uriTemplate=uriTemplateDefinition.getUriTemplateObject();
+    if (uriTemplate != null) {
+      return uriTemplate.bindByName(parameterNameValues);
+    }
+  }
+  return null;
+}

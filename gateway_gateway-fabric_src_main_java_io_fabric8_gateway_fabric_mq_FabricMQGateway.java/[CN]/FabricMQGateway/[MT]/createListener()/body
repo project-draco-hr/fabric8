@@ -4,8 +4,8 @@
   VertxService vertxService=getVertxService();
   Vertx vertx=vertxService.getVertx();
   CuratorFramework curator=getCurator();
-  LoadBalancer<String> pathLoadBalancer=LoadBalancers.createLoadBalancer(loadBalancerType,stickyLoadBalancerCacheSize);
-  LoadBalancer<ServiceDetails> serviceLoadBalancer=LoadBalancers.createLoadBalancer(loadBalancerType,stickyLoadBalancerCacheSize);
+  LoadBalancer pathLoadBalancer=LoadBalancers.createLoadBalancer(loadBalancerType,stickyLoadBalancerCacheSize);
+  LoadBalancer serviceLoadBalancer=LoadBalancers.createLoadBalancer(loadBalancerType,stickyLoadBalancerCacheSize);
   LOG.info("activating MQ mapping ZooKeeper path: " + zkPath + " host: "+ host+ " with load balancer: "+ pathLoadBalancer);
   List<TcpGateway> gateways=new ArrayList<TcpGateway>();
   addGateway(gateways,vertx,serviceMap,"tcp",isOpenWireEnabled(),getOpenWirePort(),pathLoadBalancer,serviceLoadBalancer);
