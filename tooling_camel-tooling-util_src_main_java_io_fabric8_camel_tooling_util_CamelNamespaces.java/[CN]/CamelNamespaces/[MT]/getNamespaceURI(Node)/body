@@ -1,0 +1,21 @@
+{
+  if (node instanceof Element) {
+    Namespace ns=((Element)node).getNamespace();
+    if (ns != null) {
+      String uri=ns.getURI();
+      if (uri == null || uri.length() == 0) {
+        String uriAttr=ns.getPrefix().equals("") ? ((Element)node).getAttributeValue("xmlns") : null;
+        if (uriAttr != null) {
+          return uriAttr;
+        }
+ else {
+          return getNamespaceURI(((Element)node).getParent());
+        }
+      }
+ else {
+        return uri;
+      }
+    }
+  }
+  return null;
+}

@@ -1,0 +1,16 @@
+{
+  XmlModel x=assertLoadModel(new File(getBaseDir(),"src/test/resources/routeContext.xml"),1);
+  int rc=x.getRouteDefinitionList().size();
+  DefaultCamelContext tmpContext=new DefaultCamelContext();
+  tmpContext.addRoutes(new RouteBuilder(){
+    @Override public void configure() throws Exception {
+      from("seda:newFrom").to("seda:newTo");
+    }
+  }
+);
+  x.getContextElement().getRoutes().addAll(tmpContext.getRouteDefinitions());
+  String xmlText=tool.marshalToText(x);
+  XmlModel y=tool.unmarshal(xmlText);
+  assertTrue(y.getRouteDefinitionList().size() == x.getRouteDefinitionList().size());
+  assertFalse(y.getRouteDefinitionList().size() == rc);
+}

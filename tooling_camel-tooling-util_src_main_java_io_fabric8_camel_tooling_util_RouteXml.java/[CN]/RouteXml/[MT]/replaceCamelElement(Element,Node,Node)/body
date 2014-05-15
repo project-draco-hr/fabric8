@@ -1,0 +1,10 @@
+{
+  replaceChild(docElem,camelElem,oldNode);
+  if (camelElem instanceof Element && oldNode instanceof Element) {
+    for (    Attribute attr : ((Element)oldNode).getAttributes()) {
+      if (attr.getName().startsWith("xmlns")) {
+        ((Element)camelElem).setAttribute(attr.getName(),attr.getValue());
+      }
+    }
+  }
+}

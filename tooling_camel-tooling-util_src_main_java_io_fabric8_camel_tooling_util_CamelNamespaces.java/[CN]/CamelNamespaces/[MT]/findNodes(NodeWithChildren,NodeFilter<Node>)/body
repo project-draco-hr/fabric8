@@ -1,0 +1,11 @@
+{
+  List<Node> answer=node.getNodes(filter);
+  List<Node> children=node.getNodes();
+  for (  Node child : children) {
+    if (child instanceof Element) {
+      List<Node> childMatched=findNodes((Element)child,filter);
+      answer.addAll(childMatched);
+    }
+  }
+  return answer;
+}

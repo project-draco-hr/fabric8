@@ -1,0 +1,15 @@
+{
+  String name="src/test/resources/springArchetypeWithRootCamelPrefix.xml";
+  File file=new File(getBaseDir(),name);
+  XmlModel x=assertRoutes(file,1,null);
+  List<RouteDefinition> definitionList=x.getRouteDefinitionList();
+  RouteDefinition route=new RouteDefinition().from("file:foo").to("file:bar");
+  definitionList.add(route);
+  System.out.println("Routes now: " + x.getRouteDefinitionList());
+  String text=FileCopyUtils.copyToString(new FileReader(file));
+  RouteXml helper=new RouteXml();
+  String newText=helper.marshalToText(text,definitionList);
+  System.out.println("newText: " + newText);
+  assertTrue(newText.contains("Configures the Camel Context"));
+  assertValid(x);
+}

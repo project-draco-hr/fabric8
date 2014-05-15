@@ -1,0 +1,11 @@
+{
+  if (_schema == null) {
+    loadSchemas(new SchemaFinder(){
+      @Override public URL findSchema(      XsdDetails details){
+        return details.getClassLoader().getResource(details.getPath());
+      }
+    }
+);
+  }
+  return _schema;
+}

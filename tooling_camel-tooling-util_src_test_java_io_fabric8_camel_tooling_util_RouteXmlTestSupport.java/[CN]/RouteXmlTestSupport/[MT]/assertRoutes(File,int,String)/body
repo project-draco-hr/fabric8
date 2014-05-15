@@ -1,0 +1,24 @@
+{
+  if (ns == null || ns.trim().length() == 0) {
+    ns=CamelNamespaces.springNS;
+  }
+  XmlModel x=assertLoadModel(file,expected);
+  DefaultCamelContext tmpContext=new DefaultCamelContext();
+  tmpContext.addRoutes(new RouteBuilder(){
+    @Override public void configure() throws Exception {
+      from("seda:newFrom").to("seda:newTo");
+    }
+  }
+);
+  x.getContextElement().getRoutes().addAll(tmpContext.getRouteDefinitions());
+  List<RouteDefinition> routes=x.getRouteDefinitionList();
+  assertEquals("routes: " + routes,expected + 1,routes.size());
+  outDir.mkdirs();
+  File outFile=new File(outDir,file.getName());
+  System.out.println("Generating file: " + outFile);
+  tool.marshal(outFile,x);
+  assertFileExists(outFile);
+  String text=FileCopyUtils.copyToString(new FileReader(outFile));
+  assertTrue("Namespace " + ns + " not present in output file\n"+ text,text.contains(ns));
+  return x;
+}

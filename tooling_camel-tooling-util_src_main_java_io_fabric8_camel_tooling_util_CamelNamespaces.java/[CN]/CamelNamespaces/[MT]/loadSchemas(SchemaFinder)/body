@@ -1,0 +1,16 @@
+{
+  SchemaFactory factory=SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+  XsdDetails[] xsds=new XsdDetails[]{new XsdDetails("camel-spring.xsd","http://camel.apache.org/schema/spring/camel-spring.xsd",CamelEndpointFactoryBean.class),new XsdDetails("camel-blueprint.xsd","http://camel.apache.org/schema/blueprint/camel-blueprint.xsd",org.apache.camel.blueprint.CamelEndpointFactoryBean.class)};
+  List<Source> sources=new ArrayList<Source>(xsds.length);
+  for (  XsdDetails xsdd : xsds) {
+    URL url=loader.findSchema(xsdd);
+    if (url != null) {
+      sources.add(new StreamSource(url.openStream(),xsdd.getUri()));
+    }
+ else {
+      System.out.println("Warning could not find local resource " + xsdd.getPath() + " on classpath");
+      sources.add(new StreamSource(xsdd.getUri()));
+    }
+  }
+  _schema=factory.newSchema(sources.toArray(new Source[sources.size()]));
+}

@@ -1,0 +1,11 @@
+{
+  if (parent instanceof Element) {
+    for (    Attribute attr : ((Element)parent).getAttributes()) {
+      String name=attr.getName();
+      if (name.startsWith("xmlns") && element.getAttributeValue(name) == null) {
+        element.setAttribute(name,attr.getValue());
+      }
+    }
+    addParentNamespaces(element,((Element)parent).getParent());
+  }
+}

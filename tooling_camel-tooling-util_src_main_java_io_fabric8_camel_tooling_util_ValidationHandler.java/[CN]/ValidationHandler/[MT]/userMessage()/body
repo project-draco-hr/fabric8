@@ -1,0 +1,21 @@
+{
+  StringWriter sw=new StringWriter();
+  for (  SAXParseException ex : errors) {
+    sw.append(", ").append(ex.getMessage());
+  }
+  for (  SAXParseException ex : fatalErrors) {
+    sw.append(", ").append(ex.getMessage());
+  }
+  String text=sw.toString();
+  if (text.length() > 2) {
+    text=text.substring(2);
+  }
+  int idx=text.indexOf(":");
+  if (text.startsWith("cvc-complex-type") && idx > 0) {
+    text=text.substring(idx + 1).trim();
+  }
+  for (  String uri : camelNamespaces) {
+    text=text.replaceAll("\"" + uri + "\":","");
+  }
+  return text;
+}

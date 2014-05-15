@@ -1,0 +1,27 @@
+{
+  if (node instanceof Element) {
+    String ns=getNamespaceURI(node);
+    if (ns != null && ns.equals(oldNS)) {
+      Namespace namespace=((Element)node).getNamespace();
+      if (namespace != null) {
+        if (namespace.getURI() != null && namespace.getURI().equals(oldNS)) {
+          ((Element)node).setNamespace(new Namespace(namespace.getPrefix(),newNS));
+        }
+      }
+      for (      Attribute attr : ((Element)node).getAttributes()) {
+        if (attr.getName().startsWith("xmlns")) {
+          String value=attr.getValue();
+          if (value != null && value.equals(oldNS)) {
+            attr.setValue(newNS);
+          }
+        }
+      }
+    }
+  }
+  if (node instanceof NodeWithChildren) {
+    for (    Node n : ((NodeWithChildren)node).getNodes()) {
+      replaceNamespace(n,oldNS,newNS);
+    }
+  }
+  return node;
+}

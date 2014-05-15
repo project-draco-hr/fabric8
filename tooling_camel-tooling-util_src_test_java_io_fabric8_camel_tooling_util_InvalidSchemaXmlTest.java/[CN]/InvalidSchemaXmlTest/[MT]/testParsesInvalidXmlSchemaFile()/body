@@ -1,0 +1,11 @@
+{
+  XmlModel m=assertLoadModel(new File(getBaseDir(),"src/test/resources/invalidSchemaRoute.xml"),1);
+  ValidationHandler status=m.validate();
+  for (  SAXParseException e : status.getErrors()) {
+    System.out.println("Error: " + e.getMessage());
+  }
+  for (  SAXParseException e : status.getFatalErrors()) {
+    System.out.println("Fatal Error: " + e.getMessage());
+  }
+  assertEquals("Should have validation errors: " + status,true,status.hasErrors());
+}

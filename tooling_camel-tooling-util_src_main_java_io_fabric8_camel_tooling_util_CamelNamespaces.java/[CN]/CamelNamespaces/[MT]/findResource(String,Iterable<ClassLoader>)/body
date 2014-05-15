@@ -1,0 +1,12 @@
+{
+  if (classLoaders == null) {
+    classLoaders=Arrays.asList(Thread.currentThread().getContextClassLoader(),CamelNamespaces.class.getClassLoader());
+  }
+  for (  ClassLoader cl : classLoaders) {
+    URL resource=tryLoadClass(cl,name);
+    if (resource != null) {
+      return resource;
+    }
+  }
+  return null;
+}

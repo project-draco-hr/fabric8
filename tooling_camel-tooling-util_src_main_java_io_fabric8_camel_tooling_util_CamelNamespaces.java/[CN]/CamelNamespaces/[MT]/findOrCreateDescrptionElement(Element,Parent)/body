@@ -1,0 +1,24 @@
+{
+  for (  Node node : element.getNodes()) {
+    if (node instanceof Element) {
+      if ("description".equals(((Element)node).getName())) {
+        return (Element)node;
+      }
+    }
+  }
+  Element parent=element.getParentElement();
+  if (element == root || parent == null || parent == root) {
+    return null;
+  }
+ else   if (elementsWithDescription.contains(element.getName())) {
+    String ebn=element.getBeginName();
+    int idx=ebn.indexOf(":");
+    String name=idx > 0 ? ebn.substring(0,idx + 1) + "description" : "description";
+    Element description=new Element(name,element.getNamespace());
+    element.addNode(0,description);
+    return description;
+  }
+ else {
+    return findOrCreateDescrptionElement(parent,root);
+  }
+}

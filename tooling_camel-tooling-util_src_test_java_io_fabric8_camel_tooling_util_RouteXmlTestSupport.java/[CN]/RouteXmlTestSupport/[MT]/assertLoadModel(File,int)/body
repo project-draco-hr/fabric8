@@ -1,0 +1,10 @@
+{
+  System.out.println("Loading file: " + file);
+  assertFileExists(file);
+  XmlModel x=tool.unmarshal(file);
+  System.out.println("Got: " + x);
+  List<RouteDefinition> routes=x.getRouteDefinitionList();
+  assertEquals("routes: " + routes,expected,routes.size());
+  System.out.println("routes: " + routes);
+  return x;
+}

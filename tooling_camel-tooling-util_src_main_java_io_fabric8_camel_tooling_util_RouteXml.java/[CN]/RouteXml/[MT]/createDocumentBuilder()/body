@@ -1,0 +1,14 @@
+{
+  DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+  dbf.setExpandEntityReferences(false);
+  dbf.setIgnoringComments(false);
+  dbf.setIgnoringElementContentWhitespace(false);
+  dbf.setCoalescing(false);
+  dbf.setNamespaceAware(true);
+  try {
+    return dbf.newDocumentBuilder();
+  }
+ catch (  ParserConfigurationException e) {
+    throw new RuntimeException(e.getMessage(),e);
+  }
+}

@@ -1,0 +1,11 @@
+{
+  ValidationHandler handler;
+  try {
+    handler=x.validate();
+  }
+ catch (  Exception e) {
+    throw new RuntimeException(e.getMessage(),e);
+  }
+  List<SAXParseException> errors=handler.getErrors();
+  assertTrue("errors were: " + errors,errors.size() == 0);
+}

@@ -1,0 +1,13 @@
+{
+  String exemplar="io/fabric8/camel/tooling/exemplar.xml";
+  URL url=findResource(exemplar,null);
+  if (url != null) {
+    return parse(new XMLIOSource(url));
+  }
+ else {
+    LOG.warn("Could not find file {} on the class path",exemplar);
+    Document d=new Document();
+    d.addNode(new Element("beans",springNamespace));
+    return d;
+  }
+}
