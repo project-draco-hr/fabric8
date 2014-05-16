@@ -1,0 +1,17 @@
+{
+  final int[] resultPointer=new int[1];
+  for (  final String outDir : outDirs) {
+    Thread t=new Thread(new Runnable(){
+      @Override public void run(){
+        System.out.println("Invoking project in " + outDir);
+        MavenCli maven=new MavenCli();
+        resultPointer[0]=maven.doMain(new String[]{"compile"},outDir,System.out,System.out);
+        System.out.println("result: " + resultPointer[0]);
+      }
+    }
+);
+    t.start();
+    t.join();
+    assertEquals("Build of project " + outDir + " failed. Result = "+ resultPointer[0],0,resultPointer[0]);
+  }
+}

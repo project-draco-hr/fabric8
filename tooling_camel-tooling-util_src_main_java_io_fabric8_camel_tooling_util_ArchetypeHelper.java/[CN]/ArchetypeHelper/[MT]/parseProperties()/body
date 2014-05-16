@@ -1,0 +1,32 @@
+{
+  Map<String,String> replaceProperties=new HashMap<String,String>();
+  ZipInputStream zip=null;
+  try {
+    zip=new ZipInputStream(archetypeIn);
+    boolean ok=true;
+    while (ok) {
+      ZipEntry entry=zip.getNextEntry();
+      if (entry == null) {
+        ok=false;
+      }
+ else {
+        if (!entry.isDirectory()) {
+          String fullName=entry.getName();
+          if (fullName != null && fullName.equals("META-INF/maven/archetype-metadata.xml")) {
+            parseReplaceProperties(zip,replaceProperties);
+          }
+        }
+        zip.closeEntry();
+      }
+    }
+  }
+ catch (  Exception e) {
+    throw new IOException(e.getMessage(),e);
+  }
+ finally {
+    if (zip != null) {
+      zip.close();
+    }
+  }
+  return replaceProperties;
+}

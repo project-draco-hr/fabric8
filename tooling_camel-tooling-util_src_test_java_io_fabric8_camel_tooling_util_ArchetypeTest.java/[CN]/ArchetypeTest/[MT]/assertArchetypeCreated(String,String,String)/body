@@ -1,0 +1,8 @@
+{
+  AetherResult result=aether.resolve(groupId,artifactId,version);
+  List<File> files=result.getResolvedFiles();
+  assertTrue("No files resolved for " + artifactId + " version: "+ version,files.size() > 0);
+  File archetypejar=files.get(0);
+  assertTrue("archetype jar does not exist",archetypejar.exists());
+  assertArchetypeCreated(artifactId,groupId,version,archetypejar);
+}
