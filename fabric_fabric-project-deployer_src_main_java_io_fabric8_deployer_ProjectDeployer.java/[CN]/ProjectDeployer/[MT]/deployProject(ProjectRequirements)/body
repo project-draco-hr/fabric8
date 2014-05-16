@@ -19,5 +19,12 @@
     downloadManager=DownloadManagers.createDownloadManager(fabric,overlay,executorService);
   }
   Map<String,Parser> profileArtifacts=AgentUtils.getProfileArtifacts(downloadManager,overlay);
+  Integer minimumInstances=requirements.getMinimumInstances();
+  if (minimumInstances != null) {
+    FabricRequirements fabricRequirements=fabric.getRequirements();
+    ProfileRequirements profileRequirements=fabricRequirements.getOrCreateProfileRequirement(profile.getId());
+    profileRequirements.setMinimumInstances(minimumInstances);
+    fabric.setRequirements(fabricRequirements);
+  }
   return resolveProfileDeployments(requirements,profile,profileArtifacts);
 }
