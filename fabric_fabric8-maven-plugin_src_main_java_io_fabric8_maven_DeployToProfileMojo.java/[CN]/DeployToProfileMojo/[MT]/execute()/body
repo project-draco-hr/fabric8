@@ -6,6 +6,7 @@
       requirements.setRootDependency(rootDependency);
     }
     configureRequirements(requirements);
+    boolean newUserAdded=false;
     fabricServer=mavenSettings.getServer(serverId);
     if (fabricServer == null) {
       boolean create=false;
@@ -32,8 +33,14 @@
         if (create) {
           System.out.println("Please let us know the login details for this server: " + serverId);
           System.out.println();
-          String userName=readInput("User name: ");
-          String password=readInput("Password: ");
+          String userName=readInput("Username: ");
+          String password=readPassword("Password: ");
+          String password2=readPassword("Repeat Password: ");
+          while (!password.equals(password2)) {
+            System.out.println("Passwords do not match, please try again.");
+            password=readPassword("Password: ");
+            password2=readPassword("Repeat Password: ");
+          }
           System.out.println();
           fabricServer=new Server();
           fabricServer.setId(serverId);
@@ -55,6 +62,7 @@
           mavenSettingsWriter.write(mavenSettingsFile,config,mavenSettings);
           System.out.println("Updated settings file: " + mavenSettingsFile.getAbsolutePath());
           System.out.println();
+          newUserAdded=true;
         }
       }
     }
@@ -65,7 +73,7 @@
     }
     J4pClient client=createJolokiaClient();
     if (upload && includeArtifact) {
-      uploadDeploymentUnit(client);
+      uploadDeploymentUnit(client,newUserAdded);
     }
  else {
       getLog().info("Uploading to the fabric8 maven repository is disabled");

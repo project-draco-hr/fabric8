@@ -11,6 +11,9 @@
   @SuppressWarnings("unchecked") List<Artifact> attachedArtifacts=project.getAttachedArtifacts();
   DefaultRepositoryLayout layout=new DefaultRepositoryLayout();
   ArtifactRepository repo=new DefaultArtifactRepository(serverId,uri,layout);
+  if (newUserAdded) {
+    repo.setAuthentication(new Authentication(fabricServer.getUsername(),fabricServer.getPassword()));
+  }
   boolean isPomArtifact="pom".equals(packaging);
   if (!isPomArtifact) {
     ProjectArtifactMetadata metadata=new ProjectArtifactMetadata(artifact,pomFile);
