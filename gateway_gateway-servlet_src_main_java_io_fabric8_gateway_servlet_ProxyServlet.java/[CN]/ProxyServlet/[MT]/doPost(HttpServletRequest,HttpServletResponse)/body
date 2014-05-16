@@ -1,7 +1,7 @@
 {
   ProxyDetails proxyDetails=createProxyDetails(httpServletRequest,httpServletResponse);
   if (!proxyDetails.isValid()) {
-    httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST,"Context-Path should contain the proxy hostname to use");
+    noMappingFound(httpServletRequest,httpServletResponse);
   }
  else {
     PostMethod postMethodProxyRequest=new PostMethod(proxyDetails.getStringProxyURL());
