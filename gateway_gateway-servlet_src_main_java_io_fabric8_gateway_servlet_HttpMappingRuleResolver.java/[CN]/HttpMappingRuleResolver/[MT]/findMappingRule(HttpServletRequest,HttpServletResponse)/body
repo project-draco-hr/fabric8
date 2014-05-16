@@ -1,5 +1,13 @@
 {
   String requestURI=request.getRequestURI();
-  MappingResult answer=resolver.findMappingRule(requestURI);
+  String contextPath=request.getContextPath();
+  MappingResult answer=null;
+  if (contextPath != null && contextPath.length() > 0 && !contextPath.equals("/")) {
+    String requestWithoutContextPath=requestURI.substring(contextPath.length());
+    answer=resolver.findMappingRule(requestWithoutContextPath);
+  }
+  if (answer == null) {
+    answer=resolver.findMappingRule(requestURI);
+  }
   return answer != null ? new HttpMappingResult(answer) : null;
 }
