@@ -1,9 +1,13 @@
 {
   try {
+    LOG.info("Starting producer");
     producerService=new ActiveMQService(connectionFactory);
     producerService.setMaxAttempts(10);
     producerService.start();
     String destination=(String)configuration.get("destination");
+    if (destination == null) {
+      destination=DEFAULT_DESTINATION;
+    }
     producer=new ProducerThread(producerService,destination);
     producer.setSleep(500);
     producer.start();

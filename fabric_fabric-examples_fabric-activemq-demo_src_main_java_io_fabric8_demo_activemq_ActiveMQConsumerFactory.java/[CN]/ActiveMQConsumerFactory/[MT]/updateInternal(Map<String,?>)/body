@@ -1,9 +1,13 @@
 {
   try {
+    LOG.info("Starting consumer");
     consumerService=new ActiveMQService(connectionFactory);
     consumerService.setMaxAttempts(10);
     consumerService.start();
     String destination=(String)configuration.get("destination");
+    if (destination == null) {
+      destination=DEFAULT_DESTINATION;
+    }
     consumer=new ConsumerThread(consumerService,destination);
     consumer.start();
     LOG.info("Consumer started");
