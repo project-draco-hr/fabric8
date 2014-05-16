@@ -9,6 +9,11 @@
     answer.setScope(artifact.getScope());
     answer.setType(artifact.getType());
     answer.setOptional(artifact.isOptional());
+    String type=answer.getType();
+    if (type != null && type.equals("pom")) {
+      getLog().debug("Ignoring pom.xml for " + answer);
+      return null;
+    }
     List children=node.getChildren();
     for (    Object child : children) {
       if (child instanceof DependencyNode) {
