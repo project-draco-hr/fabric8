@@ -2,9 +2,9 @@
   try {
     if (Strings.isNotBlank(value)) {
       String pidPey=value.substring(RESOLVER_SCHEME.length() + 1);
-      String answer=substituteFromProfile(configs,VERSIONS_PID,pidPey);
+      String answer=substituteFromProfile(fabricService,configs,VERSIONS_PID,pidPey);
       if (answer != null) {
-        answer=replaceVersions(configs,answer);
+        answer=replaceVersions(fabricService,configs,answer);
       }
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Replaced value " + value + " with answer: "+ answer);

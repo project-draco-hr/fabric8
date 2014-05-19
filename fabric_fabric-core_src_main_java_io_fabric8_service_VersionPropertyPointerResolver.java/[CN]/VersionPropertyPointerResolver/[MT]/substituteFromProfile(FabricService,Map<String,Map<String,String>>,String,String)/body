@@ -1,0 +1,15 @@
+{
+  Map<String,String> configuration=configs.get(pid);
+  if (configuration != null && configuration.containsKey(key)) {
+    return configuration.get(key);
+  }
+ else {
+    configuration=fabricService.getCurrentContainer().getOverlayProfile().getConfiguration(pid);
+    if (configuration != null && configuration.containsKey(key)) {
+      return configuration.get(key);
+    }
+ else {
+      return EMPTY;
+    }
+  }
+}

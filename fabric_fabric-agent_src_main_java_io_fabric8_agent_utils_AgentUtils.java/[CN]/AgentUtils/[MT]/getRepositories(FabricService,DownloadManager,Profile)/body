@@ -5,7 +5,7 @@
       try {
         String replacedUrl=repositoryUrl;
         if (repositoryUrl.contains("$")) {
-          replacedUrl=VersionPropertyPointerResolver.replaceVersions(profile.getConfigurations(),repositoryUrl);
+          replacedUrl=VersionPropertyPointerResolver.replaceVersions(fabricService,profile.getConfigurations(),repositoryUrl);
         }
         URI repoUri=new URI(replacedUrl);
         addRepository(downloadManager,repositories,repoUri);
