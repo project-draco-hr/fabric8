@@ -23,5 +23,12 @@
   if (overlayResources != null && !overlayResources.isEmpty()) {
     answer=CompositeTask.combine(answer,new DownloadResourcesTask(overlayResources));
   }
+  if (!configObject.isInternalAgent()) {
+    Map<String,File> javaArtifacts=JavaContainers.getJavaContainerArtifactsFiles(fabricService,profiles,downloadExecutor);
+    if (!javaArtifacts.isEmpty()) {
+      answer=CompositeTask.combine(answer,new InstallDeploymentsTask(javaArtifacts));
+      setProvisionList(container,javaArtifacts);
+    }
+  }
   return answer;
 }

@@ -1,0 +1,18 @@
+{
+  File baseDir=ProcessUtils.findInstallDir(installDir);
+  String sharedLibraryPath=config.getSharedLibraryPath();
+  String deployPath=config.getDeployPath();
+  File sharedLibDir=new File(baseDir,sharedLibraryPath);
+  File deployDir=new File(baseDir,deployPath);
+  sharedLibDir.mkdirs();
+  deployDir.mkdirs();
+  Set<Map.Entry<String,File>> entries=javaArtifacts.entrySet();
+  for (  Map.Entry<String,File> entry : entries) {
+    String uri=entry.getKey();
+    File file=entry.getValue();
+    String fileName=file.getName();
+    File destDir=fileName.endsWith(".jar") ? sharedLibDir : deployDir;
+    File destFile=new File(destDir,fileName);
+    Files.copy(file,destFile);
+  }
+}
