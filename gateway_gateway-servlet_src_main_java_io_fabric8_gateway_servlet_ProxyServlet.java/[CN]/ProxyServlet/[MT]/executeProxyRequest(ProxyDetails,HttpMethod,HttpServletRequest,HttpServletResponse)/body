@@ -24,7 +24,9 @@
   httpServletResponse.setStatus(intProxyResponseCode);
   Header[] headerArrayResponse=httpMethodProxyRequest.getResponseHeaders();
   for (  Header header : headerArrayResponse) {
-    httpServletResponse.setHeader(header.getName(),header.getValue());
+    if (!ProxySupport.isHopByHopHeader(header.getName())) {
+      httpServletResponse.setHeader(header.getName(),header.getValue());
+    }
   }
   int code=httpMethodProxyRequest.getStatusCode();
   boolean noData=code == HttpStatus.SC_NO_CONTENT;
