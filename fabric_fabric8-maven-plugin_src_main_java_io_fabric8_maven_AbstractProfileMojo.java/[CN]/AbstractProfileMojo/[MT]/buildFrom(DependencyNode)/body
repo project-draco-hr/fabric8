@@ -6,7 +6,8 @@
     answer.setArtifactId(artifact.getArtifactId());
     answer.setVersion(artifact.getVersion());
     answer.setClassifier(artifact.getClassifier());
-    answer.setScope(artifact.getScope());
+    String scope=artifact.getScope();
+    answer.setScope(scope);
     answer.setType(artifact.getType());
     answer.setOptional(artifact.isOptional());
     String type=answer.getType();
@@ -18,6 +19,12 @@
     if (state != DependencyNode.INCLUDED) {
       getLog().debug("Ignoring " + node);
       return null;
+    }
+    if (isWarProject()) {
+      if (scope != null && !scope.equals("provided")) {
+        getLog().debug("WAR packaging so ignoring non-provided scope " + scope + " for "+ node);
+        return null;
+      }
     }
     List children=node.getChildren();
     for (    Object child : children) {
