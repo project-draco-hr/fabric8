@@ -1,6 +1,9 @@
 {
   Client client=new Client();
-  System.out.println("Calling the sayHello first time with the result " + client.getProxy().sayHello());
-  System.out.println("Calling the sayHello second time with the result " + client.getProxy().sayHello());
-  System.out.println("Calling the sayHello third time with the result " + client.getProxy().sayHello());
+  System.out.println("Calling the web service 10 times with 5 second delay ...");
+  for (int i=0; i < 10; i++) {
+    System.out.println("Calling the sayHello #" + i + " with result: "+ client.getProxy().sayHello());
+    Thread.sleep(5000);
+  }
+  System.out.println("... Done");
 }
