@@ -2,7 +2,7 @@
   DependencyDTO rootDependency=requirements.getRootDependency();
   if (rootDependency != null) {
     LOG.info("Got root: " + rootDependency);
-    String bundleUrl=rootDependency.toBundleUrl();
+    String bundleUrl=rootDependency.toBundleUrlWithType();
     List<String> bundles=profile.getBundles();
     String prefix=rootDependency.toBundleUrlWithoutVersion();
     List<String> originalBundles=new ArrayList<String>(bundles);
@@ -18,6 +18,15 @@
     profile.setBundles(bundles);
     LOG.info("Adding bundle: " + bundleUrl);
   }
-  LOG.info("Got profile artifacts: " + profileArtifacts);
+  if (false) {
+    DownloadManager downloadManager=null;
+    if (container != null) {
+      downloadManager=DownloadManagers.createDownloadManager(fabric,executorService);
+    }
+ else {
+      downloadManager=DownloadManagers.createDownloadManager(fabric,overlay,executorService);
+    }
+    Map<String,Parser> profileArtifacts=AgentUtils.getProfileArtifacts(fabric,downloadManager,overlay);
+  }
   return new DeployResults(profile);
 }

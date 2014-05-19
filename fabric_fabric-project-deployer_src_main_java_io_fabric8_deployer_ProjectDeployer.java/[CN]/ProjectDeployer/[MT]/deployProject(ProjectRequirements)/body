@@ -11,14 +11,6 @@
   }
  catch (  Exception e) {
   }
-  DownloadManager downloadManager=null;
-  if (container != null) {
-    downloadManager=DownloadManagers.createDownloadManager(fabric,executorService);
-  }
- else {
-    downloadManager=DownloadManagers.createDownloadManager(fabric,overlay,executorService);
-  }
-  Map<String,Parser> profileArtifacts=AgentUtils.getProfileArtifacts(fabric,downloadManager,overlay);
   Integer minimumInstances=requirements.getMinimumInstances();
   if (minimumInstances != null) {
     FabricRequirements fabricRequirements=fabric.getRequirements();
@@ -26,5 +18,5 @@
     profileRequirements.setMinimumInstances(minimumInstances);
     fabric.setRequirements(fabricRequirements);
   }
-  return resolveProfileDeployments(requirements,profile,profileArtifacts);
+  return resolveProfileDeployments(requirements,fabric,container,profile,overlay);
 }
