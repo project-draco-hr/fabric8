@@ -1,0 +1,15 @@
+{
+synchronized (this) {
+    if (pool_enabled) {
+      return_pool(this);
+    }
+    if (discoveryAgent != null) {
+      discoveryAgent.stop();
+    }
+    if (started.compareAndSet(true,false)) {
+      stop();
+    }
+  }
+  waitForStop();
+  executor.shutdownNow();
+}

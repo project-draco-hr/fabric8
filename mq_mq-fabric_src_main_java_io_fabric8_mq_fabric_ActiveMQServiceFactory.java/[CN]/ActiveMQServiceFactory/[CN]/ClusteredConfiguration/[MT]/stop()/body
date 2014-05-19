@@ -1,0 +1,11 @@
+{
+  if (stop_future == null || stop_future.isDone()) {
+    interruptAndWaitForStart();
+    stop_future=executor.submit(new Runnable(){
+      @Override public void run(){
+        doStop();
+      }
+    }
+);
+  }
+}

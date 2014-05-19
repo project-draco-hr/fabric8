@@ -1,0 +1,30 @@
+{
+  this.properties=properties;
+  this.name=properties.getProperty("broker-name");
+  if (this.name == null)   this.name=System.getProperty("karaf.home");
+  this.data=properties.getProperty("data");
+  if (this.data == null)   this.data="data" + System.getProperty("file.separator") + this.name;
+  this.config=properties.getProperty("config");
+  if (this.config == null)   ActiveMQServiceFactory.arg_error("config property must be set");
+  this.group=properties.getProperty("group");
+  if (this.group == null)   this.group="default";
+  this.pool=properties.getProperty("standby.pool");
+  if (this.pool == null)   this.pool="default";
+  String connectorsProperty=properties.getProperty("connectors","");
+  this.connectors=connectorsProperty.split("\\s");
+  this.replicating="true".equalsIgnoreCase(properties.getProperty("replicating"));
+  this.standalone="true".equalsIgnoreCase(properties.getProperty("standalone"));
+  this.registerService="true".equalsIgnoreCase(properties.getProperty("registerService"));
+  this.configCheck="true".equalsIgnoreCase(properties.getProperty("config.check"));
+  ensure_broker_name_is_set();
+  if (standalone) {
+    if (started.compareAndSet(false,true)) {
+      info("Standalone broker %s is starting.",name);
+      start();
+    }
+  }
+ else {
+    urlHandlerService.waitForService(60000L);
+    updateCurator(curator);
+  }
+}

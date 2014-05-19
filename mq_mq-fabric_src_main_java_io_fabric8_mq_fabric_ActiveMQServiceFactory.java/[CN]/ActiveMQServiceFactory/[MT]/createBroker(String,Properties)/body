@@ -1,0 +1,54 @@
+{
+  CONFIG_PROPERTIES.set(properties);
+  try {
+    ClassLoader classLoader=new MultiParentClassLoader("xbean",new URL[0],new ClassLoader[]{this.getClass().getClassLoader(),BrokerService.class.getClassLoader()});
+    Thread.currentThread().setContextClassLoader(classLoader);
+    Resource resource=Utils.resourceFromString(uri);
+    ResourceXmlApplicationContext ctx=new ResourceXmlApplicationContext(resource){
+      @Override protected void initBeanDefinitionReader(      XmlBeanDefinitionReader reader){
+        reader.setValidating(false);
+      }
+    }
+;
+    String[] names=ctx.getBeanNamesForType(BrokerService.class);
+    BrokerService broker=null;
+    for (    String name : names) {
+      broker=ctx.getBean(name,BrokerService.class);
+      if (broker != null) {
+        break;
+      }
+    }
+    if (broker == null) {
+      arg_error("Configuration did not contain a BrokerService");
+    }
+    String networks=properties.getProperty("network","");
+    String[] networksTab=networks.split(",");
+    for (    String name : networksTab) {
+      if (!name.isEmpty()) {
+        LOG.info("Adding network connector " + name);
+        NetworkConnector nc=new DiscoveryNetworkConnector(new URI("fabric:" + name));
+        nc.setName("fabric-" + name);
+        Map<String,Object> networkProperties=new HashMap<String,Object>();
+        networkProperties.put("network.userName","admin");
+        networkProperties.put("network.password",properties.getProperty("zookeeper.password"));
+        for (        String k : properties.stringPropertyNames()) {
+          networkProperties.put(k,properties.getProperty(k));
+        }
+        IntrospectionSupport.setProperties(nc,networkProperties,"network.");
+        if (broker != null) {
+          broker.addNetworkConnector(nc);
+        }
+      }
+    }
+    SpringBrokerContext brokerContext=new SpringBrokerContext();
+    brokerContext.setConfigurationUrl(resource.getURL().toExternalForm());
+    brokerContext.setApplicationContext(ctx);
+    if (broker != null) {
+      broker.setBrokerContext(brokerContext);
+    }
+    return new ServerInfo(ctx,broker,resource);
+  }
+  finally {
+    CONFIG_PROPERTIES.remove();
+  }
+}

@@ -1,0 +1,11 @@
+{
+  config_thread.running=false;
+  config_thread.interrupt();
+  config_thread.join();
+  for (  String pid : configurations.keySet()) {
+    deleted(pid);
+  }
+  fabricService.close();
+  curatorService.close();
+  urlHandlerService.close();
+}

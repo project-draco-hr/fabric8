@@ -1,0 +1,7 @@
+{
+  final javax.jms.ConnectionFactory connectionFactory=new ActiveMQConnectionFactory("vm://" + broker.getBrokerName() + "?create=false");
+  Hashtable<String,String> properties=new Hashtable<String,String>();
+  properties.put("name",broker.getBrokerName());
+  cfServiceRegistration=bundleContext.registerService(ConnectionFactory.class,connectionFactory,properties);
+  debug("registerService of type " + javax.jms.ConnectionFactory.class.getName() + " as: "+ connectionFactory+ " with name: "+ broker.getBrokerName()+ "; "+ cfServiceRegistration);
+}

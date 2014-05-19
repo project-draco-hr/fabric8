@@ -1,0 +1,11 @@
+{
+  try {
+    deleted(pid);
+    configurations.put(pid,new ClusteredConfiguration(toProperties(properties)));
+  }
+ catch (  Exception e) {
+    ConfigurationException configurationException=new ConfigurationException(null,"Unable to parse ActiveMQ configuration: " + e.getMessage());
+    configurationException.initCause(e);
+    throw configurationException;
+  }
+}

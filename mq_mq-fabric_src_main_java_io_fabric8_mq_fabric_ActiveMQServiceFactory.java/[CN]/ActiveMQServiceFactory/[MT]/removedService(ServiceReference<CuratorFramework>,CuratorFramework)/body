@@ -1,0 +1,14 @@
+{
+  boundCuratorRefs.remove(reference);
+  try {
+    if (boundCuratorRefs.isEmpty()) {
+      bindCurator(null);
+    }
+ else {
+      bindCurator(curatorService.getService(boundCuratorRefs.get(0)));
+    }
+  }
+ catch (  Exception e) {
+    throw new RuntimeException(e.getMessage(),e);
+  }
+}
