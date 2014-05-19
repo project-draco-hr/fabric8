@@ -1,0 +1,19 @@
+{
+  chechNotNull(in);
+  HashMap<String,HttpProxyRule> map=new HashMap<String,HttpProxyRule>();
+  try {
+    for (    JsonNode node : getRuleBase(OM.readTree(in))) {
+      String rule=node.get("rule").asText();
+      HttpProxyRule httpProxyRule=new HttpProxyRule(rule);
+      httpProxyRule.to(node.get("to").asText());
+      map.put(rule,httpProxyRule);
+    }
+    return map;
+  }
+ catch (  IOException e) {
+    throw new RuntimeException(e.getMessage(),e);
+  }
+ finally {
+    safeClose(in);
+  }
+}
