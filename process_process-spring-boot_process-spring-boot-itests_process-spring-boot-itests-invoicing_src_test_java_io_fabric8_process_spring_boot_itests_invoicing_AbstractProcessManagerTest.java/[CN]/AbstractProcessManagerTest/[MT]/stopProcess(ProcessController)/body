@@ -1,0 +1,14 @@
+{
+  try {
+    if (processController != null) {
+      processController.stop();
+    }
+  }
+ catch (  IllegalThreadStateException e) {
+    System.out.println("Ignoring <java.lang.IllegalThreadStateException: process hasn't exited> exception.");
+  }
+catch (  Exception e) {
+    System.out.println("Problem occurred while stopping the process " + processController);
+    e.printStackTrace();
+  }
+}

@@ -1,0 +1,13 @@
+{
+  try {
+    processController.start();
+  }
+  finally {
+    getRuntime().addShutdownHook(new Thread(){
+      @Override public void run(){
+        stopProcess(processController);
+      }
+    }
+);
+  }
+}
