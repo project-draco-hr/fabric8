@@ -3,9 +3,12 @@
     if (processController != null) {
       processController.stop();
     }
+ else {
+      System.out.println("Process controller has not been initialized - skipping stop command.");
+    }
   }
  catch (  IllegalThreadStateException e) {
-    System.out.println("Ignoring <java.lang.IllegalThreadStateException: process hasn't exited> exception.");
+    System.out.println(format("There is no need to kill the process %s. Process already stopped.",processController));
   }
 catch (  Exception e) {
     System.out.println("Problem occurred while stopping the process " + processController);
