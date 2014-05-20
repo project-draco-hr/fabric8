@@ -14,5 +14,11 @@
  catch (  Exception e) {
     LOGGER.error("Failed to execute process " + "stdin" + " for " + commands + ": "+ e,e);
   }
-  return process != null ? process.exitValue() : 1;
+  try {
+    return process != null ? process.waitFor() : 1;
+  }
+ catch (  InterruptedException e) {
+    String message=format("Interrupted while waiting for 'kill %d ' command to finish",pid);
+    throw new RuntimeException(message,e);
+  }
 }
