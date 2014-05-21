@@ -14,7 +14,8 @@
       }
     }
 ;
-    syscontext.addServiceListener(listener,"(objectClass=" + BootstrapConfiguration.class.getName() + ")");
+    String filter="(objectClass=" + BootstrapConfiguration.class.getName() + ")";
+    bootConfig.getComponentContext().getBundleContext().addServiceListener(listener,filter);
     LOGGER.debug("Disable BootstrapConfiguration");
     ComponentContext componentContext=bootConfig.getComponentContext();
     componentContext.disableComponent(BootstrapConfiguration.COMPONENT_NAME);
