@@ -31,6 +31,8 @@
               throw new FailedLoginException("Tokens do not match");
             }
  else {
+              request.setAttribute(HttpContext.AUTHENTICATION_TYPE,HttpServletRequest.BASIC_AUTH);
+              request.setAttribute(HttpContext.REMOTE_USER,username);
               return true;
             }
           }

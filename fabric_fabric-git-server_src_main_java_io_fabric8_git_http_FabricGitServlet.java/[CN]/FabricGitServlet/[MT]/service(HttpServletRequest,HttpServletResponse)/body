@@ -1,6 +1,7 @@
 {
   String service=req.getParameter("service");
   boolean isPush=service != null && service.equals("git-receive-pack");
+  LOGGER.trace("FabricGitServlet service git service={}, isPush={}",service,isPush);
   Lock lock=isPush ? rwLock.writeLock() : rwLock.readLock();
   try {
     lock.lock();
