@@ -1,0 +1,51 @@
+{
+  Map<String,String> initialEnvironmentVariables=new HashMap<String,String>();
+  ProcessConfig currentConfig=getProcessConfig(installation);
+  if (currentConfig != null) {
+    Map<String,String> environment=currentConfig.getEnvironment();
+    for (    Map.Entry<String,String> entry : environment.entrySet()) {
+      String key=entry.getKey();
+      if (key.endsWith("_PROXY_PORT")) {
+        String value=entry.getValue();
+        initialEnvironmentVariables.put(key,value);
+      }
+    }
+  }
+  CreateContainerMetadata<?> containerMetadata=container.getMetadata();
+  if (containerMetadata instanceof CreateChildContainerMetadata) {
+    CreateChildContainerMetadata metadata=(CreateChildContainerMetadata)containerMetadata;
+    CreateContainerOptions createOptions=metadata.getCreateOptions();
+    if (createOptions instanceof CreateChildContainerOptions) {
+      CreateChildContainerOptions options=(CreateChildContainerOptions)createOptions;
+      ProcessManager procManager=new ProcessManager(){
+        @Override public Installation install(        InstallOptions parameters,        InstallTask postInstall) throws Exception {
+          updateInstallation(container,installation,parameters,postInstall);
+          return null;
+        }
+        @Override public Installation installJar(        InstallOptions parameters) throws Exception {
+          updateInstallation(container,installation,parameters,null);
+          return null;
+        }
+        @Override public Executor getExecutor(){
+          return processManager.getExecutor();
+        }
+        @Override public List<Installation> listInstallations(){
+          return processManager.listInstallations();
+        }
+        @Override public ImmutableMap<String,Installation> listInstallationMap(){
+          return processManager.listInstallationMap();
+        }
+        @Override public Installation getInstallation(        String id){
+          return processManager.getInstallation(id);
+        }
+        @Override public ProcessConfig loadProcessConfig(        InstallOptions options) throws IOException {
+          return processManager.loadProcessConfig(options);
+        }
+      }
+;
+      Installation newInstallation=createInstallation(procManager,container,options,metadata,initialEnvironmentVariables);
+      if (newInstallation != null) {
+      }
+    }
+  }
+}

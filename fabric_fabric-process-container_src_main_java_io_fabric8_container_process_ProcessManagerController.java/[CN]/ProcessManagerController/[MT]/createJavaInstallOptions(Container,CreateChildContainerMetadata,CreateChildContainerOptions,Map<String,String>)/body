@@ -7,7 +7,19 @@
   boolean isJavaContainer=true;
   javaConfig.updateEnvironmentVariables(environmentVariables,isJavaContainer);
   if (JolokiaAgentHelper.hasJolokiaAgent(environmentVariables)) {
-    int jolokiaPort=owner.createJolokiaPort(container.getId());
+    String JOLOKIA_PROXY_PORT_ENV="FABRIC8_JOLOKIA_PROXY_PORT";
+    String portText=environmentVariables.get(JOLOKIA_PROXY_PORT_ENV);
+    Integer portObject=null;
+    if (portText != null) {
+      try {
+        portObject=Integer.parseInt(portText);
+      }
+ catch (      NumberFormatException e) {
+        LOG.warn("Ignoring bad port number for " + JOLOKIA_PROXY_PORT_ENV + " value '"+ portText+ ". "+ e,e);
+      }
+    }
+    int jolokiaPort=(portObject != null) ? portObject : owner.createJolokiaPort(container.getId());
+    environmentVariables.put(JOLOKIA_PROXY_PORT_ENV,"" + jolokiaPort);
     JolokiaAgentHelper.substituteEnvironmentVariables(javaConfig,environmentVariables,isJavaContainer,JolokiaAgentHelper.getJolokiaPortOverride(jolokiaPort),JolokiaAgentHelper.getJolokiaAgentIdOverride(fabricService.getEnvironment()));
   }
  else {

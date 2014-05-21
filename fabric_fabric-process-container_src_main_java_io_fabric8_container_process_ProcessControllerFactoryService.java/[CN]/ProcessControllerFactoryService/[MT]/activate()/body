@@ -8,4 +8,8 @@
   }
 ;
   keepAliveTimer.schedule(timerTask,monitorPollTime,monitorPollTime);
+  DataStore dataStore=getDataStore();
+  if (dataStore != null) {
+    dataStore.trackConfiguration(configurationChangeHandler);
+  }
 }

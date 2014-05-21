@@ -51,12 +51,28 @@
     Integer port=entry.getKey();
     String portName=entry.getValue();
     int externalPort=port;
-    if (!disableDynamicPorts.contains(portName)) {
-      externalPort=owner.createExternalPort(containerId,portName,usedPortByHost,options);
+    environmentVariables.put("FABRIC8_" + portName + "_PORT","" + port);
+    String proxyPortEnvName="FABRIC8_" + portName + "_PROXY_PORT";
+    Integer currentProxyPort=null;
+    String currentExternalPortText=environmentVariables.get(proxyPortEnvName);
+    if (currentExternalPortText != null) {
+      try {
+        currentProxyPort=Integer.parseInt(currentExternalPortText);
+      }
+ catch (      NumberFormatException e) {
+        LOG.warn("Could not parse env var " + proxyPortEnvName + " of "+ currentExternalPortText+ " as a number: "+ e,e);
+      }
+    }
+    if (currentProxyPort != null) {
+      externalPort=currentProxyPort;
+    }
+ else {
+      if (!disableDynamicPorts.contains(portName)) {
+        externalPort=owner.createExternalPort(containerId,portName,usedPortByHost,options);
+      }
+      environmentVariables.put(proxyPortEnvName,"" + externalPort);
     }
     externalPorts.put(portName,externalPort);
-    environmentVariables.put("FABRIC8_" + portName + "_PORT","" + port);
-    environmentVariables.put("FABRIC8_" + portName + "_PROXY_PORT","" + externalPort);
     if (portName.equals(JolokiaAgentHelper.JOLOKIA_PORT_NAME)) {
       jolokiaUrl="http://" + listenHost + ":"+ externalPort+ "/jolokia/";
       LOG.info("Found Jolokia URL: " + jolokiaUrl);

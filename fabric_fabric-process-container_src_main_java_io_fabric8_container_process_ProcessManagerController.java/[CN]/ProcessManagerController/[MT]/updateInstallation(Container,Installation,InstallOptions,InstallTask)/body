@@ -1,0 +1,29 @@
+{
+  boolean requiresRestart=false;
+  ProcessConfig processConfig=processManager.loadProcessConfig(parameters);
+  processConfig.setName(parameters.getName());
+  ProcessConfig oldConfig=getProcessConfig(installation);
+  String id=installation.getId();
+  File installDir=installation.getInstallDir();
+  if (processConfig != null && !oldConfig.equals(processConfig)) {
+    requiresRestart=true;
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Requires restart as config has changed: OLD: " + JsonHelper.toJson(oldConfig) + " and NEW: "+ JsonHelper.toJson(processConfig));
+    }
+    postInstall.install(processConfig,id,installDir);
+  }
+  if (postInstall != null) {
+    JsonHelper.saveProcessConfig(processConfig,installDir);
+  }
+ else {
+    JarInstaller installer=new JarInstaller(processManager.getExecutor());
+    installer.unpackJarProcess(processConfig,id,installDir,parameters);
+  }
+  if (requiresRestart) {
+    LOG.info("Restarting " + container.getId() + " due to profile change");
+    ProcessController controller=installation.getController();
+    if (controller != null) {
+      controller.restart();
+    }
+  }
+}
