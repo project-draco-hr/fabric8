@@ -1,0 +1,10 @@
+{
+  File jvmConfigFile=new File(etc,"jvm.config");
+  if (jvmConfigFile.exists() && jvmConfigFile.length() > 0) {
+    LOGGER.debug("Non empty {} file exists. Skipping writing of the following jvmOptions: {}",jvmConfigFile,Arrays.toString(jvmOptions));
+  }
+ else {
+    LOGGER.debug("Writing the following jvmOptions to the {} file: {}",jvmConfigFile,Arrays.toString(jvmOptions));
+    Files.write(generateJvmConfig(jvmOptions),jvmConfigFile,Charsets.UTF_8);
+  }
+}

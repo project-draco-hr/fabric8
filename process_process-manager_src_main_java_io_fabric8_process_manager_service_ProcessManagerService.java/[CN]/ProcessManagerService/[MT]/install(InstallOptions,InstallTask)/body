@@ -6,6 +6,8 @@
       if (options.getExtractCmd() != null) {
         File archive=new File(installDir,INSTALLED_BINARY);
         FileUtils.extractArchive(archive,installDir,options.getExtractCmd(),untarTimeout,executor);
+        File nestedProcessDirectory=findInstallDir(installDir);
+        writeJvmConfig(new File(nestedProcessDirectory,"etc"),options.getJvmOptions());
       }
       if (postInstall != null) {
         postInstall.install(config,id,installDir);
