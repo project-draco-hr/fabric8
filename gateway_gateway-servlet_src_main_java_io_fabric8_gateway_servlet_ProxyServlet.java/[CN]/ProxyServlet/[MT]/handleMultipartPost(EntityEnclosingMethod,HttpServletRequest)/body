@@ -16,9 +16,9 @@
         listParts.add(filePart);
       }
     }
-    MultipartRequestEntity multipartRequestEntity=new MultipartRequestEntity(listParts.toArray(new Part[]{}),postMethodProxyRequest.getParams());
-    postMethodProxyRequest.setRequestEntity(multipartRequestEntity);
-    postMethodProxyRequest.setRequestHeader(STRING_CONTENT_TYPE_HEADER_NAME,multipartRequestEntity.getContentType());
+    MultipartRequestEntity multipartRequestEntity=new MultipartRequestEntity(listParts.toArray(new Part[]{}),entityEnclosingMethod.getParams());
+    entityEnclosingMethod.setRequestEntity(multipartRequestEntity);
+    entityEnclosingMethod.setRequestHeader(STRING_CONTENT_TYPE_HEADER_NAME,multipartRequestEntity.getContentType());
   }
  catch (  FileUploadException fileUploadException) {
     throw new ServletException(fileUploadException);

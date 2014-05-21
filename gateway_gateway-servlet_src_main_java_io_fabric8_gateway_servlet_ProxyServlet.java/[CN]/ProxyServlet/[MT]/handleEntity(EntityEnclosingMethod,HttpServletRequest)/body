@@ -15,13 +15,15 @@
     if (contentType.contains("json") || contentType.contains("xml") || contentType.contains("application")|| contentType.contains("text")) {
       String body=IOHelpers.readFully(httpServletRequest.getReader());
       entity=new StringRequestEntity(body,contentType,httpServletRequest.getCharacterEncoding());
-      postMethodProxyRequest.setRequestEntity(entity);
+      entityEnclosingMethod.setRequestEntity(entity);
     }
   }
   NameValuePair[] parameters=listNameValuePairs.toArray(new NameValuePair[]{});
   if (entity != null) {
   }
  else {
-    postMethodProxyRequest.setRequestBody(parameters);
+    if (entityEnclosingMethod instanceof PostMethod) {
+      ((PostMethod)entityEnclosingMethod).setRequestBody(parameters);
+    }
   }
 }
