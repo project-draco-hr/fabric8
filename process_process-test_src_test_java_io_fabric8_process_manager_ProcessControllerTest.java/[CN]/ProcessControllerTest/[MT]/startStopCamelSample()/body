@@ -1,10 +1,8 @@
 {
-  System.setProperty("java.protocol.handler.pkgs","org.ops4j.pax.url.mvn");
-  processManager.init();
   InstallTask postInstall=null;
   String version=FabricConstants.FABRIC_VERSION;
   InstallOptions options=InstallOptions.builder().name("camel-sample").url(new URL(null,"mvn:io.fabric8.samples/process-sample-camel-spring/" + version + "/tar.gz",new Handler())).build();
-  Installation install=processManager.install(options,postInstall);
+  Installation install=processManagerService.install(options,postInstall);
   String id=install.getId();
   assertTrue("ID should not be blank " + id,Strings.isNotBlank(id));
   File installDir=install.getInstallDir();
@@ -12,9 +10,9 @@
     fail("Installation does not exist: " + installDir);
   }
   ProcessController controller=install.getController();
-  int rc=controller.start();
+  int rc=startProcess(controller);
   assertEquals("Return code",0,rc);
   Thread.sleep(2000);
-  rc=controller.stop();
+  rc=stopProcess(controller);
   assertEquals("Return code",0,rc);
 }
