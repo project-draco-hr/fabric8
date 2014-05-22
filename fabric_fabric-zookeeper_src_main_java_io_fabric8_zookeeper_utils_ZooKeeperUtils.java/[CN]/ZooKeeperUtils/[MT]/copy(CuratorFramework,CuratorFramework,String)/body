@@ -2,7 +2,7 @@
   for (  String child : source.getChildren().forPath(path)) {
     child=ZKPaths.makePath(path,child);
     Stat stat=source.checkExists().forPath(child);
-    if (stat.getEphemeralOwner() == 0 && dest.checkExists().forPath(child) == null) {
+    if (stat != null && stat.getEphemeralOwner() == 0 && dest.checkExists().forPath(child) == null) {
       byte[] data=source.getData().forPath(child);
       setData(dest,child,data);
       copy(source,dest,child);
