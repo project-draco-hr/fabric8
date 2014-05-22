@@ -5,7 +5,7 @@
   config_thread.start();
   fabricService=new ServiceTracker<FabricService,FabricService>(this.bundleContext,FabricService.class,null);
   fabricService.open();
-  curatorService=new ServiceTracker<CuratorFramework,CuratorFramework>(this.bundleContext,CuratorFramework.class,null);
+  curatorService=new ServiceTracker<CuratorFramework,CuratorFramework>(this.bundleContext,CuratorFramework.class,this);
   curatorService.open();
   filter=FrameworkUtil.createFilter("(&(objectClass=org.osgi.service.url.URLStreamHandlerService)(url.handler.protocol=profile))");
   urlHandlerService=new ServiceTracker<URLStreamHandlerService,URLStreamHandlerService>(this.bundleContext,filter,null);
