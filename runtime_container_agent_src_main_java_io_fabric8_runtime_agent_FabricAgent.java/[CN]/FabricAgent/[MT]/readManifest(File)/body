@@ -1,0 +1,11 @@
+{
+  FileInputStream fis=null;
+  try {
+    fis=new FileInputStream(file);
+    JarInputStream jis=new JarInputStream(fis);
+    return jis.getManifest();
+  }
+  finally {
+    Closeables.closeQuitely(fis);
+  }
+}

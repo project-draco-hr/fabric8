@@ -15,7 +15,9 @@
   if (profile != null && fabric != null && provisionService != null) {
     List<String> resources=null;
     try {
-      resources=updateProvisioning(fabric,profile,provisionService);
+      Map<String,File> artifacts=downloadProfileArtifacts(fabric,profile);
+      populateExplodedWar(artifacts);
+      resources=updateProvisioning(artifacts,provisionService);
       updateStatus(Container.PROVISION_SUCCESS,null,resources);
     }
  catch (    Throwable e) {

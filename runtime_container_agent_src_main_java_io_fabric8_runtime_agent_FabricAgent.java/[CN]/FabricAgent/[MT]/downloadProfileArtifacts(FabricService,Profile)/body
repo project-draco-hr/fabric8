@@ -1,0 +1,9 @@
+{
+  updateStatus("downloading",null,null);
+  Set<String> bundles=new LinkedHashSet<String>();
+  Set<Feature> features=new LinkedHashSet<Feature>();
+  bundles.addAll(profile.getBundles());
+  DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,downloadExecutor);
+  AgentUtils.addFeatures(features,fabric,downloadManager,profile);
+  return AgentUtils.downloadBundles(downloadManager,features,bundles,Collections.<String>emptySet());
+}

@@ -1,17 +1,11 @@
 {
-  updateStatus("installing",null,null);
-  Set<String> bundles=new LinkedHashSet<String>();
-  Set<Feature> features=new LinkedHashSet<Feature>();
-  bundles.addAll(profile.getBundles());
-  DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,downloadExecutor);
-  AgentUtils.addFeatures(features,fabric,downloadManager,profile);
   ResourceInstaller resourceInstaller=provisionService.getResourceInstaller();
   Map<ResourceIdentity,Resource> installedResources=getInstalledResources(provisionService);
   Map<Requirement,Resource> requirements=new HashMap<Requirement,Resource>();
-  Map<String,File> files=AgentUtils.downloadBundles(downloadManager,features,bundles,Collections.<String>emptySet());
-  Set<Map.Entry<String,File>> entries=files.entrySet();
+  Set<Map.Entry<String,File>> entries=artifacts.entrySet();
   List<Resource> resourcesToInstall=new ArrayList<Resource>();
   List<String> resourceUrisInstalled=new ArrayList<String>();
+  updateStatus("installing",null,null);
   for (  Map.Entry<String,File> entry : entries) {
     String name=entry.getKey();
     File file=entry.getValue();
@@ -21,14 +15,13 @@
       coords=name.substring(idx + 1);
     }
     coords=coords.replace('/',':');
-    MavenCoordinates mvnCoords=MavenCoordinates.parse(coords);
+    MavenCoordinates mvnCoords=parse(coords);
     URL url=file.toURI().toURL();
     if (url == null) {
       LOGGER.warn("Could not find URL for file " + file);
       continue;
     }
-    boolean isWar=name.startsWith("war:") || name.contains("/war/") || file.getName().toLowerCase().endsWith(".war");
-    boolean isShared=!isWar;
+    boolean isShared=!isWar(name,file);
     Resource resource=findMavenResource(mvnCoords,url,isShared);
     if (resource == null) {
       LOGGER.warn("Could not find resource for " + mvnCoords + " and "+ url);
@@ -38,7 +31,7 @@
       Resource oldResource=installedResources.remove(identity);
       if (oldResource == null && !resourcehandleMap.containsKey(identity)) {
         if (isShared) {
-          LOGGER.warn("TODO not installing " + (isShared ? "shared" : "non-shared") + " resource: "+ identity);
+          LOGGER.debug("TODO not installing " + (isShared ? "shared" : "non-shared") + " resource: "+ identity);
         }
  else {
           LOGGER.info("Installing " + (isShared ? "shared" : "non-shared") + " resource: "+ identity);
