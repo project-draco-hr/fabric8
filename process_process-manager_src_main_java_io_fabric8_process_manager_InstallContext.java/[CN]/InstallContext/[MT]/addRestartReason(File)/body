@@ -1,0 +1,13 @@
+{
+  String path=null;
+  try {
+    path=Files.getRelativePath(installDir,target);
+  }
+ catch (  IOException e) {
+    LOG.warn("Failed to calculate relative path from " + installDir + " to "+ target+ ". "+ e,e);
+  }
+  if (path == null) {
+    path=target.getPath();
+  }
+  addRestartReason(path);
+}

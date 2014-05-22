@@ -1,0 +1,8 @@
+{
+  Map<String,String> templates=Maps.filterKeys(configuration,isTemplate);
+  Map<String,String> plainFiles=Maps.difference(configuration,templates).entriesOnlyOnLeft();
+  Map<String,String> renderedTemplates=Maps.transformValues(templates,new MvelTemplateRendering(variables));
+  File baseDir=ProcessUtils.findInstallDir(installDir);
+  applyTemplates(installContext,renderedTemplates,baseDir);
+  applyPlainConfiguration(installContext,plainFiles,baseDir);
+}

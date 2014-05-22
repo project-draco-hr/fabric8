@@ -1,0 +1,9 @@
+{
+  File cacheFile=new File(dir,FOLDER_CHECKSUM_CACHE);
+  Properties properties=new Properties();
+  Set<Map.Entry<File,Long>> entries=checksums.entrySet();
+  for (  Map.Entry<File,Long> entry : entries) {
+    properties.put(entry.getKey().getName(),"" + entry.getValue());
+  }
+  properties.store(new FileWriter(cacheFile),"Updated on " + new Date());
+}

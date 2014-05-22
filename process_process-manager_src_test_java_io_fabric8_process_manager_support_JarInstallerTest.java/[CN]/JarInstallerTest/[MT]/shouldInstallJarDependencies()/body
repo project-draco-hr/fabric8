@@ -1,4 +1,5 @@
 {
-  jarInstaller.unpackJarProcess(new ProcessConfig(),"1",installDir,installOptions);
+  InstallContext installContext=new InstallContext(installDir,false);
+  jarInstaller.install(installContext,new ProcessConfig(),"1",installDir);
   assertTrue(new File(installDir,"lib/xstream-1.4.4.jar").exists());
 }
