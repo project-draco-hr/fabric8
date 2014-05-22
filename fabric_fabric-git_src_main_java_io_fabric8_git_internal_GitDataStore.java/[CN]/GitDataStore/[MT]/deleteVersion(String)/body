@@ -4,7 +4,7 @@
     public Void call(    Git git,    GitContext context) throws Exception {
       removeVersion(version);
       GitHelpers.removeBranch(git,version);
-      git.push().setTimeout(10).setCredentialsProvider(getCredentialsProvider()).add(":refs/heads/" + version).call();
+      git.push().setTimeout(gitTimeout).setCredentialsProvider(getCredentialsProvider()).add(":refs/heads/" + version).call();
       return null;
     }
   }

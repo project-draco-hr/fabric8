@@ -8,9 +8,10 @@
       LOG.info("No remote repository defined yet for the git repository at " + GitHelpers.getRootGitDirectory(git) + " so not doing a push");
       return Collections.emptyList();
     }
-    return git.push().setTimeout(10).setCredentialsProvider(credentialsProvider).setPushAll().call();
+    return git.push().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setPushAll().call();
   }
  catch (  Throwable ex) {
+    LOG.warn("Failed to push from the remote git repo " + GitHelpers.getRootGitDirectory(git) + " due "+ ex.getMessage()+ ". This exception is ignored.");
     LOG.debug("Failed to push from the remote git repo " + GitHelpers.getRootGitDirectory(git) + ". This exception is ignored.",ex);
     return Collections.emptyList();
   }
