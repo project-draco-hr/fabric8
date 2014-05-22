@@ -1,6 +1,6 @@
 {
-  SshClient client=getSshClient(blueprintContainer,sshClientId);
-  String agentSocket=null;
+  SshClient client=createClient();
+  String agentSocket;
   if (this.session.get(SshAgent.SSH_AUTHSOCKET_ENV_NAME) != null) {
     agentSocket=this.session.get(SshAgent.SSH_AUTHSOCKET_ENV_NAME).toString();
     client.getProperties().put(SshAgent.SSH_AUTHSOCKET_ENV_NAME,agentSocket);
