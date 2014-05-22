@@ -1,7 +1,7 @@
 {
   Configuration[] configs;
   try {
-    configs=admin.listConfigurations(null);
+    configs=configurationAdmin.listConfigurations(null);
     if (configs == null) {
       return;
     }
@@ -13,4 +13,5 @@
   for (  Configuration config : configs) {
     delegate.getStrings().addAll(getPidWithKeys(config.getPid()));
   }
+  activateComponent();
 }
