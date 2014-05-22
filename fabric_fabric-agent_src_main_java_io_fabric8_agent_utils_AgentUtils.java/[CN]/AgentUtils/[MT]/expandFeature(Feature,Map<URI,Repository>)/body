@@ -1,0 +1,9 @@
+{
+  Set<Feature> features=new HashSet<Feature>();
+  for (  Feature f : feature.getDependencies()) {
+    Feature loaded=FeatureUtils.search(f.getName(),repositories.values());
+    features.addAll(expandFeature(loaded,repositories));
+  }
+  features.add(feature);
+  return features;
+}
