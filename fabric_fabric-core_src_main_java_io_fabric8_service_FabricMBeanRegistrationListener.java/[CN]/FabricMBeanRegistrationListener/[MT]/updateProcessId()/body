@@ -1,6 +1,6 @@
 {
   try {
-    String processName=(String)mbeanServer.get().getAttribute(new ObjectName("java.lang:type=Runtime"),"Name");
+    String processName=ManagementFactory.getRuntimeMXBean().getName();
     Long processId=Long.parseLong(processName.split("@")[0]);
     String runtimeIdentity=runtimeProperties.get().getRuntimeIdentity();
     String path=ZkPath.CONTAINER_PROCESS_ID.getPath(runtimeIdentity);
