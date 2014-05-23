@@ -4,13 +4,23 @@
   DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,executorService);
   Container[] containers=fabric.getContainers();
   for (  Container container : containers) {
-    container.getProvisionList();
     Profile[] profiles=container.getProfiles();
+    boolean javaOrProcessContainer=ChildContainers.isJavaOrProcessContainer(fabric,container);
     for (    Profile profile : profiles) {
       Profile overlay=profile.getOverlay();
       ProfileVersionKey key=new ProfileVersionKey(profile);
-      if (!profileArtifacts.containsKey(key)) {
-        Map<String,Parser> artifacts=AgentUtils.getProfileArtifacts(fabric,downloadManager,overlay);
+      Map<String,Parser> artifacts=null;
+      if (javaOrProcessContainer) {
+        List<Profile> singletonList=Collections.singletonList(profile);
+        artifacts=JavaContainers.getJavaContainerArtifacts(fabric,singletonList,executorService);
+      }
+ else {
+        artifacts=AgentUtils.getProfileArtifacts(fabric,downloadManager,overlay);
+      }
+      if (artifacts != null) {
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("Profile " + profile.getId() + " maps to artefacts: "+ artifacts.keySet());
+        }
         profileArtifacts.put(key,artifacts);
       }
     }

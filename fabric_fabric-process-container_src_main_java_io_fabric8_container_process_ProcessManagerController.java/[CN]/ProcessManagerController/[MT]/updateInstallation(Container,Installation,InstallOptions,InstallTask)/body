@@ -5,7 +5,7 @@
   ProcessConfig oldConfig=getProcessConfig(installation);
   String id=installation.getId();
   File installDir=installation.getInstallDir();
-  InstallContext installContext=new InstallContext(installDir,true);
+  InstallContext installContext=new InstallContext(parameters.getContainer(),installDir,true);
   if (processConfig != null && !oldConfig.equals(processConfig)) {
     installContext.addRestartReason("Environment Variables");
     if (LOG.isDebugEnabled()) {
@@ -20,6 +20,7 @@
     JarInstaller installer=new JarInstaller(parameters,processManager.getExecutor());
     installer.install(installContext,processConfig,id,installDir);
   }
+  installContext.updateContainerChecksums();
   if (installContext.isRestartRequired()) {
     LOG.info("Restarting " + container.getId() + " due to profile changes: "+ installContext.getRestartReasons());
     ProcessController controller=installation.getController();

@@ -39,6 +39,9 @@
             Parser parser=artifactMapEntry.getValue();
             if (isSnapshot(parser) || wildCardMatch(location)) {
               Object value=checksums.get(location);
+              if (value == null) {
+                value=checksums.get(JavaContainers.removeUriPrefixBeforeMaven(location));
+              }
               Long checksum=null;
               if (value instanceof Number) {
                 checksum=((Number)value).longValue();
@@ -48,7 +51,7 @@
               }
               if (checksum == null) {
                 if (missingChecksums.add(location)) {
-                  LOG.debug("Could not find checksum for location " + location);
+                  LOG.warn("Could not find checksum for location " + location);
                 }
               }
  else {

@@ -7,11 +7,7 @@
     Set<String> rawUrls=profileArtifacts.keySet();
     List<String> cleanUrlsToDownload=new ArrayList<String>();
     for (    String rawUrl : rawUrls) {
-      String mvnUrl=rawUrl;
-      int idx=mvnUrl.indexOf(":mvn:");
-      if (idx > 0) {
-        mvnUrl=mvnUrl.substring(idx + 1);
-      }
+      String mvnUrl=removeUriPrefixBeforeMaven(rawUrl);
       cleanUrlsToDownload.add(mvnUrl);
     }
     Map<String,File> profileFiles=AgentUtils.downloadLocations(downloadManager,cleanUrlsToDownload);

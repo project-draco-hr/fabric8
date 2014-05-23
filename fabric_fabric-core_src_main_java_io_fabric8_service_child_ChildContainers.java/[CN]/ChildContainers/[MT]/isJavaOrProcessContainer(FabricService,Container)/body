@@ -1,0 +1,12 @@
+{
+  if (container != null) {
+    CreateContainerMetadata<?> metadata=container.getMetadata();
+    if (metadata != null) {
+      CreateContainerOptions createOptions=metadata.getCreateOptions();
+      if (createOptions instanceof CreateContainerBasicOptions) {
+        return isJavaOrProcessContainer(fabric,(CreateContainerBasicOptions)createOptions);
+      }
+    }
+  }
+  return false;
+}

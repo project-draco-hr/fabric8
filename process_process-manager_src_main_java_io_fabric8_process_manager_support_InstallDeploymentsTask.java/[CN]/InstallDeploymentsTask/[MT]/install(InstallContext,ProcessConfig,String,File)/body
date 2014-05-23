@@ -18,7 +18,7 @@
   for (int i=0; i < 2; i++) {
     boolean deletePass=i == 0;
     for (    Map.Entry<String,File> entry : entries) {
-      String uri=entry.getKey();
+      String location=entry.getKey();
       File file=entry.getValue();
       String fileName=file.getName();
       File destDir;
@@ -45,9 +45,7 @@
         FileChangeInfo changeInfo=installContext.createChangeInfo(destFile);
         LOG.debug("Copying file " + fileName + " to :  "+ destFile.getCanonicalPath());
         org.codehaus.plexus.util.FileUtils.copyFile(file,destFile);
-        if (isSharedLibrary) {
-          installContext.onFileWrite(destFile,changeInfo);
-        }
+        installContext.onDeploymentFileWrite(location,destFile,changeInfo,isSharedLibrary);
       }
     }
     if (deletePass) {

@@ -1,0 +1,33 @@
+{
+  FileChangeInfo changeInfo=FileChangeInfo.newInstance(target);
+  boolean updateChecksums=true;
+  if (updateMode) {
+    if (oldChangeInfo != null) {
+      if (oldChangeInfo.equals(changeInfo)) {
+        updateChecksums=false;
+      }
+ else {
+        if (isSharedLibrary) {
+          addRestartReason(target);
+        }
+      }
+    }
+ else     if (target.isFile() && target.exists()) {
+      if (isSharedLibrary) {
+        addRestartReason(target);
+      }
+    }
+ else {
+      updateChecksums=false;
+    }
+  }
+  if (updateChecksums && container != null) {
+    if (containerChecksums == null) {
+      containerChecksums=container.getProvisionChecksums();
+    }
+    if (containerChecksums != null) {
+      long checksum=changeInfo.getChecksum();
+      containerChecksums.put(location,Long.toString(checksum));
+    }
+  }
+}

@@ -29,7 +29,8 @@
   Map<String,File> javaArtifacts=JavaContainers.getJavaContainerArtifactsFiles(fabricService,profiles,downloadExecutor);
   setProvisionList(container,javaArtifacts);
   InstallOptions.InstallOptionsBuilder builder=InstallOptions.builder();
-  builder.jarFiles(javaArtifacts.values());
+  builder.container(container);
+  builder.jarFiles(javaArtifacts);
   builder.id(options.getName());
   builder.environment(environmentVariables);
   String mainClass=environmentVariables.get(JavaContainerEnvironmentVariables.FABRIC8_JAVA_MAIN);
