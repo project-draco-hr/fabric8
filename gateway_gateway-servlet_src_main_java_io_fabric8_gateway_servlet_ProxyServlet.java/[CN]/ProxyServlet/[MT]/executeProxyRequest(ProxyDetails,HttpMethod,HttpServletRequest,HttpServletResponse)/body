@@ -1,4 +1,5 @@
 {
+  httpMethodProxyRequest.setDoAuthentication(false);
   httpMethodProxyRequest.setFollowRedirects(false);
   HttpClient httpClient=proxyDetails.createHttpClient(httpMethodProxyRequest);
   int intProxyResponseCode=httpClient.executeMethod(httpMethodProxyRequest);
@@ -25,7 +26,14 @@
   Header[] headerArrayResponse=httpMethodProxyRequest.getResponseHeaders();
   for (  Header header : headerArrayResponse) {
     if (!ProxySupport.isHopByHopHeader(header.getName())) {
-      httpServletResponse.setHeader(header.getName(),header.getValue());
+      if (ProxySupport.isSetCookieHeader(header)) {
+        HttpProxyRule proxyRule=proxyDetails.getProxyRule();
+        String setCookie=ProxySupport.replaceCookieAttributes(header.getValue(),proxyRule.getCookiePath(),proxyRule.getCookieDomain());
+        httpServletResponse.setHeader(header.getName(),setCookie);
+      }
+ else {
+        httpServletResponse.setHeader(header.getName(),header.getValue());
+      }
     }
   }
   int code=httpMethodProxyRequest.getStatusCode();

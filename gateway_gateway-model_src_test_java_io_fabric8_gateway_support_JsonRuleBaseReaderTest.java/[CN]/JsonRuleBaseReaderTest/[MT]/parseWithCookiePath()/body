@@ -1,0 +1,6 @@
+{
+  final InputStream in=JsonRuleBaseBuilder.newRuleBase().rule("/foo/{path}","https://foo.com/cheese/{path}","/cookiePath").inputStream();
+  final Map<String,HttpProxyRule> rules=JsonRuleBaseReader.parseJson(in);
+  final HttpProxyRule httpProxyRule=rules.get("/foo/{path}");
+  assertThat(httpProxyRule.getCookiePath(),equalTo("/cookiePath"));
+}

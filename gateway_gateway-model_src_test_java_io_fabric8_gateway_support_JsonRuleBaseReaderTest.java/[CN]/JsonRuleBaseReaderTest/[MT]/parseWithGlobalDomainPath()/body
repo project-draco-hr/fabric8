@@ -1,0 +1,6 @@
+{
+  final InputStream in=JsonRuleBaseBuilder.newRuleBase().globalCookieDomain(".global.com").rule("/foo/{path}","https://foo.com/cheese/{path}").rule("/foo2/{path}","https://foo2.com/cheese/{path}",null,"overriddenDomain").inputStream();
+  final Map<String,HttpProxyRule> rules=JsonRuleBaseReader.parseJson(in);
+  assertThat(rules.get("/foo/{path}").getCookieDomain(),equalTo(".global.com"));
+  assertThat(rules.get("/foo2/{path}").getCookieDomain(),equalTo("overriddenDomain"));
+}
