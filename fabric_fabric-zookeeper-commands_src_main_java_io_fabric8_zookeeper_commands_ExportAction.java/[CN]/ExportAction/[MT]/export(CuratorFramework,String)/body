@@ -14,8 +14,11 @@
     }
     founMatch=true;
     byte[] data=curator.getData().forPath(p);
+    String name=p;
+    if (name.contains("/*")) {
+      name=name.replaceAll(Pattern.quote("/*"),"/__asterisk__");
+    }
     if (data != null && data.length > 0) {
-      String name=p;
       if (!p.contains(".") || p.endsWith("fabric-ensemble")) {
         name+=".cfg";
       }
@@ -29,7 +32,7 @@
       settings.put(new File(target + File.separator + name),value);
     }
  else {
-      directories.add(new File(target + File.separator + p));
+      directories.add(new File(target + File.separator + name));
     }
   }
   if (!founMatch) {
