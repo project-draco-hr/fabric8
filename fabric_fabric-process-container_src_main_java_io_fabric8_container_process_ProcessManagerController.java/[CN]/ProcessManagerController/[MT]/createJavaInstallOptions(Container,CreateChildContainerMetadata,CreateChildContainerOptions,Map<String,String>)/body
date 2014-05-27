@@ -29,6 +29,9 @@
   Map<String,File> javaArtifacts=JavaContainers.getJavaContainerArtifactsFiles(fabricService,profiles,downloadExecutor);
   setProvisionList(container,javaArtifacts);
   InstallOptions.InstallOptionsBuilder builder=InstallOptions.builder();
+  if (javaConfig.getJarUrl() != null) {
+    builder.url(javaConfig.getJarUrl());
+  }
   builder.container(container);
   builder.jarFiles(javaArtifacts);
   builder.id(options.getName());
