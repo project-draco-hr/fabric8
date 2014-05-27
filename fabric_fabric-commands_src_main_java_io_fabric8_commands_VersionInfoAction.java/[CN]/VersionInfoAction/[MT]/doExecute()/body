@@ -13,12 +13,16 @@
     }
   }
   String containers=sbContainers.toString();
-  if (containers.endsWith(", "))   containers=containers.substring(0,containers.lastIndexOf(", "));
+  if (containers.endsWith(", ")) {
+    containers=containers.substring(0,containers.lastIndexOf(", "));
+  }
   boolean defaultVersion=version.getId().equals(fabricService.getDefaultVersion().getId());
   Profile[] profiles=CommandUtils.sortProfiles(version.getProfiles());
   StringBuilder sbProfiles=new StringBuilder("");
   for (int i=0; i < profiles.length; i++) {
-    if (i != 0)     sbProfiles.append(", ");
+    if (i != 0) {
+      sbProfiles.append(", ");
+    }
     sbProfiles.append(profiles[i].getId());
   }
   System.out.println(String.format(FORMAT,"Name:",version.getId()));
