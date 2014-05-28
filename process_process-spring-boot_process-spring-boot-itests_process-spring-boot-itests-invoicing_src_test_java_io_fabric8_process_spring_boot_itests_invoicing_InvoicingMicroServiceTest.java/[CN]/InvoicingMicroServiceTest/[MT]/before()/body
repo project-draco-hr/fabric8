@@ -1,5 +1,5 @@
 {
-  InstallOptions installOptions=new InstallOptions.InstallOptionsBuilder().jvmOptions("-D" + ComponentScanningApplicationContextInitializer.BASE_PACKAGE_PROPERTY_KEY + "=io.fabric8.process.spring.boot.itests").url("mvn:io.fabric8/process-spring-boot-itests-service-invoicing/" + FABRIC_VERSION + "/jar").environment(springBootProcessEnvironment()).mainClass(FabricSpringApplication.class).build();
+  InstallOptions installOptions=new InstallOptions.InstallOptionsBuilder().jvmOptions("-D" + ComponentScanningApplicationContextInitializer.BASE_PACKAGE_PROPERTY_KEY + "=io.fabric8.process.spring.boot.itests.service.invoicing").url("mvn:io.fabric8/process-spring-boot-itests-service-invoicing/" + FABRIC_VERSION + "/jar").environment(springBootProcessEnvironment()).mainClass(FabricSpringApplication.class).build();
   processController=processManagerService.installJar(installOptions).getController();
   startProcess(processController);
   waitForRestResource("http://localhost:8080/");
