@@ -17,8 +17,8 @@
     }
   }
   if (saslClient.isComplete()) {
-    if ((serverToken == null) && (saslClient.getMechanismName() == "GSSAPI"))     gotLastPacket=true;
-    if (saslClient.getMechanismName() != "GSSAPI") {
+    if ((serverToken == null) && (saslClient.getMechanismName().equals("GSSAPI")))     gotLastPacket=true;
+    if (!saslClient.getMechanismName().equals("GSSAPI")) {
       gotLastPacket=true;
     }
     cnxn.enableWrite();
