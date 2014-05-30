@@ -1,0 +1,9 @@
+{
+  Matcher placeholdersMatcher=CAMEL_PLACEHOLDERS_PATTERN.matcher(uri);
+  while (placeholdersMatcher.find()) {
+    String placeholder=placeholdersMatcher.group(1);
+    String resolvedPlaceholder=propertyResolver.getProperty(placeholder);
+    uri=uri.replace("{{" + placeholder + "}}",resolvedPlaceholder);
+  }
+  return uri;
+}
