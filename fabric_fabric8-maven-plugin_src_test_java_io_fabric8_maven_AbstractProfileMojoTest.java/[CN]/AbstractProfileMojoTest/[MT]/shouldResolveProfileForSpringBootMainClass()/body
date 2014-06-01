@@ -1,0 +1,11 @@
+{
+  System.setProperty("java.protocol.handler.pkgs","org.ops4j.pax.url");
+  Map<String,String> profilesMapping=mojo.getDefaultClassToProfileMap();
+  URLClassLoader jarClassLoader=new URLClassLoader(new URL[]{new URL("mvn:io.fabric8/process-spring-boot-itests-service-invoicing/" + FABRIC_VERSION + "/jar")});
+  for (  String mainClass : profilesMapping.keySet()) {
+    if (mojo.hasClass(jarClassLoader,mainClass)) {
+      return;
+    }
+  }
+  fail("Profile for Spring Boot main class not found.");
+}
