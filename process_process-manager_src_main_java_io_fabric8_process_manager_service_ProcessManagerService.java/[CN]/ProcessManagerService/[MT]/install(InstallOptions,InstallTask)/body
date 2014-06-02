@@ -5,8 +5,19 @@
       downloadContent(options.getUrl(),installDir);
       if (options.getExtractCmd() != null) {
         File archive=new File(installDir,INSTALLED_BINARY);
-        FileUtils.extractArchive(archive,installDir,options.getExtractCmd(),untarTimeout,executor);
+        String extractCmd=options.getExtractCmd();
+        FileUtils.extractArchive(archive,installDir,extractCmd,untarTimeout,executor);
         File nestedProcessDirectory=findInstallDir(installDir);
+        String[] postInstallCmds=options.getPostInstallCmds();
+        if (postInstallCmds != null) {
+          for (          String postInstallCmd : postInstallCmds) {
+            if (Strings.isNotBlank(postInstallCmd)) {
+              String[] args=FileUtils.splitCommands(postInstallCmd);
+              LOGGER.info("Running post install command " + Arrays.asList(args) + " in folder "+ nestedProcessDirectory);
+              new Command(args).setDirectory(nestedProcessDirectory).setTimeLimit(postInstallTimeout).execute(executor);
+            }
+          }
+        }
         writeJvmConfig(new File(nestedProcessDirectory,"etc"),options.getJvmOptions());
       }
       if (postInstall != null) {

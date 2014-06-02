@@ -2,8 +2,9 @@
   Preconditions.checkNotNull(archiveFile,"archiveFile is null");
   Preconditions.checkNotNull(targetDirectory,"targetDirectory is null");
   Preconditions.checkArgument(targetDirectory.isDirectory(),"targetDirectory is not a directory: " + targetDirectory.getAbsolutePath());
-  final String[] commands=extractCommand.split(" ");
+  final String[] commands=splitCommands(extractCommand);
   final String[] args=Arrays.copyOf(commands,commands.length + 1);
   args[args.length - 1]=archiveFile.getAbsolutePath();
+  LOG.info("Extracting archive with commands: " + Arrays.asList(args));
   new Command(args).setDirectory(targetDirectory).setTimeLimit(timeLimit).execute(executor);
 }
