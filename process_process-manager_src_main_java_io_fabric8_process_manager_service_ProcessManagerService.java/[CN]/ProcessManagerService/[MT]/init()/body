@@ -5,6 +5,10 @@
     for (    File file : files) {
       if (file.isDirectory()) {
         String name=file.getName();
+        if (name.startsWith(".")) {
+          LOGGER.debug("Ignoring deleted installation at folder " + name);
+          continue;
+        }
         if (name.matches("\\d+")) {
           try {
             int id=Integer.parseInt(name);
