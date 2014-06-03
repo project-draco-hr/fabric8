@@ -1,7 +1,7 @@
 {
   try {
     ProjectRequirements requirements=new ProjectRequirements();
-    if (includeArtifact) {
+    if (isIncludeArtifact()) {
       DependencyDTO rootDependency=loadRootDependency();
       requirements.setRootDependency(rootDependency);
     }
@@ -72,7 +72,7 @@
       throw new MojoExecutionException(message);
     }
     J4pClient client=createJolokiaClient();
-    if (upload && includeArtifact) {
+    if (upload && isIncludeArtifact()) {
       uploadDeploymentUnit(client,newUserAdded);
     }
  else {
