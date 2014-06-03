@@ -6,12 +6,14 @@
     for (    File f : dirList) {
       if (f.isDirectory()) {
         String prefix=path + f.getName() + "/";
-        zos.putNextEntry(new ZipEntry(prefix));
-        zipDirectory(log,f,zos,prefix,filter);
+        if (matches(filter,f)) {
+          zos.putNextEntry(new ZipEntry(prefix));
+          zipDirectory(log,f,zos,prefix,filter);
+        }
       }
  else {
         String entry=path + f.getName();
-        if (filter == null || filter.accept(f)) {
+        if (matches(filter,f)) {
           FileInputStream fis=new FileInputStream(f);
           try {
             ZipEntry anEntry=new ZipEntry(entry);
