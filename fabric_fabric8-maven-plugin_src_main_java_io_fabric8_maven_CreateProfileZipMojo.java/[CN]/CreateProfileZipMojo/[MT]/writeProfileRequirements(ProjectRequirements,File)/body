@@ -1,0 +1,8 @@
+{
+  ObjectMapper mapper=DtoHelper.getMapper();
+  String name=DtoHelper.getRequirementsConfigFileName(requirements);
+  File outFile=new File(profileBuildDir,name);
+  outFile.getParentFile().mkdirs();
+  mapper.writeValue(outFile,requirements);
+  getLog().info("Writing " + outFile);
+}
