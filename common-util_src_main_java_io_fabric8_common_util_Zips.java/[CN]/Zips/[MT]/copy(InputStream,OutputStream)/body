@@ -1,0 +1,13 @@
+{
+  try {
+    byte[] b=new byte[4096];
+    int l=is.read(b);
+    while (l >= 0) {
+      os.write(b,0,l);
+      l=is.read(b);
+    }
+  }
+  finally {
+    closeQuitely(os);
+  }
+}

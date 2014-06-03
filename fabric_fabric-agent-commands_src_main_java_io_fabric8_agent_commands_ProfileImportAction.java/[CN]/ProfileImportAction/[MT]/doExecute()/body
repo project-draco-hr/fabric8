@@ -1,0 +1,26 @@
+{
+  if (Strings.isNullOrBlank(version)) {
+    if (newVersion) {
+    }
+  }
+  Version ver=version != null ? fabricService.getVersion(version) : fabricService.getDefaultVersion();
+  if (ver == null) {
+    if (version != null) {
+      System.out.println("version " + version + " does not exist!");
+    }
+ else {
+      System.out.println("No default version available!");
+    }
+    return null;
+  }
+  if (executorService == null) {
+    if (threadPoolSize > 1) {
+      executorService=Executors.newFixedThreadPool(threadPoolSize);
+    }
+ else {
+      executorService=Executors.newSingleThreadExecutor();
+    }
+  }
+  fabricService.getDataStore().importProfiles(ver.getId(),profileUrls);
+  return null;
+}

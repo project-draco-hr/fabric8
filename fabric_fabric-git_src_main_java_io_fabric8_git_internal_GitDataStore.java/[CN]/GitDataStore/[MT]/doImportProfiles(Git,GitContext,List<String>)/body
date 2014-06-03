@@ -1,0 +1,26 @@
+{
+  assertValid();
+  File profilesDirectory=getProfilesDirectory(git);
+  for (  String profileZipUrl : profileZipUrls) {
+    URL zipUrl;
+    try {
+      zipUrl=new URL(profileZipUrl);
+    }
+ catch (    MalformedURLException e) {
+      throw new IOException("Failed to create URL for " + profileZipUrl + ". "+ e,e);
+    }
+    InputStream inputStream=zipUrl.openStream();
+    if (inputStream == null) {
+      throw new IOException("Could not open zip: " + profileZipUrl);
+    }
+    try {
+      Zips.unzip(inputStream,profilesDirectory);
+    }
+ catch (    IOException e) {
+      throw new IOException("Failed to unzip " + profileZipUrl + ". "+ e,e);
+    }
+  }
+  doAddFiles(git,profilesDirectory);
+  context.commit("Added profile zip(s) " + profileZipUrls);
+  return null;
+}
