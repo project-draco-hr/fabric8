@@ -4,6 +4,9 @@
       getLog().info("Not the execution root so ignoring this project");
       return;
     }
+ else {
+      getLog().info("Execution root directory so about to aggregate the reactor " + reactorProjects.size() + " project(s) into "+ buildDir);
+    }
     buildDir.mkdirs();
     for (    MavenProject reactorProject : reactorProjects) {
       if (!reactorProject.isExecutionRoot()) {
@@ -19,9 +22,11 @@
     getLog().info("Created profile zip file: " + relativePath);
   }
  catch (  MojoExecutionException e) {
+    getLog().error(e);
     throw e;
   }
 catch (  Exception e) {
+    getLog().error(e);
     throw new MojoExecutionException("Error executing",e);
   }
 }
