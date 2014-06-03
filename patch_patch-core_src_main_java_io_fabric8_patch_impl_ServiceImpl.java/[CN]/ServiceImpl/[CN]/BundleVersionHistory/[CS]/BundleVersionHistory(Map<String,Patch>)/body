@@ -1,0 +1,17 @@
+{
+  super();
+  for (  Map.Entry<String,Patch> patch : patches.entrySet()) {
+    Result result=patch.getValue().getResult();
+    if (result != null) {
+      for (      BundleUpdate update : result.getUpdates()) {
+        String symbolicName=stripSymbolicName(update.getSymbolicName());
+        Map<String,String> versions=bundleVersions.get(symbolicName);
+        if (versions == null) {
+          versions=new HashMap<String,String>();
+          bundleVersions.put(symbolicName,versions);
+        }
+        versions.put(update.getNewVersion(),update.getNewLocation());
+      }
+    }
+  }
+}

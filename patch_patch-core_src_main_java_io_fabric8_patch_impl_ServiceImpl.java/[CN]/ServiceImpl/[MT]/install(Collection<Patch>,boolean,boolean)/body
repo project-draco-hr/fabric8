@@ -2,6 +2,7 @@
   try {
     final Map<String,Result> results=new LinkedHashMap<String,Result>();
     final Map<Bundle,String> toUpdate=new HashMap<Bundle,String>();
+    final BundleVersionHistory history=createBundleVersionHistory();
     Map<String,BundleUpdate> allUpdates=new HashMap<String,BundleUpdate>();
     for (    Patch patch : patches) {
       String startup=readFully(new File(System.getProperty("karaf.base"),"etc/startup.properties"));
@@ -33,7 +34,7 @@
           for (          Bundle bundle : allBundles) {
             Version oldV=bundle.getVersion();
             if (bundle.getBundleId() != 0 && stripSymbolicName(sn).equals(stripSymbolicName(bundle.getSymbolicName())) && range.contains(oldV)) {
-              String location=bundle.getLocation();
+              String location=history.getLocation(bundle);
               BundleUpdate update=new BundleUpdateImpl(sn,v.toString(),url,oldV.toString(),location);
               updates.add(update);
               BundleUpdate oldUpdate=allUpdates.get(sn);
