@@ -1,5 +1,0 @@
-{
-  JavaArchive jarTest=ShrinkWrap.create(JavaArchive.class).addPackages(false,packages).addAsManifestResource(EmptyAsset.INSTANCE,"beans.xml");
-  File[] libs=Maven.resolver().loadPomFromFile("pom.xml").resolve("org.apache.camel:camel-core","org.apache.camel:camel-cdi").withTransitivity().as(File.class);
-  return ShrinkWrap.create(WebArchive.class,"test.war").addAsLibrary(jarTest).addAsLibraries(libs);
-}
