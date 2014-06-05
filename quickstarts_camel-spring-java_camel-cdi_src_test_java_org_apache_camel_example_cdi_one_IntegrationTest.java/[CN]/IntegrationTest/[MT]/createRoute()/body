@@ -1,0 +1,11 @@
+{
+  return new RouteBuilder(){
+    public void configure(){
+      routeConfigured=true;
+      Endpoint resultEndpoint=config.getResultEndpoint();
+      LOG.info("consuming from output: " + resultEndpoint + " to endpoint: "+ result);
+      from(resultEndpoint).to(result);
+    }
+  }
+;
+}
