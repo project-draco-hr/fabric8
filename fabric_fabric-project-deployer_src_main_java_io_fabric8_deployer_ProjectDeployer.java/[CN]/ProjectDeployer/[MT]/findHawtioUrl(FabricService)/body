@@ -1,0 +1,13 @@
+{
+  Container[] containers=fabric.getContainers();
+  for (  Container aContainer : containers) {
+    Profile[] profiles=aContainer.getProfiles();
+    for (    Profile aProfile : profiles) {
+      String id=aProfile.getId();
+      if (id.equals("fabric")) {
+        return fabric.profileWebAppURL("io.hawt.hawtio-web",id,aProfile.getVersion());
+      }
+    }
+  }
+  return null;
+}

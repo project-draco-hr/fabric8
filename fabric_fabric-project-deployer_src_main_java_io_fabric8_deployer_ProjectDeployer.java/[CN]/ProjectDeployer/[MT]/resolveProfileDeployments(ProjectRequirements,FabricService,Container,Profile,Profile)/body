@@ -28,5 +28,14 @@
     }
     Map<String,Parser> profileArtifacts=AgentUtils.getProfileArtifacts(fabric,downloadManager,overlay);
   }
-  return new DeployResults(profile);
+  String profileUrl=findHawtioUrl(fabric);
+  if (profileUrl == null) {
+    profileUrl="/";
+  }
+  if (!profileUrl.endsWith("/")) {
+    profileUrl+="/";
+  }
+  String profilePath=Profiles.convertProfileIdToPath(profile.getId());
+  profileUrl+="index.html#/wiki/branch/" + profile.getVersion() + "/view/fabric/profiles/"+ profilePath;
+  return new DeployResults(profile,profileUrl);
 }
