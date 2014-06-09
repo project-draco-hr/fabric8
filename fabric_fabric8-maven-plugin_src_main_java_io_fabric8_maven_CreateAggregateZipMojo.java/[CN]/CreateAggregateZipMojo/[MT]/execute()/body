@@ -1,32 +1,22 @@
 {
   try {
     if (isIgnore())     return;
+    List<MavenProject> reactorProjectList=reactorProjects;
+    File projectBuildDir=buildDir;
     if (!project.isExecutionRoot()) {
       getLog().info("Not the execution root so ignoring this project");
       return;
     }
  else {
-      getLog().info("Execution root directory so about to aggregate the reactor " + reactorProjects.size() + " project(s) into "+ buildDir);
+      getLog().info("Execution root directory so about to aggregate the reactor " + reactorProjectList.size() + " project(s) into "+ projectBuildDir);
     }
-    buildDir.mkdirs();
-    for (    MavenProject reactorProject : reactorProjects) {
-      if (!reactorProject.isExecutionRoot()) {
-        combineProfilesTo(reactorProject,buildDir);
-      }
-    }
-    Zips.createZipFile(getLog(),buildDir,outputFile);
-    projectHelper.attachArtifact(project,artifactType,artifactClassifier,outputFile);
-    String relativePath=Files.getRelativePath(project.getBasedir(),outputFile);
-    while (relativePath.startsWith("/")) {
-      relativePath=relativePath.substring(1);
-    }
-    getLog().info("Created profile zip file: " + relativePath);
+    File projectOutputFile=outputFile;
+    File projectBaseDir=project.getBasedir();
+    String reactorProjectOutputPath1=reactorProjectOutputPath;
+    createAggregatedZip(reactorProjectList,projectBaseDir,projectBuildDir,reactorProjectOutputPath1,projectOutputFile);
+    projectHelper.attachArtifact(project,artifactType,artifactClassifier,projectOutputFile);
   }
- catch (  MojoExecutionException e) {
-    getLog().error(e);
-    throw e;
-  }
-catch (  Exception e) {
+ catch (  Exception e) {
     getLog().error(e);
     throw new MojoExecutionException("Error executing",e);
   }

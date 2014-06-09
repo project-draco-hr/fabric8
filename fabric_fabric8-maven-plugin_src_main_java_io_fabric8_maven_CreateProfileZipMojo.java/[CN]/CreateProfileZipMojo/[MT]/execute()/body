@@ -1,36 +1,54 @@
 {
   try {
     if (isIgnore())     return;
-    ProjectRequirements requirements=new ProjectRequirements();
-    DependencyDTO rootDependency=null;
-    if (!"pom".equals(project.getPackaging()) && isIncludeArtifact()) {
-      rootDependency=loadRootDependency();
-      requirements.setRootDependency(rootDependency);
-    }
-    configureRequirements(requirements);
-    if (isIncludeArtifact()) {
-      addProjectArtifactBundle(requirements);
-    }
-    File profileBuildDir=createProfileBuildDir(requirements.getProfileId());
-    boolean hasConfigDir=profileConfigDir.isDirectory();
-    if (hasConfigDir) {
-      copyProfileConfigFiles(profileBuildDir,profileConfigDir);
-    }
+    generateZip();
+    if (reactorProjects != null) {
+      List<MavenProject> pomZipProjects=new ArrayList<>();
+      List<MavenProject> projectsWithZip=new ArrayList<>();
+      for (      MavenProject reactorProject : reactorProjects) {
+        List<Plugin> buildPlugins=reactorProject.getBuildPlugins();
+        for (        Plugin buildPlugin : buildPlugins) {
+          String artifactId=buildPlugin.getArtifactId();
+          if ("fabric8-maven-plugin".equals(artifactId)) {
+            Object goals=buildPlugin.getGoals();
+            boolean hasZipGoal=goals != null && goals.toString().contains("zip");
+            List<PluginExecution> executions=buildPlugin.getExecutions();
+            for (            PluginExecution execution : executions) {
+              List<String> execGoals=execution.getGoals();
+              if (execGoals.contains("zip")) {
+                hasZipGoal=true;
+              }
+            }
+            getLog().debug("project " + reactorProject.getArtifactId() + " has zip goal: "+ hasZipGoal);
+            if ("pom".equals(reactorProject.getPackaging())) {
+              pomZipProjects.add(reactorProject);
+            }
+            projectsWithZip.add(reactorProject);
+          }
+        }
+      }
+      int projectsWithZipSize=projectsWithZip.size();
+      if (projectsWithZipSize > 0) {
+        MavenProject lastProject=projectsWithZip.get(projectsWithZipSize - 1);
+        if (lastProject == project && projectsWithZipSize > 0) {
+          getLog().info("");
+          getLog().info("Creating aggregated profile zip");
+          getLog().info("built the last fabric8:zip project so generating a combined zip for all " + projectsWithZipSize + " projects with a fabric8:zip goal");
+          MavenProject rootProject;
+          int pomZipProjectsSize=pomZipProjects.size();
+          if (pomZipProjectsSize > 0) {
+            rootProject=pomZipProjects.get(0);
+            if (pomZipProjects.size() > 1) {
+              getLog().debug("pom packaged projects with fabric8:zip goals: " + pomZipProjects);
+            }
+          }
  else {
-      getLog().info("The profile configuration files directory " + profileConfigDir + " doesn't exist, so not copying any additional project documentation or configuration files");
-    }
-    if (hasConfigDir || rootDependency != null || notEmpty(requirements.getBundles()) || notEmpty(requirements.getFeatures()) || notEmpty(requirements.getFeatureRepositories())) {
-      if (isIncludeArtifact()) {
-        writeProfileRequirements(requirements,profileBuildDir);
+            rootProject=reactorProjects.get(0);
+          }
+          getLog().info("Choosing root project " + rootProject.getArtifactId() + " for generation of aggregated zip");
+          generateAggregatedZip(rootProject);
+        }
       }
-      generateFabricAgentProperties(requirements,new File(profileBuildDir,"io.fabric8.agent.properties"));
-      Zips.createZipFile(getLog(),buildDir,outputFile);
-      projectHelper.attachArtifact(project,artifactType,artifactClassifier,outputFile);
-      String relativePath=Files.getRelativePath(project.getBasedir(),outputFile);
-      while (relativePath.startsWith("/")) {
-        relativePath=relativePath.substring(1);
-      }
-      getLog().info("Created profile zip file: " + relativePath);
     }
   }
  catch (  MojoExecutionException e) {

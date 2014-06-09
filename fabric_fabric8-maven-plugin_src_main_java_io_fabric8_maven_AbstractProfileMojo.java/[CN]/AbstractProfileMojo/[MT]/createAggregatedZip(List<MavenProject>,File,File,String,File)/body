@@ -1,0 +1,15 @@
+{
+  projectBuildDir.mkdirs();
+  for (  MavenProject reactorProject : reactorProjectList) {
+    if (!reactorProject.isExecutionRoot()) {
+      Log log=getLog();
+      combineProfileFilesToFolder(reactorProject,projectBuildDir,log,reactorProjectOutputPath);
+    }
+  }
+  Zips.createZipFile(getLog(),projectBuildDir,projectOutputFile);
+  String relativePath=Files.getRelativePath(projectBaseDir,projectOutputFile);
+  while (relativePath.startsWith("/")) {
+    relativePath=relativePath.substring(1);
+  }
+  getLog().info("Created profile zip file: " + relativePath);
+}
