@@ -1,0 +1,3 @@
+{
+  from("cxf:bean:WS").id("cxf-to-client-pojo").choice().when().simple("${in.header.SOAPAction} contains 'getCustomerByName'").log(">>> We will search a Customer").beanRef("customerServiceBean","getCustomerByName").when().simple("${in.header.SOAPAction} contains 'saveCustomer'").log(">>> We will save a Customer").beanRef("customerServiceBean","saveCustomer").when().simple("${in.header.SOAPAction} contains 'getAllCustomers'").log(">>> We will get all Customers").beanRef("customerServiceBean","getCustomers");
+}

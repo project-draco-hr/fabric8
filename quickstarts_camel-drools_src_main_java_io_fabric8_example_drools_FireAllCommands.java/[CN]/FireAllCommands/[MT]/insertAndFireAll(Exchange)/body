@@ -1,0 +1,9 @@
+{
+  final Message in=exchange.getIn();
+  final Object body=in.getBody();
+  BatchExecutionCommandImpl command=new BatchExecutionCommandImpl();
+  final List<GenericCommand<?>> commands=command.getCommands();
+  commands.add(new InsertObjectCommand(body,"obj1"));
+  commands.add(new FireAllRulesCommand());
+  in.setBody(command);
+}
