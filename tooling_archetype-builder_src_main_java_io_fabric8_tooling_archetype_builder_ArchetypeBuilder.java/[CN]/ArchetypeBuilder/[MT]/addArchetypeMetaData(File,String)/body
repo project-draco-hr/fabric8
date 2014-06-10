@@ -1,0 +1,17 @@
+{
+  Document doc=parseXml(new InputSource(new FileReader(pom)));
+  Element root=doc.getDocumentElement();
+  String groupId="io.fabric8";
+  String artifactId=firstElementText(root,"artifactId",outputName);
+  String description=firstElementText(root,"description","");
+  String version="";
+  NodeList parents=root.getElementsByTagName("parent");
+  if (parents.getLength() > 0) {
+    version=firstElementText((Element)parents.item(0),"version","");
+  }
+  if (version.length() == 0) {
+    version=firstElementText(root,"version","");
+  }
+  String repo="https://repo.fusesource.com/nexus/content/groups/public";
+  printWriter.println(String.format("        <archetype>\n" + "            <groupId>%s</groupId>\n" + "            <artifactId>%s</artifactId>\n"+ "            <version>%s</version>\n"+ "            <repository>%s</repository>\n"+ "            <description>%s</description>\n"+ "        </archetype>\n",groupId,artifactId,version,repo,description));
+}

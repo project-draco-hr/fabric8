@@ -1,0 +1,18 @@
+{
+  if (documentBuilder == null) {
+    DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+    dbf.setNamespaceAware(true);
+    try {
+      this.documentBuilder=dbf.newDocumentBuilder();
+    }
+ catch (    ParserConfigurationException e) {
+      throw new RuntimeException(e.getMessage(),e);
+    }
+  }
+  try {
+    return documentBuilder.parse(inputSource);
+  }
+ catch (  Exception e) {
+    throw new RuntimeException(e.getMessage(),e);
+  }
+}

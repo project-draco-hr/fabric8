@@ -1,0 +1,14 @@
+{
+  if (srcDir.isFile()) {
+    copyFile(srcDir,outDir,replaceFn);
+  }
+ else {
+    outDir.mkdirs();
+    String[] names=srcDir.list();
+    if (names != null) {
+      for (      String name : names) {
+        copyCodeFiles(new File(srcDir,name),new File(outDir,name),replaceFn);
+      }
+    }
+  }
+}

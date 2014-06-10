@@ -1,0 +1,12 @@
+{
+  Document doc=null;
+  try {
+    doc=parseXml(new InputSource(new FileReader(pom)));
+  }
+ catch (  FileNotFoundException e) {
+    throw new RuntimeException(e.getMessage(),e);
+  }
+  Element root=doc.getDocumentElement();
+  String packaging=firstElementText(root,"packaging","");
+  return packaging == null || !packaging.equals("pom");
+}

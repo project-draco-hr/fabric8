@@ -1,0 +1,16 @@
+{
+  if (isValidFileToCopy(projectDir,srcDir)) {
+    if (srcDir.isFile()) {
+      copyFile(srcDir,outDir,replaceFn);
+    }
+ else {
+      outDir.mkdirs();
+      String[] names=srcDir.list();
+      if (names != null) {
+        for (        String name : names) {
+          copyOtherFiles(projectDir,new File(srcDir,name),new File(outDir,name),replaceFn);
+        }
+      }
+    }
+  }
+}

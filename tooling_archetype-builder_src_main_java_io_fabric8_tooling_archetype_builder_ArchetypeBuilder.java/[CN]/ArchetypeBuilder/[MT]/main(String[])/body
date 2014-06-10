@@ -1,0 +1,25 @@
+{
+  try {
+    String basedir=System.getProperty("basedir");
+    if (basedir == null) {
+      basedir=".";
+    }
+    File srcDir=new File(basedir,"../examples").getCanonicalFile();
+    File catalogFile=new File(basedir,"target/archetype-catalog.xml").getCanonicalFile();
+    File quickStartSrcDir=new File(basedir,"../../quickstarts").getCanonicalFile();
+    File quickStartBeginnerSrcDir=new File(basedir,"../../quickstarts/beginner").getCanonicalFile();
+    File outputDir=args.length > 0 ? new File(args[0]) : new File(basedir,"../archetypes");
+    ArchetypeBuilder builder=new ArchetypeBuilder(catalogFile);
+    builder.configure(args);
+    try {
+      builder.generateArchetypes(srcDir,outputDir);
+    }
+  finally {
+      LOG.info("Completed the generation. Closing!");
+      builder.close();
+    }
+  }
+ catch (  Exception e) {
+    LOG.error("Caught: " + e.getMessage(),e);
+  }
+}

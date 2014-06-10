@@ -1,0 +1,23 @@
+{
+  File[] children=directory.listFiles(new FileFilter(){
+    @Override public boolean accept(    File pathname){
+      return isValidSourceFileOrDir(pathname);
+    }
+  }
+);
+  if (children != null) {
+    List<File> results=new LinkedList<File>();
+    for (    File it : children) {
+      if (it != null) {
+        results.add(findRootPackage(it));
+      }
+    }
+    if (results.size() == 1) {
+      return results.get(0);
+    }
+ else {
+      return directory;
+    }
+  }
+  return null;
+}

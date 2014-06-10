@@ -1,0 +1,62 @@
+{
+  LOG.info("Generating archetype from {} to {}",directory.getName(),outputDir.getCanonicalPath());
+  File srcDir=new File(directory,"src/main");
+  File testDir=new File(directory,"src/test");
+  File outputSrcDir=new File(outputDir,"src");
+  File outputGitIgnoreFile=new File(outputDir,".gitignore");
+  if (outputSrcDir.exists() && fileIncludesLine(outputGitIgnoreFile,"src")) {
+    LOG.info("Removing generated src dir {}",outputSrcDir);
+    FileUtils.deleteDirectory(outputSrcDir);
+    if (outputSrcDir.exists()) {
+      throw new RuntimeException("The directory " + outputSrcDir + " should not exist!");
+    }
+  }
+  File archetypeOutputDir=new File(outputDir,"src/main/resources/archetype-resources");
+  File metadataXmlFile=new File(directory,"archetype-metadata.xml");
+  File metadataXmlOutFile=new File(outputDir,"src/main/resources-filtered/META-INF/maven/archetype-metadata.xml");
+  Replacement replaceFunction=new IdentityReplacement();
+  File mainSrcDir=null;
+  for (  String it : sourceCodeDirNames) {
+    File dir=new File(srcDir,it);
+    if (dir.exists()) {
+      mainSrcDir=dir;
+      break;
+    }
+  }
+  if (mainSrcDir != null) {
+    File rootPackage=findRootPackage(mainSrcDir);
+    if (rootPackage != null) {
+      String packagePath=relativePath(mainSrcDir,rootPackage);
+      String packageName=packagePath.replaceAll("/",".");
+      final String regex=packageName.replaceAll("\\.","\\\\.");
+      replaceFunction=new Replacement(){
+        @Override public String replace(        String token){
+          return token.replaceAll(regex,"\\${package}");
+        }
+      }
+;
+      File outputMainSrc=new File(archetypeOutputDir,relativePath(directory,mainSrcDir));
+      copyCodeFiles(rootPackage,outputMainSrc,replaceFunction);
+      File testSrcDir=null;
+      for (      String it : sourceCodeDirNames) {
+        File dir=new File(testDir,it);
+        if (dir.exists()) {
+          testSrcDir=dir;
+          break;
+        }
+      }
+      if (testSrcDir != null) {
+        File rootTestDir=new File(testSrcDir,packagePath);
+        File outputTestSrc=new File(archetypeOutputDir,relativePath(directory,testSrcDir));
+        if (rootTestDir.exists()) {
+          copyCodeFiles(rootTestDir,outputTestSrc,replaceFunction);
+        }
+ else {
+          copyCodeFiles(testSrcDir,outputTestSrc,replaceFunction);
+        }
+      }
+    }
+  }
+  copyPom(pom,new File(archetypeOutputDir,"pom.xml"),metadataXmlFile,metadataXmlOutFile,replaceFunction);
+  copyOtherFiles(directory,directory,archetypeOutputDir,replaceFunction);
+}
