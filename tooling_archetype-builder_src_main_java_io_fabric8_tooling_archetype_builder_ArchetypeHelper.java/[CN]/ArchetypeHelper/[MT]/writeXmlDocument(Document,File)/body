@@ -1,0 +1,13 @@
+{
+  try {
+    Transformer tr=transformerFactory.newTransformer();
+    tr.setOutputProperty(OutputKeys.ENCODING,"UTF-8");
+    tr.setOutputProperty(OutputKeys.INDENT,"yes");
+    FileOutputStream fileOutputStream=new FileOutputStream(file);
+    tr.transform(new DOMSource(document),new StreamResult(fileOutputStream));
+    fileOutputStream.close();
+  }
+ catch (  Exception e) {
+    throw new IOException(e.getMessage(),e);
+  }
+}

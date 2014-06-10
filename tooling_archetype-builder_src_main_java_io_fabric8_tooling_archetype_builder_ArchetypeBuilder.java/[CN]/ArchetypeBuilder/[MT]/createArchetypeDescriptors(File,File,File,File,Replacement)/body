@@ -1,0 +1,125 @@
+{
+  LOG.info("Parsing " + projectPom);
+  String text=replaceFn.replace(FileUtils.readFileToString(projectPom));
+  Document doc=archetypeHelper.parseXml(new InputSource(new StringReader(text)));
+  Element root=doc.getDocumentElement();
+  String originalArtifactId, originalName, originalDescription;
+  Element artifactIdEl=(Element)findChild(root,"artifactId");
+  Element nameEl=(Element)findChild(root,"name");
+  Element descriptionEl=(Element)findChild(root,"description");
+  if (artifactIdEl != null && artifactIdEl.getTextContent() != null && artifactIdEl.getTextContent().trim().length() > 0) {
+    originalArtifactId=artifactIdEl.getTextContent().trim();
+  }
+ else {
+    originalArtifactId=archetypeDir.getName();
+  }
+  if (nameEl != null && nameEl.getTextContent() != null && nameEl.getTextContent().trim().length() > 0) {
+    originalName=nameEl.getTextContent().trim();
+  }
+ else {
+    originalName=originalArtifactId;
+  }
+  if (descriptionEl != null && descriptionEl.getTextContent() != null && descriptionEl.getTextContent().trim().length() > 0) {
+    originalDescription=descriptionEl.getTextContent().trim();
+  }
+ else {
+    originalDescription=originalName;
+  }
+  Set<String> propertyNameSet=new TreeSet<String>();
+  if (root != null) {
+    NodeList parents=root.getElementsByTagName("parent");
+    if (parents.getLength() > 0) {
+      if (parents.item(0).getNextSibling().getNodeType() == Node.TEXT_NODE) {
+        root.removeChild(parents.item(0).getNextSibling());
+      }
+      root.removeChild(parents.item(0));
+    }
+    Set<String> pomPropertyNames=new LinkedHashSet<String>();
+    NodeList propertyElements=root.getElementsByTagName("properties");
+    if (propertyElements.getLength() > 0) {
+      Element propertyElement=(Element)propertyElements.item(0);
+      NodeList children=propertyElement.getChildNodes();
+      for (int cn=0; cn < children.getLength(); cn++) {
+        Node e=children.item(cn);
+        if (e instanceof Element) {
+          pomPropertyNames.add(e.getNodeName());
+        }
+      }
+    }
+    LOG.debug("Found <properties> in the pom: {}",pomPropertyNames);
+    NodeList children=root.getElementsByTagName("*");
+    for (int cn=0; cn < children.getLength(); cn++) {
+      Node e=children.item(cn);
+      if (e instanceof Element) {
+        String cText=e.getTextContent();
+        String prefix="${";
+        if (cText.startsWith(prefix)) {
+          int offset=prefix.length();
+          int idx=cText.indexOf("}",offset + 1);
+          if (idx > 0) {
+            String name=cText.substring(offset,idx);
+            if (!pomPropertyNames.contains(name) && isValidRequiredPropertyName(name)) {
+              propertyNameSet.add(name);
+            }
+          }
+        }
+      }
+    }
+    List<String> beforeNames=Arrays.asList("artifactId","version","packaging","name","properties");
+    replaceOrAddElementText(doc,root,"version","${version}",beforeNames);
+    replaceOrAddElementText(doc,root,"artifactId","${artifactId}",beforeNames);
+    replaceOrAddElementText(doc,root,"groupId","${groupId}",beforeNames);
+  }
+  archetypePom.getParentFile().mkdirs();
+  archetypeHelper.writeXmlDocument(doc,archetypePom);
+  String archetypeXmlText=defaultArchetypeXmlText();
+  Document archDoc=archetypeHelper.parseXml(new InputSource(new StringReader(archetypeXmlText)));
+  Element archRoot=archDoc.getDocumentElement();
+  archRoot.setAttribute("name",archetypeDir.getName());
+  LOG.debug(("Found property names: {}"),propertyNameSet);
+  Element requiredProperties=replaceOrAddElement(archDoc,archRoot,"requiredProperties",Arrays.asList("fileSets"));
+  for (  String propertyName : propertyNameSet) {
+    requiredProperties.appendChild(archDoc.createTextNode("\n" + indent + indent));
+    Element requiredProperty=archDoc.createElement("requiredProperty");
+    requiredProperties.appendChild(requiredProperty);
+    requiredProperty.setAttribute("key",propertyName);
+    requiredProperty.appendChild(archDoc.createTextNode("\n" + indent + indent+ indent));
+    Element defaultValue=archDoc.createElement("defaultValue");
+    requiredProperty.appendChild(defaultValue);
+    defaultValue.appendChild(archDoc.createTextNode("${" + propertyName + "}"));
+    requiredProperty.appendChild(archDoc.createTextNode("\n" + indent + indent));
+  }
+  requiredProperties.appendChild(archDoc.createTextNode("\n" + indent));
+  metadataXmlOutFile.getParentFile().mkdirs();
+  archetypeHelper.writeXmlDocument(archDoc,metadataXmlOutFile);
+  File archetypeProjectPom=new File(archetypeDir,"pom.xml");
+  if (!archetypeProjectPom.exists()) {
+    StringWriter sw=new StringWriter();
+    IOUtils.copy(getClass().getResourceAsStream("default-archetype-pom.xml"),sw,"UTF-8");
+    Document pomDocument=archetypeHelper.parseXml(new InputSource(new StringReader(sw.toString())));
+    List<String> emptyList=Collections.emptyList();
+    Element artifactId=replaceOrAddElement(pomDocument,pomDocument.getDocumentElement(),"artifactId",emptyList);
+    artifactId.setTextContent(archetypeDir.getName());
+    Element name=replaceOrAddElement(pomDocument,pomDocument.getDocumentElement(),"name",emptyList);
+    if (originalName.contains(" :: ")) {
+      String[] originalNameTab=originalName.split(" :: ");
+      if (originalNameTab.length > 2) {
+        StringBuilder sb=new StringBuilder();
+        sb.append("Fabric8 :: Archetypes");
+        for (int idx=2; idx < originalNameTab.length; idx++) {
+          sb.append(" :: ").append(originalNameTab[idx]);
+        }
+        name.setTextContent(sb.toString());
+      }
+ else {
+        name.setTextContent("Fabric8 :: Archetypes :: " + originalNameTab[1]);
+      }
+    }
+ else {
+      name.setTextContent("Fabric8 :: Archetypes :: " + originalName);
+    }
+    Element description=replaceOrAddElement(pomDocument,pomDocument.getDocumentElement(),"description",emptyList);
+    description.setTextContent("Creates a new " + originalDescription);
+    archetypeHelper.writeXmlDocument(pomDocument,archetypeProjectPom);
+  }
+}

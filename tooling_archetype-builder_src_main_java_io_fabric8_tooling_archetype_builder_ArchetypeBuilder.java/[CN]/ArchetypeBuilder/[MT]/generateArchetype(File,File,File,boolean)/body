@@ -1,0 +1,66 @@
+{
+  LOG.info("Generating archetype from {} to {}",projectDir.getName(),archetypeDir.getCanonicalPath());
+  File srcDir=new File(projectDir,"src/main");
+  File testDir=new File(projectDir,"src/test");
+  File outputSrcDir=new File(archetypeDir,"src");
+  File outputGitIgnoreFile=new File(archetypeDir,".gitignore");
+  if (clean) {
+    LOG.info("Removing generated archetype dir {}",archetypeDir);
+    FileUtils.deleteDirectory(archetypeDir);
+  }
+ else   if (outputSrcDir.exists() && outputGitIgnoreFile.exists() && fileIncludesLine(outputGitIgnoreFile,"src")) {
+    LOG.info("Removing generated src dir {}",outputSrcDir);
+    FileUtils.deleteDirectory(outputSrcDir);
+    if (outputSrcDir.exists()) {
+      throw new RuntimeException("The projectDir " + outputSrcDir + " should not exist!");
+    }
+  }
+  File archetypeOutputDir=new File(archetypeDir,"src/main/resources/archetype-resources");
+  File metadataXmlOutFile=new File(archetypeDir,"src/main/resources-filtered/META-INF/maven/archetype-metadata.xml");
+  Replacement replaceFunction=new IdentityReplacement();
+  File mainSrcDir=null;
+  for (  String it : ArchetypeHelper.sourceCodeDirNames) {
+    File dir=new File(srcDir,it);
+    if (dir.exists()) {
+      mainSrcDir=dir;
+      break;
+    }
+  }
+  if (mainSrcDir != null) {
+    File rootPackage=archetypeHelper.findRootPackage(mainSrcDir);
+    if (rootPackage != null) {
+      String packagePath=archetypeHelper.relativePath(mainSrcDir,rootPackage);
+      String packageName=packagePath.replaceAll(Pattern.quote("/"),".");
+      LOG.debug("Found root package in {}: {}",mainSrcDir,packageName);
+      final String regex=packageName.replaceAll(Pattern.quote("."),"\\.");
+      replaceFunction=new Replacement(){
+        @Override public String replace(        String token){
+          return token.replaceAll(regex,"\\${package}");
+        }
+      }
+;
+      File outputMainSrc=new File(archetypeOutputDir,archetypeHelper.relativePath(projectDir,mainSrcDir));
+      copyCodeFiles(rootPackage,outputMainSrc,replaceFunction);
+      File testSrcDir=null;
+      for (      String it : ArchetypeHelper.sourceCodeDirNames) {
+        File dir=new File(testDir,it);
+        if (dir.exists()) {
+          testSrcDir=dir;
+          break;
+        }
+      }
+      if (testSrcDir != null) {
+        File rootTestDir=new File(testSrcDir,packagePath);
+        File outputTestSrc=new File(archetypeOutputDir,archetypeHelper.relativePath(projectDir,testSrcDir));
+        if (rootTestDir.exists()) {
+          copyCodeFiles(rootTestDir,outputTestSrc,replaceFunction);
+        }
+ else {
+          copyCodeFiles(testSrcDir,outputTestSrc,replaceFunction);
+        }
+      }
+    }
+  }
+  createArchetypeDescriptors(projectPom,archetypeDir,new File(archetypeOutputDir,"pom.xml"),metadataXmlOutFile,replaceFunction);
+  copyOtherFiles(projectDir,projectDir,archetypeOutputDir,replaceFunction);
+}

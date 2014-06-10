@@ -1,0 +1,10 @@
+{
+  assertThat(archetypeHelper.findRootPackage(new File("src/test/resources/example-1/src/main/java")),equalTo(new File("src/test/resources/example-1/src/main/java/io/fabric8/example/root")));
+  assertThat(archetypeHelper.findRootPackage(new File("src/test/resources/example-2/src/main/java/")),equalTo(new File("src/test/resources/example-2/src/main/java/io/fabric8/example/root/nested")));
+  try {
+    archetypeHelper.findRootPackage(new File("src/test/resources/example-1/io/fabric8/example/root/A.java"));
+    fail("Should fail when checking root package of file");
+  }
+ catch (  IllegalArgumentException e) {
+  }
+}

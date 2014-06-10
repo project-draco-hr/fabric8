@@ -1,0 +1,33 @@
+{
+  if (!directory.isDirectory()) {
+    throw new IllegalArgumentException("Can't find package inside file. Argument should be valid directory.");
+  }
+  File[] children=directory.listFiles(new FileFilter(){
+    @Override public boolean accept(    File pathname){
+      return isValidSourceFileOrDir(pathname);
+    }
+  }
+);
+  if (children != null) {
+    List<File> results=new LinkedList<File>();
+    for (    File it : children) {
+      if (!it.isDirectory()) {
+        results.add(directory);
+        break;
+      }
+ else {
+        File pkg=findRootPackage(it);
+        if (pkg != null) {
+          results.add(pkg);
+        }
+      }
+    }
+    if (results.size() == 1) {
+      return results.get(0);
+    }
+ else {
+      return directory;
+    }
+  }
+  return null;
+}

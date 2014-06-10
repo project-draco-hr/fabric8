@@ -1,13 +1,13 @@
 {
-  if (srcDir.isFile()) {
-    copyFile(srcDir,outDir,replaceFn);
+  if (rootPackage.isFile()) {
+    copyFile(rootPackage,outDir,replaceFn);
   }
  else {
     outDir.mkdirs();
-    String[] names=srcDir.list();
+    String[] names=rootPackage.list();
     if (names != null) {
       for (      String name : names) {
-        copyCodeFiles(new File(srcDir,name),new File(outDir,name),replaceFn);
+        copyCodeFiles(new File(rootPackage,name),new File(outDir,name),replaceFn);
       }
     }
   }

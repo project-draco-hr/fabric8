@@ -3,14 +3,16 @@
     String original=FileUtils.readFileToString(src);
     String escapeDollarSquiggly=original;
     if (original.contains("${")) {
-      String replaced=original.replaceAll("\\$\\{","\\$\\{D\\}\\{");
+      String replaced=original.replaceAll(Pattern.quote("${"),"\\${D}{");
       escapeDollarSquiggly="#set( $D = '$' )\n" + replaced;
     }
     String text=replaceFn.replace(escapeDollarSquiggly);
     FileUtils.write(dest,text);
   }
  else {
-    LOG.warn("Not a source dir as the extention is {}",FilenameUtils.getExtension(src.getName()));
+    if (LOG.isDebugEnabled()) {
+      LOG.warn("Not a source dir as the extention is {}",FilenameUtils.getExtension(src.getName()));
+    }
     FileUtils.copyFile(src,dest);
   }
 }

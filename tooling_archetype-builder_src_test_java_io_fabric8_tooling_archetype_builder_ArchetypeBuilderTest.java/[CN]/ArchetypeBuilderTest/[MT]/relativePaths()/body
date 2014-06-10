@@ -1,0 +1,14 @@
+{
+  File base=new File("/tmp/x");
+  File nested=new File("/tmp/x/y");
+  assertThat(archetypeHelper.relativePath(base,nested),equalTo("y"));
+  base=new File("/tmp/x");
+  nested=new File("/var/tmp/x/y");
+  assertThat(archetypeHelper.relativePath(base,nested),equalTo("/var/tmp/x/y"));
+  base=new File("/tmp/x");
+  nested=new File("/tmp/x");
+  assertThat(archetypeHelper.relativePath(base,nested),equalTo(""));
+  base=new File("/tmp/x/..");
+  nested=new File("/tmp/x");
+  assertThat(archetypeHelper.relativePath(base,nested),equalTo("x"));
+}
