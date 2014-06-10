@@ -1,0 +1,9 @@
+{
+  helloInterface=mock(HelloInterface.class);
+  when(helloInterface.hello(anyString())).thenAnswer(new Answer(){
+    @Override public Object answer(    InvocationOnMock invocation) throws Throwable {
+      return "Hello " + invocation.getArguments()[0] + "!";
+    }
+  }
+);
+}
