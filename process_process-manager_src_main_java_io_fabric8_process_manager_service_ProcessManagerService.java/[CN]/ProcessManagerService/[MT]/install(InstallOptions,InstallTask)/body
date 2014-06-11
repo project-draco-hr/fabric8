@@ -8,6 +8,7 @@
         String extractCmd=options.getExtractCmd();
         FileUtils.extractArchive(archive,installDir,extractCmd,untarTimeout,executor);
         File nestedProcessDirectory=findInstallDir(installDir);
+        exportInstallDirEnvVar(options,nestedProcessDirectory);
         String[] postInstallCmds=options.getPostInstallCmds();
         if (postInstallCmds != null) {
           for (          String postInstallCmd : postInstallCmds) {
