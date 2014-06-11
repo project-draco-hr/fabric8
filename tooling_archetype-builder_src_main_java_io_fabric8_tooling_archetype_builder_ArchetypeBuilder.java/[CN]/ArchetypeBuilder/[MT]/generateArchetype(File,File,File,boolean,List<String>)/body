@@ -1,15 +1,16 @@
 {
-  LOG.info("Generating archetype from {} to {}",projectDir.getName(),archetypeDir.getCanonicalPath());
+  LOG.debug("Generating archetype from {} to {}",projectDir.getName(),archetypeDir.getCanonicalPath());
+  dirs.add(archetypeDir.getCanonicalPath());
   File srcDir=new File(projectDir,"src/main");
   File testDir=new File(projectDir,"src/test");
   File outputSrcDir=new File(archetypeDir,"src");
   File outputGitIgnoreFile=new File(archetypeDir,".gitignore");
   if (clean) {
-    LOG.info("Removing generated archetype dir {}",archetypeDir);
+    LOG.debug("Removing generated archetype dir {}",archetypeDir);
     FileUtils.deleteDirectory(archetypeDir);
   }
  else   if (outputSrcDir.exists() && outputGitIgnoreFile.exists() && fileIncludesLine(outputGitIgnoreFile,"src")) {
-    LOG.info("Removing generated src dir {}",outputSrcDir);
+    LOG.debug("Removing generated src dir {}",outputSrcDir);
     FileUtils.deleteDirectory(outputSrcDir);
     if (outputSrcDir.exists()) {
       throw new RuntimeException("The projectDir " + outputSrcDir + " should not exist!");

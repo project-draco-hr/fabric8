@@ -1,5 +1,5 @@
 {
-  LOG.info("Generating archetypes from {} to {}",baseDir.getCanonicalPath(),outputDir.getCanonicalPath());
+  LOG.debug("Generating archetypes from {} to {}",baseDir.getCanonicalPath(),outputDir.getCanonicalPath());
   File[] files=baseDir.listFiles();
   if (files != null) {
     for (    File file : files) {
@@ -12,8 +12,9 @@
           if (fileName.equals(archetypeDirName)) {
             archetypeDirName+="-archetype";
           }
+          archetypeDirName=containerType + "-" + archetypeDirName;
           File archetypeDir=new File(outputDir,archetypeDirName);
-          generateArchetype(projectDir,projectPom,archetypeDir,clean);
+          generateArchetype(projectDir,projectPom,archetypeDir,clean,dirs);
           File archetypePom=new File(archetypeDir,"pom.xml");
           if (archetypePom.exists()) {
             addArchetypeMetaData(archetypePom,archetypeDirName);
