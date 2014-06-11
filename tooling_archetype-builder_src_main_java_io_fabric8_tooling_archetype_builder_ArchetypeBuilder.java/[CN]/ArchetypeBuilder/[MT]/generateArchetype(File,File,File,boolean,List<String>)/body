@@ -1,6 +1,6 @@
 {
   LOG.debug("Generating archetype from {} to {}",projectDir.getName(),archetypeDir.getCanonicalPath());
-  dirs.add(archetypeDir.getCanonicalPath());
+  dirs.add(archetypeDir.getName());
   File srcDir=new File(projectDir,"src/main");
   File testDir=new File(projectDir,"src/test");
   File outputSrcDir=new File(archetypeDir,"src");
@@ -64,4 +64,7 @@
   }
   createArchetypeDescriptors(projectPom,archetypeDir,new File(archetypeOutputDir,"pom.xml"),metadataXmlOutFile,replaceFunction);
   copyOtherFiles(projectDir,projectDir,archetypeOutputDir,replaceFunction);
+  if (!outputGitIgnoreFile.exists()) {
+    ArchetypeHelper.writeGitIgnore(outputGitIgnoreFile);
+  }
 }
