@@ -1,0 +1,18 @@
+{
+  File target=new File(baseDir,name);
+  JavaDockerContainerImageBuilder.dockerfileAddFile(buffer,target,name);
+  if (!target.exists() && !target.getParentFile().exists() && !target.getParentFile().mkdirs()) {
+    throw new IOException("Directory: " + target.getParentFile().getAbsolutePath() + " can't be created");
+  }
+ else   if (target.isDirectory()) {
+    throw new IOException("Can't write to : " + target.getAbsolutePath() + ". It's a directory");
+  }
+ else   if (!target.exists() && !target.createNewFile()) {
+    throw new IOException("Failed to create file: " + target.getAbsolutePath() + ".");
+  }
+  Files.write(content.getBytes(Charsets.UTF_8),target);
+  String lowerName=name.toLowerCase();
+  if (lowerName.endsWith(".sh") || lowerName.endsWith(".bat") || lowerName.endsWith(".cmd")) {
+    target.setExecutable(true);
+  }
+}

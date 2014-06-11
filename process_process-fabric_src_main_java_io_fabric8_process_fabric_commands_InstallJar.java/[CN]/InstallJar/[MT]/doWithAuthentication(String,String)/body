@@ -1,7 +1,7 @@
 {
   ContainerInstallOptions options=ContainerInstallOptions.builder().container(getContainerObject()).user(jmxUser).password(jmxPassword).controllerUrl(getControllerURL()).groupId(groupId).artifactId(artifactId).version(version).classifier(classifier).extension(extension).offline(offline).optionalDependencyPatterns(optionalDependencyPatterns).excludeDependencyFilterPatterns(excludeDependencyPatterns).mainClass(mainClass).controllerUrl(getControllerURL()).build();
   InstallTask postInstall=null;
-  Installation install=getContainerProcessManager().installJar(options);
+  Installation install=getContainerProcessManager().installJar(options,postInstall);
   ShellUtils.storeFabricCredentials(session,jmxUser,jmxPassword);
   System.out.println("Installed process " + install.getId() + " to "+ install.getInstallDir());
 }

@@ -19,9 +19,12 @@
   try {
     if (ChildContainers.isJavaContainer(fabricService,options)) {
       LOG.debug("Java container detected - installing jar. Configuration: ",options);
-      InstallOptions parameters=createJavaInstallOptions(container,metadata,options,environmentVariables);
+      JavaContainerConfig javaConfig=createJavaContainerConfig(options);
+      InstallOptions parameters=createJavaInstallOptions(container,metadata,options,javaConfig,environmentVariables);
+      String layout=javaConfig.getOverlayFolder();
+      InstallTask postInstall=createCommonPostInstal(options,environmentVariables,layout);
       Objects.notNull(parameters,"JavaInstall parameters");
-      installation=procManager.installJar(parameters);
+      installation=procManager.installJar(parameters,postInstall);
     }
  else {
       LOG.debug("Process container detected - installing process. Configuration: ",options);

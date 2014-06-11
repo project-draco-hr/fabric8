@@ -148,7 +148,7 @@
     String tag="fabric8-" + Strings.join(names,"-").replace('.','-');
     JavaDockerContainerImageBuilder builder=new JavaDockerContainerImageBuilder();
     JavaContainerOptions javaContainerOptions=new JavaContainerOptions(image,imageRepository,tag,libDir,entryPoint);
-    String actualImage=builder.generateContainerImage(service,container,profileOverlays,docker,javaContainerOptions,downloadExecutor,environmentVariables);
+    String actualImage=builder.generateContainerImage(service,container,profileOverlays,docker,javaContainerOptions,javaConfig,options,downloadExecutor,environmentVariables);
     containerConfig.setImage(actualImage);
   }
   List<String> env=containerConfig.getEnv();

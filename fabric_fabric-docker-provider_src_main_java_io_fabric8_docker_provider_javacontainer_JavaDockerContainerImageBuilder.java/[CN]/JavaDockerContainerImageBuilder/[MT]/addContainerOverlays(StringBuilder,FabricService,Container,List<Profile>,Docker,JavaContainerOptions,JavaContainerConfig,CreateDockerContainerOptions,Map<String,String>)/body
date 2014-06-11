@@ -1,0 +1,47 @@
+{
+  Set<String> profileIds=containerOptions.getProfiles();
+  String versionId=containerOptions.getVersion();
+  String layout=javaConfig.getOverlayFolder();
+  if (layout != null) {
+    Map<String,String> configuration=ProcessUtils.getProcessLayout(profiles,layout);
+    if (configuration != null && !configuration.isEmpty()) {
+      Map variables=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.TEMPLATE_VARIABLES_PID);
+      if (variables == null) {
+        variables=new HashMap();
+      }
+ else {
+        JolokiaAgentHelper.substituteEnvironmentVariableExpressions(variables,environmentVariables);
+      }
+      variables.putAll(environmentVariables);
+      LOGGER.info("Using template variables for MVEL: " + variables);
+      new ApplyConfigurationStep(buffer,configuration,variables,getTempDirectory()).install();
+    }
+  }
+  Map<String,String> overlayResources=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.PROCESS_CONTAINER_OVERLAY_RESOURCES_PID);
+  if (overlayResources != null && !overlayResources.isEmpty()) {
+    File baseDir=getTempDirectory();
+    Set<Map.Entry<String,String>> entries=overlayResources.entrySet();
+    for (    Map.Entry<String,String> entry : entries) {
+      String localPath=entry.getKey();
+      String urlText=entry.getValue();
+      if (Strings.isNotBlank(urlText)) {
+        URL url=null;
+        try {
+          url=new URL(urlText);
+        }
+ catch (        MalformedURLException e) {
+          LOGGER.warn("Ignoring invalid URL '" + urlText + "' for overlay resource "+ localPath+ ". "+ e,e);
+        }
+        if (url != null) {
+          File newFile=new File(baseDir,localPath);
+          newFile.getParentFile().mkdirs();
+          InputStream stream=url.openStream();
+          if (stream != null) {
+            Files.copy(stream,new BufferedOutputStream(new FileOutputStream(newFile)));
+            dockerfileAddFile(buffer,newFile,localPath);
+          }
+        }
+      }
+    }
+  }
+}

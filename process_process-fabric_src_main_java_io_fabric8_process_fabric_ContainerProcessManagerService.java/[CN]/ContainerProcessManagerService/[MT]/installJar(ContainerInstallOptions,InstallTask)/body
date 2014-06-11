@@ -3,7 +3,7 @@
   ProcessManagerJmxTemplate jmxTemplate=getJmxTemplate(container,options.getUser(),options.getPassword());
   return jmxTemplate.execute(new ProcessManagerCallback<Installation>(){
     @Override public Installation doWithProcessManager(    ProcessManagerServiceMBean processManagerService) throws Exception {
-      return processManagerService.installJar(options.asInstallOptions());
+      return processManagerService.installJar(options.asInstallOptions(),postInstall);
     }
   }
 );

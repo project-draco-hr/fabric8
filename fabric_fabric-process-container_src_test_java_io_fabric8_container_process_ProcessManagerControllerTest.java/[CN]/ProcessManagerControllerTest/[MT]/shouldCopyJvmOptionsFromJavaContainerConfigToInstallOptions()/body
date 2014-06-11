@@ -2,6 +2,6 @@
   String firstVmOption="-Dfoo=bar";
   String secondVmOption="-Dbaz=qux";
   javaContainerConfig.setJvmArguments(firstVmOption + " " + secondVmOption);
-  InstallOptions installOptions=managerController.createJavaInstallOptions(container,containerMetadata,containerOptions,new HashMap<String,String>());
+  InstallOptions installOptions=managerController.createJavaInstallOptions(container,containerMetadata,containerOptions,javaContainerConfig,new HashMap<String,String>());
   assertArrayEquals(new String[]{firstVmOption,secondVmOption},installOptions.getJvmOptions());
 }

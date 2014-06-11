@@ -24,6 +24,9 @@
       writeJvmConfig(etc,parameters.getJvmOptions());
       JarInstaller installer=new JarInstaller(parameters,executor);
       installer.install(installContext,config,id,installDir);
+      if (postInstall != null) {
+        postInstall.install(installContext,config,id,installDir);
+      }
     }
   }
 ;

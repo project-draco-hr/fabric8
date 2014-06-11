@@ -1,0 +1,26 @@
+{
+  Set<String> profileIds=options.getProfiles();
+  String versionId=options.getVersion();
+  List<Profile> profiles=Profiles.getProfiles(fabricService,profileIds,versionId);
+  InstallTask answer=null;
+  if (layout != null) {
+    Map<String,String> configuration=ProcessUtils.getProcessLayout(profiles,layout);
+    if (configuration != null && !configuration.isEmpty()) {
+      Map variables=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.TEMPLATE_VARIABLES_PID);
+      if (variables == null) {
+        variables=new HashMap();
+      }
+ else {
+        JolokiaAgentHelper.substituteEnvironmentVariableExpressions(variables,environmentVariables);
+      }
+      variables.putAll(environmentVariables);
+      LOG.info("Using template variables for MVEL: " + variables);
+      answer=new ApplyConfigurationTask(configuration,variables);
+    }
+  }
+  Map<String,String> overlayResources=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.PROCESS_CONTAINER_OVERLAY_RESOURCES_PID);
+  if (overlayResources != null && !overlayResources.isEmpty()) {
+    answer=CompositeTask.combine(answer,new DownloadResourcesTask(overlayResources));
+  }
+  return answer;
+}
