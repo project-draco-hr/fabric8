@@ -1,5 +1,5 @@
 {
-  if (isSourceFile(src)) {
+  if (replaceFn != null && isSourceFile(src)) {
     String original=FileUtils.readFileToString(src);
     String escapeDollarSquiggly=original;
     if (original.contains("${")) {
@@ -11,7 +11,7 @@
   }
  else {
     if (LOG.isDebugEnabled()) {
-      LOG.warn("Not a source dir as the extention is {}",FilenameUtils.getExtension(src.getName()));
+      LOG.warn("Not a source dir as the extension is {}",FilenameUtils.getExtension(src.getName()));
     }
     FileUtils.copyFile(src,dest);
   }
