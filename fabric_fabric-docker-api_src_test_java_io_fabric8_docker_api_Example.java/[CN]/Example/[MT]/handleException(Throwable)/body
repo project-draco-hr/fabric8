@@ -1,4 +1,8 @@
 {
   System.out.println(e.getMessage());
+  if (e instanceof WebApplicationException) {
+    WebApplicationException webException=(WebApplicationException)e;
+    System.out.println("Message: " + webException.getResponse().readEntity(String.class));
+  }
   e.printStackTrace();
 }

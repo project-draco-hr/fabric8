@@ -8,6 +8,12 @@
       stopJolokiaKeepAlive(metadata);
     }
     Integer timeToWait=null;
-    docker.containerStop(id,timeToWait);
+    try {
+      docker.containerStop(id,timeToWait);
+    }
+ catch (    Exception e) {
+      LOG.info("Could not stop container " + id + ": "+ e+ Dockers.dockerErrorMessage(e),e);
+      throw e;
+    }
   }
 }

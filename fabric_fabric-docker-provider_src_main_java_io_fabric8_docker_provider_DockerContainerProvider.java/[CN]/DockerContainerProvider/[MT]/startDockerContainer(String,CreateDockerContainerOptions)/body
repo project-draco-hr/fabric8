@@ -20,6 +20,12 @@
     }
     hostConfig.setPortBindings(portBindings);
     LOG.info("starting container " + id + " with "+ hostConfig);
-    docker.containerStart(id,hostConfig);
+    try {
+      docker.containerStart(id,hostConfig);
+    }
+ catch (    Exception e) {
+      LOG.error("Failed to start container " + id + " with "+ hostConfig+ " "+ e+ Dockers.dockerErrorMessage(e),e);
+      throw e;
+    }
   }
 }

@@ -1,0 +1,12 @@
+{
+  if (e instanceof WebApplicationException) {
+    try {
+      WebApplicationException webException=(WebApplicationException)e;
+      return " " + webException.getResponse().readEntity(String.class);
+    }
+ catch (    Exception e1) {
+      return " could not extract response message: " + e;
+    }
+  }
+  return "";
+}
