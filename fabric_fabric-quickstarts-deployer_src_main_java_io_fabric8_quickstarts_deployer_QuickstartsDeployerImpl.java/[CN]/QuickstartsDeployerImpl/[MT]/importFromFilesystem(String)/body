@@ -1,8 +1,21 @@
 {
   LOG.info("Importing from file system directory: {}",path);
-  List<String> profiles=new ArrayList<String>();
-  profiles.add("file:" + path + "/profile.zip");
-  LOG.info("Importing quickstarts ...");
-  dataStore.get().importProfiles(importVersion,profiles);
-  LOG.info("Importing quickstarts done");
+  String[] zips=new File(path).list(new FilenameFilter(){
+    @Override public boolean accept(    File dir,    String name){
+      return name.endsWith(".zip");
+    }
+  }
+);
+  int count=zips != null ? zips.length : 0;
+  LOG.info("Found {} .zip files to import",count);
+  if (zips != null && zips.length > 0) {
+    List<String> profiles=new ArrayList<String>();
+    for (    String name : zips) {
+      profiles.add("file:" + path + "/"+ name);
+      LOG.debug("Adding {} .zip file to import",name);
+    }
+    LOG.info("Importing quickstarts ...");
+    dataStore.get().importProfiles(dataStore.get().getDefaultVersion(),profiles);
+    LOG.info("Importing quickstarts done");
+  }
 }
