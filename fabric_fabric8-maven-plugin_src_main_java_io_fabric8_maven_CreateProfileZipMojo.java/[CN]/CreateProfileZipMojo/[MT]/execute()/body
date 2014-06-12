@@ -6,6 +6,9 @@
       List<MavenProject> pomZipProjects=new ArrayList<>();
       List<MavenProject> projectsWithZip=new ArrayList<>();
       for (      MavenProject reactorProject : reactorProjects) {
+        if ("pom".equals(reactorProject.getPackaging())) {
+          pomZipProjects.add(reactorProject);
+        }
         List<Plugin> buildPlugins=reactorProject.getBuildPlugins();
         for (        Plugin buildPlugin : buildPlugins) {
           String artifactId=buildPlugin.getArtifactId();
@@ -20,9 +23,6 @@
               }
             }
             getLog().debug("project " + reactorProject.getArtifactId() + " has zip goal: "+ hasZipGoal);
-            if ("pom".equals(reactorProject.getPackaging())) {
-              pomZipProjects.add(reactorProject);
-            }
             projectsWithZip.add(reactorProject);
           }
         }
@@ -46,7 +46,7 @@
             rootProject=reactorProjects.get(0);
           }
           getLog().info("Choosing root project " + rootProject.getArtifactId() + " for generation of aggregated zip");
-          generateAggregatedZip(rootProject,projectsWithZip);
+          generateAggregatedZip(rootProject,projectsWithZip,pomZipProjects);
         }
       }
     }

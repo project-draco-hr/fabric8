@@ -6,6 +6,16 @@
       combineProfileFilesToFolder(reactorProject,projectBuildDir,log,reactorProjectOutputPath);
     }
   }
+  if (includeRootReadMe) {
+    for (    MavenProject pomProjects : pomZipProjects) {
+      File src=pomProjects.getFile().getParentFile();
+      String root=projectBaseDir.getName();
+      String relativePath=Files.getRelativePath(projectBaseDir,pomProjects.getBasedir());
+      relativePath=root + File.separator + relativePath;
+      File outDir=new File(reactorProjectOutputPath,relativePath);
+      copyReadMe(src,outDir);
+    }
+  }
   Zips.createZipFile(getLog(),projectBuildDir,projectOutputFile);
   String relativePath=Files.getRelativePath(projectBaseDir,projectOutputFile);
   while (relativePath.startsWith("/")) {
