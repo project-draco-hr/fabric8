@@ -1,5 +1,12 @@
 {
   configurer.configure(configuration,this);
   activateComponent();
-  importFromFilesystem("foo");
+  if (autoImport) {
+    String karafHome=runtimeProperties.get().getProperty(SystemProperties.KARAF_HOME);
+    String dir=karafHome + File.separator + importDir;
+    importFromFilesystem(dir);
+  }
+ else {
+    LOG.info("Auto import is disabled");
+  }
 }
