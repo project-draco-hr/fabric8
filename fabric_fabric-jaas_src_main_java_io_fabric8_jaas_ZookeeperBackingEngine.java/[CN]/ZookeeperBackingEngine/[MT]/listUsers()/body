@@ -1,7 +1,10 @@
 {
   List<UserPrincipal> result=new ArrayList<UserPrincipal>();
-  for (  String userNames : users.keySet()) {
-    UserPrincipal userPrincipal=new UserPrincipal(userNames);
+  for (  String userName : users.keySet()) {
+    if (userName.startsWith(GROUP_PREFIX)) {
+      continue;
+    }
+    UserPrincipal userPrincipal=new UserPrincipal(userName);
     result.add(userPrincipal);
   }
   return result;

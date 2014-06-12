@@ -1,0 +1,14 @@
+{
+  List<GroupPrincipal> result=new ArrayList<GroupPrincipal>();
+  String userInfo=(String)users.get(userName);
+  if (userInfo != null) {
+    String[] infos=userInfo.split(",");
+    for (int i=1; i < infos.length; i++) {
+      String name=infos[i];
+      if (name.startsWith(GROUP_PREFIX)) {
+        result.add(new GroupPrincipal(name.substring(GROUP_PREFIX.length())));
+      }
+    }
+  }
+  return result;
+}
