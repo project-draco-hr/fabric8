@@ -1,0 +1,18 @@
+{
+  LOG.info("Importing from file system directory: {}",path);
+  ProjectRequirements req=new ProjectRequirements();
+  req.setProfileId("my-test");
+  List<String> parent=new ArrayList<String>();
+  parent.add("feature-camel");
+  req.setParentProfiles(parent);
+  List<String> bundles=new ArrayList<String>();
+  bundles.add("mvn:com.foo/mycamel/1.0");
+  req.setBundles(bundles);
+  LOG.info("{}",req);
+  try {
+    projectDeployer.get().deployProject(req);
+  }
+ catch (  Exception e) {
+    LOG.error("Error deploying due " + e.getMessage(),e);
+  }
+}
