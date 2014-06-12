@@ -1,0 +1,13 @@
+{
+  LOG.info("Looking up a version for id is: {}",versionId);
+  if (fabricService != null && Strings.isNotBlank(versionId)) {
+    Version version=fabricService.getVersion(versionId);
+    if (version != null) {
+      return new VersionResource(this,version);
+    }
+ else {
+      LOG.warn("No version found for: {}",version);
+    }
+  }
+  return null;
+}

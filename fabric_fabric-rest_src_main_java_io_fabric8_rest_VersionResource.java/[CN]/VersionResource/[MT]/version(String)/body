@@ -1,0 +1,10 @@
+{
+  LOG.info("Looking up a profile for id is: {}",profileId);
+  if (Strings.isNotBlank(profileId) && version != null && version.hasProfile(profileId)) {
+    Profile profile=version.getProfile(profileId);
+    if (profile != null) {
+      return new ProfileResource(this,profile);
+    }
+  }
+  return null;
+}
