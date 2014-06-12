@@ -1,7 +1,8 @@
 {
-  LOG.info("========== asking for profiles");
   if (version != null) {
-    return Profiles.profileIds(version.getProfiles());
+    List<String> answer=Profiles.profileIds(version.getProfiles());
+    Collections.sort(answer);
+    return answer;
   }
   return Collections.EMPTY_LIST;
 }
