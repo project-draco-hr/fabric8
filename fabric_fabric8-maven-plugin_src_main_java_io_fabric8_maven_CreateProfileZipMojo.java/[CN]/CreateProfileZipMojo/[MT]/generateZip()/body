@@ -17,6 +17,9 @@
  else {
     getLog().info("The profile configuration files directory " + profileConfigDir + " doesn't exist, so not copying any additional project documentation or configuration files");
   }
+  if (includeRootReadMe) {
+    copyReadMe(profileBuildDir);
+  }
   if (hasConfigDir || rootDependency != null || notEmpty(requirements.getBundles()) || notEmpty(requirements.getFeatures()) || notEmpty(requirements.getFeatureRepositories())) {
     if (isIncludeArtifact()) {
       writeProfileRequirements(requirements,profileBuildDir);
