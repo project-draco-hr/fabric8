@@ -161,7 +161,8 @@
   Collection<Resource> allResources=builder.resolve(systemBundle,resolveOptionalImports);
   Set<String> ignoredBundles=getPrefixedProperties(properties,"ignore.");
   Map<String,StreamProvider> providers=builder.getProviders();
-  install(allResources,ignoredBundles,providers);
+  Map<Resource,List<Wire>> wiring=builder.getWiring();
+  install(allResources,ignoredBundles,providers,wiring);
   installFeatureConfigs(bundleContext,downloadedResources);
   return true;
 }

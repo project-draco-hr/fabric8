@@ -5,7 +5,7 @@
   repos.addAll(resourceRepos);
   ResolverImpl resolver=new ResolverImpl(new Slf4jResolverLog(LOGGER));
   ResolveContext context=new ResolveContextImpl(Collections.<Resource>singleton(requirements),Collections.<Resource>emptySet(),new AggregateRepository(repos),resolveOptionalImports);
-  Map<Resource,List<Wire>> wiring=resolver.resolve(context);
+  wiring=resolver.resolve(context);
   Map<String,Resource> deploy=new TreeMap<String,Resource>();
   for (  Resource res : wiring.keySet()) {
     String uri=getUri(res);
