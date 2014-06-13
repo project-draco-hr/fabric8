@@ -1,0 +1,12 @@
+{
+  if (src.exists() && src.isDirectory()) {
+    File out=new File(profileBuildDir,"data");
+    File[] files=src.listFiles();
+    for (    File file : files) {
+      if (file.getName().startsWith(".")) {
+        continue;
+      }
+      Files.copy(file,new File(out,file.getName()));
+    }
+  }
+}
