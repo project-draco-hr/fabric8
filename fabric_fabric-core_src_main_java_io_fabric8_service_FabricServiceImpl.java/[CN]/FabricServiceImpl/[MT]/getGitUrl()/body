@@ -1,19 +1,15 @@
 {
   assertValid();
-  String restApiFolder=ZkPath.REST_API_CLUSTERS.getPath("FabricResource/fabric8");
+  String restApiFolder=ZkPath.GIT.getPath();
   try {
     CuratorFramework curatorFramework=curator.get();
     if (curatorFramework != null) {
       List<String> versions=getChildrenSafe(curatorFramework,restApiFolder);
       for (      String version : versions) {
         String versionPath=restApiFolder + "/" + version;
-        List<String> containers=getChildrenSafe(curatorFramework,versionPath);
-        for (        String container : containers) {
-          String containerPath=versionPath + "/" + container;
-          String answer=getFirstService(containerPath);
-          if (!Strings.isNullOrEmpty(answer)) {
-            return answer;
-          }
+        String answer=getFirstService(versionPath);
+        if (!Strings.isNullOrEmpty(answer)) {
+          return answer;
         }
       }
     }
