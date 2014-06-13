@@ -43,7 +43,13 @@
     Collections.sort(bundles);
     container.setProvisionList(bundles);
   }
-  addContainerOverlays(buffer,fabric,container,profileList,docker,options,javaConfig,containerOptions,envVars);
+  String restAPI=fabric.getRestAPI();
+  if (Strings.isNotBlank(restAPI)) {
+    addContainerOverlays(buffer,restAPI,fabric,container,profileList,docker,options,javaConfig,containerOptions,envVars);
+  }
+ else {
+    LOGGER.error("Cannot perform container overlays as there is no REST API for fabric8!");
+  }
   String[] copiedEnvVars=JavaContainerEnvironmentVariables.ALL_ENV_VARS;
   for (  String envVarName : copiedEnvVars) {
     String value=envVars.get(envVarName);

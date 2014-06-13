@@ -3,18 +3,21 @@
   String versionId=containerOptions.getVersion();
   String layout=javaConfig.getOverlayFolder();
   if (layout != null) {
-    Map<String,String> configuration=ProcessUtils.getProcessLayout(profiles,layout);
-    if (configuration != null && !configuration.isEmpty()) {
-      Map variables=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.TEMPLATE_VARIABLES_PID);
-      if (variables == null) {
-        variables=new HashMap();
-      }
+    for (    Profile profile : profiles) {
+      Map<String,String> configuration=ProcessUtils.getProcessLayout(profile,layout);
+      if (configuration != null && !configuration.isEmpty()) {
+        String profileRestApi=restAPI + "/version/" + profile.getVersion()+ "/profile/"+ profile.getId()+ "/file/";
+        Map variables=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.TEMPLATE_VARIABLES_PID);
+        if (variables == null) {
+          variables=new HashMap();
+        }
  else {
-        JolokiaAgentHelper.substituteEnvironmentVariableExpressions(variables,environmentVariables);
+          JolokiaAgentHelper.substituteEnvironmentVariableExpressions(variables,environmentVariables);
+        }
+        variables.putAll(environmentVariables);
+        LOGGER.info("Using template variables for MVEL: " + variables);
+        new ApplyConfigurationStep(buffer,profileRestApi,configuration,variables,getTempDirectory()).install();
       }
-      variables.putAll(environmentVariables);
-      LOGGER.info("Using template variables for MVEL: " + variables);
-      new ApplyConfigurationStep(buffer,configuration,variables,getTempDirectory()).install();
     }
   }
   Map<String,String> overlayResources=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.PROCESS_CONTAINER_OVERLAY_RESOURCES_PID);
@@ -33,13 +36,7 @@
           LOGGER.warn("Ignoring invalid URL '" + urlText + "' for overlay resource "+ localPath+ ". "+ e,e);
         }
         if (url != null) {
-          File newFile=new File(baseDir,localPath);
-          newFile.getParentFile().mkdirs();
-          InputStream stream=url.openStream();
-          if (stream != null) {
-            Files.copy(stream,new BufferedOutputStream(new FileOutputStream(newFile)));
-            dockerfileAddFile(buffer,newFile,localPath);
-          }
+          LOGGER.warn("TODO - add overlay resources into a docker file for URL: " + url);
         }
       }
     }
