@@ -30,10 +30,6 @@
     generateFabricAgentProperties(requirements,new File(profileBuildDir,"io.fabric8.agent.properties"));
     Zips.createZipFile(getLog(),buildDir,outputFile);
     projectHelper.attachArtifact(project,artifactType,artifactClassifier,outputFile);
-    String relativePath=Files.getRelativePath(project.getBasedir(),outputFile);
-    while (relativePath.startsWith("/")) {
-      relativePath=relativePath.substring(1);
-    }
-    getLog().info("Created profile zip file: " + relativePath);
+    getLog().info("Created profile zip file: " + outputFile);
   }
 }

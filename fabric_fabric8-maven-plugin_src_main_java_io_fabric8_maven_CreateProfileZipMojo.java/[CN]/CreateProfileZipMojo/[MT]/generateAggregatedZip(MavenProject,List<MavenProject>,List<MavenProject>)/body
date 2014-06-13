@@ -4,5 +4,18 @@
   getLog().info("Generating " + projectOutputFile.getAbsolutePath() + " from root project "+ rootProject.getArtifactId());
   File projectBuildDir=new File(projectBaseDir,reactorProjectOutputPath);
   createAggregatedZip(reactorProjects,projectBaseDir,projectBuildDir,reactorProjectOutputPath,projectOutputFile,includeReadMe,pomZipProjects);
+  if (rootProject.getAttachedArtifacts() != null) {
+    Artifact found=null;
+    for (    Artifact artifact : rootProject.getAttachedArtifacts()) {
+      if (artifactClassifier != null && artifact.hasClassifier() && artifact.getClassifier().equals(artifactClassifier)) {
+        found=artifact;
+        break;
+      }
+    }
+    if (found != null) {
+      rootProject.getAttachedArtifacts().remove(found);
+    }
+  }
+  getLog().info("Attaching aggregated zip " + projectOutputFile + " to root project "+ rootProject.getArtifactId());
   projectHelper.attachArtifact(rootProject,artifactType,artifactClassifier,projectOutputFile);
 }
