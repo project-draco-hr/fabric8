@@ -29,18 +29,20 @@
   server.getBroker().waitUntilStarted();
   server.getBroker().addShutdownHook(new Runnable(){
     @Override public void run(){
-      if (started.get() && server != null && server.getBroker().isRestartAllowed() && server.getBroker().isRestartRequested()) {
-        info("Restarting broker '%s' after shutdown on restart request",name);
-        discoveryAgent.setServices(new String[0]);
-        start();
-      }
- else {
-        info("Broker '%s' shut down, giving up being master",name);
-        try {
-          updateCurator(curator);
+      if (started.get() && server != null) {
+        if (server.getBroker().isRestartAllowed() && server.getBroker().isRestartRequested()) {
+          info("Restarting broker '%s' after shutdown on restart request",name);
+          discoveryAgent.setServices(new String[0]);
+          start();
         }
- catch (        Exception e) {
-          throw new RuntimeException(e.getMessage(),e);
+ else {
+          info("Broker '%s' shut down, giving up being master",name);
+          try {
+            updateCurator(curator);
+          }
+ catch (          Exception e) {
+            throw new RuntimeException(e.getMessage(),e);
+          }
         }
       }
     }
