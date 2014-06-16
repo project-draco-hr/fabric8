@@ -1,6 +1,7 @@
 {
   try {
     if (isIgnoreProject())     return;
+    generateZip();
     if (reactorProjects != null) {
       List<MavenProject> pomZipProjects=new ArrayList<>();
       List<MavenProject> projectsWithZip=new ArrayList<>();
@@ -26,13 +27,15 @@
           }
         }
       }
-      if (reactorProjects.size() > 1 && reactorProjects.get(0) == project) {
-        getLog().info("Choosing root project " + project.getArtifactId() + " for generation of aggregated zip");
-        generateAggregatedZip(project,projectsWithZip,pomZipProjects);
-        return;
+      if (reactorProjects.size() > 1 && project == reactorProjects.get(reactorProjects.size() - 1)) {
+        getLog().info("");
+        getLog().info("Creating aggregated profile zip");
+        getLog().info("built the last fabric8:zip project so generating a combined zip for all " + projectsWithZip.size() + " projects with a fabric8:zip goal");
+        MavenProject rootProject=reactorProjects.get(0);
+        getLog().info("Choosing root project " + rootProject.getArtifactId() + " for generation of aggregated zip");
+        generateAggregatedZip(rootProject,projectsWithZip,pomZipProjects);
       }
     }
-    generateZip();
   }
  catch (  MojoExecutionException e) {
     throw e;
