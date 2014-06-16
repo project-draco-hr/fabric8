@@ -136,6 +136,7 @@
   environmentVariables.put(EnvironmentVariables.FABRIC8_GLOBAL_RESOLVER,ZkDefs.MANUAL_IP);
   environmentVariables.put(EnvironmentVariables.FABRIC8_FABRIC_ENVIRONMENT,DockerConstants.SCHEME);
   String libDir=configOverlay.get(DockerConstants.PROPERTIES.JAVA_LIBRARY_PATH);
+  String homeDir=configOverlay.get(DockerConstants.PROPERTIES.HOME_PATH);
   if (!Strings.isNullOrBlank(libDir)) {
     if (container != null) {
       container.setProvisionResult("preparing");
@@ -147,7 +148,7 @@
     names.add(versionId);
     String tag="fabric8-" + Strings.join(names,"-").replace('.','-');
     JavaDockerContainerImageBuilder builder=new JavaDockerContainerImageBuilder();
-    JavaContainerOptions javaContainerOptions=new JavaContainerOptions(image,imageRepository,tag,libDir,entryPoint);
+    JavaContainerOptions javaContainerOptions=new JavaContainerOptions(image,imageRepository,tag,libDir,homeDir,entryPoint);
     String actualImage=builder.generateContainerImage(service,container,profileOverlays,docker,javaContainerOptions,javaConfig,options,downloadExecutor,environmentVariables);
     containerConfig.setImage(actualImage);
   }
