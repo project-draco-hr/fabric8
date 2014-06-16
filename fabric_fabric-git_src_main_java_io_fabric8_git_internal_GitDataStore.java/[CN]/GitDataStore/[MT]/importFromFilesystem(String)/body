@@ -1,5 +1,5 @@
 {
-  LOG.info("Importing from file system directory: {}",path);
+  LOG.info("Importing additional profiles from file system directory: {}",path);
   List<String> profiles=new ArrayList<String>();
   String[] zips=new File(path).list(new FilenameFilter(){
     @Override public boolean accept(    File dir,    String name){
@@ -26,7 +26,7 @@
   try {
     if (props != null && props.length > 0) {
       for (      String name : props) {
-        Properties p=new Properties();
+        java.util.Properties p=new java.util.Properties();
         p.load(new FileInputStream(new File(path,name)));
         Enumeration<String> e=(Enumeration<String>)p.propertyNames();
         while (e.hasMoreElements()) {
@@ -41,11 +41,12 @@
     }
   }
  catch (  Exception e) {
-    LOG.warn("Error importing quickstarts due " + e.getMessage());
+    LOG.debug("Error importing profiles due " + e.getMessage(),e);
+    LOG.warn("Error importing profiles due " + e.getMessage() + ". This exception is ignored.",e);
   }
   if (!profiles.isEmpty()) {
-    LOG.info("Importing quickstarts from {} url locations ...",profiles.size());
-    dataStore.get().importProfiles(dataStore.get().getDefaultVersion(),profiles);
-    LOG.info("Importing quickstarts done");
+    LOG.info("Importing additional profiles from {} url locations ...",profiles.size());
+    importProfiles(getDefaultVersion(),profiles);
+    LOG.info("Importing additional profiles done");
   }
 }
