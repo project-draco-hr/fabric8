@@ -16,24 +16,28 @@
       rootProject.getAttachedArtifacts().remove(found);
     }
   }
-  getLog().info("Installing aggregated zip " + projectOutputFile);
-  InvocationRequest request=new DefaultInvocationRequest();
-  request.setBaseDirectory(rootProject.getBasedir());
-  request.setPomFile(new File("./pom.xml"));
-  request.setGoals(Collections.singletonList("install:install-file"));
-  request.setRecursive(false);
-  request.setInteractive(false);
-  String opts=String.format("-Dfile=target/profile.zip -DgroupId=%s -DartifactId=%s -Dversion=%s -Dclassifier=profile -Dpackaging=zip",rootProject.getGroupId(),rootProject.getArtifactId(),rootProject.getVersion());
-  request.setMavenOpts(opts);
-  getLog().info("Installing aggregated zip using: mvn install:install-file " + opts);
-  Invoker invoker=new DefaultInvoker();
-  try {
-    InvocationResult result=invoker.execute(request);
-    if (result.getExitCode() != 0) {
-      throw new IllegalStateException("Error invoking Maven goal install:install-file");
+  getLog().info("Attaching aggregated zip " + projectOutputFile + " to root project "+ rootProject.getArtifactId());
+  projectHelper.attachArtifact(rootProject,artifactType,artifactClassifier,projectOutputFile);
+  if (rootProject.hasLifecyclePhase("install")) {
+    getLog().info("Installing aggregated zip " + projectOutputFile);
+    InvocationRequest request=new DefaultInvocationRequest();
+    request.setBaseDirectory(rootProject.getBasedir());
+    request.setPomFile(new File("./pom.xml"));
+    request.setGoals(Collections.singletonList("install:install-file"));
+    request.setRecursive(false);
+    request.setInteractive(false);
+    String opts=String.format("-Dfile=target/profile.zip -DgroupId=%s -DartifactId=%s -Dversion=%s -Dclassifier=profile -Dpackaging=zip",rootProject.getGroupId(),rootProject.getArtifactId(),rootProject.getVersion());
+    request.setMavenOpts(opts);
+    getLog().info("Installing aggregated zip using: mvn install:install-file " + opts);
+    Invoker invoker=new DefaultInvoker();
+    try {
+      InvocationResult result=invoker.execute(request);
+      if (result.getExitCode() != 0) {
+        throw new IllegalStateException("Error invoking Maven goal install:install-file");
+      }
     }
-  }
- catch (  MavenInvocationException e) {
-    throw new MojoExecutionException("Error invoking Maven goal install:install-file",e);
+ catch (    MavenInvocationException e) {
+      throw new MojoExecutionException("Error invoking Maven goal install:install-file",e);
+    }
   }
 }
