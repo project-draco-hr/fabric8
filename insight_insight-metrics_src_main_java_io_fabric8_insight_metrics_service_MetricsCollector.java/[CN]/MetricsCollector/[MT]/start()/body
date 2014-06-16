@@ -1,0 +1,38 @@
+{
+  this.executor=new ScheduledThreadPoolExecutor(threadPoolSize);
+  this.executor.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
+  this.executor.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
+  this.mbeanServer=new ServiceTracker<MBeanServer,MBeanServer>(bundleContext,MBeanServer.class,new ServiceTrackerCustomizer<MBeanServer,MBeanServer>(){
+    @Override public MBeanServer addingService(    ServiceReference<MBeanServer> reference){
+      MBeanServer service=bundleContext.getService(reference);
+      try {
+        service.registerMBean(MetricsCollector.this,objectName);
+      }
+ catch (      Exception e) {
+        LOG.info("Unable to register metrics collector mbean",e);
+      }
+      return service;
+    }
+    @Override public void modifiedService(    ServiceReference<MBeanServer> reference,    MBeanServer service){
+    }
+    @Override public void removedService(    ServiceReference<MBeanServer> reference,    MBeanServer service){
+      try {
+        service.unregisterMBean(objectName);
+      }
+ catch (      Exception e) {
+        LOG.info("Unable to unregister metrics collector mbean",e);
+      }
+      bundleContext.ungetService(reference);
+    }
+  }
+);
+  this.storage=new ServiceTracker<MetricsStorageService,MetricsStorageService>(bundleContext,MetricsStorageService.class,null);
+  this.mbeanServer.open();
+  this.storage.open();
+  this.executor.scheduleWithFixedDelay(new Runnable(){
+    @Override public void run(){
+      process();
+    }
+  }
+,1,defaultDelay,TimeUnit.SECONDS);
+}

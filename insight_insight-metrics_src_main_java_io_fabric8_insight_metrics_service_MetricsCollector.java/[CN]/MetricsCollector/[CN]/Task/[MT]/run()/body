@@ -1,0 +1,31 @@
+{
+  try {
+    MBeanServer mbs=mbeanServer.getService();
+    MetricsStorageService svc=storage.getService();
+    if (mbs == null || svc == null) {
+      return;
+    }
+    if (query.lock != null && !query.lock.isMaster()) {
+      return;
+    }
+    QueryResult qrs=JmxUtils.execute(query.server,query.query,mbs);
+    boolean forceSend=query.query.getMinPeriod() == query.query.getPeriod() || qrs.getTimestamp().getTime() - query.lastSent >= TimeUnit.SECONDS.toMillis(query.query.getMinPeriod());
+    if (!forceSend && query.lastResult != null) {
+      if (qrs.getResults().equals(query.lastResult.getResults())) {
+        query.lastResult=qrs;
+        query.lastResultSent=false;
+        return;
+      }
+      if (!query.lastResultSent) {
+        renderAndSend(svc,query.lastResult);
+      }
+    }
+    query.lastResult=qrs;
+    query.lastResultSent=true;
+    query.lastSent=qrs.getTimestamp().getTime();
+    renderAndSend(svc,qrs);
+  }
+ catch (  Throwable e) {
+    LOG.debug("Error sending metrics",e);
+  }
+}
