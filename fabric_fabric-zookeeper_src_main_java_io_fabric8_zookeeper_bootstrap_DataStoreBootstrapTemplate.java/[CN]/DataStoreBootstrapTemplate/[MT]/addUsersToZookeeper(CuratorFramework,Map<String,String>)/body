@@ -1,5 +1,5 @@
 {
-  Pattern p=Pattern.compile("(.+),(.+)");
+  Pattern p=Pattern.compile("([^,]+),(.+)");
   Map<String,Object> options=new HashMap<String,Object>();
   options.put("encryption.prefix","{CRYPT}");
   options.put("encryption.suffix","{CRYPT}");
@@ -29,8 +29,8 @@
           password=encryptionSupport.getEncryptionPrefix() + encryption.encryptPassword(m.group(1)).trim() + encryptionSupport.getEncryptionSuffix();
         }
       }
-      String role=m.group(2).trim();
-      sb.append(user).append("=").append(password).append(",").append(role).append("\n");
+      String roles=m.group(2).trim();
+      sb.append(user).append("=").append(password).append(",").append(roles).append("\n");
     }
   }
   String allUsers=sb.toString();
