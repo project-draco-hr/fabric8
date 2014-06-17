@@ -1,0 +1,15 @@
+{
+  if (command.length == 1) {
+    sb.append(instruction).append(" ").append(command[0]);
+  }
+ else {
+    sb.append(instruction).append(" ");
+    sb.append("[");
+    for (    String arg : command) {
+      sb.append("\"").append(escapeParentheses(arg)).append("\"").append(", ");
+    }
+    sb.setLength(sb.length() - 2);
+    sb.append("]");
+  }
+  sb.append("\n");
+}

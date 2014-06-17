@@ -11,8 +11,7 @@
   repoTextPrefix="http://" + fabric.getZooKeeperUser() + ":"+ fabric.getZookeeperPassword()+ "@"+ repoTextPrefix;
   String baseImage=options.getBaseImage();
   String tag=options.getNewImageTag();
-  StringBuilder buffer=new StringBuilder();
-  buffer.append("FROM " + baseImage + "\n\n");
+  DockerFileBuilder dockerFile=DockerFileBuilder.from(baseImage);
   Set<Map.Entry<String,Parser>> entries=artifacts.entrySet();
   for (  Map.Entry<String,Parser> entry : entries) {
     Parser parser=entry.getValue();
@@ -27,7 +26,7 @@
     }
     String fileName=parser.getArtifact() + "-" + version+ snapshotModifier+ "."+ parser.getType();
     String filePath=libDirAndSeparator + fileName;
-    buffer.append("ADD " + url + " "+ filePath+ "\n");
+    dockerFile.add(url,filePath);
   }
   if (container != null) {
     List<String> bundles=new ArrayList<String>();
@@ -42,7 +41,7 @@
   }
   String restAPI=fabric.getRestAPI();
   if (Strings.isNotBlank(restAPI)) {
-    addContainerOverlays(buffer,restAPI,fabric,container,profileList,docker,options,javaConfig,containerOptions,envVars,homeDirAndSeparator);
+    addContainerOverlays(dockerFile,restAPI,fabric,container,profileList,docker,options,javaConfig,containerOptions,envVars,homeDirAndSeparator);
   }
  else {
     LOGGER.error("Cannot perform container overlays as there is no REST API for fabric8!");
@@ -51,19 +50,17 @@
   for (  String envVarName : copiedEnvVars) {
     String value=envVars.get(envVarName);
     if (value != null) {
-      buffer.append("ENV " + envVarName + " "+ value+ " \n");
+      dockerFile.env(envVarName,value);
     }
   }
   String entryPoint=options.getEntryPoint();
   if (Strings.isNotBlank(entryPoint)) {
-    buffer.append("CMD " + entryPoint + "\n");
+    dockerFile.cmd(entryPoint);
   }
-  String source=buffer.toString();
   File tmpFile=File.createTempFile("fabric-",".dockerfiledir");
   tmpFile.delete();
   tmpFile.mkdirs();
-  File dockerFile=new File(tmpFile,"Dockerfile");
-  Files.writeToFile(dockerFile,source.getBytes());
+  dockerFile.writeTo(new File(tmpFile,"Dockerfile"));
   String commands="docker build -t " + tag + " "+ tmpFile.getCanonicalPath();
   Process process=null;
   Runtime runtime=Runtime.getRuntime();
