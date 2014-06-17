@@ -1,5 +1,6 @@
 {
   System.err.println(executeCommand("fabric:create -n"));
+  System.err.println(executeCommand("fabric:profile-list"));
   executeCommand("mq-create --no-ssl --group us-east --networks us-west --jmx-user admin --jmx-password admin --networks-username admin --networks-password admin --minimumInstances 1 us-east");
   executeCommand("mq-create --no-ssl --group us-west --networks us-east --jmx-user admin --jmx-password admin --networks-username admin --networks-password admin --minimumInstances 1 us-west");
   ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
@@ -18,6 +19,8 @@
       waitForBroker("us-west");
       final BrokerViewMBean brokerEast=(BrokerViewMBean)Provision.getMBean(eastBroker,new ObjectName("org.apache.activemq:type=Broker,brokerName=us-east"),BrokerViewMBean.class,120000);
       final BrokerViewMBean brokerWest=(BrokerViewMBean)Provision.getMBean(westBroker,new ObjectName("org.apache.activemq:type=Broker,brokerName=us-west"),BrokerViewMBean.class,120000);
+      Assert.assertNotNull("Cannot get BrokerViewMBean from JMX",brokerEast);
+      Assert.assertNotNull("Cannot get BrokerViewMBean from JMX",brokerWest);
       Container eastProducer=containerList.removeLast();
       executeCommand("container-add-profile " + eastProducer.getId() + " example-mq-producer mq-client-us-east");
       Container westConsumer=containerList.removeLast();
