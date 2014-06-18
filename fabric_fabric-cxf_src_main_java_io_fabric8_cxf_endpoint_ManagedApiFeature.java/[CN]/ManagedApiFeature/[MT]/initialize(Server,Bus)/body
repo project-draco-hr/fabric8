@@ -4,6 +4,11 @@
   if (iMgr != null) {
     try {
       iMgr.register(mApi);
+      ServerLifeCycleManager slcMgr=bus.getExtension(ServerLifeCycleManager.class);
+      if (slcMgr != null) {
+        slcMgr.registerListener(mApi);
+        slcMgr.startServer(server);
+      }
     }
  catch (    JMException jmex) {
       jmex.printStackTrace();
