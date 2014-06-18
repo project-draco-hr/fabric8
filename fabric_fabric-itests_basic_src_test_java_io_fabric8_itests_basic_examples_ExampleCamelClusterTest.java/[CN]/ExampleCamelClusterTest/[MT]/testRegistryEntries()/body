@@ -1,6 +1,6 @@
 {
-  System.err.println(executeCommand("fabric:create -n root"));
-  System.err.println(executeCommand("fabric:profile-list"));
+  System.out.println(executeCommand("fabric:create -n root"));
+  System.out.println(executeCommand("fabric:profile-list"));
   ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
   try {
     FabricService fabricService=fabricProxy.getService();
@@ -18,8 +18,8 @@
       Profile p=client.getVersion().getProfile("example-camel-cluster.client");
       client.setProfiles(new Profile[]{p});
       Provision.provisioningSuccess(Arrays.asList(new Container[]{client}),PROVISION_TIMEOUT);
-      System.err.println(executeCommand("fabric:container-list"));
-      System.err.println(executeCommand("fabric:profile-display --overlay fabric-camel-server"));
+      System.out.println(executeCommand("fabric:container-list"));
+      System.out.println(executeCommand("fabric:profile-display --overlay fabric-camel-server"));
       Assert.assertNotNull(exists(curator,"/fabric/registry/camel/endpoints"));
       Assert.assertEquals(1,getChildren(curator,"/fabric/registry/camel/endpoints").size());
       Assert.assertTrue(Provision.waitForCondition(Arrays.asList(client),new ContainerCondition(){
@@ -43,7 +43,7 @@
         }
 ,60000L));
       }
-      System.err.println(new AnsiString(executeCommand("fabric:container-connect -u admin -p admin " + client.getId() + " camel:route-info fabric-client")).getPlain().toString());
+      System.out.println(new AnsiString(executeCommand("fabric:container-connect -u admin -p admin " + client.getId() + " camel:route-info fabric-client")).getPlain().toString());
     }
   finally {
       ContainerBuilder.destroy(containers);

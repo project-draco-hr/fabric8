@@ -1,23 +1,23 @@
 {
   if (!isReady()) {
-    System.err.println("Amazon is not setup correctly. This test will not run.");
-    System.err.println("To properly run this test, you need to setup with maven the following properties:");
-    System.err.println("fabricitest.aws.identity \t The aws access id");
-    System.err.println("fabricitest.aws.credential \t The aws access key");
-    System.err.println("fabricitest.aws.image  \t The aws (java ready) image");
-    System.err.println("fabricitest.aws.user  \t The user under which the agent will run");
+    System.out.println("Amazon is not setup correctly. This test will not run.");
+    System.out.println("To properly run this test, you need to setup with maven the following properties:");
+    System.out.println("fabricitest.aws.identity \t The aws access id");
+    System.out.println("fabricitest.aws.credential \t The aws access key");
+    System.out.println("fabricitest.aws.image  \t The aws (java ready) image");
+    System.out.println("fabricitest.aws.user  \t The user under which the agent will run");
     return;
   }
-  System.err.println(executeCommand("features:install jclouds-aws-ec2 fabric-jclouds jclouds-commands"));
+  System.out.println(executeCommand("features:install jclouds-aws-ec2 fabric-jclouds jclouds-commands"));
   executeCommand("fabric:cloud-service-add --provider aws-ec2 --identity " + identity + " --credential "+ credential);
   ComputeService computeService=ServiceLocator.awaitService(bundleContext,ComputeService.class,3,TimeUnit.MINUTES);
-  System.err.println(executeCommand("fabric:cloud-service-list"));
-  System.err.println(executeCommand(String.format("fabric:container-create-cloud --name aws-ec2 --locationId %s --imageId %s --group %s --ensemble-server ensemble1",location,image,group),10 * 60000L,false));
+  System.out.println(executeCommand("fabric:cloud-service-list"));
+  System.out.println(executeCommand(String.format("fabric:container-create-cloud --name aws-ec2 --locationId %s --imageId %s --group %s --ensemble-server ensemble1",location,image,group),10 * 60000L,false));
   String publicIp=getNodePublicIp(computeService);
   assertNotNull(publicIp);
   Thread.sleep(DEFAULT_TIMEOUT);
-  System.err.println(executeCommand("fabric:join -n " + publicIp + ":2181",10 * 60000L,false));
+  System.out.println(executeCommand("fabric:join -n " + publicIp + ":2181",10 * 60000L,false));
   String agentList=executeCommand("fabric:container-list");
-  System.err.println(agentList);
+  System.out.println(agentList);
   assertTrue(agentList.contains("root") && agentList.contains("ensemble1"));
 }
