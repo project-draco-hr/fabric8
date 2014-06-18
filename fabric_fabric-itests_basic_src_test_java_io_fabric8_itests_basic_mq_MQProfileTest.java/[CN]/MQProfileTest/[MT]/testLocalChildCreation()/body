@@ -3,7 +3,7 @@
   System.out.println(executeCommand("fabric:profile-list"));
   ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
   try {
-    Set<ContainerProxy> containers=ContainerBuilder.create(fabricProxy,2).withName("child").withProfiles("default").assertProvisioningResult().build();
+    Set<ContainerProxy> containers=ContainerBuilder.create(fabricProxy,2).withName("child").withProfiles("mq-default").assertProvisioningResult().build();
     try {
       LinkedList<Container> containerList=new LinkedList<Container>(containers);
       Container broker=containerList.removeLast();
