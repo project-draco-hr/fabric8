@@ -8,30 +8,40 @@
   commandSession.put("USER","karaf");
   FutureTask<String> commandFuture=new FutureTask<String>(new Callable<String>(){
     public String call() throws Exception {
-      for (      String command : commands) {
-        boolean keepRunning=true;
-        if (!silent) {
-          System.out.println(command);
-          System.out.flush();
-        }
-        while (!Thread.currentThread().isInterrupted() && keepRunning) {
-          try {
-            commandSession.execute(command);
-            keepRunning=false;
-          }
- catch (          Exception e) {
-            if (retryException(e)) {
-              keepRunning=true;
-              sleep(1000);
+      Subject subject=new Subject();
+      subject.getPrincipals().add(new UserPrincipal("admin"));
+      subject.getPrincipals().add(new RolePrincipal("admin"));
+      subject.getPrincipals().add(new RolePrincipal("manager"));
+      subject.getPrincipals().add(new RolePrincipal("viewer"));
+      return Subject.doAs(subject,new PrivilegedAction<String>(){
+        @Override public String run(){
+          for (          String command : commands) {
+            boolean keepRunning=true;
+            if (!silent) {
+              System.out.println(command);
+              System.out.flush();
             }
+            while (!Thread.currentThread().isInterrupted() && keepRunning) {
+              try {
+                commandSession.execute(command);
+                keepRunning=false;
+              }
+ catch (              Exception e) {
+                if (retryException(e)) {
+                  keepRunning=true;
+                  sleep(1000);
+                }
  else {
-              throw new CommandExecutionException(e);
+                  throw new CommandExecutionException(e);
+                }
+              }
             }
           }
+          printStream.flush();
+          return byteArrayOutputStream.toString();
         }
       }
-      printStream.flush();
-      return byteArrayOutputStream.toString();
+);
     }
   }
 );
