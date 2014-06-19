@@ -5,8 +5,8 @@
   DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabricService,executorService);
   Set<String> bundles=new LinkedHashSet<String>();
   Set<Feature> features=new LinkedHashSet<Feature>();
-  addMavenBundles(bundles,profile.getBundles());
-  addMavenBundles(bundles,profile.getFabs());
+  addMavenBundles(fabricService,profile,bundles,profile.getBundles());
+  addMavenBundles(fabricService,profile,bundles,profile.getFabs());
   AgentUtils.addFeatures(features,fabricService,downloadManager,profile);
   Map<String,File> files=AgentUtils.downloadBundles(downloadManager,features,bundles,Collections.<String>emptySet());
   Set<Map.Entry<String,File>> entries=files.entrySet();
