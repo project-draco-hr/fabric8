@@ -1,11 +1,10 @@
 {
   for (  String bundle : bundleList) {
-    String mvnCoords=getMavenCoords(bundle);
-    if (mvnCoords != null) {
-      if (mvnCoords.contains("$")) {
-        mvnCoords=VersionPropertyPointerResolver.replaceVersions(fabricService,profile.getOverlay().getConfigurations(),mvnCoords);
+    if (bundle != null) {
+      if (bundle.contains("$")) {
+        bundle=VersionPropertyPointerResolver.replaceVersions(fabricService,profile.getOverlay().getConfigurations(),bundle);
       }
-      bundles.add(mvnCoords);
+      bundles.add(bundle);
     }
   }
 }
