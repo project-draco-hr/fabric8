@@ -19,11 +19,17 @@
       for (      String s : assignedProfiles.split(",")) {
         str+=Strings.rpadByMaxSize(" ",s,31) + ",";
       }
-      String highlightedProfiles=Arrays.join(Strings.rpad(" ","\n",52),str.split(","));
-      if (count != 1) {
-        highlightedProfiles=Strings.rpad(" ",highlightedProfiles,17);
+      String highlightedProfiles="";
+      String secondlinehighlightedProfiles="";
+      highlightedProfiles=str.split(",")[0];
+      if (str.split(",").length > 1) {
+        secondlinehighlightedProfiles=Strings.rpad(" ",System.getProperty("line.separator"),52) + Arrays.join(Strings.rpad(" ",System.getProperty("line.separator"),52),java.util.Arrays.asList(str.split(",")).subList(1,str.split(",").length).toArray());
       }
-      String line=String.format(FORMAT,indent + container.getId() + marker,container.getVersion().getId(),container.isAlive(),assignedProfiles,CommandUtils.status(container));
+      if (count != 1) {
+        highlightedProfiles=Strings.rpad(" ",highlightedProfiles,16);
+      }
+      String status=CommandUtils.status(container) + secondlinehighlightedProfiles;
+      String line=String.format(FORMAT,indent + container.getId() + marker,container.getVersion().getId(),container.isAlive(),highlightedProfiles,status);
       int pStart=Math.max(header.indexOf(HEADERS[3]),line.indexOf(assignedProfiles));
       int pEnd=pStart + assignedProfiles.length();
       for (      String p : missingProfiles) {
