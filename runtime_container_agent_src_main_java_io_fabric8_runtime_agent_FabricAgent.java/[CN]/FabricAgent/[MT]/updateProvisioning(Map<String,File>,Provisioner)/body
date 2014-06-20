@@ -56,7 +56,11 @@
   }
   if (resourcesToInstall.size() > 0) {
     LOGGER.info("Installing " + resourcesToInstall.size() + " resource(s)");
-    Set<ResourceHandle> resourceHandles=resourceInstaller.installResources(resourcesToInstall,requirements);
+    Set<ResourceHandle> resourceHandles=new LinkedHashSet<>();
+    ResourceInstaller.Context context=new DefaultInstallerContext(resourcesToInstall,requirements);
+    for (    Resource resource : resourcesToInstall) {
+      resourceHandles.add(resourceInstaller.installResource(context,resource));
+    }
     LOGGER.info("Got " + resourceHandles.size() + " resource handle(s)");
     for (    ResourceHandle resourceHandle : resourceHandles) {
       resourcehandleMap.put(resourceHandle.getResource().getIdentity(),resourceHandle);

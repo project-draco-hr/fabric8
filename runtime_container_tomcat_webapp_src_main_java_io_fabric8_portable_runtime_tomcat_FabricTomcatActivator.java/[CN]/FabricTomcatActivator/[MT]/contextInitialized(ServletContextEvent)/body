@@ -3,8 +3,6 @@
   PropertiesProvider propsProvider=new FabricPropertiesProvider(servletContext);
   Runtime runtime=RuntimeLocator.createRuntime(new TomcatRuntimeFactory(servletContext),propsProvider);
   runtime.init();
-  Object configsDir=propsProvider.getProperty(Constants.PROPERTY_CONFIGURATIONS_DIR);
-  ActivationSupport.initConfigurationAdmin(new File((String)configsDir));
   final ModuleContext syscontext=runtime.getModuleContext();
   final BoostrapLatch latch=new BoostrapLatch(1);
   ServiceListener listener=new ServiceListener(){
@@ -16,9 +14,9 @@
     }
   }
 ;
-  syscontext.addServiceListener(listener,"(objectClass=" + ZooKeeperClusterBootstrap.class.getName() + ")");
   servletContext.setAttribute(BoostrapLatch.class.getName(),latch);
-  servletContext.setAttribute(BundleContext.class.getName(),new BundleContextAdaptor(syscontext));
+  syscontext.addServiceListener(listener,"(objectClass=" + BootstrapComplete.class.getName() + ")");
+  registerServices(servletContext,runtime);
   WebAppContextListener webappInstaller=new WebAppContextListener();
   Module module=webappInstaller.installWebappModule(servletContext);
   servletContext.setAttribute(Module.class.getName(),module);
@@ -28,7 +26,4 @@
  catch (  ModuleException ex) {
     throw new IllegalStateException(ex);
   }
-  Repository repository=registerRepositoryService(runtime);
-  Resolver resolver=registerResolverService(runtime);
-  registerProvisionerService(servletContext,runtime,repository,resolver);
 }
