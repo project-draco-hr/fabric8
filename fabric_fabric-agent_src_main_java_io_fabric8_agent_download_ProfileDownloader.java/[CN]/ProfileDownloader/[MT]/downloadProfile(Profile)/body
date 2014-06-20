@@ -1,4 +1,7 @@
 {
+  if (listener != null) {
+    listener.beforeDownloadProfile(profile);
+  }
   if (!profile.isOverlay()) {
     profile=profile.getOverlay();
   }
@@ -27,7 +30,13 @@
       if (force || !destFile.exists()) {
         LOG.info("Copying file " + name + " to :  "+ destFile.getCanonicalPath());
         Files.copy(file,destFile);
+        if (listener != null) {
+          listener.onCopyDone(profile,destFile);
+        }
       }
     }
+  }
+  if (listener != null) {
+    listener.afterDownloadProfile(profile);
   }
 }

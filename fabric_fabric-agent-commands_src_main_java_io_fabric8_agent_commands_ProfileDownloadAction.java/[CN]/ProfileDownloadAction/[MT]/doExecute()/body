@@ -31,6 +31,10 @@
     }
   }
   ProfileDownloader downloader=new ProfileDownloader(fabricService,target,force,executorService);
+  downloader.setStopOnFailure(stopOnFailure);
+  if (verbose) {
+    downloader.setListener(new ProgressIndicator());
+  }
   if (profile != null) {
     Profile profileObject=null;
     if (ver.hasProfile(profile)) {

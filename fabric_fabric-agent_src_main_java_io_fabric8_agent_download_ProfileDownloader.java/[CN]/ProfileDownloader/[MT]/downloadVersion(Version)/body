@@ -1,18 +1,27 @@
 {
   Profile[] profiles=version.getProfiles();
+  if (listener != null) {
+    listener.beforeDownloadProfiles(profiles);
+  }
   for (  Profile profile : profiles) {
-    if (stopOnFailure) {
+    try {
       downloadProfile(profile);
     }
- else {
-      try {
-        downloadProfile(profile);
+ catch (    Exception e) {
+      if (listener != null) {
+        listener.onError(profile,e);
       }
- catch (      Exception e) {
+      if (!stopOnFailure) {
         String id=profile.getId();
         errors.put(id,e);
-        LOG.error("Failed to download profile " + id + " "+ e,e);
+        LOG.error("Failed to download profile " + id + " due "+ e.getMessage(),e);
+      }
+ else {
+        throw e;
       }
     }
+  }
+  if (listener != null) {
+    listener.afterDownloadProfiles(profiles);
   }
 }
