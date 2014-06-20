@@ -1,9 +1,10 @@
 {
+  FabricService fabricService=getFabricService();
   if (fabricService != null) {
-    return Containers.containerIds(fabricService.getContainers());
+    return mapToLinks(Containers.containerIds(fabricService.getContainers()),"/container/");
   }
  else {
     noFabricService();
   }
-  return Collections.EMPTY_LIST;
+  return Collections.EMPTY_MAP;
 }

@@ -1,9 +1,11 @@
 {
+  FabricService fabricService=getFabricService();
   if (fabricService != null) {
-    return Profiles.versionIds(fabricService.getVersions());
+    List<String> versionIds=Profiles.versionIds(fabricService.getVersions());
+    return mapToLinks(versionIds,"/version/");
   }
  else {
     noFabricService();
   }
-  return Collections.EMPTY_LIST;
+  return Collections.EMPTY_MAP;
 }
