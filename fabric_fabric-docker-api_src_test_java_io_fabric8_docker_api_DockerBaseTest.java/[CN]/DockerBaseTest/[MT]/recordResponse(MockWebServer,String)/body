@@ -1,0 +1,9 @@
+{
+  try {
+    String json=Resources.toString(getResource(responseName + ".json"),Charsets.UTF_8);
+    server.enqueue(new MockResponse().addHeader("Content-Type","application/json").setBody(json));
+  }
+ catch (  IOException e) {
+    throw new RuntimeException(e);
+  }
+}
