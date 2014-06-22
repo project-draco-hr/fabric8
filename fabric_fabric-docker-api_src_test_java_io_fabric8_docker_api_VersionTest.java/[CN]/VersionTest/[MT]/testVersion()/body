@@ -1,7 +1,6 @@
 {
-  String json=Resources.toString(getResource("version.json"),Charsets.UTF_8);
   MockWebServer server=new MockWebServer();
-  server.enqueue(new MockResponse().setBody(json));
+  recordResponse(server,"version");
   server.play();
   Docker docker=createDockerForMock(server);
   Version version=docker.version();
