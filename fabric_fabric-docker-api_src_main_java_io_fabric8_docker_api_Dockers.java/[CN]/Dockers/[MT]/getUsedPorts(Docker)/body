@@ -1,17 +1,22 @@
 {
-  List<Container> containers=docker.containers(null,null,null,null,null);
-  Set<Integer> answer=new HashSet<Integer>();
-  for (  Container container : containers) {
-    List<Port> ports=container.getPorts();
-    if (ports != null) {
-      for (      Port port : ports) {
-        Integer privatePort=port.getPrivatePort();
-        Integer publicPort=port.getPublicPort();
-        if (privatePort != null && publicPort != null) {
-          answer.add(publicPort);
+  try {
+    List<Container> containers=docker.containers(null,null,null,null,null);
+    Set<Integer> answer=new HashSet<Integer>();
+    for (    Container container : containers) {
+      List<Port> ports=container.getPorts();
+      if (ports != null) {
+        for (        Port port : ports) {
+          Integer privatePort=port.getPrivatePort();
+          Integer publicPort=port.getPublicPort();
+          if (privatePort != null && publicPort != null) {
+            answer.add(publicPort);
+          }
         }
       }
     }
+    return answer;
   }
-  return answer;
+ catch (  ProcessingException e) {
+    throw new DockerApiConnectionException("Can't connect to the Docker REST API.",e);
+  }
 }

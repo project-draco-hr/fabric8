@@ -1,8 +1,14 @@
 {
-  FabricService fabric=getFabricService();
-  Container currentContainer=fabric.getCurrentContainer();
-  Set<Integer> usedPorts=fabric.getPortService().findUsedPortByHost(currentContainer);
-  Set<Integer> dockerPorts=Dockers.getUsedPorts(docker);
-  usedPorts.addAll(dockerPorts);
-  return usedPorts;
+  try {
+    FabricService fabric=getFabricService();
+    Container currentContainer=fabric.getCurrentContainer();
+    Set<Integer> usedPorts=fabric.getPortService().findUsedPortByHost(currentContainer);
+    Set<Integer> dockerPorts=Dockers.getUsedPorts(docker);
+    usedPorts.addAll(dockerPorts);
+    return usedPorts;
+  }
+ catch (  DockerApiConnectionException e) {
+    String suggestion=String.format("Can't connect to the Docker server. Are you sure a Docker server is running at %s?",dockerFactory.getAddress());
+    throw new DockerApiConnectionException(suggestion,e.getCause());
+  }
 }
