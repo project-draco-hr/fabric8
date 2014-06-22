@@ -1,0 +1,14 @@
+{
+  Hashtable<String,String> properties=new Hashtable<String,String>();
+  properties.put("type","MethodMetrics");
+  properties.put("name",ObjectName.quote(methodMetrics.getName()));
+  properties.put("methodId",String.valueOf(System.identityHashCode(methodMetrics)));
+  try {
+    ObjectName objectName=new ObjectName(DEFAULT_DOMAIN,properties);
+    ObjectInstance objectInstance=getMBeanServer().registerMBean(methodMetrics,objectName);
+    objectNameMap.put(methodMetrics,objectInstance.getObjectName());
+  }
+ catch (  Throwable e) {
+    LOG.error("Failed to register mbean " + methodMetrics.toString(),e);
+  }
+}

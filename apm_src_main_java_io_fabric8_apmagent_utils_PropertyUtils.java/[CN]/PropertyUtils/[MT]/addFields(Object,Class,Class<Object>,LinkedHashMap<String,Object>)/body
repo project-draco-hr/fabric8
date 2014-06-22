@@ -1,0 +1,26 @@
+{
+  if (startClass != stopClass) {
+    addFields(target,startClass.getSuperclass(),stopClass,map);
+  }
+  Field[] fields=startClass.getDeclaredFields();
+  for (  Field field : fields) {
+    if (Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers()) || Modifier.isPrivate(field.getModifiers())) {
+      continue;
+    }
+    try {
+      field.setAccessible(true);
+      Object o=field.get(target);
+      if (o != null && o.getClass().isArray()) {
+        try {
+          o=Arrays.asList((Object[])o);
+        }
+ catch (        Exception e) {
+        }
+      }
+      map.put(field.getName(),o);
+    }
+ catch (    Exception e) {
+      e.printStackTrace();
+    }
+  }
+}

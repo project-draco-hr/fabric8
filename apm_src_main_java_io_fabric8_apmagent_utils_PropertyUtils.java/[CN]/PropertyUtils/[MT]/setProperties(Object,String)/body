@@ -1,0 +1,17 @@
+{
+  boolean result=false;
+  if (string != null && !string.isEmpty()) {
+    Map<String,String> properties=new HashMap<String,String>();
+    String[] split=string.split(",");
+    for (int i=0; i < split.length; i++) {
+      String[] split2=split[i].split("=");
+      if (split2.length == 2) {
+        String key=split2[0].trim();
+        String value=split2[1].trim();
+        properties.put(key,value);
+      }
+    }
+    result=setProperties(target,properties,"");
+  }
+  return result;
+}

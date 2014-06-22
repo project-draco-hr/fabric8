@@ -1,0 +1,16 @@
+{
+  try {
+    Method setter=findSetterMethod(name);
+    if (setter != null) {
+      if (value == null || value.getClass().equals(setter.getParameterTypes()[0])) {
+        setter.invoke(this,new Object[]{value});
+      }
+ else {
+        setter.invoke(this,new Object[]{convert(value,setter.getParameterTypes()[0])});
+      }
+    }
+  }
+ catch (  Throwable e) {
+    logger.warn("Failed to set property: " + e.getMessage(),e);
+  }
+}

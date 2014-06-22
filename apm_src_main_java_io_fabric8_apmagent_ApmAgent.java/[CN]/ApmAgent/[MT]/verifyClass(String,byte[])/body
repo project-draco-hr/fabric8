@@ -1,0 +1,12 @@
+{
+  boolean result=true;
+  StringWriter sw=new StringWriter();
+  PrintWriter pw=new PrintWriter(sw);
+  CheckClassAdapter.verify(new ClassReader(transformed),false,pw);
+  if (sw.toString().length() != 0) {
+    result=false;
+    LOG.error(" Failed to transform class: " + className);
+    LOG.error(sw.toString());
+  }
+  return result;
+}

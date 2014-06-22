@@ -1,0 +1,42 @@
+{
+  boolean rc=false;
+  if (target == null) {
+    throw new IllegalArgumentException("target was null.");
+  }
+  if (props == null) {
+    throw new IllegalArgumentException("props was null.");
+  }
+  if (optionPrefix == null) {
+    optionPrefix="";
+  }
+  Class<?> clazz=target.getClass();
+  Method[] methods=clazz.getMethods();
+  for (  Method method : methods) {
+    String name=method.getName();
+    Class<?> type=method.getReturnType();
+    Class<?> params[]=method.getParameterTypes();
+    if ((name.startsWith("is") || name.startsWith("get")) && params.length == 0 && type != null) {
+      try {
+        Object value=method.invoke(target);
+        if (value == null) {
+          continue;
+        }
+        String strValue=convertToString(value,type);
+        if (strValue == null) {
+          continue;
+        }
+        if (name.startsWith("get")) {
+          name=name.substring(3,4).toLowerCase(Locale.ENGLISH) + name.substring(4);
+        }
+ else {
+          name=name.substring(2,3).toLowerCase(Locale.ENGLISH) + name.substring(3);
+        }
+        props.put(optionPrefix + name,strValue);
+        rc=true;
+      }
+ catch (      Exception ignore) {
+      }
+    }
+  }
+  return rc;
+}

@@ -1,0 +1,21 @@
+{
+  if (value == null) {
+    if (boolean.class.isAssignableFrom(to)) {
+      return Boolean.FALSE;
+    }
+    return null;
+  }
+  if (to.isAssignableFrom(value.getClass())) {
+    return to.cast(value);
+  }
+  if (to.isAssignableFrom(String[].class)) {
+    return StringArrayConverter.convertToStringArray(value);
+  }
+  TypeConversionSupport.Converter converter=TypeConversionSupport.lookupConverter(value.getClass(),to);
+  if (converter != null) {
+    return converter.convert(value);
+  }
+ else {
+    throw new IllegalArgumentException("Cannot convert from " + value.getClass() + " to "+ to+ " with value "+ value);
+  }
+}

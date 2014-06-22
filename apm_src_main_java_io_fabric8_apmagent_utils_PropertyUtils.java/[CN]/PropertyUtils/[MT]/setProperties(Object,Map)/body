@@ -1,0 +1,17 @@
+{
+  boolean rc=false;
+  if (target == null) {
+    throw new IllegalArgumentException("target was null.");
+  }
+  if (props == null) {
+    throw new IllegalArgumentException("props was null.");
+  }
+  for (Iterator<?> iter=props.entrySet().iterator(); iter.hasNext(); ) {
+    Map.Entry<?,?> entry=(Map.Entry<?,?>)iter.next();
+    if (setProperty(target,(String)entry.getKey(),entry.getValue())) {
+      iter.remove();
+      rc=true;
+    }
+  }
+  return rc;
+}

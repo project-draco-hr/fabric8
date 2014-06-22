@@ -1,0 +1,18 @@
+{
+  if (name.equals(getName())) {
+    onEnter();
+  }
+ else {
+    ThreadContextMethodMetrics last=stack.getLast();
+    if (last == null) {
+      last=this;
+    }
+    ThreadContextMethodMetrics methodMetrics=last.children.get(name);
+    if (methodMetrics == null) {
+      methodMetrics=new ThreadContextMethodMetrics(context,thread,last,stack,name);
+      last.children.put(name,methodMetrics);
+      context.registerThreadContextMethodMetricsMBean(methodMetrics);
+    }
+    methodMetrics.onEnter();
+  }
+}

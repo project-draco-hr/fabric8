@@ -1,0 +1,18 @@
+{
+  boolean result=matches(className);
+  if (result) {
+    result=false;
+    if (method == null || method.isEmpty()) {
+      if (getMethodName() == null || getMethodName().isEmpty()) {
+        result=true;
+      }
+    }
+ else     if (method != null && getMethodName() != null && !getMethodName().isEmpty()) {
+      result=method.matches(getMethodName());
+    }
+ else {
+      result=matchIfNoFilterMethod;
+    }
+  }
+  return result;
+}

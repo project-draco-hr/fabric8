@@ -1,0 +1,13 @@
+{
+  long elaspsed=-1;
+  if (timerContext != null) {
+    elaspsed=timerContext.stop();
+  }
+  if (removeFromStack) {
+    stack.pop();
+  }
+  if (ApmAgent.INSTANCE.getConfiguration().isTrace()) {
+    LOG.trace("Thread " + Thread.currentThread().getName() + " Method: "+ getName()+ " on exit STACK: "+ stack);
+  }
+  return elaspsed;
+}

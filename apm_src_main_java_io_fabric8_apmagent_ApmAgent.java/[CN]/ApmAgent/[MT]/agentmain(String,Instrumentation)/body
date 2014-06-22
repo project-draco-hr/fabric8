@@ -1,0 +1,16 @@
+{
+  try {
+    ApmAgent agent=ApmAgent.INSTANCE;
+    if (agent.initialize(instrumentation,args)) {
+      if (agent.getConfiguration().isStartJolokiaAgent()) {
+        JvmAgent.agentmain(args);
+      }
+      agent.start();
+      agent.instrument(args);
+    }
+  }
+ catch (  Exception e) {
+    LOG.error("Failed in agentmain",e);
+    throw e;
+  }
+}

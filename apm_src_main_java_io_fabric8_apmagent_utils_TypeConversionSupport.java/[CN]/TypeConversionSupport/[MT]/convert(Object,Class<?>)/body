@@ -1,0 +1,18 @@
+{
+  if (value == null) {
+    if (boolean.class.isAssignableFrom(to)) {
+      return Boolean.FALSE;
+    }
+    return null;
+  }
+  if (to.isInstance(value)) {
+    return to.cast(value);
+  }
+  Converter c=lookupConverter(value.getClass(),to);
+  if (c != null) {
+    return c.convert(value);
+  }
+ else {
+    return null;
+  }
+}

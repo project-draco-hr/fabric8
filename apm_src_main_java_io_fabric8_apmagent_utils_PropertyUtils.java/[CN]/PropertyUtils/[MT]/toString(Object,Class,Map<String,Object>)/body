@@ -1,0 +1,29 @@
+{
+  LinkedHashMap<String,Object> map=new LinkedHashMap<String,Object>();
+  addFields(target,target.getClass(),stopClass,map);
+  if (overrideFields != null) {
+    for (    String key : overrideFields.keySet()) {
+      Object value=overrideFields.get(key);
+      map.put(key,value);
+    }
+  }
+  StringBuffer buffer=new StringBuffer(simpleName(target.getClass()));
+  buffer.append(" {");
+  Set<Map.Entry<String,Object>> entrySet=map.entrySet();
+  boolean first=true;
+  for (  Map.Entry<String,Object> entry : entrySet) {
+    Object value=entry.getValue();
+    Object key=entry.getKey();
+    if (first) {
+      first=false;
+    }
+ else {
+      buffer.append(", ");
+    }
+    buffer.append(key);
+    buffer.append(" = ");
+    buffer.append(value);
+  }
+  buffer.append("}");
+  return buffer.toString();
+}

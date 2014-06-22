@@ -1,0 +1,17 @@
+{
+  String result="";
+  if (list != null && !list.isEmpty()) {
+    for (int i=0; i < list.size(); i++) {
+      FilterItem filterItem=list.get(i);
+      result+=filterItem.getClassName();
+      String methodName=filterItem.getMethodName();
+      if (methodName != null && methodName.length() > 0) {
+        result+="@" + methodName;
+      }
+      if (i < (list.size() - 1)) {
+        result+=",";
+      }
+    }
+  }
+  return result;
+}

@@ -1,0 +1,15 @@
+{
+  byte[] buffer=null;
+  if (!cleanUp.get()) {
+    if (configuration.isAudit(className) && !ApmAgentContext.INSTANCE.isAlreadyTransformed(className)) {
+      ClassReader cr=new ClassReader(classfileBuffer);
+      ClassWriter cw=new ClassWriter(cr,ClassWriter.COMPUTE_MAXS);
+      ApmClassVisitor visitor=new ApmClassVisitor(cw,className);
+      cr.accept(visitor,ClassReader.SKIP_FRAMES);
+      buffer=cw.toByteArray();
+      ApmAgentContext.INSTANCE.addTransformedClass(className);
+      LOG.trace("TRANSFORMED " + className);
+    }
+  }
+  return buffer;
+}

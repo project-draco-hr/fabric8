@@ -1,0 +1,32 @@
+{
+  VirtualMachine vm=null;
+  try {
+    vm=VirtualMachine.attach(pid);
+  }
+ catch (  AttachNotSupportedException x) {
+    IOException ioe=new IOException(x.getMessage());
+    ioe.initCause(x);
+    throw ioe;
+  }
+  try {
+    String agent=ApmAgentLauncher.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    System.err.println("Trying to load agent " + agent);
+    vm.loadAgent(agent,args);
+    System.out.println("Agent successfully loaded");
+  }
+ catch (  AgentLoadException x) {
+    IOException ioe=new IOException(x.getMessage());
+    ioe.initCause(x);
+    throw ioe;
+  }
+catch (  AgentInitializationException x) {
+    IOException ioe=new IOException(x.getMessage());
+    ioe.initCause(x);
+    throw ioe;
+  }
+ finally {
+    if (vm != null) {
+      vm.detach();
+    }
+  }
+}

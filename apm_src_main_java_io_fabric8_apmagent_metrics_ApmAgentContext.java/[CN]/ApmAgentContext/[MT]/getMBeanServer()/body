@@ -1,0 +1,11 @@
+{
+  if (mBeanServer == null) {
+    if (getApmConfiguration().isUsePlatformMBeanServer()) {
+      mBeanServer=ManagementFactory.getPlatformMBeanServer();
+    }
+ else {
+      mBeanServer=JolokiaMBeanServerUtil.getJolokiaMBeanServer();
+    }
+  }
+  return mBeanServer;
+}

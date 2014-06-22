@@ -1,0 +1,18 @@
+{
+  ApmAgentContext apmAgentContext=ApmAgentContext.INSTANCE;
+  if (apmAgentContext.isInitialized()) {
+    Thread currentThread=Thread.currentThread();
+    ThreadMetrics threadMetrics=apmAgentContext.threadMetricsMap.get(currentThread);
+    if (threadMetrics == null) {
+      threadMetrics=new ThreadMetrics(apmAgentContext,currentThread);
+      apmAgentContext.threadMetricsMap.put(currentThread,threadMetrics);
+    }
+    threadMetrics.enter(methodName);
+    MethodMetrics methodMetrics=apmAgentContext.methodMetricsMap.get(methodName);
+    if (methodMetrics == null) {
+      methodMetrics=new MethodMetrics(methodName);
+      apmAgentContext.methodMetricsMap.put(methodName,methodMetrics);
+      apmAgentContext.registerMethodMetricsMBean(methodMetrics);
+    }
+  }
+}

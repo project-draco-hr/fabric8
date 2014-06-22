@@ -1,0 +1,12 @@
+{
+  if (from.isPrimitive()) {
+    from=convertPrimitiveTypeToWrapperType(from);
+  }
+  if (to.isPrimitive()) {
+    to=convertPrimitiveTypeToWrapperType(to);
+  }
+  if (from.equals(to)) {
+    return IDENTITY_CONVERTER;
+  }
+  return CONVERSION_MAP.get(new ConversionKey(from,to));
+}

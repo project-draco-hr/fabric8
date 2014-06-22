@@ -1,0 +1,11 @@
+{
+  ObjectName objectName=objectNameMap.remove(threadMetrics);
+  if (objectName != null) {
+    try {
+      getMBeanServer().unregisterMBean(objectName);
+    }
+ catch (    Throwable e) {
+      LOG.error("Failed to unregister " + threadMetrics,e);
+    }
+  }
+}

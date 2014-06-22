@@ -1,0 +1,11 @@
+{
+  PropertyEditor editor=PropertyEditorManager.findEditor(type);
+  if (editor != null) {
+    editor.setAsText(value.toString());
+    return editor.getValue();
+  }
+  if (type == URI.class) {
+    return new URI(value.toString());
+  }
+  return null;
+}

@@ -1,0 +1,13 @@
+{
+  long elapsed=-1;
+  ThreadContextMethodMetrics last=stack.pop();
+  while (last != null) {
+    long time=last.onExit(false);
+    if (last.getName().equals(methodName)) {
+      elapsed=time;
+      break;
+    }
+    last=stack.pop();
+  }
+  return elapsed;
+}

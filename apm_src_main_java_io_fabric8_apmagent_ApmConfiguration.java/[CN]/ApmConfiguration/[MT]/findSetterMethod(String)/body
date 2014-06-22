@@ -1,0 +1,11 @@
+{
+  String methodName="set" + name.substring(0,1).toUpperCase() + name.substring(1);
+  Method[] methods=ApmConfiguration.class.getMethods();
+  for (  Method method : methods) {
+    Class params[]=method.getParameterTypes();
+    if (method.getName().equals(name) && params.length == 1) {
+      return method;
+    }
+  }
+  return null;
+}

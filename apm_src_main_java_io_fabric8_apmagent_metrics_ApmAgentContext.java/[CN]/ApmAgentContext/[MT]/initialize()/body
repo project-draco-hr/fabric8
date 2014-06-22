@@ -1,0 +1,17 @@
+{
+  if (initialized.compareAndSet(false,true)) {
+    backGroundThread=new Thread(new Runnable(){
+      @Override public void run(){
+        while (started.get())         try {
+          checkForDeadThreads();
+          Thread.sleep(2000);
+        }
+ catch (        Throwable e) {
+          break;
+        }
+      }
+    }
+,"ApmAgentContext background thread");
+    backGroundThread.setDaemon(true);
+  }
+}

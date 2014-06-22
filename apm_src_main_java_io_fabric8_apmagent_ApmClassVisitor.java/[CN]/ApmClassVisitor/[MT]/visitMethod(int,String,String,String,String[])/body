@@ -1,0 +1,35 @@
+{
+  try {
+    if (canProfileMethod(name,desc) && ApmAgent.INSTANCE.getConfiguration().isAudit(id,name)) {
+      MethodVisitor mv=super.visitMethod(access,name,desc,signature,exceptions);
+      Type[] parameterTypes=Type.getArgumentTypes(desc);
+      String str="";
+      if (parameterTypes == null || parameterTypes.length == 0) {
+        str="()";
+      }
+ else {
+        str="(";
+        for (int i=0; i < parameterTypes.length; i++) {
+          str+=parameterTypes[i].getClassName();
+          if ((i + 1) < parameterTypes.length) {
+            str+=",";
+          }
+        }
+        str+=")";
+      }
+      Type type=Type.getReturnType(desc);
+      if (type == null) {
+        str+=" void";
+      }
+ else {
+        str+=" " + type.getClassName();
+      }
+      ApmMethodVisitor methodVisitor=new ApmMethodVisitor(mv,id,name,str);
+      return methodVisitor;
+    }
+  }
+ catch (  Throwable e) {
+    LOG.error("Failed to visitMethod " + name,e);
+  }
+  return super.visitMethod(access,name,desc,signature,exceptions);
+}

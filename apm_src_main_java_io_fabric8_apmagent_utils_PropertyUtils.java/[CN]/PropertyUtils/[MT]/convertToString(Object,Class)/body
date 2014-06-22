@@ -1,0 +1,19 @@
+{
+  if (value == null) {
+    return null;
+  }
+  if (value instanceof String) {
+    return (String)value;
+  }
+  if (String[].class.isInstance(value)) {
+    String[] array=(String[])value;
+    return StringArrayConverter.convertToString(array);
+  }
+  TypeConversionSupport.Converter converter=TypeConversionSupport.lookupConverter(value.getClass(),String.class);
+  if (converter != null) {
+    return (String)converter.convert(value);
+  }
+ else {
+    throw new IllegalArgumentException("Cannot convert from " + value.getClass() + " to "+ to+ " with value "+ value);
+  }
+}

@@ -1,0 +1,16 @@
+{
+  if (methodDescriptor != null) {
+    Type[] parameterTypes=Type.getArgumentTypes(methodDescriptor);
+    if (methodName.equals("<init>") || methodName.equals("<clinit>")) {
+      return false;
+    }
+    if (methodName.startsWith("is") || methodName.startsWith("get") && (parameterTypes == null || parameterTypes.length == 0)) {
+      return false;
+    }
+    if (methodName.startsWith("set") && parameterTypes != null && parameterTypes.length == 1) {
+      return false;
+    }
+    return true;
+  }
+  return false;
+}

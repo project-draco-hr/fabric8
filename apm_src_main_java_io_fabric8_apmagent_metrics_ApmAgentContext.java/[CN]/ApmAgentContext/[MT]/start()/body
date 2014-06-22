@@ -1,0 +1,19 @@
+{
+  if (initialized.get()) {
+    if (started.compareAndSet(false,true)) {
+      backGroundThread.start();
+      try {
+        ObjectName objectName=new ObjectName(DEFAULT_DOMAIN,"type","apmAgent");
+        ObjectInstance objectInstance=getMBeanServer().registerMBean(this,objectName);
+        objectNameMap.put(this,objectInstance.getObjectName());
+        ApmConfiguration configuration=ApmAgent.INSTANCE.getConfiguration();
+        objectName=new ObjectName(DEFAULT_DOMAIN,"type","configuration");
+        objectInstance=getMBeanServer().registerMBean(configuration,objectName);
+        objectNameMap.put(configuration,objectInstance.getObjectName());
+      }
+ catch (      Throwable e) {
+        LOG.error("Failed to register apmAgent mbeans with mBeanServer ",e);
+      }
+    }
+  }
+}

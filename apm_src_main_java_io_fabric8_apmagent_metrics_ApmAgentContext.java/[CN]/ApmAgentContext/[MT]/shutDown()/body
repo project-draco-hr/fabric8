@@ -1,0 +1,22 @@
+{
+  if (initialized.compareAndSet(true,false)) {
+    started.set(false);
+    backGroundThread=null;
+    if (mBeanServer != null) {
+      for (      ObjectName objectName : objectNameMap.values()) {
+        try {
+          mBeanServer.unregisterMBean(objectName);
+        }
+ catch (        Throwable e) {
+          LOG.error("Failed to unregister mbean: " + objectName,e);
+        }
+      }
+      if (jolokiaServer != null) {
+        jolokiaServer.stop();
+        jolokiaServer=null;
+      }
+      mBeanServer=null;
+    }
+    ApmAgent.INSTANCE.shutdowm("");
+  }
+}

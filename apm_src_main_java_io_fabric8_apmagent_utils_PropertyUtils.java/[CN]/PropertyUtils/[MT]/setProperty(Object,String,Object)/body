@@ -1,0 +1,20 @@
+{
+  try {
+    Class<?> clazz=target.getClass();
+    Method setter=findSetterMethod(clazz,name);
+    if (setter == null) {
+      return false;
+    }
+    if (value == null || value.getClass() == setter.getParameterTypes()[0]) {
+      setter.invoke(target,value);
+    }
+ else {
+      setter.invoke(target,convert(value,setter.getParameterTypes()[0]));
+    }
+    return true;
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+    return false;
+  }
+}
