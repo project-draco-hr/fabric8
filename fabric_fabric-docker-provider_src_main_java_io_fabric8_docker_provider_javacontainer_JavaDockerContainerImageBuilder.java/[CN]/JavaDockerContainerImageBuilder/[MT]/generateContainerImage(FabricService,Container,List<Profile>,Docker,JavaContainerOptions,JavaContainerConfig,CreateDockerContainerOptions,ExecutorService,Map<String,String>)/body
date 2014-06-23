@@ -61,15 +61,17 @@
   tmpFile.delete();
   tmpFile.mkdirs();
   dockerFile.writeTo(new File(tmpFile,"Dockerfile"));
-  String commands="docker build -t " + tag + " "+ tmpFile.getCanonicalPath();
-  Process process=null;
-  Runtime runtime=Runtime.getRuntime();
-  String message=commands;
+  String[] commands=new String[]{"docker","build","-t",tag,tmpFile.getCanonicalPath()};
+  String message=join(asList(commands)," ");
   LOGGER.info("Executing commands: " + message);
   String answer=null;
   String errors=null;
+  String dockerHost=resolveDockerHost();
   try {
-    process=runtime.exec(commands);
+    ProcessBuilder dockerBuild=new ProcessBuilder().command(commands);
+    Map<String,String> env=dockerBuild.environment();
+    env.put("DOCKER_HOST",dockerHost);
+    Process process=dockerBuild.start();
     answer=parseCreatedImage(process.getInputStream(),message);
     errors=processErrors(process.getErrorStream(),message);
   }

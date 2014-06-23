@@ -4,12 +4,7 @@
     dockerHost=System.getProperty("docker.host");
   }
   if (!isEmpty(dockerHost)) {
-    if (dockerHost.startsWith("tcp:")) {
-      return "http:" + dockerHost.substring(4);
-    }
- else {
-      return dockerHost;
-    }
+    return dockerHost;
   }
   return DEFAULT_DOCKER_HOST;
 }
