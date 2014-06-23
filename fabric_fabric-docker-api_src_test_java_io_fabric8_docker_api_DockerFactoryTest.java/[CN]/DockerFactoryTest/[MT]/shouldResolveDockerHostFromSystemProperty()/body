@@ -1,0 +1,11 @@
+{
+  try {
+    String host="http://localhost:1234";
+    System.setProperty("docker.host",host);
+    DockerFactory dockerFactory=new DockerFactory(host);
+    assertEquals(host,dockerFactory.getAddress());
+  }
+  finally {
+    System.clearProperty("docker.host");
+  }
+}
