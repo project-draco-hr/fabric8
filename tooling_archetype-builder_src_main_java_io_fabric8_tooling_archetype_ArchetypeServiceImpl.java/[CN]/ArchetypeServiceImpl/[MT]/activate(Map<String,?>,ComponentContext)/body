@@ -1,0 +1,11 @@
+{
+  if (mbeanServer != null) {
+    JMXUtils.registerMBean(this,mbeanServer,OBJECT_NAME);
+  }
+  activateComponent();
+  URL catalog=componentContext.getBundleContext().getBundle().getResource("archetype-catalog.xml");
+  Archetypes archetypes=(Archetypes)Archetypes.newUnmarshaller().unmarshal(new StreamSource(catalog.openStream()));
+  for (  Archetype arch : archetypes.getArchetypes()) {
+    this.archetypes.put(String.format("%s:%s:%s",arch.groupId,arch.artifactId,arch.version),arch);
+  }
+}

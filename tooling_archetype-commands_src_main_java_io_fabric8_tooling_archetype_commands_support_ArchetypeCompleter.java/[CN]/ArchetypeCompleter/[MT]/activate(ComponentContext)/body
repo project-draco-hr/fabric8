@@ -1,9 +1,6 @@
 {
   activateComponent();
-  this.componentContext=componentContext;
-  URL catalog=this.componentContext.getBundleContext().getBundle().getResource("fabric8-archetype-catalog.xml");
-  Archetypes archetypes=(Archetypes)Archetypes.newUnmarshaller().unmarshal(new StreamSource(catalog.openStream()));
-  for (  Archetype arch : archetypes.getArchetypes()) {
-    this.archetypes.add(String.format("%s:%s:%s",arch.groupId,arch.artifactId,arch.version));
+  for (  String[] gav : this.archetypeService.listArchetypeGAVs()) {
+    this.archetypes.add(String.format("%s:%s:%s",gav[0],gav[1],gav[2]));
   }
 }
