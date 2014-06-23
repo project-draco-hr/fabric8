@@ -3,7 +3,7 @@
     HostConfig hostConfig=new HostConfig();
     Map<String,Integer> externalPorts=options.getExternalPorts();
     Map<String,Integer> internalPorts=options.getInternalPorts();
-    SortedMap<Integer,List<Map<String,String>>> sortedPortsToBinding=new TreeMap<Integer,List<Map<String,String>>>();
+    SortedMap<Integer,List<Map<String,String>>> sortedPortsToBinding=new TreeMap<>();
     for (    Map.Entry<String,Integer> entry : internalPorts.entrySet()) {
       String portName=entry.getKey();
       Integer internalPort=entry.getValue();
@@ -12,7 +12,7 @@
         sortedPortsToBinding.put(internalPort,createNewPortConfig(externalPort));
       }
     }
-    Map<String,List<Map<String,String>>> portBindings=new LinkedHashMap<String,List<Map<String,String>>>();
+    Map<String,List<Map<String,String>>> portBindings=new LinkedHashMap<>();
     for (    Map.Entry<Integer,List<Map<String,String>>> entry : sortedPortsToBinding.entrySet()) {
       Integer internalPort=entry.getKey();
       List<Map<String,String>> value=entry.getValue();
