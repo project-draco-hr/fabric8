@@ -20,7 +20,7 @@
   File metadataXmlOutFile=new File(archetypeDir,"src/main/resources-filtered/META-INF/maven/archetype-metadata.xml");
   Replacement replaceFunction=new IdentityReplacement();
   File mainSrcDir=null;
-  for (  String it : ArchetypeHelper.sourceCodeDirNames) {
+  for (  String it : ArchetypeUtils.sourceCodeDirNames) {
     File dir=new File(srcDir,it);
     if (dir.exists()) {
       mainSrcDir=dir;
@@ -28,9 +28,9 @@
     }
   }
   if (mainSrcDir != null) {
-    File rootPackage=archetypeHelper.findRootPackage(mainSrcDir);
+    File rootPackage=archetypeUtils.findRootPackage(mainSrcDir);
     if (rootPackage != null) {
-      String packagePath=archetypeHelper.relativePath(mainSrcDir,rootPackage);
+      String packagePath=archetypeUtils.relativePath(mainSrcDir,rootPackage);
       String packageName=packagePath.replaceAll(Pattern.quote("/"),".");
       LOG.debug("Found root package in {}: {}",mainSrcDir,packageName);
       final String regex=packageName.replaceAll(Pattern.quote("."),"\\.");
@@ -40,10 +40,10 @@
         }
       }
 ;
-      File outputMainSrc=new File(archetypeOutputDir,archetypeHelper.relativePath(projectDir,mainSrcDir));
+      File outputMainSrc=new File(archetypeOutputDir,archetypeUtils.relativePath(projectDir,mainSrcDir));
       copyCodeFiles(rootPackage,outputMainSrc,replaceFunction);
       File testSrcDir=null;
-      for (      String it : ArchetypeHelper.sourceCodeDirNames) {
+      for (      String it : ArchetypeUtils.sourceCodeDirNames) {
         File dir=new File(testDir,it);
         if (dir.exists()) {
           testSrcDir=dir;
@@ -52,7 +52,7 @@
       }
       if (testSrcDir != null) {
         File rootTestDir=new File(testSrcDir,packagePath);
-        File outputTestSrc=new File(archetypeOutputDir,archetypeHelper.relativePath(projectDir,testSrcDir));
+        File outputTestSrc=new File(archetypeOutputDir,archetypeUtils.relativePath(projectDir,testSrcDir));
         if (rootTestDir.exists()) {
           copyCodeFiles(rootTestDir,outputTestSrc,replaceFunction);
         }
@@ -65,6 +65,6 @@
   createArchetypeDescriptors(projectPom,archetypeDir,new File(archetypeOutputDir,"pom.xml"),metadataXmlOutFile,replaceFunction);
   copyOtherFiles(projectDir,projectDir,archetypeOutputDir,replaceFunction);
   if (!outputGitIgnoreFile.exists()) {
-    ArchetypeHelper.writeGitIgnore(outputGitIgnoreFile);
+    ArchetypeUtils.writeGitIgnore(outputGitIgnoreFile);
   }
 }

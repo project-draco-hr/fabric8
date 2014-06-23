@@ -1,7 +1,7 @@
 {
   LOG.debug("Parsing " + projectPom);
   String text=replaceFn.replace(FileUtils.readFileToString(projectPom));
-  Document doc=archetypeHelper.parseXml(new InputSource(new StringReader(text)));
+  Document doc=archetypeUtils.parseXml(new InputSource(new StringReader(text)));
   Element root=doc.getDocumentElement();
   String originalArtifactId, originalName, originalDescription;
   Element artifactIdEl=(Element)findChild(root,"artifactId");
@@ -71,9 +71,9 @@
     replaceOrAddElementText(doc,root,"groupId","${groupId}",beforeNames);
   }
   archetypePom.getParentFile().mkdirs();
-  archetypeHelper.writeXmlDocument(doc,archetypePom);
+  archetypeUtils.writeXmlDocument(doc,archetypePom);
   String archetypeXmlText=defaultArchetypeXmlText();
-  Document archDoc=archetypeHelper.parseXml(new InputSource(new StringReader(archetypeXmlText)));
+  Document archDoc=archetypeUtils.parseXml(new InputSource(new StringReader(archetypeXmlText)));
   Element archRoot=archDoc.getDocumentElement();
   archRoot.setAttribute("name",archetypeDir.getName());
   LOG.debug(("Found property names: {}"),propertyNameSet);
@@ -91,12 +91,12 @@
   }
   requiredProperties.appendChild(archDoc.createTextNode("\n" + indent));
   metadataXmlOutFile.getParentFile().mkdirs();
-  archetypeHelper.writeXmlDocument(archDoc,metadataXmlOutFile);
+  archetypeUtils.writeXmlDocument(archDoc,metadataXmlOutFile);
   File archetypeProjectPom=new File(archetypeDir,"pom.xml");
   if (!archetypeProjectPom.exists()) {
     StringWriter sw=new StringWriter();
     IOUtils.copy(getClass().getResourceAsStream("default-archetype-pom.xml"),sw,"UTF-8");
-    Document pomDocument=archetypeHelper.parseXml(new InputSource(new StringReader(sw.toString())));
+    Document pomDocument=archetypeUtils.parseXml(new InputSource(new StringReader(sw.toString())));
     List<String> emptyList=Collections.emptyList();
     Element artifactId=replaceOrAddElement(pomDocument,pomDocument.getDocumentElement(),"artifactId",emptyList);
     artifactId.setTextContent(archetypeDir.getName());
@@ -120,6 +120,6 @@
     }
     Element description=replaceOrAddElement(pomDocument,pomDocument.getDocumentElement(),"description",emptyList);
     description.setTextContent("Creates a new " + originalDescription);
-    archetypeHelper.writeXmlDocument(pomDocument,archetypeProjectPom);
+    archetypeUtils.writeXmlDocument(pomDocument,archetypeProjectPom);
   }
 }

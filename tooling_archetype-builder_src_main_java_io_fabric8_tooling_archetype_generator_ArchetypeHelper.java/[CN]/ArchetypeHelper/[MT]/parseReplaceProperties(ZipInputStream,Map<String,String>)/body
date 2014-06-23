@@ -1,0 +1,29 @@
+{
+  ByteArrayOutputStream bos=new ByteArrayOutputStream();
+  copy(zip,bos);
+  DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+  dbf.setNamespaceAware(true);
+  DocumentBuilder db=dbf.newDocumentBuilder();
+  InputSource inputSource=new InputSource(new ByteArrayInputStream(bos.toByteArray()));
+  Document document=db.parse(inputSource);
+  XPath xpath=XPathFactory.newInstance().newXPath();
+  SimpleNamespaceContext nsContext=new SimpleNamespaceContext();
+  nsContext.registerMapping("ad",archetypeDescriptorUri);
+  xpath.setNamespaceContext(nsContext);
+  NodeList properties=(NodeList)xpath.evaluate(requiredPropertyXPath,document,XPathConstants.NODESET);
+  for (int p=0; p < properties.getLength(); p++) {
+    Element requiredProperty=(Element)properties.item(p);
+    String key=requiredProperty.getAttribute("key");
+    NodeList children=requiredProperty.getElementsByTagNameNS(archetypeDescriptorUri,"defaultValue");
+    String value="";
+    if (children.getLength() == 1 && children.item(0).hasChildNodes()) {
+      value=children.item(0).getTextContent();
+    }
+ else {
+      if ("name".equals(key) && value.isEmpty()) {
+        value="HelloWorld";
+      }
+    }
+    replaceProperties.put(key,value);
+  }
+}

@@ -1,16 +1,16 @@
 {
-  Document doc=archetypeHelper.parseXml(new InputSource(new FileReader(pom)));
+  Document doc=archetypeUtils.parseXml(new InputSource(new FileReader(pom)));
   Element root=doc.getDocumentElement();
   String groupId="io.fabric8";
-  String artifactId=archetypeHelper.firstElementText(root,"artifactId",outputName);
-  String description=archetypeHelper.firstElementText(root,"description","");
+  String artifactId=archetypeUtils.firstElementText(root,"artifactId",outputName);
+  String description=archetypeUtils.firstElementText(root,"description","");
   String version="";
   NodeList parents=root.getElementsByTagName("parent");
   if (parents.getLength() > 0) {
-    version=archetypeHelper.firstElementText((Element)parents.item(0),"version","");
+    version=archetypeUtils.firstElementText((Element)parents.item(0),"version","");
   }
   if (version.length() == 0) {
-    version=archetypeHelper.firstElementText(root,"version","");
+    version=archetypeUtils.firstElementText(root,"version","");
   }
   String repo="https://repo.fusesource.com/nexus/content/groups/public";
   printWriter.println(String.format(indent + indent + "<archetype>\n"+ indent+ indent+ indent+ "<groupId>%s</groupId>\n"+ indent+ indent+ indent+ "<artifactId>%s</artifactId>\n"+ indent+ indent+ indent+ "<version>%s</version>\n"+ indent+ indent+ indent+ "<repository>%s</repository>\n"+ indent+ indent+ indent+ "<description>%s</description>\n"+ indent+ indent+ "</archetype>",groupId,artifactId,version,repo,description));
