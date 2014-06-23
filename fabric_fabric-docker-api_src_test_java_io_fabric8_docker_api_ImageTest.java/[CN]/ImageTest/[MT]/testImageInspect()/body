@@ -1,8 +1,5 @@
 {
-  String json=Resources.toString(getResource("image/image-inspect.json"),Charsets.UTF_8);
-  MockWebServer server=new MockWebServer();
-  server.enqueue(new MockResponse().setBody(json));
-  server.play();
+  recordResponse("image/image-inspect");
   Docker docker=createDockerForMock(server);
   ImageInfo response=docker.imageInspect("b750fe79269d");
   assertNotNull(response);

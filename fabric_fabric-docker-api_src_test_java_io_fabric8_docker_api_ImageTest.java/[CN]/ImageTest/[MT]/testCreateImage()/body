@@ -1,8 +1,5 @@
 {
-  String json=Resources.toString(getResource("image/image-create.json"),Charsets.UTF_8);
-  MockWebServer server=new MockWebServer();
-  server.enqueue(new MockResponse().setBody(json));
-  server.play();
+  recordResponse("image/image-create");
   Docker docker=createDockerForMock(server);
   String response=docker.imageCreate("base",null,null,null,null);
   assertNotNull(response);

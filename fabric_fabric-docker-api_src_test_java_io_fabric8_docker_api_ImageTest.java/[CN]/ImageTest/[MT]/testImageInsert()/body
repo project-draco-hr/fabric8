@@ -1,8 +1,5 @@
 {
-  String json=Resources.toString(getResource("image/image-insert.json"),Charsets.UTF_8);
-  MockWebServer server=new MockWebServer();
-  server.enqueue(new MockResponse().setBody(json));
-  server.play();
+  recordResponse("image/image-insert");
   Docker docker=createDockerForMock(server);
   String response=docker.imageInsert("base","somepath","http://someurl");
   assertNotNull(response);

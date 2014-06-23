@@ -1,12 +1,9 @@
 {
-  final String json=Resources.toString(getResource("image/image-push.json"),Charsets.UTF_8);
+  recordResponse("image/image-push");
   final Auth auth=new Auth();
   auth.setUsername("hannibal");
   auth.setPassword("xxxx");
   auth.setEmail("hannibal@a-team.com");
-  MockWebServer server=new MockWebServer();
-  server.enqueue(new MockResponse().setBody(json));
-  server.play();
   Docker docker=createDockerForMock(server);
   Progress response=docker.imagePush("base","reg",auth);
   assertNotNull(response);

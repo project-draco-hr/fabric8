@@ -1,8 +1,5 @@
 {
-  String json=Resources.toString(getResource("image/image-history.json"),Charsets.UTF_8);
-  MockWebServer server=new MockWebServer();
-  server.enqueue(new MockResponse().setBody(json));
-  server.play();
+  recordResponse("image/image-history");
   Docker docker=createDockerForMock(server);
   List<ImageHistoryItem> history=docker.imageHistory("b750fe79269d");
   assertNotNull(history);
