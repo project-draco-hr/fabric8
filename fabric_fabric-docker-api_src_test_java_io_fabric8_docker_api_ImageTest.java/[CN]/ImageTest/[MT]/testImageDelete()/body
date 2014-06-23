@@ -3,7 +3,6 @@
   MockWebServer server=new MockWebServer();
   server.enqueue(new MockResponse().setBody(json));
   server.play();
-  Docker docker=createDockerForMock(server);
   List<DeleteInfo> info=docker.imageDelete("b750fe79269d");
   assertNotNull(info);
   assertEquals(info.size(),3);
