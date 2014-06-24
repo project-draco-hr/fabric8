@@ -11,7 +11,7 @@
             final String mvn=future.getUrl();
             String file=future.getFile().toURI().toURL().toString();
             String real=url.replace(mvn,file);
-            SimpleDownloadTask task=new SimpleDownloadTask(real,executor);
+            SimpleDownloadTask task=new SimpleDownloadTask(real,executor,tmpPath);
             executor.submit(task);
             task.addListener(new FutureListener<DownloadFuture>(){
               @Override public void operationComplete(              DownloadFuture future){
@@ -44,7 +44,7 @@
       return task;
     }
   }
-  final SimpleDownloadTask download=new SimpleDownloadTask(url,executor);
+  final SimpleDownloadTask download=new SimpleDownloadTask(url,executor,tmpPath);
   executor.submit(download);
   return download;
 }
