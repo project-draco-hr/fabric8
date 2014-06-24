@@ -11,7 +11,7 @@
   helper.execute();
   File pom=new File(outDir,"pom.xml");
   assertFileExists(pom);
-  String pomText=FileCopyUtils.copyToString(new FileReader(pom));
+  String pomText=IOUtils.toString(new FileReader(pom));
   String badText="${camel-";
   if (pomText.contains(badText)) {
     if (verbose) {
