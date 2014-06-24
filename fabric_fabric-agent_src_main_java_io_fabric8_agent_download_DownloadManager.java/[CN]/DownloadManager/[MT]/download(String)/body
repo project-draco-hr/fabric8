@@ -3,39 +3,7 @@
   if (mvnUrl.startsWith("mvn:")) {
     MavenDownloadTask task=new MavenDownloadTask(mvnUrl,cache,system,configuration,executor);
     executor.submit(task);
-    if (!mvnUrl.equals(url)) {
-      final DummyDownloadTask download=new DummyDownloadTask(url,executor);
-      task.addListener(new FutureListener<DownloadFuture>(){
-        @Override public void operationComplete(        DownloadFuture future){
-          try {
-            final String mvn=future.getUrl();
-            String file=future.getFile().toURI().toURL().toString();
-            String real=url.replace(mvn,file);
-            SimpleDownloadTask task=new SimpleDownloadTask(real,executor);
-            executor.submit(task);
-            task.addListener(new FutureListener<DownloadFuture>(){
-              @Override public void operationComplete(              DownloadFuture future){
-                try {
-                  download.setFile(future.getFile());
-                }
- catch (                IOException e) {
-                  download.setException(e);
-                }
-              }
-            }
-);
-          }
- catch (          IOException e) {
-            download.setException(e);
-          }
-        }
-      }
-);
-      return download;
-    }
- else {
-      return task;
-    }
+    return task;
   }
  else {
     final SimpleDownloadTask download=new SimpleDownloadTask(url,executor);
