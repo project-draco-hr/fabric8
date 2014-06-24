@@ -1,0 +1,21 @@
+{
+  assertValid();
+  Map<String,Object> result=new HashMap<>();
+  final Runtime runtime=RuntimeLocator.getRuntime();
+  PropertiesProvider provider=new SubstitutionPropertiesProvider(new CompositePropertiesProvider(new MapPropertiesProvider(configuration),new PropertiesProvider(){
+    @Override public Object getProperty(    String key){
+      return runtime.getProperty(key);
+    }
+    @Override public Object getProperty(    String key,    Object defaultValue){
+      return runtime.getProperty(key,defaultValue);
+    }
+  }
+));
+  for (  Map.Entry<String,?> entry : configuration.entrySet()) {
+    String key=entry.getKey();
+    Object value=provider.getProperty(key);
+    result.put(key,value);
+  }
+  ConfigInjection.applyConfiguration(result,target,ignorePrefix);
+  return result;
+}
