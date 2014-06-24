@@ -1,4 +1,8 @@
 {
   String javaAgent=getJavaAgent(environmentVariables);
-  return findJolokiaUrlFromJavaAgent(javaAgent,defaultHost);
+  String answer=findJolokiaUrlFromJavaAgent(javaAgent,defaultHost);
+  if (Strings.isNullOrBlank(answer)) {
+    answer=environmentVariables.get(EnvironmentVariables.FABRIC8_JOLOKIA_URL);
+  }
+  return answer;
 }
