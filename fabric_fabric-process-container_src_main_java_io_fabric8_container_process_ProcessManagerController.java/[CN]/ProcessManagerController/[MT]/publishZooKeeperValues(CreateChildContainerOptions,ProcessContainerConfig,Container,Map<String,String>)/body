@@ -5,7 +5,7 @@
     String configName=entry.getKey();
     Map<String,String> exportConfig=entry.getValue();
     if (exportConfig != null && !exportConfig.isEmpty()) {
-      JolokiaAgentHelper.substituteEnvironmentVariableExpressions(exportConfig,environmentVariables);
+      JolokiaAgentHelper.substituteEnvironmentVariableExpressions(exportConfig,environmentVariables,fabricService);
       ZooKeeperPublishConfig config=new ZooKeeperPublishConfig();
       try {
         configurer.configure(exportConfig,config);

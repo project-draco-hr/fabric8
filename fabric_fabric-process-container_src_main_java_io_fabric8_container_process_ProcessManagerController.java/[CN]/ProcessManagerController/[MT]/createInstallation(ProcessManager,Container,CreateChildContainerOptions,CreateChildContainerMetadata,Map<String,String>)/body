@@ -13,8 +13,8 @@
   if (container != null) {
     registerPorts(options,processConfig,container,environmentVariables);
   }
-  JolokiaAgentHelper.substituteEnvironmentVariableExpressions(environmentVariables,environmentVariables);
-  JolokiaAgentHelper.substituteEnvironmentVariableExpressions(environmentVariables,System.getenv());
+  JolokiaAgentHelper.substituteEnvironmentVariableExpressions(environmentVariables,environmentVariables,fabricService);
+  JolokiaAgentHelper.substituteEnvironmentVariableExpressions(environmentVariables,System.getenv(),null);
   publishZooKeeperValues(options,processConfig,container,environmentVariables);
   Installation installation=null;
   try {
