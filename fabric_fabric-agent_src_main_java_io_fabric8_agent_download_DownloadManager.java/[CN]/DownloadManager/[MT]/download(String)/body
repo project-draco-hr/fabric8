@@ -5,9 +5,14 @@
     executor.submit(task);
     return task;
   }
+ else   if (mvnUrl.startsWith("profile:")) {
+    NoDownloadTask task=new NoDownloadTask(url,executor);
+    executor.submit(task);
+    return task;
+  }
  else {
-    final SimpleDownloadTask download=new SimpleDownloadTask(url,executor);
-    executor.submit(download);
-    return download;
+    final SimpleDownloadTask task=new SimpleDownloadTask(url,executor);
+    executor.submit(task);
+    return task;
   }
 }
