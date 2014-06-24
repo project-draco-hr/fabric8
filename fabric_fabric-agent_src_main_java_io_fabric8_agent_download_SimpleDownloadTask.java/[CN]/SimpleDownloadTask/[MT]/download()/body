@@ -1,10 +1,14 @@
 {
   LOG.trace("Downloading [" + url + "]");
-  if (url.startsWith(BLUEPRINT_PREFIX) || url.startsWith(SPRING_PREFIX)) {
+  String s=url;
+  if (s.startsWith("fab:")) {
+    s=s.substring(4);
+  }
+  if (s.startsWith(BLUEPRINT_PREFIX) || s.startsWith(SPRING_PREFIX)) {
     return downloadBlueprintOrSpring();
   }
   try {
-    URL urlObj=new URL(url);
+    URL urlObj=new URL(s);
     File file=new File(basePath,getFileName(urlObj.getFile()));
     if (file.exists()) {
       return file;
