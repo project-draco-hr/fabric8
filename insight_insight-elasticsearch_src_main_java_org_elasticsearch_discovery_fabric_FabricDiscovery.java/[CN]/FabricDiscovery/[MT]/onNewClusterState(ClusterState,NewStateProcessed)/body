@@ -1,0 +1,44 @@
+{
+  if (singleton.isMaster()) {
+    logger.warn("master should not receive new cluster state from [{}]",newState.nodes().masterNode());
+  }
+ else {
+    if (newState.nodes().localNode() == null) {
+      logger.warn("received a cluster state from [{}] and not part of the cluster, should not happen",newState.nodes().masterNode());
+    }
+ else {
+      clusterService.submitStateUpdateTask("zen-disco-receive(from master [" + newState.nodes().masterNode() + "])",new ProcessedClusterStateUpdateTask(){
+        @Override public ClusterState execute(        ClusterState currentState){
+          latestDiscoNodes=newState.nodes();
+          ClusterState.Builder builder=ClusterState.builder(newState);
+          if (newState.routingTable().version() == currentState.routingTable().version()) {
+            builder.routingTable(currentState.routingTable());
+          }
+          if (newState.metaData().version() == currentState.metaData().version()) {
+            builder.metaData(currentState.metaData());
+          }
+ else {
+            MetaData.Builder metaDataBuilder=MetaData.builder(newState.metaData()).removeAllIndices();
+            for (            IndexMetaData indexMetaData : newState.metaData()) {
+              IndexMetaData currentIndexMetaData=currentState.metaData().index(indexMetaData.index());
+              if (currentIndexMetaData == null || currentIndexMetaData.version() != indexMetaData.version()) {
+                metaDataBuilder.put(indexMetaData,false);
+              }
+ else {
+                metaDataBuilder.put(currentIndexMetaData,false);
+              }
+            }
+            builder.metaData(metaDataBuilder);
+          }
+          return builder.build();
+        }
+        @Override public void clusterStateProcessed(        String s,        ClusterState clusterState,        ClusterState clusterState2){
+          sendInitialStateEventIfNeeded();
+        }
+        @Override public void onFailure(        String s,        Throwable throwable){
+        }
+      }
+);
+    }
+  }
+}

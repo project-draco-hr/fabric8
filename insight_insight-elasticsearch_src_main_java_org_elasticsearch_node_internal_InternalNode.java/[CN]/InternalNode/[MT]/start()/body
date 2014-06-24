@@ -3,7 +3,7 @@
     return this;
   }
   ESLogger logger=Loggers.getLogger(Node.class,settings.get("name"));
-  logger.info("{{}}[{}]: starting ...",Version.CURRENT,JvmInfo.jvmInfo().pid());
+  logger.info("starting ...");
   injector.getInstance(Discovery.class).setAllocationService(injector.getInstance(AllocationService.class));
   for (  Class<? extends LifecycleComponent> plugin : pluginsService.services()) {
     injector.getInstance(plugin).start();
@@ -13,6 +13,7 @@
   injector.getInstance(IndicesClusterStateService.class).start();
   injector.getInstance(IndicesTTLService.class).start();
   injector.getInstance(RiversManager.class).start();
+  injector.getInstance(SnapshotsService.class).start();
   injector.getInstance(ClusterService.class).start();
   injector.getInstance(RoutingService.class).start();
   injector.getInstance(SearchService.class).start();
@@ -25,7 +26,8 @@
     injector.getInstance(HttpServer.class).start();
   }
   injector.getInstance(BulkUdpService.class).start();
-  injector.getInstance(JmxService.class).connectAndRegister(discoService.nodeDescription(),injector.getInstance(NetworkService.class));
-  logger.info("{{}}[{}]: started",Version.CURRENT,JvmInfo.jvmInfo().pid());
+  injector.getInstance(ResourceWatcherService.class).start();
+  injector.getInstance(TribeService.class).start();
+  logger.info("started");
   return this;
 }

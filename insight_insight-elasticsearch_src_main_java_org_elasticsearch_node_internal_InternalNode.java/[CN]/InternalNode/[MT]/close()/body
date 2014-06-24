@@ -6,9 +6,11 @@
     return;
   }
   ESLogger logger=Loggers.getLogger(Node.class,settings.get("name"));
-  logger.info("{{}}[{}]: closing ...",Version.CURRENT,JvmInfo.jvmInfo().pid());
+  logger.info("closing ...");
   StopWatch stopWatch=new StopWatch("node_close");
-  stopWatch.start("bulk.udp");
+  stopWatch.start("tribe");
+  injector.getInstance(TribeService.class).close();
+  stopWatch.stop().start("bulk.udp");
   injector.getInstance(BulkUdpService.class).close();
   stopWatch.stop().start("http");
   if (settings.getAsBoolean("http.enabled",true)) {
@@ -16,12 +18,15 @@
   }
   stopWatch.stop().start("rivers");
   injector.getInstance(RiversManager.class).close();
+  stopWatch.stop().start("snapshot_service");
+  injector.getInstance(SnapshotsService.class).close();
   stopWatch.stop().start("client");
   injector.getInstance(Client.class).close();
   stopWatch.stop().start("indices_cluster");
   injector.getInstance(IndicesClusterStateService.class).close();
   stopWatch.stop().start("indices");
   injector.getInstance(IndicesFilterCache.class).close();
+  injector.getInstance(IndicesFieldDataCache.class).close();
   injector.getInstance(IndexingMemoryController.class).close();
   injector.getInstance(IndicesTTLService.class).close();
   injector.getInstance(IndicesService.class).close();
@@ -41,12 +46,12 @@
   injector.getInstance(RestController.class).close();
   stopWatch.stop().start("transport");
   injector.getInstance(TransportService.class).close();
+  stopWatch.stop().start("percolator_service");
+  injector.getInstance(PercolatorService.class).close();
   for (  Class<? extends LifecycleComponent> plugin : pluginsService.services()) {
     stopWatch.stop().start("plugin(" + plugin.getName() + ")");
     injector.getInstance(plugin).close();
   }
-  stopWatch.stop().start("node_cache");
-  injector.getInstance(NodeCache.class).close();
   stopWatch.stop().start("script");
   injector.getInstance(ScriptService.class).close();
   stopWatch.stop().start("thread_pool");
@@ -63,13 +68,13 @@
  catch (  Exception e) {
   }
   stopWatch.stop();
-  CacheRecycler.clear();
-  CachedStreams.clear();
-  ThreadLocals.clearReferencesThreadLocals();
   if (logger.isTraceEnabled()) {
     logger.trace("Close times for each service:\n{}",stopWatch.prettyPrint());
   }
   injector.getInstance(NodeEnvironment.class).close();
+  injector.getInstance(CacheRecycler.class).close();
+  injector.getInstance(PageCacheRecycler.class).close();
   Injectors.close(injector);
-  logger.info("{{}}[{}]: closed",Version.CURRENT,JvmInfo.jvmInfo().pid());
+  CachedStreams.clear();
+  logger.info("closed");
 }

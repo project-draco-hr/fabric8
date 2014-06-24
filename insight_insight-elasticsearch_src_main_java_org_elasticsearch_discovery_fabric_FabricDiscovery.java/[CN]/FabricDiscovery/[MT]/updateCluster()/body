@@ -5,10 +5,10 @@
  catch (  Exception e) {
   }
   if (singleton.isMaster()) {
-    clusterService.submitStateUpdateTask("fabric-discovery",new ProcessedClusterStateUpdateTask(){
+    clusterService.submitStateUpdateTask("fabric-discovery",Priority.URGENT,new ProcessedClusterStateUpdateTask(){
       @Override public ClusterState execute(      ClusterState currentState){
-        ClusterState.Builder stateBuilder=newClusterStateBuilder().state(currentState);
-        DiscoveryNodes.Builder nodesBuilder=newNodesBuilder().localNodeId(localNode.id()).masterNodeId(singleton.master().getNode().id()).put(singleton.master().getNode());
+        ClusterState.Builder stateBuilder=ClusterState.builder(currentState);
+        DiscoveryNodes.Builder nodesBuilder=DiscoveryNodes.builder().localNodeId(localNode.id()).masterNodeId(singleton.master().getNode().id()).put(singleton.master().getNode());
         for (        ESNode node : singleton.slaves()) {
           nodesBuilder.put(node.getNode());
         }
@@ -25,8 +25,11 @@
         }
         return stateBuilder.build();
       }
-      @Override public void clusterStateProcessed(      ClusterState clusterState){
+      @Override public void clusterStateProcessed(      String source,      ClusterState oldState,      ClusterState newState){
         sendInitialStateEventIfNeeded();
+      }
+      @Override public void onFailure(      String source,      Throwable t){
+        logger.error("unexpected failure during [{}]",t,source);
       }
     }
 );

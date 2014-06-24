@@ -21,8 +21,30 @@ catch (      NamespaceException e) {
     }
   }
 );
+  this.mbeanServerTracker=new ServiceTracker<MBeanServer,MBeanServer>(bundleContext,MBeanServer.class,new ServiceTrackerCustomizer<MBeanServer,MBeanServer>(){
+    @Override public MBeanServer addingService(    ServiceReference<MBeanServer> reference){
+      MBeanServer mBeanServer=bundleContext.getService(reference);
+      try {
+        JMXUtils.registerMBean(rest,mBeanServer,OBJECT_NAME);
+      }
+ catch (      Exception e) {
+        e.printStackTrace();
+      }
+      return mBeanServer;
+    }
+    @Override public void modifiedService(    ServiceReference<MBeanServer> reference,    MBeanServer service){
+    }
+    @Override public void removedService(    ServiceReference<MBeanServer> reference,    MBeanServer service){
+      try {
+        JMXUtils.unregisterMBean(service,OBJECT_NAME);
+      }
+ catch (      Exception e) {
+      }
+    }
+  }
+);
   this.node=node;
-  this.rest=new ElasticRestImpl(node);
+  this.rest=new ElasticRest(node);
   this.storage=new ElasticStorageImpl(node);
-  this.servlet=new ElasticSearchServlet(this.rest);
+  this.servlet=new ElasticSearchServlet(this);
 }
