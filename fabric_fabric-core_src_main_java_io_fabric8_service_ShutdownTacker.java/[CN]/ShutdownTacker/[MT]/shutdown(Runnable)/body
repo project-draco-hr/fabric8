@@ -1,0 +1,9 @@
+{
+  if (stopping.compareAndSet(false,true)) {
+    this.onStopCallback=onStopCallback;
+    release();
+  }
+ else {
+    throw new ShutdownException();
+  }
+}

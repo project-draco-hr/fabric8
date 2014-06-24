@@ -4,8 +4,13 @@ case CONNECTED:
 case RECONNECTED:
     executor.submit(new Runnable(){
       public void run(){
-        if (isValid()) {
-          updateProcessId();
+        if (shutdownTracker.attemptRetain()) {
+          try {
+            updateProcessId();
+          }
+  finally {
+            shutdownTracker.release();
+          }
         }
       }
     }

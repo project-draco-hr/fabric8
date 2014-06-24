@@ -1,8 +1,13 @@
 {
   executor.submit(new Runnable(){
     public void run(){
-      if (isValid()) {
-        doHandleNotification(notif,o);
+      if (shutdownTracker.attemptRetain()) {
+        try {
+          doHandleNotification(notif,o);
+        }
+  finally {
+          shutdownTracker.release();
+        }
       }
     }
   }

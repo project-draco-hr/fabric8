@@ -2,7 +2,7 @@
   try {
     ObjectName name=getObjectName();
     if (!mbeanServer.isRegistered(name)) {
-      mbeanServer.registerMBean(this,name);
+      mbeanServer.registerMBean(shutdownTracker.mbeanProxy(this),name);
     }
   }
  catch (  Exception e) {

@@ -3,8 +3,8 @@
   this.managerMBean=new FabricManager((FabricServiceImpl)fabricService.get());
   this.zooKeeperMBean=new ZooKeeperFacade((FabricServiceImpl)fabricService.get());
   this.fileSystemMBean=new FileSystem(runtimeProperties.get());
-  healthCheck.registerMBeanServer(mbeanServer.get());
-  managerMBean.registerMBeanServer(mbeanServer.get());
-  fileSystemMBean.registerMBeanServer(mbeanServer.get());
-  zooKeeperMBean.registerMBeanServer(mbeanServer.get());
+  healthCheck.registerMBeanServer(shutdownTracker,mbeanServer.get());
+  managerMBean.registerMBeanServer(shutdownTracker,mbeanServer.get());
+  fileSystemMBean.registerMBeanServer(shutdownTracker,mbeanServer.get());
+  zooKeeperMBean.registerMBeanServer(shutdownTracker,mbeanServer.get());
 }
