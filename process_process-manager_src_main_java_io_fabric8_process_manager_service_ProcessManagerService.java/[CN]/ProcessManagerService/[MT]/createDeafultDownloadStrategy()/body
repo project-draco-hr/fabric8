@@ -1,0 +1,15 @@
+{
+  return new DownloadStrategy(){
+    @Override public File downloadContent(    final URL sourceUrl,    final File installDir) throws IOException {
+      File archive=new File(installDir,INSTALLED_BINARY);
+      Files.copy(new InputSupplier<InputStream>(){
+        @Override public InputStream getInput() throws IOException {
+          return sourceUrl.openStream();
+        }
+      }
+,archive);
+      return archive;
+    }
+  }
+;
+}
