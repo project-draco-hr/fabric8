@@ -1,4 +1,7 @@
 {
   RHQMetrics.Builder builder=new RHQMetrics.Builder();
+  if (Strings.isNotBlank(configuration.get("nodes"))) {
+    builder=builder.withCassandraDataStore();
+  }
   return builder.build();
 }
