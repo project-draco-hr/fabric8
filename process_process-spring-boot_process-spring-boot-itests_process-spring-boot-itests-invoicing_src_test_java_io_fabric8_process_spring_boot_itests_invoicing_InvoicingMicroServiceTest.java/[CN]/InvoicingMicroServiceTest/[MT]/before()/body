@@ -1,5 +1,19 @@
 {
-  String url="file://" + USER_REPOSITORY + "/io/fabric8/process-spring-boot-itests-service-invoicing/"+ FABRIC_VERSION+ "/process-spring-boot-itests-service-invoicing-"+ FABRIC_VERSION+ ".jar";
+  String artifactPath="/io/fabric8/process-spring-boot-itests-service-invoicing/" + FABRIC_VERSION + "/process-spring-boot-itests-service-invoicing-"+ FABRIC_VERSION+ ".jar";
+  String fileName=USER_REPOSITORY + artifactPath;
+  if (!new File(fileName).exists()) {
+    String localRepo=System.getProperty("maven.repo.local");
+    if (Strings.isNotBlank(localRepo)) {
+      fileName=localRepo + artifactPath;
+      if (!new File(fileName).exists()) {
+        fail("Could not find " + artifactPath + " in either user maven repository "+ USER_REPOSITORY+ " or in "+ localRepo);
+      }
+    }
+ else {
+      fail("Could not find " + artifactPath + " in either user maven repository "+ USER_REPOSITORY);
+    }
+  }
+  String url="file://" + fileName;
   InstallOptions installOptions=new InstallOptions.InstallOptionsBuilder().jvmOptions("-D" + SPRING_MAIN_SOURCES + "=io.fabric8.process.spring.boot.itests.service.invoicing").url(url).environment(springBootProcessEnvironment()).mainClass(FabricSpringApplication.class).build();
   processController=processManagerService.installJar(installOptions,null).getController();
   startProcess(processController);
