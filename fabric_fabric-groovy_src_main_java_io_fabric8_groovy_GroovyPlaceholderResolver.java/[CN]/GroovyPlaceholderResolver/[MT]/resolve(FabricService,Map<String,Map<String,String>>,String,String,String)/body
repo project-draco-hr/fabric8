@@ -1,0 +1,17 @@
+{
+  try {
+    Binding binding=new Binding();
+    binding.setVariable("zk",new Integer(2));
+    GroovyShell shell=new GroovyShell(binding);
+    LOGGER.info("Evaluating groovy expression '" + value + "'");
+    Object result=shell.evaluate(value);
+    LOGGER.info("Got result: " + result);
+    if (result != null) {
+      return result.toString();
+    }
+    return "";
+  }
+ catch (  Exception e) {
+    throw FabricException.launderThrowable(e);
+  }
+}
