@@ -1,0 +1,22 @@
+{
+  MavenConfigurationImpl config=new MavenConfigurationImpl(new PropertiesPropertyResolver(System.getProperties()),"org.ops4j.pax.url.mvn");
+  config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
+  DownloadManager dm=new DownloadManager(config,Executors.newSingleThreadExecutor());
+  final CountDownLatch latch=new CountDownLatch(1);
+  DownloadFuture df=dm.download(String.format("mvn:%s/%s/%s",archetype.groupId,archetype.artifactId,archetype.version));
+  df.addListener(new FutureListener<DownloadFuture>(){
+    @Override public void operationComplete(    DownloadFuture future){
+      latch.countDown();
+    }
+  }
+);
+  try {
+    latch.await(30,TimeUnit.SECONDS);
+  }
+ catch (  InterruptedException e) {
+    System.err.println("Failed to download " + archetype);
+    throw new IOException(e.getMessage(),e);
+  }
+  System.out.println("Downloaded archetype (" + df.getFile() + ")");
+  return new FileInputStream(df.getFile());
+}

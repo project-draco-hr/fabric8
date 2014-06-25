@@ -1,0 +1,22 @@
+{
+  String home=System.getProperty("user.home");
+  Properties properties=new Properties();
+  properties.setProperty("mvn.localRepository",home + "/.m2/repository/@snapshots");
+  properties.setProperty("mvn.repositories","http://repo1.maven.org/maven2/");
+  PropertiesPropertyResolver propertyResolver=new PropertiesPropertyResolver(properties);
+  MavenConfigurationImpl mavenConfiguration=new MavenConfigurationImpl(propertyResolver,"mvn");
+  mavenConfiguration.setSettings(new MavenSettingsImpl(new URL("file:" + home + "/.m2/settings.xml")));
+  DownloadManager dm=new DownloadManager(mavenConfiguration,Executors.newSingleThreadExecutor());
+  final CountDownLatch latch=new CountDownLatch(1);
+  DownloadFuture df=dm.download("mvn:io.fabric8.archetypes/karaf-camel-cbr-archetype/1.1.0-SNAPSHOT");
+  df.addListener(new FutureListener<DownloadFuture>(){
+    @Override public void operationComplete(    DownloadFuture future){
+      latch.countDown();
+    }
+  }
+);
+  latch.await(30,TimeUnit.SECONDS);
+  assertNotNull(df.getUrl());
+  assertNotNull(df.getFile());
+  LOG.info("Downloaded URL={}, FILE={}",df.getUrl(),df.getFile());
+}

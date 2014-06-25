@@ -3,7 +3,10 @@
   String[] lines=text.split("\r?\n");
   for (  String line : lines) {
     String l=line.trim();
-    if (!l.startsWith("##")) {
+    if (!l.startsWith("##") && !l.startsWith("#set(")) {
+      if (line.contains("${D}")) {
+        line=line.replaceAll("\\$\\{D\\}","\\$");
+      }
       answer=answer.concat(line);
       answer=answer.concat("\n");
     }

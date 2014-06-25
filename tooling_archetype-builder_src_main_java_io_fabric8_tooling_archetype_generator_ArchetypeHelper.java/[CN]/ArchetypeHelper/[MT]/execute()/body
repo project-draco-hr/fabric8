@@ -82,11 +82,15 @@
   info("Using replace properties: " + replaceProperties);
   if (!replaceProperties.isEmpty()) {
     File pom=new File(outputDir,"pom.xml");
-    String text=IOUtils.toString(new FileReader(pom));
+    FileReader reader=new FileReader(pom);
+    String text=IOUtils.toString(reader);
+    IOUtils.closeQuietly(reader);
     for (    Map.Entry<String,String> e : replaceProperties.entrySet()) {
       text=replaceVariable(text,e.getKey(),e.getValue());
     }
-    IOUtils.write(text,new FileWriter(pom));
+    FileWriter writer=new FileWriter(pom);
+    IOUtils.write(text,writer);
+    IOUtils.closeQuietly(writer);
   }
   if (createDefaultDirectories) {
     File srcDir=new File(outputDir,"src");
