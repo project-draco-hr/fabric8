@@ -1,0 +1,21 @@
+{
+  File file=bundleContext.getDataFile("servicemix-bundles.properties");
+  if (file.exists() && file.isFile()) {
+    Properties props=new Properties();
+    try (FileInputStream fis=new FileInputStream(file)){
+      props.load(fis);
+      Map<String,String> map=new HashMap<String,String>();
+      for (Enumeration e=props.propertyNames(); e.hasMoreElements(); ) {
+        String name=(String)e.nextElement();
+        map.put(name,props.getProperty(name));
+      }
+      long date=Long.parseLong(map.get("timestamp"));
+      if (System.currentTimeMillis() - date < 24L * 60L * 60L* 1000L) {
+        servicemixBundles=map;
+      }
+    }
+ catch (    IOException e) {
+    }
+  }
+  doGetAllServiceMixBundles();
+}

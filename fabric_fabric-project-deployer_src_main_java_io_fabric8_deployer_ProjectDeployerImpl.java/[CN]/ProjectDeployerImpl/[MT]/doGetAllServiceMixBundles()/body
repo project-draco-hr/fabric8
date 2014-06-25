@@ -1,0 +1,80 @@
+{
+  final ExecutorService executor=Executors.newFixedThreadPool(64);
+  if (servicemixBundles != null) {
+    return;
+  }
+  servicemixBundles=new HashMap<String,String>();
+  downloadThreads++;
+  executor.execute(new Runnable(){
+    @Override public void run(){
+      try {
+        String md=IOUtil.toString(new URL("http://central.maven.org/maven2/org/apache/servicemix/bundles/").openStream());
+        Matcher matcher=Pattern.compile("<a href=\"(org\\.apache\\.servicemix\\.bundles\\.[^\"]*)/\">").matcher(md);
+        while (matcher.find()) {
+          final String artifactId=matcher.group(1);
+synchronized (ProjectDeployerImpl.this) {
+            downloadThreads++;
+          }
+          executor.execute(new Runnable(){
+            @Override public void run(){
+              try {
+                String mda=IOUtil.toString(new URL("http://central.maven.org/maven2/org/apache/servicemix/bundles/" + artifactId).openStream());
+                Matcher matcher=Pattern.compile("<a href=\"([^\\.][^\"]*)/\">").matcher(mda);
+                while (matcher.find()) {
+                  final String version=matcher.group(1);
+synchronized (ProjectDeployerImpl.this) {
+                    downloadThreads++;
+                  }
+                  executor.execute(new Runnable(){
+                    @Override public void run(){
+                      try {
+                        String pom=IOUtil.toString(new URL("http://central.maven.org/maven2/org/apache/servicemix/bundles/" + artifactId + "/"+ version+ "/"+ artifactId+ "-"+ version+ ".pom").openStream());
+                        String pkgGroupId=extract(pom,"<pkgGroupId>(.*)</pkgGroupId>");
+                        String pkgArtifactId=extract(pom,"<pkgArtifactId>(.*)</pkgArtifactId>");
+                        String pkgVersion=extract(pom,"<pkgVersion>(.*)</pkgVersion>");
+                        if (pkgGroupId != null && pkgArtifactId != null && pkgVersion != null) {
+                          String key=pkgGroupId + ":" + pkgArtifactId+ ":"+ pkgVersion;
+synchronized (ProjectDeployerImpl.this) {
+                            String cur=servicemixBundles.get(key);
+                            if (cur == null) {
+                              servicemixBundles.put(key,"org.apache.servicemix.bundles:" + artifactId + ":"+ version);
+                            }
+ else {
+                              int v1=extractBundleRelease(cur);
+                              int v2=extractBundleRelease(version);
+                              if (v2 > v1) {
+                                servicemixBundles.put(key,"org.apache.servicemix.bundles:" + artifactId + ":"+ version);
+                              }
+                            }
+                          }
+                        }
+                      }
+ catch (                      IOException e) {
+                      }
+ finally {
+                        downloadThreadDone();
+                      }
+                    }
+                  }
+);
+                }
+              }
+ catch (              IOException e) {
+              }
+ finally {
+                downloadThreadDone();
+              }
+            }
+          }
+);
+        }
+      }
+ catch (      IOException e) {
+      }
+ finally {
+        downloadThreadDone();
+      }
+    }
+  }
+);
+}

@@ -1,0 +1,63 @@
+{
+  getLog().info("Retrieving ServiceMix bundles on maven central");
+  final Map<String,String> bundles=new HashMap<String,String>();
+  final ExecutorService executor=Executors.newCachedThreadPool();
+  try {
+    String md=IOUtil.toString(new URL("http://central.maven.org/maven2/org/apache/servicemix/bundles/").openStream());
+    Matcher matcher=Pattern.compile("<a href=\"(org\\.apache\\.servicemix\\.bundles\\.[^\"]*)/\">").matcher(md);
+    while (matcher.find()) {
+      final String artifactId=matcher.group(1);
+      executor.execute(new Runnable(){
+        @Override public void run(){
+          try {
+            String mda=IOUtil.toString(new URL("http://central.maven.org/maven2/org/apache/servicemix/bundles/" + artifactId).openStream());
+            Matcher matcher=Pattern.compile("<a href=\"([^\\.][^\"]*)/\">").matcher(mda);
+            while (matcher.find()) {
+              final String version=matcher.group(1);
+              executor.execute(new Runnable(){
+                @Override public void run(){
+                  try {
+                    String pom=IOUtil.toString(new URL("http://central.maven.org/maven2/org/apache/servicemix/bundles/" + artifactId + "/"+ version+ "/"+ artifactId+ "-"+ version+ ".pom").openStream());
+                    String pkgGroupId=extract(pom,"<pkgGroupId>(.*)</pkgGroupId>");
+                    String pkgArtifactId=extract(pom,"<pkgArtifactId>(.*)</pkgArtifactId>");
+                    String pkgVersion=extract(pom,"<pkgVersion>(.*)</pkgVersion>");
+                    if (pkgGroupId != null && pkgArtifactId != null && pkgVersion != null) {
+                      String key=pkgGroupId + ":" + pkgArtifactId+ ":"+ pkgVersion;
+                      getLog().info("Found ServiceMix bundle for " + key + " in version "+ version);
+synchronized (bundles) {
+                        String cur=bundles.get(key);
+                        if (cur == null) {
+                          bundles.put(key,"org.apache.servicemix.bundles:" + artifactId + ":"+ version);
+                        }
+ else {
+                          int v1=extractBundleRelease(cur);
+                          int v2=extractBundleRelease(version);
+                          if (v2 > v1) {
+                            bundles.put(key,"org.apache.servicemix.bundles:" + artifactId + ":"+ version);
+                          }
+                        }
+                      }
+                    }
+                  }
+ catch (                  IOException e) {
+                    getLog().warn("Error retrieving ServiceMix bundles list",e);
+                  }
+                }
+              }
+);
+            }
+          }
+ catch (          IOException e) {
+            getLog().warn("Error retrieving ServiceMix bundles list",e);
+          }
+        }
+      }
+);
+    }
+    executor.awaitTermination(5,TimeUnit.MINUTES);
+  }
+ catch (  IOException e) {
+    getLog().warn("Error retrieving ServiceMix bundles list",e);
+  }
+  return bundles;
+}

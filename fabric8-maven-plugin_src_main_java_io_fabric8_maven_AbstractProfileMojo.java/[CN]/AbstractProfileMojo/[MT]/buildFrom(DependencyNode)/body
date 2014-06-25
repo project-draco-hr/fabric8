@@ -9,6 +9,26 @@
     String scope=artifact.getScope();
     answer.setScope(scope);
     answer.setType(artifact.getType());
+    if (artifact.getClassifier() == null && "jar".equals(artifact.getType())) {
+      try {
+        ArtifactResolutionRequest request=new ArtifactResolutionRequest();
+        request.setArtifact(artifact);
+        request.setRemoteRepositories(remoteRepositories);
+        request.setLocalRepository(localRepository);
+        resolver.resolve(request);
+        JarInputStream jis=new JarInputStream(new FileInputStream(artifact.getFile()));
+        Manifest man=jis.getManifest();
+        String bsn=man.getMainAttributes().getValue(Constants.BUNDLE_SYMBOLICNAME);
+        if (bsn != null) {
+          answer.setType("bundle");
+        }
+ else {
+        }
+      }
+ catch (      Exception e) {
+        getLog().debug("Error checking artifact type for " + artifact,e);
+      }
+    }
     answer.setOptional(artifact.isOptional());
     String type=answer.getType();
     if (type != null && type.equals("pom")) {
@@ -31,9 +51,15 @@
       if (child instanceof DependencyNode) {
         DependencyNode childNode=(DependencyNode)child;
         if (childNode.getState() == DependencyNode.INCLUDED) {
-          DependencyDTO childDTO=buildFrom(childNode);
-          if (childDTO != null) {
-            answer.addChild(childDTO);
+          String childScope=childNode.getArtifact().getScope();
+          if (!"test".equals(childScope) && !"provided".equals(childScope)) {
+            DependencyDTO childDTO=buildFrom(childNode);
+            if (childDTO != null) {
+              answer.addChild(childDTO);
+            }
+          }
+ else {
+            getLog().debug("Ignoring artifact " + childNode.getArtifact() + " with scope "+ childScope);
           }
         }
       }
