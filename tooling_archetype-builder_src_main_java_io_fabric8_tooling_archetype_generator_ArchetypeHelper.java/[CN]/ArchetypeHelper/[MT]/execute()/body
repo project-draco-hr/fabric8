@@ -64,6 +64,7 @@
           }
  else           if (fullName != null && fullName.equals("META-INF/maven/archetype-metadata.xml")) {
             parseReplaceProperties(zip,replaceProperties);
+            replaceProperties.putAll(overrideProperties);
           }
         }
         zip.closeEntry();
@@ -78,7 +79,6 @@
       zip.close();
     }
   }
-  replaceProperties.putAll(overrideProperties);
   info("Using replace properties: " + replaceProperties);
   if (!replaceProperties.isEmpty()) {
     File pom=new File(outputDir,"pom.xml");
