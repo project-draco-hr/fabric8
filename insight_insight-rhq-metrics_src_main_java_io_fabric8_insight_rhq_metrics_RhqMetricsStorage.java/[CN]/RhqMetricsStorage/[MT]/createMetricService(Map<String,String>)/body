@@ -1,7 +1,20 @@
 {
+  LOG.info("Configuring RHQ metric service from " + configuration);
+  configurer.configure(configuration,this);
   RHQMetrics.Builder builder=new RHQMetrics.Builder();
-  if (Strings.isNotBlank(configuration.get("nodes"))) {
+  if (nodes != null && nodes.length > 0) {
     builder=builder.withCassandraDataStore();
+    LOG.info("Using Cassandra nodes: " + Arrays.asList(nodes));
+    builder.withNodes(nodes);
+    if (Strings.isNotBlank(keyspace)) {
+      builder.withKeyspace(keyspace);
+    }
+    if (cqlport > 0) {
+      builder.withCQLPort(cqlport);
+    }
+  }
+ else {
+    builder=builder.withInMemoryDataStore();
   }
   return builder.build();
 }

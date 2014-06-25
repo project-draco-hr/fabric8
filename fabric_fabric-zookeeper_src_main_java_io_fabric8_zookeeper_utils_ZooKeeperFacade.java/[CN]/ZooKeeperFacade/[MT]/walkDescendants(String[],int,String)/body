@@ -1,7 +1,11 @@
 {
   boolean isLast=index >= paths.length - 1;
   if (isLast) {
-    return getAllChildren(prefix);
+    List<String> allChildren=getAllChildren(prefix);
+    if (exists(prefix) != null) {
+      allChildren.add(prefix);
+    }
+    return allChildren;
   }
  else {
     List<String> answer=new ArrayList<String>();
@@ -10,7 +14,6 @@
     String nextPath=paths[nextIndex];
     for (    String child : children) {
       String childPrefix=prefix + "/" + child+ "/"+ nextPath;
-      System.out.println("childPrefix " + childPrefix + " as child is "+ child);
       List<String> childResults=walkDescendants(paths,nextIndex,childPrefix);
       answer.addAll(childResults);
     }
