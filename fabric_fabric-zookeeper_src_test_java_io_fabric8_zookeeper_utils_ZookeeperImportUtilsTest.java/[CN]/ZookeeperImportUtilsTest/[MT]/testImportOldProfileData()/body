@@ -6,4 +6,10 @@
   Properties properties=new Properties();
   properties.load(new StringReader(new String(curator.getData().forPath("/fabric3/fabric/configs/versions/1.0/profiles/p1/io.fabric8.agent.properties"))));
   assertThat(properties.getProperty("parents"),equalTo("x y z"));
+  ZooKeeperFacade facade=new ZooKeeperFacade(curator);
+  List<String> childTextData=facade.matchingDescendantStringData("/fabric3/fabric/configs/versions/*/profiles/*");
+  System.out.println("Got children: " + childTextData);
+  assertThat("children size: " + childTextData,childTextData.size(),equalTo(1));
+  String firstText=childTextData.get(0).trim();
+  assertThat(firstText,containsString("x y z"));
 }

@@ -4,4 +4,8 @@
   ZookeeperImportUtils.importFromFileSystem(curator,source,target,null,null,false,false,false);
   assertThat(curator.getChildren().forPath("/fabric4/fabric/registry/clusters/servlets/io.fabric8.fabric-redirect/1.0.0/*").size(),equalTo(1));
   assertThat(curator.getChildren().forPath("/fabric4/fabric/registry/clusters/servlets/io.fabric8.fabric-redirect/1.0.0/*").get(0),equalTo("root"));
+  ZooKeeperFacade facade=new ZooKeeperFacade(curator);
+  List<String> children=facade.matchingDescendants("/fabric4/fabric/registry/clusters/servlets/*/1.0.0");
+  System.out.println("Got children: " + children);
+  assertThat("children size: " + children,children.size(),not(equalTo(0)));
 }
