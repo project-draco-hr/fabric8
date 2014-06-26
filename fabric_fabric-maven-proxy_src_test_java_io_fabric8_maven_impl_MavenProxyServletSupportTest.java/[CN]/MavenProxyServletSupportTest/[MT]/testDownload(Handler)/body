@@ -1,0 +1,48 @@
+{
+  String old=System.getProperty("karaf.data");
+  System.setProperty("karaf.data",new File("target").getCanonicalPath());
+  FileUtils.deleteDirectory(new File("target/tmp"));
+  Server server=new Server(3000);
+  server.setHandler(serverHandler);
+  server.start();
+  try {
+    int localPort=server.getConnectors()[0].getLocalPort();
+    List<String> remoteRepos=Arrays.asList("http://relevant.not/maven2@id=central");
+    RuntimeProperties props=new MockRuntimeProperties();
+    MavenDownloadProxyServlet servlet=new MavenDownloadProxyServlet(props,"target/tmp",remoteRepos,false,"always","warn","http","localhost",localPort,"fuse","fuse",null);
+    HttpServletRequest request=EasyMock.createMock(HttpServletRequest.class);
+    EasyMock.expect(request.getPathInfo()).andReturn("org.apache.camel/camel-core/2.13.0/camel-core-2.13.0-sources.jar");
+    HttpServletResponse response=EasyMock.createMock(HttpServletResponse.class);
+    final ByteArrayOutputStream baos=new ByteArrayOutputStream();
+    EasyMock.expect(response.getOutputStream()).andReturn(new ServletOutputStream(){
+      @Override public void write(      int b) throws IOException {
+        baos.write(b);
+      }
+      @Override public void write(      byte[] b,      int off,      int len) throws IOException {
+        baos.write(b,off,len);
+      }
+    }
+).anyTimes();
+    response.setStatus(EasyMock.anyInt());
+    EasyMock.expectLastCall().anyTimes();
+    response.setContentLength(EasyMock.anyInt());
+    EasyMock.expectLastCall().anyTimes();
+    response.setContentType((String)EasyMock.anyObject());
+    EasyMock.expectLastCall().anyTimes();
+    response.setDateHeader((String)EasyMock.anyObject(),EasyMock.anyLong());
+    EasyMock.expectLastCall().anyTimes();
+    response.setHeader((String)EasyMock.anyObject(),(String)EasyMock.anyObject());
+    EasyMock.expectLastCall().anyTimes();
+    EasyMock.replay(request,response);
+    servlet.start();
+    servlet.doGet(request,response);
+    Assert.assertArrayEquals(new byte[]{0x42},baos.toByteArray());
+    EasyMock.verify(request,response);
+  }
+  finally {
+    server.stop();
+    if (old != null) {
+      System.setProperty("karaf.data",old);
+    }
+  }
+}
