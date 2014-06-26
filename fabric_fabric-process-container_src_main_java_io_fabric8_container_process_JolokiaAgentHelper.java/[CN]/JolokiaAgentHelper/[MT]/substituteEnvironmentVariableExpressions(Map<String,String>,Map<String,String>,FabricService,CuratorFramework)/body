@@ -23,6 +23,28 @@
       if (Strings.isNotBlank(zkPassword)) {
         text=text.replace("${zookeeper.password}",zkPassword);
       }
+      if (curator != null) {
+        text=InterpolationHelper.substVars(text,"dummy",null,Collections.EMPTY_MAP,new InterpolationHelper.SubstitutionCallback(){
+          @Override public String getValue(          String key){
+            if (key.startsWith("zk:")) {
+              try {
+                return new String(ZkPath.loadURL(curator,key),"UTF-8");
+              }
+ catch (              Exception e) {
+              }
+            }
+ else             if (key.startsWith("groovy:")) {
+              try {
+                return GroovyPlaceholderResolver.resolveValue(curator,key);
+              }
+ catch (              Exception e) {
+              }
+            }
+            return null;
+          }
+        }
+);
+      }
       if (!Objects.equal(oldText,text)) {
         map.put(key,text);
       }

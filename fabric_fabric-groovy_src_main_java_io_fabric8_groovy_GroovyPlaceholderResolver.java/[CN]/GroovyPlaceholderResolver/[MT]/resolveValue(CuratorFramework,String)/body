@@ -1,0 +1,23 @@
+{
+  try {
+    Binding binding=new Binding();
+    ZooKeeperFacade zk=new ZooKeeperFacade(curator);
+    binding.setVariable("zk",zk);
+    GroovyShell shell=new GroovyShell(binding);
+    String expression=value;
+    if (expression.startsWith(RESOLVER_SCHEME + ":")) {
+      expression=expression.substring(RESOLVER_SCHEME.length() + 1);
+    }
+    Object result=shell.evaluate(expression);
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("groovy expression: " + expression + " => "+ result);
+    }
+    if (result != null) {
+      return result.toString();
+    }
+    return "";
+  }
+ catch (  Exception e) {
+    throw FabricException.launderThrowable(e);
+  }
+}
