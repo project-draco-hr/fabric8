@@ -14,7 +14,7 @@ synchronized (this) {
   }
   if (downloadExecutor == null) {
     LOGGER.info("Creating a new fixed thread pool for download manager.");
-    downloadExecutor=Executors.newFixedThreadPool(5);
+    downloadExecutor=Executors.newFixedThreadPool(5,new NamedThreadFactory("fabric-agent-download"));
     shutdownDownloadExecutor=true;
   }
  else {
