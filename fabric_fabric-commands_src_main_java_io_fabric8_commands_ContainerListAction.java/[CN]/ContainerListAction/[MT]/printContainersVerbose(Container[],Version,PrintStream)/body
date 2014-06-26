@@ -1,5 +1,4 @@
 {
-  Set<String> missingProfiles=findMissingProfiles(containers);
   String header=String.format(VERBOSE_FORMAT,(Object[])VERBOSE_HEADERS);
   out.println(header);
   for (  Container container : containers) {
@@ -12,17 +11,13 @@
       if (container.getId().equals(fabricService.getCurrentContainer().getId())) {
         marker="*";
       }
-      String assignedProfiles=FabricCommand.toString(container.getProfiles());
-      String highlightedProfiles=new String(assignedProfiles);
-      String line=String.format(VERBOSE_FORMAT,indent + container.getId() + marker,container.getVersion().getId(),container.isAlive(),assignedProfiles,container.getSshUrl(),container.getJmxUrl(),CommandUtils.status(container));
-      int pStart=Math.max(header.indexOf(HEADERS[3]),line.indexOf(assignedProfiles));
-      int pEnd=pStart + assignedProfiles.length();
-      for (      String p : missingProfiles) {
-        String highlighted=Ansi.ansi().fg(Ansi.Color.RED).a(p).toString() + Ansi.ansi().reset().toString();
-        highlightedProfiles=highlightedProfiles.replaceAll(p,highlighted);
+      List<String> assignedProfiles=fabricService.getDataStore().getContainerProfiles(container.getId());
+      String firstLine=String.format(VERBOSE_FORMAT,indent + container.getId() + marker,container.getVersion().getId(),container.isAlive(),assignedProfiles.get(0),emptyIfNull(container.getSshUrl()),emptyIfNull(container.getJmxUrl()),CommandUtils.status(container));
+      out.println(firstLine);
+      for (int i=1; i < assignedProfiles.size(); i++) {
+        String nextLine=String.format(VERBOSE_FORMAT,"","","",assignedProfiles.get(i),"","","");
+        out.println(nextLine);
       }
-      line=replaceAll(line,pStart,pEnd,assignedProfiles,highlightedProfiles);
-      out.println(line);
     }
   }
 }
