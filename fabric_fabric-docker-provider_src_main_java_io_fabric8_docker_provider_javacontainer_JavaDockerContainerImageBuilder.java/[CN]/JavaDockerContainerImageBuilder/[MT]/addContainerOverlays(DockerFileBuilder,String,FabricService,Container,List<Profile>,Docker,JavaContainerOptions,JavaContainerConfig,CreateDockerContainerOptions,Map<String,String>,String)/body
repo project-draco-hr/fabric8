@@ -12,6 +12,7 @@
           variables=new HashMap();
         }
  else {
+          CuratorFramework curator=fabricService.adapt(CuratorFramework.class);
           JolokiaAgentHelper.substituteEnvironmentVariableExpressions(variables,environmentVariables,fabricService,curator);
         }
         variables.putAll(environmentVariables);
