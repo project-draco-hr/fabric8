@@ -1,0 +1,15 @@
+{
+  RuntimeProperties sysprops=runtimeProperties.get();
+  String runtimeIdentity=sysprops.getRuntimeIdentity();
+  String nodeAlive=CONTAINER_ALIVE.getPath(runtimeIdentity);
+  Stat stat=exists(curator.get(),nodeAlive);
+  if (stat != null) {
+    if (stat.getEphemeralOwner() != curator.get().getZookeeperClient().getZooKeeper().getSessionId()) {
+      delete(curator.get(),nodeAlive);
+      create(curator.get(),nodeAlive,CreateMode.EPHEMERAL);
+    }
+  }
+ else {
+    create(curator.get(),nodeAlive,CreateMode.EPHEMERAL);
+  }
+}

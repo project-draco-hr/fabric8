@@ -3,6 +3,11 @@
   delete(sfb.getDataDir());
   delete(sfb.getDataLogDir());
   sfb.afterPropertiesSet();
+  sysprops=EasyMock.createMock(RuntimeProperties.class);
+  EasyMock.expect(sysprops.getRuntimeIdentity()).andReturn("root").anyTimes();
+  EasyMock.expect(sysprops.getHomePath()).andReturn(Paths.get("target")).anyTimes();
+  EasyMock.expect(sysprops.getDataPath()).andReturn(Paths.get("target/data")).anyTimes();
+  EasyMock.replay(sysprops);
   CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().connectString("localhost:" + sfb.getClientPortAddress().getPort()).retryPolicy(new RetryOneTime(1000)).connectionTimeoutMs(360000);
   curator=builder.build();
   curator.start();
@@ -21,8 +26,6 @@
   config.setString("remote","origin","url",remoteUrl);
   config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
   config.save();
-  DefaultRuntimeProperties sysprops=new DefaultRuntimeProperties();
-  sysprops.setProperty(SystemProperties.KARAF_DATA,"target/data");
   FabricGitServiceImpl gitService=new FabricGitServiceImpl();
   gitService.bindRuntimeProperties(sysprops);
   gitService.activate();
@@ -35,11 +38,15 @@
   dataStore.bindRegistrationHandler(registrationHandler);
   dataStore.bindRuntimeProperties(sysprops);
   dataStore.bindConfigurer(new Configurer(){
-    @Override public <T>void configure(    Map<String,?> configuration,    T target) throws Exception {
+    @Override public <T>Map<String,?> configure(    Map<String,?> configuration,    T target,    String... ignorePrefix) throws Exception {
+      return null;
+    }
+    @Override public <T>Map<String,?> configure(    Dictionary<String,?> configuration,    T target,    String... ignorePrefix) throws Exception {
+      return null;
     }
   }
 );
-  Map<String,String> datastoreProperties=new HashMap<String,String>();
+  Map<String,Object> datastoreProperties=new HashMap<String,Object>();
   datastoreProperties.put(GitDataStore.GIT_REMOTE_URL,remoteUrl);
   dataStore.activate(datastoreProperties);
 }

@@ -1,9 +1,9 @@
 {
-  String karafName=runtimeProperties.get().getProperty(SystemProperties.KARAF_NAME);
+  String runtimeIdentity=runtimeProperties.get().getRuntimeIdentity();
 synchronized (this) {
     domains.addAll(Arrays.asList(mbeanServer.get().getDomains()));
   }
   for (  String domain : mbeanServer.get().getDomains()) {
-    setData(curator.get(),CONTAINER_DOMAIN.getPath(karafName,domain),"",CreateMode.EPHEMERAL);
+    setData(curator.get(),CONTAINER_DOMAIN.getPath(runtimeIdentity,domain),"",CreateMode.EPHEMERAL);
   }
 }

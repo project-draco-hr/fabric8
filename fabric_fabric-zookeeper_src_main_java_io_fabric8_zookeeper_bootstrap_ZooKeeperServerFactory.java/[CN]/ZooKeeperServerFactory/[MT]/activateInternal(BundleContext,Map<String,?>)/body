@@ -5,10 +5,8 @@
     props.put(entry.getKey(),entry.getValue());
   }
   String dataDir=props.getProperty("dataDir");
-  if (dataDir != null && dataDir.startsWith(CreateEnsembleOptions.DEFAULT_DATA_DIR)) {
-    RuntimeProperties sysprops=runtimeProperties.get();
-    dataDir=dataDir.substring(dataDir.indexOf('/'));
-    dataDir=sysprops.getProperty(SystemProperties.KARAF_DATA) + dataDir;
+  if (dataDir != null && !Paths.get(dataDir).isAbsolute()) {
+    dataDir=runtimeProperties.get().getHomePath().resolve(dataDir).toFile().getAbsolutePath();
     props.setProperty("dataDir",dataDir);
   }
   String serverId=(String)props.get("server.id");

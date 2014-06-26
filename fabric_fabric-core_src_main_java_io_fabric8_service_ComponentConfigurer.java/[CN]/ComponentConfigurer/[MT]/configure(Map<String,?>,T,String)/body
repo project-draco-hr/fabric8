@@ -1,0 +1,33 @@
+{
+  assertValid();
+  Map<String,Object> result=new HashMap<>();
+  PropertiesProvider envPropertiesProvider=new EnvPropertiesProvider("FABRIC8_");
+  PropertiesProvider systemPropertiesProvider=new SystemPropertiesProvider();
+  final Runtime runtime=this.runtime.get();
+  final PropertiesProvider configurationProvider=new MapPropertiesProvider((Map<String,Object>)configuration);
+  final PropertiesProvider fallbackPropertiesProvider=new CompositePropertiesProvider(systemPropertiesProvider,envPropertiesProvider);
+  final PropertiesProvider[] propertiesProviders=new PropertiesProvider[]{configurationProvider,fallbackPropertiesProvider};
+  PropertiesProvider provider=new SubstitutionPropertiesProvider(new PropertiesProvider(){
+    @Override public Object getProperty(    String key){
+      return runtime.getProperty(key);
+    }
+    @Override public Object getProperty(    String key,    Object defaultValue){
+      Object value=null;
+      for (      PropertiesProvider p : propertiesProviders) {
+        value=p.getProperty(key);
+        if (value != null && !isCyclicReference(key,value)) {
+          return value;
+        }
+      }
+      return defaultValue;
+    }
+  }
+);
+  for (  Map.Entry<String,?> entry : configuration.entrySet()) {
+    String key=entry.getKey();
+    Object value=provider.getProperty(key);
+    result.put(key,value);
+  }
+  ConfigInjection.applyConfiguration(result,target,ignorePrefix);
+  return result;
+}

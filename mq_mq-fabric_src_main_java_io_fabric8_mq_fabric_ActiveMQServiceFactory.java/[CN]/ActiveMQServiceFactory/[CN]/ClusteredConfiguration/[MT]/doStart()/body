@@ -59,7 +59,7 @@
         warn("ActiveMQ broker '%s' does not have a connector called '%s'",name,name);
       }
  else {
-        services.add(connector.getConnectUri().getScheme() + "://${zk:" + System.getProperty("karaf.name")+ "/ip}:"+ connector.getPublishableConnectURI().getPort());
+        services.add(connector.getConnectUri().getScheme() + "://${zk:" + System.getProperty("runtime.id")+ "/ip}:"+ connector.getPublishableConnectURI().getPort());
       }
     }
     discoveryAgent.setServices(services.toArray(new String[services.size()]));

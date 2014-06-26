@@ -19,8 +19,8 @@
       gitListener.onRemoteUrlChanged(remoteUrl);
     }
     forceGetVersions();
-    String karafHome=getRuntimeProperties().getProperty(SystemProperties.KARAF_HOME);
-    String dir=karafHome + File.separator + importDir;
+    Path homePath=getRuntimeProperties().getHomePath();
+    Path dir=homePath.resolve(importDir);
     importFromFilesystem(dir);
     LOG.info("Starting to push to remote git repository every {} millis",gitPushInterval);
     threadPool.scheduleWithFixedDelay(new Runnable(){

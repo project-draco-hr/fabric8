@@ -28,9 +28,12 @@
   config.setString("remote","origin","url",remoteUrl);
   config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
   config.save();
-  DefaultRuntimeProperties runtimeProperties=new DefaultRuntimeProperties();
-  runtimeProperties.setProperty(SystemProperties.KARAF_DATA,"target/data");
-  runtimeProperties.setProperty(SystemProperties.KARAF_NAME,"root");
+  runtimeProperties=EasyMock.createMock(RuntimeProperties.class);
+  EasyMock.expect(runtimeProperties.getRuntimeIdentity()).andReturn("root").anyTimes();
+  EasyMock.expect(runtimeProperties.getHomePath()).andReturn(Paths.get("target")).anyTimes();
+  EasyMock.expect(runtimeProperties.getDataPath()).andReturn(Paths.get("target/data")).anyTimes();
+  EasyMock.expect(runtimeProperties.getProperty(EasyMock.eq(SystemProperties.FABRIC_ENVIRONMENT))).andReturn("").anyTimes();
+  EasyMock.replay(runtimeProperties);
   FabricGitServiceImpl gitService=new FabricGitServiceImpl();
   gitService.bindRuntimeProperties(runtimeProperties);
   gitService.activate();
@@ -43,11 +46,15 @@
   dataStore.bindRegistrationHandler(registrationHandler);
   dataStore.bindRuntimeProperties(runtimeProperties);
   dataStore.bindConfigurer(new Configurer(){
-    @Override public <T>void configure(    Map<String,?> configuration,    T target) throws Exception {
+    @Override public <T>Map<String,?> configure(    Map<String,?> configuration,    T target,    String... ignorePrefix) throws Exception {
+      return null;
+    }
+    @Override public <T>Map<String,?> configure(    Dictionary<String,?> configuration,    T target,    String... ignorePrefix) throws Exception {
+      return null;
     }
   }
 );
-  Map<String,String> datastoreProperties=new HashMap<String,String>();
+  Map<String,Object> datastoreProperties=new HashMap<String,Object>();
   datastoreProperties.put(GitDataStore.GIT_REMOTE_URL,remoteUrl);
   dataStore.activate(datastoreProperties);
   fabricService=new FabricServiceImpl();

@@ -1,0 +1,20 @@
+{
+  try {
+    return fabricService.get().getCurrentContainer();
+  }
+ catch (  Exception e) {
+    final RuntimeProperties sysprops=runtimeProperties.get();
+    final String runtimeIdentity=sysprops.getRuntimeIdentity();
+    return new ContainerImpl(null,runtimeIdentity,null){
+      @Override public String getIp(){
+        try {
+          return ZooKeeperUtils.getSubstitutedPath(curator.get(),CONTAINER_IP.getPath(runtimeIdentity));
+        }
+ catch (        Exception e) {
+          throw FabricException.launderThrowable(e);
+        }
+      }
+    }
+;
+  }
+}

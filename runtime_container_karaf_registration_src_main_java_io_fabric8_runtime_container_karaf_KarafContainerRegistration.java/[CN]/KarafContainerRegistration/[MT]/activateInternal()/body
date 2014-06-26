@@ -1,0 +1,44 @@
+{
+  RuntimeProperties sysprops=runtimeProperties.get();
+  String runtimeIdentity=sysprops.getRuntimeIdentity();
+  String version=sysprops.getProperty("fabric.version",ZkDefs.DEFAULT_VERSION);
+  String profiles=sysprops.getProperty("fabric.profiles");
+  try {
+    if (profiles != null) {
+      String versionNode=CONFIG_CONTAINER.getPath(runtimeIdentity);
+      String profileNode=CONFIG_VERSIONS_CONTAINER.getPath(version,runtimeIdentity);
+      createDefault(curator.get(),versionNode,version);
+      createDefault(curator.get(),profileNode,profiles);
+    }
+    checkAlive();
+    String domainsNode=CONTAINER_DOMAINS.getPath(runtimeIdentity);
+    Stat stat=exists(curator.get(),domainsNode);
+    if (stat != null) {
+      deleteSafe(curator.get(),domainsNode);
+    }
+    createDefault(curator.get(),CONTAINER_BINDADDRESS.getPath(runtimeIdentity),sysprops.getProperty(ZkDefs.BIND_ADDRESS,"0.0.0.0"));
+    createDefault(curator.get(),CONTAINER_RESOLVER.getPath(runtimeIdentity),getContainerResolutionPolicy(sysprops,curator.get(),runtimeIdentity));
+    setData(curator.get(),CONTAINER_LOCAL_HOSTNAME.getPath(runtimeIdentity),HostUtils.getLocalHostName());
+    setData(curator.get(),CONTAINER_LOCAL_IP.getPath(runtimeIdentity),HostUtils.getLocalIp());
+    setData(curator.get(),CONTAINER_IP.getPath(runtimeIdentity),getContainerPointer(curator.get(),runtimeIdentity));
+    createDefault(curator.get(),CONTAINER_GEOLOCATION.getPath(runtimeIdentity),geoLocationService.get().getGeoLocation());
+    for (    String resolver : ZkDefs.VALID_RESOLVERS) {
+      String address=sysprops.getProperty(resolver);
+      if (address != null && !address.isEmpty() && exists(curator.get(),CONTAINER_ADDRESS.getPath(runtimeIdentity,resolver)) == null) {
+        setData(curator.get(),CONTAINER_ADDRESS.getPath(runtimeIdentity,resolver),address);
+      }
+    }
+    Container current=getContainer();
+    System.setProperty(SystemProperties.JAVA_RMI_SERVER_HOSTNAME,current.getIp());
+    registerJmx(current);
+    registerSsh(current);
+    registerHttp(current);
+    String minimumPort=sysprops.getProperty(ZkDefs.MINIMUM_PORT);
+    String maximumPort=sysprops.getProperty(ZkDefs.MAXIMUM_PORT);
+    createDefault(curator.get(),CONTAINER_PORT_MIN.getPath(runtimeIdentity),minimumPort);
+    createDefault(curator.get(),CONTAINER_PORT_MAX.getPath(runtimeIdentity),maximumPort);
+  }
+ catch (  Exception e) {
+    LOGGER.warn("Error updating Fabric Container information. This exception will be ignored.",e);
+  }
+}

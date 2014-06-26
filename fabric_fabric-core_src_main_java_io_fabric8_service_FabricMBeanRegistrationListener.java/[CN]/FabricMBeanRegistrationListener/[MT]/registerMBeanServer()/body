@@ -1,7 +1,7 @@
 {
   try {
-    String karafName=runtimeProperties.get().getProperty(SystemProperties.KARAF_NAME);
-    mbeanServer.get().addNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this,null,karafName);
+    String runtimeIdentity=runtimeProperties.get().getRuntimeIdentity();
+    mbeanServer.get().addNotificationListener(new ObjectName("JMImplementation:type=MBeanServerDelegate"),this,null,runtimeIdentity);
     registerDomains();
     registerFabricMBeans();
   }

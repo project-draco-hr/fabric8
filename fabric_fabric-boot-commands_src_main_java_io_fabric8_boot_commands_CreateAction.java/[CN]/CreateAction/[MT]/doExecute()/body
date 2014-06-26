@@ -6,11 +6,11 @@
     System.out.println("You can use the --force option, if you want to force re-create the fabric.");
     return null;
   }
-  String karafName=runtimeProperties.getProperty(SystemProperties.KARAF_NAME);
-  CreateEnsembleOptions.Builder builder=CreateEnsembleOptions.builder().zooKeeperServerTickTime(zooKeeperTickTime).zooKeeperServerInitLimit(zooKeeperInitLimit).zooKeeperServerSyncLimit(zooKeeperSyncLimit).zooKeeperServerDataDir(zooKeeperDataDir).fromRuntimeProperties(new DefaultRuntimeProperties()).bootstrapTimeout(bootstrapTimeout).waitForProvision(waitForProvisioning).clean(clean);
+  String runtimeIdentity=runtimeProperties.getRuntimeIdentity();
+  CreateEnsembleOptions.Builder builder=CreateEnsembleOptions.builder().zooKeeperServerTickTime(zooKeeperTickTime).zooKeeperServerInitLimit(zooKeeperInitLimit).zooKeeperServerSyncLimit(zooKeeperSyncLimit).zooKeeperServerDataDir(zooKeeperDataDir).fromRuntimeProperties(runtimeProperties).bootstrapTimeout(bootstrapTimeout).waitForProvision(waitForProvisioning).clean(clean);
   builder.version(version);
   if (containers == null || containers.isEmpty()) {
-    containers=Arrays.asList(karafName);
+    containers=Arrays.asList(runtimeIdentity);
   }
   if (!noImport && importDir != null) {
     builder.autoImportEnabled(true);
@@ -100,7 +100,7 @@
     builder.zookeeperPassword(zookeeperPassword);
   }
   CreateEnsembleOptions options=builder.users(userProps).withUser(newUser,newUserPassword,newUserRole).build();
-  if (containers.size() == 1 && containers.contains(karafName)) {
+  if (containers.size() == 1 && containers.contains(runtimeIdentity)) {
     bootstrap.create(options);
   }
  else {

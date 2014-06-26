@@ -1,0 +1,89 @@
+{
+  FabricRequirements requirements=fabricService.getRequirements();
+  MQService mqService=createMQService(fabricService,runtimeProperties);
+  Map<String,String> configuration=new HashMap<String,String>();
+  List<String> properties=dto.getProperties();
+  String version=dto.version();
+  if (properties != null) {
+    for (    String entry : properties) {
+      String[] parts=entry.split("=",2);
+      if (parts.length == 2) {
+        configuration.put(parts[0],parts[1]);
+      }
+ else {
+        configuration.put(parts[0],"");
+      }
+    }
+  }
+  String data=dto.getData();
+  String profileName=dto.profile();
+  String brokerName=dto.getBrokerName();
+  if (data == null) {
+    data="${runtime.data}" + brokerName;
+  }
+  configuration.put(DATA,data);
+  for (  Map.Entry<String,String> port : dto.getPorts().entrySet()) {
+    configuration.put(port.getKey() + "-port",port.getValue());
+  }
+  BrokerKind kind=dto.kind();
+  configuration.put(KIND,kind.toString());
+  String config=dto.getConfigUrl();
+  if (config != null) {
+    configuration.put(CONFIG_URL,mqService.getConfig(version,config));
+  }
+  String group=dto.getGroup();
+  if (group != null) {
+    configuration.put(GROUP,group);
+  }
+  Maps.setStringValues(configuration,NETWORKS,dto.getNetworks());
+  String networksUserName=dto.getNetworksUserName();
+  if (networksUserName != null) {
+    configuration.put(NETWORK_USER_NAME,networksUserName);
+  }
+  String networksPassword=dto.getNetworksPassword();
+  if (networksPassword != null) {
+    configuration.put(NETWORK_PASSWORD,networksPassword);
+  }
+  String parentProfile=dto.getParentProfile();
+  if (parentProfile != null) {
+    configuration.put(PARENT,parentProfile);
+  }
+  Boolean ssl=dto.getSsl();
+  if (ssl != null) {
+    configuration.put(SSL,ssl.toString());
+  }
+  Integer replicas=dto.getReplicas();
+  if (replicas != null) {
+    configuration.put(REPLICAS,replicas.toString());
+  }
+  Integer minInstances=dto.getMinimumInstances();
+  if (minInstances != null) {
+    configuration.put(MINIMUM_INSTANCES,minInstances.toString());
+  }
+  Profile profile=mqService.createOrUpdateMQProfile(version,profileName,brokerName,configuration,dto.kind().equals(BrokerKind.Replicated));
+  String profileId=profile.getId();
+  ProfileRequirements profileRequirement=requirements.getOrCreateProfileRequirement(profileId);
+  Integer minimumInstances=profileRequirement.getMinimumInstances();
+  List<MQBrokerConfigDTO> list=createConfigDTOs(mqService,profile);
+  int requiredInstances=2;
+  if (list.size() == 1) {
+    MQBrokerConfigDTO loadedDTO=list.get(0);
+    requiredInstances=loadedDTO.requiredInstances();
+  }
+ else {
+    requiredInstances=list.size() + 1;
+  }
+  if (minimumInstances == null || minimumInstances.intValue() < requiredInstances) {
+    profileRequirement.setMinimumInstances(requiredInstances);
+    fabricService.setRequirements(requirements);
+  }
+  String clientProfile=dto.clientProfile();
+  if (Strings.isNotBlank(clientProfile)) {
+    String clientParentProfile=dto.getClientParentProfile();
+    if (Strings.isNullOrBlank(clientParentProfile)) {
+      clientParentProfile="mq-client-base";
+    }
+    mqService.createOrUpdateMQClientProfile(version,clientProfile,group,clientParentProfile);
+  }
+  return profile;
+}

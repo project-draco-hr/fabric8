@@ -2,6 +2,6 @@
   this.bundleContext=bundleContext;
   this.bootstrap=bootstrap;
   this.runtimeProperties=runtimeProperties;
-  String karafHome=runtimeProperties.getProperty(SystemProperties.KARAF_HOME);
-  importDir=karafHome + File.separator + "fabric"+ File.separator+ "import";
+  Path homePath=runtimeProperties.getHomePath();
+  importDir=homePath.resolve("fabric").resolve("import").toFile().getAbsolutePath();
 }
