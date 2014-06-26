@@ -1,34 +1,3 @@
 {
-synchronized (this) {
-    if (this.downloadExecutor != null) {
-      return this.downloadExecutor;
-    }
-  }
-  ExecutorService downloadExecutor=null;
-  boolean shutdownDownloadExecutor;
-  try {
-    downloadExecutor=new FelixExecutorServiceFinder().find(bundleContext.getBundle());
-  }
- catch (  Throwable t) {
-    LOGGER.warn("Cannot find reference to MonitoringService. This exception will be ignored.",t);
-  }
-  if (downloadExecutor == null) {
-    LOGGER.info("Creating a new fixed thread pool for download manager.");
-    downloadExecutor=Executors.newFixedThreadPool(5,new NamedThreadFactory("fabric-agent-download"));
-    shutdownDownloadExecutor=true;
-  }
- else {
-    LOGGER.info("Using Felix thread pool for download manager.");
-    shutdownDownloadExecutor=false;
-  }
-synchronized (this) {
-    if (this.downloadExecutor == null) {
-      this.downloadExecutor=downloadExecutor;
-      this.shutdownDownloadExecutor=shutdownDownloadExecutor;
-    }
- else     if (shutdownDownloadExecutor) {
-      downloadExecutor.shutdown();
-    }
-    return this.downloadExecutor;
-  }
+  return downloadExecutor;
 }

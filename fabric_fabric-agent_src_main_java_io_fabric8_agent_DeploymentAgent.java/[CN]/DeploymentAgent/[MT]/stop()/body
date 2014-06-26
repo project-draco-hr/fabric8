@@ -1,10 +1,7 @@
 {
   LOGGER.info("Stopping DeploymentAgent");
-  executor.shutdown();
-  if (shutdownDownloadExecutor && downloadExecutor != null) {
-    downloadExecutor.shutdown();
-    downloadExecutor=null;
-  }
+  executor.shutdownNow();
+  downloadExecutor.shutdownNow();
   manager.shutdown();
   fabricService.close();
 }

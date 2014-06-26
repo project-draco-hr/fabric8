@@ -1,0 +1,12 @@
+{
+  String size=DEFAULT_DOWNLOAD_THREADS;
+  try {
+    Properties customProps=new Properties(new File(KARAF_BASE + File.separator + "etc"+ File.separator+ "custom.properties"));
+    size=customProps.getProperty(DOWNLOAD_THREADS,size);
+  }
+ catch (  Exception e) {
+  }
+  int num=Integer.parseInt(size);
+  LOGGER.info("Creating fabric-agent-download thread pool with size: {}",num);
+  return Executors.newFixedThreadPool(num,new NamedThreadFactory("fabric-agent-download"));
+}

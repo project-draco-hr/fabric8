@@ -10,9 +10,10 @@
   this.managedLibs=new Properties(bundleContext.getDataFile("libs.properties"));
   this.managedEndorsedLibs=new Properties(bundleContext.getDataFile("endorsed.properties"));
   this.managedExtensionLibs=new Properties(bundleContext.getDataFile("extension.properties"));
+  this.downloadExecutor=createDownloadExecutor();
   MavenConfigurationImpl config=new MavenConfigurationImpl(new PropertiesPropertyResolver(System.getProperties()),"org.ops4j.pax.url.mvn");
   config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
-  manager=new DownloadManager(config);
+  manager=new DownloadManager(config,getDownloadExecutor());
   fabricService=new ServiceTracker<FabricService,FabricService>(systemBundleContext,FabricService.class,new ServiceTrackerCustomizer<FabricService,FabricService>(){
     @Override public FabricService addingService(    ServiceReference<FabricService> reference){
       FabricService service=systemBundleContext.getService(reference);
