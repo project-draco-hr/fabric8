@@ -1,4 +1,11 @@
 {
+  ServiceReference<FabricService> sref=bundleContext.getServiceReference(FabricService.class);
+  FabricService fabricService=sref != null ? bundleContext.getService(sref) : null;
+  if (!force && (fabricService != null && fabricService.getCurrentContainer().isEnsembleServer())) {
+    System.out.println("Current container " + fabricService.getCurrentContainerName() + " is already in the current fabric ensemble. Cannot create fabric.");
+    System.out.println("You can use the --force option, if you want to force re-create the fabric.");
+    return null;
+  }
   String karafName=runtimeProperties.getProperty(SystemProperties.KARAF_NAME);
   CreateEnsembleOptions.Builder builder=CreateEnsembleOptions.builder().zooKeeperServerTickTime(zooKeeperTickTime).zooKeeperServerInitLimit(zooKeeperInitLimit).zooKeeperServerSyncLimit(zooKeeperSyncLimit).zooKeeperServerDataDir(zooKeeperDataDir).fromRuntimeProperties(new DefaultRuntimeProperties()).bootstrapTimeout(bootstrapTimeout).waitForProvision(waitForProvisioning).clean(clean);
   builder.version(version);
