@@ -1,0 +1,23 @@
+{
+  final DetectingGateway gateway=createGateway();
+  final Socket socket=new Socket("localhost",gateway.getBoundPort());
+  final InputStream inputStream=socket.getInputStream();
+  long start=System.currentTimeMillis();
+  socket.getOutputStream().write("STOMP".getBytes());
+  assertEquals(-1,inputStream.read());
+  long duration=System.currentTimeMillis() - start;
+  socket.close();
+  assertTrue(duration > 4000);
+  assertTrue(duration < 6000);
+  within(1,TimeUnit.SECONDS,new Callable<Object>(){
+    @Override public Object call() throws Exception {
+      assertEquals(1,gateway.getReceivedConnectionAttempts());
+      assertEquals(1,gateway.getFailedConnectionAttempts());
+      assertEquals(0,gateway.getSuccessfulConnectionAttempts());
+      assertEquals(0,gateway.getConnectingClients().length);
+      assertEquals(0,gateway.getConnectedClients().length);
+      return null;
+    }
+  }
+);
+}

@@ -1,0 +1,15 @@
+{
+  try {
+    File file=new File(getClass().getProtectionDomain().getCodeSource().getLocation().getFile());
+    file=file.getParentFile().getParentFile().getCanonicalFile();
+    if (file.isDirectory()) {
+      return file.getCanonicalFile();
+    }
+ else {
+      return new File(".").getCanonicalFile();
+    }
+  }
+ catch (  Throwable e) {
+    return new File(".");
+  }
+}

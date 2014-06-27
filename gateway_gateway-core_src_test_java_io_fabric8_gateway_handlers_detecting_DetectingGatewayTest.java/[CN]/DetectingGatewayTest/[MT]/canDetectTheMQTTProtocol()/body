@@ -1,6 +1,5 @@
 {
   DetectingGateway gateway=createGateway();
-  gateway.init();
   MQTT mqtt=new MQTT();
   mqtt.setHost("localhost",gateway.getBoundPort());
   mqtt.setClientId("myclientid");
@@ -8,6 +7,8 @@
   mqtt.setConnectAttemptsMax(1);
   org.fusesource.mqtt.client.BlockingConnection connection=mqtt.blockingConnection();
   connection.connect();
+  assertEquals(1,gateway.getSuccessfulConnectionAttempts());
+  assertEquals(1,gateway.getConnectedClients().length);
   assertConnectedToBroker(0);
   connection.kill();
 }

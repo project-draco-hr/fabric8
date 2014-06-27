@@ -1,4 +1,5 @@
 {
+  DetectingGateway gateway=new DetectingGateway();
   ArrayList<Protocol> protocols=new ArrayList<Protocol>();
   if (isStompEnabled()) {
     protocols.add(new StompProtocol());
@@ -50,19 +51,20 @@
     if (Strings.isNotBlank(disabledCypherSuites)) {
       sslConfig.setDisabledCypherSuites(disabledCypherSuites);
     }
-    handler.setSslConfig(sslConfig);
+    gateway.setSslConfig(sslConfig);
     protocols.add(new SslProtocol());
   }
   if (protocols.isEmpty()) {
     return null;
   }
   VertxService vertxService=getVertxService();
-  Vertx vertx=vertxService.getVertx();
   LoadBalancer serviceLoadBalancer=LoadBalancers.createLoadBalancer(loadBalancerType,stickyLoadBalancerCacheSize);
-  handler.setVertx(vertx);
-  handler.setServiceMap(serviceMap);
-  handler.setProtocols(protocols);
-  handler.setServiceLoadBalancer(serviceLoadBalancer);
-  handler.setDefaultVirtualHost(defaultVirtualHost);
-  return new DetectingGateway(vertx,port,handler);
+  gateway.setVertx(vertxService.getVertx());
+  gateway.setPort(port);
+  gateway.setServiceMap(serviceMap);
+  gateway.setProtocols(protocols);
+  gateway.setShutdownTacker(shutdownTacker);
+  gateway.setServiceLoadBalancer(serviceLoadBalancer);
+  gateway.setDefaultVirtualHost(defaultVirtualHost);
+  return gateway;
 }

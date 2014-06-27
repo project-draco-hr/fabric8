@@ -1,0 +1,18 @@
+{
+  for (int i=0; i < 2; i++) {
+    String name="broker" + i;
+    Broker broker=createBroker(name);
+    ServiceControl.start(broker);
+    brokers.add(broker);
+    ServiceDTO details=new ServiceDTO();
+    details.setId(name);
+    details.setVersion("1.0");
+    details.setContainer("testing");
+    details.setBundleName("none");
+    details.setBundleVersion("1.0");
+    List<String> services=Arrays.asList("stomp://localhost:" + portOfBroker(i),"mqtt://localhost:" + portOfBroker(i),"amqp://localhost:" + portOfBroker(i),"tcp://localhost:" + portOfBroker(i));
+    details.setServices(services);
+    serviceMap.serviceUpdated(name,details);
+    println(String.format("Broker %s is exposing: %s",name,services));
+  }
+}

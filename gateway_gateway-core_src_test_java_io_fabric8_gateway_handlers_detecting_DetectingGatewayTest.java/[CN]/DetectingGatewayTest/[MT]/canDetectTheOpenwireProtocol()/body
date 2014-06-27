@@ -6,5 +6,7 @@
   Connection connection=factory.createConnection();
   connection.start();
   assertConnectedToBroker(0);
+  assertEquals(1,gateway.getSuccessfulConnectionAttempts());
+  assertEquals(1,gateway.getConnectedClients().length);
   connection.close();
 }

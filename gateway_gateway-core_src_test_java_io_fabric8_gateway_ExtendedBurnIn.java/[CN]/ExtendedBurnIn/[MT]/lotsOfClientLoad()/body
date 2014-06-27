@@ -1,0 +1,39 @@
+{
+  DetectingGateway gateway=createGateway();
+  final ShutdownTracker tracker=new ShutdownTracker();
+  final StompJmsConnectionFactory factory=new StompJmsConnectionFactory();
+  factory.setBrokerURI("tcp://localhost:" + gateway.getBoundPort());
+  for (int client=0; client < 10; client++) {
+    new Thread("Client: " + client){
+      @Override public void run(){
+        while (tracker.attemptRetain()) {
+          try {
+            Connection connection=factory.createConnection();
+            Session session=connection.createSession(false,Session.AUTO_ACKNOWLEDGE);
+            MessageConsumer consumer=session.createConsumer(session.createTopic("FOO"));
+            MessageProducer producer=session.createProducer(session.createTopic("FOO"));
+            producer.send(session.createTextMessage("Hello"));
+            consumer.receive(1000);
+            connection.close();
+          }
+ catch (          JMSException e) {
+            e.printStackTrace();
+          }
+ finally {
+            tracker.release();
+          }
+        }
+      }
+    }
+.start();
+  }
+  MBeanServer mBeanServer=ManagementFactory.getPlatformMBeanServer();
+  for (int i=0; i < 60 * 5; i++) {
+    Thread.sleep(900);
+    Runtime.getRuntime().gc();
+    Thread.sleep(100);
+    long usedMB=((Long)((CompositeData)mBeanServer.getAttribute(new ObjectName("java.lang:type=Memory"),"HeapMemoryUsage")).get("used")).longValue() / (1024 * 1024);
+    System.out.println("Using " + usedMB + " MB of heap.");
+  }
+  tracker.stop();
+}

@@ -1,0 +1,47 @@
+{
+  NetClient client=null;
+  if (params.protocolVirtualHost == null) {
+    params.protocolVirtualHost=defaultVirtualHost;
+  }
+  HashSet<String> schemes=new HashSet<String>(Arrays.asList(params.protocolSchemes));
+  if (params.protocolVirtualHost != null) {
+    List<ServiceDetails> services=serviceMap.getServices(params.protocolVirtualHost);
+    if (services.isEmpty() && !params.protocolVirtualHost.equals(defaultVirtualHost)) {
+      params.protocolVirtualHost=defaultVirtualHost;
+      services=serviceMap.getServices(params.protocolVirtualHost);
+    }
+    LOG.debug(String.format("%d services match the virtual host",services.size()));
+    if (!services.isEmpty()) {
+      ClientRequestFacade clientRequestFacade=clientRequestFacadeFactory.create(socket,params);
+      ServiceDetails serviceDetails=serviceLoadBalancer.choose(services,clientRequestFacade);
+      if (serviceDetails != null) {
+        List<String> urlStrings=serviceDetails.getServices();
+        LOG.debug("Selected service exposes the following URLS: {}",urlStrings);
+        for (        String urlString : urlStrings) {
+          if (Strings.notEmpty(urlString)) {
+            try {
+              URI uri=new URI(urlString);
+              String urlProtocol=uri.getScheme();
+              if (schemes.contains(urlProtocol)) {
+                if (!socket.remoteAddress().toString().equals(clientRequestFacade.getClientRequestKey())) {
+                  LOG.info(String.format("Connecting client from '%s' (with key '%s') requesting virtual host '%s' to '%s:%d' using the %s protocol",socket.remoteAddress(),clientRequestFacade.getClientRequestKey(),params.protocolVirtualHost,uri.getHost(),uri.getPort(),params.protocol));
+                }
+ else {
+                  LOG.info(String.format("Connecting client from '%s' requesting virtual host '%s' to '%s:%d' using the %s protocol",socket.remoteAddress(),params.protocolVirtualHost,uri.getHost(),uri.getPort(),params.protocol));
+                }
+                client=createClient(params,socket,uri,received);
+                break;
+              }
+            }
+ catch (            URISyntaxException e) {
+              LOG.warn("Failed to parse URI: " + urlString + ". "+ e,e);
+            }
+          }
+        }
+      }
+    }
+  }
+  if (client == null) {
+    handleConnectFailure(socket,String.format("No endpoint available for virtual host '%s' and protocol %s",params.protocolVirtualHost,params.protocol));
+  }
+}
