@@ -1,23 +1,26 @@
 {
   assertValid();
+  String fabricVersion=fabricVersionService.get().getVersion();
   File profilesDirectory=getProfilesDirectory(git);
   for (  String profileZipUrl : profileZipUrls) {
+    String token="\\$\\{version:fabric\\}";
+    String url=profileZipUrl.replaceFirst(token,fabricVersion);
     URL zipUrl;
     try {
-      zipUrl=new URL(profileZipUrl);
+      zipUrl=new URL(url);
     }
  catch (    MalformedURLException e) {
-      throw new IOException("Failed to create URL for " + profileZipUrl + ". "+ e,e);
+      throw new IOException("Failed to create URL for " + url + ". "+ e,e);
     }
     InputStream inputStream=zipUrl.openStream();
     if (inputStream == null) {
-      throw new IOException("Could not open zip: " + profileZipUrl);
+      throw new IOException("Could not open zip: " + url);
     }
     try {
       Zips.unzip(inputStream,profilesDirectory);
     }
  catch (    IOException e) {
-      throw new IOException("Failed to unzip " + profileZipUrl + ". "+ e,e);
+      throw new IOException("Failed to unzip " + url + ". "+ e,e);
     }
   }
   doAddFiles(git,profilesDirectory);

@@ -1,0 +1,34 @@
+{
+  if (version != null) {
+    return version;
+  }
+  InputStream is=null;
+  try {
+    Properties p=new Properties();
+    is=getClass().getResourceAsStream("/META-INF/maven/io.fabric8/fabric-core/pom.properties");
+    if (is != null) {
+      p.load(is);
+      version=p.getProperty("version","");
+    }
+  }
+ catch (  Exception e) {
+  }
+ finally {
+    if (is != null) {
+      IOHelpers.close(is);
+    }
+  }
+  if (version == null) {
+    Package aPackage=getClass().getPackage();
+    if (aPackage != null) {
+      version=aPackage.getImplementationVersion();
+      if (version == null) {
+        version=aPackage.getSpecificationVersion();
+      }
+    }
+  }
+  if (version == null) {
+    version="";
+  }
+  return version;
+}
