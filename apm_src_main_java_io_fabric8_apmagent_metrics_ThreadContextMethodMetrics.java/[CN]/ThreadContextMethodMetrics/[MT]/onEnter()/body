@@ -1,7 +1,4 @@
 {
   timerContext=timer.time();
-  stack.push(this);
-  if (ApmAgent.INSTANCE.getConfiguration().isTrace()) {
-    LOG.trace("Thread " + Thread.currentThread().getName() + " Method: "+ getName()+ " on enter STACK: "+ stack);
-  }
+  stackRef.get().push(this);
 }

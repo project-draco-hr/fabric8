@@ -1,3 +1,10 @@
 {
-  root.onMethodEnter(methodName);
+  ThreadContextMethodMetrics threadContextMethodMetrics=methods.get(methodName);
+  if (threadContextMethodMetrics == null) {
+    threadContextMethodMetrics=new ThreadContextMethodMetrics(thread,this.methodStackRef,methodName);
+    ThreadContextMethodMetrics val=methods.putIfAbsent(methodName,threadContextMethodMetrics);
+    threadContextMethodMetrics=val != null ? val : threadContextMethodMetrics;
+    apmAgentContext.registerThreadContextMethodMetricsMBean(threadContextMethodMetrics);
+  }
+  threadContextMethodMetrics.onEnter();
 }

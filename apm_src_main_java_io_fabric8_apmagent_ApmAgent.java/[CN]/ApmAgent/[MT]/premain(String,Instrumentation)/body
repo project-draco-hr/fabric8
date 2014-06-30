@@ -5,8 +5,9 @@
       if (agent.getConfiguration().isStartJolokiaAgent()) {
         JvmAgent.premain(args);
       }
-      agent.start();
-      agent.instrument(args);
+      if (agent.getConfiguration().isAutoStartMetrics()) {
+        agent.startMetrics();
+      }
     }
   }
  catch (  Exception e) {

@@ -1,0 +1,30 @@
+{
+  if (!instrumentation.isRetransformClassesSupported()) {
+    throw new UnmodifiableClassException();
+  }
+  instrumentation.addTransformer(this,true);
+  for (  Class<?> c : instrumentation.getAllLoadedClasses()) {
+    if (isInstrumentClass(c)) {
+      if (configuration.isAsyncTransformation()) {
+        try {
+          blockingQueue.put(c);
+        }
+ catch (        InterruptedException e) {
+          Thread.currentThread().interrupt();
+          break;
+        }
+      }
+ else {
+        try {
+          instrumentation.retransformClasses(new Class[]{c});
+        }
+ catch (        Throwable e) {
+          LOG.error("Could not transform " + c.getName(),e);
+        }
+      }
+    }
+  }
+  if (configuration.isAsyncTransformation() && !blockingQueue.isEmpty()) {
+    startTransformThread();
+  }
+}

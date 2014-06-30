@@ -1,0 +1,9 @@
+{
+  MethodMetrics methodMetrics=this.methodMetricsMap.remove(methodDescription.getFullMethodName());
+  if (methodMetrics != null) {
+    unregisterMethodMetricsMBean(methodMetrics);
+  }
+  for (  ThreadMetrics threadMetrics : threadMetricsMap.values()) {
+    threadMetrics.remove(methodDescription.getFullMethodName());
+  }
+}

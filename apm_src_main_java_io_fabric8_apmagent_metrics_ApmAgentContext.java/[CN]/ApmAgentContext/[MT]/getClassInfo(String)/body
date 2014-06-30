@@ -1,0 +1,13 @@
+{
+  String key=className.replace('/','.');
+  ClassInfo result=allMethods.get(key);
+  if (result == null) {
+    ClassInfo classInfo=new ClassInfo();
+    classInfo.setClassName(key);
+    result=allMethods.putIfAbsent(key,classInfo);
+    if (result == null) {
+      result=classInfo;
+    }
+  }
+  return result;
+}

@@ -3,10 +3,10 @@
     Method setter=findSetterMethod(name);
     if (setter != null) {
       if (value == null || value.getClass().equals(setter.getParameterTypes()[0])) {
-        setter.invoke(this,new Object[]{value});
+        setter.invoke(this,value);
       }
  else {
-        setter.invoke(this,new Object[]{convert(value,setter.getParameterTypes()[0])});
+        setter.invoke(this,convert(value,setter.getParameterTypes()[0]));
       }
     }
   }

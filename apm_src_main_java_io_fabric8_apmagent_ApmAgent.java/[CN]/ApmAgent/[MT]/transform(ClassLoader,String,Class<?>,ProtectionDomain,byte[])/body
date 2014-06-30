@@ -1,14 +1,32 @@
 {
   byte[] buffer=null;
+  ClassInfo classInfo=apmAgentContext.getClassInfo(className);
+  classInfo.setOriginalClass(classBeingRedefined);
+  if (classInfo.getTransformed() == null) {
+    classInfo.setOriginal(classfileBuffer);
+  }
   if (!cleanUp.get()) {
-    if (configuration.isAudit(className) && !ApmAgentContext.INSTANCE.isAlreadyTransformed(className)) {
-      ClassReader cr=new ClassReader(classfileBuffer);
-      ClassWriter cw=new ClassWriter(cr,ClassWriter.COMPUTE_MAXS);
-      ApmClassVisitor visitor=new ApmClassVisitor(cw,className);
+    byte[] classBufferToRedefine=classInfo.getOriginal();
+    if (configuration.isAudit(className)) {
+      if (classInfo.isTransformed()) {
+        apmAgentContext.resetMethods(classInfo);
+      }
+      ClassReader cr=new ClassReader(classBufferToRedefine);
+      ClassWriter cw=new ClassWriter(cr,ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+      ApmClassVisitor visitor=new ApmClassVisitor(this,cw,classInfo);
       cr.accept(visitor,ClassReader.SKIP_FRAMES);
       buffer=cw.toByteArray();
-      ApmAgentContext.INSTANCE.addTransformedClass(className);
-      LOG.trace("TRANSFORMED " + className);
+      if (!verifyClass(className,buffer)) {
+        classInfo.setCanTransform(false);
+        buffer=null;
+      }
+      classInfo.setTransformed(buffer);
+    }
+  }
+ else {
+    if (classInfo.getOriginal() != null) {
+      buffer=classInfo.getOriginal();
+      apmAgentContext.resetAll(classInfo);
     }
   }
   return buffer;

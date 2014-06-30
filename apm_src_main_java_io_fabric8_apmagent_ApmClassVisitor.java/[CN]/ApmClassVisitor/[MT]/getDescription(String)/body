@@ -1,0 +1,25 @@
+{
+  Type[] parameterTypes=Type.getArgumentTypes(desc);
+  String result;
+  if (parameterTypes == null || parameterTypes.length == 0) {
+    result="()";
+  }
+ else {
+    result="(";
+    for (int i=0; i < parameterTypes.length; i++) {
+      result+=parameterTypes[i].getClassName();
+      if ((i + 1) < parameterTypes.length) {
+        result+=",";
+      }
+    }
+    result+=")";
+  }
+  Type type=Type.getReturnType(desc);
+  if (type == null) {
+    result+=" void";
+  }
+ else {
+    result+=" " + type.getClassName();
+  }
+  return result;
+}

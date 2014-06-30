@@ -1,15 +1,16 @@
 {
-  ApmAgentContext apmAgentContext=ApmAgentContext.INSTANCE;
-  if (apmAgentContext.isInitialized()) {
+  if (isInitialized()) {
     Thread currentThread=Thread.currentThread();
-    ThreadMetrics threadMetrics=apmAgentContext.threadMetricsMap.get(currentThread);
+    ThreadMetrics threadMetrics=threadMetricsMap.get(currentThread);
     long elapsed=-1;
     if (threadMetrics != null) {
       elapsed=threadMetrics.exit(methodName);
     }
-    MethodMetrics methodMetrics=apmAgentContext.methodMetricsMap.get(methodName);
-    if (methodMetrics != null) {
-      methodMetrics.update(elapsed);
+    if (elapsed >= 0) {
+      MethodMetrics methodMetrics=methodMetricsMap.get(methodName);
+      if (methodMetrics != null) {
+        methodMetrics.update(elapsed);
+      }
     }
   }
 }

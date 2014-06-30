@@ -1,19 +1,22 @@
 {
   if (initialized.get()) {
     if (started.compareAndSet(false,true)) {
-      backGroundThread.start();
-      try {
-        ObjectName objectName=new ObjectName(DEFAULT_DOMAIN,"type","apmAgent");
-        ObjectInstance objectInstance=getMBeanServer().registerMBean(this,objectName);
-        objectNameMap.put(this,objectInstance.getObjectName());
-        ApmConfiguration configuration=ApmAgent.INSTANCE.getConfiguration();
-        objectName=new ObjectName(DEFAULT_DOMAIN,"type","configuration");
-        objectInstance=getMBeanServer().registerMBean(configuration,objectName);
-        objectNameMap.put(configuration,objectInstance.getObjectName());
+      Timer oldValue=backgroundTimerRef.getAndSet(new Timer(true));
+      if (oldValue != null) {
+        oldValue.cancel();
       }
- catch (      Throwable e) {
-        LOG.error("Failed to register apmAgent mbeans with mBeanServer ",e);
+      TimerTask deadThread=new TimerTask(){
+        @Override public void run(){
+          for (          ThreadMetrics tm : threadMetricsMap.values()) {
+            if (tm.isDead()) {
+              tm.destroy();
+              threadMetricsMap.remove(tm.getThread());
+            }
+          }
+        }
       }
+;
+      backgroundTimerRef.get().scheduleAtFixedRate(deadThread,0,2 * 1000);
     }
   }
 }

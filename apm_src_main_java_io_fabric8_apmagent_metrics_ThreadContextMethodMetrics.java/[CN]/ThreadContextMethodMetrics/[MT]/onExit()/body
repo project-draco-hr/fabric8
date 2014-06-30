@@ -1,0 +1,17 @@
+{
+  long result=-1;
+  ThreadContextMethodMetrics last=stackRef.get().pop();
+  if (last == this) {
+    result=timerContext.stop();
+  }
+ else {
+    while (last != null && last != this) {
+      result=last.timerContext.stop();
+      last=stackRef.get().pop();
+    }
+    if (last == this) {
+      result=timerContext.stop();
+    }
+  }
+  return result;
+}

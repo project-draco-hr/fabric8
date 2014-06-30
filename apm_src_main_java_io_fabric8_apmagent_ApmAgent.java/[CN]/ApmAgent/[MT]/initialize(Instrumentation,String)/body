@@ -1,17 +1,17 @@
 {
-  boolean result=false;
+  boolean result;
   if ((result=initialized.compareAndSet(false,true))) {
     this.instrumentation=instrumentation;
     cleanUp.set(false);
     this.instrumentation=instrumentation;
     PropertyUtils.setProperties(configuration,args);
-    ApmAgentContext apmAgentContext=ApmAgentContext.INSTANCE;
+    configuration.addChangeListener(this);
     apmAgentContext.initialize();
     Thread cleanup=new Thread(){
       @Override public void run(){
         try {
           ApmAgent apmAgent=ApmAgent.INSTANCE;
-          apmAgent.shutdowm("");
+          apmAgent.shutDown();
         }
  catch (        Exception e) {
           LOG.error("Failed to run shutdown hook",e);

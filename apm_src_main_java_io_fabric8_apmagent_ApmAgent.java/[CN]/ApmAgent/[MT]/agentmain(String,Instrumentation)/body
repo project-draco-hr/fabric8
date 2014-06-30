@@ -5,12 +5,11 @@
       if (agent.getConfiguration().isStartJolokiaAgent()) {
         JvmAgent.agentmain(args);
       }
-      agent.start();
-      agent.instrument(args);
+      agent.startMetrics();
     }
   }
  catch (  Exception e) {
-    LOG.error("Failed in agentmain",e);
+    LOG.info("Failed in agentmain",e);
     throw e;
   }
 }

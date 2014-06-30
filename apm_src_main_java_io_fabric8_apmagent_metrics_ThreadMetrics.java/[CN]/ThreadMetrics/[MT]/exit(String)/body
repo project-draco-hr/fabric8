@@ -1,3 +1,11 @@
 {
-  return root.onMethodExit(methodName);
+  long result=-1;
+  ThreadContextMethodMetrics threadContextMethodMetrics=methods.get(methodName);
+  if (threadContextMethodMetrics != null) {
+    result=threadContextMethodMetrics.onExit();
+  }
+ else {
+    methodStackRef.set(new ThreadContextMethodMetricsStack());
+  }
+  return result;
 }

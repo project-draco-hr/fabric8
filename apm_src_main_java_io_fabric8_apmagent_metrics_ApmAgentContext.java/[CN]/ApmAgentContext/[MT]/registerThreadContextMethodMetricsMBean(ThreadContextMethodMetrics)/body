@@ -1,11 +1,9 @@
 {
-  Hashtable<String,String> properties=new Hashtable<String,String>();
+  Hashtable<String,String> properties=new Hashtable<>();
   properties.put("type","threadContextMetrics");
   properties.put("name",ObjectName.quote(threadMetrics.getName()));
   properties.put("threadName",ObjectName.quote(threadMetrics.getThreadName()));
   properties.put("threadId",String.valueOf(threadMetrics.getThreadId()));
-  properties.put("parent",ObjectName.quote(threadMetrics.getParentName()));
-  properties.put("methodId",String.valueOf(System.identityHashCode(threadMetrics)));
   try {
     ObjectName objectName=new ObjectName(DEFAULT_DOMAIN,properties);
     ObjectInstance objectInstance=getMBeanServer().registerMBean(threadMetrics,objectName);

@@ -7,10 +7,7 @@
     if (methodName.startsWith("is") || methodName.startsWith("get") && (parameterTypes == null || parameterTypes.length == 0)) {
       return false;
     }
-    if (methodName.startsWith("set") && parameterTypes != null && parameterTypes.length == 1) {
-      return false;
-    }
-    return true;
+    return !(methodName.startsWith("set") && parameterTypes != null && parameterTypes.length == 1);
   }
   return false;
 }

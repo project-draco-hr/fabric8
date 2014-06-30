@@ -1,0 +1,21 @@
+{
+  if (initialized.get() && started.compareAndSet(true,false)) {
+    Timer oldValue=backgroundTimerRef.getAndSet(null);
+    if (oldValue != null) {
+      oldValue.cancel();
+    }
+    if (mBeanServer != null) {
+      for (      ObjectName objectName : objectNameMap.values()) {
+        try {
+          mBeanServer.unregisterMBean(objectName);
+        }
+ catch (        Throwable e) {
+          LOG.error("Failed to unregister mbean: " + objectName,e);
+        }
+      }
+      objectNameMap.clear();
+    }
+    methodMetricsMap.clear();
+    threadMetricsMap.clear();
+  }
+}

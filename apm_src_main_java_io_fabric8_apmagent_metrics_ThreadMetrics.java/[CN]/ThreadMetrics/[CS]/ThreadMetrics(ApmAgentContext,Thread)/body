@@ -1,8 +1,7 @@
 {
+  this.methodStackRef=new AtomicReference<>(new ThreadContextMethodMetricsStack());
   this.apmAgentContext=apmAgentContext;
   this.threadMXBean=ManagementFactory.getThreadMXBean();
   this.threadInfo=threadMXBean.getThreadInfo(thread.getId());
   this.thread=thread;
-  this.root=new ThreadContextMethodMetrics(apmAgentContext,thread,null,new ThreadContextMethodMetricsStack(),"java.lang.thread@run");
-  this.apmAgentContext.registerThreadContextMethodMetricsMBean(root);
 }

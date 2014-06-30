@@ -1,17 +1,16 @@
 {
   if (initialized.compareAndSet(false,true)) {
-    backGroundThread=new Thread(new Runnable(){
-      @Override public void run(){
-        while (started.get())         try {
-          checkForDeadThreads();
-          Thread.sleep(2000);
-        }
- catch (        Throwable e) {
-          break;
-        }
-      }
+    try {
+      ObjectName objectName=new ObjectName(DEFAULT_DOMAIN,"type","apmAgent");
+      ObjectInstance objectInstance=getMBeanServer().registerMBean(apmAgent,objectName);
+      agentObjectName=objectInstance.getObjectName();
+      ApmConfiguration configuration=apmAgent.getConfiguration();
+      objectName=new ObjectName(DEFAULT_DOMAIN,"type","configuration");
+      objectInstance=getMBeanServer().registerMBean(configuration,objectName);
+      configurationObjectName=objectInstance.getObjectName();
     }
-,"ApmAgentContext background thread");
-    backGroundThread.setDaemon(true);
+ catch (    Throwable e) {
+      LOG.error("Failed to register apmAgent mbeans with mBeanServer ",e);
+    }
   }
 }

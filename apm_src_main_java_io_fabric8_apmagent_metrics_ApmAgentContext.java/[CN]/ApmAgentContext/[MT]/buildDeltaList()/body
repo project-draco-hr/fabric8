@@ -1,0 +1,39 @@
+{
+  ApmConfiguration configuration=apmAgent.getConfiguration();
+  List<ClassInfo> result=new ArrayList<>();
+  for (  ClassInfo classInfo : allMethods.values()) {
+    if (classInfo.isTransformed()) {
+      if (configuration.isAudit(classInfo.getClassName())) {
+        boolean retransform=false;
+        Set<String> transformedMethodNames=classInfo.getAllTransformedMethodNames();
+        for (        String methodName : transformedMethodNames) {
+          if (!configuration.isAudit(classInfo.getClassName(),methodName)) {
+            retransform=true;
+            break;
+          }
+        }
+        if (!retransform) {
+          Set<String> allMethodNames=classInfo.getAllMethodNames();
+          for (          String methodName : allMethodNames) {
+            if (!transformedMethodNames.contains(methodName) && configuration.isAudit(classInfo.getClassName(),methodName)) {
+              retransform=true;
+              break;
+            }
+          }
+        }
+        if (retransform) {
+          result.add(classInfo);
+        }
+      }
+ else {
+        result.add(classInfo);
+      }
+    }
+ else     if (configuration.isAudit(classInfo.getClassName())) {
+      if (classInfo.isCanTransform()) {
+        result.add(classInfo);
+      }
+    }
+  }
+  return result;
+}
