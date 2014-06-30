@@ -1,4 +1,5 @@
 {
+  URL.setURLStreamHandlerFactory(new CustomBundleURLStreamHandlerFactory());
   basedir=System.getProperty("basedir",".");
   String karafRoot=basedir + "/target/karaf";
   System.setProperty("karaf.root",karafRoot);
@@ -52,6 +53,11 @@
   fabricService=new FabricServiceImpl();
   fabricService.bindDataStore(dataStore);
   fabricService.bindRuntimeProperties(runtimeProperties);
+  fabricService.bindPlaceholderResolver(new DummyPlaceholerResolver("port"));
+  fabricService.bindPlaceholderResolver(new DummyPlaceholerResolver("zk"));
+  fabricService.bindPlaceholderResolver(new ProfilePropertyPointerResolver());
+  fabricService.bindPlaceholderResolver(new ChecksumPlaceholderResolver());
+  fabricService.bindPlaceholderResolver(new VersionPropertyPointerResolver());
   fabricService.activateComponent();
   projectDeployer=new ProjectDeployerImpl();
   projectDeployer.bindFabricService(fabricService);
