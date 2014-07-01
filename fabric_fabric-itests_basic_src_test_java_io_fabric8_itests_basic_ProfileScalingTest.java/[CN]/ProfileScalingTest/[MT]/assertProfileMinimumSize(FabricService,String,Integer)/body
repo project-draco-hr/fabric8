@@ -1,12 +1,15 @@
 {
-  try {
-    Thread.sleep(2000);
+  boolean done=false;
+  int tries=0;
+  while (!done) {
+    try {
+      doAssertProfileMinimumSize(fabricService,profile,expected);
+      done=true;
+    }
+ catch (    Error e) {
+      if (++tries > 3) {
+        throw e;
+      }
+    }
   }
- catch (  Exception e) {
-  }
-  FabricRequirements requirements=fabricService.getRequirements();
-  ProfileRequirements profileRequirements=requirements.getOrCreateProfileRequirement(profile);
-  Assert.assertNotNull("Should have profile requirements for profile " + profile,profileRequirements);
-  Assert.assertEquals("profile " + profile + " minimum instances",expected,profileRequirements.getMinimumInstances());
-  System.out.println("Profile " + profile + " now has requirements "+ profileRequirements);
 }
