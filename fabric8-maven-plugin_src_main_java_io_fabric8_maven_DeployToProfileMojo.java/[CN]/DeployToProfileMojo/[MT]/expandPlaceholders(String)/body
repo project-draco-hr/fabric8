@@ -1,4 +1,6 @@
 {
-  getLog().debug("Expanding placeholders in the config file: " + text);
-  return text.replace("${project.groupId}",project.getGroupId()).replace("${project.artifactId}",project.getArtifactId()).replace("${project.version}",project.getVersion());
+  getLog().debug("Expanding placeholders in the config file: " + configToExpand);
+  String expandedConfig=configToExpand.replace("${project.groupId}",project.getGroupId()).replace("${project.artifactId}",project.getArtifactId()).replace("${project.version}",project.getVersion());
+  getLog().debug("Expanded config file: " + expandedConfig);
+  return expandedConfig;
 }

@@ -4,5 +4,6 @@
   writeToFile(config,property.getBytes());
   mojo.uploadProfileConfigFile(jolokiaClient,deployResults,root,config);
   String decodedConfig=decodeSentConfig();
-  assertEquals("groupId = io.fabric8",decodedConfig);
+  String expectedConfig="groupId = " + project.getGroupId();
+  assertEquals(expectedConfig,decodedConfig);
 }
