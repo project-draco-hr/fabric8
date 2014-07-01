@@ -1,0 +1,10 @@
+{
+  karafHomeOld=System.getProperty("karaf.home");
+  karafHome=new File("target/karaf");
+  FileUtils.deleteDirectory(karafHome);
+  karafHome.mkdirs();
+  systemRepo=new File(karafHome,"system");
+  systemRepo.mkdirs();
+  systemRepoUri=systemRepo.getCanonicalFile().toURI().toString() + "@snapshots@id=karaf-default";
+  System.setProperty("karaf.home",karafHome.getCanonicalPath());
+}

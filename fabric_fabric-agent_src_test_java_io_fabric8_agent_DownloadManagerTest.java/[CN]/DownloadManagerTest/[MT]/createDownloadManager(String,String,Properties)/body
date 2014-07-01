@@ -1,0 +1,14 @@
+{
+  File mavenSettings=new File(karafHome,settingsFile);
+  Properties properties=new Properties();
+  if (props != null) {
+    properties.putAll(props);
+  }
+  properties.setProperty("org.ops4j.pax.url.mvn.localRepository",systemRepoUri);
+  properties.setProperty("org.ops4j.pax.url.mvn.repositories",remoteRepo);
+  properties.setProperty("org.ops4j.pax.url.mvn.defaultRepositories",systemRepoUri);
+  PropertiesPropertyResolver propertyResolver=new PropertiesPropertyResolver(properties);
+  MavenConfigurationImpl mavenConfiguration=new MavenConfigurationImpl(propertyResolver,"org.ops4j.pax.url.mvn");
+  mavenConfiguration.setSettings(new MavenSettingsImpl(mavenSettings.toURI().toURL()));
+  return new DownloadManager(mavenConfiguration,Executors.newSingleThreadExecutor());
+}

@@ -1,0 +1,43 @@
+{
+  Server server=new Server(0);
+  server.setHandler(new AbstractHandler(){
+    @Override public void handle(    String target,    Request baseRequest,    HttpServletRequest request,    HttpServletResponse response) throws IOException, ServletException {
+      String proxyAuth=request.getHeader("Proxy-Authorization");
+      if (proxyAuth == null || proxyAuth.trim().equals("")) {
+        response.setStatus(HttpServletResponse.SC_PROXY_AUTHENTICATION_REQUIRED);
+        response.addHeader("Proxy-Authenticate","Basic realm=\"Proxy Server\"");
+        baseRequest.setHandled(true);
+      }
+ else {
+        response.setStatus(HttpServletResponse.SC_OK);
+        baseRequest.setHandled(true);
+        response.getOutputStream().write(new byte[]{0x42});
+        response.getOutputStream().close();
+      }
+    }
+  }
+);
+  server.start();
+  Properties custom=new Properties();
+  custom.setProperty("org.ops4j.pax.url.mvn.proxySupport","true");
+  String settings=createMavenSettingsWithProxy(server.getConnectors()[0].getLocalPort());
+  DownloadManager dm=createDownloadManager("http://relevant.not/maven2@id=central",settings,custom);
+  try {
+    final CountDownLatch latch=new CountDownLatch(1);
+    DownloadFuture df=dm.download("mvn:x.y/z/1.0");
+    df.addListener(new FutureListener<DownloadFuture>(){
+      @Override public void operationComplete(      DownloadFuture future){
+        latch.countDown();
+      }
+    }
+);
+    latch.await(30,TimeUnit.SECONDS);
+    assertNotNull(df.getUrl());
+    assertNotNull(df.getFile());
+    assertEquals("z-1.0.jar",df.getFile().getName());
+    LOG.info("Downloaded URL={}, FILE={}",df.getUrl(),df.getFile());
+  }
+  finally {
+    server.stop();
+  }
+}
