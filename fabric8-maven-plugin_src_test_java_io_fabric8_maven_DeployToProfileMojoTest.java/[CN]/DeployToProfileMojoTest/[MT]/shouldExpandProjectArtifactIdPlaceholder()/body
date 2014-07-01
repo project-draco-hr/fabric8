@@ -1,9 +1,8 @@
 {
-  File root=new File("target");
   File config=new File(root,randomUUID().toString());
-  String property="project = " + PLACEHOLDER_PROJECT_VERSION;
+  String property="artifactId = " + PLACEHOLDER_PROJECT_ARTIFACT_ID;
   writeToFile(config,property.getBytes());
   mojo.uploadProfileConfigFile(jolokiaClient,deployResults,root,config);
   String decodedConfig=decodeSentConfig();
-  assertEquals("project = " + FABRIC_VERSION,decodedConfig);
+  assertEquals("artifactId = artifact",decodedConfig);
 }

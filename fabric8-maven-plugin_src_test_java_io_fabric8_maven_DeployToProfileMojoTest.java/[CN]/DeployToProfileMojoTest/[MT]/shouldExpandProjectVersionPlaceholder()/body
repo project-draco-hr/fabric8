@@ -1,0 +1,8 @@
+{
+  File config=new File(root,randomUUID().toString());
+  String property="project = " + PLACEHOLDER_PROJECT_VERSION;
+  writeToFile(config,property.getBytes());
+  mojo.uploadProfileConfigFile(jolokiaClient,deployResults,root,config);
+  String decodedConfig=decodeSentConfig();
+  assertEquals("project = " + FABRIC_VERSION,decodedConfig);
+}

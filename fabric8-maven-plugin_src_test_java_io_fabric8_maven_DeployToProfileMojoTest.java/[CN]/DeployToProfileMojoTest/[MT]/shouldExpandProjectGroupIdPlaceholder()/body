@@ -1,0 +1,8 @@
+{
+  File config=new File(root,randomUUID().toString());
+  String property="groupId = " + PLACEHOLDER_PROJECT_GROUP_ID;
+  writeToFile(config,property.getBytes());
+  mojo.uploadProfileConfigFile(jolokiaClient,deployResults,root,config);
+  String decodedConfig=decodeSentConfig();
+  assertEquals("groupId = io.fabric8",decodedConfig);
+}
