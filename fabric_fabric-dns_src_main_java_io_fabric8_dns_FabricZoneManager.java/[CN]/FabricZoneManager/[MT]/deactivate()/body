@@ -1,0 +1,16 @@
+{
+  executor.shutdown();
+  try {
+    executor.awaitTermination(5,TimeUnit.SECONDS);
+  }
+ catch (  InterruptedException e) {
+    executor.shutdownNow();
+  }
+  for (  Group group : activeGroups.values()) {
+    group.remove(groupListener);
+    Closeables.closeQuitely(group);
+  }
+  caches.clear();
+  znames.clear();
+  TSIGs.clear();
+}

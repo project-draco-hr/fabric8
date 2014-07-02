@@ -1,0 +1,17 @@
+{
+  byte[] data=packet.data().getBytes();
+  try {
+    Message request=new Message(packet.data().getBytes());
+    LOGGER.trace("Received Request {}.",request);
+    byte[] response=fabricZoneManager.generateReply(request,data,data.length,null);
+    socket.send(new Buffer(response),packet.sender().getHostName(),packet.sender().getPort(),new Handler<AsyncResult<DatagramSocket>>(){
+      @Override public void handle(      AsyncResult<DatagramSocket> event){
+        LOGGER.trace("Event {}",event);
+      }
+    }
+);
+  }
+ catch (  IOException e) {
+    LOGGER.error("Failed to read message.",e);
+  }
+}

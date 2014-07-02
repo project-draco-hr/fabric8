@@ -1,0 +1,12 @@
+{
+  Name domainRoot=Name.fromString(domain,Name.root);
+  Name containerDomain=Name.fromString(containerSubDomain,domainRoot);
+  Name serivceDomain=Name.fromString(serviceSubDomain,domainRoot);
+  Name ns=Name.fromString(nameServer,domainRoot);
+  Name admin=Name.fromString(adminServer,domainRoot);
+  FabricService service=fabricService.get();
+  List<Record> records=new ArrayList<>();
+  records.add(new SOARecord(domainRoot,DClass.IN,DAY,ns,admin,1,refresh,retry,expire,minimumTtl));
+  records.add(new NSRecord(domainRoot,DClass.IN,DAY,ns));
+  return new Zone(domainRoot,records.toArray(new Record[records.size()]));
+}

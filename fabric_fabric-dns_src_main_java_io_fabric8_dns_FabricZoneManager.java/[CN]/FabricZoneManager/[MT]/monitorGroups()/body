@@ -1,0 +1,12 @@
+{
+  CuratorFramework curator=fabricService.get().adapt(CuratorFramework.class);
+  for (  String groupName : groups) {
+    Group<SrvNode> group=activeGroups.get(groupName);
+    if (group == null) {
+      group=new ZooKeeperGroup(curator,"/fabric/registry/clusters/" + groupName,SrvNode.class);
+      group.add(groupListener);
+      group.start();
+      activeGroups.put(groupName,group);
+    }
+  }
+}
