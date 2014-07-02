@@ -1,17 +1,18 @@
 {
   System.out.println(String.format("Waiting for container: %s",containerName));
   Exception lastException=null;
-  long startedAt=System.currentTimeMillis();
-  while (!Thread.interrupted() && System.currentTimeMillis() < startedAt + timeout) {
-    ServiceReference<FabricService> sref=syscontext.getServiceReference(FabricService.class);
-    FabricService fabricService=sref != null ? syscontext.getService(sref) : null;
+  long now=System.currentTimeMillis();
+  long end=now + timeout;
+  while (!Thread.interrupted() && now < end) {
+    FabricService fabricService=ServiceLocator.getRequiredService(FabricService.class);
     try {
-      Container container=fabricService != null ? fabricService.getContainer(containerName) : null;
+      Container container=fabricService.getContainer(containerName);
       if (container != null && container.isAlive()) {
         return;
       }
  else {
         Thread.sleep(500);
+        now=System.currentTimeMillis();
       }
     }
  catch (    InterruptedException ex) {

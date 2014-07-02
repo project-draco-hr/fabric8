@@ -11,6 +11,11 @@
     @Override public Object getProperty(    String key){
       return runtime.getProperty(key);
     }
+    @Override public Object getRequiredProperty(    String key){
+      Object value=getProperty(key,null);
+      IllegalStateAssertion.assertNotNull(value,"Cannot obtain property: " + key);
+      return value;
+    }
     @Override public Object getProperty(    String key,    Object defaultValue){
       Object value=null;
       for (      PropertiesProvider p : propertiesProviders) {

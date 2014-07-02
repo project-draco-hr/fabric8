@@ -1,7 +1,7 @@
 {
   assertValid();
   try {
-    ServiceLocator.awaitService(bundleContext,BootstrapComplete.class);
+    ServiceLocator.awaitService(BootstrapComplete.class);
     LOGGER.info("Create fabric with: {}",options);
     stopBundles();
     DataStoreRegistrationHandler regHandler=registrationHandler.get();
@@ -14,10 +14,13 @@
     createHandler.bootstrapFabric(name,homeDir,options);
     startBundles(options);
     long startTime=System.currentTimeMillis();
-    createHandler.waitForContainerAlive(name,syscontext,options.getBootstrapTimeout());
+    long bootstrapTimeout=options.getBootstrapTimeout();
+    ServiceLocator.awaitService(FabricComplete.class,bootstrapTimeout,TimeUnit.MILLISECONDS);
+    long timeDiff=System.currentTimeMillis() - startTime;
+    createHandler.waitForContainerAlive(name,syscontext,bootstrapTimeout - timeDiff);
     if (options.isWaitForProvision() && options.isAgentEnabled()) {
       long currentTime=System.currentTimeMillis();
-      createHandler.waitForSuccessfulDeploymentOf(name,syscontext,options.getBootstrapTimeout() - (currentTime - startTime));
+      createHandler.waitForSuccessfulDeploymentOf(name,syscontext,bootstrapTimeout - (currentTime - startTime));
     }
   }
  catch (  RuntimeException rte) {
