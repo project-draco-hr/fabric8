@@ -1,0 +1,38 @@
+{
+  Set<String> locations=new HashSet<String>();
+  for (  Feature feature : features) {
+    List<BundleInfo> bundleList=feature.getBundles();
+    if (bundleList == null) {
+      LOGGER.warn("No bundles for feature " + feature);
+    }
+ else {
+      for (      BundleInfo bundle : bundleList) {
+        locations.add(bundle.getLocation());
+      }
+    }
+  }
+  for (  String bundle : bundles) {
+    locations.add(bundle);
+  }
+  Map<String,Parser> artifacts=new HashMap<String,Parser>();
+  for (  String location : locations) {
+    try {
+      if (location.contains("$")) {
+        location=VersionPropertyPointerResolver.replaceVersions(fabricService,profile.getOverlay().getConfigurations(),location);
+      }
+      if (location.startsWith("mvn:") || location.contains(":mvn:")) {
+        Parser parser=Parser.parsePathWithSchemePrefix(location);
+        artifacts.put(location,parser);
+      }
+ else {
+        if (nonMavenLocationCallback != null) {
+          nonMavenLocationCallback.call(location);
+        }
+      }
+    }
+ catch (    MalformedURLException e) {
+      LOGGER.error("Failed to parse bundle URL: " + location + ". "+ e,e);
+    }
+  }
+  return artifacts;
+}
