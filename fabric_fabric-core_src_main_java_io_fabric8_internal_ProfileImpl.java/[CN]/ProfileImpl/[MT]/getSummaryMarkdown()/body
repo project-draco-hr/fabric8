@@ -1,0 +1,24 @@
+{
+  byte[] data=getFileConfiguration("Summary.md");
+  if (data == null) {
+    data=getOverlay().getFileConfiguration("Summary.md");
+  }
+  if (data != null) {
+    return new String(data);
+  }
+  data=getOverlay().getFileConfiguration("ReadMe.md");
+  if (data != null) {
+    String readMe=new String(data).trim();
+    StringTokenizer iter=new StringTokenizer(readMe,"\n");
+    while (iter.hasMoreTokens()) {
+      String text=iter.nextToken();
+      if (text != null) {
+        text=text.trim();
+        if (text.length() > 0) {
+          return text;
+        }
+      }
+    }
+  }
+  return null;
+}
