@@ -1,6 +1,7 @@
 {
   Invoice invoice=new Invoice().invoiceId(randomUUID().toString());
   Invoice savedInvoice=restRepository.save(invoice);
-  Iterable<Invoice> receivedInvoices=restRepository.findByQuery(new InvoiceQuery().invoiceId(invoice.invoiceId()));
+  InvoiceQuery query=new InvoiceQuery().invoiceId(invoice.invoiceId());
+  Iterable<Invoice> receivedInvoices=restRepository.findByQuery(query);
   assertEquals(savedInvoice.id(),receivedInvoices.iterator().next().id());
 }
