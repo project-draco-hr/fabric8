@@ -10,11 +10,13 @@ case CHANGED:
           LOGGER.info("AutoScaleController is the master");
           group.update(state);
           dataStore.trackConfiguration(runnable);
+          enableTimer();
           onConfigurationChanged();
         }
  else {
           LOGGER.info("AutoScaleController is not the master");
           group.update(state);
+          disableTimer();
           dataStore.untrackConfiguration(runnable);
         }
       }
