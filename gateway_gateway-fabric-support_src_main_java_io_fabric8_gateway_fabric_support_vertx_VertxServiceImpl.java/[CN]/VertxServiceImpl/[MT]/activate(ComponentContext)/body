@@ -1,29 +1,4 @@
 {
-  Bundle bundle=context.getBundleContext().getBundle();
-  final ClassLoader classLoader=AriesFrameworkUtil.getClassLoader(bundle);
-  ClassLoaders.withContextClassLoader(classLoader,new Callable<Object>(){
-    @Override public Object call() throws Exception {
-      if (vertx == null) {
-        try {
-          vertx=VertxFactory.newVertx();
-        }
- catch (        Throwable e) {
-          LOG.warn("Failed to use META-INF/services to discover vertx: " + e,e);
-        }
-        if (vertx == null) {
-          try {
-            DefaultVertxFactory factory=new DefaultVertxFactory();
-            vertx=factory.createVertx();
-          }
- catch (          Throwable e) {
-            LOG.error("Failed to create Vertx instance: " + e,e);
-          }
-        }
-        LOG.info("Created a vertx implementation: " + vertx);
-      }
-      return null;
-    }
-  }
-);
+  vertx=vertxFactory.createVertx();
   Objects.notNull(vertx,"vertx");
 }
