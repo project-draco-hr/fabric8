@@ -1,0 +1,13 @@
+{
+  return new Specification<Invoice>(){
+    @Override public Predicate toPredicate(    Root<Invoice> root,    CriteriaQuery<?> qq,    CriteriaBuilder cb){
+      if (query.getInvoiceId() != null) {
+        return cb.equal(root.get("invoiceId"),query.getInvoiceId());
+      }
+ else {
+        return cb.isNull(root.get("invoiceId"));
+      }
+    }
+  }
+;
+}
