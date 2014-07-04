@@ -32,7 +32,20 @@
         destDir=deployDir;
         checksums=deployChecksums;
       }
-      File destFile=new File(destDir,fileName);
+      String destFileName=fileName;
+      if (destFileName.endsWith(".war")) {
+        String value=locationToContextPathMap.get(location);
+        if (value != null) {
+          while (value.startsWith("/")) {
+            value=value.substring(1);
+          }
+          if (value.length() == 0) {
+            value="ROOT";
+          }
+          destFileName=value + ".war";
+        }
+      }
+      File destFile=new File(destDir,destFileName);
       Long checksum=checksums.get(destFile);
       if (deletePass) {
         filesToDelete.remove(destFile);

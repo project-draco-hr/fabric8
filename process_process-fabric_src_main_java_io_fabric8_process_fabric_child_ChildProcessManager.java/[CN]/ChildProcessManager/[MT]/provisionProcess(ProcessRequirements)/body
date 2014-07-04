@@ -10,7 +10,10 @@
   List<Profile> profiles=new ArrayList<Profile>();
   profiles.add(deployProcessProfile);
   Map<String,File> javaArtifacts=JavaContainers.getJavaContainerArtifactsFiles(fabricService,profiles,executorService);
-  InstallTask applyProfile=new InstallDeploymentsTask(javaArtifacts);
+  String versionId=Profiles.versionId(fabricService.getCurrentContainer().getVersion());
+  List<String> profileIds=Profiles.profileIds(profiles);
+  Map<String,String> contextPathConfiguration=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.WEB_CONTEXT_PATHS_PID);
+  InstallTask applyProfile=new InstallDeploymentsTask(javaArtifacts,contextPathConfiguration);
   InstallTask compositeTask=new CompositeTask(applyConfiguration,applyProfile);
   Installation installation=processManager.install(installOptions,compositeTask);
   if (installation != null) {
