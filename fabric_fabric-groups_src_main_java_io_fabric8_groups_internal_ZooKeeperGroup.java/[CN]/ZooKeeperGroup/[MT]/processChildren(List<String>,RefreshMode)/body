@@ -13,7 +13,11 @@
   for (  String name : children) {
     String fullPath=ZKPaths.makePath(path,name);
     if ((mode == RefreshMode.FORCE_GET_DATA_AND_STAT) || !currentData.containsKey(fullPath)) {
-      getDataAndStat(fullPath);
+      try {
+        getDataAndStat(fullPath);
+      }
+ catch (      KeeperException.NoNodeException ignore) {
+      }
     }
   }
 }
