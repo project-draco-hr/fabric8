@@ -1,8 +1,5 @@
 {
   System.out.println(executeCommand("fabric:create -n --wait-for-provisioning"));
-  System.out.println(executeCommand("shell:info"));
-  System.out.println(executeCommand("fabric:info"));
-  System.out.println(executeCommand("fabric:profile-list"));
   ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
   try {
     Set<Container> containers=ContainerBuilder.create(fabricProxy,1).withName("cnt").withProfiles("quickstarts-karaf-beginner-camel.log").assertProvisioningResult().build();
