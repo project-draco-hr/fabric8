@@ -1,0 +1,11 @@
+{
+  try {
+    Enumeration<URL> registryProperties=getClass().getClassLoader().getResources("META-INF/io/fabric8/process/spring/boot/registry/registry.properties");
+    while (registryProperties.hasMoreElements()) {
+      registry.load(registryProperties.nextElement().openStream());
+    }
+  }
+ catch (  IOException e) {
+    throw new RuntimeException(e);
+  }
+}
