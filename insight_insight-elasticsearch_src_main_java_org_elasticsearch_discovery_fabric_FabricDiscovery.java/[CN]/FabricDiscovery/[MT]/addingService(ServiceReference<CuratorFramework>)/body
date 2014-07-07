@@ -1,6 +1,7 @@
 {
   CuratorFramework curator=context.getService(reference);
   try {
+    logger.debug("CuratorFramework found, starting group");
     GroupFactory factory=new ZooKeeperGroupFactory(curator);
     singleton=factory.createGroup("/fabric/registry/clusters/elasticsearch/" + clusterName.value(),ESNode.class);
     singleton.add(this);

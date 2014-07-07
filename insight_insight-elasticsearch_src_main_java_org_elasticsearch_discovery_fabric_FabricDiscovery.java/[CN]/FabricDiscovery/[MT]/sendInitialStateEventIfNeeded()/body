@@ -1,5 +1,6 @@
 {
   if (initialStateSent.compareAndSet(false,true)) {
+    logger.debug("Sending initial state event");
     for (    InitialStateDiscoveryListener listener : initialStateListeners) {
       listener.initialStateProcessed();
     }

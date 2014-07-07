@@ -1,4 +1,5 @@
 {
+  logger.debug("Starting FabricDiscovery");
   Map<String,String> nodeAttributes=discoveryNodeService.buildAttributes();
   String nodeId=UUID.randomUUID().toString();
   String host=settings.get("discovery.publish.host");
@@ -11,4 +12,5 @@
     localNode=new DiscoveryNode(settings.get("name"),nodeId,transportService.boundAddress().publishAddress(),nodeAttributes,Version.CURRENT);
   }
   tracker.open();
+  logger.debug("FabricDiscovery started");
 }

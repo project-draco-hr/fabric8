@@ -1,7 +1,8 @@
 {
+  Thread.currentThread().setContextClassLoader(Node.class.getClassLoader());
   ImmutableSettings.Builder builder=ImmutableSettings.settingsBuilder();
   builder.put(settings);
-  builder.classLoader(NodeFactory.class.getClassLoader());
+  builder.classLoader(Node.class.getClassLoader());
   if (properties != null) {
     for (Enumeration e=properties.keys(); e.hasMoreElements(); ) {
       String key=e.nextElement().toString();

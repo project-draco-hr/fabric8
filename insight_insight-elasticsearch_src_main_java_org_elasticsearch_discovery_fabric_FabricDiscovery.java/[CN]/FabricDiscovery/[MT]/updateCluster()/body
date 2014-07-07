@@ -5,7 +5,15 @@
  catch (  Exception e) {
   }
   if (singleton.isMaster()) {
-    clusterService.submitStateUpdateTask("fabric-discovery",Priority.URGENT,new ProcessedClusterStateUpdateTask(){
+    if (logger.isDebugEnabled()) {
+      String master=singleton.master() != null ? singleton.master().node.name() : null;
+      List<String> slaves=new ArrayList<String>();
+      for (      ESNode s : singleton.slaves()) {
+        slaves.add(s.node.name());
+      }
+      logger.debug("Updating cluster: master {}, slaves {}",master,slaves);
+    }
+    clusterService.submitStateUpdateTask("fabric-discovery-master",Priority.URGENT,new ProcessedClusterStateUpdateTask(){
       @Override public ClusterState execute(      ClusterState currentState){
         ClusterState.Builder stateBuilder=ClusterState.builder(currentState);
         DiscoveryNodes.Builder nodesBuilder=DiscoveryNodes.builder().localNodeId(localNode.id()).masterNodeId(singleton.master().getNode().id()).put(singleton.master().getNode());
@@ -26,6 +34,7 @@
         return stateBuilder.build();
       }
       @Override public void clusterStateProcessed(      String source,      ClusterState oldState,      ClusterState newState){
+        logger.debug("Cluster updated");
         sendInitialStateEventIfNeeded();
       }
       @Override public void onFailure(      String source,      Throwable t){

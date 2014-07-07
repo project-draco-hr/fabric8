@@ -1,7 +1,9 @@
 {
+  logger.debug("Publishing cluster state");
   if (!singleton.isMaster()) {
     throw new ElasticsearchIllegalStateException("Shouldn't publish state when not master");
   }
   latestDiscoNodes=clusterState.nodes();
   publishClusterState.publish(clusterState,ackListener);
+  logger.debug("Cluster state published");
 }

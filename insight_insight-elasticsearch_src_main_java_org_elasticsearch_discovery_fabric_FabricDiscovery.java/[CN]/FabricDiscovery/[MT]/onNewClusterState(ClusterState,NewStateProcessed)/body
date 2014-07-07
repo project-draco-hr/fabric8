@@ -7,19 +7,55 @@
       logger.warn("received a cluster state from [{}] and not part of the cluster, should not happen",newState.nodes().masterNode());
     }
  else {
-      clusterService.submitStateUpdateTask("zen-disco-receive(from master [" + newState.nodes().masterNode() + "])",new ProcessedClusterStateUpdateTask(){
+      if (logger.isDebugEnabled()) {
+        String master=singleton.master() != null ? singleton.master().node.name() : null;
+        List<String> slaves=new ArrayList<String>();
+        for (        ESNode s : singleton.slaves()) {
+          slaves.add(s.node.name());
+        }
+        logger.debug("Cluster state received: master {}, slaves {}",master,slaves);
+      }
+      final ProcessClusterState processClusterState=new ProcessClusterState(newState,newStateProcessed);
+      processNewClusterStates.add(processClusterState);
+      clusterService.submitStateUpdateTask("fabric-discovery-slave",new ProcessedClusterStateUpdateTask(){
         @Override public ClusterState execute(        ClusterState currentState){
-          latestDiscoNodes=newState.nodes();
-          ClusterState.Builder builder=ClusterState.builder(newState);
-          if (newState.routingTable().version() == currentState.routingTable().version()) {
+          if (processClusterState.processed) {
+            return currentState;
+          }
+          ProcessClusterState stateToProcess=processNewClusterStates.poll();
+          if (stateToProcess == null) {
+            return currentState;
+          }
+          stateToProcess.processed=true;
+          while (true) {
+            ProcessClusterState potentialState=processNewClusterStates.peek();
+            if (potentialState == null) {
+              break;
+            }
+            if (!Objects.equal(stateToProcess.clusterState.nodes().masterNodeId(),potentialState.clusterState.nodes().masterNodeId())) {
+              break;
+            }
+            potentialState=processNewClusterStates.poll();
+            potentialState.processed=true;
+            if (potentialState.clusterState.version() > stateToProcess.clusterState.version()) {
+              stateToProcess=potentialState;
+            }
+          }
+          ClusterState updatedState=stateToProcess.clusterState;
+          if (updatedState.version() < currentState.version() && Objects.equal(updatedState.nodes().masterNodeId(),currentState.nodes().masterNodeId())) {
+            return currentState;
+          }
+          latestDiscoNodes=updatedState.nodes();
+          ClusterState.Builder builder=ClusterState.builder(updatedState);
+          if (updatedState.routingTable().version() == currentState.routingTable().version()) {
             builder.routingTable(currentState.routingTable());
           }
-          if (newState.metaData().version() == currentState.metaData().version()) {
+          if (updatedState.metaData().version() == currentState.metaData().version()) {
             builder.metaData(currentState.metaData());
           }
  else {
-            MetaData.Builder metaDataBuilder=MetaData.builder(newState.metaData()).removeAllIndices();
-            for (            IndexMetaData indexMetaData : newState.metaData()) {
+            MetaData.Builder metaDataBuilder=MetaData.builder(updatedState.metaData()).removeAllIndices();
+            for (            IndexMetaData indexMetaData : updatedState.metaData()) {
               IndexMetaData currentIndexMetaData=currentState.metaData().index(indexMetaData.index());
               if (currentIndexMetaData == null || currentIndexMetaData.version() != indexMetaData.version()) {
                 metaDataBuilder.put(indexMetaData,false);
@@ -33,9 +69,13 @@
           return builder.build();
         }
         @Override public void clusterStateProcessed(        String s,        ClusterState clusterState,        ClusterState clusterState2){
+          logger.debug("Cluster state processed");
           sendInitialStateEventIfNeeded();
+          newStateProcessed.onNewClusterStateProcessed();
         }
-        @Override public void onFailure(        String s,        Throwable throwable){
+        @Override public void onFailure(        String source,        Throwable t){
+          logger.error("unexpected failure during [{}]",t,source);
+          newStateProcessed.onNewClusterStateFailed(t);
         }
       }
 );

@@ -1,0 +1,36 @@
+{
+  int nb=(get ? 1 : 0) + (put ? 1 : 0) + (delete ? 1 : 0)+ (head ? 1 : 0)+ (post ? 1 : 0);
+  if (nb > 1) {
+    throw new IllegalArgumentException("Only one of get / put / delete / head / post can be used");
+  }
+  String ret;
+  if (!noPretty) {
+    int idx=uri.indexOf("?");
+    if (idx > 0) {
+      boolean hasPretty=false;
+      for (      String p : uri.substring(idx + 1).split("&")) {
+        hasPretty|=(p.equals("pretty") || p.startsWith("pretty="));
+      }
+      uri=uri + "&pretty";
+    }
+ else {
+      uri=uri + "?pretty";
+    }
+  }
+  if (post) {
+    ret=rest.post(uri,body != null ? body : "");
+  }
+ else   if (put) {
+    ret=rest.put(uri,body != null ? body : "");
+  }
+ else   if (head) {
+    ret=rest.head(uri);
+  }
+ else   if (delete) {
+    ret=rest.delete(uri);
+  }
+ else {
+    ret=rest.get(uri);
+  }
+  System.out.println(ret);
+}
