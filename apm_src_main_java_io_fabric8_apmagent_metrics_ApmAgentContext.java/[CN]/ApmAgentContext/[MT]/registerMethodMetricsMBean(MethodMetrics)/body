@@ -1,8 +1,8 @@
 {
   try {
     ObjectName objectName=new ObjectName(DEFAULT_DOMAIN + ":" + "type=MethodMetrics"+ ",name="+ ObjectName.quote(methodMetrics.getName()));
-    ObjectInstance objectInstance=getMBeanServer().registerMBean(methodMetrics,objectName);
-    objectNameMap.put(methodMetrics,objectInstance.getObjectName());
+    registerMBean(objectName,methodMetrics);
+    objectNameMap.put(methodMetrics,objectName);
   }
  catch (  Throwable e) {
     LOG.error("Failed to register mbean " + methodMetrics.toString(),e);

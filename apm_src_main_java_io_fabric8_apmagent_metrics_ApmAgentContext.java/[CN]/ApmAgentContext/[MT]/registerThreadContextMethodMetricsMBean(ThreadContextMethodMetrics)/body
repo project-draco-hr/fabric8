@@ -1,8 +1,8 @@
 {
   try {
     ObjectName objectName=new ObjectName(DEFAULT_DOMAIN + ":" + "type=ThreadContextMetrics"+ ",name="+ ObjectName.quote(threadMetrics.getName())+ ",threadName="+ ObjectName.quote(threadMetrics.getThreadName()));
-    ObjectInstance objectInstance=getMBeanServer().registerMBean(threadMetrics,objectName);
-    objectNameMap.put(threadMetrics,objectInstance.getObjectName());
+    registerMBean(objectName,threadMetrics);
+    objectNameMap.put(threadMetrics,objectName);
   }
  catch (  Throwable e) {
     LOG.error("Failed to register mbean " + threadMetrics.toString(),e);
