@@ -1,9 +1,6 @@
 {
-  Hashtable<String,String> properties=new Hashtable<>();
-  properties.put("type","MethodMetrics");
-  properties.put("name",ObjectName.quote(methodMetrics.getName()));
   try {
-    ObjectName objectName=new ObjectName(DEFAULT_DOMAIN,properties);
+    ObjectName objectName=new ObjectName(DEFAULT_DOMAIN + ":" + "type=MethodMetrics"+ ",name="+ ObjectName.quote(methodMetrics.getName()));
     ObjectInstance objectInstance=getMBeanServer().registerMBean(methodMetrics,objectName);
     objectNameMap.put(methodMetrics,objectInstance.getObjectName());
   }

@@ -1,11 +1,6 @@
 {
-  Hashtable<String,String> properties=new Hashtable<>();
-  properties.put("type","threadContextMetrics");
-  properties.put("name",ObjectName.quote(threadMetrics.getName()));
-  properties.put("threadName",ObjectName.quote(threadMetrics.getThreadName()));
-  properties.put("threadId",String.valueOf(threadMetrics.getThreadId()));
   try {
-    ObjectName objectName=new ObjectName(DEFAULT_DOMAIN,properties);
+    ObjectName objectName=new ObjectName(DEFAULT_DOMAIN + ":" + "type=ThreadContextMetrics"+ ",name="+ ObjectName.quote(threadMetrics.getName())+ ",threadName="+ ObjectName.quote(threadMetrics.getThreadName()));
     ObjectInstance objectInstance=getMBeanServer().registerMBean(threadMetrics,objectName);
     objectNameMap.put(threadMetrics,objectInstance.getObjectName());
   }
