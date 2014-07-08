@@ -1,11 +1,4 @@
 {
   ObjectName objectName=objectNameMap.remove(methodMetrics);
-  if (objectName != null) {
-    try {
-      getMBeanServer().unregisterMBean(objectName);
-    }
- catch (    Throwable e) {
-      LOG.error("Failed to unregister " + methodMetrics,e);
-    }
-  }
+  unregisterMBean(objectName);
 }
