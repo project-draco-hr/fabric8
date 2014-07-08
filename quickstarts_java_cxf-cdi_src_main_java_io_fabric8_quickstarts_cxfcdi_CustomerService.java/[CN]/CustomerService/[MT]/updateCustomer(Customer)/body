@@ -1,0 +1,13 @@
+{
+  LOG.info("Invoking updateCustomer, Customer name is: {}",customer.getName());
+  Customer c=customers.get(customer.getId());
+  Response r;
+  if (c != null) {
+    customers.put(customer.getId(),customer);
+    r=Response.ok().build();
+  }
+ else {
+    r=Response.notModified().build();
+  }
+  return r;
+}

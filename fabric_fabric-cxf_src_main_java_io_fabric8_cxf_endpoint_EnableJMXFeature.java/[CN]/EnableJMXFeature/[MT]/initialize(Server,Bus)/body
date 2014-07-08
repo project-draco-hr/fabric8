@@ -1,0 +1,25 @@
+{
+  ManagedApi mApi=new ManagedApi(bus,server.getEndpoint(),server);
+  InstrumentationManager iMgr=bus.getExtension(InstrumentationManager.class);
+  if (iMgr == null) {
+    iMgr=new InstrumentationManagerImpl(bus);
+  }
+  ((InstrumentationManagerImpl)iMgr).setUsePlatformMBeanServer(true);
+  ((InstrumentationManagerImpl)iMgr).setCreateMBServerConnectorFactory(false);
+  ((InstrumentationManagerImpl)iMgr).setEnabled(true);
+  ((InstrumentationManagerImpl)iMgr).init();
+  if (iMgr != null) {
+    try {
+      iMgr.register(mApi);
+      ServerLifeCycleManager slcMgr=bus.getExtension(ServerLifeCycleManager.class);
+      if (slcMgr != null) {
+        slcMgr.registerListener(mApi);
+        slcMgr.startServer(server);
+      }
+    }
+ catch (    JMException jmex) {
+      jmex.printStackTrace();
+      LOG.log(Level.WARNING,"Registering ManagedApi failed.",jmex);
+    }
+  }
+}

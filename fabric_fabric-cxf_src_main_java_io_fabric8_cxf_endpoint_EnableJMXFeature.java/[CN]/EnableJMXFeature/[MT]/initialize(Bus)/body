@@ -1,0 +1,26 @@
+{
+  List<Server> servers=new ArrayList<Server>();
+  ServerRegistry serverRegistry=bus.getExtension(ServerRegistry.class);
+  servers.addAll(serverRegistry.getServers());
+  for (Iterator<Server> iter=servers.iterator(); iter.hasNext(); ) {
+    Server server=(Server)iter.next();
+    ManagedApi mApi=new ManagedApi(bus,server.getEndpoint(),server);
+    InstrumentationManager iMgr=bus.getExtension(InstrumentationManager.class);
+    if (iMgr == null) {
+      iMgr=new InstrumentationManagerImpl(bus);
+    }
+    ((InstrumentationManagerImpl)iMgr).setUsePlatformMBeanServer(true);
+    ((InstrumentationManagerImpl)iMgr).setCreateMBServerConnectorFactory(false);
+    ((InstrumentationManagerImpl)iMgr).setEnabled(true);
+    ((InstrumentationManagerImpl)iMgr).init();
+    if (iMgr != null) {
+      try {
+        iMgr.register(mApi);
+      }
+ catch (      JMException jmex) {
+        jmex.printStackTrace();
+        LOG.log(Level.WARNING,"Registering ManagedApi failed.",jmex);
+      }
+    }
+  }
+}

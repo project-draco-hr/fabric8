@@ -1,0 +1,14 @@
+{
+  LOG.info("Invoking deleteCustomer, Customer id is: {}",id);
+  long idNumber=Long.parseLong(id);
+  Customer c=customers.get(idNumber);
+  Response r;
+  if (c != null) {
+    r=Response.ok().build();
+    customers.remove(idNumber);
+  }
+ else {
+    r=Response.notModified().build();
+  }
+  return r;
+}

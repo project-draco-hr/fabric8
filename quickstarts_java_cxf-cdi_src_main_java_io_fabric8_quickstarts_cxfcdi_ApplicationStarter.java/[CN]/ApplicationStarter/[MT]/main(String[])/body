@@ -1,0 +1,12 @@
+{
+  final Server server=new Server(8585);
+  final ServletHolder servletHolder=new ServletHolder(new CXFCdiServlet());
+  final ServletContextHandler context=new ServletContextHandler();
+  context.setContextPath("/");
+  context.addEventListener(new Listener());
+  context.addEventListener(new BeanManagerResourceBindingListener());
+  context.addServlet(servletHolder,"/cxfcdi/*");
+  server.setHandler(context);
+  server.start();
+  server.join();
+}
