@@ -1,0 +1,18 @@
+{
+  MBeanServer mBeanServer=ManagementFactory.getPlatformMBeanServer();
+  if (mBeanServer != null) {
+    if (mBeanServer.isRegistered(AGENT_MBEAN_NAME)) {
+      if (enabledAgent.compareAndSet(false,true)) {
+        System.out.println("==== HAS AGENT!");
+        try {
+          mBeanServer.invoke(AGENT_MBEAN_NAME,"startMetrics",new Object[0],new String[0]);
+          System.out.println("Enabled agent " + AGENT_MBEAN_NAME);
+        }
+ catch (        Exception e) {
+          System.out.println("Failed to invoke the mbean: " + AGENT_MBEAN_NAME);
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+}
