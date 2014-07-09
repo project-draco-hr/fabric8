@@ -1,0 +1,6 @@
+{
+  restServices.symbol("fooService").configure().when(request()).respond(response().withBody("Hello world!"));
+  String url=System.getProperty(serviceUrlProperty("fooService"));
+  String response=IOUtils.toString(new URL(url));
+  assertEquals("Hello world!",response);
+}

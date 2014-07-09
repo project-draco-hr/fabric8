@@ -1,0 +1,12 @@
+{
+  ClientAndServer server=mockServers.get(serviceSymbol);
+  if (server == null) {
+    int port=PortFactory.findFreePort();
+    server=new ClientAndServer(port);
+    mockServers.put(serviceSymbol,server);
+    for (    MockRestServiceDirectory directory : mockRestServiceDirectories) {
+      directory.publish(serviceSymbol,"http://localhost:" + port);
+    }
+  }
+  return new Configure(server);
+}

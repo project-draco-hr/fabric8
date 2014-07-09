@@ -1,0 +1,9 @@
+{
+  try {
+    server.when(request().withPath(".*?" + pathFragment + ".*")).respond(response().withBody(jackson.writeValueAsString(pojo)));
+    return this;
+  }
+ catch (  JsonProcessingException e) {
+    throw new RuntimeException(e);
+  }
+}

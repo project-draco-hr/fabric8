@@ -1,0 +1,8 @@
+{
+  restServices.symbol("fooService").json("one",1).json("two",2);
+  String url=System.getProperty(serviceUrlProperty("fooService"));
+  String responseForOne=IOUtils.toString(new URL(url + "/api/one"));
+  String responseForTwo=IOUtils.toString(new URL(url + "/api/two"));
+  assertEquals("1",responseForOne);
+  assertEquals("2",responseForTwo);
+}
