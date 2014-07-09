@@ -1,12 +1,11 @@
 {
   boolean answer=false;
-  Version version=getFabricService().getVersion(versionId);
+  Version version=profileService.getVersion(versionId);
   if (version != null) {
-    Profile profile=version.getProfile(profileId);
-    if (profile != null) {
-      profile.setConfiguration(pid,properties);
-      answer=true;
-    }
+    ProfileBuilder builder=ProfileBuilder.Factory.createFrom(versionId,profileId);
+    builder.addConfiguration(pid,properties);
+    profileService.updateProfile(builder.getProfile());
+    answer=true;
   }
   return answer;
 }

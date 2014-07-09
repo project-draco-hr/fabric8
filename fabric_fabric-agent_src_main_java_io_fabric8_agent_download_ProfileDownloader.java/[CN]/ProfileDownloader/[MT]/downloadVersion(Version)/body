@@ -1,7 +1,8 @@
 {
-  Profile[] profiles=version.getProfiles();
+  List<Profile> profiles=version.getProfiles();
+  Profile[] prfarray=profiles.toArray(new Profile[profiles.size()]);
   if (listener != null) {
-    listener.beforeDownloadProfiles(profiles);
+    listener.beforeDownloadProfiles(prfarray);
   }
   for (  Profile profile : profiles) {
     try {
@@ -22,6 +23,6 @@
     }
   }
   if (listener != null) {
-    listener.afterDownloadProfiles(profiles);
+    listener.afterDownloadProfiles(prfarray);
   }
 }

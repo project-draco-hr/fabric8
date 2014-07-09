@@ -7,7 +7,7 @@
   Container current=fabricService.get().getCurrentContainer();
   Version version=current.getVersion();
   String templateProfileName=String.valueOf(context.getConfiguration().get(TEMPLATE_PROFILE_PROPERTY_NAME));
-  Profile templateProfile=version.getProfile(templateProfileName);
+  Profile templateProfile=version.getRequiredProfile(templateProfileName);
   Set<String> allFiles=templateProfile.getFileConfigurations().keySet();
   Iterable<String> mvelFiles=Iterables.filter(allFiles,MvelPredicate.INSTANCE);
   Iterable<String> plainFiles=Iterables.filter(allFiles,Predicates.not(MvelPredicate.INSTANCE));

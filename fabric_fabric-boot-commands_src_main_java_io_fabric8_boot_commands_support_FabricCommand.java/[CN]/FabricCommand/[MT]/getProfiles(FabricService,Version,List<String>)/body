@@ -1,19 +1,21 @@
 {
-  Profile[] allProfiles=version.getProfiles();
-  List<Profile> profiles=new ArrayList<Profile>();
+  List<Profile> allProfiles=version.getProfiles();
+  List<Profile> profiles=new ArrayList<>();
   if (names == null) {
     return new Profile[0];
   }
-  for (  String name : names) {
+  for (  String profileId : names) {
     Profile profile=null;
     for (    Profile p : allProfiles) {
-      if (name.equals(p.getId())) {
+      if (profileId.equals(p.getId())) {
         profile=p;
         break;
       }
     }
     if (profile == null) {
-      profile=new ProfileImpl(name,version.getId(),fabricService);
+      ProfileBuilder builder=ProfileBuilder.Factory.create(version.getId(),profileId);
+      ProfileService profileService=fabricService.adapt(ProfileService.class);
+      profile=profileService.createProfile(builder.getProfile());
     }
     profiles.add(profile);
   }

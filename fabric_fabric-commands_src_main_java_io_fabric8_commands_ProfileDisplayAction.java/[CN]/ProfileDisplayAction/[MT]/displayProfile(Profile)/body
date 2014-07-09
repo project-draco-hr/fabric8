@@ -1,17 +1,22 @@
 {
   PrintStream output=session.getConsole();
-  output.println("Profile id: " + p.getId());
-  output.println("Version   : " + p.getVersion());
+  output.println("Profile id: " + profile.getId());
+  output.println("Version   : " + profile.getVersion());
   output.println("Attributes: ");
-  Map<String,String> props=p.getAttributes();
+  Map<String,String> props=profile.getAttributes();
   for (  String key : props.keySet()) {
     output.println("\t" + key + ": "+ props.get(key));
   }
-  output.printf("Containers: %s\n",toString(p.getAssociatedContainers()));
-  Profile profile=overlay ? p.getOverlay() : p;
-  Map<String,Map<String,String>> configuration=profile.getConfigurations();
+  String versionId=profile.getVersion();
+  String profileId=profile.getId();
+  output.printf("Containers: %s\n",toString(fabricService.getAssociatedContainers(versionId,profileId)));
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
+  if (overlay) {
+    profile=profileService.getOverlayProfile(profile);
+  }
+  Map<String,Map<String,String>> configuration=new HashMap<>(profile.getConfigurations());
   Map<String,byte[]> resources=profile.getFileConfigurations();
-  Map<String,String> agentConfiguration=profile.getContainerConfiguration();
+  Map<String,String> agentConfiguration=profile.getConfiguration(Constants.AGENT_PID);
   List<String> agentProperties=new ArrayList<String>();
   List<String> systemProperties=new ArrayList<String>();
   List<String> configProperties=new ArrayList<String>();

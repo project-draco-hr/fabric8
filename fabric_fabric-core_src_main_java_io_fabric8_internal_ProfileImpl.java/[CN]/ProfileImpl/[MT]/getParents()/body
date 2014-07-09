@@ -1,18 +1,3 @@
 {
-  try {
-    String str=getAttributes().get(PARENTS);
-    if (str == null || str.isEmpty()) {
-      return new Profile[0];
-    }
-    str=str.trim();
-    List<Profile> profiles=new ArrayList<Profile>();
-    Version v=fabricService.getVersion(version);
-    for (    String p : str.split(" ")) {
-      profiles.add(v.getProfile(p));
-    }
-    return profiles.toArray(new Profile[profiles.size()]);
-  }
- catch (  Exception e) {
-    throw FabricException.launderThrowable(e);
-  }
+  return Collections.unmodifiableList(parentProfiles);
 }

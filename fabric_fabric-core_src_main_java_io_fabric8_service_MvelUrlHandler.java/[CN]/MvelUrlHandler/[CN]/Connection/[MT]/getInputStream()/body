@@ -4,7 +4,8 @@
   URL url=new URL(path);
   CompiledTemplate compiledTemplate=TemplateCompiler.compileTemplate(url.openStream());
   Map<String,Object> data=new HashMap<String,Object>();
-  data.put("profile",fabricService.get().getCurrentContainer().getOverlayProfile());
+  Profile overlayProfile=fabricService.get().getCurrentContainer().getOverlayProfile();
+  data.put("profile",Profiles.getEffectiveProfile(fabricService.get(),overlayProfile));
   data.put("runtime",runtimeProperties.get());
   String content=TemplateRuntime.execute(compiledTemplate,data).toString();
   return new ByteArrayInputStream(content.getBytes());

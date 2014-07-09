@@ -1,10 +1,11 @@
 {
-  Version version=getFabricService().getVersion(versionId);
+  Version version=profileService.getVersion(versionId);
   Profile profile=version.getProfile(profileId);
   if (profile != null) {
-    return profile.getConfigurationFileNames();
+    ArrayList<String> fileNames=new ArrayList<>(profile.getConfigurationFileNames());
+    return Collections.unmodifiableList(fileNames);
   }
  else {
-    return new ArrayList<String>();
+    return Collections.emptyList();
   }
 }

@@ -1,21 +1,21 @@
 {
   Map<ProfileVersionKey,Map<String,Parser>> profileArtifacts=new HashMap<ProfileVersionKey,Map<String,Parser>>();
-  FabricService fabric=fabricService.get();
-  DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,executorService);
-  Container[] containers=fabric.getContainers();
+  ProfileService profileService=fabricService.get().adapt(ProfileService.class);
+  DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabricService.get(),executorService);
+  Container[] containers=fabricService.get().getContainers();
   for (  Container container : containers) {
     Profile[] profiles=container.getProfiles();
-    boolean javaOrProcessContainer=ChildContainers.isJavaOrProcessContainer(fabric,container);
+    boolean javaOrProcessContainer=ChildContainers.isJavaOrProcessContainer(fabricService.get(),container);
     for (    Profile profile : profiles) {
-      Profile overlay=profile.getOverlay();
+      Profile overlay=profileService.getOverlayProfile(profile);
       ProfileVersionKey key=new ProfileVersionKey(profile);
       Map<String,Parser> artifacts=null;
       if (javaOrProcessContainer) {
         List<Profile> singletonList=Collections.singletonList(profile);
-        artifacts=JavaContainers.getJavaContainerArtifacts(fabric,singletonList,executorService);
+        artifacts=JavaContainers.getJavaContainerArtifacts(fabricService.get(),singletonList,executorService);
       }
  else {
-        artifacts=AgentUtils.getProfileArtifacts(fabric,downloadManager,overlay);
+        artifacts=AgentUtils.getProfileArtifacts(fabricService.get(),downloadManager,overlay);
       }
       if (artifacts != null) {
         if (LOG.isDebugEnabled()) {

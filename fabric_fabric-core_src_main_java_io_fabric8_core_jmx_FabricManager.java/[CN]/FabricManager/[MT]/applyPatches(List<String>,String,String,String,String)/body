@@ -13,14 +13,17 @@
     LOG.warn("No valid patches to apply");
     throw new FabricException("No valid patches to apply");
   }
-  Version version=getFabricService().getVersion(targetVersionId);
+  Version version=profileService.getVersion(targetVersionId);
   if (version == null) {
     throw new FabricException("Version " + targetVersionId + " not found");
   }
   if (newVersionId == null || newVersionId.equals("")) {
-    newVersionId=getLatestVersion().getSequence().next().getName();
+    Version latestVersion=getLatestVersion();
+    VersionSequence sequence=new VersionSequence(latestVersion.getId());
+    newVersionId=sequence.next().getName();
   }
-  Version targetVersion=getFabricService().createVersion(version,newVersionId);
+  Version targetVersion=VersionBuilder.Factory.create(newVersionId).parent(version.getId()).getVersion();
+  targetVersion=profileService.createVersion(targetVersion);
   File currentPatchFile=null;
   try {
     for (    File file : patchFiles) {
@@ -36,7 +39,7 @@
   }
  catch (  Throwable t) {
     LOG.warn("Failed to apply patch file {}",currentPatchFile,t);
-    targetVersion.delete();
+    profileService.deleteVersion(newVersionId);
     throw new FabricException("Failed to apply patch file " + currentPatchFile,t);
   }
   for (  File file : patchFiles) {

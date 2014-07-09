@@ -1,17 +1,12 @@
 {
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
   String versionId=requirements.getVersion();
   Version version;
   if (!Strings.isNullOrEmpty(versionId)) {
-    version=fabricService.getVersion(versionId);
-    if (version == null) {
-      throw new IllegalStateException("Version " + versionId + " could not be found");
-    }
+    version=profileService.getRequiredVersion(versionId);
   }
  else {
     version=fabricService.getDefaultVersion();
-    if (version == null) {
-      throw new IllegalStateException("No version specified and no default version for the fabric");
-    }
   }
   Set<String> profileIds=new HashSet<String>(Profiles.profileIds(version.getProfiles()));
   List<ProfileRequirements> profileRequirements=requirements.getProfileRequirements();

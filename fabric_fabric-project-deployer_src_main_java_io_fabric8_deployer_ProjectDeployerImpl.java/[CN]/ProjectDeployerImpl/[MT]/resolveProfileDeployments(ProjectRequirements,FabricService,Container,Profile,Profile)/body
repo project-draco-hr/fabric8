@@ -54,9 +54,10 @@
         optionals.add(dependency.toBundleUrlWithType());
       }
     }
-    profile.setBundles(bundles);
-    profile.setOptionals(optionals);
-    profile.setFeatures(features);
+    ProfileBuilder builder=ProfileBuilder.Factory.createFrom(profile);
+    builder.setBundles(bundles).setOptionals(optionals).setFeatures(features);
+    ProfileService profileService=fabricService.get().adapt(ProfileService.class);
+    profile=profileService.updateProfile(builder.getProfile());
   }
   String profileUrl=findHawtioUrl(fabric);
   if (profileUrl == null) {

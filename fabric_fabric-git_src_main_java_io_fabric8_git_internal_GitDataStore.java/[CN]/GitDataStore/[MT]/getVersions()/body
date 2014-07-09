@@ -1,4 +1,13 @@
 {
   assertValid();
-  return new ArrayList<String>(versions);
+  List<VersionSequence> sequences=new ArrayList<>();
+  for (  String versionId : versions) {
+    sequences.add(new VersionSequence(versionId));
+  }
+  Collections.sort(sequences);
+  List<String> verlist=new ArrayList<>();
+  for (  VersionSequence seq : sequences) {
+    verlist.add(seq.getName());
+  }
+  return Collections.unmodifiableList(verlist);
 }

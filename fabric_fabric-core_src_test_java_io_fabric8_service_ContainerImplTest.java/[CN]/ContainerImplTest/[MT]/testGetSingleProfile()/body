@@ -1,9 +1,9 @@
 {
   String v="1.0";
   String profileId="feature-camel";
-  Version version=new VersionImpl(v,fabricService);
+  Version version=null;
   List<String> profiles=Arrays.asList(profileId);
-  expect(fabricService.getVersion(eq(v))).andReturn(version).anyTimes();
+  expect(profileService.getRequiredVersion(eq(v))).andReturn(version).anyTimes();
   expect(dataStore.getContainerVersion(eq(CONTAINER_ID))).andReturn(v).anyTimes();
   expect(dataStore.getContainerProfiles(eq(CONTAINER_ID))).andReturn(profiles).anyTimes();
   expect(dataStore.hasProfile(v,profileId)).andReturn(true).anyTimes();

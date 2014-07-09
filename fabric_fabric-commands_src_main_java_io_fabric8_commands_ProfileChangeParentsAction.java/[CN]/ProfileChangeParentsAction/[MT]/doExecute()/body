@@ -1,7 +1,9 @@
 {
-  Version ver=version != null ? fabricService.getVersion(version) : fabricService.getDefaultVersion();
-  Profile prof=FabricCommand.getProfile(ver,name);
-  Profile[] profs=FabricCommand.getExistingProfiles(fabricService,ver,parents);
-  prof.setParents(profs);
+  Version version=versionId != null ? profileService.getRequiredVersion(versionId) : fabricService.getDefaultVersion();
+  Profile profile=version.getRequiredProfile(profileId);
+  Profile[] parents=FabricCommand.getExistingProfiles(fabricService,version,parentIds);
+  ProfileBuilder builder=ProfileBuilder.Factory.createFrom(profile);
+  builder.setParents(Arrays.asList(parents));
+  profileService.updateProfile(builder.getProfile());
   return null;
 }

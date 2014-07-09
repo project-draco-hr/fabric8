@@ -1,11 +1,11 @@
 {
-  Profile profile=getFabricService().getVersion(versionId).getProfile(profileId);
-  Profile overlay=profile.getOverlay(true);
+  Profile profile=profileService.getVersion(versionId).getRequiredProfile(profileId);
+  Profile effectiveProfile=Profiles.getEffectiveProfile(fabricService,profileService.getOverlayProfile(profile));
   Map<String,Boolean> isParentFeature=new HashMap<String,Boolean>();
   for (  String feature : profile.getFeatures()) {
     isParentFeature.put(feature,Boolean.FALSE);
   }
-  for (  String feature : overlay.getFeatures()) {
+  for (  String feature : effectiveProfile.getFeatures()) {
     if (isParentFeature.get(feature) == null) {
       isParentFeature.put(feature,Boolean.TRUE);
     }
@@ -20,7 +20,7 @@
   }
   rc.put("featureDefinitions",featureDefs);
   List<Map<String,Object>> repositoryDefs=new ArrayList<Map<String,Object>>();
-  for (  String repo : overlay.getRepositories()) {
+  for (  String repo : effectiveProfile.getRepositories()) {
     Map<String,Object> repoDef=new HashMap<String,Object>();
     repoDef.put("id",repo);
     Closeable closeable=null;

@@ -1,17 +1,14 @@
 {
   System.out.println("Create test profile:" + profile + " in datastore.");
-  List<String> versions=Lists.transform(Arrays.<Version>asList(fabricService.getVersions()),new Function<Version,String>(){
-    @Override public String apply(    Version version){
-      return version.getId();
-    }
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
+  List<String> versions=profileService.getVersions();
+  if (!versions.contains(versionId)) {
+    Version version=VersionBuilder.Factory.create(versionId).getVersion();
+    profileService.createVersion(version);
   }
-);
-  if (!versions.contains(version)) {
-    fabricService.createVersion(version);
-  }
-  fabricService.getDataStore().createProfile(version,profile);
-  GitUtils.waitForBranchUpdate(curator,version);
-  GitUtils.checkoutBranch(git,"origin",version);
+  fabricService.getDataStore().createProfile(versionId,profile);
+  GitUtils.waitForBranchUpdate(curator,versionId);
+  GitUtils.checkoutBranch(git,"origin",versionId);
   PullResult pullResult=git.pull().setCredentialsProvider(getCredentialsProvider()).setRebase(true).call();
   assertTrue(pullResult.isSuccessful());
   String relativeProfileDir="fabric/profiles/" + profile + ".profile";

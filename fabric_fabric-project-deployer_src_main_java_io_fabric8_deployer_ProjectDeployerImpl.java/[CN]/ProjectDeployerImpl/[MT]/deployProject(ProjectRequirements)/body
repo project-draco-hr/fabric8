@@ -1,5 +1,4 @@
 {
-  FabricService fabric=getFabricService();
   Version version=getOrCreateVersion(requirements);
   for (  String parent : requirements.getParentProfiles()) {
     if (!version.hasProfile(parent)) {
@@ -7,27 +6,27 @@
     }
   }
   Profile profile=getOrCreateProfile(version,requirements);
-  if (requirements.isAbstractProfile()) {
-    profile.setAttribute(Profile.ABSTRACT,"true");
-  }
- else {
-    profile.setAttribute(Profile.ABSTRACT,"false");
-  }
+  boolean isAbstract=requirements.isAbstractProfile();
+  ProfileBuilder builder=ProfileBuilder.Factory.createFrom(profile);
+  builder.addAttribute(Profile.ABSTRACT,"" + isAbstract);
+  ProfileService profileService=fabricService.get().adapt(ProfileService.class);
+  profile=profileService.updateProfile(profile);
   ProjectRequirements oldRequirements=writeRequirementsJson(requirements,profile);
   updateProfileConfiguration(version,profile,requirements,oldRequirements);
-  Profile overlay=profile.getOverlay(true);
+  Profile overlayProfile=profileService.getOverlayProfile(profile);
+  Profile effectiveProfile=Profiles.getEffectiveProfile(fabricService.get(),overlayProfile);
   Container container=null;
   try {
-    container=fabric.getCurrentContainer();
+    container=fabricService.get().getCurrentContainer();
   }
  catch (  Exception e) {
   }
   Integer minimumInstances=requirements.getMinimumInstances();
   if (minimumInstances != null) {
-    FabricRequirements fabricRequirements=fabric.getRequirements();
+    FabricRequirements fabricRequirements=fabricService.get().getRequirements();
     ProfileRequirements profileRequirements=fabricRequirements.getOrCreateProfileRequirement(profile.getId());
     profileRequirements.setMinimumInstances(minimumInstances);
-    fabric.setRequirements(fabricRequirements);
+    fabricService.get().setRequirements(fabricRequirements);
   }
-  return resolveProfileDeployments(requirements,fabric,container,profile,overlay);
+  return resolveProfileDeployments(requirements,fabricService.get(),container,profile,effectiveProfile);
 }

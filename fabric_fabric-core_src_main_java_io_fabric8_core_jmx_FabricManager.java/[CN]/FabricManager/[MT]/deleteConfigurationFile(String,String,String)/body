@@ -1,6 +1,5 @@
 {
-  Profile profile=getFabricService().getVersion(versionId).getProfile(profileId);
-  Map<String,byte[]> configs=profile.getFileConfigurations();
-  configs.remove(fileName);
-  profile.setFileConfigurations(configs);
+  ProfileBuilder builder=ProfileBuilder.Factory.createFrom(versionId,profileId);
+  builder.deleteConfigurationFile(fileName);
+  profileService.updateProfile(builder.getProfile());
 }

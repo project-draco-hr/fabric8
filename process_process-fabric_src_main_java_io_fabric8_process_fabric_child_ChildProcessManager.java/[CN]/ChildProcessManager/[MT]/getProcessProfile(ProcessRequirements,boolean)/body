@@ -1,5 +1,6 @@
 {
   Container container=fabricService.getCurrentContainer();
-  ProcessProfile profile=new ProcessProfile(container,requirements,fabricService,includeController);
-  return new ProfileOverlayImpl(profile,fabricService.getEnvironment(),true,fabricService);
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
+  Profile processProfile=getProcessProfile(requirements,includeController,container);
+  return Profiles.getEffectiveProfile(fabricService,profileService.getOverlayProfile(processProfile));
 }

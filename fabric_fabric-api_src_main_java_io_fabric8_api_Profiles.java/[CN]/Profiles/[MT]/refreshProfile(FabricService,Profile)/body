@@ -1,0 +1,12 @@
+{
+  LOGGER.info("refreshProfile: {}",profile);
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
+  ProfileBuilder builder=ProfileBuilder.Factory.createFrom(profile);
+  Map<String,String> agentConfiguration=builder.getConfiguration(Constants.AGENT_PID);
+  if (agentConfiguration == null) {
+    agentConfiguration=new HashMap<String,String>();
+  }
+  agentConfiguration.put("lastRefresh." + profile.getId(),String.valueOf(System.currentTimeMillis()));
+  builder.addConfiguration(Constants.AGENT_PID,agentConfiguration);
+  profileService.updateProfile(builder.getProfile());
+}

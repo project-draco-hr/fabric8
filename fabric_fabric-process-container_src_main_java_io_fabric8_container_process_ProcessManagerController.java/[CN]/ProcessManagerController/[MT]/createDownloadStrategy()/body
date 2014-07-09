@@ -2,25 +2,22 @@
   if (fabricService != null) {
     Container container=fabricService.getCurrentContainer();
     if (container != null) {
-      Profile currentContainerOverlayProfile=fabricService.getCurrentContainer().getOverlayProfile();
-      if (currentContainerOverlayProfile != null) {
-        final DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabricService,downloadExecutor);
-        return new DownloadStrategy(){
-          @Override public File downloadContent(          URL sourceUrl,          File installDir) throws IOException {
-            DownloadFuture future=downloadManager.download(sourceUrl.toString());
-            File file=AgentUtils.waitForFileDownload(future);
-            if (file != null && file.exists() && file.isFile()) {
-              File newFile=new File(installDir,file.getName());
-              Files.copy(file,newFile);
-              return newFile;
-            }
+      final DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabricService,downloadExecutor);
+      return new DownloadStrategy(){
+        @Override public File downloadContent(        URL sourceUrl,        File installDir) throws IOException {
+          DownloadFuture future=downloadManager.download(sourceUrl.toString());
+          File file=AgentUtils.waitForFileDownload(future);
+          if (file != null && file.exists() && file.isFile()) {
+            File newFile=new File(installDir,file.getName());
+            Files.copy(file,newFile);
+            return newFile;
+          }
  else {
-              throw new IOException("Could not download " + sourceUrl);
-            }
+            throw new IOException("Could not download " + sourceUrl);
           }
         }
-;
       }
+;
     }
   }
   return null;

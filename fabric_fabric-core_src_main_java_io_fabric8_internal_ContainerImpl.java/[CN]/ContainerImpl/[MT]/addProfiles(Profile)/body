@@ -4,9 +4,12 @@
   for (  Profile p : getProfiles()) {
     updatedProfileList.add(p);
   }
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
   for (  Profile addedProfile : addedProfiles) {
-    if (!addedProfile.exists()) {
-      throw new IllegalArgumentException("Profile " + addedProfile.getId() + " doesn't exist.");
+    String versionId=addedProfile.getVersion();
+    String profileId=addedProfile.getId();
+    if (!profileService.hasProfile(versionId,profileId)) {
+      throw new IllegalArgumentException("Profile " + profileId + " doesn't exist.");
     }
  else     if (!updatedProfileList.contains(addedProfile)) {
       updatedProfileList.add(addedProfile);

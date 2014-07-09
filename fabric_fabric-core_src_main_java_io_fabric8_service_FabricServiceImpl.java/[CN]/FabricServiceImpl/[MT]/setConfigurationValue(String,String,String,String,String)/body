@@ -1,25 +1,25 @@
 {
   assertValid();
-  Version v=getVersion(versionId);
-  if (v == null)   throw new FabricException("No version found: " + versionId);
-  Profile pr=v.getProfile(profileId);
-  if (pr == null)   throw new FabricException("No profile found: " + profileId);
-  Map<String,byte[]> configs=pr.getFileConfigurations();
-  byte[] b=configs.get(pid);
-  Properties p=null;
+  Version version=profileService.get().getRequiredVersion(versionId);
+  Profile profile=version.getRequiredProfile(profileId);
+  Map<String,byte[]> configs=profile.getFileConfigurations();
+  byte[] bytes=configs.get(pid);
+  Properties properties;
   try {
-    if (b != null) {
-      p=DataStoreUtils.toProperties(b);
+    if (bytes != null) {
+      properties=DataStoreUtils.toProperties(bytes);
     }
  else {
-      p=new Properties();
+      properties=new Properties();
     }
-    p.setProperty(key,value);
-    b=DataStoreUtils.toBytes(p);
-    configs.put(pid,b);
-    pr.setFileConfigurations(configs);
+    properties.setProperty(key,value);
+    bytes=DataStoreUtils.toBytes(properties);
+    configs.put(pid,bytes);
   }
- catch (  Throwable t) {
-    throw new FabricException(t);
+ catch (  IOException ex) {
+    throw new FabricException(ex);
   }
+  ProfileBuilder builder=ProfileBuilder.Factory.createFrom(profile);
+  builder.setFileConfigurations(configs);
+  profileService.get().updateProfile(builder.getProfile());
 }

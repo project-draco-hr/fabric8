@@ -1,0 +1,13 @@
+{
+  List<String> removedProfiles=Arrays.asList(profileIds);
+  List<Profile> updatedProfileList=new LinkedList<>();
+  for (  String profileId : fabricService.getDataStore().getContainerProfiles(id)) {
+    if (!removedProfiles.contains(profileId)) {
+      Profile profile=getVersion().getProfile(profileId);
+      if (profile != null) {
+        updatedProfileList.add(profile);
+      }
+    }
+  }
+  setProfiles(updatedProfileList.toArray(new Profile[updatedProfileList.size()]));
+}

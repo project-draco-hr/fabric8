@@ -1,27 +1,26 @@
 {
-  Version version=fabricService.getVersion(versionId);
+  Version version=profileService.getRequiredVersion(versionId);
   Profile parentProfile=null;
   if (Strings.isNotBlank(parentProfileName)) {
-    parentProfile=version.getProfile(parentProfileName);
+    parentProfile=version.getRequiredProfile(parentProfileName);
   }
-  Profile result=parentProfile;
-  if (group != null && profile != null) {
-    Map config=null;
-    if (!version.hasProfile(profile)) {
-      result=version.createProfile(profile);
-    }
+  if (group == null || profileId == null)   return parentProfile;
+  ProfileBuilder builder;
+  boolean create=!version.hasProfile(profileId);
+  if (create) {
+    builder=ProfileBuilder.Factory.create(versionId,profileId);
+  }
  else {
-      result=version.getProfile(profile);
-    }
-    if (parentProfile != null) {
-      result.setParents(new Profile[]{parentProfile});
-    }
-    Map<String,String> parentProfileConfig=result.getConfiguration(MQ_CONNECTION_FACTORY_PID);
-    if (config == null) {
-      config=parentProfileConfig;
-    }
-    config.put(GROUP,group);
-    result.setConfiguration(MQ_CONNECTION_FACTORY_PID,config);
+    Profile profile=version.getRequiredProfile(profileId);
+    builder=ProfileBuilder.Factory.createFrom(profile);
   }
-  return result;
+  if (parentProfile != null) {
+    builder.addParent(parentProfile);
+  }
+  Map<String,String> config=builder.getConfiguration(MQ_CONNECTION_FACTORY_PID);
+  config=config != null ? new HashMap<>(config) : new HashMap<String,String>();
+  config.put(GROUP,group);
+  builder.addConfiguration(MQ_CONNECTION_FACTORY_PID,config);
+  Profile profile=builder.getProfile();
+  return create ? profileService.createProfile(profile) : profileService.updateProfile(profile);
 }

@@ -1,8 +1,8 @@
 {
   String v="1.0";
-  Version version=new VersionImpl(v,fabricService);
+  Version version=null;
   List<String> profiles=Arrays.asList();
-  expect(fabricService.getVersion(eq(v))).andReturn(version).anyTimes();
+  expect(profileService.getRequiredVersion(eq(v))).andReturn(version).anyTimes();
   expect(dataStore.getContainerVersion(eq(CONTAINER_ID))).andReturn(v).anyTimes();
   expect(dataStore.getContainerProfiles(eq(CONTAINER_ID))).andReturn(profiles).anyTimes();
   expect(dataStore.hasProfile(v,"default")).andReturn(true).anyTimes();

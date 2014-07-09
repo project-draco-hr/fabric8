@@ -1,9 +1,0 @@
-{
-  out.println(String.format(CONSOLE_FORMAT,"[version]","[default]","[# containers]","[description]"));
-  for (  Version version : versions) {
-    boolean isDefault=defaultVersion.getId().equals(version.getId());
-    int active=countContainersByVersion(containers,version);
-    String description=version.getAttributes().get(Version.DESCRIPTION);
-    out.println(String.format(CONSOLE_FORMAT,version.getId(),(isDefault ? "true" : "false"),active,(description != null ? description : "")));
-  }
-}

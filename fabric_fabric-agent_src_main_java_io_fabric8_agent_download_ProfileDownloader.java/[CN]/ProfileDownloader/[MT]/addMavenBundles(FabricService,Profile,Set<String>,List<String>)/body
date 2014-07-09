@@ -2,7 +2,9 @@
   for (  String bundle : bundleList) {
     if (bundle != null) {
       if (bundle.contains("$")) {
-        bundle=VersionPropertyPointerResolver.replaceVersions(fabricService,profile.getOverlay().getConfigurations(),bundle);
+        ProfileService profileService=fabricService.adapt(ProfileService.class);
+        Profile overlay=profileService.getOverlayProfile(profile);
+        bundle=VersionPropertyPointerResolver.replaceVersions(fabricService,overlay.getConfigurations(),bundle);
       }
       bundles.add(bundle);
     }

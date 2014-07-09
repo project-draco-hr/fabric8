@@ -1,0 +1,25 @@
+{
+  Profile profile=profiles.get(profileId);
+  if (profile == null) {
+    boolean hasProfile=dataStore.get().hasProfile(versionId,profileId);
+    IllegalStateAssertion.assertTrue(hasProfile,"Profile '" + profileId + "' does not exist in version: "+ versionId);
+    Map<String,String> attributes=dataStore.get().getProfileAttributes(versionId,profileId);
+    ProfileBuilder builder=ProfileBuilder.Factory.create(profileId).version(versionId).setAttributes(attributes);
+    String parentsAttr=attributes.get(Profile.PARENTS);
+    if (parentsAttr != null && !parentsAttr.isEmpty()) {
+      for (      String parentId : parentsAttr.trim().split(" ")) {
+        Profile parent=profiles.get(parentId);
+        if (parent == null) {
+          parent=getProfileInternal(versionId,parentId,profiles);
+        }
+        builder.addParent(parent);
+      }
+    }
+    builder.setFileConfigurations(dataStore.get().getFileConfigurations(versionId,profileId));
+    builder.setConfigurations(dataStore.get().getConfigurations(versionId,profileId));
+    builder.setLastModified(dataStore.get().getLastModified(versionId,profileId));
+    profile=builder.getProfile();
+    profiles.put(profile.getId(),profile);
+  }
+  return profile;
+}

@@ -1,7 +1,5 @@
 {
   String versionId=fabricService.getDataStore().getContainerVersion(id);
-  if (versionId == null) {
-    return null;
-  }
-  return fabricService.getVersion(versionId);
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
+  return versionId != null ? profileService.getVersion(versionId) : null;
 }

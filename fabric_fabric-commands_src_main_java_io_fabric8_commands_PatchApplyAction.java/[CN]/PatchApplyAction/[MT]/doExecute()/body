@@ -1,10 +1,15 @@
 {
   List<Version> versions;
-  if (version != null && !version.isEmpty()) {
-    versions=Collections.singletonList(fabricService.getVersion(version));
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
+  if (versionId != null && !versionId.isEmpty()) {
+    Version version=profileService.getRequiredVersion(versionId);
+    versions=Collections.singletonList(version);
   }
  else   if (allVersions) {
-    versions=Arrays.asList(fabricService.getVersions());
+    versions=new ArrayList<>();
+    for (    String versionId : profileService.getVersions()) {
+      versions.add(profileService.getRequiredVersion(versionId));
+    }
   }
  else {
     versions=Collections.singletonList(fabricService.getDefaultVersion());

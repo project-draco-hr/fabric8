@@ -1,14 +1,15 @@
 {
   Set<String> bundles=new LinkedHashSet<String>();
   Set<Feature> features=new LinkedHashSet<Feature>();
-  Profile profile=container.getOverlayProfile();
-  bundles.addAll(profile.getBundles());
-  AgentUtils.addFeatures(features,fabricService,downloadManager,profile);
+  Profile overlayProfile=container.getOverlayProfile();
+  Profile effectiveProfile=Profiles.getEffectiveProfile(fabricService,overlayProfile);
+  bundles.addAll(effectiveProfile.getBundles());
+  AgentUtils.addFeatures(features,fabricService,downloadManager,effectiveProfile);
   if (copyFilesIntoGit) {
     copyDeploymentsIntoGit(git,baseDir,bundles,features);
   }
  else {
-    addDeploymentsIntoPom(git,baseDir,profile,bundles,features);
+    addDeploymentsIntoPom(git,baseDir,effectiveProfile,bundles,features);
   }
   String message="updating deployment";
   git.commit().setMessage(message).call();

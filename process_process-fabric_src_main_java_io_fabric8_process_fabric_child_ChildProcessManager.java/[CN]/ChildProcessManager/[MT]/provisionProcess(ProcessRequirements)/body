@@ -1,11 +1,9 @@
 {
   uninstallProcess(requirements);
-  String id=requirements.getId();
   InstallOptions installOptions=requirements.createInstallOptions();
   Profile processProfile=getProcessProfile(requirements,true);
   Profile deployProcessProfile=getProcessProfile(requirements,false);
-  Map<String,String> configuration=ProcessUtils.getProcessLayout(processProfile,requirements.getLayout());
-  DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabricService,executorService);
+  Map<String,String> configuration=ProcessUtils.getProcessLayout(fabricService,processProfile,requirements.getLayout());
   InstallTask applyConfiguration=new ApplyConfigurationTask(configuration,installOptions.getProperties());
   List<Profile> profiles=new ArrayList<Profile>();
   profiles.add(deployProcessProfile);

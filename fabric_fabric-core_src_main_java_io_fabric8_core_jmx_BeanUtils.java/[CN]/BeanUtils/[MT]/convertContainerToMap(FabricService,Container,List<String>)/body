@@ -14,7 +14,9 @@
       answer.put(field,Ids.getId(container.getVersion()));
     }
  else     if (field.equalsIgnoreCase("overlayProfile")) {
-      answer.put(field,convertProfileToMap(service,container.getOverlayProfile(),getFields(Profile.class)));
+      Profile overlayProfile=container.getOverlayProfile();
+      Profile effectiveProfile=Profiles.getEffectiveProfile(fabricService,overlayProfile);
+      answer.put(field,convertProfileToMap(fabricService,effectiveProfile,getFields(Profile.class)));
     }
  else {
       addProperty(container,field,answer);

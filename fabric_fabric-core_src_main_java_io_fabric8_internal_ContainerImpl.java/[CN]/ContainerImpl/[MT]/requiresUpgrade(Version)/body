@@ -5,8 +5,9 @@
   }
   for (  Profile oldProfile : getProfiles()) {
     Profile newProfile=version.getProfile(oldProfile.getId());
-    if (newProfile != null && !oldProfile.agentConfigurationEquals(newProfile)) {
+    if (newProfile != null && !Profiles.agentConfigurationEquals(fabricService,oldProfile,newProfile)) {
       requiresUpgrade=true;
+      break;
     }
   }
   return requiresUpgrade;

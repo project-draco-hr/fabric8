@@ -1,7 +1,7 @@
 {
-  FabricService fservice=fabricService.get();
-  Container container=fservice.getCurrentContainer();
+  Container container=fabricService.get().getCurrentContainer();
+  ProfileService profileService=fabricService.get().adapt(ProfileService.class);
   Version version=container.getVersion();
-  Profile p=new VersionProfile(version);
-  return new ProfileOverlayImpl(p,fservice.getEnvironment(),true,fservice);
+  Profile versionProfile=getVersionProfile(version);
+  return Profiles.getEffectiveProfile(fabricService.get(),profileService.getOverlayProfile(versionProfile));
 }

@@ -1,8 +1,9 @@
 {
   String oldTemplateText=templateText;
   if (templateText == null && fabricService != null) {
-    Container current=fabricService.getCurrentContainer();
-    byte[] bytes=current.getOverlayProfile().getFileConfiguration(TEMPLATE_FILE_NAME);
+    Profile overlayProfile=fabricService.getCurrentContainer().getOverlayProfile();
+    Profile effectiveProfile=Profiles.getEffectiveProfile(fabricService,overlayProfile);
+    byte[] bytes=effectiveProfile.getFileConfiguration(TEMPLATE_FILE_NAME);
     if (bytes != null) {
       templateText=new String(bytes);
     }

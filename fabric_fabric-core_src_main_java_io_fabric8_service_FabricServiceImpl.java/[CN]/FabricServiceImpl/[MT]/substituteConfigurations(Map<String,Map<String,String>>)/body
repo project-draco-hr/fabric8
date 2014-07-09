@@ -1,6 +1,6 @@
 {
   final Map<String,PlaceholderResolver> resolversSnapshot=new HashMap<String,PlaceholderResolver>(placeholderResolvers);
-  Set<String> requiredSchemes=getSchemesForProfileConfigurations(configs);
+  Set<String> requiredSchemes=getSchemesForProfileConfigurations(configurations);
   Set<String> availableSchemes=resolversSnapshot.keySet();
   if (!availableSchemes.containsAll(requiredSchemes)) {
     StringBuilder sb=new StringBuilder();
@@ -12,8 +12,14 @@
     }
     throw new FabricException(sb.toString());
   }
+  final Map<String,Map<String,String>> mutableConfigurations=new HashMap<>();
+  for (  Entry<String,Map<String,String>> entry : configurations.entrySet()) {
+    String key=entry.getKey();
+    Map<String,String> value=new HashMap<>(entry.getValue());
+    mutableConfigurations.put(key,value);
+  }
   final FabricService fabricService=this;
-  for (  Map.Entry<String,Map<String,String>> entry : configs.entrySet()) {
+  for (  Map.Entry<String,Map<String,String>> entry : mutableConfigurations.entrySet()) {
     final String pid=entry.getKey();
     Map<String,String> props=entry.getValue();
     for (    Map.Entry<String,String> e : props.entrySet()) {
@@ -23,7 +29,7 @@
         public String getValue(        String toSubstitute){
           if (toSubstitute != null && toSubstitute.contains(":")) {
             String scheme=toSubstitute.substring(0,toSubstitute.indexOf(":"));
-            return resolversSnapshot.get(scheme).resolve(fabricService,configs,pid,key,toSubstitute);
+            return resolversSnapshot.get(scheme).resolve(fabricService,mutableConfigurations,pid,key,toSubstitute);
           }
           return substituteBundleProperty(toSubstitute,bundleContext);
         }
@@ -31,4 +37,5 @@
 ));
     }
   }
+  return mutableConfigurations;
 }

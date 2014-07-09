@@ -1,10 +1,11 @@
 {
   FabricValidations.validateProfileName(profileName);
-  Version version=versionName != null ? fabricService.getVersion(versionName) : fabricService.getDefaultVersion();
-  Profile profile=version.getProfile(profileName);
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
+  Version version=versionName != null ? profileService.getVersion(versionName) : fabricService.getDefaultVersion();
+  Profile profile=version.getRequiredProfile(profileName);
   if (profile == null) {
     throw new IllegalArgumentException("No profile found with name:" + profileName + " and version:"+ version.getId());
   }
-  profile.refresh();
+  Profiles.refreshProfile(fabricService,profile);
   return null;
 }

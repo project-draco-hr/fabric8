@@ -1,0 +1,13 @@
+{
+  Profile overlayProfile;
+  if (profile.isOverlay()) {
+    overlayProfile=profile;
+  }
+ else {
+    String environment=runtimeProperties.get().getProperty(SystemProperties.FABRIC_ENVIRONMENT);
+    ProfileBuilder builder=ProfileBuilder.Factory.create(profile.getVersion(),profile.getId());
+    builder.addOptions(new OverlayOptionsProvider(profile,environment));
+    overlayProfile=builder.getProfile();
+  }
+  return overlayProfile;
+}

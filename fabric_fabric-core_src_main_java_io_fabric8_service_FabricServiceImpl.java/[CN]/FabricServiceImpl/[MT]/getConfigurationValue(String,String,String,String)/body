@@ -1,9 +1,6 @@
 {
   assertValid();
-  Version v=getVersion(versionId);
-  if (v == null)   throw new FabricException("No version found: " + versionId);
-  Profile pr=v.getProfile(profileId);
-  if (pr == null)   throw new FabricException("No profile found: " + profileId);
+  Profile pr=profileService.get().getRequiredProfile(versionId,profileId);
   Map<String,byte[]> configs=pr.getFileConfigurations();
   byte[] b=configs.get(pid);
   Properties p=null;

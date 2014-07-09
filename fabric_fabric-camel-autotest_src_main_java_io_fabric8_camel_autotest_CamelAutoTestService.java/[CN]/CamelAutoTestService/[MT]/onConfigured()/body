@@ -4,7 +4,8 @@
   MBeanServer mbeanServerValue=mbeanServer;
   if (mbeanServerValue != null && fabricService != null) {
     Profile overlayProfile=fabricService.getCurrentContainer().getOverlayProfile();
-    List<String> configurationFileNames=overlayProfile.getConfigurationFileNames();
+    Profile effectiveProfile=Profiles.getEffectiveProfile(fabricService,overlayProfile);
+    Set<String> configurationFileNames=effectiveProfile.getConfigurationFileNames();
     for (    CamelContext camelContext : camelContexts.values()) {
       String camelContextID=camelContext.getName();
       if (camelContext instanceof ModelCamelContext) {
@@ -60,7 +61,7 @@
                   for (                  String configFile : configurationFileNames) {
                     if (configFile.startsWith(routePath)) {
                       LOG.info("Sending file: " + configFile + " to "+ endpoint);
-                      byte[] data=overlayProfile.getFileConfiguration(configFile);
+                      byte[] data=effectiveProfile.getFileConfiguration(configFile);
                       if (data != null) {
                         producerTemplate.sendBody(endpoint,data);
                       }

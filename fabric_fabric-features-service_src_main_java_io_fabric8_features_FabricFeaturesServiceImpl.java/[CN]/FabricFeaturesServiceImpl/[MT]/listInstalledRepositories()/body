@@ -1,9 +1,10 @@
 {
   Set<String> repositoryUris=new LinkedHashSet<String>();
   Set<Repository> repos=new LinkedHashSet<Repository>();
-  Profile profile=fabricService.get().getCurrentContainer().getOverlayProfile();
-  if (profile.getRepositories() != null) {
-    for (    String uri : profile.getRepositories()) {
+  Profile overlayProfile=fabricService.get().getCurrentContainer().getOverlayProfile();
+  Profile effectiveProfile=Profiles.getEffectiveProfile(fabricService.get(),overlayProfile);
+  if (effectiveProfile.getRepositories() != null) {
+    for (    String uri : effectiveProfile.getRepositories()) {
       repositoryUris.add(uri);
     }
   }

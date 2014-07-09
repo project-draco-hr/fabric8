@@ -1,14 +1,15 @@
 {
-  Profile profile=null;
+  Profile effectiveProfile;
   try {
-    profile=fabricService.get().getCurrentContainer().getOverlayProfile();
+    Profile overlayProfile=fabricService.get().getCurrentContainer().getOverlayProfile();
+    effectiveProfile=Profiles.getEffectiveProfile(fabricService.get(),overlayProfile);
   }
  catch (  Exception ex) {
-    LOGGER.debug("Failed to read container profile. This exception will be ignored..",ex);
+    LOGGER.warn("Failed to read container profile. This exception will be ignored..",ex);
     return;
   }
   try {
-    final Map<String,Map<String,String>> pidProperties=profile.getConfigurations();
+    final Map<String,Map<String,String>> pidProperties=effectiveProfile.getConfigurations();
     List<Configuration> configs=asList(configAdmin.get().listConfigurations("(" + FABRIC_ZOOKEEPER_PID + "=*)"));
     for (    String pid : pidProperties.keySet()) {
       if (!pid.equals(Constants.AGENT_PID)) {
@@ -21,7 +22,7 @@
       if (pid.equals(Constants.AGENT_PID)) {
         Hashtable<String,Object> c=new Hashtable<String,Object>();
         c.putAll(pidProperties.get(pid));
-        c.put(Profile.HASH,String.valueOf(profile.getProfileHash()));
+        c.put(Profile.HASH,String.valueOf(effectiveProfile.getProfileHash()));
         updateConfig(configs,pid,c);
       }
     }

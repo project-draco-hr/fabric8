@@ -7,12 +7,13 @@
   String versionId=options.getVersion();
   Map<String,String> openshiftConfigOverlay=new HashMap<String,String>();
   if (profiles != null && versionId != null) {
-    Version version=fabricService.get().getVersion(versionId);
+    ProfileService profileService=fabricService.get().adapt(ProfileService.class);
+    Version version=profileService.getVersion(versionId);
     if (version != null) {
       for (      String profileId : profiles) {
-        Profile profile=version.getProfile(profileId);
+        Profile profile=version.getRequiredProfile(profileId);
         if (profile != null) {
-          Profile overlay=profile.getOverlay();
+          Profile overlay=profileService.getOverlayProfile(profile);
           Map<String,String> openshiftConfig=overlay.getConfiguration(OpenShiftConstants.OPENSHIFT_PID);
           if (openshiftConfig != null) {
             openshiftConfigOverlay.putAll(openshiftConfig);

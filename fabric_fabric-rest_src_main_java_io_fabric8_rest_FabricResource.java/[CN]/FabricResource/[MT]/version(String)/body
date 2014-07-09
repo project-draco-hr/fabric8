@@ -1,7 +1,8 @@
 {
   FabricService fabricService=getFabricService();
   if (fabricService != null && Strings.isNotBlank(versionId)) {
-    Version version=fabricService.getVersion(versionId);
+    ProfileService profileService=fabricService.adapt(ProfileService.class);
+    Version version=profileService.getRequiredVersion(versionId);
     if (version != null) {
       return new VersionResource(this,version);
     }

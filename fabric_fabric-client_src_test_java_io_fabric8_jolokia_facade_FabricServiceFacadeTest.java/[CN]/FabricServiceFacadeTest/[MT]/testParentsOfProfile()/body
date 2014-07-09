@@ -3,9 +3,9 @@
   FabricService service=getFabricService();
   Version v=service.getDefaultVersion();
   Assume.assumeNotNull(v);
-  Profile prof=v.getProfile("hawtio");
+  Profile prof=v.getRequiredProfile("hawtio");
   Assume.assumeNotNull(prof);
-  Profile[] parents=prof.getParents();
+  List<Profile> parents=prof.getParents();
   for (  Profile p : parents) {
     System.out.println(p.getId() + " - " + p.getVersion());
   }

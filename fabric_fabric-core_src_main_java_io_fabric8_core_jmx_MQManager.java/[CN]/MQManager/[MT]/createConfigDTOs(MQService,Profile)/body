@@ -13,9 +13,9 @@
       dto.setBrokerName(brokerName);
       String version=profile.getVersion();
       dto.setVersion(version);
-      Profile[] parents=profile.getParents();
-      if (parents != null && parents.length > 0) {
-        dto.setParentProfile(parents[0].getId());
+      List<Profile> parents=profile.getParents();
+      if (parents.size() > 0) {
+        dto.setParentProfile(parents.get(0).getId());
       }
       if (configuration != null) {
         dto.setData(configuration.get(DATA));

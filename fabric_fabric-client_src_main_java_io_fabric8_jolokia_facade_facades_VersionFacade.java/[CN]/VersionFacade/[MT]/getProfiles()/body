@@ -2,10 +2,10 @@
   List<Profile> rc=new ArrayList<Profile>();
   JSONArray array=getFieldValue("profiles");
   if (array == null || array.size() == 0) {
-    return new Profile[0];
+    return Collections.emptyList();
   }
   for (  Object profile : array) {
     rc.add(new ProfileFacade(j4p,id,(String)profile));
   }
-  return rc.toArray(new Profile[rc.size()]);
+  return rc;
 }

@@ -1,8 +1,10 @@
 {
-  FabricValidations.validateProfileName(name);
-  Version ver=version != null ? fabricService.getVersion(version) : fabricService.getDefaultVersion();
-  Profile[] parents=FabricCommand.getExistingProfiles(fabricService,ver,this.parents);
-  Profile profile=fabricService.getVersion(ver.getId()).createProfile(name);
-  profile.setParents(parents);
+  FabricValidations.validateProfileName(profileId);
+  Version version=versionParam != null ? profileService.getRequiredVersion(versionParam) : fabricService.getDefaultVersion();
+  String versionId=version.getId();
+  Profile[] parents=FabricCommand.getExistingProfiles(fabricService,version,this.parents);
+  ProfileBuilder builder=ProfileBuilder.Factory.create(versionId,profileId);
+  builder.setParents(Arrays.asList(parents));
+  profileService.createProfile(builder.getProfile());
   return null;
 }

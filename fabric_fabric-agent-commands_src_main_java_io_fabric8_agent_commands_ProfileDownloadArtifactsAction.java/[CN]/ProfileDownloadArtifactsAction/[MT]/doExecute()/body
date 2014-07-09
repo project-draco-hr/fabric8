@@ -1,5 +1,5 @@
 {
-  Version ver=version != null ? fabricService.getVersion(version) : fabricService.getDefaultVersion();
+  Version ver=version != null ? profileService.getRequiredVersion(version) : fabricService.getDefaultVersion();
   if (ver == null) {
     if (version != null) {
       System.out.println("version " + version + " does not exist!");
@@ -39,7 +39,7 @@
   if (profile != null) {
     Profile profileObject=null;
     if (ver.hasProfile(profile)) {
-      profileObject=ver.getProfile(profile);
+      profileObject=ver.getRequiredProfile(profile);
     }
     if (profileObject == null) {
       System.out.println("Source profile " + profile + " not found.");

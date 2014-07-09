@@ -1,5 +1,6 @@
 {
-  Profile p=getFabricService().getVersion(versionId).createProfile(name);
-  p.setParents(stringsToProfiles(versionId,parents));
-  return getProfile(versionId,p.getId());
+  ProfileBuilder builder=ProfileBuilder.Factory.create(versionId,profileId);
+  builder.addParents(Arrays.asList(stringsToProfiles(versionId,parents)));
+  Profile profile=profileService.createProfile(builder.getProfile());
+  return getProfile(versionId,profile.getId());
 }

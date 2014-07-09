@@ -13,10 +13,11 @@
   addAll(bundles,requirements.getBundles());
   addAll(features,requirements.getFeatures());
   addAll(repositories,requirements.getFeatureRepositories());
-  Containers.setParentProfileIds(version,profile,parentProfiles);
-  profile.setBundles(bundles);
-  profile.setFeatures(features);
-  profile.setRepositories(repositories);
+  ProfileBuilder builder=ProfileBuilder.Factory.createFrom(profile);
+  setParentProfileIds(builder,version,profile,parentProfiles);
+  builder.setBundles(bundles);
+  builder.setFeatures(features);
+  builder.setRepositories(repositories);
   String webContextPath=requirements.getWebContextPath();
   if (!Strings.isEmpty(webContextPath)) {
     Map<String,String> contextPathConfig=profile.getConfiguration(ChildConstants.WEB_CONTEXT_PATHS_PID);
@@ -27,7 +28,7 @@
     String current=contextPathConfig.get(key);
     if (!Objects.equal(current,webContextPath)) {
       contextPathConfig.put(key,webContextPath);
-      profile.setConfiguration(ChildConstants.WEB_CONTEXT_PATHS_PID,contextPathConfig);
+      builder.addConfiguration(ChildConstants.WEB_CONTEXT_PATHS_PID,contextPathConfig);
     }
   }
   String description=requirements.getDescription();
@@ -35,7 +36,9 @@
     String fileName="Summary.md";
     byte[] data=profile.getFileConfiguration(fileName);
     if (data == null || data.length == 0 || new String(data).trim().length() == 0) {
-      profile.setConfigurationFile(fileName,description.getBytes());
+      builder.addConfigurationFile(fileName,description.getBytes());
     }
   }
+  ProfileService profileService=fabricService.get().adapt(ProfileService.class);
+  profile=profileService.updateProfile(builder.getProfile());
 }

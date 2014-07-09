@@ -4,7 +4,7 @@
   List<Profile> profiles=Profiles.getProfiles(fabricService,profileIds,versionId);
   InstallTask answer=null;
   if (layout != null) {
-    Map<String,String> configuration=ProcessUtils.getProcessLayout(profiles,layout);
+    Map<String,String> configuration=ProcessUtils.getProcessLayout(fabricService,profiles,layout);
     if (configuration != null && !configuration.isEmpty()) {
       Map variables=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.TEMPLATE_VARIABLES_PID);
       if (variables == null) {

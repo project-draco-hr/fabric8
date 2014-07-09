@@ -1,0 +1,11 @@
+{
+  assertValid();
+  if (!dataStore.get().hasVersion(versionId))   return null;
+  VersionBuilder builder=VersionBuilder.Factory.create(versionId);
+  builder.setAttributes(dataStore.get().getVersionAttributes(versionId));
+  HashMap<String,Profile> profiles=new HashMap<String,Profile>();
+  for (  String profileId : dataStore.get().getProfiles(versionId)) {
+    builder.addProfile(getProfileInternal(versionId,profileId,profiles));
+  }
+  return builder.getVersion();
+}

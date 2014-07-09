@@ -1,8 +1,9 @@
 {
   StringsCompleter delegate=new StringsCompleter();
-  Version[] versions=fabricService.getVersions();
-  for (  Version version : versions) {
-    delegate.getStrings().add(version.getId());
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
+  List<String> versions=profileService.getVersions();
+  for (  String version : versions) {
+    delegate.getStrings().add(version);
   }
   return delegate.complete(buffer,cursor,candidates);
 }

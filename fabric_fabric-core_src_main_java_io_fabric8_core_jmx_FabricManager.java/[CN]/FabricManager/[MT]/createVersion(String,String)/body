@@ -1,4 +1,5 @@
 {
-  Version version=getFabricService().createVersion(parentVersionId,toVersion);
-  return BeanUtils.convertVersionToMap(getFabricService(),version,BeanUtils.getFields(Version.class));
+  Version version=VersionBuilder.Factory.create(versionId).parent(parentId).getVersion();
+  version=profileService.createVersion(version);
+  return BeanUtils.convertVersionToMap(fabricService,version,BeanUtils.getFields(Version.class));
 }

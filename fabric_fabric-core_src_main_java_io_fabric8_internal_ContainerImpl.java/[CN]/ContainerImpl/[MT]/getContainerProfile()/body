@@ -1,0 +1,7 @@
+{
+  Version version=getVersion();
+  String profileId="#container-" + getId();
+  ProfileBuilder builder=ProfileBuilder.Factory.create(profileId).version(version.getId());
+  ContainerProfileOptions optionsProvider=new ContainerProfileOptions(getId(),version,fabricService.getDataStore());
+  return builder.addOptions(optionsProvider).getProfile();
+}

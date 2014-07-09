@@ -1,0 +1,55 @@
+{
+  boolean editInline=true;
+  for (  String pidProperty : pidProperties) {
+    String currentPid=null;
+    String keyValuePair="";
+    if (pidProperty.contains(PID_KEY_SEPARATOR)) {
+      currentPid=pidProperty.substring(0,pidProperty.indexOf(PID_KEY_SEPARATOR));
+      keyValuePair=pidProperty.substring(pidProperty.indexOf(PID_KEY_SEPARATOR) + 1);
+    }
+ else {
+      currentPid=pidProperty;
+    }
+    Map<String,String> conf=getConfigurationFromBuilder(builder,currentPid);
+    if (pidProperties.length == 1 && importPid) {
+      System.out.println("Importing pid:" + currentPid + " to profile:"+ profile.getId()+ " version:"+ profile.getVersion());
+      importPidFromLocalConfigAdmin(currentPid,conf);
+      builder.addConfiguration(currentPid,conf);
+      return true;
+    }
+    Map<String,String> configMap=extractConfigs(keyValuePair);
+    if (configMap.isEmpty() && set) {
+      editInline=false;
+    }
+ else     if (configMap.isEmpty() && delete) {
+      editInline=true;
+      System.out.println("Deleting pid:" + currentPid + " from profile:"+ profile.getId()+ " version:"+ profile.getVersion());
+      builder.deleteConfiguration(currentPid);
+    }
+ else {
+      for (      Map.Entry<String,String> configEntries : configMap.entrySet()) {
+        String key=configEntries.getKey();
+        String value=configEntries.getValue();
+        if (value == null && delete) {
+          System.out.println("Deleting key:" + key + " from pid:"+ currentPid+ " and profile:"+ profile.getId()+ " version:"+ profile.getVersion());
+          conf.remove(key);
+        }
+ else {
+          if (append) {
+            System.out.println("Appending value:" + value + " key:"+ key+ " to pid:"+ currentPid+ " and profile:"+ profile.getId()+ " version:"+ profile.getVersion());
+          }
+ else           if (remove) {
+            System.out.println("Removing value:" + value + " key:"+ key+ " from pid:"+ currentPid+ " and profile:"+ profile.getId()+ " version:"+ profile.getVersion());
+          }
+ else           if (set) {
+            System.out.println("Setting value:" + value + " key:"+ key+ " on pid:"+ currentPid+ " and profile:"+ profile.getId()+ " version:"+ profile.getVersion());
+          }
+          updatedDelimitedList(conf,key,value,delimiter,set,delete,append,remove);
+        }
+      }
+      editInline=true;
+      builder.addConfiguration(currentPid,conf);
+    }
+  }
+  return editInline;
+}

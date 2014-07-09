@@ -1,6 +1,8 @@
 {
   List<String> answer=new ArrayList<String>();
-  for (  Container c : self.getAssociatedContainers()) {
+  String versionId=self.getVersion();
+  String profileId=self.getId();
+  for (  Container c : fabricService.getAssociatedContainers(versionId,profileId)) {
     answer.add(c.getId());
   }
   return answer;

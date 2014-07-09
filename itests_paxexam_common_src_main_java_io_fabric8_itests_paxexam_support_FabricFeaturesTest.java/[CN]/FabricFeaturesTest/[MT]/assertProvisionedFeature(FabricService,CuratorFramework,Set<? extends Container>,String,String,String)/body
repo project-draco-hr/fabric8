@@ -7,8 +7,8 @@
   sb.append("]");
   System.out.println("Testing profile:" + profileName + " on container:"+ sb.toString()+ " by adding feature:"+ featureNames);
   Version version=fabricService.getDefaultVersion();
-  Profile defaultProfile=version.getProfile("default");
-  Profile targetProfile=version.getProfile(profileName);
+  Profile defaultProfile=version.getRequiredProfile("default");
+  Profile targetProfile=version.getRequiredProfile(profileName);
   for (  Container container : containers) {
     container.setProfiles(new Profile[]{defaultProfile});
   }
@@ -36,7 +36,7 @@
   }
 ,PROVISION_TIMEOUT));
   for (  Container container : containers) {
-    if (!defaultProfile.configurationEquals(targetProfile)) {
+    if (!defaultProfile.equals(targetProfile)) {
       setData(curator,ZkPath.CONTAINER_PROVISION_RESULT.getPath(container.getId()),"switching profile");
     }
     container.setProfiles(new Profile[]{defaultProfile});

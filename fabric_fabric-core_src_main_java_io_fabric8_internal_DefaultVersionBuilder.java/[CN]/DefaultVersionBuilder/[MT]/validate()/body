@@ -1,0 +1,14 @@
+{
+  super.validate();
+  IllegalStateAssertion.assertNotNull(versionId,"Version must have an identity");
+  if (parentId != null) {
+    boolean hasContent=!getAttributes().isEmpty() || !profiles.isEmpty();
+    IllegalStateAssertion.assertFalse(hasContent,"Version can either specify a parent or have attribute/profile content");
+  }
+ else {
+    for (    Profile profile : profiles.values()) {
+      String prfversion=profile.getVersion();
+      IllegalStateAssertion.assertEquals(versionId,prfversion,"Profile version not '" + versionId + "' for: "+ profile);
+    }
+  }
+}

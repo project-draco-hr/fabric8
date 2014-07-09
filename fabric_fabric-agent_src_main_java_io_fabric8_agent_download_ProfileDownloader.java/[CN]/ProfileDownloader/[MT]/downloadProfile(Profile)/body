@@ -2,8 +2,9 @@
   if (listener != null) {
     listener.beforeDownloadProfile(profile);
   }
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
   if (!profile.isOverlay()) {
-    profile=profile.getOverlay();
+    profile=profileService.getOverlayProfile(profile);
   }
   DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabricService,executorService);
   downloadManager.setDownloadFilesFromProfile(isDownloadFilesFromProfile());

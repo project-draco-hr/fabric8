@@ -1,16 +1,18 @@
 {
-  FabricService fabric=getFabricService();
+  ProfileService profileService=fabricService.get().adapt(ProfileService.class);
   String versionId=getVersionId(requirements);
-  Version version=findVersion(fabric,versionId);
+  Version version=findVersion(fabricService.get(),versionId);
   if (version == null) {
     String baseVersionId=requirements.getBaseVersion();
-    baseVersionId=getVersionOrDefaultVersion(fabric,baseVersionId);
-    Version baseVersion=findVersion(fabric,baseVersionId);
+    baseVersionId=getVersionOrDefaultVersion(fabricService.get(),baseVersionId);
+    Version baseVersion=findVersion(fabricService.get(),baseVersionId);
     if (baseVersion != null) {
-      version=fabric.createVersion(baseVersion,versionId);
+      version=VersionBuilder.Factory.create(versionId).parent(baseVersion.getId()).getVersion();
+      version=profileService.createVersion(version);
     }
  else {
-      version=fabric.createVersion(versionId);
+      version=VersionBuilder.Factory.create(versionId).getVersion();
+      version=profileService.createVersion(version);
     }
   }
   return version;

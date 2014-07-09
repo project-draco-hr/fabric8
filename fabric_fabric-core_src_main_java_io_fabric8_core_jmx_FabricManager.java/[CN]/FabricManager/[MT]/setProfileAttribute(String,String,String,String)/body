@@ -1,5 +1,5 @@
 {
-  Version version=getFabricService().getVersion(versionId);
-  Profile profile=version.getProfile(profileId);
-  profile.setAttribute(attributeId,value);
+  ProfileBuilder builder=ProfileBuilder.Factory.createFrom(versionId,profileId);
+  builder.addAttribute(attributeId,value);
+  profileService.updateProfile(builder.getProfile());
 }

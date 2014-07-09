@@ -1,0 +1,33 @@
+{
+  String versionId=profile.getVersion();
+  String profileId=profile.getId();
+  if (create) {
+    LOGGER.info("createProfile: {}",profile);
+    dataStore.get().createProfile(versionId,profileId);
+  }
+ else {
+    LOGGER.info("updateProfile: {}",profile);
+  }
+  for (  Entry<String,String> entry : profile.getAttributes().entrySet()) {
+    dataStore.get().setProfileAttribute(versionId,profileId,entry.getKey(),entry.getValue());
+  }
+  List<Profile> parents=profile.getParents();
+  if (parents.size() > 0) {
+    StringBuilder sb=new StringBuilder();
+    for (    Profile parent : parents) {
+      if (sb.length() > 0) {
+        sb.append(" ");
+      }
+      sb.append(parent.getId());
+    }
+    dataStore.get().setProfileAttribute(versionId,profileId,Profile.PARENTS,sb.toString());
+  }
+  Map<String,byte[]> fileConfigurations=profile.getFileConfigurations();
+  if (!fileConfigurations.isEmpty()) {
+    dataStore.get().setFileConfigurations(versionId,profileId,fileConfigurations);
+  }
+  Map<String,Map<String,String>> configurations=profile.getConfigurations();
+  if (!configurations.isEmpty()) {
+    dataStore.get().setConfigurations(versionId,profileId,configurations);
+  }
+}

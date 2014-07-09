@@ -1,10 +1,7 @@
 {
-  Version version=getFabricService().getVersion(versionName);
-  if (version == null) {
-    throw new IllegalArgumentException("Cannot find version: " + versionName);
-  }
+  Version version=profileService.getRequiredVersion(versionId);
   StringBuilder sb=new StringBuilder();
-  for (  Container container : getFabricService().getContainers()) {
+  for (  Container container : fabricService.getContainers()) {
     if (version.equals(container.getVersion())) {
       if (sb.length() > 0) {
         sb.append(", ");
@@ -12,9 +9,7 @@
       sb.append(container.getId());
     }
   }
-  if (sb.length() > 0) {
-    throw new IllegalArgumentException("Version " + versionName + " is still in used by the following containers: "+ sb.toString());
-  }
-  version.delete();
+  IllegalStateAssertion.assertTrue(sb.length() == 0,"Version " + versionId + " is still in used by the following containers: "+ sb);
+  profileService.deleteVersion(versionId);
   return null;
 }

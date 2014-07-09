@@ -3,7 +3,9 @@
   Set<Feature> installed=new HashSet<Feature>();
   try {
     Map<String,Map<String,Feature>> allFeatures=getFeatures(installedRepositories);
-    for (    String featureName : fabricService.get().getCurrentContainer().getOverlayProfile().getFeatures()) {
+    Profile overlayProfile=fabricService.get().getCurrentContainer().getOverlayProfile();
+    Profile effectiveProfile=Profiles.getEffectiveProfile(fabricService.get(),overlayProfile);
+    for (    String featureName : effectiveProfile.getFeatures()) {
       try {
         Feature f;
         if (featureName.contains("/")) {

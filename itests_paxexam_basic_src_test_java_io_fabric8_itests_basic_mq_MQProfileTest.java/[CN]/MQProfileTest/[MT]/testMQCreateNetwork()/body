@@ -9,9 +9,9 @@
       LinkedList<Container> containerList=new LinkedList<Container>(containers);
       Container eastBroker=containerList.removeLast();
       Container westBroker=containerList.removeLast();
-      Profile eastBrokerProfile=eastBroker.getVersion().getProfile("mq-broker-us-east.us-east");
+      Profile eastBrokerProfile=eastBroker.getVersion().getRequiredProfile("mq-broker-us-east.us-east");
       eastBroker.setProfiles(new Profile[]{eastBrokerProfile});
-      Profile westBrokerProfile=eastBroker.getVersion().getProfile("mq-broker-us-west.us-west");
+      Profile westBrokerProfile=eastBroker.getVersion().getRequiredProfile("mq-broker-us-west.us-west");
       westBroker.setProfiles(new Profile[]{westBrokerProfile});
       Provision.provisioningSuccess(Arrays.asList(westBroker,eastBroker),PROVISION_TIMEOUT);
       waitForBroker("us-east");

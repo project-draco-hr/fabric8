@@ -1,6 +1,7 @@
 {
   List<String> ids=new ArrayList<String>();
-  for (  Profile p : service.getVersion(self.getVersion()).getProfiles()) {
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
+  for (  Profile p : profileService.getRequiredVersion(self.getVersion()).getProfiles()) {
     for (    Profile parent : p.getParents()) {
       if (parent.getId().equals(self.getId())) {
         ids.add(p.getId());

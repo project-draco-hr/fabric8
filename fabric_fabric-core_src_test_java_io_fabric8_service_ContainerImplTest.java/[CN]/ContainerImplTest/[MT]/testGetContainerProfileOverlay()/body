@@ -3,7 +3,7 @@
   String defaultProfile="default";
   String camelProfile="feature-camel";
   String cxfProfile="feature-cxf";
-  Version version=new VersionImpl(v,fabricService);
+  Version version=null;
   List<String> profiles=Arrays.asList(camelProfile,cxfProfile);
   Map<String,String> defaultAttributes=new HashMap<String,String>();
   Map<String,String> camelAttributes=new HashMap<String,String>();
@@ -20,7 +20,7 @@
   camelFiles.put("test1.properties","key=fromCamel".getBytes());
   cxfFiles.put("test2.properties","key=fromCxf".getBytes());
   expect(fabricService.getEnvironment()).andReturn("").anyTimes();
-  expect(fabricService.getVersion(eq(v))).andReturn(version).anyTimes();
+  expect(profileService.getRequiredVersion(eq(v))).andReturn(version).anyTimes();
   expect(dataStore.getProfileAttributes(eq(v),eq(defaultProfile))).andReturn(defaultAttributes).anyTimes();
   expect(dataStore.getProfileAttributes(eq(v),eq(camelProfile))).andReturn(camelAttributes).anyTimes();
   expect(dataStore.getProfileAttributes(eq(v),eq(cxfProfile))).andReturn(cxfAttributes).anyTimes();

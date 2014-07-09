@@ -3,10 +3,10 @@
   List<String> profileIds=fabricService.getDataStore().getContainerProfiles(id);
   List<Profile> profiles=new ArrayList<Profile>();
   for (  String profileId : profileIds) {
-    profiles.add(version.getProfile(profileId));
+    profiles.add(version.getRequiredProfile(profileId));
   }
   if (profiles.isEmpty()) {
-    profiles.add(version.getProfile(ZkDefs.DEFAULT_PROFILE));
+    profiles.add(version.getRequiredProfile(ZkDefs.DEFAULT_PROFILE));
   }
   return profiles.toArray(new Profile[profiles.size()]);
 }

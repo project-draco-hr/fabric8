@@ -1,14 +1,11 @@
 {
-  Version version=getFabricService().getVersion(versionName);
-  if (version == null) {
-    throw new IllegalArgumentException("Cannot find version: " + versionName);
-  }
-  Version currentDefault=getFabricService().getDefaultVersion();
+  Version version=profileService.getRequiredVersion(versionName);
+  Version currentDefault=fabricService.getDefaultVersion();
   if (version.compareTo(currentDefault) == 0) {
     System.out.println("Version " + version + " is already default version.");
   }
  else {
-    getFabricService().setDefaultVersion(version);
+    fabricService.setDefaultVersion(version.getId());
     System.out.println("Changed default version to " + version);
   }
   return null;

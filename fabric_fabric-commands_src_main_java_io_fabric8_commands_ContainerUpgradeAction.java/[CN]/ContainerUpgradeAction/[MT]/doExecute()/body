@@ -1,6 +1,6 @@
 {
   FabricValidations.validateContainerNames(containerIds);
-  Version version=fabricService.getVersion(this.version);
+  Version version=profileService.getRequiredVersion(this.version);
   if (containerIds == null || containerIds.isEmpty()) {
     if (all) {
       containerIds=new ArrayList<String>();
@@ -42,7 +42,7 @@
     System.out.println("Upgraded container " + container.getId() + " from version "+ oldVersion+ " to "+ version);
   }
   if (all) {
-    fabricService.setDefaultVersion(version);
+    fabricService.setDefaultVersion(version.getId());
     System.out.println("Changed default version to " + version);
   }
   return null;

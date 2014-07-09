@@ -1,21 +1,29 @@
 {
+  ProfileService profileService=fabricService.get().adapt(ProfileService.class);
   Container current=fabricService.get().getCurrentContainer();
   ProfileData profileData=createProfileData(context);
   String profileId=context.getConfiguration().get(TEMPLATE_PROFILE_PROPERTY_NAME) + "-" + name;
   Version version=current.getVersion();
+  String versionId=version.getId();
   try {
     if (lock.acquire(60,TimeUnit.SECONDS)) {
       if (profileData.isEmpty()) {
         if (version.hasProfile(profileId)) {
-          version.getProfile(profileId).delete(true);
+          profileService.deleteProfile(fabricService.get(),versionId,profileId,true);
         }
         return;
       }
- else       if (!version.hasProfile(profileId)) {
-        fabricService.get().getDataStore().createProfile(version.getId(),profileId);
+      ProfileBuilder builder;
+      boolean create=!version.hasProfile(profileId);
+      if (create) {
+        builder=ProfileBuilder.Factory.create(versionId,profileId);
       }
-      Profile managedProfile=version.getProfile(profileId);
-      managedProfile.setFileConfigurations(profileData.getFiles());
+ else {
+        builder=ProfileBuilder.Factory.createFrom(versionId,profileId);
+      }
+      builder.setFileConfigurations(profileData.getFiles());
+      Profile managedProfile=builder.getProfile();
+      managedProfile=create ? profileService.createProfile(managedProfile) : profileService.updateProfile(managedProfile);
       current.addProfiles(managedProfile);
     }
  else {

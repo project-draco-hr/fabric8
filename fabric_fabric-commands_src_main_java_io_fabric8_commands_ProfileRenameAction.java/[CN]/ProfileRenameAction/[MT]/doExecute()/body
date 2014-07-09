@@ -1,17 +1,18 @@
 {
   FabricValidations.validateProfileName(profileName);
   FabricValidations.validateProfileName(newName);
-  Version ver=version != null ? fabricService.getVersion(version) : fabricService.getDefaultVersion();
-  if (!ver.hasProfile(profileName)) {
+  Version version=versionParam != null ? profileService.getRequiredVersion(versionParam) : fabricService.getDefaultVersion();
+  String versionId=version.getId();
+  if (!version.hasProfile(profileName)) {
     System.out.println("Profile " + profileName + " not found.");
     return null;
   }
- else   if (ver.hasProfile(newName)) {
+ else   if (version.hasProfile(newName)) {
     if (!force) {
       System.out.println("New name " + newName + " already exists. Use --force if you want to overwrite.");
       return null;
     }
   }
-  ver.renameProfile(profileName,newName,force);
+  Profiles.renameProfile(fabricService,versionId,profileName,newName,force);
   return null;
 }

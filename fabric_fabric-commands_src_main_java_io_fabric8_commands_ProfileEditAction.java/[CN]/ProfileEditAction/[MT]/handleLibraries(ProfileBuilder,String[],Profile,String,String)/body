@@ -1,0 +1,13 @@
+{
+  Map<String,String> conf=getConfigurationFromBuilder(builder,Constants.AGENT_PID);
+  for (  String lib : libs) {
+    if (set) {
+      System.out.println("Adding " + libType + ":"+ lib+ " to profile:"+ profile.getId()+ " version:"+ profile.getVersion());
+    }
+ else     if (delete) {
+      System.out.println("Deleting " + libType + ":"+ lib+ " from profile:"+ profile.getId()+ " version:"+ profile.getVersion());
+    }
+    updateConfig(conf,libPrefix + lib.replace('/','_'),lib,set,delete);
+  }
+  builder.addConfiguration(Constants.AGENT_PID,conf);
+}

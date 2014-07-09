@@ -16,7 +16,9 @@
       return;
     }
   }
-  String revision=git.getRepository().getRefDatabase().getRef(version).getObjectId().getName();
+  Ref versionRef=git.getRepository().getRefDatabase().getRef(version);
+  IllegalStateAssertion.assertNotNull(versionRef,"Cannot get version ref for: " + version);
+  String revision=versionRef.getObjectId().getName();
   String path=convertProfileIdToDirectory(profile);
   RevCommit commit=CommitUtils.getLastCommit(git.getRepository(),revision,CONFIGS_PROFILES + File.separator + path);
   String lastModified=commit != null ? commit.getId().abbreviate(GIT_COMMIT_SHORT_LENGTH).name() : "";

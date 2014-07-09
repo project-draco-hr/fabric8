@@ -1,5 +1,5 @@
 {
-  Version v=getFabricService().getVersion(versionId);
-  Profile profile=v.getProfile(profileId);
-  profile.setRepositories(repositories);
+  ProfileBuilder builder=ProfileBuilder.Factory.createFrom(versionId,profileId);
+  builder.setRepositories(repositories);
+  profileService.updateProfile(builder.getProfile());
 }

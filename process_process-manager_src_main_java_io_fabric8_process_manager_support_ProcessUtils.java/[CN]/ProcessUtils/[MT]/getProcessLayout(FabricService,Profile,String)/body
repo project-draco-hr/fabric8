@@ -1,0 +1,5 @@
+{
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
+  Profile overlay=profileService.getOverlayProfile(profile);
+  return ByteToStringValues.INSTANCE.apply(Maps.filterKeys(overlay.getFileConfigurations(),new LayOutPredicate(layoutPath)));
+}

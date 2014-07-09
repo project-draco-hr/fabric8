@@ -4,7 +4,9 @@
     return configuration.get(key);
   }
  else {
-    configuration=fabricService.getCurrentContainer().getOverlayProfile().getConfiguration(pid);
+    Profile overlayProfile=fabricService.getCurrentContainer().getOverlayProfile();
+    Profile effectiveProfile=Profiles.getEffectiveProfile(fabricService,overlayProfile);
+    configuration=effectiveProfile.getConfiguration(pid);
     if (configuration != null && configuration.containsKey(key)) {
       return configuration.get(key);
     }

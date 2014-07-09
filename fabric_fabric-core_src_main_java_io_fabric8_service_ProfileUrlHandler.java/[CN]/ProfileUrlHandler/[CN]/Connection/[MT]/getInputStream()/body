@@ -1,13 +1,9 @@
 {
   assertValid();
   String path=url.getPath();
-  Profile profile=fabricService.get().getCurrentContainer().getOverlayProfile();
-  Map<String,byte[]> configs=profile.getFileConfigurations();
-  if (configs.containsKey(path)) {
-    byte[] b=configs.get(path);
-    return new ByteArrayInputStream(b);
-  }
- else {
-    throw new IllegalArgumentException("Resource " + path + " does not exist in the profile overlay.");
-  }
+  Container container=fabricService.get().getCurrentContainer();
+  Profile overlayProfile=container.getOverlayProfile();
+  byte[] bytes=overlayProfile.getFileConfiguration(path);
+  IllegalStateAssertion.assertNotNull(bytes,"Resource " + path + " does not exist in the profile overlay.");
+  return new ByteArrayInputStream(bytes);
 }

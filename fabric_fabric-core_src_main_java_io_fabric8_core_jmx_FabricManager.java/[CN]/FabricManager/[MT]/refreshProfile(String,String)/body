@@ -1,9 +1,9 @@
 {
-  Version version=getFabricService().getVersion(versionId);
+  Version version=profileService.getVersion(versionId);
   if (version != null) {
-    Profile profile=version.getProfile(profileId);
+    Profile profile=version.getRequiredProfile(profileId);
     if (profile != null) {
-      profile.refresh();
+      Profiles.refreshProfile(fabricService,profile);
     }
   }
 }

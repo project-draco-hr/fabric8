@@ -3,9 +3,9 @@
   String profile1Id="feature-camel";
   String profile2Id="feature-cxf";
   String missing="missing";
-  Version version=new VersionImpl(v,fabricService);
+  Version version=null;
   List<String> profiles=Arrays.asList(profile1Id,profile2Id,missing);
-  expect(fabricService.getVersion(eq(v))).andReturn(version).anyTimes();
+  expect(profileService.getRequiredVersion(eq(v))).andReturn(version).anyTimes();
   expect(fabricService.getEnvironment()).andReturn("").anyTimes();
   expect(dataStore.getContainerVersion(eq(CONTAINER_ID))).andReturn(v).anyTimes();
   expect(dataStore.getContainerProfiles(eq(CONTAINER_ID))).andReturn(profiles).anyTimes();
@@ -16,8 +16,8 @@
   replay(fabricService);
   replay(dataStore);
   Profile overlay=container.getOverlayProfile();
-  Profile[] parents=overlay.getParents();
-  assertEquals(2,parents.length);
+  List<Profile> parents=overlay.getParents();
+  assertEquals(2,parents.size());
   verify(fabricService);
   verify(dataStore);
 }

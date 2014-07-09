@@ -2,8 +2,8 @@
   LOGGER.info("Configuration has changed; so checking the Fabric managed Java cartridges on OpenShift are up to date");
   Container[] containers=fabricService.get().getContainers();
   for (  Container container : containers) {
-    Profile profile=container.getOverlayProfile();
-    Map<String,String> openshiftConfiguration=profile.getConfiguration(OpenShiftConstants.OPENSHIFT_PID);
+    Profile effectiveProfile=Profiles.getEffectiveProfile(fabricService.get(),container.getOverlayProfile());
+    Map<String,String> openshiftConfiguration=effectiveProfile.getConfiguration(OpenShiftConstants.OPENSHIFT_PID);
     if (openshiftConfiguration != null) {
       DeploymentUpdater deployTask=null;
       try {

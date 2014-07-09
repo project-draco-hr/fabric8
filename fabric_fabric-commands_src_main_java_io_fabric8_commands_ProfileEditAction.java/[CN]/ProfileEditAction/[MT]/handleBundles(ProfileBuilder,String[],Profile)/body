@@ -1,0 +1,13 @@
+{
+  Map<String,String> conf=getConfigurationFromBuilder(builder,Constants.AGENT_PID);
+  for (  String bundle : bundles) {
+    if (set) {
+      System.out.println("Adding bundle:" + bundle + " to profile:"+ profile.getId()+ " version:"+ profile.getVersion());
+    }
+ else     if (delete) {
+      System.out.println("Deleting bundle:" + bundle + " from profile:"+ profile.getId()+ " version:"+ profile.getVersion());
+    }
+    updateConfig(conf,BUNDLE_PREFIX + bundle.replace('/','_'),bundle,set,delete);
+  }
+  builder.addConfiguration(Constants.AGENT_PID,conf);
+}

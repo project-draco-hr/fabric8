@@ -1,8 +1,0 @@
-{
-  List<Map<String,Object>> results=Helpers.exec(getJolokiaClient(),"versions(java.util.List)",Helpers.toList("id"));
-  List<Version> answer=new ArrayList<Version>();
-  for (  Map<String,Object> result : results) {
-    answer.add(new VersionFacade(getJolokiaClient(),(String)result.get("id")));
-  }
-  return answer.toArray(new Version[answer.size()]);
-}

@@ -1,9 +1,12 @@
 {
   FabricValidations.validateProfileName(name);
-  Version ver=version != null ? fabricService.getVersion(version) : fabricService.getDefaultVersion();
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
+  Version ver=version != null ? profileService.getVersion(version) : fabricService.getDefaultVersion();
   for (  Profile profile : ver.getProfiles()) {
-    if (name.equals(profile.getId())) {
-      profile.delete(force);
+    String versionId=profile.getVersion();
+    String profileId=profile.getId();
+    if (name.equals(profileId)) {
+      profileService.deleteProfile(fabricService,versionId,profileId,force);
     }
   }
   return null;

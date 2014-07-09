@@ -1,6 +1,6 @@
 {
   try {
-    URI uploadUri=fabric.getMavenRepoUploadURI();
+    URI uploadUri=fabricService.getMavenRepoUploadURI();
     List<PatchDescriptor> descriptors=new ArrayList<PatchDescriptor>();
     ZipInputStream zis=new ZipInputStream(new BufferedInputStream(patch.openStream()));
     try {
@@ -60,7 +60,7 @@
   finally {
       close(zis);
     }
-    Profile[] profiles=version.getProfiles();
+    List<Profile> profiles=version.getProfiles();
     for (    PatchDescriptor descriptor : descriptors) {
       String profileId="patch-" + descriptor.getId();
       Profile profile=null;
@@ -71,13 +71,17 @@
         }
       }
       if (profile == null) {
-        profile=version.createProfile(profileId);
-        profile.setOverrides(descriptor.getBundles());
-        Profile defaultProfile=version.getProfile("default");
-        List<Profile> parents=new ArrayList<Profile>(Arrays.asList(defaultProfile.getParents()));
+        String versionId=version.getId();
+        ProfileBuilder builder=ProfileBuilder.Factory.create(versionId,profileId);
+        builder.setOverrides(descriptor.getBundles());
+        profile=profileService.createProfile(builder.getProfile());
+        Profile defaultProfile=version.getRequiredProfile("default");
+        List<Profile> parents=defaultProfile.getParents();
         if (!parents.contains(profile)) {
           parents.add(profile);
-          defaultProfile.setParents(parents.toArray(new Profile[parents.size()]));
+          builder=ProfileBuilder.Factory.createFrom(defaultProfile);
+          builder.setParents(parents);
+          profileService.updateProfile(builder.getProfile());
         }
       }
  else {

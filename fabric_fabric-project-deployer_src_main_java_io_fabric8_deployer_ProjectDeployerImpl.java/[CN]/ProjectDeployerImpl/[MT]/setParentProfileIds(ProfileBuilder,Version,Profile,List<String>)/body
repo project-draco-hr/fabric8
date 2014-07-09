@@ -1,0 +1,16 @@
+{
+  List<Profile> list=new ArrayList<>();
+  for (  String parentProfileId : parentProfileIds) {
+    Profile parentProfile=null;
+    if (version.hasProfile(parentProfileId)) {
+      parentProfile=version.getRequiredProfile(parentProfileId);
+    }
+    if (parentProfile != null) {
+      list.add(parentProfile);
+    }
+ else {
+      LOG.warn("Could not find parent profile: " + parentProfileId + " in version "+ version.getId());
+    }
+  }
+  builder.setParents(list);
+}

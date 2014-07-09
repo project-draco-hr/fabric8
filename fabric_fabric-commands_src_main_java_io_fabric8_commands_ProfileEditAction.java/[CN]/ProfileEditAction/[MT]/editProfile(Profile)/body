@@ -1,50 +1,51 @@
 {
   boolean editInLine=false;
+  ProfileBuilder builder=ProfileBuilder.Factory.createFrom(profile);
   if (delete || remove) {
     editInLine=true;
   }
   if (features != null && features.length > 0) {
     editInLine=true;
-    handleFeatures(features,profile);
+    handleFeatures(builder,features,profile);
   }
   if (repositories != null && repositories.length > 0) {
     editInLine=true;
-    handleFeatureRepositories(repositories,profile);
+    handleFeatureRepositories(builder,repositories,profile);
   }
   if (libs != null && libs.length > 0) {
     editInLine=true;
-    handleLibraries(libs,profile,"lib",LIB_PREFIX);
+    handleLibraries(builder,libs,profile,"lib",LIB_PREFIX);
   }
   if (endorsed != null && endorsed.length > 0) {
     editInLine=true;
-    handleLibraries(endorsed,profile,"endorsed lib",ENDORSED_PREFIX);
+    handleLibraries(builder,endorsed,profile,"endorsed lib",ENDORSED_PREFIX);
   }
   if (extension != null && extension.length > 0) {
     editInLine=true;
-    handleLibraries(extension,profile,"extension lib",EXT_PREFIX);
+    handleLibraries(builder,extension,profile,"extension lib",EXT_PREFIX);
   }
   if (bundles != null && bundles.length > 0) {
     editInLine=true;
-    handleBundles(bundles,profile);
+    handleBundles(builder,bundles,profile);
   }
   if (fabs != null && fabs.length > 0) {
     editInLine=true;
-    handleFabs(fabs,profile);
+    handleFabs(builder,fabs,profile);
   }
   if (overrides != null && overrides.length > 0) {
     editInLine=true;
-    handleOverrides(overrides,profile);
+    handleOverrides(builder,overrides,profile);
   }
   if (pidProperties != null && pidProperties.length > 0) {
-    editInLine=handlePid(pidProperties,profile);
+    editInLine=handlePid(builder,pidProperties,profile);
   }
   if (systemProperties != null && systemProperties.length > 0) {
     editInLine=true;
-    handleSystemProperties(systemProperties,profile);
+    handleSystemProperties(builder,systemProperties,profile);
   }
   if (configProperties != null && configProperties.length > 0) {
     editInLine=true;
-    handleConfigProperties(configProperties,profile);
+    handleConfigProperties(builder,configProperties,profile);
   }
   if (!editInLine) {
     resource=resource != null ? resource : "io.fabric8.agent.properties";
@@ -53,4 +54,5 @@
     }
     openInEditor(profile,resource);
   }
+  profileService.updateProfile(builder.getProfile());
 }

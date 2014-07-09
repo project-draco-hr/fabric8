@@ -1,0 +1,14 @@
+{
+  this.profileId=profileId;
+  this.versionId=versionId;
+  this.lastModified=lastModified;
+  this.isOverlay=isOverlay;
+  this.attributes.putAll(attributes);
+  this.parentProfiles.addAll(parentProfiles);
+  this.fileConfigurations.putAll(fileConfigurations);
+  for (  Entry<String,Map<String,String>> entry : configs.entrySet()) {
+    String pid=entry.getKey();
+    Map<String,String> value=new HashMap<>(entry.getValue());
+    configurations.put(pid,Collections.unmodifiableMap(value));
+  }
+}
