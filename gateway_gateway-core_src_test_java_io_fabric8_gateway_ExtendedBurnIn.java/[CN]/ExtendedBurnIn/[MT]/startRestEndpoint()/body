@@ -1,0 +1,14 @@
+{
+  restEndpointServer=vertx.createHttpServer();
+  restEndpointServer.requestHandler(new Handler<HttpServerRequest>(){
+    @Override public void handle(    HttpServerRequest request){
+      request.response().putHeader("content-type","text/plain");
+      request.response().end("Hello World!");
+    }
+  }
+);
+  FutureHandler<AsyncResult<HttpServer>> future=new FutureHandler<>();
+  restEndpointServer.listen(8181,"0.0.0.0",future);
+  future.await();
+  return restEndpointServer;
+}

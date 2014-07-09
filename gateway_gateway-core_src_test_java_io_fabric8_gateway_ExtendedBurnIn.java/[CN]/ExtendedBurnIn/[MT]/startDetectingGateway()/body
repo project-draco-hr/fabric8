@@ -20,6 +20,9 @@
   gateway.setServiceLoadBalancer(serviceLoadBalancer);
   gateway.setDefaultVirtualHost("broker1");
   gateway.setConnectionTimeout(5000);
+  if (httpGatewayServer != null) {
+    gateway.setHttpGateway(new InetSocketAddress("localhost",httpGatewayServer.getPort()));
+  }
   gateway.init();
   gateways.add(gateway);
   return gateway;

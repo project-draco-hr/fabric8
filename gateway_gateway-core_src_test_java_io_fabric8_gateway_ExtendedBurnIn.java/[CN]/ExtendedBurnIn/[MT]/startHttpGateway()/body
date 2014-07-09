@@ -1,0 +1,31 @@
+{
+  if (restEndpointServer != null) {
+    LoadBalancer loadBalancer=new RoundRobinLoadBalancer();
+    ServiceDTO serviceDetails=new ServiceDTO();
+    serviceDetails.setContainer("local");
+    serviceDetails.setVersion("1");
+    mappedServices.put("/hello/world",new MappedServices("http://localhost:8181",serviceDetails,loadBalancer,false));
+  }
+  DetectingGatewayWebSocketHandler websocketHandler=new DetectingGatewayWebSocketHandler();
+  HttpGatewayHandler handler=new HttpGatewayHandler(vertx,new HttpGateway(){
+    @Override public void addMappingRuleConfiguration(    HttpMappingRule mappingRule){
+    }
+    @Override public void removeMappingRuleConfiguration(    HttpMappingRule mappingRule){
+    }
+    @Override public Map<String,MappedServices> getMappedServices(){
+      return mappedServices;
+    }
+    @Override public boolean isEnableIndex(){
+      return true;
+    }
+    @Override public InetSocketAddress getLocalAddress(){
+      return new InetSocketAddress("0.0.0.0",8080);
+    }
+  }
+);
+  websocketHandler.setPathPrefix("");
+  httpGatewayServer=new HttpGatewayServer(vertx,handler,websocketHandler,8080);
+  httpGatewayServer.setHost("localhost");
+  httpGatewayServer.init();
+  return httpGatewayServer;
+}
