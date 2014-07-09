@@ -26,9 +26,15 @@
     request.setGoals(Collections.singletonList("install:install-file"));
     request.setRecursive(false);
     request.setInteractive(false);
-    String opts=String.format("-Dfile=target/profile.zip -DgroupId=%s -DartifactId=%s -Dversion=%s -Dclassifier=profile -Dpackaging=zip",rootProject.getGroupId(),rootProject.getArtifactId(),rootProject.getVersion());
-    request.setMavenOpts(opts);
-    getLog().info("Installing aggregated zip using: mvn install:install-file " + opts);
+    Properties props=new Properties();
+    props.setProperty("file","target/profile.zip");
+    props.setProperty("groupId",rootProject.getGroupId());
+    props.setProperty("artifactId",rootProject.getArtifactId());
+    props.setProperty("version",rootProject.getVersion());
+    props.setProperty("classifier","profile");
+    props.setProperty("packaging","zip");
+    request.setProperties(props);
+    getLog().info("Installing aggregated zip using: mvn install:install-file" + serializeMvnProperties(props));
     Invoker invoker=new DefaultInvoker();
     try {
       InvocationResult result=invoker.execute(request);
