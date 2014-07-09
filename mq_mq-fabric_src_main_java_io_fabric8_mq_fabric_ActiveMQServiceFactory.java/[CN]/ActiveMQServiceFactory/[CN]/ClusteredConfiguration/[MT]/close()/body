@@ -6,10 +6,12 @@ synchronized (this) {
     if (discoveryAgent != null) {
       discoveryAgent.stop();
     }
-    if (started.compareAndSet(true,false)) {
+    if (started.get()) {
       stop();
     }
   }
-  waitForStop();
+  if (started.compareAndSet(true,false)) {
+    waitForStop();
+  }
   executor.shutdownNow();
 }
