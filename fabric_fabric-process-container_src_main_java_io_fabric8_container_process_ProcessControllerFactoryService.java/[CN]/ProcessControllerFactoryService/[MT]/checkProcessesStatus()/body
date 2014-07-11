@@ -2,6 +2,7 @@
   ProcessManager manager=getProcessManager();
   FabricService fabric=getFabricService();
   if (manager != null && fabric != null) {
+    Set<String> aliveIds=new HashSet<>();
     ImmutableMap<String,Installation> map=manager.listInstallationMap();
     ImmutableSet<Map.Entry<String,Installation>> entries=map.entrySet();
     for (    Map.Entry<String,Installation> entry : entries) {
@@ -32,8 +33,16 @@
             if (!Objects.equal(container.getProvisionResult(),Container.PROVISION_SUCCESS)) {
               container.setProvisionResult(Container.PROVISION_SUCCESS);
             }
+            aliveIds.add(id);
             Map<String,String> envVars=ProcessManagerController.getInstallationProxyPorts(installation);
-            JolokiaAgentHelper.jolokiaKeepAliveCheck(curator.get(),fabric,container,envVars);
+            List<String> newZkPaths=JolokiaAgentHelper.jolokiaKeepAliveCheck(curator.get(),fabric,container,envVars);
+            if (!newZkPaths.isEmpty()) {
+              ChildContainerController controller=getControllerForContainer(container);
+              if (controller instanceof ProcessManagerController) {
+                ProcessManagerController processManagerController=(ProcessManagerController)controller;
+                addZooKeeperPaths(installation,container,newZkPaths);
+              }
+            }
           }
         }
       }
@@ -41,5 +50,6 @@
         LOG.warn("Failed to get PID for process " + id + ". "+ e,e);
       }
     }
+    deleteContainerPathsForDeadContainers(aliveIds);
   }
 }

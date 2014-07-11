@@ -1,7 +1,8 @@
 {
+  List<String> newZkContainerPaths=new ArrayList<>();
   String jolokiaUrl=container.getJolokiaUrl();
   if (Strings.isNullOrBlank(jolokiaUrl)) {
-    return;
+    return newZkContainerPaths;
   }
   String containerName=container.getId();
   boolean debugLog=LOG.isDebugEnabled();
@@ -45,7 +46,7 @@
   if (debugLog) {
     LOG.debug("Current provision result: " + provisionResult + " valid: "+ valid);
   }
-  valid=valid && performExtraJolokiaChecks(curator,fabric,container,jmxDomains,url,envVars);
+  valid=valid && performExtraJolokiaChecks(curator,fabric,container,jmxDomains,url,envVars,newZkContainerPaths);
   if (valid) {
     if (!Objects.equal(Container.PROVISION_SUCCESS,provisionResult) || !container.isAlive()) {
       container.setProvisionResult(Container.PROVISION_SUCCESS);
@@ -65,4 +66,5 @@
       container.setProvisionResult(Container.PROVISION_FAILED);
     }
   }
+  return newZkContainerPaths;
 }

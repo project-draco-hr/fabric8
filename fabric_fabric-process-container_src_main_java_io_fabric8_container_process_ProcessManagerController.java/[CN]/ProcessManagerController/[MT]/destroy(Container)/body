@@ -3,6 +3,7 @@
   if (installation != null) {
     try {
       installation.getController().stop();
+      owner.deleteContainerZooKeeperPaths(installation,container);
     }
  catch (    Exception e) {
       LOG.info("Failed to stop process for container " + container.getId() + ". "+ e,e);

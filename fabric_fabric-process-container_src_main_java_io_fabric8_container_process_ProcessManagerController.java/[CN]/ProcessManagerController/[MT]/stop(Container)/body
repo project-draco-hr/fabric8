@@ -4,6 +4,7 @@
     try {
       installation.getController().stop();
       container.setProvisionResult(Container.PROVISION_STOPPED);
+      owner.deleteContainerZooKeeperPaths(installation,container);
     }
  catch (    Exception e) {
       handleException("Stopping container " + container.getId(),e);

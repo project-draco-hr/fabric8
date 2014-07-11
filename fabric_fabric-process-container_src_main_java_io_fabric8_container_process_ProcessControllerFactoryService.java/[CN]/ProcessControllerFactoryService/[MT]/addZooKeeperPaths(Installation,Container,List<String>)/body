@@ -1,0 +1,12 @@
+{
+  Set<String> allZkPaths=loadZooKeeperPaths(installation,container);
+  boolean changed=false;
+  for (  String newZkPath : newZkPaths) {
+    if (allZkPaths.add(newZkPath)) {
+      changed=true;
+    }
+  }
+  if (changed) {
+    saveZooKeeperPaths(installation,container,allZkPaths);
+  }
+}

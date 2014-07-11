@@ -29,10 +29,10 @@
         }
       }
       String url=httpUrl + path;
-      System.out.println("Got http URL: " + httpUrl);
       String json="{\"id\":" + JsonHelper.jsonEncodeString(id) + ", \"container\":"+ JsonHelper.jsonEncodeString(id)+ ", \"services\":["+ JsonHelper.jsonEncodeString(url)+ "]"+ "}";
       try {
         ZooKeeperUtils.setData(curator,zkPath,json,CreateMode.EPHEMERAL);
+        newZkContainerPaths.add(zkPath);
       }
  catch (      Exception e) {
         LOG.warn("Failed to register web app json at path " + path + " json: "+ json+ ". "+ e,e);
