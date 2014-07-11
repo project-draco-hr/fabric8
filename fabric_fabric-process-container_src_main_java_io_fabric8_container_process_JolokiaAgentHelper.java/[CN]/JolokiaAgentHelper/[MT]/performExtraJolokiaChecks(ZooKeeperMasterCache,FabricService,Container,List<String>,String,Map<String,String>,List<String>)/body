@@ -1,5 +1,5 @@
 {
-  if (curator != null) {
+  if (zkMasterCache != null) {
     for (    String jmxDomain : jmxDomains) {
       if (jmxDomain.startsWith("Catalina") || jmxDomain.startsWith("Tomcat")) {
         String tomcatUrl=url + "?maxDepth=6&maxCollectionSize=500&ignoreErrors=true&canonicalNaming=false";
@@ -20,7 +20,7 @@
                 path="/";
               }
               Object displayName=getValue(node,"displayName");
-              updateZookeeperEntry(curator,fabric,container,envVars,path,stateName,startTime,displayName,newZkContainerPaths);
+              updateZookeeperEntry(zkMasterCache,fabric,container,envVars,path,stateName,startTime,displayName,newZkContainerPaths);
             }
           }
         }

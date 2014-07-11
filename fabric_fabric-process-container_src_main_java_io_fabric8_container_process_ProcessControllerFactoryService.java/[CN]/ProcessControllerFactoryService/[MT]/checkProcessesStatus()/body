@@ -35,7 +35,7 @@
             }
             aliveIds.add(id);
             Map<String,String> envVars=ProcessManagerController.getInstallationProxyPorts(installation);
-            List<String> newZkPaths=JolokiaAgentHelper.jolokiaKeepAliveCheck(curator.get(),fabric,container,envVars);
+            List<String> newZkPaths=JolokiaAgentHelper.jolokiaKeepAliveCheck(zkMasterCache,fabric,container,envVars);
             if (!newZkPaths.isEmpty()) {
               ChildContainerController controller=getControllerForContainer(container);
               if (controller instanceof ProcessManagerController) {

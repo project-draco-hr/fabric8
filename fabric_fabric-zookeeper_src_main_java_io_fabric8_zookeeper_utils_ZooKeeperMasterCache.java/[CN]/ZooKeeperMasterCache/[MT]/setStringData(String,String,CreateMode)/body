@@ -1,0 +1,7 @@
+{
+  String currentValue=cache.get(data);
+  if (currentValue == null || !Objects.equal(currentValue,data)) {
+    ZooKeeperUtils.setData(curator,zkPath,data,createMode);
+    cache.put(zkPath,data);
+  }
+}

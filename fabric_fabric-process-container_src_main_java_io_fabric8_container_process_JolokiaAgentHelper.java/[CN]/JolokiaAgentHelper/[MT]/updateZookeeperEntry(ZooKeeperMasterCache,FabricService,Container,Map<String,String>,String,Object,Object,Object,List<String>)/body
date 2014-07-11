@@ -31,7 +31,7 @@
       String url=httpUrl + path;
       String json="{\"id\":" + JsonHelper.jsonEncodeString(id) + ", \"container\":"+ JsonHelper.jsonEncodeString(id)+ ", \"services\":["+ JsonHelper.jsonEncodeString(url)+ "]"+ "}";
       try {
-        ZooKeeperUtils.setData(curator,zkPath,json,CreateMode.EPHEMERAL);
+        zkMasterCache.setStringData(zkPath,json,CreateMode.EPHEMERAL);
         newZkContainerPaths.add(zkPath);
       }
  catch (      Exception e) {
@@ -40,10 +40,7 @@
     }
  else {
       try {
-        if (ZooKeeperUtils.exists(curator,path) != null) {
-          LOG.info("unregistered web app at " + path);
-          ZooKeeperUtils.deleteSafe(curator,path);
-        }
+        zkMasterCache.deleteData(zkPath);
       }
  catch (      Exception e) {
         LOG.warn("Failed to remove web app json at path " + path + ". "+ e,e);
