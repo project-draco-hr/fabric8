@@ -18,6 +18,13 @@
           builder=childBuilder.jmxUser(username).jmxPassword(password);
         }
         metadatas=fabricService.createContainers(builder.build());
+        if (metadatas != null) {
+          for (          CreateContainerMetadata meta : metadatas) {
+            if (meta.getFailure() != null && meta.getFailure() instanceof FabricAuthenticationException) {
+              throw (FabricAuthenticationException)meta.getFailure();
+            }
+          }
+        }
         ShellUtils.storeFabricCredentials(session,username,password);
       }
  catch (      FabricAuthenticationException fae) {
