@@ -2,7 +2,7 @@
   String mvnUrl=stripUrl(url);
   if (mvnUrl.startsWith("mvn:")) {
     MavenRepositoryURL inlined=null;
-    String inlinedMavenRepoUrl=stripInlinedMavenRepositoryUrl(mvnUrl);
+    final String inlinedMavenRepoUrl=stripInlinedMavenRepositoryUrl(mvnUrl);
     if (inlinedMavenRepoUrl != null) {
       inlined=new MavenRepositoryURL(inlinedMavenRepoUrl);
       mvnUrl=removeInlinedMavenRepositoryUrl(mvnUrl);
@@ -17,6 +17,9 @@
             final String mvn=future.getUrl();
             String file=future.getFile().toURI().toURL().toString();
             String real=url.replace(mvn,file);
+            if (inlinedMavenRepoUrl != null) {
+              real=removeInlinedMavenRepositoryUrl(real);
+            }
             SimpleDownloadTask task=new SimpleDownloadTask(real,executor,tmpPath);
             executor.submit(task);
             task.addListener(new FutureListener<DownloadFuture>(){
