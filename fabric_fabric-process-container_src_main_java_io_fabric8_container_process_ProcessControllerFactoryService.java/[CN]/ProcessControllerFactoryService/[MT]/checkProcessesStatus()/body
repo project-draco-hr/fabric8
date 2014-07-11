@@ -32,7 +32,8 @@
             if (!Objects.equal(container.getProvisionResult(),Container.PROVISION_SUCCESS)) {
               container.setProvisionResult(Container.PROVISION_SUCCESS);
             }
-            JolokiaAgentHelper.jolokiaKeepAliveCheck(curator.get(),fabric,container);
+            Map<String,String> envVars=ProcessManagerController.getInstallationProxyPorts(installation);
+            JolokiaAgentHelper.jolokiaKeepAliveCheck(curator.get(),fabric,container,envVars);
           }
         }
       }

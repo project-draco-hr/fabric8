@@ -14,7 +14,22 @@
     if (isWebAppActive(stateName)) {
       String id=container.getId();
       String httpUrl=container.getHttpUrl();
-      String url="" + (httpUrl != null ? httpUrl : "") + path;
+      if (Strings.isNullOrBlank(httpUrl)) {
+        if (envVars != null) {
+          String portText=envVars.get("FABRIC8_HTTP_PROXY_PORT");
+          if (Strings.isNotBlank(portText)) {
+            String ip=container.getIp();
+            if (Strings.isNotBlank(ip)) {
+              httpUrl="http://" + ip + ":"+ portText;
+            }
+          }
+        }
+        if (httpUrl == null) {
+          httpUrl="";
+        }
+      }
+      String url=httpUrl + path;
+      System.out.println("Got http URL: " + httpUrl);
       String json="{\"id\":" + JsonHelper.jsonEncodeString(id) + ", \"container\":"+ JsonHelper.jsonEncodeString(id)+ ", \"services\":["+ JsonHelper.jsonEncodeString(url)+ "]"+ "}";
       try {
         ZooKeeperUtils.setData(curator,zkPath,json,CreateMode.EPHEMERAL);
