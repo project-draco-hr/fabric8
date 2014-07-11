@@ -1,7 +1,13 @@
 {
   String mvnUrl=stripUrl(url);
   if (mvnUrl.startsWith("mvn:")) {
-    MavenDownloadTask task=new MavenDownloadTask(mvnUrl,cache,system,configuration,executor);
+    MavenRepositoryURL inlined=null;
+    String inlinedMavenRepoUrl=stripInlinedMavenRepositoryUrl(mvnUrl);
+    if (inlinedMavenRepoUrl != null) {
+      inlined=new MavenRepositoryURL(inlinedMavenRepoUrl);
+      mvnUrl=removeInlinedMavenRepositoryUrl(mvnUrl);
+    }
+    MavenDownloadTask task=new MavenDownloadTask(mvnUrl,cache,system,inlined,configuration,executor);
     executor.submit(task);
     if (!mvnUrl.equals(url)) {
       final DummyDownloadTask download=new DummyDownloadTask(url,executor);
