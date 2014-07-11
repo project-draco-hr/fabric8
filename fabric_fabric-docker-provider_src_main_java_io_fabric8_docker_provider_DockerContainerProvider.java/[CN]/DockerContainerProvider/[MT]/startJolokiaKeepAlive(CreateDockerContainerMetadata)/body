@@ -10,7 +10,7 @@
           try {
             String jolokiaUrl=containerMetadata.getJolokiaUrl();
             String containerName=containerMetadata.getContainerName();
-            JolokiaAgentHelper.jolokiaKeepAliveCheck(getFabricService(),jolokiaUrl,containerName);
+            JolokiaAgentHelper.jolokiaKeepAliveCheck(getCuratorFramework(),getFabricService(),jolokiaUrl,containerName);
           }
  catch (          Exception e) {
             LOG.warn("Jolokia keep alive check failed for container " + containerMetadata.getId() + ". "+ e,e);
