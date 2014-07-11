@@ -1,0 +1,28 @@
+{
+  try {
+    URL theUrl=new URL(url);
+    URLConnection connection=theUrl.openConnection();
+    connection.setDoInput(true);
+    connection.setDoOutput(true);
+    connection.setConnectTimeout(50000);
+    connection.setReadTimeout(5000);
+    connection.connect();
+    OutputStream os=connection.getOutputStream();
+    OutputStreamWriter writer=new OutputStreamWriter(os);
+    writer.write(json);
+    writer.close();
+    if (connection instanceof HttpURLConnection) {
+      int code=((HttpURLConnection)connection).getResponseCode();
+      if (code < 200 || code >= 300) {
+        LOG.warn("Got a " + code + " when posting to URL "+ url+ " with JSON: "+ json);
+      }
+ else {
+        return jolokiaMapper.readTree(connection.getInputStream());
+      }
+    }
+  }
+ catch (  IOException e) {
+    LOG.warn("Failed ot post to " + url + " with JSON: "+ json+ ". "+ e,e);
+  }
+  return null;
+}

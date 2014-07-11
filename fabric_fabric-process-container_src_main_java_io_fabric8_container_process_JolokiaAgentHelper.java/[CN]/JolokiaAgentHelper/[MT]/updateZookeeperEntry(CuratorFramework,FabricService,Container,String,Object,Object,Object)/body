@@ -1,0 +1,38 @@
+{
+  String matchedZkPath=null;
+  Map<String,String> configuration=container.getOverlayProfile().getConfiguration(ChildConstants.WEB_CONTEXT_PATHS_PID);
+  if (configuration != null) {
+    for (    Map.Entry<String,String> entry : configuration.entrySet()) {
+      if (entry.getValue().equals(path)) {
+        matchedZkPath=entry.getKey();
+        break;
+      }
+    }
+  }
+  if (matchedZkPath != null) {
+    String zkPath=ZkPath.WEBAPPS_CLUSTER.getPath(matchedZkPath);
+    if (isWebAppActive(stateName)) {
+      String id=container.getId();
+      String httpUrl=container.getHttpUrl();
+      String url="" + (httpUrl != null ? httpUrl : "") + path;
+      String json="{\"id\":" + JsonHelper.jsonEncodeString(id) + ", \"container\":"+ JsonHelper.jsonEncodeString(id)+ ", \"services\":["+ JsonHelper.jsonEncodeString(url)+ "]"+ "}";
+      try {
+        ZooKeeperUtils.setData(curator,zkPath,json,CreateMode.EPHEMERAL);
+      }
+ catch (      Exception e) {
+        LOG.warn("Failed to register web app json at path " + path + " json: "+ json+ ". "+ e,e);
+      }
+    }
+ else {
+      try {
+        if (ZooKeeperUtils.exists(curator,path) != null) {
+          LOG.info("unregistered web app at " + path);
+          ZooKeeperUtils.deleteSafe(curator,path);
+        }
+      }
+ catch (      Exception e) {
+        LOG.warn("Failed to remove web app json at path " + path + ". "+ e,e);
+      }
+    }
+  }
+}

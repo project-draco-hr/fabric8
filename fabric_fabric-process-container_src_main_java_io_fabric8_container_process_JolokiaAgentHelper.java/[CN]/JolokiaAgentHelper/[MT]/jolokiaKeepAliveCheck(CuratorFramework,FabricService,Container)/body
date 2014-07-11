@@ -18,11 +18,11 @@
   if (!url.endsWith("/")) {
     url+="/";
   }
-  url+="list/?maxDepth=1";
+  String listUrl=url + "list/?maxDepth=1";
   List<String> jmxDomains=new ArrayList<String>();
   boolean valid=false;
   try {
-    URL theUrl=new URL(url);
+    URL theUrl=new URL(listUrl);
     JsonNode jsonNode=jolokiaMapper.readTree(theUrl);
     if (jsonNode != null) {
       JsonNode value=jsonNode.get("value");
@@ -39,12 +39,13 @@
     }
   }
  catch (  IOException e) {
-    LOG.warn("Failed to query: " + url + ". "+ e,e);
+    LOG.warn("Failed to query: " + listUrl + ". "+ e,e);
   }
   String provisionResult=container.getProvisionResult();
   if (debugLog) {
     LOG.debug("Current provision result: " + provisionResult + " valid: "+ valid);
   }
+  valid=valid && performExtraJolokiaChecks(curator,fabric,container,jmxDomains,url);
   if (valid) {
     if (!Objects.equal(Container.PROVISION_SUCCESS,provisionResult) || !container.isAlive()) {
       container.setProvisionResult(Container.PROVISION_SUCCESS);
