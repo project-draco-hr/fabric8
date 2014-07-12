@@ -1,8 +1,11 @@
 {
-  FabricService fabricService=containerProvider.getFabricService();
+  int count=request.getDelta();
+  String profile=request.getProfile();
+  String version=request.getVersion();
+  FabricService fabricService=request.getFabricService();
   CreateDockerContainerOptions.Builder builder=null;
   if (fabricService != null) {
-    builder=createAuthoScaleOptions(fabricService);
+    builder=createAutoScaleOptions(fabricService);
   }
   if (builder != null) {
     for (int i=0; i < count; i++) {

@@ -11,8 +11,10 @@
       }
  else       if (delta > 0) {
         if (requirementsSatisfied(requirements,profileRequirement)) {
-          String version=fabricService.get().getDefaultVersion().getId();
-          autoScaler.createContainers(version,profile,delta);
+          FabricService service=fabricService.get();
+          String version=service.getDefaultVersion().getId();
+          AutoScaleRequest command=new AutoScaleRequest(service,version,profile,delta,requirements,profileRequirement);
+          autoScaler.createContainers(command);
         }
       }
     }

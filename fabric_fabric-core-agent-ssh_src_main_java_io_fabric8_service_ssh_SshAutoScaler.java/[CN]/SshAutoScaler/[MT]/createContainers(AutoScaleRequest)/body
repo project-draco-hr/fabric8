@@ -1,0 +1,24 @@
+{
+  int count=request.getDelta();
+  String profile=request.getProfile();
+  String command=request.getVersion();
+  FabricService fabricService=request.getFabricService();
+  CreateSshContainerOptions.Builder builder=null;
+  if (fabricService != null) {
+    builder=createAuthoScaleOptions(fabricService);
+  }
+  if (builder != null) {
+    Container[] containers=fabricService.getContainers();
+    for (int i=0; i < count; i++) {
+      final CreateSshContainerOptions.Builder configuredBuilder=builder.number(1).version(command).profiles(profile);
+      NameValidator nameValidator=Containers.createNameValidator(containers);
+      String name=Containers.createContainerName(containers,profile,containerProvider.getScheme(),nameValidator);
+      CreateSshContainerOptions options=configuredBuilder.name(name).build();
+      LOG.info("Creating container name " + name + " version "+ command+ " profile "+ profile+ " "+ count+ " container(s)");
+      fabricService.createContainers(options);
+    }
+  }
+ else {
+    LOG.warn("Could not create version " + command + " profile "+ profile+ " due to missing autoscale configuration");
+  }
+}
