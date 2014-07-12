@@ -1,6 +1,11 @@
 {
   FabricService fabric=getFabricService();
   Version version=getOrCreateVersion(requirements);
+  for (  String parent : requirements.getParentProfiles()) {
+    if (!version.hasProfile(parent)) {
+      throw new IllegalArgumentException("Parent profile " + parent + " does not exists in version "+ version.getId());
+    }
+  }
   Profile profile=getOrCreateProfile(version,requirements);
   if (requirements.isAbstractProfile()) {
     profile.setAttribute(Profile.ABSTRACT,"true");
