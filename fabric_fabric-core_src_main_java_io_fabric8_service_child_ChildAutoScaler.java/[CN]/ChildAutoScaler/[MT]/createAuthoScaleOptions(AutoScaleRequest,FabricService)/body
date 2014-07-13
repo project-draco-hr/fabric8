@@ -1,0 +1,26 @@
+{
+  CreateChildContainerOptions.Builder builder=CreateChildContainerOptions.builder();
+  Container[] containers=fabricService.getContainers();
+  if (containers != null) {
+    List<String> containerIds=Containers.rootContainerIds(containers);
+    if (containerIds.isEmpty()) {
+      throw new IllegalStateException("No root containers are available!");
+    }
+    String rootContainer=null;
+    if (containerIds.size() == 1) {
+      rootContainer=containerIds.get(0);
+    }
+ else {
+      rootContainer=chooseRootContainer(request,containerIds);
+    }
+    if (Strings.isNullOrBlank(rootContainer)) {
+      throw new IllegalStateException("Could not choose a root container from the possible IDs: " + containerIds + " with requirements: "+ getChildScalingRequirements(request));
+    }
+ else {
+      builder=builder.parent(rootContainer);
+    }
+  }
+  String zookeeperUrl=fabricService.getZookeeperUrl();
+  String zookeeperPassword=fabricService.getZookeeperPassword();
+  return builder.jmxUser("admin").jmxPassword(zookeeperPassword).zookeeperUrl(zookeeperUrl).zookeeperPassword(zookeeperPassword);
+}
