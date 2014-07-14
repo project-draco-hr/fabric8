@@ -1,6 +1,6 @@
 {
   boolean changed=false;
-  Pattern pattern=Pattern.compile("\\[(.*)\\]\\((.*)\\)");
+  Pattern pattern=Pattern.compile("\\[(.*?)\\]\\((.*?)\\)");
   Matcher matcher=pattern.matcher(line);
   StringBuffer sb=new StringBuffer();
   while (matcher.find()) {
@@ -9,7 +9,7 @@
       matcher.appendReplacement(sb,"[$1]($2)");
     }
  else {
-      if (names.contains(s2)) {
+      if (names.contains(s2) || names.contains(relativePath + s2) || names.contains(relativePath + "/" + s2)) {
         String prefix="/fabric/profiles/quickstarts/";
         matcher.appendReplacement(sb,"[$1](" + prefix + "$2)");
       }
