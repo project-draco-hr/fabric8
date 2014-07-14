@@ -1,0 +1,18 @@
+{
+  SshHostsConfiguration config=getSshConfiguration();
+  if (config == null) {
+    config=new SshHostsConfiguration();
+    setSshConfiguration(config);
+  }
+  Map<String,SshHostConfiguration> hosts=config.getHosts();
+  if (hosts == null) {
+    hosts=new HashMap<String,SshHostConfiguration>();
+    config.setHosts(hosts);
+  }
+  SshHostConfiguration answer=hosts.get(hostAlias);
+  if (answer == null) {
+    answer=new SshHostConfiguration(hostAlias);
+    hosts.put(hostAlias,answer);
+  }
+  return answer;
+}

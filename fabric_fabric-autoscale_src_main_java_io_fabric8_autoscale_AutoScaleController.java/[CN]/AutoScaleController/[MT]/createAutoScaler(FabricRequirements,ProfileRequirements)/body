@@ -1,0 +1,10 @@
+{
+  FabricService service=fabricService.getOptional();
+  if (service != null) {
+    return service.createContainerAutoScaler(requirements,profileRequirements);
+  }
+ else {
+    LOGGER.warn("No FabricService available so cannot autoscale");
+    return null;
+  }
+}

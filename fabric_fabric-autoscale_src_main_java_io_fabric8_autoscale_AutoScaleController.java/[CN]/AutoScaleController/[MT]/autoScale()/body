@@ -1,13 +1,13 @@
 {
-  ContainerAutoScaler autoScaler=getContainerAutoScaler();
-  if (autoScaler != null) {
-    FabricRequirements requirements=fabricService.get().getRequirements();
-    List<ProfileRequirements> profileRequirements=requirements.getProfileRequirements();
-    for (    ProfileRequirements profileRequirement : profileRequirements) {
+  FabricRequirements requirements=fabricService.get().getRequirements();
+  List<ProfileRequirements> profileRequirements=requirements.getProfileRequirements();
+  for (  ProfileRequirements profileRequirement : profileRequirements) {
+    ContainerAutoScaler autoScaler=createAutoScaler(requirements,profileRequirement);
+    if (autoScaler != null) {
       autoScaleProfile(autoScaler,requirements,profileRequirement);
     }
-  }
  else {
-    LOGGER.warn("No ContainerAutoScaler available");
+      LOGGER.warn("No ContainerAutoScaler available for profile " + profileRequirement.getProfile());
+    }
   }
 }

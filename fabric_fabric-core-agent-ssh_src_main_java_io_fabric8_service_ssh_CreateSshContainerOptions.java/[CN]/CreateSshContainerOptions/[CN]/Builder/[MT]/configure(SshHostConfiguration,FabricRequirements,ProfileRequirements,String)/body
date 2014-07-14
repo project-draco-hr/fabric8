@@ -1,0 +1,41 @@
+{
+  SshHostsConfiguration sshHosts=requirements.getSshConfiguration();
+  host=sshHostConfig.getHostName();
+  if (Strings.isNullOrBlank(host)) {
+    throw new IllegalArgumentException("Missing host property in the ssh configuration: " + sshHostConfig);
+  }
+  path=sshHostConfig.getPath();
+  if (Strings.isNullOrBlank(path)) {
+    if (sshHosts != null) {
+      path=sshHosts.getDefaultPath();
+    }
+    if (Strings.isNullOrBlank(path)) {
+      path=DEFAULT_PATH;
+    }
+  }
+  Integer portValue=sshHostConfig.getPort();
+  if (portValue == null) {
+    if (sshHosts != null) {
+      portValue=sshHosts.getDefaultPort();
+    }
+  }
+  port=portValue != null ? portValue : DEFAULT_SSH_PORT;
+  username=sshHostConfig.getUsername();
+  if (Strings.isNullOrBlank(username)) {
+    if (sshHosts != null) {
+      username=sshHosts.getDefaultUsername();
+    }
+    if (Strings.isNullOrBlank(username)) {
+      throw new IllegalArgumentException("Missing username property in the ssh configuration: " + sshHostConfig);
+    }
+  }
+  password=sshHostConfig.getPassword();
+  if (Strings.isNullOrBlank(password)) {
+    if (sshHosts != null) {
+      password=sshHosts.getDefaultPassword();
+    }
+    if (Strings.isNullOrBlank(password)) {
+      throw new IllegalArgumentException("Missing password property in the ssh configuration: " + sshHostConfig);
+    }
+  }
+}
