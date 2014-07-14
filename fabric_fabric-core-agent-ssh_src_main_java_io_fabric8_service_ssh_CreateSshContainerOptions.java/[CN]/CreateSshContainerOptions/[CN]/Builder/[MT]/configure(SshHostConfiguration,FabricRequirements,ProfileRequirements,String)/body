@@ -1,5 +1,5 @@
 {
-  SshHostsConfiguration sshHosts=requirements.getSshConfiguration();
+  SshConfiguration sshHosts=requirements.getSshConfiguration();
   host=sshHostConfig.getHostName();
   if (Strings.isNullOrBlank(host)) {
     throw new IllegalArgumentException("Missing host property in the ssh configuration: " + sshHostConfig);
@@ -37,5 +37,8 @@
     if (Strings.isNullOrBlank(password)) {
       throw new IllegalArgumentException("Missing password property in the ssh configuration: " + sshHostConfig);
     }
+  }
+  if (sshHosts != null) {
+    fallbackRepositories=sshHosts.getFallbackRepositories();
   }
 }
