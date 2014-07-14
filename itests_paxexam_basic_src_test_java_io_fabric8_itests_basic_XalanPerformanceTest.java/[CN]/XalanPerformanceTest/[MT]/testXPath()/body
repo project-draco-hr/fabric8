@@ -1,0 +1,18 @@
+{
+  DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+  dbf.setNamespaceAware(true);
+  Document document=dbf.newDocumentBuilder().parse(new InputSource(new StringReader(this.xml)));
+  long ms1=System.currentTimeMillis();
+  for (int i=0; i < 10000; i++) {
+    Element e=(Element)document.getElementsByTagName("child").item(0);
+    e.getTextContent();
+  }
+  System.out.println("T1: " + (System.currentTimeMillis() - ms1) + "ms");
+  XPath xp=XPathFactory.newInstance().newXPath();
+  XPathExpression expression=xp.compile("/root/child/text()");
+  long ms2=System.currentTimeMillis();
+  for (int i=0; i < 10000; i++) {
+    expression.evaluate(new InputSource(new StringReader(this.xml)),XPathConstants.STRING);
+  }
+  System.out.println("T2: " + (System.currentTimeMillis() - ms2) + "ms");
+}
