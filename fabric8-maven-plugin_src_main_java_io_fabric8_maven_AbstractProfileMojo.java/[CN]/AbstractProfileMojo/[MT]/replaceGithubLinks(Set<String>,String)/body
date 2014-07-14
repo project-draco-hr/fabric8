@@ -1,0 +1,30 @@
+{
+  boolean changed=false;
+  Pattern pattern=Pattern.compile("\\[(.*)\\]\\((.*)\\)");
+  Matcher matcher=pattern.matcher(line);
+  StringBuffer sb=new StringBuffer();
+  while (matcher.find()) {
+    String s2=matcher.group(2);
+    if (s2.startsWith("http:") || s2.startsWith("https:")) {
+      matcher.appendReplacement(sb,"[$1]($2)");
+    }
+ else {
+      if (names.contains(s2)) {
+        String prefix="/fabric/profiles/quickstarts/";
+        matcher.appendReplacement(sb,"[$1](" + prefix + "$2)");
+      }
+ else {
+        String prefix="/fabric/profiles/quickstarts/";
+        matcher.appendReplacement(sb,"[$1](" + prefix + "$2.profile)");
+      }
+      changed=true;
+    }
+  }
+  matcher.appendTail(sb);
+  if (changed) {
+    return sb.toString();
+  }
+ else {
+    return null;
+  }
+}

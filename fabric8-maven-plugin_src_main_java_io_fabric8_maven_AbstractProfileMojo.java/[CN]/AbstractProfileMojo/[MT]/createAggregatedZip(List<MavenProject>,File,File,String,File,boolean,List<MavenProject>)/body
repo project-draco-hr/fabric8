@@ -7,6 +7,7 @@
     }
   }
   if (includeReadMe) {
+    Map<String,File> pomNames=new HashMap<String,File>();
     for (    MavenProject pomProjects : pomZipProjects) {
       File src=pomProjects.getFile().getParentFile();
       String root=projectBaseDir.getName();
@@ -14,7 +15,31 @@
       relativePath=root + File.separator + relativePath;
       relativePath=pathToProfilePath(relativePath);
       File outDir=new File(projectBuildDir,relativePath);
-      copyReadMe(src,outDir);
+      File copiedFile=copyReadMe(src,outDir);
+      if (copiedFile != null) {
+        System.out.println("*** " + copiedFile);
+        System.out.println("    " + relativePath);
+        String key=getReadMeFileKey(relativePath);
+        System.out.println("    " + key);
+        pomNames.put(key,copiedFile);
+      }
+    }
+    for (    Map.Entry<String,File> entry : pomNames.entrySet()) {
+      File file=entry.getValue();
+      boolean changed=false;
+      List<String> lines=Files.readLines(file);
+      for (int i=0; i < lines.size(); i++) {
+        String line=lines.get(i);
+        String newLine=replaceGithubLinks(pomNames.keySet(),line);
+        if (newLine != null) {
+          lines.set(i,newLine);
+          changed=true;
+        }
+      }
+      if (changed) {
+        Files.writeLines(file,lines);
+        System.out.println("*** updated file " + file);
+      }
     }
   }
   Zips.createZipFile(getLog(),projectBuildDir,projectOutputFile);
