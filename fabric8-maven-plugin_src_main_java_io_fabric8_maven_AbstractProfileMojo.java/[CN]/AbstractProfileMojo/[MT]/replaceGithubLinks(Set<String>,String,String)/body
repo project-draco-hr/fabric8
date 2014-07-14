@@ -11,10 +11,16 @@
  else {
       if (names.contains(s2) || names.contains(relativePath + s2) || names.contains(relativePath + "/" + s2)) {
         s2=pathToProfilePath(s2);
+        if (relativePath != null && !"<root>".equals(relativePath)) {
+          s2=addToPath(relativePath,s2);
+        }
         matcher.appendReplacement(sb,"[$1](" + replaceReadmeLinksPrefix + s2+ ")");
       }
  else {
         s2=pathToProfilePath(s2);
+        if (relativePath != null && !"<root>".equals(relativePath)) {
+          s2=addToPath(relativePath,s2);
+        }
         matcher.appendReplacement(sb,"[$1](" + replaceReadmeLinksPrefix + s2+ ".profile)");
       }
       changed=true;
