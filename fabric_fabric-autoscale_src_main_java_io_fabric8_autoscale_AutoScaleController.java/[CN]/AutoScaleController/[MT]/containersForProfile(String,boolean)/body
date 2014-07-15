@@ -1,0 +1,26 @@
+{
+  List<Container> answer=new ArrayList<Container>();
+  List<Container> containers=Containers.containersForProfile(fabricService.get().getContainers(),profile);
+  for (  Container container : containers) {
+    boolean alive=container.isAlive();
+    boolean provisioningPending=container.isProvisioningPending();
+    if (includePending) {
+      if (alive || provisioningPending) {
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("Container " + container.getId() + " is alive "+ alive+ " provision is pending "+ provisioningPending);
+        }
+        answer.add(container);
+      }
+    }
+ else {
+      String provisionResult=container.getProvisionResult();
+      if (alive && Container.PROVISION_SUCCESS.equals(provisionResult)) {
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("Container " + container.getId() + " is alive "+ alive+ " provision is complete");
+        }
+        answer.add(container);
+      }
+    }
+  }
+  return answer;
+}

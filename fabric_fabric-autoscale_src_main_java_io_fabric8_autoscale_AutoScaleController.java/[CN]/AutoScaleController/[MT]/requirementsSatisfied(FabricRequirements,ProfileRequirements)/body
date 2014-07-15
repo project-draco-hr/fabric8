@@ -5,7 +5,7 @@
       ProfileRequirements dependentProfileRequirements=requirements.getOrCreateProfileRequirement(dependentProfile);
       Integer minimumInstances=dependentProfileRequirements.getMinimumInstances();
       if (minimumInstances != null) {
-        List<Container> containers=containersForProfile(dependentProfile);
+        List<Container> containers=aliveAndSuccessfulContainersForProfile(dependentProfile);
         int dependentSize=containers.size();
         if (minimumInstances > dependentSize) {
           LOGGER.info("Cannot yet auto-scale profile " + profileRequirement.getProfile() + " since dependent profile "+ dependentProfile+ " has only "+ dependentSize+ " container(s) when it requires "+ minimumInstances+ " container(s)");
