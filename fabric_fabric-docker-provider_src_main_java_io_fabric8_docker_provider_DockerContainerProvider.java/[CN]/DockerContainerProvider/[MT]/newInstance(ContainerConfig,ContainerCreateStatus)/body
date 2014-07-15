@@ -2,9 +2,7 @@
   List<String> warnings=new ArrayList<String>();
   String[] warningArray=status.getWarnings();
   if (warningArray != null) {
-    for (    String warning : warningArray) {
-      warnings.add(warning);
-    }
+    Collections.addAll(warnings,warningArray);
   }
   return new CreateDockerContainerMetadata(status.getId(),warnings);
 }
