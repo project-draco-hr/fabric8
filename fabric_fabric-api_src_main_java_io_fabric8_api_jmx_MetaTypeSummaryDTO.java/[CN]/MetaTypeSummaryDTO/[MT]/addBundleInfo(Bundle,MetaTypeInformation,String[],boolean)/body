@@ -1,0 +1,23 @@
+{
+  String locale=null;
+  if (pids != null) {
+    long bundleId=bundle.getBundleId();
+    for (    String pid : pids) {
+      MetaTypeObjectSummaryDTO summary=this.pids.get(pid);
+      if (summary == null) {
+        summary=new MetaTypeObjectSummaryDTO(pid);
+        this.pids.put(pid,summary);
+      }
+      if (factory) {
+        summary.getFactoryPidBundleIds().add(bundleId);
+      }
+ else {
+        summary.getPidBundleIds().add(bundleId);
+      }
+      ObjectClassDefinition objectClassDefinition=MetaTypeSummaryDTO.tryGetObjectClassDefinition(info,pid,locale);
+      if (objectClassDefinition != null) {
+        summary.appendObjectDefinition(objectClassDefinition);
+      }
+    }
+  }
+}

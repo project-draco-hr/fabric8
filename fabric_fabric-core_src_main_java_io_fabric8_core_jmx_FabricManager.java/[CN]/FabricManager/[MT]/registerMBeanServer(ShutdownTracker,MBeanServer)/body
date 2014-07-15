@@ -1,0 +1,12 @@
+{
+  try {
+    ObjectName name=getObjectName();
+    if (!mbeanServer.isRegistered(name)) {
+      StandardMBean mbean=new StandardMBean(this,FabricManagerMBean.class);
+      mbeanServer.registerMBean(mbean,name);
+    }
+  }
+ catch (  Exception e) {
+    LOG.warn("An error occured during mbean server registration: " + e,e);
+  }
+}

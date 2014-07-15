@@ -1,0 +1,10 @@
+{
+  this.bundleContext=bundleContext;
+  bundleUtils=new BundleUtils(bundleContext);
+  Objects.notNull(metaTypeService,"metaTypeService");
+  Objects.notNull(bundleContext,"bundleContext");
+  if (mbeanServer != null) {
+    StandardMBean mbean=new StandardMBean(this,MetaTypeFacadeMXBean.class);
+    JMXUtils.registerMBean(mbean,mbeanServer,OBJECT_NAME);
+  }
+}
