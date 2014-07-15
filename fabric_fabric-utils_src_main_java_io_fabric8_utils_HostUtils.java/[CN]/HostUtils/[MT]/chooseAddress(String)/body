@@ -4,11 +4,25 @@
     try {
       InetAddress preferredAddress=InetAddress.getByName(preferred);
       if (addresses != null && addresses.contains(preferredAddress)) {
+        LOG.info("preferred address is " + preferredAddress.getHostAddress() + " for host "+ preferredAddress.getHostName());
         return preferredAddress;
       }
     }
  catch (    UnknownHostException e) {
     }
+    for (    InetAddress address : addresses) {
+      if (preferred.equals(address.getHostName())) {
+        return address;
+      }
+    }
+    StringBuffer hostNameBuffer=new StringBuffer();
+    for (    InetAddress address : addresses) {
+      if (hostNameBuffer.length() > 0) {
+        hostNameBuffer.append(", ");
+      }
+      hostNameBuffer.append(address.getHostName() + "/" + address.getHostAddress());
+    }
+    LOG.warn("Could not find network address for preferred '" + preferred + "' when the addresses were: "+ hostNameBuffer);
   }
   if (addresses.contains(InetAddress.getLocalHost())) {
     return InetAddress.getLocalHost();
