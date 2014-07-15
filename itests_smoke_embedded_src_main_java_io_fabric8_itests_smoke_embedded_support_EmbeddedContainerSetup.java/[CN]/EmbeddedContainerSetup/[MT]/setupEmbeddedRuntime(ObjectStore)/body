@@ -1,0 +1,22 @@
+{
+  Path basedir=Paths.get("").toAbsolutePath();
+  Path modulesPath=basedir.resolve(Paths.get("target","modules"));
+  final Runtime runtime=RuntimeLocator.getRequiredRuntime();
+  final ModuleContext syscontext=runtime.getModuleContext();
+  final CountDownLatch latch=new CountDownLatch(1);
+  ServiceListener listener=new ServiceListener(){
+    @Override public void serviceChanged(    ServiceEvent event){
+      if (event.getType() == ServiceEvent.REGISTERED) {
+        syscontext.removeServiceListener(this);
+        latch.countDown();
+      }
+    }
+  }
+;
+  syscontext.addServiceListener(listener,"(objectClass=" + BootstrapComplete.class.getName() + ")");
+  for (  URL url : getInitialModuleLocations(modulesPath)) {
+    ClassLoader classLoader=EmbeddedUtils.class.getClassLoader();
+    EmbeddedUtils.installAndStartModule(classLoader,url);
+  }
+  IllegalStateAssertion.assertTrue(latch.await(20,TimeUnit.SECONDS),"BootstrapComplete registered");
+}

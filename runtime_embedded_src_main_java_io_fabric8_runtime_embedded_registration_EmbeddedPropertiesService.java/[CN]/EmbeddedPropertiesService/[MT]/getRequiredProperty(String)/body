@@ -1,7 +1,5 @@
 {
   String result=getPropertyInternal(propName,null);
-  if (result != null) {
-    return result;
-  }
-  throw new IllegalStateException("Cannot obtain required property: " + propName);
+  IllegalStateAssertion.assertNotNull(result,"Cannot obtain required property: " + propName);
+  return result;
 }
