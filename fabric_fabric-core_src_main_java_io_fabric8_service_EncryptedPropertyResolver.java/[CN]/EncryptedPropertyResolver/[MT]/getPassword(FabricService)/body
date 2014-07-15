@@ -1,6 +1,7 @@
 {
   try {
-    return getStringData(fabricService.adapt(CuratorFramework.class),AUTHENTICATION_CRYPT_PASSWORD.getPath());
+    String pw=getStringData(fabricService.adapt(CuratorFramework.class),AUTHENTICATION_CRYPT_PASSWORD.getPath());
+    return PasswordEncoder.decode(pw);
   }
  catch (  Exception e) {
     throw FabricException.launderThrowable(e);
