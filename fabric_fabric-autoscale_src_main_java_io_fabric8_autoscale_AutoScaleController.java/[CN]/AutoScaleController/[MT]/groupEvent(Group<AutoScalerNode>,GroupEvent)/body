@@ -7,6 +7,7 @@ case CHANGED:
       AutoScalerNode state=createState();
       try {
         if (group.isMaster()) {
+          enableMasterZkCache(curator.get());
           LOGGER.info("AutoScaleController is the master");
           group.update(state);
           dataStore.trackConfiguration(runnable);
@@ -18,6 +19,7 @@ case CHANGED:
           group.update(state);
           disableTimer();
           dataStore.untrackConfiguration(runnable);
+          disableMasterZkCache();
         }
       }
  catch (      IllegalStateException e) {

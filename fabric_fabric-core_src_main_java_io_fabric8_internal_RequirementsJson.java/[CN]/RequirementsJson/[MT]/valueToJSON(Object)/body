@@ -1,0 +1,11 @@
+{
+  try {
+    StringWriter writer=new StringWriter();
+    mapper.writeValue(writer,value);
+    return writer.toString();
+  }
+ catch (  IOException e) {
+    LOG.warn("Failed to marshal to JSON: " + e,e);
+    throw new IOException(e.getMessage());
+  }
+}

@@ -1,13 +1,29 @@
 {
   FabricRequirements requirements=fabricService.get().getRequirements();
   List<ProfileRequirements> profileRequirements=requirements.getProfileRequirements();
-  for (  ProfileRequirements profileRequirement : profileRequirements) {
-    ContainerAutoScaler autoScaler=createAutoScaler(requirements,profileRequirement);
-    if (autoScaler != null) {
-      autoScaleProfile(autoScaler,requirements,profileRequirement);
+  if (profileRequirements != null && !profileRequirements.isEmpty()) {
+    AutoScaleStatus status=new AutoScaleStatus();
+    for (    ProfileRequirements profileRequirement : profileRequirements) {
+      ContainerAutoScaler autoScaler=createAutoScaler(requirements,profileRequirement);
+      if (autoScaler != null) {
+        autoScaleProfile(autoScaler,requirements,profileRequirement,status);
+      }
+ else {
+        LOGGER.warn("No ContainerAutoScaler available for profile " + profileRequirement.getProfile());
+      }
+    }
+    if (zkMasterCache != null) {
+      try {
+        String json=RequirementsJson.toJSON(status);
+        String zkPath=ZkPath.AUTO_SCALE_STATUS.getPath();
+        zkMasterCache.setStringData(zkPath,json,CreateMode.EPHEMERAL);
+      }
+ catch (      Exception e) {
+        LOGGER.warn("Failed to write autoscale status " + e,e);
+      }
     }
  else {
-      LOGGER.warn("No ContainerAutoScaler available for profile " + profileRequirement.getProfile());
+      LOGGER.warn("No ZooKeeperMasterCache!");
     }
   }
 }

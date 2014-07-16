@@ -1,0 +1,19 @@
+{
+  String profile=profileRequirement.getProfile();
+  List<String> dependentProfiles=profileRequirement.getDependentProfiles();
+  if (dependentProfiles != null) {
+    for (    String dependentProfile : dependentProfiles) {
+      ProfileRequirements dependentProfileRequirements=requirements.getOrCreateProfileRequirement(dependentProfile);
+      Integer minimumInstances=dependentProfileRequirements.getMinimumInstances();
+      if (minimumInstances != null) {
+        List<Container> containers=aliveAndSuccessfulContainersForProfile(dependentProfile);
+        int dependentSize=containers.size();
+        if (minimumInstances > dependentSize) {
+          status.profileStatus(profile).missingDependency(dependentProfile,dependentSize,minimumInstances);
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}

@@ -1,5 +1,7 @@
 {
-  group=new ZooKeeperGroup<AutoScalerNode>(curator.get(),ZkPath.AUTO_SCALE.getPath(),AutoScalerNode.class);
+  CuratorFramework curator=this.curator.get();
+  enableMasterZkCache(curator);
+  group=new ZooKeeperGroup<AutoScalerNode>(curator,ZkPath.AUTO_SCALE_CLUSTER.getPath(),AutoScalerNode.class);
   group.add(this);
   group.update(createState());
   group.start();
