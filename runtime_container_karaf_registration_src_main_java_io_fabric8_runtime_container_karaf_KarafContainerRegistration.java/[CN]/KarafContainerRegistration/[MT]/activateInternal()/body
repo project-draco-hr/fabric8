@@ -16,18 +16,18 @@
     if (stat != null) {
       deleteSafe(curator.get(),domainsNode);
     }
-    createDefault(curator.get(),CONTAINER_BINDADDRESS.getPath(runtimeIdentity),sysprops.getProperty(ZkDefs.BIND_ADDRESS,"0.0.0.0"));
-    createDefault(curator.get(),CONTAINER_RESOLVER.getPath(runtimeIdentity),getContainerResolutionPolicy(sysprops,curator.get(),runtimeIdentity));
+    ZooKeeperUtils.createDefault(curator.get(),CONTAINER_BINDADDRESS.getPath(runtimeIdentity),bootstrapConfiguration.get().getBindAddress());
+    ZooKeeperUtils.createDefault(curator.get(),CONTAINER_RESOLVER.getPath(runtimeIdentity),getContainerResolutionPolicy(curator.get(),runtimeIdentity));
     setData(curator.get(),CONTAINER_LOCAL_HOSTNAME.getPath(runtimeIdentity),HostUtils.getLocalHostName());
     setData(curator.get(),CONTAINER_LOCAL_IP.getPath(runtimeIdentity),HostUtils.getLocalIp());
     setData(curator.get(),CONTAINER_IP.getPath(runtimeIdentity),getContainerPointer(curator.get(),runtimeIdentity));
-    createDefault(curator.get(),CONTAINER_GEOLOCATION.getPath(runtimeIdentity),geoLocationService.get().getGeoLocation());
     for (    String resolver : ZkDefs.VALID_RESOLVERS) {
-      String address=sysprops.getProperty(resolver);
+      String address=String.valueOf(bootstrapConfiguration.get().getConfiguration().get(resolver));
       if (address != null && !address.isEmpty() && exists(curator.get(),CONTAINER_ADDRESS.getPath(runtimeIdentity,resolver)) == null) {
         setData(curator.get(),CONTAINER_ADDRESS.getPath(runtimeIdentity,resolver),address);
       }
     }
+    createDefault(curator.get(),CONTAINER_GEOLOCATION.getPath(runtimeIdentity),geoLocationService.get().getGeoLocation());
     Container current=getContainer();
     System.setProperty(SystemProperties.JAVA_RMI_SERVER_HOSTNAME,current.getIp());
     registerJmx(current);

@@ -6,6 +6,11 @@
     System.out.println("You can use the --force option, if you want to force re-create the fabric.");
     return null;
   }
+  Configuration bootConfiguration=configAdmin.getConfiguration(BootstrapConfiguration.COMPONENT_PID,null);
+  Dictionary<String,Object> bootProperties=bootConfiguration.getProperties();
+  if (bootProperties == null) {
+    bootProperties=new Hashtable<>();
+  }
   String runtimeIdentity=runtimeProperties.getRuntimeIdentity();
   CreateEnsembleOptions.Builder builder=CreateEnsembleOptions.builder().zooKeeperServerTickTime(zooKeeperTickTime).zooKeeperServerInitLimit(zooKeeperInitLimit).zooKeeperServerSyncLimit(zooKeeperSyncLimit).zooKeeperServerDataDir(zooKeeperDataDir).fromRuntimeProperties(runtimeProperties).bootstrapTimeout(bootstrapTimeout).waitForProvision(waitForProvisioning).clean(clean);
   builder.version(version);
@@ -18,26 +23,26 @@
   }
   if (globalResolver != null) {
     builder.globalResolver(globalResolver);
-    System.setProperty(ZkDefs.GLOBAL_RESOLVER_PROPERTY,globalResolver);
+    bootProperties.put(ZkDefs.GLOBAL_RESOLVER_PROPERTY,globalResolver);
   }
   if (resolver != null) {
     builder.resolver(resolver);
-    System.setProperty(ZkDefs.LOCAL_RESOLVER_PROPERTY,resolver);
+    bootProperties.put(ZkDefs.LOCAL_RESOLVER_PROPERTY,resolver);
   }
   if (manualIp != null) {
     builder.manualIp(manualIp);
-    System.setProperty(ZkDefs.MANUAL_IP,manualIp);
+    bootProperties.put(ZkDefs.MANUAL_IP,manualIp);
   }
   if (bindAddress != null) {
     if (!bindAddress.contains(":")) {
       builder.bindAddress(bindAddress);
-      System.setProperty(ZkDefs.BIND_ADDRESS,bindAddress);
+      bootProperties.put(ZkDefs.BIND_ADDRESS,bindAddress);
     }
  else {
       String[] parts=bindAddress.split(":");
       builder.bindAddress(parts[0]);
       builder.zooKeeperServerPort(Integer.parseInt(parts[1]));
-      System.setProperty(ZkDefs.BIND_ADDRESS,parts[0]);
+      bootProperties.put(ZkDefs.BIND_ADDRESS,parts[0]);
     }
   }
   if (zooKeeperServerPort > 0) {
@@ -64,8 +69,8 @@
   }
   builder.minimumPort(minimumPort);
   builder.minimumPort(maximumPort);
-  System.setProperty(ZkDefs.MINIMUM_PORT,String.valueOf(minimumPort));
-  System.setProperty(ZkDefs.MAXIMUM_PORT,String.valueOf(maximumPort));
+  bootProperties.put(ZkDefs.MINIMUM_PORT,String.valueOf(minimumPort));
+  bootProperties.put(ZkDefs.MAXIMUM_PORT,String.valueOf(maximumPort));
   newUser=newUser != null ? newUser : ShellUtils.retrieveFabricUser(session);
   newUserPassword=newUserPassword != null ? newUserPassword : ShellUtils.retrieveFabricUserPassword(session);
   String karafEtc=runtimeProperties.getProperty(SystemProperties.KARAF_ETC);
@@ -99,6 +104,7 @@
  else {
     builder.zookeeperPassword(zookeeperPassword);
   }
+  bootConfiguration.update(bootProperties);
   CreateEnsembleOptions options=builder.users(userProps).withUser(newUser,newUserPassword,newUserRole).build();
   if (containers.size() == 1 && containers.contains(runtimeIdentity)) {
     bootstrap.create(options);

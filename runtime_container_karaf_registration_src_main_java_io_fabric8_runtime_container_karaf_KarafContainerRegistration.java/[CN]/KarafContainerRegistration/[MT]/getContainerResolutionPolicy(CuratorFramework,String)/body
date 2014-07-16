@@ -1,0 +1,11 @@
+{
+  String policy=null;
+  List<String> validResolverList=Arrays.asList(ZkDefs.VALID_RESOLVERS);
+  if (exists(zooKeeper,ZkPath.CONTAINER_RESOLVER.getPath(container)) != null) {
+    policy=getStringData(zooKeeper,ZkPath.CONTAINER_RESOLVER.getPath(container));
+  }
+ else   if (bootstrapConfiguration.get().getLocalResolver() != null && validResolverList.contains(bootstrapConfiguration.get().getLocalResolver())) {
+    policy=bootstrapConfiguration.get().getLocalResolver();
+  }
+  return policy;
+}

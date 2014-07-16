@@ -16,12 +16,17 @@
     if (stat != null) {
       ZooKeeperUtils.deleteSafe(curator.get(),domainsNode);
     }
-    ZooKeeperUtils.createDefault(curator.get(),CONTAINER_BINDADDRESS.getPath(runtimeIdentity),sysprops.getProperty(ZkDefs.BIND_ADDRESS,"0.0.0.0"));
-    ZooKeeperUtils.createDefault(curator.get(),CONTAINER_RESOLVER.getPath(runtimeIdentity),getContainerResolutionPolicy(sysprops,curator.get(),runtimeIdentity));
+    ZooKeeperUtils.createDefault(curator.get(),CONTAINER_BINDADDRESS.getPath(runtimeIdentity),bootstrapConfiguration.get().getBindAddress());
+    ZooKeeperUtils.createDefault(curator.get(),CONTAINER_RESOLVER.getPath(runtimeIdentity),getContainerResolutionPolicy(curator.get(),runtimeIdentity));
     ZooKeeperUtils.setData(curator.get(),CONTAINER_LOCAL_HOSTNAME.getPath(runtimeIdentity),HostUtils.getLocalHostName());
     ZooKeeperUtils.setData(curator.get(),CONTAINER_LOCAL_IP.getPath(runtimeIdentity),HostUtils.getLocalIp());
-    ZooKeeperUtils.setData(curator.get(),CONTAINER_IP.getPath(runtimeIdentity),getContainerPointer(curator.get(),runtimeIdentity));
-    ZooKeeperUtils.createDefault(curator.get(),CONTAINER_GEOLOCATION.getPath(runtimeIdentity),geoLocationService.get().getGeoLocation());
+    for (    String resolver : ZkDefs.VALID_RESOLVERS) {
+      String address=String.valueOf(bootstrapConfiguration.get().getConfiguration().get(resolver));
+      if (address != null && !address.isEmpty() && exists(curator.get(),CONTAINER_ADDRESS.getPath(runtimeIdentity,resolver)) == null) {
+        setData(curator.get(),CONTAINER_ADDRESS.getPath(runtimeIdentity,resolver),address);
+      }
+    }
+    createDefault(curator.get(),CONTAINER_GEOLOCATION.getPath(runtimeIdentity),geoLocationService.get().getGeoLocation());
     for (    String resolver : ZkDefs.VALID_RESOLVERS) {
       String address=sysprops.getProperty(resolver);
       if (address != null && !address.isEmpty() && ZooKeeperUtils.exists(curator.get(),CONTAINER_ADDRESS.getPath(runtimeIdentity,resolver)) == null) {

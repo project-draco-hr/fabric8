@@ -1,0 +1,12 @@
+{
+  BundleContext bundleContext=componentContext.getBundleContext();
+  boolean isCreated=checkCreated(bundleContext);
+  if (!Strings.isNotBlank(zookeeperUrl) && !isCreated && options.isEnsembleStart()) {
+    String connectionUrl=getConnectionUrl(options);
+    registrationHandler.get().setRegistrationCallback(new DataStoreBootstrapTemplate(name,homeDir,connectionUrl,options));
+    createOrUpdateDataStoreConfig(options);
+    createZooKeeeperServerConfig(options);
+    createZooKeeeperClientConfig(connectionUrl,options);
+    markCreated(bundleContext);
+  }
+}
