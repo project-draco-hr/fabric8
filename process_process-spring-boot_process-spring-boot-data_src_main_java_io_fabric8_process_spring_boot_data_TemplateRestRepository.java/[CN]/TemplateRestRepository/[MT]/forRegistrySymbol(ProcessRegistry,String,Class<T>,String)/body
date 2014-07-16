@@ -1,0 +1,9 @@
+{
+  String serviceUrl=processRegistry.readProperty(String.format("service.%s.url",serviceSymbol));
+  try {
+    return new TemplateRestRepository<>(entityClass,serviceUrl + "/" + entityResource);
+  }
+ catch (  MalformedURLException e) {
+    throw new RuntimeException(e);
+  }
+}

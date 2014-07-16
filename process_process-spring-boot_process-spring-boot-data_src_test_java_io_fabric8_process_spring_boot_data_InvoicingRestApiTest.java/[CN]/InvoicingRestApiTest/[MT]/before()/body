@@ -1,7 +1,5 @@
 {
-  port=tomcat.getEmbeddedServletContainer().getPort();
-  baseUri="http://localhost:" + port + "/invoice";
-  restRepository=new TemplateRestRepository<>(Invoice.class,baseUri);
+  restRepository=forRegistrySymbol(processRegistry,"invoicing",Invoice.class);
   invoice=new Invoice().invoiceId(randomUUID().toString());
   invoice=restRepository.save(invoice);
 }
