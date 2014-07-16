@@ -1,0 +1,13 @@
+{
+  String mediaType=guessMediaType(path);
+  if (mediaType.equals("text/plain")) {
+    String fileExtension=Files.getFileExtension(path);
+    if (fileExtension == null) {
+      String trimmedText=new String(bytes).trim();
+      if (trimmedText.startsWith("[") && trimmedText.endsWith("]") || trimmedText.startsWith("{") && trimmedText.endsWith("}")) {
+        mediaType="application/json";
+      }
+    }
+  }
+  return mediaType;
+}

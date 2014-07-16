@@ -1,0 +1,14 @@
+{
+  Map<String,String> links=new LinkedHashMap<>();
+  links.put("data",getLink("data"));
+  links.put("children",getLink("children"));
+  if (zkPrefix.length() > 0 && !"/".equals(zkPrefix)) {
+    String baseUri=getBaseUri();
+    int idx=baseUri.lastIndexOf('/');
+    if (idx > 0) {
+      String parentLink=baseUri.substring(0,idx);
+      links.put("parent",parentLink);
+    }
+  }
+  return links;
+}
