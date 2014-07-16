@@ -1,0 +1,14 @@
+{
+  CreateSshContainerOptions.Builder builder=CreateSshContainerOptions.builder();
+  FabricRequirements requirements=request.getFabricRequirements();
+  ProfileRequirements profileRequirements=request.getProfileRequirements();
+  SshScalingRequirements sshScalingRequirements=profileRequirements.getSshScalingRequirements();
+  List<SshHostConfiguration> sshHostConfigurations=filterHosts(requirements,profileRequirements,sshScalingRequirements,hostProfileCounter);
+  SshHostConfiguration sshHostConfig=Filters.matchRandomElement(sshHostConfigurations);
+  if (sshHostConfig == null) {
+    LOG.warn("Could not create version " + request.getVersion() + " profile "+ request.getProfile()+ " as no matching hosts could be found for "+ sshScalingRequirements);
+    return null;
+  }
+  builder.configure(sshHostConfig,requirements,profileRequirements);
+  return builder;
+}

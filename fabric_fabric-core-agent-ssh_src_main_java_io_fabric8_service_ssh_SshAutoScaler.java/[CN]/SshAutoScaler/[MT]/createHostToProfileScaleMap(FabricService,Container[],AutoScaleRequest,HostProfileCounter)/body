@@ -1,0 +1,18 @@
+{
+  Map<String,CountingMap> answer=new HashMap<String,CountingMap>();
+  FabricRequirements requirements=request.getFabricRequirements();
+  Map<String,SshHostConfiguration> sshHostsMap=requirements.getSshHostsMap();
+  if (sshHostsMap != null && containers != null) {
+    if (containers != null) {
+      for (      Container container : containers) {
+        String hostAlias=findHostAlias(sshHostsMap,container);
+        if (hostAlias != null) {
+          hostContainerCounts.incrementContainers(hostAlias);
+          List<String> profileIds=Profiles.profileIds(container.getProfiles());
+          hostContainerCounts.incrementProfilesCount(hostAlias,profileIds);
+        }
+      }
+    }
+  }
+  return answer;
+}
