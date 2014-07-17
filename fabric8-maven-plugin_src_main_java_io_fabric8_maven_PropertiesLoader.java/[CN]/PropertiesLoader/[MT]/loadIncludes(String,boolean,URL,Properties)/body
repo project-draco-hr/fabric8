@@ -1,0 +1,19 @@
+{
+  String includes=(String)configProps.get(propertyName);
+  if (includes != null) {
+    StringTokenizer st=new StringTokenizer(includes,"\" ",true);
+    if (st.countTokens() > 0) {
+      String location;
+      do {
+        location=nextLocation(st);
+        if (location != null) {
+          URL url=new URL(configPropURL,location);
+          Properties props=loadPropertiesFile(url,mandatory);
+          configProps.putAll(props);
+        }
+      }
+ while (location != null);
+    }
+  }
+  configProps.remove(propertyName);
+}

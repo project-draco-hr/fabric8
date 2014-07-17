@@ -1,0 +1,22 @@
+{
+  Properties props=new Properties(false);
+  try {
+    InputStream is=new FileInputStream(file);
+    props.load(is);
+    is.close();
+  }
+ catch (  Exception e1) {
+  }
+  for (Enumeration<?> e=props.propertyNames(); e.hasMoreElements(); ) {
+    String name=(String)e.nextElement();
+    if (name.startsWith(OVERRIDE_PREFIX)) {
+      String overrideName=name.substring(OVERRIDE_PREFIX.length());
+      String value=props.getProperty(name);
+      System.setProperty(overrideName,substVars(value,name,null,props));
+    }
+ else {
+      String value=System.getProperty(name,props.getProperty(name));
+      System.setProperty(name,substVars(value,name,null,props));
+    }
+  }
+}

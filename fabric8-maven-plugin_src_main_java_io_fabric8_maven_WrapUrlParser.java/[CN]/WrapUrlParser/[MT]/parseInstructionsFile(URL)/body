@@ -1,0 +1,17 @@
+{
+  try {
+    InputStream is=null;
+    try {
+      is=URLUtils.prepareInputStream(bndFileURL,true);
+      m_wrappingProperties.load(is);
+    }
+  finally {
+      if (is != null) {
+        is.close();
+      }
+    }
+  }
+ catch (  IOException e) {
+    throwAsMalformedURLException("Could not retrieve the instructions from [" + bndFileURL + "]",e);
+  }
+}

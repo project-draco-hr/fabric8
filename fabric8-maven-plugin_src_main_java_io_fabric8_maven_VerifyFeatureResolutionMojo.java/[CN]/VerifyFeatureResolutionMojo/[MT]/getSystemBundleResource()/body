@@ -1,0 +1,29 @@
+{
+  Artifact karafDistro=pluginDescriptor.getArtifactMap().get(distribution);
+  String dir=distDir;
+  if (dir == null) {
+    dir=karafDistro.getArtifactId() + "-" + karafDistro.getBaseVersion();
+  }
+  URL configPropURL=new URL("jar:file:" + karafDistro.getFile() + "!/"+ dir+ "/etc/config.properties");
+  org.apache.felix.utils.properties.Properties configProps=PropertiesLoader.loadPropertiesFile(configPropURL,true);
+  if (javase == null) {
+    configProps.put("java.specification.version",System.getProperty("java.specification.version"));
+  }
+ else {
+    configProps.put("java.specification.version",javase);
+  }
+  configProps.substitute();
+  Map<String,String> headers=new HashMap<>();
+  headers.put(Constants.BUNDLE_MANIFESTVERSION,"2");
+  headers.put(Constants.BUNDLE_SYMBOLICNAME,"system-bundle");
+  headers.put(Constants.BUNDLE_VERSION,"0.0.0");
+  String exportPackages=configProps.getProperty("org.osgi.framework.system.packages");
+  if (configProps.containsKey("org.osgi.framework.system.packages.extra")) {
+    exportPackages+="," + configProps.getProperty("org.osgi.framework.system.packages.extra");
+  }
+  headers.put(Constants.EXPORT_PACKAGE,exportPackages);
+  String systemCaps=configProps.getProperty("org.osgi.framework.system.capabilities");
+  headers.put(Constants.PROVIDE_CAPABILITY,systemCaps);
+  Resource resource=ResourceBuilder.build("system-bundle",headers);
+  return resource;
+}

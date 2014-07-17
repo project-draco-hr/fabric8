@@ -1,0 +1,14 @@
+{
+  URL configPropURL;
+  try {
+    configPropURL=file.toURI().toURL();
+  }
+ catch (  MalformedURLException ex) {
+    System.err.print("Main: " + ex);
+    return null;
+  }
+  Properties configProps=loadPropertiesFile(configPropURL,false);
+  copySystemProperties(configProps);
+  configProps.substitute();
+  return configProps;
+}

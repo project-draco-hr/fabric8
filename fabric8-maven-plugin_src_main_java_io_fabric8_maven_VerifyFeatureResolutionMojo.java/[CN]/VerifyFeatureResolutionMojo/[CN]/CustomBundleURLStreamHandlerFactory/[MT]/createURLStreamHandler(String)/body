@@ -1,0 +1,21 @@
+{
+  if (protocol.equals("wrap")) {
+    return new URLStreamHandler(){
+      @Override protected URLConnection openConnection(      URL url) throws IOException {
+        return new URLConnection(url){
+          @Override public void connect() throws IOException {
+          }
+          @Override public InputStream getInputStream() throws IOException {
+            WrapUrlParser parser=new WrapUrlParser(url.getPath());
+            return org.ops4j.pax.swissbox.bnd.BndUtils.createBundle(parser.getWrappedJarURL().openStream(),parser.getWrappingProperties(),url.toExternalForm(),parser.getOverwriteMode());
+          }
+        }
+;
+      }
+    }
+;
+  }
+ else {
+    return null;
+  }
+}

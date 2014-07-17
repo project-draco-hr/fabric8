@@ -1,0 +1,48 @@
+{
+  URL.setURLStreamHandlerFactory(new CustomBundleURLStreamHandlerFactory());
+  System.setProperty("karaf.home","target/karaf");
+  System.setProperty("karaf.data","target/karaf/data");
+  Hashtable<String,String> properties=new Hashtable<String,String>();
+  for (int i=0; i < descriptors.size(); i++) {
+    properties.put("repository." + i,descriptors.get(i));
+  }
+  if (features == null || features.isEmpty()) {
+    try {
+      DictionaryPropertyResolver propertyResolver=new DictionaryPropertyResolver(properties);
+      MavenConfigurationImpl config=new MavenConfigurationImpl(propertyResolver,"org.ops4j.pax.url.mvn");
+      config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
+      ExecutorService executor=Executors.newFixedThreadPool(8);
+      DownloadManager manager=new DownloadManager(config,executor);
+      final Map<String,Repository> repositories=loadRepositories(manager,new HashSet<String>(descriptors));
+      features=new ArrayList<>();
+      for (      Repository repo : repositories.values()) {
+        for (        Feature feature : repo.getFeatures()) {
+          features.add(feature.getName() + "/" + feature.getVersion());
+        }
+      }
+    }
+ catch (    Exception e) {
+      throw new MojoExecutionException("Unable to load features descriptors",e);
+    }
+  }
+  for (int i=0; i < framework.size(); i++) {
+    properties.put("feature.framework." + i,framework.get(i));
+  }
+  List<Throwable> failures=new ArrayList<>();
+  for (int i=0; i < features.size(); i++) {
+    try {
+      verifyResolution(features.get(i),properties);
+      getLog().info("Verification of feature " + features.get(i) + " succeeded");
+    }
+ catch (    Exception e) {
+      getLog().warn(e.getMessage());
+      failures.add(e);
+      if ("first".equals(fail)) {
+        throw e;
+      }
+    }
+  }
+  if ("end".equals(fail) && !failures.isEmpty()) {
+    throw new MojoExecutionException("Verification failures",new MultiException("Verification failures",failures));
+  }
+}
