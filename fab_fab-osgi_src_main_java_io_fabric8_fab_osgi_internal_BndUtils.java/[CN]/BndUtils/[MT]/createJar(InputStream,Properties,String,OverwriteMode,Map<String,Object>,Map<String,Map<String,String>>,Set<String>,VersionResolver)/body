@@ -34,12 +34,20 @@
       analyzer.mergeManifest(manifest);
     }
     checkMandatoryProperties(analyzer,jar,jarInfo);
-    analyzer.calcManifest();
+    Manifest newManifest=analyzer.calcManifest();
+    jar.setManifest(newManifest);
     Attributes main=jar.getManifest().getMainAttributes();
+    String importPackage=main.getValue(Analyzer.IMPORT_PACKAGE);
+    for (    Descriptors.PackageRef key : analyzer.getReferred().keySet()) {
+      if (key.getFQN().startsWith("META-INF.")) {
+        importPackage+="," + key.getFQN();
+      }
+    }
+    main.putValue(Analyzer.IMPORT_PACKAGE,importPackage);
     String importPackages=emptyIfNull(main.getValue(Analyzer.IMPORT_PACKAGE));
-    Map<String,Map<String,String>> values=new Analyzer().parseHeader(importPackages);
+    Parameters values=new Analyzer().parseHeader(importPackages);
     if (versionResolver != null) {
-      for (      Map.Entry<String,Map<String,String>> entry : values.entrySet()) {
+      for (      Map.Entry<String,Attrs> entry : values.entrySet()) {
         String packageName=entry.getKey();
         Map<String,String> packageValues=entry.getValue();
         if (!packageValues.containsKey("version")) {
@@ -58,7 +66,9 @@
  else {
         original.putAll(entry.getValue());
       }
-      values.put(entry.getKey(),original);
+      Attrs newAttrs=new Attrs();
+      newAttrs.putAll(original);
+      values.put(entry.getKey(),newAttrs);
     }
     String excludedPackagesText=main.getValue(ServiceConstants.INSTR_FAB_EXCLUDE_IMPORTS_PACKAGE);
     if (notEmpty(excludedPackagesText)) {
@@ -95,7 +105,7 @@
         }
       }
     }
-    for (    Map.Entry<String,Map<String,String>> entry : values.entrySet()) {
+    for (    Map.Entry<String,Attrs> entry : values.entrySet()) {
       String packageName=entry.getKey();
       Map<String,String> map=entry.getValue();
       String res=map.get("resolution:");
@@ -109,13 +119,13 @@
         actualImports.add(packageName);
       }
     }
-    importPackages=Processor.printClauses(values,ALLOWED_PACKAGE_CLAUSES);
+    importPackages=Processor.printClauses(values);
     if (notEmpty(importPackages)) {
       main.putValue(Analyzer.IMPORT_PACKAGE,importPackages);
     }
     String exportPackages=emptyIfNull(main.getValue(Analyzer.EXPORT_PACKAGE));
-    Map<String,Map<String,String>> exports=new Analyzer().parseHeader(exportPackages);
-    for (    Map.Entry<String,Map<String,String>> entry : exports.entrySet()) {
+    Parameters exports=new Analyzer().parseHeader(exportPackages);
+    for (    Map.Entry<String,Attrs> entry : exports.entrySet()) {
       String packageName=entry.getKey();
       Map<String,String> map=entry.getValue();
       String version=map.get("version");
@@ -126,7 +136,7 @@
         }
       }
     }
-    exportPackages=Processor.printClauses(exports,ALLOWED_PACKAGE_CLAUSES);
+    exportPackages=Processor.printClauses(exports);
     if (notEmpty(exportPackages)) {
       main.putValue(Analyzer.EXPORT_PACKAGE,exportPackages);
     }

@@ -8,8 +8,8 @@
       if (dependency.isBundle()) {
         String importPackages=dependency.getManifestEntry(Analyzer.IMPORT_PACKAGE);
         if (notEmpty(importPackages)) {
-          Map<String,Map<String,String>> values=new Analyzer().parseHeader(importPackages);
-          for (          Map.Entry<String,Map<String,String>> entry : values.entrySet()) {
+          Parameters values=new Analyzer().parseHeader(importPackages);
+          for (          Map.Entry<String,Attrs> entry : values.entrySet()) {
             String res=entry.getValue().get("resolution:");
             if (!"optional".equals(res)) {
               actualImports.add(entry.getKey());
