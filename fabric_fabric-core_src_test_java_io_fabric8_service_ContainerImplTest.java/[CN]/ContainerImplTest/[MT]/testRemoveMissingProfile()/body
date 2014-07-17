@@ -9,10 +9,10 @@
   expect(profileService.getRequiredVersion(eq(v))).andReturn(version).anyTimes();
   expect(dataStore.getContainerVersion(eq(CONTAINER_ID))).andReturn(v).anyTimes();
   expect(dataStore.getContainerProfiles(eq(CONTAINER_ID))).andReturn(profiles).anyTimes();
-  expect(dataStore.hasProfile(v,profile1Id)).andReturn(true).anyTimes();
-  expect(dataStore.hasProfile(v,profile2Id)).andReturn(true).anyTimes();
-  expect(dataStore.hasProfile(v,missing)).andReturn(false).anyTimes();
-  expect(dataStore.getProfileAttributes(eq(v),EasyMock.<String>anyObject())).andReturn(Maps.<String,String>newHashMap()).anyTimes();
+  expect(profileRegistry.hasProfile(v,profile1Id)).andReturn(true).anyTimes();
+  expect(profileRegistry.hasProfile(v,profile2Id)).andReturn(true).anyTimes();
+  expect(profileRegistry.hasProfile(v,missing)).andReturn(false).anyTimes();
+  expect(profileRegistry.getProfileAttributes(eq(v),EasyMock.<String>anyObject())).andReturn(Maps.<String,String>newHashMap()).anyTimes();
   dataStore.setContainerProfiles(eq(CONTAINER_ID),eq(profilesToSet));
   expectLastCall().once();
   replay(fabricService);

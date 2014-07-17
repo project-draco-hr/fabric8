@@ -9,7 +9,7 @@
   boolean defaultVersion=version.getId().equals(fabricService.getDefaultVersionId());
   List<Profile> profiles=CommandUtils.sortProfiles(version.getProfiles());
   List<Container> containerList=new ArrayList<Container>();
-  for (  String c : fabricService.getDataStore().getContainers()) {
+  for (  String c : dataStore.getContainers()) {
     Container container=fabricService.getContainer(c);
     if (version.getId().equals(container.getVersion().getId())) {
       containerList.add(container);

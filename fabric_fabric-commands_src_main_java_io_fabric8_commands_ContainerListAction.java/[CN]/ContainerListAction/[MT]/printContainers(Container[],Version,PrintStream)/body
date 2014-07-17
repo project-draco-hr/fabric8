@@ -10,7 +10,7 @@
       if (container.getId().equals(fabricService.getCurrentContainer().getId())) {
         marker="*";
       }
-      List<String> assignedProfiles=fabricService.getDataStore().getContainerProfiles(container.getId());
+      List<String> assignedProfiles=dataStore.getContainerProfiles(container.getId());
       String firstLine=String.format(FORMAT,indent + container.getId() + marker,container.getVersion().getId(),container.getType(),container.isAlive(),assignedProfiles.get(0),CommandUtils.status(container));
       out.println(firstLine);
       for (int i=1; i < assignedProfiles.size(); i++) {

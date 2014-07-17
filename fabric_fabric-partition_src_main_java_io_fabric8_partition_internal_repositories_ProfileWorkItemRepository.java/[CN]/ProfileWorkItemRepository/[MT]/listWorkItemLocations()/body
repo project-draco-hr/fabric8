@@ -1,11 +1,12 @@
 {
   List<String> items=Lists.newArrayList();
   try {
-    String versionId=dataStore.getContainerVersion(name);
-    Profile profile=profileService.getRequiredProfile(versionId,profileId);
-    for (    String fileName : profile.getFileConfigurations().keySet()) {
-      if (fileName.startsWith(folderPath)) {
-        items.add(fileName);
+    ProfileService profileService=fabricService.adapt(ProfileService.class);
+    String version=dataStore.getContainerVersion(name);
+    Profile p=profileService.getRequiredProfile(version,profile);
+    for (    String f : p.getFileConfigurations().keySet()) {
+      if (f.startsWith(folderPath)) {
+        items.add(f);
       }
     }
   }

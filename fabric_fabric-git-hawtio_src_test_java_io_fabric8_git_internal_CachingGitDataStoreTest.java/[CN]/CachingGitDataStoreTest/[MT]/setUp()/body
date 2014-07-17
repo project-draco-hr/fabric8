@@ -31,7 +31,7 @@
   gitService.bindRuntimeProperties(runtimeProperties);
   gitService.activate();
   gitService.setGitForTesting(git);
-  dataStore=new CachingGitDataStore();
+  dataStore=new GitDataStoreImpl();
   dataStore.bindCurator(curator);
   dataStore.bindGitService(gitService);
   dataStore.bindRuntimeProperties(runtimeProperties);
@@ -45,6 +45,5 @@
   }
 );
   Map<String,Object> datastoreProperties=new HashMap<String,Object>();
-  datastoreProperties.put(GitDataStore.GIT_REMOTE_URL,remoteUrl);
   dataStore.activate(datastoreProperties);
 }

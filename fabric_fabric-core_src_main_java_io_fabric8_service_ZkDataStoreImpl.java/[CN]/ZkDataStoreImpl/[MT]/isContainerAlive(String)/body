@@ -1,0 +1,12 @@
+{
+  assertValid();
+  try {
+    return exists(curator.get(),ZkPath.CONTAINER_ALIVE.getPath(id)) != null;
+  }
+ catch (  KeeperException.NoNodeException e) {
+    return false;
+  }
+catch (  Exception e) {
+    throw FabricException.launderThrowable(e);
+  }
+}

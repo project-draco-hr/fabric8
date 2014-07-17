@@ -15,7 +15,7 @@
     ObjectMapper mapper=new ObjectMapper();
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
     Map optionsMap=mapper.readValue(mapper.writeValueAsString(options),Map.class);
-    String versionId=options.getVersion() != null ? options.getVersion() : getDataStore().getDefaultVersion();
+    String versionId=options.getVersion() != null ? options.getVersion() : dataStore.get().getDefaultVersion();
     Set<String> profileIds=options.getProfiles();
     if (profileIds == null || profileIds.isEmpty()) {
       profileIds=new LinkedHashSet<String>();
@@ -38,22 +38,23 @@
       }
       optionsMap.put("name",containerName);
       if (!hasValidDataStoreProperties(optionsMap)) {
-        optionsMap.put("dataStoreProperties",getDataStore().getDataStoreProperties());
+        optionsMap.put("dataStoreProperties",profileRegistry.get().getDataStoreProperties());
       }
       Class cl=options.getClass().getClassLoader().loadClass(options.getClass().getName() + "$Builder");
       CreateContainerBasicOptions.Builder builder=(CreateContainerBasicOptions.Builder)mapper.readValue(mapper.writeValueAsString(optionsMap),cl);
       builder=(CreateContainerBasicOptions.Builder)builder.zookeeperPassword(PasswordEncoder.encode(getZookeeperPassword()));
       final CreateContainerOptions containerOptions=builder.build();
       final CreationStateListener containerListener=listener;
+      final FabricService fabricService=this;
       new Thread("Creating container " + containerName){
         public void run(){
           try {
-            getDataStore().createContainerConfig(containerOptions);
+            dataStore.get().createContainerConfig(containerOptions);
             CreateContainerMetadata metadata=provider.create(containerOptions,containerListener);
             if (metadata.isSuccess()) {
               Container parent=containerOptions.getParent() != null ? getContainer(containerOptions.getParent()) : null;
               if (!containerOptions.isEnsembleServer()) {
-                getDataStore().createContainerConfig(metadata);
+                dataStore.get().createContainerConfig(metadata);
               }
               ContainerImpl container=new ContainerImpl(parent,metadata.getContainerName(),FabricServiceImpl.this);
               metadata.setContainer(container);
@@ -69,7 +70,7 @@
             metadata.setCreateOptions(containerOptions);
             metadata.setFailure(t);
             metadatas.add(metadata);
-            getDataStore().deleteContainer(containerOptions.getName());
+            dataStore.get().deleteContainer(fabricService,containerOptions.getName());
           }
  finally {
             latch.countDown();

@@ -39,24 +39,7 @@
   gitService.bindRuntimeProperties(runtimeProperties);
   gitService.activate();
   gitService.setGitForTesting(git);
-  dataStore=new CachingGitDataStore();
-  dataStore.bindCurator(curator);
-  dataStore.bindGitService(gitService);
-  dataStore.bindRuntimeProperties(runtimeProperties);
-  dataStore.bindConfigurer(new Configurer(){
-    @Override public <T>Map<String,?> configure(    Map<String,?> configuration,    T target,    String... ignorePrefix) throws Exception {
-      return null;
-    }
-    @Override public <T>Map<String,?> configure(    Dictionary<String,?> configuration,    T target,    String... ignorePrefix) throws Exception {
-      return null;
-    }
-  }
-);
-  Map<String,Object> datastoreProperties=new HashMap<String,Object>();
-  datastoreProperties.put(GitDataStore.GIT_REMOTE_URL,remoteUrl);
-  dataStore.activate(datastoreProperties);
   fabricService=new FabricServiceImpl();
-  fabricService.bindDataStore(dataStore);
   fabricService.bindRuntimeProperties(runtimeProperties);
   fabricService.bindPlaceholderResolver(new DummyPlaceholerResolver("port"));
   fabricService.bindPlaceholderResolver(new DummyPlaceholerResolver("zk"));
@@ -68,7 +51,7 @@
   projectDeployer=new ProjectDeployerImpl();
   projectDeployer.bindFabricService(fabricService);
   projectDeployer.bindMBeanServer(ManagementFactory.getPlatformMBeanServer());
-  String defaultVersion=dataStore.getDefaultVersion();
+  String defaultVersion=null;
   assertEquals("defaultVersion","1.0",defaultVersion);
   String importPath=basedir + "/../fabric8-karaf/src/main/resources/distro/fabric/import";
   assertFolderExists(importPath);

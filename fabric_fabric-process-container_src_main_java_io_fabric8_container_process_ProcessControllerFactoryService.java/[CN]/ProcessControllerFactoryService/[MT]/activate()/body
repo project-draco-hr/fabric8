@@ -8,8 +8,6 @@
   }
 ;
   keepAliveTimer.schedule(timerTask,monitorPollTime,monitorPollTime);
-  DataStore dataStore=getDataStore();
-  if (dataStore != null) {
-    dataStore.trackConfiguration(configurationChangeHandler);
-  }
+  DataStore dataStore=fabricService.get().adapt(DataStore.class);
+  dataStore.trackConfiguration(configurationChangeHandler);
 }

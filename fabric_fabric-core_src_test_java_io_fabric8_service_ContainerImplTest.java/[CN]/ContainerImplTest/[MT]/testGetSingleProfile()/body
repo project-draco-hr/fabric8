@@ -6,7 +6,7 @@
   expect(profileService.getRequiredVersion(eq(v))).andReturn(version).anyTimes();
   expect(dataStore.getContainerVersion(eq(CONTAINER_ID))).andReturn(v).anyTimes();
   expect(dataStore.getContainerProfiles(eq(CONTAINER_ID))).andReturn(profiles).anyTimes();
-  expect(dataStore.hasProfile(v,profileId)).andReturn(true).anyTimes();
+  expect(profileRegistry.hasProfile(v,profileId)).andReturn(true).anyTimes();
   replay(fabricService);
   replay(dataStore);
   Profile[] p=container.getProfiles();

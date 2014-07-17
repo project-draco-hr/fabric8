@@ -1,0 +1,17 @@
+{
+  assertValid();
+  try {
+    String versionId=getStringData(curator.get(),ZkPath.CONFIG_CONTAINER.getPath(containerId));
+    StringBuilder sb=new StringBuilder();
+    for (    String profileId : profileIds) {
+      if (sb.length() > 0) {
+        sb.append(" ");
+      }
+      sb.append(profileId);
+    }
+    setData(curator.get(),ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId),sb.toString());
+  }
+ catch (  Exception e) {
+    throw FabricException.launderThrowable(e);
+  }
+}

@@ -1,0 +1,12 @@
+{
+  assertValid();
+  try {
+    String oldVersionId=getStringData(curator.get(),ZkPath.CONFIG_CONTAINER.getPath(containerId));
+    String oldProfileIds=getStringData(curator.get(),ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(oldVersionId,containerId));
+    setData(curator.get(),ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId),oldProfileIds);
+    setData(curator.get(),ZkPath.CONFIG_CONTAINER.getPath(containerId),versionId);
+  }
+ catch (  Exception e) {
+    throw FabricException.launderThrowable(e);
+  }
+}

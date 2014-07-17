@@ -2,9 +2,9 @@
   Version version=profileService.getVersion(versionId);
   List<Map<String,Object>> answer=new ArrayList<Map<String,Object>>();
   if (version != null) {
-    for (    Container c : getFabricService().getContainers()) {
+    for (    Container c : fabricService.getContainers()) {
       if (c.getVersion().equals(version)) {
-        answer.add(BeanUtils.convertContainerToMap(getFabricService(),c,fields));
+        answer.add(BeanUtils.convertContainerToMap(fabricService,c,fields));
       }
     }
   }

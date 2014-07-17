@@ -3,12 +3,12 @@
   LOGGER.info("createVersion: {}",version);
   String versionId=version.getId();
   if (version.getParentId() != null) {
-    dataStore.get().createVersion(version.getParentId(),versionId);
+    profileRegistry.get().createVersion(version.getParentId(),versionId);
   }
  else {
-    dataStore.get().createVersion(versionId);
+    profileRegistry.get().createVersion(versionId);
     for (    Entry<String,String> entry : version.getAttributes().entrySet()) {
-      dataStore.get().setVersionAttribute(versionId,entry.getKey(),entry.getValue());
+      profileRegistry.get().setVersionAttribute(versionId,entry.getKey(),entry.getValue());
     }
     for (    Profile profile : version.getProfiles()) {
       createOrUpdateProfile(profile,true);

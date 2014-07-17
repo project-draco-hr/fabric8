@@ -1,0 +1,84 @@
+{
+  initialPull=false;
+  try {
+    LOG.info("Starting up DataStore " + this);
+    DataStoreTemplate template=runtimeProperties.get().removeRuntimeAttribute(DataStoreTemplate.class);
+    if (template != null) {
+      LOG.info("Using template: " + template);
+      template.doWith(this,dataStore.get());
+    }
+    if (gitProxyService.getOptional() != null) {
+      defaultProxySelector=ProxySelector.getDefault();
+      ProxySelector fabricProxySelector=new FabricGitLocalHostProxySelector(defaultProxySelector,gitProxyService.getOptional());
+      ProxySelector.setDefault(fabricProxySelector);
+      LOG.info("Setting up FabricProxySelector: {}",fabricProxySelector);
+    }
+    GitService optionalService=gitService.getOptional();
+    if (configuredUrl != null) {
+      gitListener.onRemoteUrlChanged(configuredUrl);
+      remoteUrl=configuredUrl;
+    }
+ else     if (optionalService != null) {
+      optionalService.addGitListener(gitListener);
+      remoteUrl=optionalService.getRemoteUrl();
+      gitListener.onRemoteUrlChanged(remoteUrl);
+    }
+    forceGetVersions();
+    Path homePath=getRuntimeProperties().getHomePath();
+    Path dir=homePath.resolve(importDir);
+    importFromFilesystem(dir);
+    LOG.info("Starting to push to remote git repository every {} millis",gitPushInterval);
+    threadPool.scheduleWithFixedDelay(new Runnable(){
+      @Override public void run(){
+        try {
+          if (!initialPull) {
+            LOG.trace("Performing initial pull");
+            pull();
+            initialPull=true;
+            LOG.debug("Performing initial pull done");
+          }
+          if (gitPullOnPush) {
+            LOG.trace("Performing timed pull");
+            pull();
+            LOG.debug("Performed timed pull done");
+          }
+          LOG.trace("Performing timed push");
+          push();
+          LOG.debug("Performed timed push done");
+        }
+ catch (        Throwable e) {
+          LOG.debug("Error during performed timed pull/push due " + e.getMessage(),e);
+          LOG.warn("Error during performed timed pull/push due " + e.getMessage() + ". This exception is ignored.");
+        }
+      }
+      @Override public String toString(){
+        return "TimedPushTask";
+      }
+    }
+,1000,gitPushInterval,TimeUnit.MILLISECONDS);
+    if (!gitPullOnPush) {
+      LOG.info("Using ZooKeeper SharedCount to react when master git repo is changed, so we can do a git pull to the local git repo.");
+      counter=new SharedCount(curator.get(),ZkPath.GIT_TRIGGER.getPath(),0);
+      counter.addListener(new SharedCountListener(){
+        @Override public void countHasChanged(        SharedCountReader sharedCountReader,        int value) throws Exception {
+          LOG.debug("Watch counter updated to " + value + ", doing a pull");
+          try {
+            Thread.sleep(1000);
+            pull();
+          }
+ catch (          Throwable e) {
+            LOG.debug("Error during pull due " + e.getMessage(),e);
+            LOG.warn("Error during pull due " + e.getMessage() + ". This exception is ignored.");
+          }
+        }
+        @Override public void stateChanged(        CuratorFramework curatorFramework,        ConnectionState connectionState){
+        }
+      }
+);
+      counter.start();
+    }
+  }
+ catch (  Exception ex) {
+    throw new FabricException("Failed to start GitDataStore:",ex);
+  }
+}

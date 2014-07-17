@@ -19,8 +19,8 @@
   }
   ObjectMapper mapper=getObjectMapper();
   builder=mapper.convertValue(options,builder.getClass());
-  builder.zookeeperPassword(getFabricService().getZookeeperPassword());
-  builder.zookeeperUrl(getFabricService().getZookeeperUrl());
+  builder.zookeeperPassword(fabricService.getZookeeperPassword());
+  builder.zookeeperUrl(fabricService.getZookeeperUrl());
   Object profileObject=options.get("profiles");
   if (profileObject != null) {
     List profiles=mapper.convertValue(profileObject,List.class);
@@ -30,7 +30,7 @@
   if (LOG.isDebugEnabled()) {
     LOG.debug("Created container options: " + build + " with profiles "+ build.getProfiles());
   }
-  CreateContainerMetadata<?> metadatas[]=getFabricService().createContainers(build);
+  CreateContainerMetadata<?> metadatas[]=fabricService.createContainers(build);
   Map<String,String> rc=new HashMap<String,String>();
   for (  CreateContainerMetadata<?> metadata : metadatas) {
     if (!metadata.isSuccess()) {

@@ -1,0 +1,16 @@
+{
+  assertValid();
+  try {
+    if (flag) {
+      setData(curator.get(),ZkPath.CONTAINER_ALIVE.getPath(id),"alive");
+    }
+ else {
+      deleteSafe(curator.get(),ZkPath.CONTAINER_ALIVE.getPath(id));
+    }
+  }
+ catch (  KeeperException.NoNodeException e) {
+  }
+catch (  Exception e) {
+    throw FabricException.launderThrowable(e);
+  }
+}

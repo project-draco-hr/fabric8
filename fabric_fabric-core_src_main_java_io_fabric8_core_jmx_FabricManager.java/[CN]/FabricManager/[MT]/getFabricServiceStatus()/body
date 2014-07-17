@@ -1,6 +1,6 @@
 {
   ServiceStatusDTO rc=new ServiceStatusDTO();
-  CuratorFramework curator=getFabricService().adapt(CuratorFramework.class);
+  CuratorFramework curator=fabricService.adapt(CuratorFramework.class);
   try {
     rc.setClientValid(curator != null);
   }
@@ -18,7 +18,7 @@
       rc.setClientConnected(false);
     }
     if (rc.isClientValid() && rc.isClientConnected()) {
-      Container c=getFabricService().getCurrentContainer();
+      Container c=fabricService.getCurrentContainer();
       try {
         rc.setManaged(c.isManaged());
       }

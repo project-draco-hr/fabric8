@@ -1,9 +1,9 @@
 {
   assertValid();
   Map<String,Container> containers=new HashMap<String,Container>();
-  List<String> containerIds=getDataStore().getContainers();
+  List<String> containerIds=dataStore.get().getContainers();
   for (  String containerId : containerIds) {
-    String parentId=getDataStore().getContainerParent(containerId);
+    String parentId=dataStore.get().getContainerParent(containerId);
     if (parentId.isEmpty()) {
       if (!containers.containsKey(containerId)) {
         Container container=new ContainerImpl(null,containerId,this);

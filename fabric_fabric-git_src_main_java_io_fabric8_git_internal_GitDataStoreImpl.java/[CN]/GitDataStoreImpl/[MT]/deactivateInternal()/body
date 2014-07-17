@@ -1,0 +1,34 @@
+{
+  GitService optsrv=gitService.getOptional();
+  if (optsrv != null) {
+    optsrv.removeGitListener(gitListener);
+  }
+  if (threadPool != null) {
+    threadPool.shutdown();
+    try {
+      if (!threadPool.awaitTermination(5,TimeUnit.SECONDS)) {
+        threadPool.shutdownNow();
+      }
+    }
+ catch (    InterruptedException ex) {
+      threadPool.shutdownNow();
+      Thread.currentThread().interrupt();
+    }
+catch (    Exception ex) {
+      throw FabricException.launderThrowable(ex);
+    }
+  }
+  if (defaultProxySelector != null) {
+    LOG.info("Restoring ProxySelector to original: {}",defaultProxySelector);
+    ProxySelector.setDefault(defaultProxySelector);
+  }
+  try {
+    if (counter != null) {
+      counter.close();
+      counter=null;
+    }
+  }
+ catch (  IOException e) {
+    LOG.warn("Error closing SharedCount due " + e.getMessage() + ". This exception is ignored.",e);
+  }
+}

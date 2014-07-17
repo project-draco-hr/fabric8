@@ -7,6 +7,6 @@
   config.getProperties().store(writer,"Saved by " + config.getClass() + " at "+ new Date());
   String propertiesText=writer.toString();
   LOG.info("Saved managed cartridge configuration: " + propertiesText);
-  fabricService.getDataStore().setContainerAttribute(containerId,DataStore.ContainerAttribute.OpenShift,propertiesText);
+  fabricService.adapt(DataStore.class).setContainerAttribute(containerId,DataStore.ContainerAttribute.OpenShift,propertiesText);
   return config;
 }

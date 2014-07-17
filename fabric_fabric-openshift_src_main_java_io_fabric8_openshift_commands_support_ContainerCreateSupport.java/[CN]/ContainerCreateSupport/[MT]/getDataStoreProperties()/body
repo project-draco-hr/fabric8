@@ -1,5 +1,6 @@
 {
-  Map<String,String> options=new HashMap<String,String>(fabricService.getDataStore().getDataStoreProperties());
+  ProfileRegistry profileRegistry=fabricService.adapt(ProfileRegistry.class);
+  Map<String,String> options=new HashMap<String,String>(profileRegistry.getDataStoreProperties());
   if (dataStoreOption != null) {
     for (    String opt : dataStoreOption) {
       String[] parts=opt.trim().split(" +");

@@ -1,0 +1,17 @@
+{
+  assertValid();
+  try {
+    FabricRequirements answer=null;
+    if (treeCache.getCurrentData(REQUIREMENTS_JSON_PATH) != null) {
+      String json=getStringData(treeCache,REQUIREMENTS_JSON_PATH);
+      answer=RequirementsJson.fromJSON(json);
+    }
+    if (answer == null) {
+      answer=new FabricRequirements();
+    }
+    return answer;
+  }
+ catch (  Exception e) {
+    throw FabricException.launderThrowable(e);
+  }
+}

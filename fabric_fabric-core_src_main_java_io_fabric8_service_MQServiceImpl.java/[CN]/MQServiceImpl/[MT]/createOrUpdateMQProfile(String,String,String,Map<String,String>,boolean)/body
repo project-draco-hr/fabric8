@@ -26,7 +26,7 @@
     config=new HashMap<>(parentProfileConfig);
   }
   if ("true".equals(configs.get("ssl"))) {
-    byte[] keystore=fabricService.getDataStore().getFileConfiguration(versionId,profileId,"keystore.jks");
+    byte[] keystore=profileRegistry.getFileConfiguration(versionId,profileId,"keystore.jks");
     if (keystore == null) {
       try {
         String host=configs.get("keystore.cn");
@@ -52,14 +52,14 @@
         keystore=Files.readBytes(keystoreFile);
         keystoreFile.delete();
         LOG.info("Keystore generated");
-        fabricService.getDataStore().setFileConfiguration(versionId,profileId,"keystore.jks",keystore);
+        profileRegistry.setFileConfiguration(versionId,profileId,"keystore.jks",keystore);
         configs.put("keystore.file","profile:keystore.jks");
       }
  catch (      IOException e) {
         LOG.info("Failed to generate keystore.jks: " + e,e);
       }
     }
-    byte[] truststore=fabricService.getDataStore().getFileConfiguration(versionId,profileId,"truststore.jks");
+    byte[] truststore=profileRegistry.getFileConfiguration(versionId,profileId,"truststore.jks");
     if (truststore == null) {
       try {
         String password=configs.get("truststore.password");
@@ -87,7 +87,7 @@
         }
         truststore=Files.readBytes(truststoreFile);
         truststoreFile.delete();
-        fabricService.getDataStore().setFileConfiguration(versionId,profileId,"truststore.jks",truststore);
+        profileRegistry.setFileConfiguration(versionId,profileId,"truststore.jks",truststore);
         configs.put("truststore.file","profile:truststore.jks");
       }
  catch (      IOException e) {

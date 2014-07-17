@@ -6,7 +6,7 @@
   String version=container.getVersion().getId();
   List<Profile> profiles=Containers.overlayProfiles(container);
   List<String> profileIds=Profiles.profileIds(profiles);
-  Collection<String> names=fabric.getDataStore().listFiles(version,profileIds,schemaPath);
+  Collection<String> names=fabric.adapt(ProfileRegistry.class).listFiles(version,profileIds,schemaPath);
   for (  String name : names) {
     if (name.endsWith(".xsd")) {
       String prefix=schemaPath;

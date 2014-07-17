@@ -1,0 +1,17 @@
+{
+  assertValid();
+  try {
+    Map<String,String> props=getVersionAttributes(version);
+    if (value != null) {
+      props.put(key,value);
+    }
+ else {
+      props.remove(key);
+    }
+    String node=ZkPath.CONFIG_VERSION.getPath(version);
+    setPropertiesAsMap(curator.get(),node,props);
+  }
+ catch (  Exception e) {
+    throw FabricException.launderThrowable(e);
+  }
+}

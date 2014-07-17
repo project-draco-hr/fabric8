@@ -4,13 +4,13 @@
   LOGGER.info("deleteProfile: {}",profile);
   Container[] containers=fabricService.getAssociatedContainers(versionId,profileId);
   if (containers.length == 0) {
-    dataStore.get().deleteProfile(versionId,profileId);
+    profileRegistry.get().deleteProfile(versionId,profileId);
   }
  else   if (force) {
     for (    Container container : containers) {
       container.removeProfiles(profileId);
     }
-    dataStore.get().deleteProfile(versionId,profileId);
+    profileRegistry.get().deleteProfile(versionId,profileId);
   }
  else {
     StringBuilder sb=new StringBuilder();

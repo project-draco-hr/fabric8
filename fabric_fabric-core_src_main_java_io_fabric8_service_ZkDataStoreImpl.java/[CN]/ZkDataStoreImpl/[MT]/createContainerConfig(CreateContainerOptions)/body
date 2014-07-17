@@ -1,0 +1,22 @@
+{
+  assertValid();
+  try {
+    String parent=options.getParent();
+    String containerId=options.getName();
+    String versionId=options.getVersion();
+    Set<String> profileIds=options.getProfiles();
+    StringBuilder sb=new StringBuilder();
+    for (    String profileId : profileIds) {
+      if (sb.length() > 0) {
+        sb.append(" ");
+      }
+      sb.append(profileId);
+    }
+    setData(curator.get(),ZkPath.CONFIG_CONTAINER.getPath(containerId),versionId);
+    setData(curator.get(),ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId),sb.toString());
+    setData(curator.get(),ZkPath.CONTAINER_PARENT.getPath(containerId),parent);
+  }
+ catch (  Exception e) {
+    throw FabricException.launderThrowable(e);
+  }
+}

@@ -1,5 +1,6 @@
 {
-  String modifed=dataStore.getLastModified(dataStore.getContainerVersion(name),profileId);
+  ProfileRegistry profileRegistry=fabricService.adapt(ProfileRegistry.class);
+  String modifed=profileRegistry.getLastModified(dataStore.getContainerVersion(name),profile);
   if (!modifed.equals(lastModified)) {
     notifyListeners();
     lastModified=modifed;

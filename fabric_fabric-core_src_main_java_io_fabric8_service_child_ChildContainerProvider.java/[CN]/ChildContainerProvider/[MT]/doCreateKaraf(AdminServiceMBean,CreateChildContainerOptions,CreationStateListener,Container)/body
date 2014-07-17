@@ -23,10 +23,8 @@
   if (options.getManualIp() != null && !options.getManualIp().isEmpty()) {
     jvmOptsBuilder.append(" -D" + ZkDefs.MANUAL_IP + "="+ options.getManualIp());
   }
-  DataStore dataStore=fabricService.get().getDataStore();
+  DataStore dataStore=fabricService.get().adapt(DataStore.class);
   ProfileService profileService=fabricService.get().adapt(ProfileService.class);
-  Map<String,String> dataStoreProperties=new HashMap<String,String>(options.getDataStoreProperties());
-  dataStoreProperties.put(DataStore.DATASTORE_TYPE_PROPERTY,dataStore.getType());
   for (  Map.Entry<String,String> dataStoreEntries : options.getDataStoreProperties().entrySet()) {
     String key=dataStoreEntries.getKey();
     String value=dataStoreEntries.getValue();

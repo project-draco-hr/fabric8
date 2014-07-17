@@ -13,7 +13,7 @@
   git.push().setCredentialsProvider(getCredentialsProvider()).setPushAll().setRemote("origin").call();
   GitUtils.waitForBranchUpdate(curator,version);
   for (int i=0; i < 5; i++) {
-    if (fabricService.getDataStore().hasProfile(version,profile)) {
+    if (fabricService.adapt(ProfileRegistry.class).hasProfile(version,profile)) {
       return;
     }
  else {

@@ -1,24 +1,23 @@
 {
-  CreateContainerMetadata[] metadatas=null;
+  CreateContainerMetadata[] metadata=null;
   validateProfileNames(profiles);
   preCreateContainer(name);
   validateParentContainer(parent);
   String jmxUser=username != null ? username : ShellUtils.retrieveFabricUser(session);
   String jmxPassword=password != null ? password : ShellUtils.retrieveFabricUserPassword(session);
-  String url="child://" + parent;
-  CreateChildContainerOptions.Builder builder=CreateChildContainerOptions.builder().name(name).parent(parent).bindAddress(bindAddress).resolver(resolver).manualIp(manualIp).ensembleServer(isEnsembleServer).number(number).zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword(fabricService.getZookeeperPassword()).jvmOpts(jvmOpts).jmxUser(jmxUser).jmxPassword(jmxPassword).version(version).profiles(getProfileNames()).dataStoreProperties(getDataStoreProperties()).dataStoreType(fabricService.getDataStore().getType());
+  CreateChildContainerOptions.Builder builder=CreateChildContainerOptions.builder().name(name).parent(parent).bindAddress(bindAddress).resolver(resolver).manualIp(manualIp).ensembleServer(isEnsembleServer).number(number).zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword(fabricService.getZookeeperPassword()).jvmOpts(jvmOpts).jmxUser(jmxUser).jmxPassword(jmxPassword).version(version).profiles(getProfileNames()).dataStoreProperties(getDataStoreProperties());
   try {
-    metadatas=fabricService.createContainers(builder.build());
-    rethrowAuthenticationErrors(metadatas);
+    metadata=fabricService.createContainers(builder.build());
+    rethrowAuthenticationErrors(metadata);
     ShellUtils.storeFabricCredentials(session,jmxUser,jmxPassword);
   }
  catch (  FabricAuthenticationException ex) {
     username=null;
     password=null;
     promptForJmxCredentialsIfNeeded();
-    metadatas=fabricService.createContainers(builder.jmxUser(username).jmxPassword(password).build());
+    metadata=fabricService.createContainers(builder.jmxUser(username).jmxPassword(password).build());
     ShellUtils.storeFabricCredentials(session,username,password);
   }
-  displayContainers(metadatas);
+  displayContainers(metadata);
   return null;
 }

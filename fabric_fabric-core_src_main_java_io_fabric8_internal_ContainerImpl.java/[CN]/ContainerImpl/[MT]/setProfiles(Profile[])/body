@@ -1,6 +1,6 @@
 {
-  String versionId=fabricService.getDataStore().getContainerVersion(id);
-  List<String> currentProfileIds=fabricService.getDataStore().getContainerProfiles(id);
+  String versionId=dataStore.getContainerVersion(id);
+  List<String> currentProfileIds=dataStore.getContainerProfiles(id);
   List<String> profileIds=new ArrayList<String>();
   if (profiles != null) {
     for (    Profile profile : profiles) {
@@ -19,5 +19,5 @@
   if (profileIds.isEmpty()) {
     profileIds.add(ZkDefs.DEFAULT_PROFILE);
   }
-  fabricService.getDataStore().setContainerProfiles(id,profileIds);
+  dataStore.setContainerProfiles(id,profileIds);
 }

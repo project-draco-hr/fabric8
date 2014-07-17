@@ -2,7 +2,7 @@
   fabricService=createMock(FabricService.class);
   dataStore=createMock(DataStore.class);
   expect(fabricService.getCurrentContainerName()).andReturn("root").anyTimes();
-  expect(fabricService.getDataStore()).andReturn(dataStore).anyTimes();
+  expect(fabricService.adapt(DataStore.class)).andReturn(dataStore).anyTimes();
   expect(fabricService.getContainer(EasyMock.<String>anyObject())).andStubAnswer(new IAnswer<Container>(){
     @Override public Container answer() throws Throwable {
       return new ContainerImpl(null,(String)EasyMock.getCurrentArguments()[0],fabricService);

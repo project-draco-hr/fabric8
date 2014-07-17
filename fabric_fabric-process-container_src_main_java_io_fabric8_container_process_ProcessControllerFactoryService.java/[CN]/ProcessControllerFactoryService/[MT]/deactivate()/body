@@ -2,10 +2,8 @@
   if (zkMasterCache != null) {
     zkMasterCache=null;
   }
-  DataStore dataStore=getDataStore();
-  if (dataStore != null) {
-    dataStore.untrackConfiguration(configurationChangeHandler);
-  }
+  DataStore dataStore=fabricService.get().adapt(DataStore.class);
+  dataStore.untrackConfiguration(configurationChangeHandler);
   if (keepAliveTimer != null) {
     keepAliveTimer.cancel();
     keepAliveTimer=null;
