@@ -3,12 +3,13 @@
   int index=0;
   Map<String,SshHostConfiguration> hosts=requirements.getSshHostsMap();
   if (hosts != null) {
-    Filter<String> filter=sshScalingRequirements != null ? Filters.createStringFilters(sshScalingRequirements.getHostPatterns()) : Filters.<String>trueFilter();
+    Filter<String> hostFilter=createHostAliasFilter(sshScalingRequirements);
+    Filter<SshHostConfiguration> configFilter=createHostConfigFilter(sshScalingRequirements);
     Set<Map.Entry<String,SshHostConfiguration>> entries=hosts.entrySet();
     for (    Map.Entry<String,SshHostConfiguration> entry : entries) {
       String hostAlias=entry.getKey();
-      if (filter.matches(hostAlias)) {
-        SshHostConfiguration config=entry.getValue();
+      SshHostConfiguration config=entry.getValue();
+      if (hostFilter.matches(hostAlias) && configFilter.matches(config)) {
         String profile=profileRequirements.getProfile();
         boolean valid=true;
         Integer maximumContainerCount=config.getMaximumContainerCount();

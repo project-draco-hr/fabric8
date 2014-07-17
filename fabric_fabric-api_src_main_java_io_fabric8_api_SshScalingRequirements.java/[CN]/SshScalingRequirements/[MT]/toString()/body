@@ -1,3 +1,6 @@
 {
-  return "SshScalingRequirements{" + "hostPatterns=" + hostPatterns + '}';
+  String hostPatternsText=hostPatterns != null && hostPatterns.size() > 0 ? "hostPatterns=" + hostPatterns : "";
+  String hostTagsText=hostTags != null && hostTags.size() > 0 ? "hostTags=" + hostTags : "";
+  String separator=hostPatternsText.length() > 0 && hostTagsText.length() > 0 ? ", " : "";
+  return "SshScalingRequirements{" + hostPatternsText + separator+ hostTagsText+ '}';
 }

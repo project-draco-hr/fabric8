@@ -1,0 +1,9 @@
+{
+  if (sshScalingRequirements != null) {
+    List<String> hostPatterns=sshScalingRequirements.getHostPatterns();
+    if (hostPatterns != null && hostPatterns.size() > 0) {
+      return Filters.createStringFilters(hostPatterns);
+    }
+  }
+  return trueFilter();
+}
