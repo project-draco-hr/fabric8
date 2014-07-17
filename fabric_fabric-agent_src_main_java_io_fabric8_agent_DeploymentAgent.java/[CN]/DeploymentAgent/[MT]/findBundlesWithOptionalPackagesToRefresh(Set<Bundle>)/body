@@ -8,33 +8,6 @@
     return;
   }
   for (  Bundle bundle : bundles) {
-    BundleRevision rev=bundle.adapt(BundleRevision.class);
-    boolean matches=false;
-    if (rev != null) {
-      for (      BundleRequirement req : rev.getDeclaredRequirements(null)) {
-        if (PackageNamespace.PACKAGE_NAMESPACE.equals(req.getNamespace()) && PackageNamespace.RESOLUTION_OPTIONAL.equals(req.getDirectives().get(PackageNamespace.REQUIREMENT_RESOLUTION_DIRECTIVE))) {
-          for (          Bundle provider : toRefresh) {
-            BundleRevision providerRev=provider.adapt(BundleRevision.class);
-            if (providerRev != null) {
-              for (              BundleCapability cap : providerRev.getDeclaredCapabilities(null)) {
-                if (req.matches(cap)) {
-                  matches=true;
-                  break;
-                }
-              }
-            }
-            if (matches) {
-              break;
-            }
-          }
-        }
-        if (matches) {
-          break;
-        }
-      }
-    }
-    if (matches) {
-      toRefresh.add(bundle);
-    }
+    matchBundleWithOptionalImport(bundle,toRefresh);
   }
 }

@@ -1,0 +1,34 @@
+{
+  BundleRevision revision=bundle.adapt(BundleRevision.class);
+  for (  BundleRequirement req : revision.getDeclaredRequirements(PackageNamespace.PACKAGE_NAMESPACE)) {
+    if (PackageNamespace.RESOLUTION_OPTIONAL.equals(req.getDirectives().get(PackageNamespace.REQUIREMENT_RESOLUTION_DIRECTIVE))) {
+      BundleWiring wiring=bundle.adapt(BundleWiring.class);
+      BundleWire reqwire=null;
+      if (wiring != null) {
+        for (        BundleWire wire : wiring.getRequiredWires(PackageNamespace.PACKAGE_NAMESPACE)) {
+          if (req.equals(wire.getRequirement())) {
+            BundleCapability cap=wire.getCapability();
+            BundleRevision provider=wire.getProvider();
+            LOGGER.debug("Optional requirement {} from {} wires to capability {} provided by {}",req,bundle,cap,provider);
+            reqwire=wire;
+            break;
+          }
+        }
+      }
+      if (reqwire == null) {
+        for (        Bundle provider : toRefresh) {
+          BundleRevision providerRev=provider.adapt(BundleRevision.class);
+          if (providerRev != null) {
+            for (            BundleCapability cap : providerRev.getDeclaredCapabilities(PackageNamespace.PACKAGE_NAMESPACE)) {
+              if (req.matches(cap)) {
+                LOGGER.info("Found possible provider for unwired optional requirement {} from {}: {}",req,bundle,provider);
+                toRefresh.add(bundle);
+                return;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
