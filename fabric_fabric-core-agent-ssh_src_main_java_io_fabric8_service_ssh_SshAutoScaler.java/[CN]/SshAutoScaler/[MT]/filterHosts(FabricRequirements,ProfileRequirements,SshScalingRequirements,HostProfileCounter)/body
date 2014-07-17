@@ -1,5 +1,6 @@
 {
-  List<SshHostConfiguration> answer=new ArrayList<SshHostConfiguration>();
+  SortedSet<LoadSortedSshHostConfiguration> answer=new TreeSet<>();
+  int index=0;
   Map<String,SshHostConfiguration> hosts=requirements.getSshHostsMap();
   if (hosts != null) {
     Filter<String> filter=sshScalingRequirements != null ? Filters.createStringFilters(sshScalingRequirements.getHostPatterns()) : Filters.<String>trueFilter();
@@ -8,6 +9,7 @@
       String hostAlias=entry.getKey();
       if (filter.matches(hostAlias)) {
         SshHostConfiguration config=entry.getValue();
+        String profile=profileRequirements.getProfile();
         boolean valid=true;
         Integer maximumContainerCount=config.getMaximumContainerCount();
         if (maximumContainerCount != null) {
@@ -19,14 +21,14 @@
         if (valid) {
           Integer maximumInstancesPerHost=profileRequirements.getMaximumInstancesPerHost();
           if (maximumInstancesPerHost != null) {
-            int count=hostProfileCounter.profileCount(hostAlias,profileRequirements.getProfile());
+            int count=hostProfileCounter.profileCount(hostAlias,profile);
             if (count >= maximumInstancesPerHost) {
               valid=false;
             }
           }
         }
         if (valid) {
-          answer.add(config);
+          answer.add(new LoadSortedSshHostConfiguration(hostAlias,config,profile,hostProfileCounter,index++));
         }
       }
     }

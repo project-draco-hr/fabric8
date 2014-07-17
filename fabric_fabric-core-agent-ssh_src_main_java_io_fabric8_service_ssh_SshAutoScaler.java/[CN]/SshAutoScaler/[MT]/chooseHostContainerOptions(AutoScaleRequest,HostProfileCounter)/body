@@ -3,8 +3,12 @@
   FabricRequirements requirements=request.getFabricRequirements();
   ProfileRequirements profileRequirements=request.getProfileRequirements();
   SshScalingRequirements sshScalingRequirements=profileRequirements.getSshScalingRequirements();
-  List<SshHostConfiguration> sshHostConfigurations=filterHosts(requirements,profileRequirements,sshScalingRequirements,hostProfileCounter);
-  SshHostConfiguration sshHostConfig=Filters.matchRandomElement(sshHostConfigurations);
+  SortedSet<LoadSortedSshHostConfiguration> sortedHostConfigurations=filterHosts(requirements,profileRequirements,sshScalingRequirements,hostProfileCounter);
+  SshHostConfiguration sshHostConfig=null;
+  if (!sortedHostConfigurations.isEmpty()) {
+    LoadSortedSshHostConfiguration first=sortedHostConfigurations.first();
+    sshHostConfig=first.getHostConfiguration();
+  }
   if (sshHostConfig == null) {
     LOG.warn("Could not create version " + request.getVersion() + " profile "+ request.getProfile()+ " as no matching hosts could be found for "+ sshScalingRequirements);
     return null;
