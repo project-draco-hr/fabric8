@@ -1,12 +1,12 @@
 {
-  Version version=profileService.getRequiredVersion(versionName);
-  Version currentDefault=fabricService.getDefaultVersion();
-  if (version.compareTo(currentDefault) == 0) {
-    System.out.println("Version " + version + " is already default version.");
+  profileService.getRequiredVersion(versionId);
+  String defaultId=fabricService.getDefaultVersionId();
+  if (versionId.compareTo(defaultId) == 0) {
+    System.out.println("Version " + versionId + " is already default version.");
   }
  else {
-    fabricService.setDefaultVersion(version.getId());
-    System.out.println("Changed default version to " + version);
+    fabricService.setDefaultVersionId(versionId);
+    System.out.println("Changed default version to " + versionId);
   }
   return null;
 }

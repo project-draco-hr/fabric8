@@ -1,7 +1,7 @@
 {
   out.println(String.format(CONSOLE_FORMAT,"[version]","[default]","[# containers]","[description]"));
   for (  String versionId : versions) {
-    boolean isDefault=defaultVersion.getId().equals(versionId);
+    boolean isDefault=versionId.equals(defaultVersionId);
     Version version=profileService.getRequiredVersion(versionId);
     int active=countContainersByVersion(containers,version);
     String description=version.getAttributes().get(Version.DESCRIPTION);

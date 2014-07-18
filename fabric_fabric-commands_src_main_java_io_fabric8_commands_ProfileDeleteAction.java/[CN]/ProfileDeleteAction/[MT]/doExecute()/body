@@ -1,8 +1,8 @@
 {
   FabricValidations.validateProfileName(name);
   ProfileService profileService=fabricService.adapt(ProfileService.class);
-  Version ver=version != null ? profileService.getVersion(version) : fabricService.getDefaultVersion();
-  for (  Profile profile : ver.getProfiles()) {
+  Version version=versionId != null ? profileService.getRequiredVersion(versionId) : fabricService.getRequiredDefaultVersion();
+  for (  Profile profile : version.getProfiles()) {
     String versionId=profile.getVersion();
     String profileId=profile.getId();
     if (name.equals(profileId)) {

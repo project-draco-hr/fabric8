@@ -1,7 +1,7 @@
 {
   ProfileService profileService=fabricService.adapt(ProfileService.class);
-  Version ver=version != null ? profileService.getVersion(version) : fabricService.getDefaultVersion();
-  List<Profile> profiles=ver.getProfiles();
+  Version version=versionId != null ? profileService.getRequiredVersion(versionId) : fabricService.getRequiredDefaultVersion();
+  List<Profile> profiles=version.getProfiles();
   profiles=sortProfiles(profiles);
   printProfiles(profileService,profiles,System.out);
   return null;

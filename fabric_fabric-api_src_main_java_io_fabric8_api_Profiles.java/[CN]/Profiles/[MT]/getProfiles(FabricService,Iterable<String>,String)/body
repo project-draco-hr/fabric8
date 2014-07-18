@@ -1,10 +1,10 @@
 {
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
   Version version;
   if (versionId == null) {
-    version=fabricService.getDefaultVersion();
+    version=fabricService.getRequiredDefaultVersion();
   }
  else {
-    ProfileService profileService=fabricService.adapt(ProfileService.class);
     version=profileService.getRequiredVersion(versionId);
   }
   List<Profile> answer=new ArrayList<Profile>();

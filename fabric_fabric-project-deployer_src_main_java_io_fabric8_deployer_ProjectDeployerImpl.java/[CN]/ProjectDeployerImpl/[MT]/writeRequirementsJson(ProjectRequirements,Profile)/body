@@ -2,7 +2,7 @@
   ObjectMapper mapper=DtoHelper.getMapper();
   byte[] json=mapper.writeValueAsBytes(requirements);
   String name=DtoHelper.getRequirementsConfigFileName(requirements);
-  DataStore dataStore=getFabricService().getDataStore();
+  DataStore dataStore=fabricService.get().getDataStore();
   String version=profile.getVersion();
   String profileId=profile.getId();
   byte[] oldData=dataStore.getFileConfiguration(version,profileId,name);

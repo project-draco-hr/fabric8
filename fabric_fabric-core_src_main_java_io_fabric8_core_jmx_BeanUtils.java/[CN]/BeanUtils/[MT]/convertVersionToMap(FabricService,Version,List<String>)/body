@@ -1,11 +1,13 @@
 {
+  IllegalArgumentAssertion.assertNotNull(version,"version");
+  IllegalArgumentAssertion.assertNotNull(fields,"fields");
   Map<String,Object> answer=new HashMap<String,Object>();
   for (  String field : fields) {
     if (field.equalsIgnoreCase("profiles") || field.equalsIgnoreCase("profileIds")) {
       answer.put(field,Ids.getIds(version.getProfiles()));
     }
  else     if (field.equalsIgnoreCase("defaultVersion")) {
-      answer.put(field,service.getDefaultVersion().equals(version));
+      answer.put(field,fabricService.getRequiredDefaultVersion().equals(version));
     }
  else     if (field.equalsIgnoreCase("class") || field.equalsIgnoreCase("string")) {
     }

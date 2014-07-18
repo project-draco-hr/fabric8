@@ -1,8 +1,13 @@
 {
   FabricValidations.validateProfileName(profileName);
   FabricValidations.validateProfileName(newName);
-  Version version=versionParam != null ? profileService.getRequiredVersion(versionParam) : fabricService.getDefaultVersion();
-  String versionId=version.getId();
+  Version version;
+  if (versionId != null) {
+    version=profileService.getRequiredVersion(versionId);
+  }
+ else {
+    version=fabricService.getDefaultVersion();
+  }
   if (!version.hasProfile(profileName)) {
     System.out.println("Profile " + profileName + " not found.");
     return null;
