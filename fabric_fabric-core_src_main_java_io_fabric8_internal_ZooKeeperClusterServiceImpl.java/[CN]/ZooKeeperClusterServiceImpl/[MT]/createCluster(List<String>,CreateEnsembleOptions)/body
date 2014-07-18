@@ -141,7 +141,7 @@
         setData(dst,ZkPath.CONFIG_ENSEMBLES.getPath(),newClusterId);
         setData(dst,ZkPath.CONFIG_ENSEMBLE.getPath(newClusterId),containerList);
         final AtomicReference<DataStore> result=new AtomicReference<DataStore>();
-        registrationHandler.get().setRegistrationCallback(new DataStoreTemplate(){
+        runtimeProperties.get().putRuntimeAttribute(DataStoreTemplate.class,new DataStoreTemplate(){
           @Override public void doWith(          DataStore dataStore){
 synchronized (result) {
               result.set(dataStore);

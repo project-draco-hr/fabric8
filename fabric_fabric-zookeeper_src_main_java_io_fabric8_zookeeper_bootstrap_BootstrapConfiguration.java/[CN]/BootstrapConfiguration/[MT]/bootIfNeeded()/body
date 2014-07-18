@@ -3,7 +3,8 @@
   boolean isCreated=checkCreated(bundleContext);
   if (!Strings.isNotBlank(zookeeperUrl) && !isCreated && options.isEnsembleStart()) {
     String connectionUrl=getConnectionUrl(options);
-    registrationHandler.get().setRegistrationCallback(new DataStoreBootstrapTemplate(name,homeDir,connectionUrl,options));
+    DataStoreOptions bootOptions=new DataStoreOptions(containerId,homeDir,connectionUrl,options);
+    runtimeProperties.get().putRuntimeAttribute(DataStoreTemplate.class,new DataStoreBootstrapTemplate(bootOptions));
     createOrUpdateDataStoreConfig(options);
     createZooKeeeperServerConfig(options);
     createZooKeeeperClientConfig(connectionUrl,options);

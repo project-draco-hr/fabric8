@@ -33,17 +33,15 @@
   EasyMock.expect(runtimeProperties.getHomePath()).andReturn(Paths.get("target")).anyTimes();
   EasyMock.expect(runtimeProperties.getDataPath()).andReturn(Paths.get("target/data")).anyTimes();
   EasyMock.expect(runtimeProperties.getProperty(EasyMock.eq(SystemProperties.FABRIC_ENVIRONMENT))).andReturn("").anyTimes();
+  EasyMock.expect(runtimeProperties.removeRuntimeAttribute(DataStoreTemplate.class)).andReturn(null).anyTimes();
   EasyMock.replay(runtimeProperties);
   FabricGitServiceImpl gitService=new FabricGitServiceImpl();
   gitService.bindRuntimeProperties(runtimeProperties);
   gitService.activate();
   gitService.setGitForTesting(git);
-  DataStoreTemplateRegistry registrationHandler=new DataStoreTemplateRegistry();
-  registrationHandler.activateComponent();
   dataStore=new CachingGitDataStore();
   dataStore.bindCurator(curator);
   dataStore.bindGitService(gitService);
-  dataStore.bindRegistrationHandler(registrationHandler);
   dataStore.bindRuntimeProperties(runtimeProperties);
   dataStore.bindConfigurer(new Configurer(){
     @Override public <T>Map<String,?> configure(    Map<String,?> configuration,    T target,    String... ignorePrefix) throws Exception {

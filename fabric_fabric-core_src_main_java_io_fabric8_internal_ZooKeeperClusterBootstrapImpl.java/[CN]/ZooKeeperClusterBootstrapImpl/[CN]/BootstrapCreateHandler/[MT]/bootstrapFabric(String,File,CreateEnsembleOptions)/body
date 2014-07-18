@@ -1,6 +1,7 @@
 {
   String connectionUrl=bootConfig.getConnectionUrl(options);
-  registrationHandler.setRegistrationCallback(new DataStoreBootstrapTemplate(containerId,homeDir,connectionUrl,options));
+  DataStoreOptions bootOptions=new DataStoreOptions(containerId,homeDir,connectionUrl,options);
+  runtimeProperties.putRuntimeAttribute(DataStoreTemplate.class,new DataStoreBootstrapTemplate(bootOptions));
   bootConfig.createOrUpdateDataStoreConfig(options);
   bootConfig.createZooKeeeperServerConfig(options);
   bootConfig.createZooKeeeperClientConfig(connectionUrl,options);

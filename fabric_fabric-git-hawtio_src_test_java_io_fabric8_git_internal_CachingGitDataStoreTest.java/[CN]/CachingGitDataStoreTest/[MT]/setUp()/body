@@ -3,11 +3,12 @@
   delete(sfb.getDataDir());
   delete(sfb.getDataLogDir());
   sfb.afterPropertiesSet();
-  sysprops=EasyMock.createMock(RuntimeProperties.class);
-  EasyMock.expect(sysprops.getRuntimeIdentity()).andReturn("root").anyTimes();
-  EasyMock.expect(sysprops.getHomePath()).andReturn(Paths.get("target")).anyTimes();
-  EasyMock.expect(sysprops.getDataPath()).andReturn(Paths.get("target/data")).anyTimes();
-  EasyMock.replay(sysprops);
+  runtimeProperties=EasyMock.createMock(RuntimeProperties.class);
+  EasyMock.expect(runtimeProperties.getRuntimeIdentity()).andReturn("root").anyTimes();
+  EasyMock.expect(runtimeProperties.getHomePath()).andReturn(Paths.get("target")).anyTimes();
+  EasyMock.expect(runtimeProperties.getDataPath()).andReturn(Paths.get("target/data")).anyTimes();
+  EasyMock.expect(runtimeProperties.removeRuntimeAttribute(DataStoreTemplate.class)).andReturn(null).anyTimes();
+  EasyMock.replay(runtimeProperties);
   CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().connectString("localhost:" + sfb.getClientPortAddress().getPort()).retryPolicy(new RetryOneTime(1000)).connectionTimeoutMs(360000);
   curator=builder.build();
   curator.start();
@@ -27,16 +28,13 @@
   config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
   config.save();
   FabricGitServiceImpl gitService=new FabricGitServiceImpl();
-  gitService.bindRuntimeProperties(sysprops);
+  gitService.bindRuntimeProperties(runtimeProperties);
   gitService.activate();
   gitService.setGitForTesting(git);
-  DataStoreTemplateRegistry registrationHandler=new DataStoreTemplateRegistry();
-  registrationHandler.activateComponent();
   dataStore=new CachingGitDataStore();
   dataStore.bindCurator(curator);
   dataStore.bindGitService(gitService);
-  dataStore.bindRegistrationHandler(registrationHandler);
-  dataStore.bindRuntimeProperties(sysprops);
+  dataStore.bindRuntimeProperties(runtimeProperties);
   dataStore.bindConfigurer(new Configurer(){
     @Override public <T>Map<String,?> configure(    Map<String,?> configuration,    T target,    String... ignorePrefix) throws Exception {
       return null;

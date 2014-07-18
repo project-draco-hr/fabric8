@@ -4,13 +4,13 @@
     ServiceLocator.awaitService(BootstrapComplete.class);
     LOGGER.info("Create fabric with: {}",options);
     stopBundles();
-    DataStoreRegistrationHandler regHandler=registrationHandler.get();
+    RuntimeProperties runtimeProps=runtimeProperties.get();
     BootstrapConfiguration bootConfig=bootstrapConfiguration.get();
     BundleContext syscontext=bundleContext.getBundle(0).getBundleContext();
     if (options.isClean()) {
-      bootConfig=cleanInternal(syscontext,bootConfig,regHandler);
+      bootConfig=cleanInternal(syscontext,bootConfig,runtimeProps);
     }
-    BootstrapCreateHandler createHandler=new BootstrapCreateHandler(bootConfig,regHandler);
+    BootstrapCreateHandler createHandler=new BootstrapCreateHandler(bootConfig,runtimeProps);
     createHandler.bootstrapFabric(name,homeDir,options);
     startBundles(options);
     long startTime=System.currentTimeMillis();
