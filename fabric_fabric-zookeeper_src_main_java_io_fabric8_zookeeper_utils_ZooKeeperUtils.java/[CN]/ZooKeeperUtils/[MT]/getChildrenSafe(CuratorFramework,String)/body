@@ -1,6 +1,4 @@
 {
-  if (curator.checkExists().forPath(path) == null) {
-    return Collections.EMPTY_LIST;
-  }
-  return curator.getChildren().forPath(path);
+  boolean pathExists=curator.checkExists().forPath(path) != null;
+  return pathExists ? curator.getChildren().forPath(path) : Collections.<String>emptyList();
 }
