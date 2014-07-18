@@ -1,5 +1,12 @@
 {
   for (  ParsedHeaderClause clause : clauses) {
+    for (int i=0; i < clause.paths.size(); i++) {
+      if ("service-reference".equals(clause.paths.get(i))) {
+        clause.paths.set(i,"osgi.service");
+      }
+    }
+  }
+  for (  ParsedHeaderClause clause : clauses) {
     for (    Map.Entry<String,String> entry : clause.types.entrySet()) {
       String type=entry.getValue();
       if (!type.equals("String")) {

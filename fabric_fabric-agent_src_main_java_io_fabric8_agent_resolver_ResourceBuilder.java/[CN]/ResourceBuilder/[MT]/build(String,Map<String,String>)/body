@@ -52,7 +52,7 @@
   List<Capability> provideCaps=convertProvideCapabilities(provideClauses,resource);
   boolean hasServiceReferenceCapability=false;
   for (  Capability cap : exportCaps) {
-    hasServiceReferenceCapability|=ServiceNamespace.SERVICE_NAMESPACE.equals(cap.getNamespace());
+    hasServiceReferenceCapability|="osgi.service".equals(cap.getNamespace());
   }
   if (!hasServiceReferenceCapability) {
     List<ParsedHeaderClause> exportServices=parseStandardHeader(headerMap.get(Constants.EXPORT_SERVICE));
@@ -61,7 +61,7 @@
   }
   boolean hasServiceReferenceRequirement=false;
   for (  Requirement req : requireReqs) {
-    hasServiceReferenceRequirement|=ServiceNamespace.SERVICE_NAMESPACE.equals(req.getNamespace());
+    hasServiceReferenceRequirement|="osgi.service".equals(req.getNamespace());
   }
   if (!hasServiceReferenceRequirement) {
     List<ParsedHeaderClause> importServices=parseStandardHeader(headerMap.get(Constants.IMPORT_SERVICE));
