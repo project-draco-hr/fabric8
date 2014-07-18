@@ -1,13 +1,12 @@
 {
-  String hostPostfix="";
   String hostSmall="small";
   String hostMedium="medium";
   String hostBig="big";
   FabricRequirements requirements=new FabricRequirements();
   requirements.sshConfiguration().defaultPath("/opt/fuse").defaultUsername("root").defaultPassword("adminuser").defaultPassPhrase("cheese");
-  requirements.sshHost(hostSmall).hostName(hostSmall + hostPostfix).maximumContainerCount(1);
-  requirements.sshHost(hostMedium).hostName(hostMedium + hostPostfix).maximumContainerCount(2);
-  requirements.sshHost(hostBig).hostName(hostBig + hostPostfix).maximumContainerCount(8);
+  requirements.sshHost(hostSmall).hostName(hostSmall).maximumContainerCount(1);
+  requirements.sshHost(hostMedium).hostName(hostMedium).maximumContainerCount(2);
+  requirements.sshHost(hostBig).hostName(hostBig).maximumContainerCount(8);
   requirements.profile(mqProfileId).minimumInstances(2).maximumInstancesPerHost(1).sshScaling().hostPatterns("!small");
   requirements.profile(exampleProfileId).minimumInstances(5).dependentProfiles(mqProfileId);
   HostProfileCounter hostProfileCounter=assertSshAutoScale(requirements);

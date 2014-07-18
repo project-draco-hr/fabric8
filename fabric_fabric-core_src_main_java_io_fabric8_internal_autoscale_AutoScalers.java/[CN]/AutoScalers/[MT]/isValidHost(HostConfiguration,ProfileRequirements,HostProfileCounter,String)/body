@@ -1,0 +1,21 @@
+{
+  boolean valid=true;
+  String profile=profileRequirements.getProfile();
+  Integer maximumContainerCount=config.getMaximumContainerCount();
+  if (maximumContainerCount != null) {
+    int count=hostProfileCounter.containerCount(hostAlias);
+    if (count >= maximumContainerCount) {
+      valid=false;
+    }
+  }
+  if (valid) {
+    Integer maximumInstancesPerHost=profileRequirements.getMaximumInstancesPerHost();
+    if (maximumInstancesPerHost != null) {
+      int count=hostProfileCounter.profileCount(hostAlias,profile);
+      if (count >= maximumInstancesPerHost) {
+        valid=false;
+      }
+    }
+  }
+  return valid;
+}

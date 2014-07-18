@@ -1,0 +1,17 @@
+{
+  CreateDockerContainerOptions.Builder builder=CreateDockerContainerOptions.builder();
+  FabricRequirements requirements=request.getFabricRequirements();
+  ProfileRequirements profileRequirements=request.getProfileRequirements();
+  DockerScalingRequirements scalingRequirements=profileRequirements.getDockerScalingRequirements();
+  SortedSet<LoadSortedHostConfiguration<SshHostConfiguration>> sortedHostConfigurations=filterHosts(requirements,profileRequirements,scalingRequirements,hostProfileCounter);
+  SshHostConfiguration sshHostConfig=null;
+  if (!sortedHostConfigurations.isEmpty()) {
+    LoadSortedHostConfiguration<SshHostConfiguration> first=sortedHostConfigurations.first();
+    sshHostConfig=first.getConfiguration();
+  }
+  if (sshHostConfig == null) {
+    LOG.warn("Could not create version " + request.getVersion() + " profile "+ request.getProfile()+ " as no matching hosts could be found for "+ scalingRequirements);
+    return null;
+  }
+  return builder;
+}

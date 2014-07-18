@@ -1,0 +1,18 @@
+{
+  SortedSet<LoadSortedHostConfiguration<SshHostConfiguration>> answer=new TreeSet<>();
+  int index=0;
+  List<SshHostConfiguration> hosts=requirements.getSshHosts();
+  Filter<String> hostFilter=createHostAliasFilter(scalingRequirements);
+  Filter<HostConfiguration> configFilter=createHostConfigFilter(scalingRequirements);
+  for (  SshHostConfiguration config : hosts) {
+    String hostName=config.getHostName();
+    if (hostFilter.matches(hostName) && configFilter.matches(config)) {
+      String profile=profileRequirements.getProfile();
+      boolean valid=isValidHost(config,profileRequirements,hostProfileCounter,hostName);
+      if (valid) {
+        answer.add(new LoadSortedHostConfiguration<>(hostName,config,profile,hostProfileCounter,index++));
+      }
+    }
+  }
+  return answer;
+}

@@ -3,9 +3,9 @@
     String hostName=entry.getKey();
     CountingMap counts=entry.getValue();
     int total=counts.total();
-    Map<String,SshHostConfiguration> sshHostsMap=requirements.getSshHostsMap();
-    assertNotNull("Should have a hosts map!",sshHostsMap);
-    SshHostConfiguration hostConfiguration=sshHostsMap.get(hostName);
+    SshConfiguration sshConfiguration=requirements.getSshConfiguration();
+    assertNotNull("Should have a sshConfiguration!",sshConfiguration);
+    SshHostConfiguration hostConfiguration=sshConfiguration.getHost(hostName);
     assertNotNull("Should have a hosts configuration for host " + hostName,hostConfiguration);
     Integer maximumContainerCount=hostConfiguration.getMaximumContainerCount();
     if (maximumContainerCount != null) {

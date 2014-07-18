@@ -4,15 +4,10 @@
     config=new SshConfiguration();
     setSshConfiguration(config);
   }
-  Map<String,SshHostConfiguration> hosts=config.getHosts();
+  List<SshHostConfiguration> hosts=config.getHosts();
   if (hosts == null) {
-    hosts=new HashMap<String,SshHostConfiguration>();
+    hosts=new ArrayList<>();
     config.setHosts(hosts);
   }
-  SshHostConfiguration answer=hosts.get(hostAlias);
-  if (answer == null) {
-    answer=new SshHostConfiguration(hostAlias);
-    hosts.put(hostAlias,answer);
-  }
-  return answer;
+  return config.host(hostName);
 }

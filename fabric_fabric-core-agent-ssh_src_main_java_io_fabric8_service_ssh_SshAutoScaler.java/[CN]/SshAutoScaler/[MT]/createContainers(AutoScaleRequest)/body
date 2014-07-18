@@ -4,8 +4,10 @@
   String version=request.getVersion();
   FabricService fabricService=request.getFabricService();
   Container[] containers=fabricService.getContainers();
+  FabricRequirements requirements=request.getFabricRequirements();
+  List<? extends HostConfiguration> hostConfigurations=requirements.getSshHosts();
   HostProfileCounter hostProfileCounter=new HostProfileCounter();
-  Map<String,CountingMap> hostToProfileCounts=createHostToProfileScaleMap(fabricService,containers,request,hostProfileCounter);
+  AutoScalers.createHostToProfileScaleMap(hostProfileCounter,hostConfigurations,containers);
   for (int i=0; i < count; i++) {
     CreateSshContainerOptions.Builder builder=null;
     NameValidator nameValidator=Containers.createNameValidator(containers);

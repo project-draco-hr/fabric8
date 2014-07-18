@@ -3,22 +3,22 @@
   String profile=request.getProfile();
   String version=request.getVersion();
   FabricService fabricService=request.getFabricService();
-  CreateDockerContainerOptions.Builder builder=null;
   if (fabricService != null) {
-    builder=createAutoScaleOptions(fabricService);
-  }
-  if (builder != null) {
+    Container[] containers=fabricService.getContainers();
+    FabricRequirements requirements=request.getFabricRequirements();
+    List<? extends HostConfiguration> hostConfigurations=requirements.getDockerHosts();
+    HostProfileCounter hostProfileCounter=new HostProfileCounter();
+    AutoScalers.createHostToProfileScaleMap(hostProfileCounter,hostConfigurations,containers);
     for (int i=0; i < count; i++) {
-      Container[] containers=fabricService.getContainers();
-      final CreateDockerContainerOptions.Builder configuredBuilder=builder.number(1).version(version).profiles(profile);
+      CreateDockerContainerOptions.Builder builder=createAutoScaleOptions(request,fabricService,hostProfileCounter);
       NameValidator nameValidator=Containers.createNameValidator(fabricService.getContainers());
       String name=Containers.createContainerName(containers,profile,containerProvider.getScheme(),nameValidator);
-      CreateDockerContainerOptions options=configuredBuilder.name(name).build();
+      CreateDockerContainerOptions options=builder.name(name).build();
       LOG.info("Creating container name " + name + " version "+ version+ " profile "+ profile+ " "+ count+ " container(s)");
       fabricService.createContainers(options);
     }
   }
  else {
-    LOG.warn("Could not create version " + version + " profile "+ profile+ " due to missing autoscale configuration");
+    LOG.warn("Could not create version " + version + " profile "+ profile+ " due to missing FabricService");
   }
 }
