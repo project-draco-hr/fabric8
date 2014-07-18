@@ -1,5 +1,9 @@
 {
-  processRegistry=new CompositeProcessRegistry(new ClassPathProcessRegistry(),new InMemoryProcessRegistry());
+  List<ProcessRegistry> registries=newArrayList(new ClassPathProcessRegistry(),new InMemoryProcessRegistry());
+  if (ClassUtils.isPresent("org.apache.curator.framework.CuratorFramework",getClass().getClassLoader())) {
+    registries.add(autodetectZooKeeperProcessRegistry());
+  }
+  processRegistry=new CompositeProcessRegistry(registries);
   ProcessRegistryPropertySource propertySource=new ProcessRegistryPropertySource(processRegistry);
   applicationContext.getEnvironment().getPropertySources().addFirst(propertySource);
 }

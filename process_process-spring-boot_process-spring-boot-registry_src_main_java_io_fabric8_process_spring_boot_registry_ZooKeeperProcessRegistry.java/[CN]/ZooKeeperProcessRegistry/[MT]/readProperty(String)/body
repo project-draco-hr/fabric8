@@ -1,0 +1,21 @@
+{
+  String path=convertPropertiesKeyToPath(key);
+  try {
+    return new String(zk.getData().forPath(path));
+  }
+ catch (  NoNodeException e) {
+    LOG.debug("NoNodeException thrown for path {}. Returning null.",path);
+    return null;
+  }
+catch (  CuratorConnectionLossException e) {
+    LOG.warn("CuratorConnectionLossException thrown for path {}. Returning null.",path);
+    return null;
+  }
+catch (  KeeperException.ConnectionLossException e) {
+    LOG.warn("ConnectionLossException thrown for path {}. Returning null.",path);
+    return null;
+  }
+catch (  Exception e) {
+    throw new RuntimeException(e);
+  }
+}
