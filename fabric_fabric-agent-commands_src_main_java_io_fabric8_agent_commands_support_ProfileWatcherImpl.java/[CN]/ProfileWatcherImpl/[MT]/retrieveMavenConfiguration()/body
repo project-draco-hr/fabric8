@@ -1,12 +1,12 @@
 {
   MavenConfiguration mavenConfiguration=null;
   try {
-    Configuration configuration=configurationAdmin.get().getConfiguration(ServiceConstants.PID);
+    Configuration configuration=configurationAdmin.get().getConfiguration("org.ops4j.pax.url.mvn");
     if (configuration != null) {
       Dictionary dictonary=configuration.getProperties();
       if (dictonary != null) {
         DictionaryPropertyResolver resolver=new DictionaryPropertyResolver(dictonary);
-        mavenConfiguration=new MavenConfigurationImpl(resolver,ServiceConstants.PID);
+        mavenConfiguration=new MavenConfigurationImpl(resolver,"org.ops4j.pax.url.mvn");
       }
     }
   }
