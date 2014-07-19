@@ -1,0 +1,32 @@
+{
+  Map<String,Map<VersionRange,Map<String,String>>> result=new HashMap<String,Map<VersionRange,Map<String,String>>>();
+  for (  String key : properties.keySet()) {
+    if (key.startsWith(prefix)) {
+      String val=properties.get(key);
+      key=key.substring(prefix.length());
+      String[] parts=key.split("#");
+      if (parts.length == 3) {
+        Map<VersionRange,Map<String,String>> ranges=result.get(parts[0]);
+        if (ranges == null) {
+          ranges=new HashMap<VersionRange,Map<String,String>>();
+          result.put(parts[0],ranges);
+        }
+        String version=parts[1];
+        if (!version.startsWith("[") && !version.startsWith("(")) {
+          Processor processor=new Processor();
+          processor.setProperty("@",VersionTable.getVersion(version).toString());
+          Macro macro=new Macro(processor);
+          version=macro.process("${range;[==,=+)}");
+        }
+        VersionRange range=new VersionRange(version);
+        Map<String,String> hdrs=ranges.get(range);
+        if (hdrs == null) {
+          hdrs=new HashMap<String,String>();
+          ranges.put(range,hdrs);
+        }
+        hdrs.put(parts[2],val);
+      }
+    }
+  }
+  return result;
+}

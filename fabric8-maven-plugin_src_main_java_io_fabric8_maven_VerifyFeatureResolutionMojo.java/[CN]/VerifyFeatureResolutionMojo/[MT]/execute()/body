@@ -2,7 +2,22 @@
   URL.setURLStreamHandlerFactory(new CustomBundleURLStreamHandlerFactory());
   System.setProperty("karaf.home","target/karaf");
   System.setProperty("karaf.data","target/karaf/data");
+  ExecutorService executor=Executors.newFixedThreadPool(8);
   Hashtable<String,String> properties=new Hashtable<String,String>();
+  if (additionalMetadata != null) {
+    try (Reader reader=new FileReader(additionalMetadata)){
+      Properties metadata=new Properties();
+      metadata.load(reader);
+      for (Enumeration<?> e=metadata.propertyNames(); e.hasMoreElements(); ) {
+        Object key=e.nextElement();
+        Object val=metadata.get(key);
+        properties.put(key.toString(),val.toString());
+      }
+    }
+ catch (    IOException e) {
+      throw new MojoExecutionException("Unable to load additional metadata from " + additionalMetadata,e);
+    }
+  }
   for (int i=0; i < descriptors.size(); i++) {
     properties.put("repository." + i,descriptors.get(i));
   }
@@ -11,13 +26,22 @@
       DictionaryPropertyResolver propertyResolver=new DictionaryPropertyResolver(properties);
       MavenConfigurationImpl config=new MavenConfigurationImpl(propertyResolver,"org.ops4j.pax.url.mvn");
       config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
-      ExecutorService executor=Executors.newFixedThreadPool(8);
       DownloadManager manager=new DownloadManager(config,executor);
       final Map<String,Repository> repositories=loadRepositories(manager,new HashSet<String>(descriptors));
       features=new ArrayList<>();
-      for (      Repository repo : repositories.values()) {
-        for (        Feature feature : repo.getFeatures()) {
-          features.add(feature.getName() + "/" + feature.getVersion());
+      if (verifyTransitive) {
+        for (        Repository repo : repositories.values()) {
+          for (          Feature feature : repo.getFeatures()) {
+            features.add(feature.getName() + "/" + feature.getVersion());
+          }
+        }
+      }
+ else {
+        for (        String uri : descriptors) {
+          Repository repo=repositories.get(uri);
+          for (          Feature feature : repo.getFeatures()) {
+            features.add(feature.getName() + "/" + feature.getVersion());
+          }
         }
       }
     }
@@ -31,7 +55,7 @@
   List<Throwable> failures=new ArrayList<>();
   for (int i=0; i < features.size(); i++) {
     try {
-      verifyResolution(features.get(i),properties);
+      verifyResolution(features.get(i),properties,executor);
       getLog().info("Verification of feature " + features.get(i) + " succeeded");
     }
  catch (    Exception e) {

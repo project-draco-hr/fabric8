@@ -4,7 +4,6 @@
     DictionaryPropertyResolver propertyResolver=new DictionaryPropertyResolver(properties);
     MavenConfigurationImpl config=new MavenConfigurationImpl(propertyResolver,"org.ops4j.pax.url.mvn");
     config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
-    ExecutorService executor=Executors.newFixedThreadPool(8);
     DownloadManager manager=new DownloadManager(config,executor);
     boolean resolveOptionalImports=getResolveOptionalImports(properties);
     final Map<String,Repository> repositories=loadRepositories(manager,getPrefixedProperties(properties,"repository."));
@@ -17,7 +16,7 @@
     }
 );
     DeploymentBuilder builder=new DeploymentBuilder(manager,fabResolverFactory,repositories.values(),-1);
-    Map<String,Resource> downloadedResources=builder.download(getPrefixedProperties(properties,"feature."),getPrefixedProperties(properties,"bundle."),getPrefixedProperties(properties,"fab."),getPrefixedProperties(properties,"req."),getPrefixedProperties(properties,"override."),getPrefixedProperties(properties,"optional."));
+    Map<String,Resource> downloadedResources=builder.download(getPrefixedProperties(properties,"feature."),getPrefixedProperties(properties,"bundle."),getPrefixedProperties(properties,"fab."),getPrefixedProperties(properties,"req."),getPrefixedProperties(properties,"override."),getPrefixedProperties(properties,"optional."),getMetadata(properties,"metadata#"));
     for (    String uri : getPrefixedProperties(properties,"resources.")) {
       builder.addResourceRepository(new MetadataRepository(new HttpMetadataProvider(uri)));
     }

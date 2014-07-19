@@ -12,7 +12,7 @@
   Map<URI,Repository> repositories=new HashMap<URI,Repository>();
   AgentUtils.addRepository(manager,repositories,URI.create("mvn:org.apache.karaf.assemblies.features/standard/" + System.getProperty("karaf-version") + "/xml/features"));
   DeploymentBuilder builder=new DeploymentBuilder(manager,null,repositories.values(),0);
-  builder.download(new HashSet<String>(Arrays.asList("karaf-framework","ssh")),Collections.<String>emptySet(),Collections.<String>emptySet(),Collections.<String>emptySet(),Collections.<String>emptySet(),Collections.<String>emptySet());
+  builder.download(new HashSet<String>(Arrays.asList("karaf-framework","ssh")),Collections.<String>emptySet(),Collections.<String>emptySet(),Collections.<String>emptySet(),Collections.<String>emptySet(),Collections.<String>emptySet(),Collections.<String,Map<VersionRange,Map<String,String>>>emptyMap());
   properties=new Properties();
   properties.setProperty("org.osgi.framework.system.packages.extra","org.apache.karaf.jaas.boot;version=\"2.4.0.SNAPSHOT\",org.apache.karaf.jaas.boot.principal;version=\"2.4.0.SNAPSHOT\",org.apache.karaf.management.boot;version=\"2.4.0.SNAPSHOT\"");
   properties.setProperty("org.osgi.framework.system.capabilities.extra","osgi.service;effective:=active;objectClass=org.osgi.service.packageadmin.PackageAdmin," + "osgi.service;effective:=active;objectClass=org.osgi.service.startlevel.StartLevel," + "osgi.service;effective:=active;objectClass=org.osgi.service.url.URLHandlers");
