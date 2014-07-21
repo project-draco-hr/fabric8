@@ -1,8 +1,8 @@
 {
   configurer.configure(configuration,this);
-  this.mavenDownloadProxyServlet=new MavenDownloadProxyServlet(runtimeProperties.get(),localRepository,remoteRepositories,appendSystemRepos,updatePolicy,checksumPolicy,proxyProtocol,proxyHost,proxyPort,proxyUsername,proxyPassword,nonProxyHosts);
+  this.mavenDownloadProxyServlet=new MavenDownloadProxyServlet(runtimeProperties.get(),localRepository,remoteRepositories,appendSystemRepos,updatePolicy,checksumPolicy,proxyProtocol,proxyHost,proxyPort,proxyUsername,proxyPassword,nonProxyHosts,projectDeployer.get());
   this.mavenDownloadProxyServlet.start();
-  this.mavenUploadProxyServlet=new MavenUploadProxyServlet(runtimeProperties.get(),localRepository,remoteRepositories,appendSystemRepos,updatePolicy,checksumPolicy,proxyProtocol,proxyHost,proxyPort,proxyUsername,proxyPassword,nonProxyHosts);
+  this.mavenUploadProxyServlet=new MavenUploadProxyServlet(runtimeProperties.get(),localRepository,remoteRepositories,appendSystemRepos,updatePolicy,checksumPolicy,proxyProtocol,proxyHost,proxyPort,proxyUsername,proxyPassword,nonProxyHosts,projectDeployer.get());
   this.mavenUploadProxyServlet.start();
   try {
     HttpContext base=httpService.get().createDefaultHttpContext();

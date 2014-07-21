@@ -1,0 +1,34 @@
+{
+  JarFile jarFile=null;
+  try {
+    jarFile=new JarFile(file);
+    String previous=null;
+    String match=null;
+    Enumeration<JarEntry> entries=jarFile.entries();
+    while (entries.hasMoreElements()) {
+      JarEntry entry=entries.nextElement();
+      String name=entry.getName();
+      if (name.startsWith("META-INF/maven/") && name.endsWith("pom.properties")) {
+        if (previous != null) {
+          throw new IllegalStateException(String.format("Duplicate pom.properties found: %s != %s",name,previous));
+        }
+        previous=name;
+        Properties props=new Properties();
+        try (InputStream stream=jarFile.getInputStream(entry)){
+          props.load(stream);
+        }
+         String groupId=props.getProperty("groupId");
+        String artifactId=props.getProperty("artifactId");
+        String version=props.getProperty("version");
+        String packaging=Files.getFileExtension(file.getPath());
+        match=String.format("%s/%s/%s/%s-%s.%s",groupId,artifactId,version,artifactId,version,packaging != null ? packaging : "jar");
+      }
+    }
+    return match;
+  }
+  finally {
+    if (jarFile != null) {
+      jarFile.close();
+    }
+  }
+}

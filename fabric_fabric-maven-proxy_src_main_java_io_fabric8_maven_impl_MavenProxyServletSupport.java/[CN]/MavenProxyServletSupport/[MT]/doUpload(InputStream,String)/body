@@ -1,0 +1,71 @@
+{
+  if (path == null) {
+    throw new InvalidMavenArtifactRequest();
+  }
+  int p=path.lastIndexOf('/');
+  final String filename=path.substring(p + 1);
+  String uuid=UUID.randomUUID().toString();
+  File tmp=new File(tmpFolder,uuid);
+  tmp.mkdir();
+  final File file;
+  try {
+    file=readFile(is,tmp,filename);
+  }
+ catch (  FileNotFoundException e) {
+    throw new IllegalStateException(e);
+  }
+  UploadContext result=new UploadContext(file);
+  if (p <= 0) {
+    try {
+      String mvnCoordsPath=readMvnCoordsPath(file);
+      if (mvnCoordsPath != null) {
+        return move(file,mvnCoordsPath);
+      }
+ else {
+        result.addHeader(LOCATION_HEADER,file.getPath());
+        return result;
+      }
+    }
+ catch (    Exception e) {
+      LOGGER.log(Level.WARNING,String.format("Failed to deploy artifact : %s due to %s",filename,e));
+      return UploadContext.ERROR;
+    }
+  }
+  Matcher artifactMatcher=ARTIFACT_REQUEST_URL_REGEX.matcher(path);
+  Matcher metadataMatcher=ARTIFACT_METADATA_URL_REGEX.matcher(path);
+  if (metadataMatcher.matches()) {
+    LOGGER.log(Level.INFO,String.format("Received upload request for maven metadata : %s",path));
+    try {
+      Metadata metadata=convertPathToMetadata(path);
+      metadata=metadata.setFile(file);
+      InstallRequest request=new InstallRequest();
+      request.addMetadata(metadata);
+      system.install(session,request);
+      LOGGER.log(Level.INFO,"Maven metadata installed: " + request.toString());
+    }
+ catch (    Exception e) {
+      result=UploadContext.ERROR;
+      LOGGER.log(Level.WARNING,String.format("Failed to upload metadata: %s due to %s",path,e),e);
+    }
+  }
+ else   if (artifactMatcher.matches()) {
+    LOGGER.log(Level.INFO,String.format("Received upload request for maven artifact : %s",path));
+    Artifact artifact=null;
+    try {
+      artifact=convertPathToArtifact(path);
+      artifact=artifact.setFile(file);
+      InstallRequest request=new InstallRequest();
+      request.addArtifact(artifact);
+      system.install(session,request);
+      result.setGroupId(artifact.getGroupId());
+      result.setArtifactId(artifact.getArtifactId());
+      result.setVersion(artifact.getVersion());
+      LOGGER.log(Level.INFO,"Artifact installed: " + artifact.toString());
+    }
+ catch (    Exception e) {
+      result=UploadContext.ERROR;
+      LOGGER.log(Level.WARNING,String.format("Failed to upload artifact : %s due to %s",artifact,e),e);
+    }
+  }
+  return result;
+}
