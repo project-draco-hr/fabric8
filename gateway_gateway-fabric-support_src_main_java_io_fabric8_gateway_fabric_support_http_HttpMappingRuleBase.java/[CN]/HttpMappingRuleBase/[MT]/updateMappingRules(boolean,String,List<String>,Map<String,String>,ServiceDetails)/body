@@ -3,7 +3,7 @@
   if (pathTemplate != null) {
     boolean versionSpecificUri=pathTemplate.getParameterNames().contains("version");
     String versionId=defaultParams.get("version");
-    if (!remove && versionId != null && !versionSpecificUri && gatewayVersion != null) {
+    if (!remove && Strings.isNotBlank(versionId) && !versionSpecificUri&& gatewayVersion != null) {
       if (!gatewayVersion.equals(versionId)) {
         remove=true;
       }
