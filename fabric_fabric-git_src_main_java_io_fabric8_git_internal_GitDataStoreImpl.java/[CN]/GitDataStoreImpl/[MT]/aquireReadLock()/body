@@ -1,0 +1,17 @@
+{
+  final ReadLock readLock=readWriteLock.readLock();
+  boolean success;
+  try {
+    success=readLock.tryLock() || readLock.tryLock(10,TimeUnit.SECONDS);
+  }
+ catch (  InterruptedException ex) {
+    success=false;
+  }
+  IllegalStateAssertion.assertTrue(success,"Cannot obtain profile read lock in time");
+  return new LockHandle(){
+    @Override public void unlock(){
+      readLock.unlock();
+    }
+  }
+;
+}

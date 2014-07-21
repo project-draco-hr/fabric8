@@ -1,0 +1,10 @@
+{
+  assertValid();
+  LockHandle readLock=aquireReadLock();
+  try {
+    return getProfileInternal(versionId,profileId);
+  }
+  finally {
+    readLock.unlock();
+  }
+}

@@ -1,0 +1,17 @@
+{
+  final WriteLock writeLock=readWriteLock.writeLock();
+  boolean success;
+  try {
+    success=writeLock.tryLock() || writeLock.tryLock(10,TimeUnit.SECONDS);
+  }
+ catch (  InterruptedException ex) {
+    success=false;
+  }
+  IllegalStateAssertion.assertTrue(success,"Cannot obtain profile write lock in time");
+  return new LockHandle(){
+    @Override public void unlock(){
+      writeLock.unlock();
+    }
+  }
+;
+}

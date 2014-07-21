@@ -1,11 +1,4 @@
 {
   assertValid();
-  if (!profileRegistry.get().hasVersion(versionId))   return null;
-  VersionBuilder builder=VersionBuilder.Factory.create(versionId);
-  builder.setAttributes(profileRegistry.get().getVersionAttributes(versionId));
-  HashMap<String,Profile> profiles=new HashMap<String,Profile>();
-  for (  String profileId : profileRegistry.get().getProfiles(versionId)) {
-    builder.addProfile(getProfileInternal(versionId,profileId,profiles));
-  }
-  return builder.getVersion();
+  return getVersionInternal(versionId);
 }

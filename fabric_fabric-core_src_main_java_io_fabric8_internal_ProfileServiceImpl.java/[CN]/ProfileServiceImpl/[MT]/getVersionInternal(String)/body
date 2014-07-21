@@ -1,0 +1,19 @@
+{
+  LockHandle readLock=profileRegistry.get().aquireReadLock();
+  try {
+    Version version=null;
+    if (profileRegistry.get().hasVersion(versionId)) {
+      VersionBuilder builder=VersionBuilder.Factory.create(versionId);
+      builder.setAttributes(profileRegistry.get().getVersionAttributes(versionId));
+      HashMap<String,Profile> profiles=new HashMap<String,Profile>();
+      for (      String profileId : profileRegistry.get().getProfiles(versionId)) {
+        builder.addProfile(getProfileInternal(versionId,profileId,profiles));
+      }
+      version=builder.getVersion();
+    }
+    return version;
+  }
+  finally {
+    readLock.unlock();
+  }
+}

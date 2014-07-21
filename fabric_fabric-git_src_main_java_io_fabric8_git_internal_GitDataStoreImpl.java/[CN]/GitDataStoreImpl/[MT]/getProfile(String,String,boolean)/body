@@ -2,15 +2,15 @@
   assertValid();
   return gitOperation(new GitOperation<String>(){
     public String call(    Git git,    GitContext context) throws Exception {
-      checkoutVersion(git,GitProfiles.getBranch(version,profile));
-      File profileDirectory=getProfileDirectory(git,profile);
+      checkoutVersion(git,GitProfiles.getBranch(versionId,profileId));
+      File profileDirectory=getProfileDirectory(git,profileId);
       if (!profileDirectory.exists()) {
         if (create) {
-          return doCreateProfile(git,context,profile,version);
+          return doCreateProfile(git,context,profileId,versionId);
         }
         return null;
       }
-      return profile;
+      return profileId;
     }
   }
 );
