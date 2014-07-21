@@ -1,0 +1,11 @@
+{
+  return Lists.newArrayList(Iterables.transform(invoiceRepository.findByQuery(query),new Function<Invoice,InvoiceListingRecord>(){
+    @Override public InvoiceListingRecord apply(    Invoice entity){
+      InvoiceListingRecord record=new InvoiceListingRecord();
+      record.setListingLabel("Extra label for listing record.");
+      copyProperties(entity,record);
+      return record;
+    }
+  }
+));
+}
