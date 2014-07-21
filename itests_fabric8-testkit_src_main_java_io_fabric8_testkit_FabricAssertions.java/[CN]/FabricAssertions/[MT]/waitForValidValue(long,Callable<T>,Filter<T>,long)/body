@@ -1,0 +1,23 @@
+{
+  long failTime=System.currentTimeMillis() + timeout;
+  while (true) {
+    T value=callable.call();
+    if (value != null && isValid.matches(value)) {
+      return value;
+    }
+ else {
+      long now=System.currentTimeMillis();
+      if (now > failTime) {
+        fail("value " + value + " is not valid using "+ isValid+ " after waiting: "+ Math.round(timeout / 1000)+ " second(s)");
+        return value;
+      }
+ else {
+        try {
+          Thread.sleep(sleepTime);
+        }
+ catch (        InterruptedException e) {
+        }
+      }
+    }
+  }
+}

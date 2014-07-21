@@ -1,0 +1,44 @@
+{
+  assertNotNull("Should have some FabricRequirements",requirements);
+  long failTime=System.currentTimeMillis() + timeout;
+  while (true) {
+    long end=System.currentTimeMillis();
+    if (end > failTime) {
+      fail("Timed out after waiting " + Math.round(timeout / 1000) + " seconds");
+      break;
+    }
+    Map<String,String> containerLinks=restAPI.containers();
+    CountingMap countingMap=new CountingMap();
+    assertNotNull("Should have received some container links data",containerLinks);
+    assertTrue("Should have received at least one container link",containerLinks.size() > 0);
+    for (    String containerLink : containerLinks.values()) {
+      Map<String,String> profileLinks=getDTO(containerLink + "/profiles",Map.class);
+      countingMap.incrementAll(profileLinks.keySet());
+    }
+    boolean valid=true;
+    List<ProfileRequirements> profileRequirements=requirements.getProfileRequirements();
+    assertNotNull("Should have some profileRequirements",profileRequirements);
+    for (    ProfileRequirements profileRequirement : profileRequirements) {
+      Integer minimumInstances=profileRequirement.getMinimumInstances();
+      if (minimumInstances != null) {
+        String profile=profileRequirement.getProfile();
+        int current=countingMap.count(profile);
+        if (current < minimumInstances) {
+          System.out.println("Still waiting for " + minimumInstances + " instance(s) of profile "+ profile+ " current count: "+ current);
+          valid=false;
+          break;
+        }
+      }
+    }
+    if (valid) {
+      break;
+    }
+ else {
+      try {
+        Thread.sleep(5000);
+      }
+ catch (      InterruptedException e) {
+      }
+    }
+  }
+}

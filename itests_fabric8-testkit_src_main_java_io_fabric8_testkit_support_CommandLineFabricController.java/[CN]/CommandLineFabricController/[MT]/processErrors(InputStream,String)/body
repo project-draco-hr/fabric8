@@ -1,0 +1,23 @@
+{
+  StringBuilder builder=new StringBuilder();
+  BufferedReader reader=new BufferedReader(new InputStreamReader(inputStream));
+  try {
+    while (true) {
+      String line=reader.readLine();
+      if (line == null)       break;
+      if (builder.length() > 0) {
+        builder.append("\n");
+      }
+      builder.append(line);
+      LOG.info(line);
+    }
+    return builder.toString();
+  }
+ catch (  Exception e) {
+    LOG.error("Failed to process stderr for " + message + ": "+ e,e);
+    throw e;
+  }
+ finally {
+    Closeables.closeQuitely(reader);
+  }
+}

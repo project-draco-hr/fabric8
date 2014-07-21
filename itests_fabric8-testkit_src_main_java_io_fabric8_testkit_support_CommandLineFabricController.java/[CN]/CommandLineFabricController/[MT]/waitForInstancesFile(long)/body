@@ -1,0 +1,13 @@
+{
+  if (installDir != null) {
+    return waitForValidValue(timeout,new Callable<File>(){
+      @Override public File call() throws Exception {
+        return new File(installDir,"instances/instance.properties");
+      }
+    }
+,new FileExistsFilter());
+  }
+ else {
+    return null;
+  }
+}
