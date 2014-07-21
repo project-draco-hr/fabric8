@@ -6,14 +6,19 @@
       System.out.println("Container is part of the ensemble. If you still want to delete it, please use --force option.");
       return null;
     }
-    Container found=FabricCommand.getContainer(fabricService,containerName);
-    applyUpdatedCredentials(found);
-    if (recursive || force) {
-      for (      Container child : found.getChildren()) {
-        child.destroy(force);
+    Container found=FabricCommand.getContainerIfExists(fabricService,containerName);
+    if (found != null) {
+      applyUpdatedCredentials(found);
+      if (recursive || force) {
+        for (        Container child : found.getChildren()) {
+          child.destroy(force);
+        }
       }
+      found.destroy(force);
     }
-    found.destroy(force);
+ else     if (force) {
+      fabricService.getDataStore().deleteContainer(containerName);
+    }
   }
   return null;
 }
