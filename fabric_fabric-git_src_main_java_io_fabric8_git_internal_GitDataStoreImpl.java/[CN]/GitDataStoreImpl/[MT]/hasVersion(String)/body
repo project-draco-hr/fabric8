@@ -1,4 +1,10 @@
 {
-  assertValid();
-  return getVersions().contains(name);
+  LockHandle readLock=aquireReadLock();
+  try {
+    assertValid();
+    return getVersions().contains(versionId);
+  }
+  finally {
+    readLock.unlock();
+  }
 }

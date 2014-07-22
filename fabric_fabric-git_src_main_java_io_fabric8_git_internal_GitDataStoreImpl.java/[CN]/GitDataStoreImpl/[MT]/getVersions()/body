@@ -1,13 +1,12 @@
 {
-  assertValid();
-  List<VersionSequence> sequences=new ArrayList<>();
-  for (  String versionId : versions) {
-    sequences.add(new VersionSequence(versionId));
+  LockHandle readLock=aquireReadLock();
+  try {
+    assertValid();
+    List<String> result=new ArrayList<>(versions);
+    Collections.sort(result,VersionSequence.getComparator());
+    return Collections.unmodifiableList(result);
   }
-  Collections.sort(sequences);
-  List<String> verlist=new ArrayList<>();
-  for (  VersionSequence seq : sequences) {
-    verlist.add(seq.getName());
+  finally {
+    readLock.unlock();
   }
-  return Collections.unmodifiableList(verlist);
 }

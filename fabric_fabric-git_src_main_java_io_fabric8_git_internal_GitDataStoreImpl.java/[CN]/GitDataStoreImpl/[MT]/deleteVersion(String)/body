@@ -1,13 +1,19 @@
 {
-  assertValid();
-  GitOperation<Void> gitop=new GitOperation<Void>(){
-    public Void call(    Git git,    GitContext context) throws Exception {
-      removeVersion(version);
-      GitHelpers.removeBranch(git,version);
-      git.push().setTimeout(gitTimeout).setCredentialsProvider(getCredentialsProvider()).setRefSpecs(new RefSpec().setSource(null).setDestination("refs/heads/" + version)).call();
-      return null;
+  LockHandle writeLock=aquireWriteLock();
+  try {
+    assertValid();
+    GitOperation<Void> gitop=new GitOperation<Void>(){
+      public Void call(      Git git,      GitContext context) throws Exception {
+        removeVersionFromCaches(version);
+        GitHelpers.removeBranch(git,version);
+        doPush(git,context,getCredentialsProvider());
+        return null;
+      }
     }
-  }
 ;
-  executeWrite(gitop,true);
+    executeWrite(gitop,true);
+  }
+  finally {
+    writeLock.unlock();
+  }
 }
