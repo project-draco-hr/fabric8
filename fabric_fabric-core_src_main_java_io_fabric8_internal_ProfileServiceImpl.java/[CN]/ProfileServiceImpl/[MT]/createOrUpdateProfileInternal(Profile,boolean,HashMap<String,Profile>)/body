@@ -1,0 +1,18 @@
+{
+  Profile result=profiles.get(profile.getId());
+  if (result == null) {
+    for (    Profile parent : profile.getParents()) {
+      createOrUpdateProfileInternal(parent,allowCreate,profiles);
+    }
+    String profileId;
+    if (allowCreate) {
+      profileId=profileRegistry.get().createProfile(profile);
+    }
+ else {
+      profileId=profileRegistry.get().updateProfile(profile);
+    }
+    result=getRequiredProfile(profile.getVersion(),profileId);
+    profiles.put(profileId,profile);
+  }
+  return result;
+}
