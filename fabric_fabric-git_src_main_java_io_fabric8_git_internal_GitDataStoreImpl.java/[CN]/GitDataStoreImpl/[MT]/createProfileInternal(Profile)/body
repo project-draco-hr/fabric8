@@ -2,8 +2,9 @@
   assertWriteLock();
   final String versionId=profile.getVersion();
   final String profileId=profile.getId();
-  GitContext context=new GitContext().requireCommit().requirePush().requirePull();
+  GitContext context=new GitContext().requirePull();
   createProfileInternal(versionId,profileId,context);
+  context.setRequirePull(false);
   for (  Entry<String,String> entry : profile.getAttributes().entrySet()) {
     setProfileAttributeInternal(versionId,profileId,entry.getKey(),entry.getValue(),context);
   }
@@ -26,5 +27,6 @@
   if (!configurations.isEmpty()) {
     setConfigurationsInternal(versionId,profileId,configurations,context);
   }
+  doCommit(getGit(),context.requireCommit().requirePush());
   return profileId;
 }
