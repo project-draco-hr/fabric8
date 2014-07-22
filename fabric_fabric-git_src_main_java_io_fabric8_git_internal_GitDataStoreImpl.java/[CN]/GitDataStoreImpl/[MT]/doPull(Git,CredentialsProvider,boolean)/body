@@ -9,15 +9,12 @@
       }
       return;
     }
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Performing a fetch in git repository " + GitHelpers.getRootGitDirectory(git) + " on remote URL: "+ url);
-    }
+    doResetHard(git);
     boolean hasChanged=false;
     try {
+      LOGGER.debug("Performing a fetch in git repository {} on remote URL: {}",GitHelpers.getRootGitDirectory(git),url);
       FetchResult result=git.fetch().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setRemote(remoteRef.get()).call();
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Git fetch result: {}",result.getMessages());
-      }
+      LOGGER.debug("Git fetch result: {}",result.getMessages());
       lastFetchWarning=null;
     }
  catch (    Exception ex) {
