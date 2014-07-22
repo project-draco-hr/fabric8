@@ -1,28 +1,15 @@
 {
   try {
     properties.put("feature.totest",feature);
-    DictionaryPropertyResolver propertyResolver=new DictionaryPropertyResolver(properties);
-    MavenConfigurationImpl config=new MavenConfigurationImpl(propertyResolver,"org.ops4j.pax.url.mvn");
-    config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
-    DownloadManager manager=new DownloadManager(config,executor);
     boolean resolveOptionalImports=getResolveOptionalImports(properties);
-    final Map<String,Repository> repositories=loadRepositories(manager,getPrefixedProperties(properties,"repository."));
-    FabResolverFactoryImpl fabResolverFactory=new FabResolverFactoryImpl();
-    fabResolverFactory.setConfiguration(new DeploymentAgent.FabricFabConfiguration(config,propertyResolver));
-    fabResolverFactory.setFeaturesService(new FeaturesServiceImpl(){
-      @Override public Repository[] listRepositories(){
-        return repositories.values().toArray(new Repository[repositories.size()]);
-      }
-    }
-);
-    DeploymentBuilder builder=new DeploymentBuilder(manager,fabResolverFactory,repositories.values(),-1);
+    DeploymentBuilder builder=new DeploymentBuilder(manager,null,repositories.values(),-1);
     Map<String,Resource> downloadedResources=builder.download(getPrefixedProperties(properties,"feature."),getPrefixedProperties(properties,"bundle."),getPrefixedProperties(properties,"fab."),getPrefixedProperties(properties,"req."),getPrefixedProperties(properties,"override."),getPrefixedProperties(properties,"optional."),getMetadata(properties,"metadata#"));
     for (    String uri : getPrefixedProperties(properties,"resources.")) {
       builder.addResourceRepository(new MetadataRepository(new HttpMetadataProvider(uri)));
     }
     Resource systemBundle=getSystemBundleResource();
     try {
-      builder.resolve(systemBundle,resolveOptionalImports);
+      Collection<Resource> resources=builder.resolve(systemBundle,resolveOptionalImports);
     }
  catch (    Exception e) {
       throw new MojoExecutionException("Feature resolution failed for " + feature + "\nMessage: "+ e.getMessage()+ "\nRepositories: "+ toString(new TreeSet<>(repositories.keySet()))+ "\nResources: "+ toString(new TreeSet<>(downloadedResources.keySet())),e);

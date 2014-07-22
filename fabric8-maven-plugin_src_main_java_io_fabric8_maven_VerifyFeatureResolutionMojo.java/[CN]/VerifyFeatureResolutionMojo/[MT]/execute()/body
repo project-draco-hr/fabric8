@@ -18,45 +18,63 @@
       throw new MojoExecutionException("Unable to load additional metadata from " + additionalMetadata,e);
     }
   }
-  for (int i=0; i < descriptors.size(); i++) {
-    properties.put("repository." + i,descriptors.get(i));
+  DownloadManager manager;
+  final Map<String,Repository> repositories;
+  Map<String,Feature[]> allFeatures=new HashMap<>();
+  try {
+    DictionaryPropertyResolver propertyResolver=new DictionaryPropertyResolver(properties);
+    MavenConfigurationImpl config=new MavenConfigurationImpl(propertyResolver,"org.ops4j.pax.url.mvn");
+    config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
+    manager=new DownloadManager(config,executor);
+    repositories=loadRepositories(manager,descriptors);
+    for (    String repoUri : repositories.keySet()) {
+      allFeatures.put(repoUri,repositories.get(repoUri).getFeatures());
+    }
   }
-  if (features == null || features.isEmpty()) {
-    try {
-      DictionaryPropertyResolver propertyResolver=new DictionaryPropertyResolver(properties);
-      MavenConfigurationImpl config=new MavenConfigurationImpl(propertyResolver,"org.ops4j.pax.url.mvn");
-      config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(),config.useFallbackRepositories()));
-      DownloadManager manager=new DownloadManager(config,executor);
-      final Map<String,Repository> repositories=loadRepositories(manager,new HashSet<String>(descriptors));
-      features=new ArrayList<>();
-      if (verifyTransitive) {
-        for (        Repository repo : repositories.values()) {
-          for (          Feature feature : repo.getFeatures()) {
-            features.add(feature.getName() + "/" + feature.getVersion());
-          }
-        }
-      }
+ catch (  Exception e) {
+    throw new MojoExecutionException("Unable to load features descriptors",e);
+  }
+  List<Feature> featuresToTest=new ArrayList<>();
+  if (verifyTransitive) {
+    for (    Feature[] features : allFeatures.values()) {
+      featuresToTest.addAll(Arrays.asList(features));
+    }
+  }
  else {
-        for (        String uri : descriptors) {
-          Repository repo=repositories.get(uri);
-          for (          Feature feature : repo.getFeatures()) {
-            features.add(feature.getName() + "/" + feature.getVersion());
-          }
-        }
-      }
-    }
- catch (    Exception e) {
-      throw new MojoExecutionException("Unable to load features descriptors",e);
+    for (    String uri : descriptors) {
+      featuresToTest.addAll(Arrays.asList(allFeatures.get(uri)));
     }
   }
-  for (int i=0; i < framework.size(); i++) {
-    properties.put("feature.framework." + i,framework.get(i));
+  if (features != null && !features.isEmpty()) {
+    StringBuilder sb=new StringBuilder();
+    for (    String feature : features) {
+      if (sb.length() > 0) {
+        sb.append("|");
+      }
+      String p=feature.replaceAll("\\.","\\\\.").replaceAll("\\*",".*");
+      sb.append(p);
+      if (!feature.contains("/")) {
+        sb.append("/.*");
+      }
+    }
+    Pattern pattern=Pattern.compile(sb.toString());
+    for (Iterator<Feature> iterator=featuresToTest.iterator(); iterator.hasNext(); ) {
+      Feature feature=iterator.next();
+      String id=feature.getName() + "/" + feature.getVersion();
+      if (!pattern.matcher(id).matches()) {
+        iterator.remove();
+      }
+    }
+  }
+  for (  String fmk : framework) {
+    properties.put("feature.framework." + fmk,fmk);
   }
   List<Throwable> failures=new ArrayList<>();
-  for (int i=0; i < features.size(); i++) {
+  for (  Feature feature : featuresToTest) {
     try {
-      verifyResolution(features.get(i),properties,executor);
-      getLog().info("Verification of feature " + features.get(i) + " succeeded");
+      String id=feature.getName() + "/" + feature.getVersion();
+      verifyResolution(manager,repositories,id,properties);
+      getLog().info("Verification of feature " + id + " succeeded");
     }
  catch (    Exception e) {
       getLog().warn(e.getMessage());
