@@ -1,0 +1,19 @@
+{
+  String message=context.getCommitMessage();
+  IllegalStateAssertion.assertTrue(message.length() > 0,"Empty commit message");
+  git.commit().setMessage(message).call();
+  if (--commitsWithoutGC < 0) {
+    commitsWithoutGC=MAX_COMMITS_WITHOUT_GC;
+    LOG.debug("Performing 'git gc' after {} commits",MAX_COMMITS_WITHOUT_GC);
+    git.gc().call();
+  }
+  cachedVersions.invalidateAll();
+  try {
+    if (context.isRequirePush()) {
+      doPush(git,context,credentialsProvider);
+    }
+  }
+  finally {
+    dataStore.get().fireChangeNotifications();
+  }
+}
