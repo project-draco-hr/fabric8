@@ -1,13 +1,19 @@
 {
-  assertValid();
-  GitOperation<Void> gitop=new GitOperation<Void>(){
-    public Void call(    Git git,    GitContext context) throws Exception {
-      checkoutVersion(git,parentId);
-      createOrCheckoutVersion(git,versionId);
-      context.commitMessage("Create version: " + parentId + " => "+ versionId);
-      return null;
+  LockHandle writeLock=aquireWriteLock();
+  try {
+    assertValid();
+    GitOperation<Void> gitop=new GitOperation<Void>(){
+      public Void call(      Git git,      GitContext context) throws Exception {
+        checkoutVersion(git,parentId);
+        createOrCheckoutVersion(git,versionId);
+        context.commitMessage("Create version: " + parentId + " => "+ versionId);
+        return null;
+      }
     }
-  }
 ;
-  executeWrite(gitop,true);
+    executeWrite(gitop,true);
+  }
+  finally {
+    writeLock.unlock();
+  }
 }

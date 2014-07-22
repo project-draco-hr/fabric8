@@ -1,18 +1,13 @@
 {
   assertValid();
-  LOGGER.info("createVersion: {}",version);
+  String parentId=version.getParentId();
   String versionId=version.getId();
-  if (version.getParentId() != null) {
-    profileRegistry.get().createVersion(version.getParentId(),versionId);
+  if (parentId != null) {
+    LOGGER.info("createVersion: {} => {}",parentId,versionId);
+    profileRegistry.get().createVersion(parentId,versionId);
   }
  else {
-    profileRegistry.get().createVersion(versionId);
-    for (    Entry<String,String> entry : version.getAttributes().entrySet()) {
-      profileRegistry.get().setVersionAttribute(versionId,entry.getKey(),entry.getValue());
-    }
-    for (    Profile profile : version.getProfiles()) {
-      profileRegistry.get().createProfile(profile);
-    }
+    versionId=profileRegistry.get().createVersion(version);
   }
   return getRequiredVersion(versionId);
 }

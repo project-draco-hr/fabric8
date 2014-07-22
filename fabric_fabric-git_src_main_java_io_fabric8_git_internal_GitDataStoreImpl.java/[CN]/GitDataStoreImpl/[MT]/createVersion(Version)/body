@@ -1,0 +1,20 @@
+{
+  LockHandle writeLock=aquireWriteLock();
+  try {
+    assertValid();
+    String versionId=version.getId();
+    GitContext context=new GitContext();
+    createVersionInternal(context,versionId);
+    for (    Entry<String,String> entry : version.getAttributes().entrySet()) {
+      setVersionAttributeInternal(context,versionId,entry.getKey(),entry.getValue());
+    }
+    for (    Profile profile : version.getProfiles()) {
+      createOrUpdateProfile(context,profile,true,new HashSet<String>());
+    }
+    doCommit(getGit(),context.requireCommit().requirePush());
+    return versionId;
+  }
+  finally {
+    writeLock.unlock();
+  }
+}
