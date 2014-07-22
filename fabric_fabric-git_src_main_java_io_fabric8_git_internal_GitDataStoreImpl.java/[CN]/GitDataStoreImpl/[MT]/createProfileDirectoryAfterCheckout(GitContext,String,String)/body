@@ -1,0 +1,16 @@
+{
+  String resultId=profileId;
+  IllegalStateAssertion.assertFalse(context.isRequirePull(),"Cannot require pull when checkout is assumed");
+  File profileDirectory=getProfileDirectory(getGit(),profileId);
+  if (!profileDirectory.exists()) {
+    GitOperation<String> gitop=new GitOperation<String>(){
+      public String call(      Git git,      GitContext context) throws Exception {
+        return doCreateProfile(git,context,versionId,profileId);
+      }
+    }
+;
+    context=new GitContext(context).setRequirePull(false);
+    resultId=executeInternal(context,null,gitop);
+  }
+  return resultId;
+}

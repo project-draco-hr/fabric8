@@ -1,0 +1,40 @@
+{
+  assertWriteLock();
+  IllegalStateAssertion.assertFalse(context.isRequirePull(),"Invalid pull requirement");
+  IllegalStateAssertion.assertFalse(context.isRequireCommit(),"Invalid commit requirement");
+  IllegalStateAssertion.assertFalse(context.isRequirePush(),"Invalid push requirement");
+  String versionId=profile.getVersion();
+  String profileId=profile.getId();
+  if (!profiles.contains(profileId)) {
+    List<Profile> parents=profile.getParents();
+    for (    Profile parent : parents) {
+      createOrUpdateProfile(context,parent,allowCreate,profiles);
+    }
+    if (allowCreate) {
+      createProfileDirectoryAfterCheckout(context,versionId,profileId);
+    }
+    for (    Entry<String,String> entry : profile.getAttributes().entrySet()) {
+      setProfileAttributeInternal(context,versionId,profileId,entry.getKey(),entry.getValue());
+    }
+    if (parents.size() > 0) {
+      StringBuilder sb=new StringBuilder();
+      for (      Profile parent : parents) {
+        if (sb.length() > 0) {
+          sb.append(" ");
+        }
+        sb.append(parent.getId());
+      }
+      setProfileAttributeInternal(context,versionId,profileId,Profile.PARENTS,sb.toString());
+    }
+    Map<String,byte[]> fileConfigurations=profile.getFileConfigurations();
+    if (!fileConfigurations.isEmpty()) {
+      setFileConfigurationsInternal(context,versionId,profileId,fileConfigurations);
+    }
+    Map<String,Map<String,String>> configurations=profile.getConfigurations();
+    if (!configurations.isEmpty()) {
+      setConfigurationsInternal(context,versionId,profileId,configurations);
+    }
+    profiles.add(profileId);
+  }
+  return profileId;
+}

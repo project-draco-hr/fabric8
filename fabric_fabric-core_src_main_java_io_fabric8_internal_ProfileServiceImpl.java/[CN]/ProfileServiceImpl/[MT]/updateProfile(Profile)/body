@@ -1,11 +1,6 @@
 {
   assertValid();
-  LockHandle writeLock=profileRegistry.get().aquireWriteLock();
-  try {
-    LOGGER.info("updateProfile: {}",profile);
-    return createOrUpdateProfileInternal(profile,false,new HashMap<String,Profile>());
-  }
-  finally {
-    writeLock.unlock();
-  }
+  LOGGER.info("updateProfile: {}",profile);
+  String profileId=profileRegistry.get().updateProfile(profile);
+  return getRequiredProfile(profile.getVersion(),profileId);
 }

@@ -1,0 +1,10 @@
+{
+  GitOperation<String> gitop=new GitOperation<String>(){
+    public String call(    Git git,    GitContext context) throws Exception {
+      checkoutVersion(git,GitProfiles.getBranch(versionId,profileId));
+      return profileId;
+    }
+  }
+;
+  return executeRead(gitop,true);
+}
