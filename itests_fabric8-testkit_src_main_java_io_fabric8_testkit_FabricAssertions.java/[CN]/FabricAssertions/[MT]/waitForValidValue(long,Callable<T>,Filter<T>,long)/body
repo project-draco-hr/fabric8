@@ -1,7 +1,13 @@
 {
   long failTime=System.currentTimeMillis() + timeout;
   while (true) {
-    T value=callable.call();
+    T value=null;
+    try {
+      value=callable.call();
+    }
+ catch (    Exception e) {
+      System.out.println(unwrapException(e));
+    }
     if (value != null && isValid.matches(value)) {
       return value;
     }

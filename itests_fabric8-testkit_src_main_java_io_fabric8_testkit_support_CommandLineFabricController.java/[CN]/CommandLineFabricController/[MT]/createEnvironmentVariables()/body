@@ -1,3 +1,12 @@
 {
-  return System.getenv();
+  Map<String,String> answer=new HashMap<>();
+  Map<String,String> current=System.getenv();
+  for (  String variable : allowedEnvironmentVariables) {
+    String value=current.get(variable);
+    if (Strings.isNotBlank(value)) {
+      answer.put(variable,value);
+    }
+  }
+  answer.put(EnvironmentVariables.FABRIC8_PROFILES,join(profiles,","));
+  return answer;
 }

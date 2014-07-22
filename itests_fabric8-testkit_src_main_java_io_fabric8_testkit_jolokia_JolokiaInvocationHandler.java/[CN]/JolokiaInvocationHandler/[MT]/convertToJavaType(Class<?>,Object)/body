@@ -1,0 +1,20 @@
+{
+  if (clazz.isArray()) {
+    if (value instanceof JSONArray) {
+      JSONArray jsonArray=(JSONArray)value;
+      Object[] javaArray=(Object[])Array.newInstance(clazz.getComponentType(),jsonArray.size());
+      int idx=0;
+      for (      Object element : jsonArray) {
+        Array.set(javaArray,idx++,convertToJavaType(clazz.getComponentType(),element));
+      }
+      return javaArray;
+    }
+ else {
+      return null;
+    }
+  }
+ else   if (String.class.equals(clazz)) {
+    return (value != null) ? value.toString() : null;
+  }
+  return value;
+}

@@ -1,36 +1,11 @@
 {
-  String killFlagProperty="fabric8.testkit.killContainers";
-  String flag=System.getProperty(killFlagProperty,"true");
+  String flag=System.getProperty(KILL_CONTAINERS_FLAG,"true");
   if (installDir == null || flag == null || flag.toLowerCase().equals("false")) {
     String message=installDir == null ? "" : " at: " + installDir.getAbsolutePath();
-    System.out.println("Not destroying the fabric" + message + " due to system property "+ killFlagProperty+ " being "+ flag);
+    System.out.println("Not destroying the fabric" + message + " due to system property "+ KILL_CONTAINERS_FLAG+ " being "+ flag);
     return;
   }
   System.out.println("Destroying the fabric at: " + installDir.getAbsolutePath());
   File instancesFile=waitForInstancesFile(20 * 1000);
-  if (instancesFile != null) {
-    Properties properties=new Properties();
-    properties.load(new FileInputStream(instancesFile));
-    Set<Map.Entry<Object,Object>> entries=properties.entrySet();
-    for (    Map.Entry<Object,Object> entry : entries) {
-      Object key=entry.getKey();
-      if (key != null) {
-        String text=key.toString();
-        if (text.startsWith("item.") && text.endsWith(".pid")) {
-          Object value=entry.getValue();
-          if (value instanceof String) {
-            String pidText=value.toString();
-            Long pid=Long.parseLong(pidText);
-            if (pid != null) {
-              System.out.println("Killing process " + pid);
-              int status=ProcessUtils.killProcess(pid,"-9");
-              if (status != 0) {
-                System.err.println("Failed to kill process " + pid + ". Got "+ status);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+  killInstanceProcesses(instancesFile);
 }

@@ -1,3 +1,11 @@
 {
-  return waitForValidValue(timeout,callable,Filters.<T>trueFilter(),defaultWaitSleepPeriod);
+  return waitForValidValue(timeout,callable,new Filter<T>(){
+    @Override public boolean matches(    T t){
+      if (t instanceof Boolean) {
+        return ((Boolean)t).booleanValue();
+      }
+      return true;
+    }
+  }
+,defaultWaitSleepPeriod);
 }

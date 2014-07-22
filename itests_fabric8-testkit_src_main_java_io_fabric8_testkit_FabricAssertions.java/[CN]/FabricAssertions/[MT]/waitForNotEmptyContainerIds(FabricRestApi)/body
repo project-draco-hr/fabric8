@@ -1,0 +1,24 @@
+{
+  Filter<List<String>> isValid=new Filter<List<String>>(){
+    @Override public String toString(){
+      return "HasNotEmptyContainerIds";
+    }
+    @Override public boolean matches(    List<String> containerIds){
+      return containerIds.size() > 0;
+    }
+  }
+;
+  return waitForValidValue(new Callable<List<String>>(){
+    @Override public List<String> call() throws Exception {
+      try {
+        return restApi.containerIds();
+      }
+ catch (      Exception e) {
+        System.out.println("Ignoring Exception while finding containers: " + unwrapException(e));
+        LOG.debug("Failed to load containers: " + e,e);
+        return null;
+      }
+    }
+  }
+,isValid);
+}
