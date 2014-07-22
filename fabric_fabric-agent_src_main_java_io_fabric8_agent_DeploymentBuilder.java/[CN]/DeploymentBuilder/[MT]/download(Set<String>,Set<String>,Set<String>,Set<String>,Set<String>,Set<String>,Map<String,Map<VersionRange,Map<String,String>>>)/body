@@ -50,6 +50,11 @@
   for (  Feature feature : featuresToRegister) {
     Resource resource=FeatureResource.build(feature,featureRange,resources);
     resources.put("feature:" + feature.getName() + "/"+ feature.getVersion(),resource);
+    for (    Conditional cond : feature.getConditional()) {
+      Feature featCond=cond.asFeature(feature.getName(),feature.getVersion());
+      FeatureResource resCond=FeatureResource.build(feature,cond,featureRange,resources);
+      resources.put("feature:" + featCond.getName() + "/"+ featCond.getVersion(),resCond);
+    }
   }
   for (  String feature : features) {
     requireFeature(feature,requirements);

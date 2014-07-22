@@ -18,6 +18,14 @@
           for (          BundleInfo bundle : f.getBundles()) {
             downloadAndBuildResource(bundle.getLocation());
           }
+          for (          Conditional cond : f.getConditional()) {
+            for (            Feature dep : cond.getDependencies()) {
+              registerMatchingFeatures(dep);
+            }
+            for (            BundleInfo bundle : cond.getBundles()) {
+              downloadAndBuildResource(bundle.getLocation());
+            }
+          }
         }
       }
     }

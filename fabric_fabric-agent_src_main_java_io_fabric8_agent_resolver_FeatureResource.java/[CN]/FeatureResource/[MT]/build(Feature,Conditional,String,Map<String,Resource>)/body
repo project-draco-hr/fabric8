@@ -1,0 +1,9 @@
+{
+  Feature fcond=conditional.asFeature(feature.getName(),feature.getVersion());
+  FeatureResource resource=build(fcond,featureRange,locToRes);
+  for (  Feature cond : conditional.getCondition()) {
+    addDependency(resource,cond.getName(),cond.getVersion(),featureRange);
+  }
+  addDependency(resource,feature.getName(),feature.getVersion(),featureRange);
+  return resource;
+}

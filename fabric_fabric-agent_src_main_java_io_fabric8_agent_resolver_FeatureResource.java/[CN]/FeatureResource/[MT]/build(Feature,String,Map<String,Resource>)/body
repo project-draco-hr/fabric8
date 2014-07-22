@@ -26,17 +26,7 @@
   for (  Feature dep : feature.getDependencies()) {
     String name=dep.getName();
     String version=dep.getVersion();
-    if (!version.startsWith("[") && !version.startsWith("(")) {
-      Processor processor=new Processor();
-      processor.setProperty("@",VersionTable.getVersion(version).toString());
-      Macro macro=new Macro(processor);
-      version=macro.process(featureRange);
-    }
-    dirs=new HashMap<String,String>();
-    attrs=new HashMap<String,Object>();
-    attrs.put(FeatureNamespace.FEATURE_NAMESPACE,name);
-    attrs.put(FeatureNamespace.CAPABILITY_VERSION_ATTRIBUTE,new VersionRange(version));
-    resource.addRequirement(new RequirementImpl(resource,FeatureNamespace.FEATURE_NAMESPACE,dirs,attrs));
+    addDependency(resource,name,version,featureRange);
   }
   return resource;
 }
