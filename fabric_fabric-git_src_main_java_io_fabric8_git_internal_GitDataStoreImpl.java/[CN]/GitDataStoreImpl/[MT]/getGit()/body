@@ -1,3 +1,8 @@
 {
-  return gitService.get().get();
+  try {
+    return gitService.get().get();
+  }
+ catch (  IOException ex) {
+    throw FabricException.launderThrowable(ex);
+  }
 }
