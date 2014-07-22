@@ -5,15 +5,15 @@
     StoredConfig config=repository.getConfig();
     String url=config.getString("remote",remoteRef.get(),"url");
     if (Strings.isNullOrBlank(url)) {
-      LOG.info("No remote repository defined yet for the git repository at " + GitHelpers.getRootGitDirectory(git) + " so not doing a push");
+      LOGGER.info("No remote repository defined yet for the git repository at " + GitHelpers.getRootGitDirectory(git) + " so not doing a push");
     }
  else {
       results=git.push().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setPushAll().call();
     }
   }
  catch (  Throwable ex) {
-    LOG.debug("Failed to push from the remote git repo " + GitHelpers.getRootGitDirectory(git) + ". This exception is ignored.",ex);
-    LOG.warn("Failed to push from the remote git repo " + GitHelpers.getRootGitDirectory(git) + " due "+ ex.getMessage()+ ". This exception is ignored.");
+    LOGGER.debug("Failed to push from the remote git repo " + GitHelpers.getRootGitDirectory(git) + ". This exception is ignored.",ex);
+    LOGGER.warn("Failed to push from the remote git repo " + GitHelpers.getRootGitDirectory(git) + " due "+ ex.getMessage()+ ". This exception is ignored.");
   }
   return results;
 }

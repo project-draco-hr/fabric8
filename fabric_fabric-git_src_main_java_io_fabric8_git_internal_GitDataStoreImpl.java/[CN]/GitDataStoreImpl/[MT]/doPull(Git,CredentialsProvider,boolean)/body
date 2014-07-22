@@ -4,27 +4,27 @@
     StoredConfig config=repository.getConfig();
     String url=config.getString("remote",remoteRef.get(),"url");
     if (Strings.isNullOrBlank(url)) {
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("No remote repository defined for the git repository at " + GitHelpers.getRootGitDirectory(git) + " so not doing a pull");
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("No remote repository defined for the git repository at " + GitHelpers.getRootGitDirectory(git) + " so not doing a pull");
       }
       return;
     }
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("Performing a fetch in git repository " + GitHelpers.getRootGitDirectory(git) + " on remote URL: "+ url);
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Performing a fetch in git repository " + GitHelpers.getRootGitDirectory(git) + " on remote URL: "+ url);
     }
     boolean hasChanged=false;
     try {
       FetchResult result=git.fetch().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setRemote(remoteRef.get()).call();
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("Git fetch result: {}",result.getMessages());
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("Git fetch result: {}",result.getMessages());
       }
       lastFetchWarning=null;
     }
  catch (    Exception ex) {
       String fetchWarning=ex.getMessage();
       if (!fetchWarning.equals(lastFetchWarning)) {
-        LOG.warn("Fetch failed because of: " + fetchWarning);
-        LOG.debug("Fetch failed - the error will be ignored",ex);
+        LOGGER.warn("Fetch failed because of: " + fetchWarning);
+        LOGGER.debug("Fetch failed - the error will be ignored",ex);
         lastFetchWarning=fetchWarning;
       }
       return;
@@ -80,7 +80,7 @@
       }
     }
     if (hasChanged) {
-      LOG.debug("Changed after pull!");
+      LOGGER.debug("Changed after pull!");
       if (credentialsProvider != null) {
         getProfilesDirectory(git);
       }
@@ -88,7 +88,7 @@
     }
   }
  catch (  Throwable ex) {
-    LOG.debug("Failed to pull from the remote git repo " + GitHelpers.getRootGitDirectory(git),ex);
-    LOG.warn("Failed to pull from the remote git repo " + GitHelpers.getRootGitDirectory(git) + " due "+ ex.getMessage()+ ". This exception is ignored.");
+    LOGGER.debug("Failed to pull from the remote git repo " + GitHelpers.getRootGitDirectory(git),ex);
+    LOGGER.warn("Failed to pull from the remote git repo " + GitHelpers.getRootGitDirectory(git) + " due "+ ex.getMessage()+ ". This exception is ignored.");
   }
 }

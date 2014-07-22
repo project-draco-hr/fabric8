@@ -6,7 +6,7 @@
   File configs=new File(fabricsDir,"configs");
   String defaultVersion=dataStore.get().getDefaultVersion();
   if (configs.exists()) {
-    LOG.info("Importing the old ZooKeeper layout");
+    LOGGER.info("Importing the old ZooKeeper layout");
     File versions=new File(configs,"versions");
     if (versions.exists() && versions.isDirectory()) {
       File[] files=versions.listFiles();
@@ -17,7 +17,7 @@
             File[] versionFiles=versionFolder.listFiles();
             if (versionFiles != null) {
               for (              File versionFile : versionFiles) {
-                LOG.info("Importing version configuration " + versionFile + " to branch "+ version);
+                LOGGER.info("Importing version configuration " + versionFile + " to branch "+ version);
                 importFromFileSystem(versionFile,CONFIG_ROOT_DIR,version,true);
               }
             }
@@ -27,13 +27,13 @@
     }
     File metrics=new File(fabricsDir,"metrics");
     if (metrics.exists()) {
-      LOG.info("Importing metrics from " + metrics + " to branch "+ defaultVersion);
+      LOGGER.info("Importing metrics from " + metrics + " to branch "+ defaultVersion);
       importFromFileSystem(metrics,CONFIG_ROOT_DIR,defaultVersion,false);
     }
   }
  else {
     String version="1.0";
-    LOG.info("Importing " + fabricsDir + " as version "+ version);
+    LOGGER.info("Importing " + fabricsDir + " as version "+ version);
     importFromFileSystem(fabricsDir,"",version,false);
   }
 }

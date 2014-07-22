@@ -1,11 +1,4 @@
 {
   assertValid();
-  GitOperation<String> gitop=new GitOperation<String>(){
-    public String call(    Git git,    GitContext context) throws Exception {
-      checkoutVersion(git,GitProfiles.getBranch(version,profile));
-      return doCreateProfile(git,context,profile,version);
-    }
-  }
-;
-  executeWrite(gitop,true);
+  createProfileInternal(version,profile,new GitContext().requireCommit().requirePush().requirePull());
 }

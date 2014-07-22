@@ -2,18 +2,15 @@
   ClassLoader oldCl=Thread.currentThread().getContextClassLoader();
   ClassLoader cl=GitDataStoreImpl.class.getClassLoader();
   Thread.currentThread().setContextClassLoader(cl);
-  LOG.trace("Setting ThreadContextClassLoader to {} instead of {}",cl,oldCl);
+  LOGGER.trace("Setting ThreadContextClassLoader to {} instead of {}",cl,oldCl);
   try {
     Git git=getGit();
     Repository repository=git.getRepository();
     if (personIdent == null) {
       personIdent=new PersonIdent(repository);
     }
-    if (GitHelpers.hasGitHead(git)) {
-      git.stashCreate().setPerson(personIdent).setWorkingDirectoryMessage("Stash before a write").call();
-    }
     CredentialsProvider credentialsProvider=getCredentialsProvider();
-    if (pullFirst) {
+    if (context.isRequirePull()) {
       doPull(git,credentialsProvider,false);
     }
     T answer=operation.call(git,context);
@@ -26,7 +23,7 @@
     throw FabricException.launderThrowable(e);
   }
  finally {
-    LOG.trace("Restoring ThreadContextClassLoader to {}",oldCl);
+    LOGGER.trace("Restoring ThreadContextClassLoader to {}",oldCl);
     Thread.currentThread().setContextClassLoader(oldCl);
   }
 }
