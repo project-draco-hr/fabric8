@@ -1,11 +1,11 @@
 {
-  assertValid();
   File profileDirectory=getProfileDirectory(git,profile);
   File file=new File(profileDirectory,pid + PROPERTIES_SUFFIX);
   if (configuration == null) {
     doRecursiveDeleteAndRemove(git,file);
   }
  else {
+    profileDirectory.mkdirs();
     Properties props=new Properties(file);
     for (    Map.Entry<String,String> entry : configuration.entrySet()) {
       props.setProperty(entry.getKey(),entry.getValue());
@@ -15,7 +15,7 @@
         props.remove(key);
       }
     }
-    props.save();
+    props.save(file);
     doAddFiles(git,file);
   }
 }

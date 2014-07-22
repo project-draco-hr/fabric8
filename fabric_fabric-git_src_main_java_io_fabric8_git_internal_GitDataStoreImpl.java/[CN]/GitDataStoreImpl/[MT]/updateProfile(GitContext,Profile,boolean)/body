@@ -1,0 +1,10 @@
+{
+  LockHandle writeLock=aquireWriteLock();
+  try {
+    assertValid();
+    return updateProfileInternal(profile,context,false);
+  }
+  finally {
+    writeLock.unlock();
+  }
+}

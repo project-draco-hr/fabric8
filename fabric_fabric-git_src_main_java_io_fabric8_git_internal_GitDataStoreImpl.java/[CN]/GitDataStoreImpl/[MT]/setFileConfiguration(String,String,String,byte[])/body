@@ -1,13 +1,4 @@
 {
   assertValid();
-  GitOperation<Void> gitop=new GitOperation<Void>(){
-    public Void call(    Git git,    GitContext context) throws Exception {
-      checkoutVersion(git,GitProfiles.getBranch(version,profile));
-      doSetFileConfiguration(git,profile,fileName,configuration);
-      context.commitMessage("Updated " + fileName + " for profile "+ profile);
-      return null;
-    }
-  }
-;
-  executeWrite(gitop,true);
+  setFileConfigurationInternal(version,profile,fileName,configuration,new GitContext());
 }

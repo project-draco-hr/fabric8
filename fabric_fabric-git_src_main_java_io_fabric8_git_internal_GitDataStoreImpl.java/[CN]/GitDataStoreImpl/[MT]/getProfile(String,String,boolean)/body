@@ -1,22 +1,4 @@
 {
   assertValid();
-  GitOperation<String> gitop=new GitOperation<String>(){
-    public String call(    Git git,    GitContext context) throws Exception {
-      checkoutVersion(git,GitProfiles.getBranch(versionId,profileId));
-      return profileId;
-    }
-  }
-;
-  String resultId=executeRead(gitop,true);
-  File profileDirectory=getProfileDirectory(getGit(),profileId);
-  if (!profileDirectory.exists() && create) {
-    gitop=new GitOperation<String>(){
-      public String call(      Git git,      GitContext context) throws Exception {
-        return doCreateProfile(git,context,profileId,versionId);
-      }
-    }
-;
-    resultId=executeWrite(gitop,false);
-  }
-  return resultId;
+  return getOrCreateProfile(versionId,profileId,allowCreate);
 }

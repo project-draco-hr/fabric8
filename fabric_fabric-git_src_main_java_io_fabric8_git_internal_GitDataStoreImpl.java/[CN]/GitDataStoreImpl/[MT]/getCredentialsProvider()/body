@@ -1,5 +1,4 @@
 {
-  assertValid();
   Map<String,String> properties=getDataStoreProperties();
   String username;
   String password;
@@ -8,7 +7,7 @@
     password=getExternalCredential(properties);
   }
  else {
-    RuntimeProperties sysprops=getRuntimeProperties();
+    RuntimeProperties sysprops=runtimeProperties.get();
     username=getContainerLogin(sysprops);
     password=generateContainerToken(sysprops,curator.get());
   }

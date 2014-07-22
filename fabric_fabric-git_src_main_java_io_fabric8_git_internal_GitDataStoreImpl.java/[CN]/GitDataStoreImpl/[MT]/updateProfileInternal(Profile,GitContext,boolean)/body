@@ -1,0 +1,32 @@
+{
+  assertWriteLock();
+  final String versionId=profile.getVersion();
+  final String profileId=profile.getId();
+  getOrCreateProfile(versionId,profileId,allowCreate);
+  for (  Entry<String,String> entry : profile.getAttributes().entrySet()) {
+    setProfileAttributeInternal(versionId,profileId,entry.getKey(),entry.getValue(),context);
+  }
+  List<Profile> parents=profile.getParents();
+  if (parents.size() > 0) {
+    StringBuilder sb=new StringBuilder();
+    for (    Profile parent : parents) {
+      if (sb.length() > 0) {
+        sb.append(" ");
+      }
+      sb.append(parent.getId());
+    }
+    setProfileAttributeInternal(versionId,profileId,Profile.PARENTS,sb.toString(),context);
+  }
+  Map<String,byte[]> fileConfigurations=profile.getFileConfigurations();
+  if (!fileConfigurations.isEmpty()) {
+    setFileConfigurationsInternal(versionId,profileId,fileConfigurations,context);
+  }
+  Map<String,Map<String,String>> configurations=profile.getConfigurations();
+  if (!configurations.isEmpty()) {
+    setConfigurationsInternal(versionId,profileId,configurations,context);
+  }
+  if (context.isRequireCommit()) {
+    doCommit(getGit(),context);
+  }
+  return profileId;
+}
