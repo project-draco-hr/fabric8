@@ -1,6 +1,6 @@
 {
   assertValid();
-  gitOperation(new GitOperation<Void>(){
+  GitOperation<Void> gitop=new GitOperation<Void>(){
     public Void call(    Git git,    GitContext context) throws Exception {
       checkoutVersion(git,parentVersionId);
       createOrCheckoutVersion(git,toVersion);
@@ -8,5 +8,6 @@
       return null;
     }
   }
-);
+;
+  executeWrite(gitop,true);
 }

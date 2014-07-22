@@ -1,11 +1,12 @@
 {
   assertValid();
-  gitOperation(new GitOperation<Void>(){
+  GitOperation<Void> gitop=new GitOperation<Void>(){
     public Void call(    Git git,    GitContext context) throws Exception {
       createOrCheckoutVersion(git,version);
       context.requirePush();
       return null;
     }
   }
-);
+;
+  executeWrite(gitop,true);
 }

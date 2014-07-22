@@ -1,5 +1,5 @@
 {
-  return gitOperation(new GitOperation<List<String>>(){
+  GitOperation<List<String>> gitop=new GitOperation<List<String>>(){
     public List<String> call(    Git git,    GitContext context) throws Exception {
       Collection<String> branches=RepositoryUtils.getBranches(git.getRepository());
       List<String> answer=new ArrayList<String>();
@@ -18,5 +18,6 @@
       return answer;
     }
   }
-,false);
+;
+  return executeRead(gitop,false);
 }

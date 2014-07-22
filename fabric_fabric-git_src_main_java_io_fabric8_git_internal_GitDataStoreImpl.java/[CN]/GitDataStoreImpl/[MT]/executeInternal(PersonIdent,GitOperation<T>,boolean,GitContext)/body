@@ -1,0 +1,47 @@
+{
+  ClassLoader oldCl=Thread.currentThread().getContextClassLoader();
+  ClassLoader cl=GitDataStoreImpl.class.getClassLoader();
+  Thread.currentThread().setContextClassLoader(cl);
+  LOG.trace("Setting ThreadContextClassLoader to {} instead of {}",cl,oldCl);
+  try {
+    Git git=getGit();
+    Repository repository=git.getRepository();
+    if (personIdent == null) {
+      personIdent=new PersonIdent(repository);
+    }
+    if (GitHelpers.hasGitHead(git)) {
+      git.stashCreate().setPerson(personIdent).setWorkingDirectoryMessage("Stash before a write").call();
+    }
+    if (pullFirst) {
+      doPull(git,getCredentialsProvider(),false);
+    }
+    T answer=operation.call(git,context);
+    boolean requirePush=context.isRequirePush();
+    if (context.isRequireCommit()) {
+      requirePush=true;
+      String message=context.getCommitMessage();
+      IllegalStateAssertion.assertTrue(message.length() > 0,"Empty commit message");
+      git.commit().setMessage(message).call();
+      if (--commitsWithoutGC < 0) {
+        commitsWithoutGC=MAX_COMMITS_WITHOUT_GC;
+        LOG.debug("Performing \"git gc\" after {} commits",MAX_COMMITS_WITHOUT_GC);
+        git.gc().call();
+      }
+    }
+    if (requirePush) {
+      doPush(git,context,getCredentialsProvider());
+    }
+    if (context.isRequireCommit()) {
+      clearCaches();
+      dataStore.get().fireChangeNotifications();
+    }
+    return answer;
+  }
+ catch (  Exception e) {
+    throw FabricException.launderThrowable(e);
+  }
+ finally {
+    LOG.trace("Restoring ThreadContextClassLoader to {}",oldCl);
+    Thread.currentThread().setContextClassLoader(oldCl);
+  }
+}

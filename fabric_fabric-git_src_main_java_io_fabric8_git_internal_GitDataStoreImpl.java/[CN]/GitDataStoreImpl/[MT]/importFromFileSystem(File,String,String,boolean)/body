@@ -1,6 +1,6 @@
 {
   assertValid();
-  gitOperation(new GitOperation<Void>(){
+  GitOperation<Void> gitop=new GitOperation<Void>(){
     public Void call(    Git git,    GitContext context) throws Exception {
       createOrCheckoutVersion(git,version);
       File toDir=GitHelpers.getRootGitDirectory(git);
@@ -13,9 +13,10 @@
  else {
         recursiveCopyAndAdd(git,from,toDir,destinationPath,false);
       }
-      context.commit("Imported from " + from);
+      context.commitMessage("Imported from " + from);
       return null;
     }
   }
-);
+;
+  executeWrite(gitop,true);
 }

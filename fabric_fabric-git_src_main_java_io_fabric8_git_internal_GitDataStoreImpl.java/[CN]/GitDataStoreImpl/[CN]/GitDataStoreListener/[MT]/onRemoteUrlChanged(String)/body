@@ -4,7 +4,7 @@
     threadPool.submit(new Runnable(){
       @Override public void run(){
         if (isValid()) {
-          gitOperation(new GitOperation<Void>(){
+          GitOperation<Void> gitop=new GitOperation<Void>(){
             @Override public Void call(            Git git,            GitContext context) throws Exception {
               Repository repository=git.getRepository();
               StoredConfig config=repository.getConfig();
@@ -21,7 +21,8 @@
               return null;
             }
           }
-);
+;
+          executeRead(gitop,true);
         }
       }
       @Override public String toString(){

@@ -1,13 +1,14 @@
 {
   assertValid();
-  gitOperation(new GitOperation<Void>(){
+  GitOperation<Void> gitop=new GitOperation<Void>(){
     public Void call(    Git git,    GitContext context) throws Exception {
       checkoutVersion(git,GitProfiles.getBranch(version,profile));
       File profileDirectory=getProfileDirectory(git,profile);
       doRecursiveDeleteAndRemove(git,profileDirectory);
-      context.commit("Removed profile " + profile);
+      context.commitMessage("Removed profile " + profile);
       return null;
     }
   }
-);
+;
+  executeWrite(gitop,false);
 }
