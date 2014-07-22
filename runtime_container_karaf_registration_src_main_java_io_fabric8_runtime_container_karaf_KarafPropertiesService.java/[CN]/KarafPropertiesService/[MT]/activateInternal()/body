@@ -1,7 +1,7 @@
 {
   Runtime runtime=this.runtime.get();
   if (runtime.getProperty(RUNTIME_IDENTITY) == null) {
-    System.setProperty(RUNTIME_IDENTITY,System.getProperty("karaf.name"));
+    System.setProperty(RUNTIME_IDENTITY,System.getProperty("karaf.name",System.getenv(EnvironmentVariables.RUNTIME_ID)));
   }
   if (runtime.getProperty(RUNTIME_HOME_DIR) == null) {
     System.setProperty(RUNTIME_HOME_DIR,System.getProperty("karaf.home"));
