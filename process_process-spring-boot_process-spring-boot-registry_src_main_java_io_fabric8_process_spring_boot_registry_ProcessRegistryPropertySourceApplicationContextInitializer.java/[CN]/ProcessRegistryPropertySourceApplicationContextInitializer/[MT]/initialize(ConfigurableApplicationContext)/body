@@ -3,7 +3,8 @@
   if (ClassUtils.isPresent("org.apache.curator.framework.CuratorFramework",getClass().getClassLoader())) {
     registries.add(autodetectZooKeeperProcessRegistry());
   }
-  processRegistry=new CompositeProcessRegistry(registries);
-  ProcessRegistryPropertySource propertySource=new ProcessRegistryPropertySource(processRegistry);
+  ProcessRegistry registry=new CompositeProcessRegistry(registries);
+  ProcessRegistryHolder.processRegistry(registry);
+  ProcessRegistryPropertySource propertySource=new ProcessRegistryPropertySource(registry);
   applicationContext.getEnvironment().getPropertySources().addFirst(propertySource);
 }
