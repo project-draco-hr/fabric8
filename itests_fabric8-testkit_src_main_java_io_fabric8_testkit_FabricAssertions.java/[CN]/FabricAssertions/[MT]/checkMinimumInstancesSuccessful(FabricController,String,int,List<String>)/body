@@ -1,0 +1,23 @@
+{
+  int successful=0;
+  for (  String containerId : containerIds) {
+    ContainerDTO container=restAPI.getContainer(containerId);
+    if (container == null) {
+      System.out.println("No ContainerDTO for " + containerId);
+    }
+ else {
+      System.out.println("Container " + containerId + " alive: "+ container.isAlive()+ " result: "+ container.getProvisionResult()+ " status: "+ container.getProvisionStatus()+ " complete: "+ container.isProvisioningComplete()+ " pending: "+ container.isProvisioningPending());
+      if (container.isAliveAndOK() && container.isProvisioningComplete() && !container.isProvisioningPending()&& "success".equals(container.getProvisionResult())) {
+        System.out.println("Container + " + containerId + " is up!");
+        successful+=1;
+        if (LOG.isDebugEnabled()) {
+          List<String> fields=BeanUtils.getFields(ContainerDTO.class);
+          for (          String field : fields) {
+            LOG.debug("container " + containerId + " "+ field+ " = "+ BeanUtils.getValue(container,field));
+          }
+        }
+      }
+    }
+  }
+  return successful >= minimumInstances;
+}

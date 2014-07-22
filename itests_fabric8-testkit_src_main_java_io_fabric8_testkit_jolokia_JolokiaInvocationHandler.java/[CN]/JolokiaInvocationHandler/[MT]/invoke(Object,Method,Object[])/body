@@ -21,7 +21,7 @@
     request.setPreferredHttpMethod("POST");
     J4pResponse response=jolokia.execute(request);
     Object value=response.getValue();
-    return convertToJavaType(method.getReturnType(),value);
+    return JolokiaClients.convertJolokiaToJavaType(method.getReturnType(),value);
   }
  catch (  J4pException e) {
     List<Object> argsList=args == null ? null : Arrays.asList(args);

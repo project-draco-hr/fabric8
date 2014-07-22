@@ -1,0 +1,44 @@
+{
+  if (clazz.isArray()) {
+    if (value instanceof JSONArray) {
+      JSONArray jsonArray=(JSONArray)value;
+      Object[] javaArray=(Object[])Array.newInstance(clazz.getComponentType(),jsonArray.size());
+      int idx=0;
+      for (      Object element : jsonArray) {
+        Array.set(javaArray,idx++,convertJolokiaToJavaType(clazz.getComponentType(),element));
+      }
+      return javaArray;
+    }
+ else {
+      return null;
+    }
+  }
+ else   if (String.class.equals(clazz)) {
+    return (value != null) ? value.toString() : null;
+  }
+ else   if (clazz.equals(Byte.class) || clazz.equals(byte.class)) {
+    Number number=asNumber(value);
+    return number != null ? number.byteValue() : null;
+  }
+ else   if (clazz.equals(Short.class) || clazz.equals(short.class)) {
+    Number number=asNumber(value);
+    return number != null ? number.shortValue() : null;
+  }
+ else   if (clazz.equals(Integer.class) || clazz.equals(int.class)) {
+    Number number=asNumber(value);
+    return number != null ? number.intValue() : null;
+  }
+ else   if (clazz.equals(Long.class) || clazz.equals(long.class)) {
+    Number number=asNumber(value);
+    return number != null ? number.longValue() : null;
+  }
+ else   if (clazz.equals(Float.class) || clazz.equals(float.class)) {
+    Number number=asNumber(value);
+    return number != null ? number.floatValue() : null;
+  }
+ else   if (clazz.equals(Double.class) || clazz.equals(double.class)) {
+    Number number=asNumber(value);
+    return number != null ? number.doubleValue() : null;
+  }
+  return value;
+}

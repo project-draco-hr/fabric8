@@ -1,0 +1,15 @@
+{
+  Map<String,PropertyDescriptor> answer=new HashMap<>();
+  if (aClass != null) {
+    BeanInfo beanInfo=java.beans.Introspector.getBeanInfo(aClass);
+    PropertyDescriptor[] propertyDescriptors=beanInfo.getPropertyDescriptors();
+    for (    PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+      String name=propertyDescriptor.getName();
+      if (name.equals("class")) {
+        continue;
+      }
+      answer.put(name,propertyDescriptor);
+    }
+  }
+  return answer;
+}
