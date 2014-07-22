@@ -11,11 +11,12 @@
   if (!profileDirectory.exists() && allowCreate) {
     gitop=new GitOperation<String>(){
       public String call(      Git git,      GitContext context) throws Exception {
-        return doCreateProfile(git,context,profileId,versionId);
+        return doCreateProfile(git,context,versionId,profileId);
       }
     }
 ;
-    resultId=executeWrite(gitop,false);
+    context=new GitContext(context).setRequirePull(false);
+    resultId=executeInternal(context,null,gitop);
   }
   return resultId;
 }

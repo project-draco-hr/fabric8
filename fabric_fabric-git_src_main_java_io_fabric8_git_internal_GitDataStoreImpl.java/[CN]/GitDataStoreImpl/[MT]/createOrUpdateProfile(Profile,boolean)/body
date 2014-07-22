@@ -3,10 +3,10 @@
   final String versionId=profile.getVersion();
   final String profileId=profile.getId();
   GitContext context=new GitContext().requirePull();
-  createProfileInternal(versionId,profileId,context);
+  getOrCreateProfileInternal(context,versionId,profileId,allowCreate);
   context.setRequirePull(false);
   for (  Entry<String,String> entry : profile.getAttributes().entrySet()) {
-    setProfileAttributeInternal(versionId,profileId,entry.getKey(),entry.getValue(),context);
+    setProfileAttributeInternal(context,versionId,profileId,entry.getKey(),entry.getValue());
   }
   List<Profile> parents=profile.getParents();
   if (parents.size() > 0) {
@@ -17,15 +17,15 @@
       }
       sb.append(parent.getId());
     }
-    setProfileAttributeInternal(versionId,profileId,Profile.PARENTS,sb.toString(),context);
+    setProfileAttributeInternal(context,versionId,profileId,Profile.PARENTS,sb.toString());
   }
   Map<String,byte[]> fileConfigurations=profile.getFileConfigurations();
   if (!fileConfigurations.isEmpty()) {
-    setFileConfigurationsInternal(versionId,profileId,fileConfigurations,context);
+    setFileConfigurationsInternal(context,versionId,profileId,fileConfigurations);
   }
   Map<String,Map<String,String>> configurations=profile.getConfigurations();
   if (!configurations.isEmpty()) {
-    setConfigurationsInternal(versionId,profileId,configurations,context);
+    setConfigurationsInternal(context,versionId,profileId,configurations);
   }
   doCommit(getGit(),context.requireCommit().requirePush());
   return profileId;

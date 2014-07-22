@@ -1,5 +1,6 @@
 {
   assertValid();
-  createOrUpdateProfile(profile,false);
-  return getRequiredProfile(profile.getVersion(),profile.getId());
+  LOGGER.info("updateProfile: {}",profile);
+  String profileId=profileRegistry.get().updateProfile(profile);
+  return getRequiredProfile(profile.getVersion(),profileId);
 }
