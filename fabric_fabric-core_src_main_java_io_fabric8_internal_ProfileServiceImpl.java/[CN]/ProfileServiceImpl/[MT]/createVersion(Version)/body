@@ -1,13 +1,6 @@
 {
   assertValid();
-  String parentId=version.getParentId();
-  String versionId=version.getId();
-  if (parentId != null) {
-    LOGGER.info("createVersion: {} => {}",parentId,versionId);
-    profileRegistry.get().createVersion(parentId,versionId);
-  }
- else {
-    versionId=profileRegistry.get().createVersion(version);
-  }
+  LOGGER.info("createVersion: {}",version);
+  String versionId=profileRegistry.get().createVersion(version);
   return getRequiredVersion(versionId);
 }

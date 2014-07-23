@@ -10,31 +10,30 @@
     VersionSequence sequence=new VersionSequence(latestVersion);
     versionId=sequence.next().getName();
   }
-  String parentId=null;
+  String sourceId=null;
   if (parentVersion == null) {
-    parentId=latestVersion;
+    sourceId=latestVersion;
   }
  else {
     IllegalStateAssertion.assertTrue(profileService.hasVersion(parentVersion),"Cannot find parent version: " + parentVersion);
-    parentId=parentVersion;
+    sourceId=parentVersion;
   }
-  VersionBuilder builder=VersionBuilder.Factory.create(versionId);
-  if (description != null) {
-    builder.addAttribute(Version.DESCRIPTION,description);
-  }
-  Version created;
-  if (parentId != null) {
-    Version newVersion=builder.parent(parentId).getVersion();
-    created=profileService.createVersion(newVersion);
-    System.out.println("Created version: " + versionId + " as copy of: "+ parentId);
+  Version targetVersion;
+  if (sourceId != null) {
+    Map<String,String> attributes=description != null ? Collections.singletonMap(Version.DESCRIPTION,description) : null;
+    targetVersion=profileService.createVersion(sourceId,versionId,attributes);
+    System.out.println("Created version: " + versionId + " as copy of: "+ sourceId);
   }
  else {
-    Version newVersion=builder.getVersion();
-    created=profileService.createVersion(newVersion);
-    System.out.println("Created version: " + versionId);
+    VersionBuilder builder=VersionBuilder.Factory.create(versionId);
+    if (description != null) {
+      builder.addAttribute(Version.DESCRIPTION,description);
+    }
+    targetVersion=profileService.createVersion(builder.getVersion());
+    System.out.println("Create version: " + versionId);
   }
   if (defaultVersion == Boolean.TRUE) {
-    fabricService.setDefaultVersionId(created.getId());
+    fabricService.setDefaultVersionId(targetVersion.getId());
   }
   return null;
 }
