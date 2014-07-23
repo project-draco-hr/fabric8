@@ -1,0 +1,54 @@
+{
+  String answer=text;
+  if (environmentVariables != null) {
+    Set<Map.Entry<String,String>> envEntries=environmentVariables.entrySet();
+    for (    Map.Entry<String,String> envEntry : envEntries) {
+      String envKey=envEntry.getKey();
+      String envValue=envEntry.getValue();
+      if (Strings.isNotBlank(envKey) && Strings.isNotBlank(envValue)) {
+        answer=answer.replace("${env:" + envKey + "}",envValue);
+      }
+    }
+  }
+  String zkUser=null;
+  String zkPassword=null;
+  if (fabricService != null) {
+    zkUser=fabricService.getZooKeeperUser();
+    zkPassword=fabricService.getZookeeperPassword();
+  }
+  if (Strings.isNotBlank(zkUser)) {
+    answer=answer.replace("${zookeeper.user}",zkUser);
+  }
+  if (Strings.isNotBlank(zkPassword)) {
+    answer=answer.replace("${zookeeper.password}",zkPassword);
+  }
+  if (curator != null) {
+    InterpolationHelper.SubstitutionCallback substitutionCallback=new InterpolationHelper.SubstitutionCallback(){
+      @Override public String getValue(      String key){
+        if (key.startsWith("zk:")) {
+          try {
+            return new String(ZkPath.loadURL(curator,key),"UTF-8");
+          }
+ catch (          Exception e) {
+          }
+        }
+ else         if (key.startsWith("groovy:")) {
+          try {
+            return GroovyPlaceholderResolver.resolveValue(curator,key);
+          }
+ catch (          Exception e) {
+          }
+        }
+        return null;
+      }
+    }
+;
+    if (preserveUnresolved) {
+      answer=InterpolationHelper.substVarsPreserveUnresolved(answer,"dummy",null,Collections.EMPTY_MAP,substitutionCallback);
+    }
+ else {
+      answer=InterpolationHelper.substVars(answer,"dummy",null,Collections.EMPTY_MAP,substitutionCallback);
+    }
+  }
+  return answer;
+}
