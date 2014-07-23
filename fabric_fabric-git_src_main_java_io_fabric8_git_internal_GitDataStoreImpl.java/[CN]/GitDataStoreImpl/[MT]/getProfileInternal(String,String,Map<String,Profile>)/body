@@ -1,0 +1,21 @@
+{
+  assertReadLock();
+  Profile profile=profiles.get(profileId);
+  if (profile == null) {
+    ProfileData profileData=getProfileData(versionId,profileId);
+    if (profileData != null) {
+      ProfileBuilder builder=ProfileBuilder.Factory.create(versionId,profileId);
+      builder.setAttributes(profileData.getAttributes());
+      builder.setFileConfigurations(profileData.getFileConfigurations());
+      builder.setConfigurations(profileData.getConfigurations());
+      builder.setLastModified(profileData.getLastModified());
+      for (      String parentId : profileData.getParents()) {
+        Profile parent=getProfileInternal(versionId,parentId,profiles);
+        builder.addParent(parent);
+      }
+      profile=builder.getProfile();
+      profiles.put(profileId,profile);
+    }
+  }
+  return profile;
+}

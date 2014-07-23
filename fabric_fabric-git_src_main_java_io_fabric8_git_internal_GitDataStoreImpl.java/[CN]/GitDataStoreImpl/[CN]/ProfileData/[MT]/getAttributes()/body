@@ -1,4 +1,15 @@
 {
+  Map<String,String> attributes=new HashMap<>();
   Map<String,String> config=configs.get(Constants.AGENT_PID);
-  return config != null ? config : Collections.<String,String>emptyMap();
+  if (config != null) {
+    for (    Map.Entry<String,String> entry : config.entrySet()) {
+      String key=entry.getKey();
+      if (key.startsWith(DataStore.ATTRIBUTE_PREFIX)) {
+        key=key.substring(DataStore.ATTRIBUTE_PREFIX.length());
+        String value=entry.getValue();
+        attributes.put(key,value);
+      }
+    }
+  }
+  return Collections.unmodifiableMap(attributes);
 }

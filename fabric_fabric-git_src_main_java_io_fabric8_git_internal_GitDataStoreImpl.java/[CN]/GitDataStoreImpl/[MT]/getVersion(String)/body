@@ -1,12 +1,14 @@
 {
-  LockHandle readLock=profileRegistry.get().aquireReadLock();
+  LockHandle readLock=aquireReadLock();
   try {
+    assertValid();
     Version version=null;
-    if (profileRegistry.get().hasVersion(versionId)) {
+    VersionData versionData=getVersionData(versionId);
+    if (versionData != null) {
       VersionBuilder builder=VersionBuilder.Factory.create(versionId);
-      builder.setAttributes(profileRegistry.get().getVersionAttributes(versionId));
+      builder.setAttributes(getVersionAttributesInternal(versionId));
       HashMap<String,Profile> profiles=new HashMap<String,Profile>();
-      for (      String profileId : profileRegistry.get().getProfiles(versionId)) {
+      for (      String profileId : getProfiles(versionId)) {
         builder.addProfile(getProfileInternal(versionId,profileId,profiles));
       }
       version=builder.getVersion();

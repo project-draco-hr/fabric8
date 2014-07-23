@@ -1,6 +1,4 @@
 {
   assertValid();
-  Profile profile=getProfileInternal(versionId,profileId,new HashMap<String,Profile>());
-  IllegalStateAssertion.assertNotNull(profile,"Cannot obtain profile " + versionId + "/"+ profileId);
-  return profile;
+  return profileRegistry.get().getRequiredProfile(versionId,profileId);
 }
