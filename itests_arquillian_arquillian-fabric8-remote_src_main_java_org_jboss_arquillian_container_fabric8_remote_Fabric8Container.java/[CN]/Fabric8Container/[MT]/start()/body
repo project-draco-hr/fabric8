@@ -1,5 +1,12 @@
 {
   fabricControllerManager=new CommandLineFabricControllerManager();
+  Fabric8ContainerConfiguration config=configuration.get();
+  String profilesText=config.getProfiles();
+  if (Strings.isNotBlank(profilesText)) {
+    List<String> profiles=Arrays.asList(profilesText.split(","));
+    System.out.println("Populating initial fabric node with the profiles: " + profiles);
+    fabricControllerManager.setProfiles(profiles);
+  }
   try {
     FabricController fabricController=FabricAssertions.assertFabricCreate(fabricControllerManager);
     controller.set(fabricController);
