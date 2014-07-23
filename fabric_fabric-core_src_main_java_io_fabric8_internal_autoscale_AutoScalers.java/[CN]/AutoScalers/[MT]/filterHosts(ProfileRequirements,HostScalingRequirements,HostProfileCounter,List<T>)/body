@@ -1,10 +1,9 @@
 {
-  SortedSet<LoadSortedHostConfiguration<SshHostConfiguration>> answer=new TreeSet<>();
+  SortedSet<LoadSortedHostConfiguration<T>> answer=new TreeSet<>();
   int index=0;
-  List<SshHostConfiguration> hosts=requirements.getSshHosts();
   Filter<String> hostFilter=createHostAliasFilter(scalingRequirements);
   Filter<HostConfiguration> configFilter=createHostConfigFilter(scalingRequirements);
-  for (  SshHostConfiguration config : hosts) {
+  for (  T config : hosts) {
     String hostName=config.getHostName();
     if (hostFilter.matches(hostName) && configFilter.matches(config)) {
       String profile=profileRequirements.getProfile();
