@@ -11,6 +11,9 @@
     AutoScalers.createHostToProfileScaleMap(hostProfileCounter,hostConfigurations,containers);
     for (int i=0; i < count; i++) {
       CreateDockerContainerOptions.Builder builder=createAutoScaleOptions(request,fabricService,hostProfileCounter);
+      if (builder == null) {
+        return;
+      }
       NameValidator nameValidator=Containers.createNameValidator(fabricService.getContainers());
       String name=Containers.createContainerName(containers,profile,containerProvider.getScheme(),nameValidator);
       CreateDockerContainerOptions options=builder.name(name).build();
