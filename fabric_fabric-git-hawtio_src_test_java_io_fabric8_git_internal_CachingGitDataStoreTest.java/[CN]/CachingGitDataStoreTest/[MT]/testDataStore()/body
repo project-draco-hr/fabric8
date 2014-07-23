@@ -44,12 +44,10 @@
   Map<String,byte[]> tomcatFileConfigurations=dataStore.getFileConfigurations("1.0","controller-tomcat");
   assertHasFileConfiguration(tomcatFileConfigurations,"tomcat/conf/server.xml.mvel");
   String profileNotCreated="shouldNotBeCreated";
-  assertEquals("Should not create profile: " + profileNotCreated,null,dataStore.getProfile(version,profileNotCreated,false));
   assertProfileNotExists(defaultVersion,profileNotCreated);
   String newProfile="myNewProfile";
   assertProfileExists(version,newProfile);
   String anotherNewProfile="anotherNewProfile";
-  dataStore.getProfile(version,anotherNewProfile,true);
   assertProfileExists(version,anotherNewProfile);
   version="1.2";
   assertCreateVersion("1.1",version);
