@@ -1,6 +1,7 @@
 {
-  ProfileBuilder builder=ProfileBuilder.Factory.createFrom(versionId,profileId);
+  Profile profile=profileService.getRequiredProfile(versionId,profileId);
+  ProfileBuilder builder=ProfileBuilder.Factory.createFrom(profile);
   builder.setParents(Arrays.asList(stringsToProfiles(versionId,parents)));
-  Profile profile=profileService.updateProfile(builder.getProfile());
+  profile=profileService.updateProfile(builder.getProfile());
   return getProfile(versionId,profile.getId());
 }

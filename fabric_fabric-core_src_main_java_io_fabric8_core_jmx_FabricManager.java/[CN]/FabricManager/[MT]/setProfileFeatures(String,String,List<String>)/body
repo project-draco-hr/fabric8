@@ -1,5 +1,6 @@
 {
-  ProfileBuilder builder=ProfileBuilder.Factory.createFrom(versionId,profileId);
+  Profile profile=profileService.getRequiredProfile(versionId,profileId);
+  ProfileBuilder builder=ProfileBuilder.Factory.createFrom(profile);
   builder.setFeatures(features);
   profileService.updateProfile(builder.getProfile());
 }

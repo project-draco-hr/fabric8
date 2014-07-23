@@ -34,6 +34,9 @@
     if (!configurations.isEmpty()) {
       setConfigurationsInternal(context,versionId,profileId,configurations);
     }
+    if (context.getCommitMessage().length() == 0) {
+      context.commitMessage("WARNING - Profile with no content: " + versionId + "/"+ profileId);
+    }
     profiles.add(profileId);
   }
   return profileId;
