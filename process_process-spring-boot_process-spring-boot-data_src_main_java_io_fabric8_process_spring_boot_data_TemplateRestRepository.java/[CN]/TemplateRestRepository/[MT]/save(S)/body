@@ -1,9 +1,8 @@
 {
   try {
-    URI location=restTemplate.postForLocation(url.toURI(),s);
+    URI location=restTemplate.postForLocation(url.toURI(),entity);
     Serializable id=Long.parseLong(location.toString().replace(url + "/",""));
-    updateId(s,(ID)id);
-    return s;
+    return (S)findOne((ID)id);
   }
  catch (  URISyntaxException e) {
     throw new RuntimeException(e);
