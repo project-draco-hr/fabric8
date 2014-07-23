@@ -1,9 +1,12 @@
 {
+  LOG.debug("Resolving property: {}",key);
   for (  ProcessRegistry processRegistry : registries) {
     String propertyValue=processRegistry.readProperty(key);
     if (propertyValue != null) {
+      LOG.debug("Found property {} with value {} in registry {}.",key,propertyValue,processRegistry);
       return propertyValue;
     }
   }
+  LOG.debug("Property {} not found in any of the registries.");
   return null;
 }
