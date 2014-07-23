@@ -1,11 +1,14 @@
 {
   Map<String,String> answer=new HashMap<>();
   Map<String,String> current=System.getenv();
-  for (  String variable : allowedEnvironmentVariables) {
+  for (  String variable : allowInheritedEnvironmentVariables) {
     String value=current.get(variable);
     if (Strings.isNotBlank(value)) {
       answer.put(variable,value);
     }
+  }
+  if (environmentVariables != null) {
+    answer.putAll(environmentVariables);
   }
   answer.put(EnvironmentVariables.FABRIC8_PROFILES,join(getProfiles(),","));
   return answer;
