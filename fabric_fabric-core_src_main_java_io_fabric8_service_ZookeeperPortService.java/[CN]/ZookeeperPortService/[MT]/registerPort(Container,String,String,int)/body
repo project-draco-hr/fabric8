@@ -2,7 +2,9 @@
   assertValid();
   String portAsString=String.valueOf(port);
   String containerPortsPath=ZkPath.PORTS_CONTAINER_PID_KEY.getPath(container.getId(),pid,key);
-  String ipPortsPath=ZkPath.PORTS_IP.getPath(container.getIp());
+  String ip=container.getIp();
+  assertValidIp(container,ip);
+  String ipPortsPath=ZkPath.PORTS_IP.getPath(ip);
   try {
     if (interProcessLock.acquire(60,TimeUnit.SECONDS)) {
       createDefault(curator.get(),containerPortsPath,portAsString);
