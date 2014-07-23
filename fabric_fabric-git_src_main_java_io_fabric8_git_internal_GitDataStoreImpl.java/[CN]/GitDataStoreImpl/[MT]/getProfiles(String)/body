@@ -1,5 +1,12 @@
 {
-  assertValid();
-  VersionData v=getVersionData(version);
-  return v != null && v.profiles != null ? new ArrayList<String>(v.profiles.keySet()) : new ArrayList<String>();
+  LockHandle readLock=aquireReadLock();
+  try {
+    assertValid();
+    VersionData versionData=getVersionData(version);
+    List<String> profiles=versionData != null ? new ArrayList<String>(versionData.profiles.keySet()) : Collections.<String>emptyList();
+    return Collections.unmodifiableList(profiles);
+  }
+  finally {
+    readLock.unlock();
+  }
 }

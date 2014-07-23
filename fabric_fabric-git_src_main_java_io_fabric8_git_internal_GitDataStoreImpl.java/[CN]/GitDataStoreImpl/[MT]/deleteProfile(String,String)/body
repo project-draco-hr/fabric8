@@ -1,14 +1,10 @@
 {
-  assertValid();
-  GitOperation<Void> gitop=new GitOperation<Void>(){
-    public Void call(    Git git,    GitContext context) throws Exception {
-      checkoutVersion(git,GitProfiles.getBranch(version,profile));
-      File profileDirectory=getProfileDirectory(git,profile);
-      doRecursiveDeleteAndRemove(git,profileDirectory);
-      context.commitMessage("Removed profile " + profile);
-      return null;
-    }
+  LockHandle writeLock=aquireWriteLock();
+  try {
+    assertValid();
+    deleteProfileInternal(version,profile);
   }
-;
-  executeWrite(gitop,false);
+  finally {
+    writeLock.unlock();
+  }
 }
