@@ -5,12 +5,12 @@
       boolean valid=true;
       List<ProfileRequirements> profileRequirements=requirements.getProfileRequirements();
       assertNotNull("Should have some profileRequirements",profileRequirements);
-      String version=requirementOrDefaultVersion(restAPI,requirements);
+      String version=requirementOrDefaultVersion(controller,requirements);
       for (      ProfileRequirements profileRequirement : profileRequirements) {
         Integer minimumInstances=profileRequirement.getMinimumInstances();
         if (minimumInstances != null) {
           String profile=profileRequirement.getProfile();
-          List<String> containerIds=restAPI.containerIdsForProfile(version,profile);
+          List<String> containerIds=controller.containerIdsForProfile(version,profile);
           int current=containerIds.size();
           if (current < minimumInstances) {
             System.out.println("Still waiting for " + minimumInstances + " instance(s) of profile "+ profile+ " currently has: "+ containerIds);
@@ -18,7 +18,7 @@
             break;
           }
  else {
-            if (checkMinimumInstancesSuccessful(restAPI,profile,minimumInstances,containerIds)) {
+            if (checkMinimumInstancesSuccessful(controller,profile,minimumInstances,containerIds)) {
               System.out.println("Valid profile " + profile + " requires "+ minimumInstances+ " instance(s) and has: "+ containerIds);
             }
  else {

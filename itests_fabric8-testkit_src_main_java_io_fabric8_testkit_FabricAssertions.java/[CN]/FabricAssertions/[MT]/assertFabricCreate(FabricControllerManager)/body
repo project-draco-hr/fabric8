@@ -1,4 +1,9 @@
 {
   assertNotNull("FabricFactory",factory);
-  return factory.createFabric();
+  FabricController restAPI=factory.createFabric();
+  assertNotNull("Should have created a REST API",restAPI);
+  Thread.sleep(30 * 1000);
+  List<String> containerIds=waitForNotEmptyContainerIds(restAPI);
+  System.out.println("Found containers: " + containerIds);
+  return restAPI;
 }

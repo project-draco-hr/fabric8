@@ -1,0 +1,12 @@
+{
+  fabricControllerManager=new CommandLineFabricControllerManager();
+  try {
+    FabricController fabricController=FabricAssertions.assertFabricCreate(fabricControllerManager);
+    dirtyHack=fabricController;
+    controller.set(fabricController);
+  }
+ catch (  Exception e) {
+    throw new LifecycleException("Failed to create fabric: " + e,e);
+  }
+  System.out.println("Created a controller " + controller.get());
+}
