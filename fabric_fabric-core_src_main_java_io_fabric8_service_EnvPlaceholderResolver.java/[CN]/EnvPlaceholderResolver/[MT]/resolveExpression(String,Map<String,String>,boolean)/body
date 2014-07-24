@@ -1,0 +1,14 @@
+{
+  int idx=expression.indexOf(ELVIS_OPERATOR);
+  String defaultValue=null;
+  String name=expression;
+  if (idx > 0) {
+    defaultValue=expression.substring(idx + ELVIS_OPERATOR.length());
+    name=expression.substring(0,idx);
+  }
+  String answer=System.getenv(name);
+  if (answer == null) {
+    return preserveUnresolved ? expression : defaultValue;
+  }
+  return answer;
+}

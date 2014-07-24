@@ -1,0 +1,13 @@
+{
+  System.setProperty("CHEESE","Edam");
+  String JAVA_HOME=System.getenv("JAVA_HOME");
+  assertExpression("${env:JAVA_HOME}",JAVA_HOME);
+  if (JAVA_HOME != null) {
+    assertExpression("A${env:JAVA_HOME}B","A" + JAVA_HOME + "B");
+    assertExpression("A${env:JAVA_HOME?:DEFAULT}B","A" + JAVA_HOME + "B");
+  }
+  assertExpression("${env:DOES_NOT_EXIST?:DEFAULT}","DEFAULT");
+  assertExpression("A${env:DOES_NOT_EXIST?:DEFAULT}B","ADEFAULTB");
+  assertExpression("${env:DOES_NOT_EXIST?:DEFAULT}${env:DOES_NOT_EXIST?:DEFAULT}","DEFAULTDEFAULT");
+  assertExpression("1${env:DOES_NOT_EXIST?:DEFAULT}2${env:DOES_NOT_EXIST?:DEFAULT}3","1DEFAULT2DEFAULT3");
+}

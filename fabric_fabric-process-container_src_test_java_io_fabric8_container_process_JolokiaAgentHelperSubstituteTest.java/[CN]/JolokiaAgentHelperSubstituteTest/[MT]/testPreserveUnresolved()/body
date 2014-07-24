@@ -1,0 +1,6 @@
+{
+  String[] expressions={"${env:DOES_NOT_EXIST?:DEFAULT}","A${env:DOES_NOT_EXIST?:DEFAULT}B","${env:DOES_NOT_EXIST?:DEFAULT}${env:DOES_NOT_EXIST?:DEFAULT}","1${env:DOES_NOT_EXIST?:DEFAULT}2${env:DOES_NOT_EXIST?:DEFAULT}3"};
+  for (  String expression : expressions) {
+    assertExpression(expression,expression,true);
+  }
+}
