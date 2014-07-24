@@ -1,6 +1,11 @@
 {
-  assertValid();
-  VersionData versionData=getVersionData(version);
-  ProfileData p=versionData != null ? versionData.profiles.get(profile) : null;
-  return p != null ? p.lastModified : "";
+  LockHandle readLock=aquireReadLock();
+  try {
+    assertValid();
+    Profile profile=getProfileFromCache(versionId,profileId);
+    return profile != null ? profile.getProfileHash() : "";
+  }
+  finally {
+    readLock.unlock();
+  }
 }

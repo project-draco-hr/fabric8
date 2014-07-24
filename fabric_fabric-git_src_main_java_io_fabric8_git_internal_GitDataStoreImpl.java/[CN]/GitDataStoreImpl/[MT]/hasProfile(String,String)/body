@@ -2,8 +2,8 @@
   LockHandle readLock=aquireReadLock();
   try {
     assertValid();
-    ProfileData profileData=getProfileData(versionId,profileId);
-    return profileData != null;
+    Profile profile=getProfileFromCache(versionId,profileId);
+    return profile != null;
   }
   finally {
     readLock.unlock();

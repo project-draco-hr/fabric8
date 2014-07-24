@@ -2,18 +2,7 @@
   LockHandle readLock=aquireReadLock();
   try {
     assertValid();
-    Version version=null;
-    VersionData versionData=getVersionData(versionId);
-    if (versionData != null) {
-      VersionBuilder builder=VersionBuilder.Factory.create(versionId);
-      builder.setAttributes(getVersionAttributesInternal(versionId));
-      HashMap<String,Profile> profiles=new HashMap<String,Profile>();
-      for (      String profileId : getProfiles(versionId)) {
-        builder.addProfile(getProfileInternal(versionId,profileId,profiles));
-      }
-      version=builder.getVersion();
-    }
-    return version;
+    return getVersionFromCache(versionId);
   }
   finally {
     readLock.unlock();

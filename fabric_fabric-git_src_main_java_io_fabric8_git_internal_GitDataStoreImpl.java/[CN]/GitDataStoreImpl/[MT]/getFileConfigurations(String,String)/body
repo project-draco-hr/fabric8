@@ -1,6 +1,11 @@
 {
-  assertValid();
-  VersionData versionData=getVersionData(version);
-  ProfileData p=versionData != null ? versionData.profiles.get(profile) : null;
-  return p != null ? new HashMap<String,byte[]>(p.files) : Collections.<String,byte[]>emptyMap();
+  LockHandle readLock=aquireReadLock();
+  try {
+    assertValid();
+    Profile profile=getProfileFromCache(versionId,profileId);
+    return profile != null ? profile.getFileConfigurations() : Collections.<String,byte[]>emptyMap();
+  }
+  finally {
+    readLock.unlock();
+  }
 }

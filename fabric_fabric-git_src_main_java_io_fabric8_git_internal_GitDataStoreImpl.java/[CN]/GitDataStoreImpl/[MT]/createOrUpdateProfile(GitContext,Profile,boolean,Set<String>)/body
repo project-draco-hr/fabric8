@@ -13,19 +13,6 @@
     if (allowCreate) {
       createProfileDirectoryAfterCheckout(context,versionId,profileId);
     }
-    for (    Entry<String,String> entry : profile.getAttributes().entrySet()) {
-      setProfileAttributeInternal(context,versionId,profileId,entry.getKey(),entry.getValue());
-    }
-    if (parents.size() > 0) {
-      StringBuilder sb=new StringBuilder();
-      for (      Profile parent : parents) {
-        if (sb.length() > 0) {
-          sb.append(" ");
-        }
-        sb.append(parent.getId());
-      }
-      setProfileAttributeInternal(context,versionId,profileId,Profile.PARENTS,sb.toString());
-    }
     Map<String,byte[]> fileConfigurations=profile.getFileConfigurations();
     if (!fileConfigurations.isEmpty()) {
       setFileConfigurationsInternal(context,versionId,profileId,fileConfigurations);

@@ -3,14 +3,17 @@
   this.versionId=versionId;
   this.lastModified=lastModified;
   this.isOverlay=isOverlay;
-  this.parentProfiles.addAll(parentProfiles);
   this.fileConfigurations.putAll(fileConfigurations);
+  for (  Profile parent : parents) {
+    this.parents.put(parent.getId(),parent);
+  }
   Map<String,String> agentConfig=configs.get(Constants.AGENT_PID);
   if (agentConfig != null) {
+    int prefixLength=DataStore.ATTRIBUTE_PREFIX.length();
     for (    Entry<String,String> entry : agentConfig.entrySet()) {
       String key=entry.getKey();
       if (key.startsWith(DataStore.ATTRIBUTE_PREFIX)) {
-        attributes.put(key,entry.getValue());
+        attributes.put(key.substring(prefixLength),entry.getValue());
       }
     }
   }

@@ -2,8 +2,8 @@
   LockHandle readLock=aquireReadLock();
   try {
     assertValid();
-    VersionData versionData=getVersionData(version);
-    List<String> profiles=versionData != null ? new ArrayList<String>(versionData.profiles.keySet()) : Collections.<String>emptyList();
+    Version version=getVersionFromCache(versionId);
+    List<String> profiles=version != null ? version.getProfileIds() : Collections.<String>emptyList();
     return Collections.unmodifiableList(profiles);
   }
   finally {

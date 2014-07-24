@@ -21,14 +21,12 @@
   assertCreateVersion("1.0",version);
   assertProfileConfiguration(version,importedProfile,Constants.AGENT_PID,"attribute.parents","feature-camel");
   assertProfileTextFileConfigurationContains(version,"example-camel-mq","camel.xml","http://camel.apache.org/schema/blueprint");
-  Map<String,String> profileAttributes=dataStore.getProfileAttributes(version,importedProfile);
+  Map<String,String> profileAttributes=Collections.emptyMap();
   String parent=profileAttributes.get("parents");
   assertEquals(importedProfile + ".profileAttributes[parent]","feature-camel",parent);
   System.out.println("Profile attributes: " + profileAttributes);
   String profileAttributeKey="myKey";
   String expectedProfileAttributeValue="myValue";
-  dataStore.setProfileAttribute(version,importedProfile,profileAttributeKey,expectedProfileAttributeValue);
-  profileAttributes=dataStore.getProfileAttributes(version,importedProfile);
   System.out.println("Profile attributes: " + profileAttributes);
   assertMapContains("Profile attribute[" + profileAttributeKey + "]",profileAttributes,profileAttributeKey,expectedProfileAttributeValue);
   String hawtioRepoKey="repository.hawtio";

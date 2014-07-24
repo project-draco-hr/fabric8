@@ -2,8 +2,8 @@
   super.validate();
   IllegalStateAssertion.assertNotNull(profileId,"Profile must have an identity");
   IllegalStateAssertion.assertNotNull(versionId,"Version must be specified");
-  for (  Profile profile : parentProfiles.values()) {
-    String prfversion=profile.getVersion();
-    IllegalStateAssertion.assertEquals(versionId,prfversion,"Profile version not '" + versionId + "' for: "+ profile);
+  for (  Profile parent : parentMapping.values()) {
+    String parentVersion=parent.getVersion();
+    IllegalStateAssertion.assertEquals(versionId,parentVersion,"Profile version not '" + versionId + "' for: "+ parent);
   }
 }

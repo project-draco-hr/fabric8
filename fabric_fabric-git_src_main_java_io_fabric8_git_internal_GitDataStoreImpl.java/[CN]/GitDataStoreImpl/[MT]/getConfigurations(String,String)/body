@@ -1,4 +1,10 @@
 {
-  assertValid();
-  return getConfigurationsInternal(version,profile);
+  LockHandle readLock=aquireReadLock();
+  try {
+    assertValid();
+    return getConfigurationsInternal(version,profile);
+  }
+  finally {
+    readLock.unlock();
+  }
 }

@@ -1,5 +1,5 @@
 {
-  VersionData versionData=getVersionData(version);
-  ProfileData p=versionData != null ? versionData.profiles.get(profile) : null;
-  return p != null ? new HashMap<String,Map<String,String>>(p.configs) : Collections.<String,Map<String,String>>emptyMap();
+  assertReadLock();
+  Profile profile=getProfileFromCache(versionId,profileId);
+  return profile != null ? profile.getConfigurations() : Collections.<String,Map<String,String>>emptyMap();
 }
