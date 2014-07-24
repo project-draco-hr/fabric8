@@ -1,5 +1,8 @@
 {
   Runtime runtime=this.runtime.get();
+  if (runtime.getProperty(EnvPropertiesProvider.ENV_PREFIX_KEY) == null) {
+    System.setProperty(EnvPropertiesProvider.ENV_PREFIX_KEY,"FABRIC8_");
+  }
   if (runtime.getProperty(RUNTIME_IDENTITY) == null) {
     System.setProperty(RUNTIME_IDENTITY,System.getProperty("karaf.name",System.getenv(EnvironmentVariables.RUNTIME_ID)));
   }
