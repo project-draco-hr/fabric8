@@ -1,11 +1,12 @@
 {
-  String commands="ps -e";
+  String commands="jps -l";
   String message=commands;
   LOGGER.debug("Executing commands: " + message);
   List<Long> answer=new ArrayList<Long>();
+  Filter<String> filter=Filters.containsAnyString(classNameFilter);
   try {
     Process process=Runtime.getRuntime().exec(commands);
-    parseProcesses(process.getInputStream(),answer,message,Filters.<String>trueFilter());
+    parseProcesses(process.getInputStream(),answer,message,filter);
     processErrors(process.getErrorStream(),message);
   }
  catch (  Exception e) {

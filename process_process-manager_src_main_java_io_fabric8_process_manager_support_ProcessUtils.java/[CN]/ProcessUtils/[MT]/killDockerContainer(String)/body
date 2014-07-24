@@ -1,0 +1,16 @@
+{
+  String commands="docker kill " + containerId;
+  String message=commands;
+  LOGGER.debug("Executing commands: " + message);
+  final List<String> answer=new ArrayList<>();
+  Process process=null;
+  try {
+    process=Runtime.getRuntime().exec(commands);
+    processInput(process.getInputStream(),commands);
+    processErrors(process.getErrorStream(),commands);
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to execute process " + "stdin" + " for " + message + ": "+ e,e);
+  }
+  return process != null ? process.exitValue() : -1;
+}

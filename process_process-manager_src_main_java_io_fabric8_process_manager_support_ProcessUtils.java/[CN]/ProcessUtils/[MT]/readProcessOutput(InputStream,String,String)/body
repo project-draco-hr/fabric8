@@ -1,17 +1,10 @@
 {
-  BufferedReader reader=new BufferedReader(new InputStreamReader(inputStream));
-  try {
-    while (true) {
-      String line=reader.readLine();
-      if (line == null)       break;
+  Function<String,Void> function=new Function<String,Void>(){
+    @Override public Void apply(    String line){
       LOGGER.debug("Error " + prefix + message+ ": "+ line);
+      return null;
     }
   }
- catch (  Exception e) {
-    LOGGER.error("Failed to process " + prefix + message+ ": "+ e,e);
-    throw e;
-  }
- finally {
-    Closeables.closeQuitely(reader);
-  }
+;
+  processOutput(inputStream,function,prefix + message);
 }

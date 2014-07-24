@@ -2,11 +2,13 @@
   long failTime=System.currentTimeMillis() + timeout;
   while (true) {
     T value=null;
+    Exception exception=null;
     try {
       value=callable.call();
     }
  catch (    Exception e) {
       System.out.println(unwrapException(e));
+      exception=e;
     }
     if (value != null && isValid.matches(value)) {
       return value;
@@ -14,7 +16,8 @@
  else {
       long now=System.currentTimeMillis();
       if (now > failTime) {
-        fail("value " + value + " is not valid using "+ isValid+ " after waiting: "+ Math.round(timeout / 1000)+ " second(s)");
+        String message=(value == null && exception != null) ? "exception " + exception : "value " + value;
+        fail(message + " is not valid using " + isValid+ " after waiting: "+ Math.round(timeout / 1000)+ " second(s)");
         return value;
       }
  else {

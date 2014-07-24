@@ -1,0 +1,24 @@
+{
+  String commands="docker ps -q";
+  String message="output of command: " + commands;
+  LOGGER.debug("Executing commands: " + message);
+  final List<String> answer=new ArrayList<>();
+  try {
+    Process process=Runtime.getRuntime().exec(commands);
+    Function<String,Void> fn=new Function<String,Void>(){
+      @Override public Void apply(      String line){
+        if (Strings.isNotBlank(line)) {
+          answer.add(line.trim());
+        }
+        return null;
+      }
+    }
+;
+    processOutput(process.getInputStream(),fn,message);
+    processErrors(process.getErrorStream(),message);
+  }
+ catch (  Exception e) {
+    LOGGER.error("Failed to execute process " + "stdin" + " for " + message + ": "+ e,e);
+  }
+  return answer;
+}
