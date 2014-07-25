@@ -52,7 +52,7 @@
         keystore=Files.readBytes(keystoreFile);
         keystoreFile.delete();
         LOG.info("Keystore generated");
-        profileRegistry.setFileConfiguration(versionId,profileId,"keystore.jks",keystore);
+        builder.addFileConfiguration("keystore.jks",keystore);
         configs.put("keystore.file","profile:keystore.jks");
       }
  catch (      IOException e) {
@@ -87,7 +87,7 @@
         }
         truststore=Files.readBytes(truststoreFile);
         truststoreFile.delete();
-        profileRegistry.setFileConfiguration(versionId,profileId,"truststore.jks",truststore);
+        builder.addFileConfiguration("truststore.jks",truststore);
         configs.put("truststore.file","profile:truststore.jks");
       }
  catch (      IOException e) {
