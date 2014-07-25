@@ -1,0 +1,23 @@
+{
+  File archetypeCatalogXml=getArchetypeCatalog();
+  List<ArchetypeInfo> answer=new ArrayList<ArchetypeInfo>();
+  Document document=XmlUtils.parseDoc(archetypeCatalogXml);
+  List<Element> elementList=XmlUtils.getElements(document,"archetype");
+  assertTrue("Should have found at least one archetype in the catalog file " + archetypeCatalogXml,elementList.size() > 0);
+  for (  Element element : elementList) {
+    String groupId=XmlUtils.getTextContentOfElement(element,"groupId");
+    String artifactId=XmlUtils.getTextContentOfElement(element,"artifactId");
+    String version=XmlUtils.getTextContentOfElement(element,"version");
+    String repository=XmlUtils.getTextContentOfElement(element,"repository");
+    assertNotBlank("groupId",groupId);
+    assertNotBlank("artifactId",artifactId);
+    assertNotBlank("version",version);
+    if (artifactId.contains("cdi") || artifactId.contains("drools")) {
+      continue;
+    }
+    ArchetypeInfo info=new ArchetypeInfo(groupId,artifactId,version,repository);
+    answer.add(info);
+    System.out.println("Created " + info);
+  }
+  return answer;
+}
