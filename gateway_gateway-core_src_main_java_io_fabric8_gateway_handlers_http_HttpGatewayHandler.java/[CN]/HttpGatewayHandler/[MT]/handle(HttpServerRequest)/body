@@ -1,4 +1,5 @@
 {
+  long callStart=System.nanoTime();
   String uri=request.uri();
   String uri2=null;
   if (!uri.endsWith("/")) {
@@ -124,9 +125,13 @@
         request.response().close();
       }
     }
+    CallDetailRecord cdr=new CallDetailRecord(System.nanoTime() - callStart,null);
+    httpGateway.addCallDetailRecord(cdr);
   }
  catch (  Throwable e) {
     LOG.error("Caught: " + e,e);
+    CallDetailRecord cdr=new CallDetailRecord(System.nanoTime() - callStart,new Date() + ":" + e.getMessage());
+    httpGateway.addCallDetailRecord(cdr);
     request.response().setStatusCode(404);
     StringWriter buffer=new StringWriter();
     e.printStackTrace(new PrintWriter(buffer));
