@@ -7,6 +7,8 @@
       FabricRequirements actual=controller.getRequirements();
       String actualVersion=actual.getVersion();
       actual.setVersion(requirements.getVersion());
+      requirements.sortProfilesRequirements();
+      actual.sortProfilesRequirements();
       boolean answer=RequirementsJson.equal(requirements,actual);
       if (answer) {
         System.out.println("Updated the requirements to: " + RequirementsJson.toJSON(requirements));

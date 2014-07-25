@@ -20,7 +20,9 @@
           }
  else {
             if (checkMinimumInstancesSuccessful(controller,profile,minimumInstances,containerIds)) {
-              System.out.println("Valid profile " + profile + " requires "+ minimumInstances+ " instance(s) and has: "+ containerIds);
+              if (minimumInstances > 0) {
+                System.out.println("Valid profile " + profile + " requires "+ minimumInstances+ " instance(s) and has: "+ containerIds);
+              }
             }
  else {
               valid=false;
@@ -36,6 +38,9 @@
             System.out.println("Still waiting for a maximum of " + maximumInstances + " instance(s) of profile "+ profile+ " currently has: "+ current+ " containers alive which need stopping");
             valid=false;
             break;
+          }
+ else {
+            System.out.println("Profile scaled down: now running a maximum of " + maximumInstances + " instance(s) of profile "+ profile+ " currently has: "+ current+ " container(s)");
           }
         }
       }
