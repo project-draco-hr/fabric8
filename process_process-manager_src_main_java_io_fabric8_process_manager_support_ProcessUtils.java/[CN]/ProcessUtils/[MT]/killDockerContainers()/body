@@ -1,10 +1,14 @@
 {
-  int count=0;
-  List<String> ids=getDockerContainerIds();
-  for (  String id : ids) {
-    if (killDockerContainer(id) == 0) {
-      count++;
+  new Thread(new Runnable(){
+    @Override public void run(){
+      int count=0;
+      List<String> ids=getDockerContainerIds();
+      for (      String id : ids) {
+        if (killDockerContainer(id) == 0) {
+          count++;
+        }
+      }
     }
   }
-  return count;
+).run();
 }
