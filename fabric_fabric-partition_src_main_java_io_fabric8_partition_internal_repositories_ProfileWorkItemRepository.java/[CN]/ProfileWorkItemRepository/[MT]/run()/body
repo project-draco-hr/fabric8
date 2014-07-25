@@ -1,8 +1,9 @@
 {
   ProfileRegistry profileRegistry=fabricService.adapt(ProfileRegistry.class);
-  String modifed=profileRegistry.getLastModified(dataStore.getContainerVersion(name),profile);
-  if (!modifed.equals(lastModified)) {
+  String versionId=dataStore.getContainerVersion(name);
+  Profile profile=profileRegistry.getProfile(versionId,versionId);
+  if (profile != null && !profile.getProfileHash().equals(lastModified)) {
     notifyListeners();
-    lastModified=modifed;
+    lastModified=profile.getProfileHash();
   }
 }

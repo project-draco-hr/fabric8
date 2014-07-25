@@ -26,7 +26,7 @@
     config=new HashMap<>(parentProfileConfig);
   }
   if ("true".equals(configs.get("ssl"))) {
-    byte[] keystore=profileRegistry.getFileConfiguration(versionId,profileId,"keystore.jks");
+    byte[] keystore=builder.getFileConfiguration("keystore.jks");
     if (keystore == null) {
       try {
         String host=configs.get("keystore.cn");
@@ -59,7 +59,7 @@
         LOG.info("Failed to generate keystore.jks: " + e,e);
       }
     }
-    byte[] truststore=profileRegistry.getFileConfiguration(versionId,profileId,"truststore.jks");
+    byte[] truststore=builder.getFileConfiguration("truststore.jks");
     if (truststore == null) {
       try {
         String password=configs.get("truststore.password");

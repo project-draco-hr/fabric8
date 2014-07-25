@@ -21,12 +21,6 @@
   cxfFiles.put("test2.properties","key=fromCxf".getBytes());
   expect(fabricService.getEnvironment()).andReturn("").anyTimes();
   expect(profileService.getRequiredVersion(eq(v))).andReturn(version).anyTimes();
-  expect(profileRegistry.getFileConfigurations(eq(v),eq(defaultProfile))).andReturn(defaultFiles).anyTimes();
-  expect(profileRegistry.getFileConfigurations(eq(v),eq(camelProfile))).andReturn(camelFiles).anyTimes();
-  expect(profileRegistry.getFileConfigurations(eq(v),eq(cxfProfile))).andReturn(cxfFiles).anyTimes();
-  expect(profileRegistry.getConfigurations(eq(v),eq(defaultProfile))).andReturn(defaultPids).anyTimes();
-  expect(profileRegistry.getConfigurations(eq(v),eq(camelProfile))).andReturn(camelPids).anyTimes();
-  expect(profileRegistry.getConfigurations(eq(v),eq(cxfProfile))).andReturn(cxfPids).anyTimes();
   fabricService.substituteConfigurations((Map<String,Map<String,String>>)anyObject());
   expectLastCall().anyTimes();
   expect(dataStore.getContainerVersion(eq(CONTAINER_ID))).andReturn(v).anyTimes();

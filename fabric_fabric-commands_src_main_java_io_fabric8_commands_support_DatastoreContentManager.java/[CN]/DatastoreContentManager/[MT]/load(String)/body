@@ -4,10 +4,11 @@
     if (parts.length < 3) {
       throw new IllegalArgumentException("Invalid location:" + location);
     }
-    String profile=parts[0];
-    String version=parts[1];
+    String profileId=parts[0];
+    String versionId=parts[1];
     String resource=parts[2];
-    String data=new String(profileRegistry.getFileConfiguration(version,profile,resource));
+    Profile profile=profileRegistry.getRequiredProfile(versionId,profileId);
+    String data=new String(profile.getFileConfiguration(resource));
     return data != null ? data : "";
   }
  catch (  Exception e) {

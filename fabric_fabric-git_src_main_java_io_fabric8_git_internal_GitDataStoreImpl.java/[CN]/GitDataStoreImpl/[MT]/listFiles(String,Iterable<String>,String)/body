@@ -3,8 +3,8 @@
   GitOperation<Collection<String>> gitop=new GitOperation<Collection<String>>(){
     public Collection<String> call(    Git git,    GitContext context) throws Exception {
       SortedSet<String> answer=new TreeSet<String>();
-      for (      String profile : profiles) {
-        checkoutVersion(git,GitProfiles.getBranch(version,profile));
+      for (      String profile : profileIds) {
+        checkoutVersion(git,GitProfiles.getBranch(versionId,profile));
         File profileDirectory=getProfileDirectory(git,profile);
         File file=Strings.isNotBlank(path) ? new File(profileDirectory,path) : profileDirectory;
         if (file.exists()) {
@@ -20,6 +20,6 @@
     }
   }
 ;
-  boolean pullFirst=!hasVersion(version);
+  boolean pullFirst=!hasVersion(versionId);
   return executeRead(gitop,pullFirst);
 }

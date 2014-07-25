@@ -1,5 +1,6 @@
 {
-  Map<String,Map<String,String>> configs=getConfigurations(version,profile);
+  assertReadLock();
+  Map<String,Map<String,String>> configs=getConfigurationsInternal(version,profile);
   if (configs.containsKey(pid)) {
     return new HashMap<String,String>(configs.get(pid));
   }

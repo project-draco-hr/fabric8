@@ -1,7 +1,9 @@
 {
   String clusterId=getStringData(curator.get(),ZkPath.CONFIG_ENSEMBLES.getPath());
-  String version=dataStore.get().getDefaultVersion();
+  String versionId=dataStore.get().getDefaultVersion();
   String profileId="fabric-ensemble-" + clusterId;
   String ensembleConfigName="io.fabric8.zookeeper.server-" + clusterId + ".properties";
-  return DataStoreUtils.toMap(profileRegistry.get().getFileConfigurations(version,profileId).get(ensembleConfigName));
+  Profile ensembleProfile=profileRegistry.get().getRequiredProfile(versionId,profileId);
+  Map<String,byte[]> fileconfigs=ensembleProfile.getFileConfigurations();
+  return DataStoreUtils.toMap(fileconfigs.get(ensembleConfigName));
 }
