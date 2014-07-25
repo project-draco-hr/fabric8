@@ -19,11 +19,19 @@
       profileRegistry.importFromFileSystem(importPath.getAbsolutePath());
     }
     ZooKeeperUtils.setData(curator,ZkPath.CONFIG_DEFAULT_VERSION.getPath(),versionId);
+    Map<String,String> jaasConfig=Collections.singletonMap("encryption.enabled","${zk:/fabric/authentication/encryption.enabled}");
     Profile defaultProfile=profileRegistry.getProfile(versionId,"default");
     if (defaultProfile == null) {
       ProfileBuilder builder=ProfileBuilder.Factory.create(versionId,"default");
+      builder.addConfiguration("io.fabric8.jaas",jaasConfig);
       String createdId=profileRegistry.createProfile(builder.getProfile());
       defaultProfile=profileRegistry.getRequiredProfile(versionId,createdId);
+    }
+ else {
+      ProfileBuilder builder=ProfileBuilder.Factory.createFrom(defaultProfile);
+      builder.addConfiguration("io.fabric8.jaas",jaasConfig);
+      String updatedId=profileRegistry.updateProfile(builder.getProfile());
+      defaultProfile=profileRegistry.getRequiredProfile(versionId,updatedId);
     }
     String defaultProfileId=defaultProfile.getId();
     ZooKeeperUtils.setData(curator,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),"${zk:" + name + "/ip}:"+ zooKeeperServerConnectionPort);
@@ -78,9 +86,6 @@
       profilesBuilder.append(" ").append("unmanaged");
     }
     ZooKeeperUtils.createDefault(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,name),profilesBuilder.toString());
-    Map<String,String> configs=new HashMap<String,String>();
-    configs.put("encryption.enabled","${zk:/fabric/authentication/encryption.enabled}");
-    profileRegistry.setConfiguration(versionId,defaultProfileId,"io.fabric8.jaas",configs);
     EncryptionSupport encryption=addUsersToZookeeper(curator,options.getUsers());
     ZooKeeperUtils.createDefault(curator,"/fabric/authentication/encryption.enabled",Boolean.valueOf(encryption != null).toString());
     ZooKeeperUtils.createDefault(curator,"/fabric/authentication/domain","karaf");
