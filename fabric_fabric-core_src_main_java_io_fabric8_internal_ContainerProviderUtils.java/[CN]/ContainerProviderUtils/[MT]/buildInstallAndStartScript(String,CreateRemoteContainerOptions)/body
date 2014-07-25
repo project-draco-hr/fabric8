@@ -1,4 +1,6 @@
 {
+  String distFilename=String.format(DISTNAME_PATTERN,"karaf",FabricConstants.FABRIC_VERSION);
+  String systemDistPath=String.format(SYSTEM_DIST,"karaf",FabricConstants.FABRIC_VERSION);
   StringBuilder sb=new StringBuilder();
   sb.append("#!/bin/bash").append("\n");
   if (options.getEnvironmentalVariables() != null && !options.getEnvironmentalVariables().isEmpty()) {
@@ -7,6 +9,7 @@
     }
   }
   sb.append(RUN_FUNCTION).append("\n");
+  sb.append(SUDO_N_FUNCTION).append("\n");
   sb.append(DOWNLOAD_FUNCTION).append("\n");
   sb.append(MAVEN_DOWNLOAD_FUNCTION).append("\n");
   sb.append(UPDATE_PKGS).append("\n");
@@ -24,6 +27,7 @@
   sb.append(FIND_FREE_PORT).append("\n");
   sb.append(WAIT_FOR_PORT).append("\n");
   sb.append(EXTRACT_ZIP).append("\n");
+  sb.append(GENERATE_SSH_KEYS).append("\n");
   sb.append("run mkdir -p ").append(options.getPath()).append("\n");
   sb.append("run cd ").append(options.getPath()).append("\n");
   sb.append("run mkdir -p ").append(name).append("\n");
@@ -44,6 +48,8 @@
   fallbackRepositories.addAll(Arrays.asList(FALLBACK_REPOS));
   extractZipIntoDirectory(sb,options.getProxyUri(),"io.fabric8","fabric8-karaf",FabricConstants.FABRIC_VERSION,fallbackRepositories);
   sb.append("run cd `").append(FIRST_FABRIC_DIRECTORY).append("`\n");
+  sb.append("run mkdir -p ").append(systemDistPath).append("\n");
+  sb.append("run cp ../").append(distFilename).append(" ").append(systemDistPath).append("/\n");
   sb.append("run chmod +x bin/*").append("\n");
   List<String> lines=new ArrayList<String>();
   String globalResolver=options.getResolver() != null ? options.getResolver() : ZkDefs.DEFAULT_RESOLVER;
@@ -123,6 +129,7 @@
       }
     }
   }
+  sb.append("generate_ssh_keys").append("\n");
   sb.append("configure_hostnames").append(" ").append(options.getHostNameContext()).append("\n");
   String jvmOptions=options.getJvmOpts();
   if (jvmOptions == null) {

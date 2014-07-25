@@ -7,8 +7,13 @@
  else   if (oResolver.equals(ZkDefs.LOCAL_IP)) {
     return HostUtils.getLocalIp();
   }
+ else   if (oResolver.equals(ZkDefs.PUBLIC_HOSTNAME) && (publichostname != null && !publichostname.isEmpty())) {
+    return publichostname;
+  }
  else   if (oResolver.equals(ZkDefs.MANUAL_IP) && (oManualIp != null && !oManualIp.isEmpty())) {
     return oManualIp;
   }
- else   return HostUtils.getLocalHostName();
+ else {
+    return HostUtils.getLocalHostName();
+  }
 }

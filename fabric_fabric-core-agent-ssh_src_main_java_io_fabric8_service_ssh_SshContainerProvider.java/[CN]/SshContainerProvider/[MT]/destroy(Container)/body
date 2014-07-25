@@ -6,12 +6,19 @@
  else {
     CreateSshContainerMetadata sshContainerMetadata=(CreateSshContainerMetadata)metadata;
     CreateSshContainerOptions options=sshContainerMetadata.getCreateOptions();
+    Session session=null;
     try {
       String script=buildUninstallScript(container.getId(),options);
-      runScriptOnHost(options,script);
+      session=createSession(options);
+      runScriptOnHost(session,script);
     }
  catch (    Throwable t) {
-      logger.error("Failed to stop container: " + container.getId(),t);
+      LOGGER.error("Failed to stop container: " + container.getId(),t);
+    }
+ finally {
+      if (session != null) {
+        session.disconnect();
+      }
     }
   }
 }

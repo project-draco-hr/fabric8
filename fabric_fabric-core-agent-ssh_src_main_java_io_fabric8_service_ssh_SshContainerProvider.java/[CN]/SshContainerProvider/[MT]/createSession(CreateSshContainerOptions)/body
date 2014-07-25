@@ -38,40 +38,5 @@
   if (connectException != null) {
     throw connectException;
   }
-  ChannelExec executor=null;
-  ByteArrayOutputStream output=new ByteArrayOutputStream();
-  ByteArrayOutputStream error=new ByteArrayOutputStream();
-  try {
-    executor=(ChannelExec)session.openChannel("exec");
-    executor.setPty(true);
-    executor.setCommand(script);
-    executor.setOutputStream(output);
-    executor.setErrStream(error);
-    executor.connect();
-    int errorStatus=-1;
-    for (int i=0; !executor.isClosed(); i++) {
-      if (i > 0) {
-        long delayMs=(long)(200L * Math.pow(i,2));
-        Thread.sleep(delayMs);
-      }
-      if ((errorStatus=executor.getExitStatus()) != -1) {
-        break;
-      }
-    }
-    logger.debug("Output: {}",output.toString());
-    logger.debug("Error:  {}",error.toString());
-    if (verbose) {
-      System.out.println("Output : " + output.toString());
-      System.out.println("Error : " + error.toString());
-    }
-    if (errorStatus != 0) {
-      throw new Exception(String.format("%s@%s:%d: received exit status %d executing \n--- command ---\n%s\n--- output ---\n%s\n--- error ---\n%s\n------\n",options.getUsername(),options.getHost(),options.getPort(),executor.getExitStatus(),script,output.toString(),error.toString()));
-    }
-  }
-  finally {
-    if (executor != null) {
-      executor.disconnect();
-    }
-    session.disconnect();
-  }
+  return session;
 }

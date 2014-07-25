@@ -65,7 +65,12 @@ catch (  Throwable t) {
     String script=buildInstallAndStartScript(containerName,options);
     listener.onStateChange(String.format("Installing fabric agent on container %s. It may take a while...",containerName));
     ExecResponse response=null;
+    String uploadPath="/tmp/fabric8-karaf-" + FabricConstants.FABRIC_VERSION + ".zip";
+    URL distributionURL=options.getProxyUri().resolve("io/fabric8/fabric8-karaf/" + FabricConstants.FABRIC_VERSION + "/fabric8-karaf-"+ FabricConstants.FABRIC_VERSION+ ".zip").toURL();
     try {
+      if (options.doUploadDistribution()) {
+        uploadToNode(computeService.getContext(),nodeMetadata,credentials,distributionURL,uploadPath);
+      }
       if (credentials != null) {
         response=computeService.runScriptOnNode(id,script,templateOptions.overrideLoginCredentials(credentials).runAsRoot(false));
       }

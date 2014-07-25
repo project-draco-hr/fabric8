@@ -1,0 +1,34 @@
+{
+  Channel channel=null;
+  try (InputStream is=url.openStream()){
+    channel=session.openChannel("sftp");
+    channel.connect();
+    ChannelSftp sftpChannel=(ChannelSftp)channel;
+    final CountDownLatch uploadLatch=new CountDownLatch(1);
+    sftpChannel.put(is,path,new SftpProgressMonitor(){
+      @Override public void init(      int op,      String src,      String dest,      long max){
+      }
+      @Override public boolean count(      long count){
+        try {
+          return is.available() > 0;
+        }
+ catch (        IOException e) {
+          return false;
+        }
+      }
+      @Override public void end(){
+        uploadLatch.countDown();
+      }
+    }
+,ChannelSftp.OVERWRITE);
+    uploadLatch.await(10,TimeUnit.MINUTES);
+  }
+ catch (  Exception e) {
+    LOGGER.warn("Failed to upload. Will attempt downloading distribution via maven.");
+  }
+ finally {
+    if (channel != null) {
+      channel.disconnect();
+    }
+  }
+}

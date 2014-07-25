@@ -15,12 +15,22 @@
     metadata.setCreateOptions(options);
     metadata.setContainerName(containerName);
     String script=buildInstallAndStartScript(containerName,options);
-    logger.debug("Running script on host {}:\n{}",host,script);
+    LOGGER.debug("Running script on host {}:\n{}",host,script);
+    Session session=null;
     try {
-      runScriptOnHost(options,script);
+      session=createSession(options);
+      if (options.doUploadDistribution()) {
+        uploadTo(session,options.getProxyUri().resolve("io/fabric8/fabric8-karaf/" + FabricConstants.FABRIC_VERSION + "/fabric8-karaf-"+ FabricConstants.FABRIC_VERSION+ ".zip").toURL(),"/tmp/fabric8-karaf-" + FabricConstants.FABRIC_VERSION + ".zip");
+      }
+      runScriptOnHost(session,script);
     }
  catch (    Throwable ex) {
       metadata.setFailure(ex);
+    }
+ finally {
+      if (session != null) {
+        session.disconnect();
+      }
     }
     return metadata;
   }
