@@ -6,7 +6,7 @@
       ProfileRequirements dependentProfileRequirements=requirements.getOrCreateProfileRequirement(dependentProfile);
       Integer minimumInstances=dependentProfileRequirements.getMinimumInstances();
       if (minimumInstances != null) {
-        List<Container> containers=aliveAndSuccessfulContainersForProfile(dependentProfile);
+        List<Container> containers=Containers.aliveAndSuccessfulContainersForProfile(dependentProfile,service);
         int dependentSize=containers.size();
         if (minimumInstances > dependentSize) {
           status.profileStatus(profile).missingDependency(dependentProfile,dependentSize,minimumInstances);

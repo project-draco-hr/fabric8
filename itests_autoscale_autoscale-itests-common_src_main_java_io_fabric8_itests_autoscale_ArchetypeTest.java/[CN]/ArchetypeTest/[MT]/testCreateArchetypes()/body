@@ -16,6 +16,7 @@
     String profileId=archetypeToProfileMap.get(archetype);
     assertNotNull("Should have a profile ID for " + archetype,profileId);
     requirements.profile(profileId).minimumInstances(1);
+    FabricAssertions.assertSetRequirementsAndTheyAreSatisfied(fabricController,requirements);
+    requirements.profile(profileId).minimumInstances(0).maximumInstances(0);
   }
-  FabricAssertions.assertSetRequirementsAndTheyAreSatisfied(fabricController,requirements);
 }

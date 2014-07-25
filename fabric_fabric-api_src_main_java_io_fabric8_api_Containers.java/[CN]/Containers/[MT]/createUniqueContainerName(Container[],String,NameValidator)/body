@@ -1,0 +1,23 @@
+{
+  if (nameValidator.isValid(currentName)) {
+    return currentName;
+  }
+  String namePrefix=currentName;
+  while (namePrefix.length() > 0) {
+    int lastIndex=namePrefix.length() - 1;
+    char lastChar=namePrefix.charAt(lastIndex);
+    if (Character.isDigit(lastChar)) {
+      namePrefix=namePrefix.substring(0,lastIndex);
+    }
+ else {
+      break;
+    }
+  }
+  int idx=1;
+  while (true) {
+    String name=namePrefix + Integer.toString(++idx);
+    if (nameValidator.isValid(name)) {
+      return name;
+    }
+  }
+}

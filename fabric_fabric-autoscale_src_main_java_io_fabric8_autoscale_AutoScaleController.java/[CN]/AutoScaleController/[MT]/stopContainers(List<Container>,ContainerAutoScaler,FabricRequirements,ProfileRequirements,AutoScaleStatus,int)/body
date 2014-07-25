@@ -1,0 +1,16 @@
+{
+  final String profile=profileRequirement.getProfile();
+  AutoScaleProfileStatus profileStatus=status.profileStatus(profile);
+  List<Container> sorted=new ArrayList<>(containers);
+  Collections.reverse(sorted);
+  List<String> stoppingContainerIds=new ArrayList<>();
+  for (int i=0; i < delta; i++) {
+    if (i >= sorted.size()) {
+      break;
+    }
+    Container container=sorted.get(i);
+    stoppingContainerIds.add(container.getId());
+    profileStatus.stoppingContainers(stoppingContainerIds);
+    container.stop(true);
+  }
+}

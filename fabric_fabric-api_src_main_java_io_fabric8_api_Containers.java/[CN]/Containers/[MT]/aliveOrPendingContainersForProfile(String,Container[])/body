@@ -1,0 +1,12 @@
+{
+  List<Container> answer=new ArrayList<Container>();
+  List<Container> containers=containersForProfile(allContainers,profile);
+  for (  Container container : containers) {
+    boolean alive=container.isAlive();
+    boolean provisioningPending=container.isProvisioningPending();
+    if (alive || provisioningPending) {
+      answer.add(container);
+    }
+  }
+  return answer;
+}

@@ -1,12 +1,13 @@
 {
-  FabricRequirements requirements=fabricService.get().getRequirements();
+  FabricService service=fabricService.get();
+  FabricRequirements requirements=service.getRequirements();
   List<ProfileRequirements> profileRequirements=requirements.getProfileRequirements();
   if (profileRequirements != null && !profileRequirements.isEmpty()) {
     AutoScaleStatus status=new AutoScaleStatus();
     for (    ProfileRequirements profileRequirement : profileRequirements) {
       ContainerAutoScaler autoScaler=createAutoScaler(requirements,profileRequirement);
       if (autoScaler != null) {
-        autoScaleProfile(autoScaler,requirements,profileRequirement,status);
+        autoScaleProfile(service,autoScaler,requirements,profileRequirement,status);
       }
  else {
         LOGGER.warn("No ContainerAutoScaler available for profile " + profileRequirement.getProfile());

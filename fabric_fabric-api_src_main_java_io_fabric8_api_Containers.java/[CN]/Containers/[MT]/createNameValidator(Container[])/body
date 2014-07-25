@@ -1,17 +1,3 @@
 {
-  final Set<String> ignoreNames=new HashSet<String>();
-  if (containers != null) {
-    for (    Container container : containers) {
-      ignoreNames.add(container.getId());
-    }
-  }
-  return new NameValidator(){
-    @Override public String toString(){
-      return "NameValidator(notIn: " + ignoreNames + ")";
-    }
-    @Override public boolean isValid(    String name){
-      return !ignoreNames.contains(name);
-    }
-  }
-;
+  return createNameValidator(containers,Collections.EMPTY_SET);
 }
