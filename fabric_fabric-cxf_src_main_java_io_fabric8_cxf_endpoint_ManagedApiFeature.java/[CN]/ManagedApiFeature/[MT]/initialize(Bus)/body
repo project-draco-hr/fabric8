@@ -1,19 +1,15 @@
 {
-  List<Server> servers=new ArrayList<Server>();
-  ServerRegistry serverRegistry=bus.getExtension(ServerRegistry.class);
-  servers.addAll(serverRegistry.getServers());
-  for (Iterator<Server> iter=servers.iterator(); iter.hasNext(); ) {
-    Server server=(Server)iter.next();
-    ManagedApi mApi=new ManagedApi(bus,server.getEndpoint(),server);
-    InstrumentationManager iMgr=bus.getExtension(InstrumentationManager.class);
-    if (iMgr != null) {
-      try {
-        iMgr.register(mApi);
-      }
- catch (      JMException jmex) {
-        jmex.printStackTrace();
-        LOG.log(Level.WARNING,"Registering ManagedApi failed.",jmex);
+  FactoryBeanListenerManager factoryBeanListenerManager=bus.getExtension(FactoryBeanListenerManager.class);
+  if (factoryBeanListenerManager == null) {
+    factoryBeanListenerManager=new FactoryBeanListenerManager(bus);
+  }
+  factoryBeanListenerManager.addListener(new FactoryBeanListener(){
+    @Override public void handleEvent(    Event arg0,    AbstractServiceFactoryBean arg1,    Object... arg2){
+      if (arg0.equals(Event.SERVER_CREATED) && (arg2[0] instanceof Server)) {
+        Server server=(Server)arg2[0];
+        initialize(server,bus);
       }
     }
   }
+);
 }

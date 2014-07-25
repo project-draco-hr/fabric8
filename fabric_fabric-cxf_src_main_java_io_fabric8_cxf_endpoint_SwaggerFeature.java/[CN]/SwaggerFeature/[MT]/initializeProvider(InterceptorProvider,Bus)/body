@@ -1,14 +1,30 @@
 {
-  if (provider instanceof Endpoint) {
-    EndpointImpl endpointImpl=(EndpointImpl)provider;
-    List<Feature> features=endpointImpl.getActiveFeatures();
-    if (features == null) {
-      features=new ArrayList<Feature>();
-      features.add(this);
-      endpointImpl.initializeActiveFeatures(features);
+  if (!(provider instanceof Endpoint)) {
+    FactoryBeanListenerManager factoryBeanListenerManager=bus.getExtension(FactoryBeanListenerManager.class);
+    if (factoryBeanListenerManager == null) {
+      factoryBeanListenerManager=new FactoryBeanListenerManager(bus);
     }
+    factoryBeanListenerManager.addListener(new FactoryBeanListener(){
+      @Override public void handleEvent(      Event arg0,      AbstractServiceFactoryBean arg1,      Object... arg2){
+        if (arg0.equals(Event.SERVER_CREATED) && (arg2[0] instanceof Server)) {
+          Server server=(Server)arg2[0];
+          if (server.getEndpoint().getEndpointInfo().getBinding().getBindingId().equals("http://apache.org/cxf/binding/jaxrs")) {
+            initialize(server,bus);
+          }
+        }
+      }
+    }
+);
+    return;
+  }
+  EndpointImpl endpointImpl=(EndpointImpl)provider;
+  List<Feature> features=endpointImpl.getActiveFeatures();
+  if (features == null) {
+    features=new ArrayList<Feature>();
+    features.add(this);
+    endpointImpl.initializeActiveFeatures(features);
+  }
  else {
-      features.add(this);
-    }
+    features.add(this);
   }
 }
