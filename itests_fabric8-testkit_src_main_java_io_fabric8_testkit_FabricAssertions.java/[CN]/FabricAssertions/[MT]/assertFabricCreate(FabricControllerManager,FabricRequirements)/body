@@ -1,13 +1,6 @@
 {
   assertNotNull("FabricRequirements",requirements);
   FabricController restAPI=assertFabricCreate(factory);
-  try {
-    restAPI.setRequirements(requirements);
-  }
- catch (  Exception e) {
-    LOG.error("Failed to set requirements: " + e,e);
-    fail(unwrapException(e));
-  }
   assertRequirementsSatisfied(restAPI,requirements);
   return restAPI;
 }

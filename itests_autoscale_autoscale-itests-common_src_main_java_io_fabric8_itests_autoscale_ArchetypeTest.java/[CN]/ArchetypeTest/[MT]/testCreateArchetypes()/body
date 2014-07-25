@@ -11,12 +11,12 @@
   }
   FabricRequirements requirements=new FabricRequirements();
   requirements.profile("mq-default").minimumInstances(1);
-  FabricAssertions.assertSetRequirementsAndTheyAreSatisfied(fabricController,requirements);
+  FabricAssertions.assertRequirementsSatisfied(fabricController,requirements);
   for (  ArchetypeInfo archetype : archetypes) {
     String profileId=archetypeToProfileMap.get(archetype);
     assertNotNull("Should have a profile ID for " + archetype,profileId);
     requirements.profile(profileId).minimumInstances(1);
-    FabricAssertions.assertSetRequirementsAndTheyAreSatisfied(fabricController,requirements);
+    FabricAssertions.assertRequirementsSatisfied(fabricController,requirements);
     requirements.profile(profileId).minimumInstances(0).maximumInstances(0);
   }
 }

@@ -1,8 +1,27 @@
 {
+  assertNotNull("FabricController",controller);
+  assertNotNull("FabricRequirements",requirements);
   assertNotNull("Should have some FabricRequirements",requirements);
   waitForValidValue(timeout,new Callable<Boolean>(){
+    boolean hasUpdatedRequirements=false;
     @Override public Boolean call() throws Exception {
-      boolean valid=true;
+      controller.setRequirements(requirements);
+      FabricRequirements actual=controller.getRequirements();
+      String actualVersion=actual.getVersion();
+      actual.setVersion(requirements.getVersion());
+      requirements.sortProfilesRequirements();
+      actual.sortProfilesRequirements();
+      boolean valid=RequirementsJson.equal(requirements,actual);
+      if (!valid) {
+        System.out.println("Expected: " + RequirementsJson.toJSON(requirements));
+        System.out.println("Actual:   " + RequirementsJson.toJSON(actual));
+        System.out.println();
+        return false;
+      }
+      if (!hasUpdatedRequirements) {
+        hasUpdatedRequirements=true;
+        System.out.println("Updated the requirements to: " + RequirementsJson.toJSON(requirements));
+      }
       List<ProfileRequirements> profileRequirements=requirements.getProfileRequirements();
       assertNotNull("Should have some profileRequirements",profileRequirements);
       String version=requirementOrDefaultVersion(controller,requirements);
