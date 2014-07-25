@@ -40,5 +40,12 @@
     Number number=asNumber(value);
     return number != null ? number.doubleValue() : null;
   }
+ else   if (value instanceof JSONObject) {
+    JSONObject jsonObject=(JSONObject)value;
+    if (!JSONObject.class.isAssignableFrom(clazz)) {
+      String json=jsonObject.toJSONString();
+      return RequirementsJson.getMapper().reader(clazz).readValue(json);
+    }
+  }
   return value;
 }
