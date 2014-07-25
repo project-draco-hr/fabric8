@@ -1,12 +1,12 @@
 {
   Map<String,String> agentConfig=getAgentConfiguration();
   for (  String key : new ArrayList<>(agentConfig.keySet())) {
-    if (key.startsWith(DataStore.ATTRIBUTE_PREFIX)) {
+    if (key.startsWith(Profile.ATTRIBUTE_PREFIX)) {
       agentConfig.remove(key);
     }
   }
   for (  Entry<String,String> entry : attributes.entrySet()) {
-    agentConfig.put(DataStore.ATTRIBUTE_PREFIX + entry.getKey(),entry.getValue());
+    agentConfig.put(Profile.ATTRIBUTE_PREFIX + entry.getKey(),entry.getValue());
   }
   return null;
 }

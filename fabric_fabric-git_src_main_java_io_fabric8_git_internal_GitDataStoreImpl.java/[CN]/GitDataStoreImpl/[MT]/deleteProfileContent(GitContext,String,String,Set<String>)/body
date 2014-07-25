@@ -1,0 +1,15 @@
+{
+  assertWriteLock();
+  GitOperation<Void> gitop=new GitOperation<Void>(){
+    public Void call(    Git git,    GitContext context) throws Exception {
+      File profileDirectory=GitHelpers.getProfileDirectory(git,profileId);
+      for (      String fileKey : removeFiles) {
+        File file=profileDirectory.toPath().resolve(fileKey).toFile();
+        doRecursiveDeleteAndRemove(git,file);
+      }
+      return null;
+    }
+  }
+;
+  executeInternal(context,null,gitop);
+}

@@ -76,10 +76,9 @@
     String profileId="fabric-ensemble-" + newClusterId;
     IllegalStateAssertion.assertFalse(profileRegistry.get().hasProfile(versionId,profileId),"Profile already exists: " + versionId + "/"+ profileId);
     ProfileBuilder ensembleProfileBuilder=ProfileBuilder.Factory.create(versionId,profileId);
+    ensembleProfileBuilder.addAttribute(Profile.ABSTRACT,"true").addAttribute(Profile.HIDDEN,"true");
     ensembleProfileBuilder.addFileConfiguration(ensemblePropertiesName,DataStoreUtils.toBytes(ensembleProperties));
     String ensembleProfileId=profileRegistry.get().createProfile(ensembleProfileBuilder.getProfile());
-    profileRegistry.get().setProfileAttribute(versionId,ensembleProfileId,"abstract","true");
-    profileRegistry.get().setProfileAttribute(versionId,ensembleProfileId,"hidden","true");
     int index=1;
     String connectionUrl="";
     String realConnectionUrl="";
@@ -112,10 +111,9 @@
       profileId="fabric-ensemble-" + newClusterId + "-"+ index;
       IllegalStateAssertion.assertFalse(profileRegistry.get().hasProfile(versionId,profileId),"Profile already exists: " + versionId + "/"+ profileId);
       ProfileBuilder memberProfileBuilder=ProfileBuilder.Factory.create(versionId,profileId);
+      memberProfileBuilder.addAttribute(Profile.HIDDEN,"true").addAttribute(Profile.PARENTS,ensembleProfileId);
       memberProfileBuilder.addFileConfiguration(memberPropertiesName,DataStoreUtils.toBytes(memberProperties));
-      String memberProfileId=profileRegistry.get().createProfile(memberProfileBuilder.getProfile());
-      profileRegistry.get().setProfileAttribute(versionId,memberProfileId,"hidden","true");
-      profileRegistry.get().setProfileAttribute(versionId,memberProfileId,"parents",ensembleProfileId);
+      profileRegistry.get().createProfile(memberProfileBuilder.getProfile());
       if (connectionUrl.length() > 0) {
         connectionUrl+=",";
         realConnectionUrl+=",";

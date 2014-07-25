@@ -1,12 +1,7 @@
 {
-  Map<String,byte[]> oldCfgs=doGetFileConfigurations(git,profile);
   for (  Map.Entry<String,byte[]> entry : configurations.entrySet()) {
     String file=entry.getKey();
-    oldCfgs.remove(file);
     byte[] newCfg=entry.getValue();
     doSetFileConfiguration(git,profile,file,newCfg);
-  }
-  for (  String pid : oldCfgs.keySet()) {
-    doRecursiveDeleteAndRemove(git,new File(profileDirectory,pid));
   }
 }

@@ -1,4 +1,5 @@
 {
+  assertValid();
   final File outputFile=new File(outputFileName);
   outputFile.getParentFile().mkdirs();
   final FileFilter filter;
@@ -21,7 +22,6 @@
  else {
     filter=null;
   }
-  assertValid();
   GitOperation<String> gitop=new GitOperation<String>(){
     public String call(    Git git,    GitContext context) throws Exception {
       checkoutVersion(git,versionId);

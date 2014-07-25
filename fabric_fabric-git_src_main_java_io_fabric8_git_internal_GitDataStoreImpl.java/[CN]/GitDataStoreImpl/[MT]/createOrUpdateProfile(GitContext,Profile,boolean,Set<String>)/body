@@ -13,6 +13,13 @@
     if (allowCreate) {
       createProfileDirectoryAfterCheckout(context,versionId,profileId);
     }
+ else {
+      Profile existingProfile=getProfileFromCache(versionId,profileId);
+      Set<String> removeFiles=new HashSet<>(existingProfile.getFileConfigurations().keySet());
+      removeFiles.removeAll(profile.getFileConfigurations().keySet());
+      removeFiles.remove(Constants.AGENT_PID + Profile.PROPERTIES_SUFFIX);
+      deleteProfileContent(context,versionId,profileId,removeFiles);
+    }
     Map<String,byte[]> fileConfigurations=profile.getFileConfigurations();
     if (!fileConfigurations.isEmpty()) {
       setFileConfigurationsInternal(context,versionId,profileId,fileConfigurations);

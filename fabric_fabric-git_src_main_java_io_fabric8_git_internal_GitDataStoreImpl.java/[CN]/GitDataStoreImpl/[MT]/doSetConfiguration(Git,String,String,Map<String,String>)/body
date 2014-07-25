@@ -1,21 +1,10 @@
 {
   File profileDirectory=GitHelpers.getProfileDirectory(git,profileId);
-  File file=new File(profileDirectory,pid + PROPERTIES_SUFFIX);
-  if (configuration == null) {
-    doRecursiveDeleteAndRemove(git,file);
+  File file=new File(profileDirectory,pid + Profile.PROPERTIES_SUFFIX);
+  Properties props=new Properties();
+  for (  Map.Entry<String,String> entry : configuration.entrySet()) {
+    props.setProperty(entry.getKey(),entry.getValue());
   }
- else {
-    profileDirectory.mkdirs();
-    Properties props=new Properties(file);
-    for (    Map.Entry<String,String> entry : configuration.entrySet()) {
-      props.setProperty(entry.getKey(),entry.getValue());
-    }
-    for (    String key : new ArrayList<String>(props.keySet())) {
-      if (!configuration.containsKey(key)) {
-        props.remove(key);
-      }
-    }
-    props.save(file);
-    doAddFiles(git,file);
-  }
+  props.save(file);
+  doAddFiles(git,file);
 }

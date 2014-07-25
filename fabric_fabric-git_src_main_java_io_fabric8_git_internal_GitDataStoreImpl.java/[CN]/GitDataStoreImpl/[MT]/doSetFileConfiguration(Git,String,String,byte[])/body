@@ -1,11 +1,6 @@
 {
   File profileDirectory=GitHelpers.getProfileDirectory(git,profileId);
   File file=new File(profileDirectory,fileName);
-  if (configuration == null) {
-    doRecursiveDeleteAndRemove(git,file);
-  }
- else {
-    Files.writeToFile(file,configuration);
-    doAddFiles(git,file);
-  }
+  Files.writeToFile(file,configuration);
+  doAddFiles(git,file);
 }
