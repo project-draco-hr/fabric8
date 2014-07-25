@@ -3,7 +3,7 @@
   GitOperation<Void> gitop=new GitOperation<Void>(){
     public Void call(    Git git,    GitContext context) throws Exception {
       checkoutVersion(git,GitProfiles.getBranch(version,profile));
-      File profileDirectory=getProfileDirectory(git,profile);
+      File profileDirectory=GitHelpers.getProfileDirectory(git,profile);
       doSetConfigurations(git,profileDirectory,profile,configurations);
       context.commitMessage("Updated configuration for profile " + profile);
       return null;

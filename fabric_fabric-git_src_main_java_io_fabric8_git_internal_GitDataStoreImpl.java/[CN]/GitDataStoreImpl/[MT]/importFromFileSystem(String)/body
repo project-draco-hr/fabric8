@@ -18,7 +18,7 @@
             if (versionFiles != null) {
               for (              File versionFile : versionFiles) {
                 LOGGER.info("Importing version configuration " + versionFile + " to branch "+ version);
-                importFromFileSystem(versionFile,CONFIG_ROOT_DIR,version,true);
+                importFromFileSystem(versionFile,GitHelpers.CONFIG_ROOT_DIR,version,true);
               }
             }
           }
@@ -28,7 +28,7 @@
     File metrics=new File(fabricsDir,"metrics");
     if (metrics.exists()) {
       LOGGER.info("Importing metrics from " + metrics + " to branch "+ defaultVersion);
-      importFromFileSystem(metrics,CONFIG_ROOT_DIR,defaultVersion,false);
+      importFromFileSystem(metrics,GitHelpers.CONFIG_ROOT_DIR,defaultVersion,false);
     }
   }
  else {

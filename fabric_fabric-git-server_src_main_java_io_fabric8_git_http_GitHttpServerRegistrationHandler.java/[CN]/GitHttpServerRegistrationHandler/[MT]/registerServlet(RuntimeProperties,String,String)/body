@@ -7,7 +7,7 @@
     HttpContext secure=new GitSecureHttpContext(base,curator.get(),realm,role);
     File fabricRoot=fabricRepoPath.toFile();
     if (!fabricRoot.exists()) {
-      Git localGit=gitService.get().get();
+      Git localGit=gitService.get().getGit();
       Git.cloneRepository().setTimeout(10).setBare(true).setNoCheckout(true).setCloneAllBranches(true).setDirectory(fabricRoot).setURI(localGit.getRepository().getDirectory().toURI().toString()).call().getRepository().close();
     }
     Dictionary<String,Object> initParams=new Hashtable<String,Object>();

@@ -10,7 +10,7 @@
     for (    File profileDir : profiles) {
       if (isProfileDirectory(profileDir)) {
         String profileId=profileDir.getName();
-        String toProfileDirName=convertProfileIdToDirectory(profileId);
+        String toProfileDirName=GitHelpers.convertProfileIdToDirectory(profileId);
         File toProfileDir=new File(toFile,toProfileDirName);
         toProfileDir.mkdirs();
         recursiveCopyAndAdd(git,profileDir,toProfileDir,pattern,true);

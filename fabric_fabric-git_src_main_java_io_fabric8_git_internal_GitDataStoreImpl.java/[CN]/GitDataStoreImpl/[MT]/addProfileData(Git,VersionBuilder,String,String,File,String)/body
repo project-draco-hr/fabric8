@@ -19,8 +19,8 @@
   Ref versionRef=git.getRepository().getRefDatabase().getRef(branch);
   IllegalStateAssertion.assertNotNull(versionRef,"Cannot get version ref for: " + branch);
   String revision=versionRef.getObjectId().getName();
-  String path=convertProfileIdToDirectory(profileId);
-  RevCommit commit=CommitUtils.getLastCommit(git.getRepository(),revision,CONFIGS_PROFILES + File.separator + path);
+  String path=GitHelpers.convertProfileIdToDirectory(profileId);
+  RevCommit commit=CommitUtils.getLastCommit(git.getRepository(),revision,GitHelpers.CONFIGS_PROFILES + File.separator + path);
   String lastModified=commit != null ? commit.getId().abbreviate(GIT_COMMIT_SHORT_LENGTH).name() : "";
   Map<String,byte[]> fileConfigurations=doGetFileConfigurations(git,profileId);
   Map<String,Map<String,String>> configurations=new HashMap<String,Map<String,String>>();

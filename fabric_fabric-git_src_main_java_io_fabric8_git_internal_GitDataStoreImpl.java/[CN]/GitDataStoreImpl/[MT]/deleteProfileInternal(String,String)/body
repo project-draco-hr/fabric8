@@ -3,7 +3,7 @@
   GitOperation<Void> gitop=new GitOperation<Void>(){
     public Void call(    Git git,    GitContext context) throws Exception {
       checkoutVersion(git,GitProfiles.getBranch(versionId,profileId));
-      File profileDirectory=getProfileDirectory(git,profileId);
+      File profileDirectory=GitHelpers.getProfileDirectory(git,profileId);
       doRecursiveDeleteAndRemove(git,profileDirectory);
       context.commitMessage("Removed profile " + profileId);
       return null;
