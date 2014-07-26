@@ -1,4 +1,10 @@
 {
-  assertValid();
-  return executeInternal(context.setRequirePull(pullFirst),personIdent,operation);
+  LockHandle writeLock=aquireWriteLock();
+  try {
+    assertValid();
+    return executeInternal(context.setRequirePull(pullFirst),personIdent,operation);
+  }
+  finally {
+    writeLock.unlock();
+  }
 }
