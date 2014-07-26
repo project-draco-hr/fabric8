@@ -1,13 +1,21 @@
 {
   assertWriteLock();
-  GitOperation<Void> gitop=new GitOperation<Void>(){
-    public Void call(    Git git,    GitContext context) throws Exception {
-      File profileDirectory=GitHelpers.getProfileDirectory(git,profile);
-      doSetFileConfigurations(git,profileDirectory,profile,configurations);
-      context.commitMessage("Updated configuration for profile " + profile);
-      return null;
-    }
+  Profile existingProfile=getProfileFromCache(versionId,profileId);
+  if (existingProfile != null) {
+    Set<String> removeFiles=new HashSet<>(existingProfile.getFileConfigurations().keySet());
+    removeFiles.removeAll(fileConfigurations.keySet());
+    context.commitMessage("Remove configurations " + removeFiles + " for profile: "+ profileId);
+    deleteProfileContent(context,profileId,removeFiles,null);
   }
+  if (!fileConfigurations.isEmpty()) {
+    GitOperation<Void> gitop=new GitOperation<Void>(){
+      public Void call(      Git git,      GitContext context) throws Exception {
+        doSetFileConfigurations(git,profileId,fileConfigurations);
+        context.commitMessage("Update configurations for profile: " + profileId);
+        return null;
+      }
+    }
 ;
-  executeInternal(context,null,gitop);
+    executeInternal(context,null,gitop);
+  }
 }

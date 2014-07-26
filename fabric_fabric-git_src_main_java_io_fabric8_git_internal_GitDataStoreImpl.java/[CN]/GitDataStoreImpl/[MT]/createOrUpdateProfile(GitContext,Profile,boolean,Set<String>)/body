@@ -13,21 +13,8 @@
     if (allowCreate) {
       createProfileDirectoryAfterCheckout(context,versionId,profileId);
     }
- else {
-      Profile existingProfile=getProfileFromCache(versionId,profileId);
-      Set<String> removeFiles=new HashSet<>(existingProfile.getFileConfigurations().keySet());
-      removeFiles.removeAll(profile.getFileConfigurations().keySet());
-      removeFiles.remove(Constants.AGENT_PID + Profile.PROPERTIES_SUFFIX);
-      deleteProfileContent(context,versionId,profileId,removeFiles);
-    }
     Map<String,byte[]> fileConfigurations=profile.getFileConfigurations();
-    if (!fileConfigurations.isEmpty()) {
-      setFileConfigurationsInternal(context,versionId,profileId,fileConfigurations);
-    }
-    Map<String,Map<String,String>> configurations=profile.getConfigurations();
-    if (!configurations.isEmpty()) {
-      setConfigurationsInternal(context,versionId,profileId,configurations);
-    }
+    setFileConfigurationsInternal(context,versionId,profileId,fileConfigurations);
     if (context.getCommitMessage().length() == 0) {
       context.commitMessage("WARNING - Profile with no content: " + versionId + "/"+ profileId);
     }

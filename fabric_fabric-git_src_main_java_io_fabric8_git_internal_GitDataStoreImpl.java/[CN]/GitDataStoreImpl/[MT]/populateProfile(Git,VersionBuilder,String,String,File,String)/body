@@ -23,14 +23,7 @@
   RevCommit commit=CommitUtils.getLastCommit(git.getRepository(),revision,GitHelpers.CONFIGS_PROFILES + File.separator + path);
   String lastModified=commit != null ? commit.getId().abbreviate(GIT_COMMIT_SHORT_LENGTH).name() : "";
   Map<String,byte[]> fileConfigurations=doGetFileConfigurations(git,profileId);
-  Map<String,Map<String,String>> configurations=new HashMap<String,Map<String,String>>();
-  for (  Map.Entry<String,byte[]> entry : fileConfigurations.entrySet()) {
-    if (entry.getKey().endsWith(".properties")) {
-      String pid=DataStoreUtils.stripSuffix(entry.getKey(),".properties");
-      configurations.put(pid,DataStoreUtils.toMap(DataStoreUtils.toProperties(entry.getValue())));
-    }
-  }
   ProfileBuilder profileBuilder=ProfileBuilder.Factory.create(versionId,profileId);
-  profileBuilder.setFileConfigurations(fileConfigurations).setConfigurations(configurations).setLastModified(lastModified);
+  profileBuilder.setFileConfigurations(fileConfigurations).setLastModified(lastModified);
   versionBuilder.addProfile(profileBuilder.getProfile());
 }

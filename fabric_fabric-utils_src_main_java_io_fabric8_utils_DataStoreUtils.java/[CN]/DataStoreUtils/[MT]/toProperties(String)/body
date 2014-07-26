@@ -1,5 +1,10 @@
 {
   Properties rc=new Properties();
-  rc.load(new StringReader(source));
+  try {
+    rc.load(new StringReader(source));
+  }
+ catch (  IOException ex) {
+    throw new IllegalArgumentException("Cannot load properties from: " + source,ex);
+  }
   return rc;
 }

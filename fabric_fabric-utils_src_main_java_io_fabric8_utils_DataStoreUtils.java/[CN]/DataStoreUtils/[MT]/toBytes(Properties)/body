@@ -1,5 +1,10 @@
 {
   ByteArrayOutputStream baos=new ByteArrayOutputStream();
-  source.store(baos,null);
+  try {
+    source.store(baos,null);
+  }
+ catch (  IOException ex) {
+    throw new IllegalArgumentException("Cannot store properties",ex);
+  }
   return baos.toByteArray();
 }

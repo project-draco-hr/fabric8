@@ -1,5 +1,10 @@
 {
   StringWriter writer=new StringWriter();
-  source.store(writer,null);
+  try {
+    source.store(writer,null);
+  }
+ catch (  IOException ex) {
+    throw new IllegalArgumentException("Cannot store properties",ex);
+  }
   return writer.toString();
 }

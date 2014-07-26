@@ -1,3 +1,10 @@
 {
-  return configMapping.keySet();
+  Set<String> result=new HashSet<>();
+  for (  String fileKey : fileMapping.keySet()) {
+    if (fileKey.endsWith(Profile.PROPERTIES_SUFFIX)) {
+      String configKey=fileKey.substring(0,fileKey.indexOf(Profile.PROPERTIES_SUFFIX));
+      result.add(configKey);
+    }
+  }
+  return Collections.unmodifiableSet(result);
 }

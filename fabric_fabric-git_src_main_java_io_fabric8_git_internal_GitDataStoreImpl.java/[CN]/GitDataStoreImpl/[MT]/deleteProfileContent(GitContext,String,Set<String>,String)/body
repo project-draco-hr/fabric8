@@ -4,6 +4,9 @@
     public Void call(    Git git,    GitContext context) throws Exception {
       File profileDirectory=GitHelpers.getProfileDirectory(git,profileId);
       for (      String fileKey : removeFiles) {
+        if (fileSuffix != null) {
+          fileKey+=fileSuffix;
+        }
         File file=profileDirectory.toPath().resolve(fileKey).toFile();
         doRecursiveDeleteAndRemove(git,file);
       }

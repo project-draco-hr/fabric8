@@ -1,11 +1,9 @@
 {
-  for (  String pid : new HashSet<>(configMapping.keySet())) {
+  for (  String pid : getConfigurationKeys()) {
     deleteConfiguration(pid);
   }
   for (  Entry<String,Map<String,String>> entry : configs.entrySet()) {
-    String pid=entry.getKey();
-    Map<String,String> config=entry.getValue();
-    configMapping.put(pid,new HashMap<String,String>(config));
+    addConfiguration(entry.getKey(),new HashMap<>(entry.getValue()));
   }
   return this;
 }

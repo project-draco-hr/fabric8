@@ -1,7 +1,12 @@
 {
   Properties rc=new Properties();
   if (source != null) {
-    rc.load(new ByteArrayInputStream(source));
+    try {
+      rc.load(new ByteArrayInputStream(source));
+    }
+ catch (    IOException ex) {
+      throw new IllegalArgumentException("Cannot load properties",ex);
+    }
   }
   return rc;
 }

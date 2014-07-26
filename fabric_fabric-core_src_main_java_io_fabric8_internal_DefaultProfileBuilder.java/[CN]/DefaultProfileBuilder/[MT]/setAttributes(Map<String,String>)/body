@@ -1,5 +1,5 @@
 {
-  Map<String,String> agentConfig=getAgentConfiguration();
+  Map<String,String> agentConfig=getMutableAgentConfiguration();
   for (  String key : new ArrayList<>(agentConfig.keySet())) {
     if (key.startsWith(Profile.ATTRIBUTE_PREFIX)) {
       agentConfig.remove(key);
@@ -8,5 +8,6 @@
   for (  Entry<String,String> entry : attributes.entrySet()) {
     agentConfig.put(Profile.ATTRIBUTE_PREFIX + entry.getKey(),entry.getValue());
   }
+  addConfiguration(Constants.AGENT_PID,agentConfig);
   return null;
 }

@@ -3,11 +3,19 @@
   this.versionId=versionId;
   this.lastModified=lastModified;
   this.isOverlay=isOverlay;
-  this.fileConfigurations.putAll(fileConfigurations);
   for (  Profile parent : parents) {
     this.parents.put(parent.getId(),parent);
   }
-  Map<String,String> agentConfig=configs.get(Constants.AGENT_PID);
+  for (  Entry<String,byte[]> entry : fileConfigs.entrySet()) {
+    String fileKey=entry.getKey();
+    byte[] bytes=entry.getValue();
+    fileConfigurations.put(fileKey,bytes);
+    if (fileKey.endsWith(Profile.PROPERTIES_SUFFIX)) {
+      String pid=fileKey.substring(0,fileKey.indexOf(Profile.PROPERTIES_SUFFIX));
+      configurations.put(pid,Collections.unmodifiableMap(DataStoreUtils.toMap(bytes)));
+    }
+  }
+  Map<String,String> agentConfig=configurations.get(Constants.AGENT_PID);
   if (agentConfig != null) {
     int prefixLength=Profile.ATTRIBUTE_PREFIX.length();
     for (    Entry<String,String> entry : agentConfig.entrySet()) {
@@ -16,10 +24,5 @@
         attributes.put(key.substring(prefixLength),entry.getValue());
       }
     }
-  }
-  for (  Entry<String,Map<String,String>> entry : configs.entrySet()) {
-    String pid=entry.getKey();
-    Map<String,String> value=new HashMap<>(entry.getValue());
-    configurations.put(pid,Collections.unmodifiableMap(value));
   }
 }

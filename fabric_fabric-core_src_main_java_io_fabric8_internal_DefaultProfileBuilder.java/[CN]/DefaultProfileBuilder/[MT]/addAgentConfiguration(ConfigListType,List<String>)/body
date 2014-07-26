@@ -1,6 +1,6 @@
 {
   String prefix=type + ".";
-  Map<String,String> agentConfig=getAgentConfiguration();
+  Map<String,String> agentConfig=getMutableAgentConfiguration();
   for (  String key : new ArrayList<>(agentConfig.keySet())) {
     if (key.startsWith(prefix)) {
       agentConfig.remove(key);
@@ -9,4 +9,5 @@
   for (  String value : values) {
     agentConfig.put(prefix + value,value);
   }
+  addConfiguration(Constants.AGENT_PID,agentConfig);
 }
