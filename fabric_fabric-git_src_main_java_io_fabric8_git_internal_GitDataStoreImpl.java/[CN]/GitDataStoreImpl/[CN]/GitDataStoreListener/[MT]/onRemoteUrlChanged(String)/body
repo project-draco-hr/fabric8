@@ -3,26 +3,8 @@
   if (isValid()) {
     threadPool.submit(new Runnable(){
       @Override public void run(){
-        if (isValid()) {
-          GitOperation<Void> gitop=new GitOperation<Void>(){
-            @Override public Void call(            Git git,            GitContext context) throws Exception {
-              Repository repository=git.getRepository();
-              StoredConfig config=repository.getConfig();
-              String currentUrl=config.getString("remote","origin","url");
-              if (actualUrl != null && !actualUrl.equals(currentUrl)) {
-                LOGGER.info("Performing on remote url changed from: {} to: {}",currentUrl,actualUrl);
-                remoteUrl=actualUrl;
-                config.setString("remote","origin","url",actualUrl);
-                config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
-                config.save();
-                doPull(git,getCredentialsProvider(),false);
-                doPush(git,context);
-              }
-              return null;
-            }
-          }
-;
-          executeRead(gitop,true);
+        if (isValid() && actualUrl != null) {
+          runRemoteUrlChanged(actualUrl);
         }
       }
       @Override public String toString(){

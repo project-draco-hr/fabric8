@@ -1,17 +1,15 @@
 {
-  if (isValid()) {
-    try {
-      GitOperation<Object> gitop=new GitOperation<Object>(){
-        public Object call(        Git git,        GitContext context) throws Exception {
-          context.requirePush();
-          return null;
-        }
+  try {
+    GitOperation<Object> gitop=new GitOperation<Object>(){
+      public Object call(      Git git,      GitContext context) throws Exception {
+        context.requirePush();
+        return null;
       }
+    }
 ;
-      executeRead(gitop,false);
-    }
- catch (    Exception e) {
-      LOGGER.warn("Failed to perform a pull " + e,e);
-    }
+    executeRead(gitop);
+  }
+ catch (  Exception e) {
+    LOGGER.warn("Failed to perform a pull " + e,e);
   }
 }

@@ -1,0 +1,33 @@
+{
+  IllegalArgumentAssertion.assertNotNull(updateUrl,"updateUrl");
+  LockHandle writeLock=aquireWriteLock();
+  try {
+    if (!isValid()) {
+      LOGGER.warn("Remote URL change on invalid component: " + updateUrl);
+      return;
+    }
+    GitOperation<Void> gitop=new GitOperation<Void>(){
+      @Override public Void call(      Git git,      GitContext context) throws Exception {
+        Repository repository=git.getRepository();
+        StoredConfig config=repository.getConfig();
+        String currentUrl=config.getString("remote","origin","url");
+        if (updateUrl != null && !updateUrl.equals(currentUrl)) {
+          LOGGER.info("Performing on remote url changed from: {} to: {}",currentUrl,updateUrl);
+          remoteUrl=updateUrl;
+          config.setString("remote","origin","url",updateUrl);
+          config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
+          config.save();
+          doPullInternal(git,context,getCredentialsProvider(),false);
+          doPushInternal(git,context,getCredentialsProvider());
+        }
+        return null;
+      }
+    }
+;
+    GitContext context=new GitContext().requirePull();
+    executeInternal(context,null,gitop);
+  }
+  finally {
+    writeLock.unlock();
+  }
+}

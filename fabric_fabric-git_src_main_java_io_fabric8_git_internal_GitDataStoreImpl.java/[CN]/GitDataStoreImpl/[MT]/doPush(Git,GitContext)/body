@@ -1,4 +1,10 @@
 {
-  assertValid();
-  return doPush(git,context,getCredentialsProvider());
+  LockHandle readLock=aquireReadLock();
+  try {
+    assertValid();
+    return doPushInternal(git,context,getCredentialsProvider());
+  }
+  finally {
+    readLock.unlock();
+  }
 }

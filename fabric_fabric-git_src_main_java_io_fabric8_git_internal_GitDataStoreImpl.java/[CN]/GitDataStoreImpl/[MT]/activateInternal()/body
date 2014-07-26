@@ -12,13 +12,15 @@
   ProxySelector.setDefault(fabricProxySelector);
   LOGGER.info("Setting up FabricProxySelector: {}",fabricProxySelector);
   if (configuredUrl != null) {
-    gitListener.onRemoteUrlChanged(configuredUrl);
+    gitListener.runRemoteUrlChanged(configuredUrl);
     remoteUrl=configuredUrl;
   }
  else {
     gitService.get().addGitListener(gitListener);
     remoteUrl=gitService.get().getRemoteUrl();
-    gitListener.onRemoteUrlChanged(remoteUrl);
+    if (remoteUrl != null) {
+      gitListener.runRemoteUrlChanged(remoteUrl);
+    }
   }
   LockHandle writeLock=aquireWriteLock();
   try {

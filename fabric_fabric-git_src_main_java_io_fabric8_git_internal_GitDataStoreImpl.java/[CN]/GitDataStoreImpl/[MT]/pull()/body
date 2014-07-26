@@ -1,16 +1,16 @@
 {
-  if (isValid()) {
-    try {
-      GitOperation<Object> gitop=new GitOperation<Object>(){
-        public Object call(        Git git,        GitContext context) throws Exception {
-          return null;
-        }
+  try {
+    GitOperation<Boolean> gitop=new GitOperation<Boolean>(){
+      public Boolean call(      Git git,      GitContext context) throws Exception {
+        return true;
       }
+    }
 ;
-      executeRead(gitop,true);
-    }
- catch (    Exception e) {
-      LOGGER.warn("Failed to perform a pull " + e,e);
-    }
+    GitContext context=new GitContext().requirePull();
+    return executeInternal(context,null,gitop);
+  }
+ catch (  Exception e) {
+    LOGGER.warn("Failed to perform a pull " + e,e);
+    return false;
   }
 }
