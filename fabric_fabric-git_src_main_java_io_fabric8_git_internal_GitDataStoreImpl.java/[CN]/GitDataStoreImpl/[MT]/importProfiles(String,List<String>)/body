@@ -1,11 +1,17 @@
 {
-  assertValid();
-  GitOperation<String> gitop=new GitOperation<String>(){
-    public String call(    Git git,    GitContext context) throws Exception {
-      checkoutVersion(git,versionId);
-      return doImportProfiles(git,context,profileZipUrls);
+  LockHandle writeLock=aquireWriteLock();
+  try {
+    assertValid();
+    GitOperation<String> gitop=new GitOperation<String>(){
+      public String call(      Git git,      GitContext context) throws Exception {
+        checkoutVersion(git,versionId);
+        return doImportProfiles(git,context,profileZipUrls);
+      }
     }
-  }
 ;
-  executeWrite(gitop,true);
+    executeWrite(gitop,true);
+  }
+  finally {
+    writeLock.unlock();
+  }
 }

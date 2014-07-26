@@ -1,12 +1,6 @@
 {
-  LockHandle readLock=aquireReadLock();
-  try {
-    assertValid();
-    Version version=getVersionFromCache(versionId);
-    List<String> profiles=version != null ? version.getProfileIds() : Collections.<String>emptyList();
-    return Collections.unmodifiableList(profiles);
-  }
-  finally {
-    readLock.unlock();
-  }
+  assertValid();
+  Version version=getVersionFromCache(versionId);
+  List<String> profiles=version != null ? version.getProfileIds() : Collections.<String>emptyList();
+  return Collections.unmodifiableList(profiles);
 }

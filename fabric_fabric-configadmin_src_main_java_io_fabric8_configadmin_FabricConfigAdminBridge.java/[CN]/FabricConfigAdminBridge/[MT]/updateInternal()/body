@@ -1,7 +1,18 @@
 {
+  Container currentContainer=fabricService.get().getCurrentContainer();
+  String containerId=currentContainer.getId();
+  ProfileRegistry profileRegistry=fabricService.get().adapt(ProfileRegistry.class);
+  DataStore dataStore=fabricService.get().adapt(DataStore.class);
+  Version version=profileRegistry.getVersion(dataStore.getContainerVersion(containerId));
+  for (  String profileId : dataStore.getContainerProfiles(containerId)) {
+    if (!profileId.startsWith("fabric-ensemble-") && !version.hasProfile(profileId)) {
+      LOGGER.info("Profile Registry does not yet contain profile [" + profileId + "] - skipping configuration update");
+      return;
+    }
+  }
   Profile effectiveProfile;
   try {
-    Profile overlayProfile=fabricService.get().getCurrentContainer().getOverlayProfile();
+    Profile overlayProfile=currentContainer.getOverlayProfile();
     effectiveProfile=Profiles.getEffectiveProfile(fabricService.get(),overlayProfile);
   }
  catch (  Exception ex) {
