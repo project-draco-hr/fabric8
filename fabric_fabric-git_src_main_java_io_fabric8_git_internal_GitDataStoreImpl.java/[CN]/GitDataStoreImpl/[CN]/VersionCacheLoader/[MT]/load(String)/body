@@ -1,0 +1,11 @@
+{
+  assertWriteLock();
+  GitOperation<Version> gitop=new GitOperation<Version>(){
+    public Version call(    Git git,    GitContext context) throws Exception {
+      return loadVersion(git,versionId);
+    }
+  }
+;
+  GitContext context=new GitContext().requirePull();
+  return executeInternal(context,null,gitop);
+}

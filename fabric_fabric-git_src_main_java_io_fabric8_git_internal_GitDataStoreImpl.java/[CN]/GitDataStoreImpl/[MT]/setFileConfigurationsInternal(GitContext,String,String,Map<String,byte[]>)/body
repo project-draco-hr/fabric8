@@ -6,18 +6,11 @@
     removeFiles.removeAll(fileConfigurations.keySet());
     if (!removeFiles.isEmpty()) {
       context.commitMessage("Remove configurations " + removeFiles + " for profile: "+ profileId);
-      deleteProfileContent(context,profileId,removeFiles,null);
+      deleteProfileContent(profileId,removeFiles,null);
     }
   }
   if (!fileConfigurations.isEmpty()) {
-    GitOperation<Void> gitop=new GitOperation<Void>(){
-      public Void call(      Git git,      GitContext context) throws Exception {
-        doSetFileConfigurations(git,profileId,fileConfigurations);
-        context.commitMessage("Update configurations for profile: " + profileId);
-        return null;
-      }
-    }
-;
-    executeInternal(context,null,gitop);
+    setFileConfigurations(getGit(),profileId,fileConfigurations);
+    context.commitMessage("Update configurations for profile: " + profileId);
   }
 }

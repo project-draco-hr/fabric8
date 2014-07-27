@@ -15,13 +15,20 @@
     if (personIdent == null) {
       personIdent=new PersonIdent(repository);
     }
-    CredentialsProvider credentialsProvider=getCredentialsProvider();
+    boolean changeNotification=false;
     if (context.isRequirePull()) {
-      doPullInternal(git,context,credentialsProvider,false);
+      changeNotification=doPullInternal(git,context,getCredentialsProvider(),false);
     }
     T result=operation.call(git,context);
     if (context.isRequireCommit()) {
       doCommitInternal(git,context);
+      changeNotification=true;
+    }
+    if (context.isRequirePush()) {
+      doPushInternal(git,context,getCredentialsProvider());
+    }
+    if (changeNotification) {
+      fireChangeNotification();
     }
     return result;
   }

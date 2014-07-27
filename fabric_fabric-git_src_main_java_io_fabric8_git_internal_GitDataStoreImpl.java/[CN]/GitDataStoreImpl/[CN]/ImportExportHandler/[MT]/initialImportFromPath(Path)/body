@@ -1,7 +1,7 @@
 {
-  LOGGER.info("Importing additional profiles from file system directory: {}",path);
+  LOGGER.info("Importing additional profiles from file system directory: {}",fromPath);
   List<String> profiles=new ArrayList<String>();
-  String[] zips=path.toFile().list(new FilenameFilter(){
+  String[] zips=fromPath.toFile().list(new FilenameFilter(){
     @Override public boolean accept(    File dir,    String name){
       return name.endsWith(".zip");
     }
@@ -11,11 +11,11 @@
   LOGGER.info("Found {} .zip files to import",count);
   if (zips != null && zips.length > 0) {
     for (    String name : zips) {
-      profiles.add("file:" + path + "/"+ name);
+      profiles.add("file:" + fromPath + "/"+ name);
       LOGGER.debug("Adding {} .zip file to import",name);
     }
   }
-  String[] props=path.toFile().list(new FilenameFilter(){
+  String[] props=fromPath.toFile().list(new FilenameFilter(){
     @Override public boolean accept(    File dir,    String name){
       return name.endsWith(Profile.PROPERTIES_SUFFIX);
     }
@@ -27,7 +27,7 @@
     if (props != null && props.length > 0) {
       for (      String name : props) {
         java.util.Properties p=new java.util.Properties();
-        p.load(new FileInputStream(path.resolve(name).toFile()));
+        p.load(new FileInputStream(fromPath.resolve(name).toFile()));
         Enumeration<String> e=(Enumeration<String>)p.propertyNames();
         while (e.hasMoreElements()) {
           String key=e.nextElement();

@@ -25,8 +25,8 @@
   try {
     getInitialVersions();
     Path homePath=runtimeProperties.get().getHomePath();
-    Path dir=homePath.resolve(importDir);
-    importFromFilesystem(dir);
+    Path fromPath=homePath.resolve(importDir);
+    importExportHandler.initialImportFromPath(fromPath);
   }
   finally {
     writeLock.unlock();

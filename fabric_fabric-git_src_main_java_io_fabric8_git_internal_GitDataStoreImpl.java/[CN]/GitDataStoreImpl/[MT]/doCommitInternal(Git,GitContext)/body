@@ -10,11 +10,6 @@
       LOGGER.debug("Performing 'git gc' after {} commits",MAX_COMMITS_WITHOUT_GC);
       git.gc().call();
     }
-    versionCache.invalidateAll();
-    if (context.isRequirePush()) {
-      doPushInternal(git,context,getCredentialsProvider());
-    }
-    dataStore.get().fireChangeNotifications();
   }
  catch (  GitAPIException ex) {
     throw FabricException.launderThrowable(ex);

@@ -4,7 +4,7 @@
   IllegalStateAssertion.assertFalse(metadataFile.exists(),"Profile metadata file already exists: " + metadataFile);
   profileDirectory.mkdirs();
   Files.writeToFile(metadataFile,"#Profile:" + profileId + "\n",Charset.defaultCharset());
-  doAddFiles(git,profileDirectory,metadataFile);
+  addFiles(git,profileDirectory,metadataFile);
   context.commitMessage("Added profile " + profileId);
   return profileId;
 }

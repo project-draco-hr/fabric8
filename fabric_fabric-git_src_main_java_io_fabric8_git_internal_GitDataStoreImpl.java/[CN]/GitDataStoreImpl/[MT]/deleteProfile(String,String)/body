@@ -2,7 +2,17 @@
   LockHandle writeLock=aquireWriteLock();
   try {
     assertValid();
-    deleteProfileInternal(versionId,profileId);
+    GitOperation<Void> gitop=new GitOperation<Void>(){
+      public Void call(      Git git,      GitContext context) throws Exception {
+        checkoutVersion(git,GitProfiles.getBranch(versionId,profileId));
+        File profileDirectory=GitHelpers.getProfileDirectory(git,profileId);
+        recursiveDeleteAndRemove(git,profileDirectory);
+        context.commitMessage("Removed profile " + profileId);
+        return null;
+      }
+    }
+;
+    executeWrite(gitop,false);
   }
   finally {
     writeLock.unlock();

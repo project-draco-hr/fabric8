@@ -1,0 +1,10 @@
+{
+  File profileDirectory=GitHelpers.getProfileDirectory(getGit(),profileId);
+  for (  String fileKey : removeFiles) {
+    if (fileSuffix != null) {
+      fileKey+=fileSuffix;
+    }
+    File file=profileDirectory.toPath().resolve(fileKey).toFile();
+    recursiveDeleteAndRemove(getGit(),file);
+  }
+}

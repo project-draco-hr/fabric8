@@ -1,12 +1,3 @@
 {
-  assertReadLock();
-  GitOperation<String> gitop=new GitOperation<String>(){
-    public String call(    Git git,    GitContext context) throws Exception {
-      checkoutVersion(git,GitProfiles.getBranch(versionId,profileId));
-      return profileId;
-    }
-  }
-;
-  GitContext context=new GitContext().requirePull();
-  return executeInternal(context,null,gitop);
+  checkoutVersion(getGit(),GitProfiles.getBranch(versionId,profileId));
 }

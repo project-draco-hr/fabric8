@@ -2,11 +2,14 @@
   LockHandle writeLock=aquireWriteLock();
   try {
     assertValid();
-    GitContext context=new GitContext();
-    checkoutProfileBranch(profile.getVersion(),profile.getId());
-    String profileId=createOrUpdateProfile(context,profile,true,new HashSet<String>());
-    doCommitInternal(getGit(),context.requireCommit().requirePush());
-    return profileId;
+    GitOperation<String> gitop=new GitOperation<String>(){
+      public String call(      Git git,      GitContext context) throws Exception {
+        checkoutProfileBranch(profile.getVersion(),profile.getId());
+        return createOrUpdateProfile(context,profile,true,new HashSet<String>());
+      }
+    }
+;
+    return executeWrite(gitop,false);
   }
   finally {
     writeLock.unlock();

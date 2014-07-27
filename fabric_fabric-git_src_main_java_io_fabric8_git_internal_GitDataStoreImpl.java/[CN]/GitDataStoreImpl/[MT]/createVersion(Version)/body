@@ -2,17 +2,22 @@
   LockHandle writeLock=aquireWriteLock();
   try {
     assertValid();
-    String versionId=version.getId();
-    GitContext context=new GitContext();
-    createVersionInternal(context,versionId);
-    for (    Entry<String,String> entry : version.getAttributes().entrySet()) {
-      setVersionAttributeInternal(context,versionId,entry.getKey(),entry.getValue());
+    GitOperation<String> gitop=new GitOperation<String>(){
+      public String call(      Git git,      GitContext context) throws Exception {
+        context.commitMessage("Create version: " + version);
+        String versionId=version.getId();
+        createOrCheckoutVersion(git,version.getId());
+        for (        Entry<String,String> entry : version.getAttributes().entrySet()) {
+          setVersionAttributeInternal(context,versionId,entry.getKey(),entry.getValue());
+        }
+        for (        Profile profile : version.getProfiles()) {
+          createOrUpdateProfile(context,profile,true,new HashSet<String>());
+        }
+        return versionId;
+      }
     }
-    for (    Profile profile : version.getProfiles()) {
-      createOrUpdateProfile(context,profile,true,new HashSet<String>());
-    }
-    doCommitInternal(getGit(),context.requireCommit().requirePush());
-    return versionId;
+;
+    return executeWrite(gitop,false);
   }
   finally {
     writeLock.unlock();

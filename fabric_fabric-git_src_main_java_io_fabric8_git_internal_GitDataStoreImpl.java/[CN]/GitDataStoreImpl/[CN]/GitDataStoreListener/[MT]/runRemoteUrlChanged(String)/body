@@ -17,8 +17,10 @@
           config.setString("remote","origin","url",updateUrl);
           config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
           config.save();
-          doPullInternal(git,context,getCredentialsProvider(),false);
-          doPushInternal(git,context,getCredentialsProvider());
+          if (doPullInternal(git,context,getCredentialsProvider(),false)) {
+            fireChangeNotification();
+            doPushInternal(git,context,getCredentialsProvider());
+          }
         }
         return null;
       }

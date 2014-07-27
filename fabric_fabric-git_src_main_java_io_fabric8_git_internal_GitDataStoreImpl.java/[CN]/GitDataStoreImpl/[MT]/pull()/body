@@ -1,17 +1,11 @@
 {
   assertWriteLock();
-  try {
-    GitOperation<Boolean> gitop=new GitOperation<Boolean>(){
-      public Boolean call(      Git git,      GitContext context) throws Exception {
-        return true;
-      }
+  GitOperation<Boolean> gitop=new GitOperation<Boolean>(){
+    public Boolean call(    Git git,    GitContext context) throws Exception {
+      return true;
     }
+  }
 ;
-    GitContext context=new GitContext().requirePull();
-    return executeInternal(context,null,gitop);
-  }
- catch (  Exception e) {
-    LOGGER.warn("Failed to perform a pull " + e,e);
-    return false;
-  }
+  GitContext context=new GitContext().requirePull();
+  return executeInternal(context,null,gitop);
 }

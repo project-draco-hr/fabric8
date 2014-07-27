@@ -6,17 +6,13 @@
     StoredConfig config=repository.getConfig();
     String url=config.getString("remote",remoteRef.get(),"url");
     if (Strings.isNullOrBlank(url)) {
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.info("No remote repository defined for the git repository at " + GitHelpers.getRootGitDirectory(git) + " so not doing a pull");
-      }
-      return;
+      LOGGER.info("No remote repository defined for the git repository at {} so not doing a pull",GitHelpers.getRootGitDirectory(git));
+      return false;
     }
-    doResetHard(git);
-    boolean hasChanged=false;
+    LOGGER.info("Performing a fetch in git repository {} on remote URL: {}",GitHelpers.getRootGitDirectory(git),url);
+    git.reset().setMode(ResetType.HARD).call();
     try {
-      LOGGER.info("Performing a fetch in git repository {} on remote URL: {}",GitHelpers.getRootGitDirectory(git),url);
-      FetchResult result=git.fetch().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setRemote(remoteRef.get()).call();
-      LOGGER.info("Git fetch result: {}",result.getMessages());
+      git.fetch().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setRemote(remoteRef.get()).call();
       lastFetchWarning=null;
     }
  catch (    Exception ex) {
@@ -26,7 +22,7 @@
         LOGGER.info("Fetch failed - the error will be ignored",ex);
         lastFetchWarning=fetchWarning;
       }
-      return;
+      return false;
     }
     Map<String,Ref> localBranches=new HashMap<String,Ref>();
     Map<String,Ref> remoteBranches=new HashMap<String,Ref>();
@@ -43,6 +39,7 @@
         gitVersions.add(name);
       }
     }
+    boolean hasChanged=false;
     for (    String version : gitVersions) {
       if (remoteBranches.isEmpty()) {
       }
@@ -80,18 +77,20 @@
     }
     if (hasChanged) {
       LOGGER.info("Changed after pull!");
+      LOGGER.info("Called from ...",new RuntimeException());
       if (credentialsProvider != null) {
         GitHelpers.getProfilesDirectory(git);
       }
-      versionCache.invalidateAll();
-      dataStore.get().fireChangeNotifications();
+      return true;
     }
  else {
       LOGGER.info("No change after pull!");
+      return false;
     }
   }
  catch (  Throwable ex) {
     LOGGER.debug("Failed to pull from the remote git repo " + GitHelpers.getRootGitDirectory(git),ex);
     LOGGER.warn("Failed to pull from the remote git repo " + GitHelpers.getRootGitDirectory(git) + " due "+ ex.getMessage()+ ". This exception is ignored.");
+    return false;
   }
 }
