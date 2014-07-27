@@ -6,7 +6,7 @@
   CommandSupport.executeCommand("fabric:profile-edit --features fabric-dosgi test-profile 1.1");
   CommandSupport.executeCommand("fabric:profile-edit --pid io.fabric8.agent/org.ops4j.pax.url.mvn.repositories=http://repo1.maven.org/maven2@id=m2central default 1.1");
   CommandSupport.executeCommand("fabric:profile-edit --pid test-profile 1.1");
-  Set<Container> containers=ContainerBuilder.create().withName("cnt").withProfiles("test-profile").assertProvisioningResult().build();
+  Set<Container> containers=ContainerBuilder.create().withName("cntA").withProfiles("test-profile").assertProvisioningResult().build();
   try {
     for (    Container container : containers) {
       CommandSupport.executeCommand("fabric:container-upgrade 1.1 " + container.getId());
@@ -21,6 +21,6 @@
     }
   }
   finally {
-    ContainerBuilder.destroy(containers);
+    ContainerBuilder.stop(containers);
   }
 }
