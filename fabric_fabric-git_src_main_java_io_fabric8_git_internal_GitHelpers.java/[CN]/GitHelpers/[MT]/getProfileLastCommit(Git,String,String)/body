@@ -1,0 +1,13 @@
+{
+  RevCommit profileRef=null;
+  try {
+    Ref versionRef=git.getRepository().getRefDatabase().getRef(branch);
+    if (versionRef != null) {
+      String revision=versionRef.getObjectId().getName();
+      profileRef=CommitUtils.getLastCommit(git.getRepository(),revision,GitHelpers.CONFIGS_PROFILES + "/" + profilePath);
+    }
+  }
+ catch (  IOException ex) {
+  }
+  return profileRef;
+}

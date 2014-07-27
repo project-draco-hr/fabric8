@@ -6,12 +6,12 @@
       public Void call(      Git git,      GitContext context) throws Exception {
         removeVersionFromCaches(versionId);
         GitHelpers.removeBranch(git,versionId);
-        doPushInternal(git,context,getCredentialsProvider());
         return null;
       }
     }
 ;
-    executeWrite(gitop,true);
+    GitContext context=new GitContext();
+    executeInternal(context,null,gitop);
   }
   finally {
     writeLock.unlock();

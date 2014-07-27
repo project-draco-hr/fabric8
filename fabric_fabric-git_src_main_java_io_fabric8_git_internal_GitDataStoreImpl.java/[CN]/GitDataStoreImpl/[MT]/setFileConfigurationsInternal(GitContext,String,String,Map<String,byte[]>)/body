@@ -4,8 +4,10 @@
   if (existingProfile != null) {
     Set<String> removeFiles=new HashSet<>(existingProfile.getFileConfigurations().keySet());
     removeFiles.removeAll(fileConfigurations.keySet());
-    context.commitMessage("Remove configurations " + removeFiles + " for profile: "+ profileId);
-    deleteProfileContent(context,profileId,removeFiles,null);
+    if (!removeFiles.isEmpty()) {
+      context.commitMessage("Remove configurations " + removeFiles + " for profile: "+ profileId);
+      deleteProfileContent(context,profileId,removeFiles,null);
+    }
   }
   if (!fileConfigurations.isEmpty()) {
     GitOperation<Void> gitop=new GitOperation<Void>(){

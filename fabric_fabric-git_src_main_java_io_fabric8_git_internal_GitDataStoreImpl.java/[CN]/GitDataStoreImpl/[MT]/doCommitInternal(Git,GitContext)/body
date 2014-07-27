@@ -13,11 +13,9 @@
     if (context.isRequirePush()) {
       doPushInternal(git,context,getCredentialsProvider());
     }
+    dataStore.get().fireChangeNotifications();
   }
  catch (  GitAPIException ex) {
     throw FabricException.launderThrowable(ex);
-  }
- finally {
-    dataStore.get().fireChangeNotifications();
   }
 }

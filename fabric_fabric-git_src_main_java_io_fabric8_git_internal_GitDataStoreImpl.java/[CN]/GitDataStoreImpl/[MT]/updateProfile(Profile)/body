@@ -5,7 +5,7 @@
     GitContext context=new GitContext();
     checkoutProfileBranch(profile.getVersion(),profile.getId());
     String profileId=createOrUpdateProfile(context,profile,false,new HashSet<String>());
-    doCommit(getGit(),context.requireCommit().requirePush());
+    doCommitInternal(getGit(),context.requireCommit().requirePush());
     return profileId;
   }
   finally {

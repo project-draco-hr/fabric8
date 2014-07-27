@@ -1,9 +1,15 @@
 {
-  ClassLoader oldCl=Thread.currentThread().getContextClassLoader();
-  ClassLoader cl=GitDataStoreImpl.class.getClassLoader();
-  Thread.currentThread().setContextClassLoader(cl);
-  LOGGER.trace("Setting ThreadContextClassLoader to {} instead of {}",cl,oldCl);
+  if (context.isRequirePull() || context.isRequireCommit()) {
+    assertWriteLock();
+  }
+ else {
+    assertReadLock();
+  }
+  ClassLoader tccl=Thread.currentThread().getContextClassLoader();
   try {
+    ClassLoader gitcl=GitDataStoreImpl.class.getClassLoader();
+    Thread.currentThread().setContextClassLoader(gitcl);
+    LOGGER.trace("Setting ThreadContextClassLoader to {} instead of {}",gitcl,tccl);
     Git git=getGit();
     Repository repository=git.getRepository();
     if (personIdent == null) {
@@ -13,17 +19,17 @@
     if (context.isRequirePull()) {
       doPullInternal(git,context,credentialsProvider,false);
     }
-    T answer=operation.call(git,context);
+    T result=operation.call(git,context);
     if (context.isRequireCommit()) {
-      doCommit(git,context);
+      doCommitInternal(git,context);
     }
-    return answer;
+    return result;
   }
  catch (  Exception e) {
     throw FabricException.launderThrowable(e);
   }
  finally {
-    LOGGER.trace("Restoring ThreadContextClassLoader to {}",oldCl);
-    Thread.currentThread().setContextClassLoader(oldCl);
+    LOGGER.trace("Restoring ThreadContextClassLoader to {}",tccl);
+    Thread.currentThread().setContextClassLoader(tccl);
   }
 }

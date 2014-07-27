@@ -6,6 +6,7 @@
   if (!profileDirectory.exists()) {
     GitOperation<String> gitop=new GitOperation<String>(){
       public String call(      Git git,      GitContext context) throws Exception {
+        context.commitMessage("Create profile: " + profileId);
         return doCreateProfile(git,context,versionId,profileId);
       }
     }

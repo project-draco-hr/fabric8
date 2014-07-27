@@ -1,27 +1,22 @@
 {
-  String profileId=profileFile.getName();
-  if (Profiles.useDirectoriesForProfiles) {
-    if (profileId.endsWith(Profiles.PROFILE_FOLDER_SUFFIX)) {
-      profileId=prefix + profileId.substring(0,profileId.length() - Profiles.PROFILE_FOLDER_SUFFIX.length());
-    }
+  String profileName=profileFile.getName();
+  String profileId=profileName;
+  if (profileId.endsWith(Profiles.PROFILE_FOLDER_SUFFIX)) {
+    profileId=prefix + profileId.substring(0,profileId.length() - Profiles.PROFILE_FOLDER_SUFFIX.length());
+  }
  else {
-      File[] files=profileFile.listFiles();
-      if (files != null) {
-        for (        File childFile : files) {
-          if (childFile.isDirectory()) {
-            populateProfile(git,versionBuilder,branch,versionId,childFile,prefix + profileFile.getName() + "-");
-          }
+    File[] files=profileFile.listFiles();
+    if (files != null) {
+      for (      File childFile : files) {
+        if (childFile.isDirectory()) {
+          populateProfile(git,versionBuilder,branch,versionId,childFile,prefix + profileFile.getName() + "-");
         }
       }
-      return;
     }
+    return;
   }
-  Ref versionRef=git.getRepository().getRefDatabase().getRef(branch);
-  IllegalStateAssertion.assertNotNull(versionRef,"Cannot get version ref for: " + branch);
-  String revision=versionRef.getObjectId().getName();
-  String path=GitHelpers.convertProfileIdToDirectory(profileId);
-  RevCommit commit=CommitUtils.getLastCommit(git.getRepository(),revision,GitHelpers.CONFIGS_PROFILES + File.separator + path);
-  String lastModified=commit != null ? commit.getId().abbreviate(GIT_COMMIT_SHORT_LENGTH).name() : "";
+  RevCommit lastCommit=GitHelpers.getProfileLastCommit(git,branch,profileName);
+  String lastModified=lastCommit != null ? lastCommit.getId().abbreviate(GIT_COMMIT_SHORT_LENGTH).name() : "";
   Map<String,byte[]> fileConfigurations=doGetFileConfigurations(git,profileId);
   ProfileBuilder profileBuilder=ProfileBuilder.Factory.create(versionId,profileId);
   profileBuilder.setFileConfigurations(fileConfigurations).setLastModified(lastModified);
