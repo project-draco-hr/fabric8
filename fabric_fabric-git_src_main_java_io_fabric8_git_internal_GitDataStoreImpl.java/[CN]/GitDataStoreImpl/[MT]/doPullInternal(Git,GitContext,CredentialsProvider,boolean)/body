@@ -7,23 +7,23 @@
     String url=config.getString("remote",remoteRef.get(),"url");
     if (Strings.isNullOrBlank(url)) {
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("No remote repository defined for the git repository at " + GitHelpers.getRootGitDirectory(git) + " so not doing a pull");
+        LOGGER.info("No remote repository defined for the git repository at " + GitHelpers.getRootGitDirectory(git) + " so not doing a pull");
       }
       return;
     }
     doResetHard(git);
     boolean hasChanged=false;
     try {
-      LOGGER.debug("Performing a fetch in git repository {} on remote URL: {}",GitHelpers.getRootGitDirectory(git),url);
+      LOGGER.info("Performing a fetch in git repository {} on remote URL: {}",GitHelpers.getRootGitDirectory(git),url);
       FetchResult result=git.fetch().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setRemote(remoteRef.get()).call();
-      LOGGER.debug("Git fetch result: {}",result.getMessages());
+      LOGGER.info("Git fetch result: {}",result.getMessages());
       lastFetchWarning=null;
     }
  catch (    Exception ex) {
       String fetchWarning=ex.getMessage();
       if (!fetchWarning.equals(lastFetchWarning)) {
         LOGGER.warn("Fetch failed because of: " + fetchWarning);
-        LOGGER.debug("Fetch failed - the error will be ignored",ex);
+        LOGGER.info("Fetch failed - the error will be ignored",ex);
         lastFetchWarning=fetchWarning;
       }
       return;
@@ -79,11 +79,15 @@
       }
     }
     if (hasChanged) {
-      LOGGER.debug("Changed after pull!");
+      LOGGER.info("Changed after pull!");
       if (credentialsProvider != null) {
         GitHelpers.getProfilesDirectory(git);
       }
+      versionCache.invalidateAll();
       dataStore.get().fireChangeNotifications();
+    }
+ else {
+      LOGGER.info("No change after pull!");
     }
   }
  catch (  Throwable ex) {

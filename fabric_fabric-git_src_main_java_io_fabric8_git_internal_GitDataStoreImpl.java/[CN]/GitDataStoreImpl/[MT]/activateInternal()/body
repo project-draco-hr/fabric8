@@ -39,7 +39,7 @@
         if (!initialPull.compareAndSet(false,true)) {
           LOGGER.trace("Performing initial pull");
           initialPull.set(pull());
-          LOGGER.debug("Initial completed with " + (initialPull.get() ? "success" : "failure"));
+          LOGGER.info("Initial pull completed with " + (initialPull.get() ? "success" : "failure"));
         }
         if (gitPullOnPush) {
           LOGGER.trace("Performing timed pull");
@@ -69,7 +69,7 @@
     counter.addListener(new SharedCountListener(){
       @Override public void countHasChanged(      SharedCountReader sharedCountReader,      int value) throws Exception {
         Thread.sleep(1000);
-        LOGGER.debug("Watch counter updated to " + value + ", doing a pull");
+        LOGGER.info("Watch counter updated to " + value + ", doing a pull");
         LockHandle writeLock=aquireWriteLock();
         try {
           pull();
