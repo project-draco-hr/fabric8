@@ -8,8 +8,14 @@
     ProfileBuilder builder=ProfileBuilder.Factory.create(profile.getVersion(),profile.getId());
     builder.addOptions(new OverlayOptionsProvider(profile,environment));
     overlayProfile=builder.getProfile();
-    LOGGER.info("Overlay" + overlayProfile.toLongString());
-    LOGGER.info("Called from ",new RuntimeException());
+synchronized (this) {
+      String longString=overlayProfile.toLongString();
+      if (!longString.equals(lastOverlayProfile)) {
+        LOGGER.info("Changed Overlay" + longString);
+        LOGGER.info("Called from ",new RuntimeException());
+        lastOverlayProfile=longString;
+      }
+    }
   }
   return overlayProfile;
 }
