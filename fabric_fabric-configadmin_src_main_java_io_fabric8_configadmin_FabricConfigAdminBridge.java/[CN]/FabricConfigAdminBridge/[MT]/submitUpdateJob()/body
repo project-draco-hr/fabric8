@@ -2,7 +2,17 @@
   executor.submit(new Runnable(){
     @Override public void run(){
       if (isValid()) {
-        updateInternal();
+        try {
+          updateInternal();
+        }
+ catch (        Throwable th) {
+          if (isValid()) {
+            LOGGER.warn("Exception when tracking configurations. This exception will be ignored.",th);
+          }
+ else {
+            LOGGER.debug("Exception when tracking configurations. This exception will be ignored because services have been unbound in the mean time.",th);
+          }
+        }
       }
     }
   }

@@ -1,11 +1,12 @@
 {
   List<Profile> parents=new ArrayList<>();
   for (  String prfid : dataStore.getContainerProfiles(cntId)) {
-    try {
-      Profile profile=version.getRequiredProfile(prfid);
+    Profile profile=version.getProfile(prfid);
+    if (profile != null) {
       parents.add(profile);
     }
- catch (    Exception e) {
+ else {
+      LOGGER.warn("Container profile '" + prfid + "' not found in: "+ version+ " - Ignoring!");
     }
   }
   return parents;
