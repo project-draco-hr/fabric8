@@ -17,16 +17,16 @@
     builder.append("\nConfigurations");
     builder.append("\n  left only: " + leftOnlyPids);
     for (    String pid : leftOnlyPids) {
-      Map<String,String> config=leftProfile.getConfiguration(pid);
       builder.append("\n  " + pid);
+      Map<String,String> config=new TreeMap<>(leftProfile.getConfiguration(pid));
       for (      Entry<String,String> citem : config.entrySet()) {
         builder.append("\n    " + citem.getKey() + " = "+ citem.getValue());
       }
     }
     builder.append("\n  right only: " + rightOnlyPids);
     for (    String pid : rightOnlyPids) {
-      Map<String,String> config=rightProfile.getConfiguration(pid);
       builder.append("\n  " + pid);
+      Map<String,String> config=new TreeMap<>(rightProfile.getConfiguration(pid));
       for (      Entry<String,String> citem : config.entrySet()) {
         builder.append("\n    " + citem.getKey() + " = "+ citem.getValue());
       }
