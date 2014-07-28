@@ -2,7 +2,7 @@
   final ReadLock readLock=readWriteLock.readLock();
   boolean success;
   try {
-    success=readLock.tryLock() || readLock.tryLock(10,TimeUnit.SECONDS);
+    success=readLock.tryLock() || readLock.tryLock(AQUIRE_LOCK_TIMEOUT,TimeUnit.MILLISECONDS);
   }
  catch (  InterruptedException ex) {
     success=false;
