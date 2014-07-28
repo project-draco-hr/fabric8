@@ -1,0 +1,7 @@
+{
+  StringBuilder builder=new StringBuilder("ProfileDiff [ver=" + leftProfile.getVersion() + ",id="+ leftProfile.getId()+ "] vs. [ver="+ rightProfile.getVersion()+ ",id="+ rightProfile.getId()+ "]");
+  builder.append("\nAttributes diff: " + Maps.difference(leftProfile.getAttributes(),rightProfile.getAttributes()));
+  builder.append("\nConfigurations diff: " + Maps.difference(leftProfile.getConfigurations(),rightProfile.getConfigurations()));
+  builder.append("\nFiles diff: " + Sets.difference(leftProfile.getFileConfigurations().keySet(),rightProfile.getFileConfigurations().keySet()));
+  return builder.toString();
+}

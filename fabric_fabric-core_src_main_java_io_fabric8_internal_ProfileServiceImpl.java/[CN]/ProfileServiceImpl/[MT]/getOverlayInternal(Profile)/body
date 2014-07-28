@@ -4,16 +4,22 @@
     overlayProfile=profile;
   }
  else {
+    String profileId=profile.getId();
     String environment=runtimeProperties.get().getProperty(SystemProperties.FABRIC_ENVIRONMENT);
-    ProfileBuilder builder=ProfileBuilder.Factory.create(profile.getVersion(),profile.getId());
+    ProfileBuilder builder=ProfileBuilder.Factory.create(profile.getVersion(),profileId);
     builder.addOptions(new OverlayOptionsProvider(profile,environment));
     overlayProfile=builder.getProfile();
-synchronized (this) {
-      String longString=overlayProfile.toLongString();
-      if (!longString.equals(lastOverlayProfile)) {
+synchronized (lastOverlayProfile) {
+      Profile lastOverlay=lastOverlayProfile.get(profileId);
+      String longString=Profiles.getProfileInfo(overlayProfile);
+      String lastString=lastOverlay != null ? Profiles.getProfileInfo(lastOverlay) : null;
+      if (lastOverlay == null || !longString.equals(lastString)) {
         LOGGER.info("Changed Overlay" + longString);
+        if (lastOverlay != null) {
+          LOGGER.info("Overlay" + Profiles.getProfileDifference(lastOverlay,overlayProfile));
+        }
         LOGGER.info("Called from ",new RuntimeException());
-        lastOverlayProfile=longString;
+        lastOverlayProfile.put(profileId,overlayProfile);
       }
     }
   }
