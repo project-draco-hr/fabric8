@@ -31,9 +31,9 @@
     File rootPackage=archetypeUtils.findRootPackage(mainSrcDir);
     if (rootPackage != null) {
       String packagePath=archetypeUtils.relativePath(mainSrcDir,rootPackage);
-      String packageName=packagePath.replaceAll(Pattern.quote("/"),".");
+      String packageName=packagePath.replace(File.separatorChar,'.');
       LOG.debug("Found root package in {}: {}",mainSrcDir,packageName);
-      final String regex=packageName.replaceAll(Pattern.quote("."),"\\.");
+      final String regex=packageName.replace(".","\\.");
       replaceFunction=new Replacement(){
         @Override public String replace(        String token){
           return token.replaceAll(regex,"\\${package}");
