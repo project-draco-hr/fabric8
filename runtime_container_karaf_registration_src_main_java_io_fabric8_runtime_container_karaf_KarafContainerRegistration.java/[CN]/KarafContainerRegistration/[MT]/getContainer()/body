@@ -2,10 +2,11 @@
   try {
     return fabricService.get().getCurrentContainer();
   }
- catch (  Exception e) {
+ catch (  Exception ex) {
+    LOGGER.error("Cannot obtain current container, using dummy wrapper",ex);
     final RuntimeProperties sysprops=runtimeProperties.get();
     final String runtimeIdentity=sysprops.getRuntimeIdentity();
-    return new ContainerImpl(null,runtimeIdentity,null){
+    return new ContainerImpl(null,runtimeIdentity,fabricService.get()){
       @Override public String getIp(){
         try {
           return getSubstitutedPath(curator.get(),CONTAINER_IP.getPath(runtimeIdentity));
