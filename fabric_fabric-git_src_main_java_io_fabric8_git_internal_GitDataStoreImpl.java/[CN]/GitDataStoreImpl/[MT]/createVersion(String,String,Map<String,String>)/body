@@ -7,9 +7,7 @@
         checkoutVersion(git,parentId);
         createOrCheckoutVersion(git,versionId);
         if (attributes != null) {
-          for (          Entry<String,String> att : attributes.entrySet()) {
-            setVersionAttributeInternal(context,versionId,att.getKey(),att.getValue());
-          }
+          setVersionAttributesInternal(git,context,versionId,attributes);
         }
         context.commitMessage("Create version: " + parentId + " => "+ versionId);
         return null;

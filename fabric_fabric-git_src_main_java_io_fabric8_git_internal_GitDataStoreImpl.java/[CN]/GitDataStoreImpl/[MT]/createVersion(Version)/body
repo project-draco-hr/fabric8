@@ -7,9 +7,7 @@
         context.commitMessage("Create version: " + version);
         String versionId=version.getId();
         createOrCheckoutVersion(git,version.getId());
-        for (        Entry<String,String> entry : version.getAttributes().entrySet()) {
-          setVersionAttributeInternal(context,versionId,entry.getKey(),entry.getValue());
-        }
+        setVersionAttributesInternal(git,context,versionId,version.getAttributes());
         for (        Profile profile : version.getProfiles()) {
           createOrUpdateProfile(context,profile,true,new HashSet<String>());
         }

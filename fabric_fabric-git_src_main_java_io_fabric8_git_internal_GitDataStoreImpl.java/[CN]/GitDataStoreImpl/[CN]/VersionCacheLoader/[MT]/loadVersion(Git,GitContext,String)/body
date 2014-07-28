@@ -4,7 +4,7 @@
   populateVersionBuilder(git,vbuilder,versionId,versionId);
   Version auxVersion=vbuilder.getVersion();
   vbuilder=VersionBuilder.Factory.create(versionId);
-  vbuilder.setAttributes(getVersionAttributesInternal(versionId));
+  vbuilder.setAttributes(getVersionAttributesInternal(git,context,versionId));
   for (  Profile profile : auxVersion.getProfiles()) {
     resolveVersionProfiles(vbuilder,auxVersion,profile.getId(),new HashMap<String,Profile>());
   }

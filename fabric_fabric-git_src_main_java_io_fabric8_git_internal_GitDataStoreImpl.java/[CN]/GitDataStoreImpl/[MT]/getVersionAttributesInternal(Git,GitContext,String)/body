@@ -1,0 +1,8 @@
+{
+  File rootDirectory=GitHelpers.getRootGitDirectory(git);
+  File file=new File(rootDirectory,GitHelpers.VERSION_ATTRIBUTES);
+  if (!file.exists()) {
+    return Collections.emptyMap();
+  }
+  return DataStoreUtils.toMap(Files.readBytes(file));
+}
