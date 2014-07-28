@@ -2,14 +2,14 @@
   LOGGER.info("Starting up GitDataStore " + this);
   DataStoreTemplate template=runtimeProperties.get().removeRuntimeAttribute(DataStoreTemplate.class);
   if (template != null) {
-    LOGGER.info("Using template: " + template);
+    LOGGER.debug("Using template: " + template);
     template.doWith(this,dataStore.get());
   }
   GitProxyService proxyService=gitProxyService.get();
   defaultProxySelector=ProxySelector.getDefault();
   ProxySelector fabricProxySelector=new FabricGitLocalHostProxySelector(defaultProxySelector,proxyService);
   ProxySelector.setDefault(fabricProxySelector);
-  LOGGER.info("Setting up FabricProxySelector: {}",fabricProxySelector);
+  LOGGER.debug("Setting up FabricProxySelector: {}",fabricProxySelector);
   if (configuredUrl != null) {
     gitListener.runRemoteUrlChanged(configuredUrl);
     remoteUrl=configuredUrl;
