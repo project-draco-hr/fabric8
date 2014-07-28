@@ -2,6 +2,7 @@
   LockHandle writeLock=aquireWriteLock();
   try {
     assertValid();
+    LOGGER.info("Delete " + ProfileBuilder.Factory.create(versionId,profileId).getProfile());
     GitOperation<Void> gitop=new GitOperation<Void>(){
       public Void call(      Git git,      GitContext context) throws Exception {
         checkoutVersion(git,GitProfiles.getBranch(versionId,profileId));

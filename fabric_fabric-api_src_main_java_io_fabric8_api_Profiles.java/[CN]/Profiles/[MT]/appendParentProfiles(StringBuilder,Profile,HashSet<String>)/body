@@ -1,0 +1,9 @@
+{
+  if (!profiles.contains(profile.getId())) {
+    for (    Profile parent : profile.getParents()) {
+      appendParentProfiles(builder,parent,profiles);
+      builder.append("\n\nParent of " + profile.getId() + " - "+ getProfileInfo(parent,false));
+    }
+    profiles.add(profile.getId());
+  }
+}

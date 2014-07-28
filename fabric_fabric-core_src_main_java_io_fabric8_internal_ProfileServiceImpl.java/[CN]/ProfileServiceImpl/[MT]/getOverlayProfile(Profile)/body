@@ -1,4 +1,32 @@
 {
   assertValid();
-  return getOverlayInternal(profile);
+  Profile overlayProfile;
+  if (profile.isOverlay()) {
+    LOGGER.info("getOverlayProfile, given profile is already an overlay: " + profile);
+    overlayProfile=profile;
+  }
+ else {
+    String profileId=profile.getId();
+    String environment=runtimeProperties.get().getProperty(SystemProperties.FABRIC_ENVIRONMENT);
+    ProfileBuilder builder=ProfileBuilder.Factory.create(profile.getVersion(),profileId);
+    builder.addOptions(new OverlayOptionsProvider(profile,environment));
+    overlayProfile=builder.getProfile();
+    if (LOGGER.isInfoEnabled()) {
+synchronized (lastOverlayProfiles) {
+        Profile lastOverlay=lastOverlayProfiles.get(profileId);
+        String longString=Profiles.getProfileInfo(overlayProfile,true);
+        String lastString=lastOverlay != null ? Profiles.getProfileInfo(lastOverlay,true) : null;
+        if (lastOverlay == null || !longString.equals(lastString)) {
+          LOGGER.info("Changed Overlay" + longString);
+          if (lastOverlay != null) {
+            LOGGER.info("Overlay" + Profiles.getProfileDifference(lastOverlay,overlayProfile));
+          }
+          LOGGER.info("Computed from " + Profiles.getProfileInfo(profile,true));
+          LOGGER.info("Called from ",new RuntimeException());
+          lastOverlayProfiles.put(profileId,overlayProfile);
+        }
+      }
+    }
+  }
+  return overlayProfile;
 }

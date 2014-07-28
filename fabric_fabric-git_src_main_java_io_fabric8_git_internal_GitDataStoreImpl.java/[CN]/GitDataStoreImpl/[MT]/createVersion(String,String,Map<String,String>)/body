@@ -2,14 +2,15 @@
   LockHandle writeLock=aquireWriteLock();
   try {
     assertValid();
+    LOGGER.info("Create version: {} => {}",sourceId,targetId);
     GitOperation<Void> gitop=new GitOperation<Void>(){
       public Void call(      Git git,      GitContext context) throws Exception {
-        checkoutVersion(git,parentId);
-        createOrCheckoutVersion(git,versionId);
+        checkoutVersion(git,sourceId);
+        createOrCheckoutVersion(git,targetId);
         if (attributes != null) {
-          setVersionAttributesInternal(git,context,versionId,attributes);
+          setVersionAttributesInternal(git,context,targetId,attributes);
         }
-        context.commitMessage("Create version: " + parentId + " => "+ versionId);
+        context.commitMessage("Create version: " + sourceId + " => "+ targetId);
         return null;
       }
     }

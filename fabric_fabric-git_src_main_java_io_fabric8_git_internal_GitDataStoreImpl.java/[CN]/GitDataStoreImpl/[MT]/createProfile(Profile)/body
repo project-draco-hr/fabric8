@@ -2,6 +2,7 @@
   LockHandle writeLock=aquireWriteLock();
   try {
     assertValid();
+    LOGGER.info("Create " + Profiles.getProfileInfo(profile,true));
     GitOperation<String> gitop=new GitOperation<String>(){
       public String call(      Git git,      GitContext context) throws Exception {
         checkoutProfileBranch(profile.getVersion(),profile.getId());
