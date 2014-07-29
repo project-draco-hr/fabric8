@@ -1,0 +1,14 @@
+{
+  if (fabricControllerManager != null) {
+    try {
+      fabricControllerManager.destroy();
+    }
+ catch (    Exception e) {
+      throw new LifecycleException("Failed to stop remote fabric: " + e,e);
+    }
+ finally {
+      fabricControllerManager=null;
+      FabricAssertions.killJavaAndDockerProcesses();
+    }
+  }
+}

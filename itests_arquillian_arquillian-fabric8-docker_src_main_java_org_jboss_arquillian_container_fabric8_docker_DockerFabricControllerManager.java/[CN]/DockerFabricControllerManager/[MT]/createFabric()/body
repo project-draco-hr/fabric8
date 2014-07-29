@@ -1,0 +1,37 @@
+{
+  String image=config.getFabricDockerImage();
+  ContainerConfig containerConfig=new ContainerConfig();
+  containerConfig.setImage(image);
+  containerConfig.setAttachStdout(true);
+  containerConfig.setAttachStderr(true);
+  containerConfig.setTty(true);
+  Map<String,Object> exposedPorts=new HashMap<>();
+  Map<String,String> emptyMap=new HashMap<>();
+  int[] rootContainerExposedPorts=config.getRootContainerExposedPorts();
+  for (  int exposedPort : rootContainerExposedPorts) {
+    String portText="" + exposedPort + "/tcp";
+    exposedPorts.put(portText,emptyMap);
+  }
+  containerConfig.setExposedPorts(exposedPorts);
+  String containerName="root";
+  ContainerCreateStatus status=docker.containerCreate(containerConfig,containerName);
+  rootDockerContainerId=status.getId();
+  System.out.println("Created docker container id " + rootDockerContainerId);
+  assertTrue("Should not have a blank docker container id for fabric8 container " + containerName,Strings.isNotBlank(rootDockerContainerId));
+  ContainerInfo containerInfo=docker.containerInspect(rootDockerContainerId);
+  HostConfig hostConfig=containerInfo.getHostConfig();
+  assertNotNull("No HostConfig available for docker container: " + rootDockerContainerId,hostConfig);
+  Map<String,List<Map<String,String>>> bindings=hostConfig.getPortBindings();
+  List<Map<String,String>> bindingList=bindings.get("8181/tcp");
+  if (bindingList == null) {
+    bindingList=bindings.get("8080/tcp");
+  }
+  assertNotNull("No HostConfig binding for 8181/tcp for docker container: " + rootDockerContainerId,bindingList);
+  assertTrue("Binding list for port 8181/tcp is empty for docker container: " + rootDockerContainerId,bindingList.size() > 0);
+  Map<String,String> binding=bindingList.get(0);
+  String bindingText=assertMandatoryEntry(binding,"HostPort","Docker container " + rootDockerContainerId);
+  assertTrue("Should have non blank bindingText for 8181/tcp",Strings.isNotBlank(bindingText));
+  String jolokiaUrl="http://localhost:" + bindingText;
+  System.out.println("Got jolokia URL: " + jolokiaUrl);
+  return new JolokiaFabricController(jolokiaUrl);
+}
