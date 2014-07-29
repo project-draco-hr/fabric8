@@ -4,17 +4,18 @@
   assertFileExists(mavenSettingsFile);
   File workDir=new File(System.getProperty("basedir","."),"target/generated-projects");
   workDir.mkdirs();
+  boolean addedBroker=false;
   Map<ArchetypeInfo,String> archetypeToProfileMap=new HashMap<>();
   for (  ArchetypeInfo archetype : archetypes) {
     String profileId=assertGenerateArchetype(archetype,workDir,mavenSettingsFile);
     archetypeToProfileMap.put(archetype,profileId);
-  }
-  FabricRequirements requirements=new FabricRequirements();
-  requirements.profile("mq-default").minimumInstances(1);
-  FabricAssertions.assertRequirementsSatisfied(fabricController,requirements);
-  for (  ArchetypeInfo archetype : archetypes) {
-    String profileId=archetypeToProfileMap.get(archetype);
     assertNotNull("Should have a profile ID for " + archetype,profileId);
+    FabricRequirements requirements=fabricController.getRequirements();
+    if (!addedBroker) {
+      addedBroker=true;
+      requirements.profile("mq-default").minimumInstances(1);
+      FabricAssertions.assertRequirementsSatisfied(fabricController,requirements);
+    }
     requirements.profile(profileId).minimumInstances(1);
     FabricAssertions.assertRequirementsSatisfied(fabricController,requirements);
     requirements.profile(profileId).minimumInstances(0).maximumInstances(0);
