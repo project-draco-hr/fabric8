@@ -9,7 +9,7 @@
   boolean isAbstract=requirements.isAbstractProfile();
   ProfileBuilder builder=ProfileBuilder.Factory.createFrom(profile);
   builder.addAttribute(Profile.ABSTRACT,"" + isAbstract);
-  ProjectRequirements oldRequirements=writeRequirementsJson(requirements,profile);
+  ProjectRequirements oldRequirements=writeRequirementsJson(requirements,profile,builder);
   updateProfileConfiguration(version,profile,requirements,oldRequirements,builder);
   return resolveProfileDeployments(requirements,fabricService.get(),profile,builder);
 }
