@@ -5,7 +5,8 @@
     String profileId=profile.getId();
     if (profileService.hasProfile(versionId,profileId) && (hidden || !profile.isHidden())) {
       int active=fabricService.getAssociatedContainers(versionId,profileId).length;
-      out.println(String.format("%-50s %-14s %s",profileId,active,profile.getParents()));
+      String parents=Strings.join(profile.getParentIds()," ");
+      out.println(String.format("%-50s %-14s %s",profileId,active,parents));
     }
   }
 }
