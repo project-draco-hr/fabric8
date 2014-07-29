@@ -6,7 +6,7 @@
     defaultValue=expression.substring(idx + ELVIS_OPERATOR.length());
     name=expression.substring(0,idx);
   }
-  String answer=environmentVariables.get(name);
+  String answer=environmentVariables != null ? environmentVariables.get(name) : null;
   if (answer == null) {
     answer=System.getenv(name);
     if (answer == null) {

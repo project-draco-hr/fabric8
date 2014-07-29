@@ -1,9 +1,6 @@
 {
-  String fabricVersion=dataStore.get().getFabricReleaseVersion();
   File profilesDirectory=GitHelpers.getProfilesDirectory(git);
-  for (  String profileZipUrl : profileZipUrls) {
-    String token="\\$\\{version:fabric\\}";
-    String url=profileZipUrl.replaceFirst(token,fabricVersion);
+  for (  String url : profileZipUrls) {
     URL zipUrl;
     try {
       zipUrl=new URL(url);

@@ -44,9 +44,28 @@
     LOGGER.debug("Error importing profiles due " + e.getMessage(),e);
     LOGGER.warn("Error importing profiles due " + e.getMessage() + ". This exception is ignored.");
   }
-  if (!profiles.isEmpty()) {
-    LOGGER.info("Importing additional profiles from {} url locations ...",profiles.size());
-    importProfiles(dataStore.get().getDefaultVersion(),profiles);
+  String fabricVersion=dataStore.get().getFabricReleaseVersion();
+  List<String> replaced=new ArrayList<>();
+  for (  String profileZipUrl : profiles) {
+    String token="\\$\\{version:fabric\\}";
+    String url=profileZipUrl.replaceFirst(token,fabricVersion);
+    url=removeTokens(url);
+    url=resolveExpression(url,null,false);
+    String[] urls=url.split(",");
+    for (    String s : urls) {
+      s=s.trim();
+      if ("false".equals(s) || "off".equals(s)) {
+        continue;
+      }
+      replaced.add(s);
+    }
+  }
+  if (!replaced.isEmpty()) {
+    LOGGER.info("Importing additional profiles from {} url locations ...",replaced.size());
+    importProfiles(dataStore.get().getDefaultVersion(),replaced);
+    for (    String url : replaced) {
+      LOGGER.info("Importing additional profile: {}",url);
+    }
     LOGGER.info("Importing additional profiles done");
   }
 }
