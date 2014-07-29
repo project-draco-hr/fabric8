@@ -9,24 +9,7 @@
   boolean isAbstract=requirements.isAbstractProfile();
   ProfileBuilder builder=ProfileBuilder.Factory.createFrom(profile);
   builder.addAttribute(Profile.ABSTRACT,"" + isAbstract);
-  ProfileService profileService=fabricService.get().adapt(ProfileService.class);
-  profile=profileService.updateProfile(profile);
   ProjectRequirements oldRequirements=writeRequirementsJson(requirements,profile);
-  updateProfileConfiguration(version,profile,requirements,oldRequirements);
-  Profile overlayProfile=profileService.getOverlayProfile(profile);
-  Profile effectiveProfile=Profiles.getEffectiveProfile(fabricService.get(),overlayProfile);
-  Container container=null;
-  try {
-    container=fabricService.get().getCurrentContainer();
-  }
- catch (  Exception e) {
-  }
-  Integer minimumInstances=requirements.getMinimumInstances();
-  if (minimumInstances != null) {
-    FabricRequirements fabricRequirements=fabricService.get().getRequirements();
-    ProfileRequirements profileRequirements=fabricRequirements.getOrCreateProfileRequirement(profile.getId());
-    profileRequirements.setMinimumInstances(minimumInstances);
-    fabricService.get().setRequirements(fabricRequirements);
-  }
-  return resolveProfileDeployments(requirements,fabricService.get(),container,profile,effectiveProfile);
+  updateProfileConfiguration(version,profile,requirements,oldRequirements,builder);
+  return resolveProfileDeployments(requirements,fabricService.get(),profile,builder);
 }

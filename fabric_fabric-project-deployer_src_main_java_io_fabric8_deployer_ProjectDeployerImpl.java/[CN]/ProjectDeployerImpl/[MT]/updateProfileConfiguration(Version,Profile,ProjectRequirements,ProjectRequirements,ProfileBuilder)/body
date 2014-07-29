@@ -13,7 +13,6 @@
   addAll(bundles,requirements.getBundles());
   addAll(features,requirements.getFeatures());
   addAll(repositories,requirements.getFeatureRepositories());
-  ProfileBuilder builder=ProfileBuilder.Factory.createFrom(profile);
   setParentProfileIds(builder,version,profile,parentProfiles);
   builder.setBundles(bundles);
   builder.setFeatures(features);
@@ -40,6 +39,4 @@
       builder.addFileConfiguration(fileName,description.getBytes());
     }
   }
-  ProfileService profileService=fabricService.get().adapt(ProfileService.class);
-  profile=profileService.updateProfile(builder.getProfile());
 }
