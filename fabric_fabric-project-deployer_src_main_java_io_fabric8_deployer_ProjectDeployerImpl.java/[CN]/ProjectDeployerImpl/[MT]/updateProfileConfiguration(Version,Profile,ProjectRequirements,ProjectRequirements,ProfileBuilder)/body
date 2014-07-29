@@ -1,8 +1,8 @@
 {
   List<String> parentProfiles=Containers.getParentProfileIds(profile);
-  List<String> bundles=profile.getBundles();
-  List<String> features=profile.getFeatures();
-  List<String> repositories=profile.getRepositories();
+  List<String> bundles=Lists.mutableList(profile.getBundles());
+  List<String> features=Lists.mutableList(profile.getFeatures());
+  List<String> repositories=Lists.mutableList(profile.getRepositories());
   if (oldRequirements != null) {
     removeAll(parentProfiles,oldRequirements.getParentProfiles());
     removeAll(bundles,oldRequirements.getBundles());
