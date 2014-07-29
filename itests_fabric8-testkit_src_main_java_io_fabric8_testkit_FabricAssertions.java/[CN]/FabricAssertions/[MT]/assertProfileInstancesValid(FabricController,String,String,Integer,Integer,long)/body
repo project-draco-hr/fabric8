@@ -1,0 +1,13 @@
+{
+  assertNotNull("FabricController",controller);
+  waitForValidValue(timeout,new Callable<Boolean>(){
+    @Override public Boolean call() throws Exception {
+      boolean valid=isProfileInstancesValid(controller,version,profile,minimumInstances,maximumInstances);
+      if (valid) {
+        System.out.println("version: " + version + " profile: "+ profile+ " has the correct number of instances");
+      }
+      return valid;
+    }
+  }
+);
+}

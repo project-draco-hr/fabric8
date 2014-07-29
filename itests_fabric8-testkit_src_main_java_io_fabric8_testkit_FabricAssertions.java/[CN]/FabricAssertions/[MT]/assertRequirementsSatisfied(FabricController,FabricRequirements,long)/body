@@ -28,39 +28,10 @@
       for (      ProfileRequirements profileRequirement : profileRequirements) {
         Integer minimumInstances=profileRequirement.getMinimumInstances();
         Integer maximumInstances=profileRequirement.getMaximumInstances();
-        if (minimumInstances != null) {
-          String profile=profileRequirement.getProfile();
-          List<String> containerIds=controller.containerIdsForProfile(version,profile);
-          int current=containerIds.size();
-          if (current < minimumInstances) {
-            System.out.println("Still waiting for " + minimumInstances + " instance(s) of profile "+ profile+ " currently has: "+ containerIds);
-            valid=false;
-            break;
-          }
- else {
-            if (checkMinimumInstancesSuccessful(controller,profile,minimumInstances,containerIds)) {
-              if (minimumInstances > 0) {
-                System.out.println("Valid profile " + profile + " requires "+ minimumInstances+ " instance(s) and has: "+ containerIds);
-              }
-            }
- else {
-              valid=false;
-            }
-          }
-        }
-        if (maximumInstances != null) {
-          String profile=profileRequirement.getProfile();
-          List<ContainerDTO> containers=controller.containersForProfile(version,profile);
-          List<ContainerDTO> aliveContainers=Containers.aliveAndSuccessfulContainers(containers);
-          int current=aliveContainers.size();
-          if (current > maximumInstances) {
-            System.out.println("Still waiting for a maximum of " + maximumInstances + " instance(s) of profile "+ profile+ " currently has: "+ current+ " containers alive which need stopping");
-            valid=false;
-            break;
-          }
- else {
-            System.out.println("Profile scaled down: now running a maximum of " + maximumInstances + " instance(s) of profile "+ profile+ " currently has: "+ current+ " container(s)");
-          }
+        String profile=profileRequirement.getProfile();
+        valid=valid && isProfileInstancesValid(controller,version,profile,minimumInstances,maximumInstances);
+        if (!valid) {
+          break;
         }
       }
       if (valid) {
