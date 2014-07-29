@@ -1,5 +1,7 @@
 {
-  CuratorFramework curator=CuratorFrameworkFactory.builder().connectString(hosts).connectionTimeoutMs(5000).retryPolicy(defaultRetryPolicy()).build();
+  String timeoutSystemProperty=System.getProperty(ZK_CONNECTION_TIMEOUT_MS_PROPERTY);
+  int connectionTimeoutMs=timeoutSystemProperty != null ? parseInt(timeoutSystemProperty) : DEFAULT_ZK_CONNECTION_TIMEOUT_MS;
+  CuratorFramework curator=CuratorFrameworkFactory.builder().connectString(hosts).connectionTimeoutMs(connectionTimeoutMs).retryPolicy(defaultRetryPolicy()).build();
   curator.start();
   return curator;
 }
