@@ -1,9 +1,9 @@
 {
   System.out.println("Killing Docker container " + containerId);
-  LOGGER.warn("WARNING: Killing Docker container " + containerId);
+  LOG.warn("WARNING: Killing Docker container " + containerId);
   String commands="docker kill " + containerId;
   String message=commands;
-  LOGGER.debug("Executing commands: " + message);
+  LOG.debug("Executing commands: " + message);
   final List<String> answer=new ArrayList<>();
   Process process=null;
   try {
@@ -12,7 +12,7 @@
     processErrors(process.getErrorStream(),commands);
   }
  catch (  Exception e) {
-    LOGGER.error("Failed to execute process " + "stdin" + " for " + message + ": "+ e,e);
+    LOG.error("Failed to execute process " + "stdin" + " for " + message + ": "+ e,e);
   }
   return process != null ? process.exitValue() : -1;
 }

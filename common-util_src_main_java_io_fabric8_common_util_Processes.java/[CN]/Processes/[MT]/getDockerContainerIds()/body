@@ -1,7 +1,7 @@
 {
   String commands="docker ps -q";
   String message="output of command: " + commands;
-  LOGGER.debug("Executing commands: " + message);
+  LOG.debug("Executing commands: " + message);
   final List<String> answer=new ArrayList<>();
   try {
     Process process=Runtime.getRuntime().exec(commands);
@@ -18,7 +18,7 @@
     processErrors(process.getErrorStream(),message);
   }
  catch (  Exception e) {
-    LOGGER.error("Failed to execute process " + "stdin" + " for " + message + ": "+ e,e);
+    LOG.error("Failed to execute process " + "stdin" + " for " + message + ": "+ e,e);
   }
   return answer;
 }

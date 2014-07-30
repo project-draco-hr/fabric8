@@ -1,7 +1,7 @@
 {
   String commands="jps -l";
   String message=commands;
-  LOGGER.debug("Executing commands: " + message);
+  LOG.debug("Executing commands: " + message);
   List<Long> answer=new ArrayList<Long>();
   Filter<String> filter=Filters.containsAnyString(classNameFilter);
   try {
@@ -10,7 +10,7 @@
     processErrors(process.getErrorStream(),message);
   }
  catch (  Exception e) {
-    LOGGER.error("Failed to execute process " + "stdin" + " for " + message + ": "+ e,e);
+    LOG.error("Failed to execute process " + "stdin" + " for " + message + ": "+ e,e);
   }
   return answer;
 }
