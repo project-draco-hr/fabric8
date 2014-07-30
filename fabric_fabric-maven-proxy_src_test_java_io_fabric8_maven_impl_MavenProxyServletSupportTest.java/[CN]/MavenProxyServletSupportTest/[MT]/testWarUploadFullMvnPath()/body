@@ -1,0 +1,9 @@
+{
+  String warPath="org.acme/acme-ui/1.0/acme-ui-1.0.war";
+  ByteArrayOutputStream baos=new ByteArrayOutputStream();
+  JarOutputStream jas=new JarOutputStream(baos);
+  addEntry(jas,"WEB-INF/web.xml","<web/>".getBytes());
+  jas.close();
+  byte[] contents=baos.toByteArray();
+  testUpload(warPath,contents,false);
+}

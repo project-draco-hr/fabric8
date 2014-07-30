@@ -1,0 +1,9 @@
+{
+  String jarPath="org.acme/acme-core/1.0/acme-core-1.0.jar";
+  ByteArrayOutputStream baos=new ByteArrayOutputStream();
+  JarOutputStream jas=new JarOutputStream(baos);
+  addEntry(jas,"hello.txt","Hello!".getBytes());
+  jas.close();
+  byte[] contents=baos.toByteArray();
+  testUpload(jarPath,contents,false);
+}

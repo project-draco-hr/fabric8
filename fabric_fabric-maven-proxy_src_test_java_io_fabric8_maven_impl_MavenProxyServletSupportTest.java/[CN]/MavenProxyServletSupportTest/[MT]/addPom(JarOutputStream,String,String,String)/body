@@ -1,0 +1,9 @@
+{
+  Properties properties=new Properties();
+  properties.setProperty("groupId",groupId);
+  properties.setProperty("artifactId",artifactId);
+  properties.setProperty("version",version);
+  ByteArrayOutputStream baos=new ByteArrayOutputStream();
+  properties.store(baos,null);
+  addEntry(jas,String.format("META-INF/maven/%s/%s/%s/pom.properties",groupId,artifactId,version),baos.toByteArray());
+}
