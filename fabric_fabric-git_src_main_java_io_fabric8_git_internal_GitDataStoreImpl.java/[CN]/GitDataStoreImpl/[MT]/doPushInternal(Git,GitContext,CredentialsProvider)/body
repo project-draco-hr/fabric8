@@ -1,4 +1,8 @@
 {
+  if (context == null) {
+    LOGGER.warn("Cannot push due to null context");
+    return Collections.EMPTY_LIST;
+  }
   assertReadLock();
   IllegalStateAssertion.assertTrue(context.incrementPushCount(),"Push not required in context");
   Iterable<PushResult> results=Collections.emptyList();
