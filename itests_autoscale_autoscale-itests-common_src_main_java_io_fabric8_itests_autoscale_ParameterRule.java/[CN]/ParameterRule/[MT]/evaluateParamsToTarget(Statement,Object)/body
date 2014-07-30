@@ -1,0 +1,26 @@
+{
+  List<Throwable> failures=new ArrayList<>();
+  List<String> failedTests=new ArrayList<>();
+  for (  Object param : params) {
+    Field targetField=getTargetField(target);
+    if (!targetField.isAccessible()) {
+      targetField.setAccessible(true);
+    }
+    targetField.set(target,param);
+    try {
+      System.out.println();
+      System.out.println("Running test " + base + " "+ target);
+      base.evaluate();
+    }
+ catch (    Throwable e) {
+      System.out.println();
+      System.out.println("FAILED: " + target + ". "+ e);
+      LOG.error("Failed test " + target + " on "+ base+ ". "+ e,e);
+      failedTests.add("" + target);
+      failures.add(e);
+    }
+  }
+  if (failures.size() > 0) {
+    fail("Tests failed " + failedTests);
+  }
+}

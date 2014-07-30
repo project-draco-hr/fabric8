@@ -4,6 +4,7 @@
   assertNotNull("Should have some FabricRequirements",requirements);
   waitForValidValue(timeout,new Callable<Boolean>(){
     boolean hasUpdatedRequirements=false;
+    Set<String> previousValidProfileIds=new HashSet<String>();
     @Override public Boolean call() throws Exception {
       controller.setRequirements(requirements);
       FabricRequirements actual=controller.getRequirements();
@@ -22,6 +23,7 @@
         hasUpdatedRequirements=true;
         System.out.println("Updated the requirements to: " + RequirementsJson.toJSON(requirements));
       }
+      Set<String> validProfileIds=new HashSet<String>();
       List<ProfileRequirements> profileRequirements=requirements.getProfileRequirements();
       assertNotNull("Should have some profileRequirements",profileRequirements);
       String version=requirementOrDefaultVersion(controller,requirements);
@@ -29,13 +31,18 @@
         Integer minimumInstances=profileRequirement.getMinimumInstances();
         Integer maximumInstances=profileRequirement.getMaximumInstances();
         String profile=profileRequirement.getProfile();
-        valid=valid && isProfileInstancesValid(controller,version,profile,minimumInstances,maximumInstances);
-        if (!valid) {
+        boolean wasValid=previousValidProfileIds.contains(profile);
+        valid=valid && isProfileInstancesValid(controller,version,profile,minimumInstances,maximumInstances,wasValid);
+        if (valid) {
+          validProfileIds.add(profile);
+        }
+ else {
           break;
         }
       }
+      previousValidProfileIds=validProfileIds;
       if (valid) {
-        System.out.println("Fabric requirements are all satisfied!");
+        System.out.println("Fabric requirements are all satisfied for profiles: " + validProfileIds);
       }
       return valid;
     }

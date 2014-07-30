@@ -8,9 +8,11 @@
       valid=false;
     }
  else {
-      if (checkMinimumInstancesSuccessful(controller,profile,minimumInstances,containerIds)) {
+      if (checkMinimumInstancesSuccessful(controller,profile,minimumInstances,containerIds,wasValid)) {
         if (minimumInstances > 0) {
-          System.out.println("Valid profile " + profile + " requires "+ minimumInstances+ " instance(s) and has: "+ containerIds);
+          if (!wasValid) {
+            System.out.println("Valid profile " + profile + " requires "+ minimumInstances+ " instance(s) and has: "+ containerIds);
+          }
         }
       }
  else {
@@ -27,7 +29,9 @@
       valid=false;
     }
  else {
-      System.out.println("Profile scaled down: now running a maximum of " + maximumInstances + " instance(s) of profile "+ profile+ " currently has: "+ current+ " container(s)");
+      if (!wasValid) {
+        System.out.println("Profile scaled down: now running a maximum of " + maximumInstances + " instance(s) of profile "+ profile+ " currently has: "+ current+ " container(s)");
+      }
     }
   }
   return valid;

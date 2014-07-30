@@ -6,9 +6,10 @@
       System.out.println("No ContainerDTO for " + containerId);
     }
  else {
-      System.out.println("Container " + containerId + " alive: "+ container.isAlive()+ " result: "+ container.getProvisionResult()+ " status: "+ container.getProvisionStatus()+ " complete: "+ container.isProvisioningComplete()+ " pending: "+ container.isProvisioningPending()+ " "+ container.getProvisionException());
+      if (!wasValid) {
+        System.out.println("Container " + containerId + " alive: "+ container.isAlive()+ " result: "+ container.getProvisionResult()+ " status: "+ container.getProvisionStatus()+ " complete: "+ container.isProvisioningComplete()+ " pending: "+ container.isProvisioningPending()+ " "+ container.getProvisionException());
+      }
       if (container.isAliveAndOK() && container.isProvisioningComplete() && !container.isProvisioningPending()&& "success".equals(container.getProvisionResult())) {
-        System.out.println("Container + " + containerId + " is up!");
         successful+=1;
         if (LOG.isDebugEnabled()) {
           List<String> fields=BeanUtils.getFields(ContainerDTO.class);
