@@ -1,10 +1,14 @@
 {
   String defaultVersion=null;
   assertEquals("defaultVersion","1.0",defaultVersion);
-  String importPath=basedir + "/../fabric8-karaf/src/main/resources/distro/fabric/import";
+  String importPath=basedir + "/../fabric8-karaf/src/main/resources/distro/fabric";
   if (useOldImportFormat) {
     assertFolderExists(importPath);
-    dataStore.importFromFileSystem(importPath);
+    try {
+      dataStore.importFromFileSystem(importPath);
+    }
+ catch (    Exception e) {
+    }
     assertHasVersion(defaultVersion);
   }
  else {
