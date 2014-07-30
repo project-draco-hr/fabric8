@@ -6,7 +6,7 @@
     List<String> parentIds=profile.getParentIds();
     boolean isKarafContainer=parentIds.contains("karaf") || parentIds.contains("containers-karaf");
     boolean addBundleDependencies=Objects.equal("bundle",rootDependency.getType()) || isKarafContainer;
-    if (addBundleDependencies) {
+    if (addBundleDependencies && requirements.isUseResolver()) {
       Profile overlay=profileService.getOverlayProfile(profile);
       List<Feature> allFeatures=new ArrayList<Feature>();
       for (      String repoUri : overlay.getRepositories()) {
@@ -15,6 +15,7 @@
         allFeatures.addAll(Arrays.asList(repo.getFeatures()));
       }
       String bundleUrl=rootDependency.toBundleUrlWithType();
+      LOG.info("Using resolver to add extra features and bundles on " + bundleUrl);
       List<String> features=new ArrayList<String>();
       List<String> bundles=new ArrayList<String>();
       List<String> optionals=new ArrayList<String>();
