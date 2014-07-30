@@ -12,6 +12,7 @@
     if (listener == null) {
       listener=new NullCreationStateListener();
     }
+    validateProfileDependencies(options);
     ObjectMapper mapper=new ObjectMapper();
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
     Map optionsMap=mapper.readValue(mapper.writeValueAsString(options),Map.class);
