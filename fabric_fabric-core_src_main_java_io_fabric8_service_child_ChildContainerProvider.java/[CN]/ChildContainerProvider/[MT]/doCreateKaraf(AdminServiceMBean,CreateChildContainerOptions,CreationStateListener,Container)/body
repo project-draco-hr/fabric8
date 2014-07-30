@@ -5,6 +5,9 @@
   if (options.getJvmOpts() == null || !options.getJvmOpts().contains("-Xmx")) {
     jvmOptsBuilder.append(" -Xmx512m");
   }
+  if (options.getJvmOpts() == null || !options.getJvmOpts().contains("-XX:MaxPermSize=")) {
+    jvmOptsBuilder.append(" -XX:MaxPermSize=256m");
+  }
   if (options.isEnsembleServer()) {
     jvmOptsBuilder.append(" ").append(CreateEnsembleOptions.ENSEMBLE_AUTOSTART + "=true");
   }
