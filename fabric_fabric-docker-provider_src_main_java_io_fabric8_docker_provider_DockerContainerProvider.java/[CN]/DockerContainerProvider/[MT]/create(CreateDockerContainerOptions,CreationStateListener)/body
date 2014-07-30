@@ -161,14 +161,7 @@
   if (env == null) {
     env=new ArrayList<>();
   }
-  Set<Map.Entry<String,String>> entries=environmentVariables.entrySet();
-  for (  Map.Entry<String,String> entry : entries) {
-    String key=entry.getKey();
-    String value=entry.getValue();
-    if (key != null && value != null) {
-      env.add(key + "=" + value);
-    }
-  }
+  Dockers.addEnvironmentVariablesToList(env,environmentVariables);
   containerConfig.setExposedPorts(exposedPorts);
   containerConfig.setEnv(env);
   String name=options.getName();

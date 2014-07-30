@@ -13,6 +13,8 @@
     exposedPorts.put(portText,emptyMap);
   }
   containerConfig.setExposedPorts(exposedPorts);
+  List<String> envList=Dockers.toEnvList(createChildEnvironmentVariables());
+  containerConfig.setEnv(envList);
   String containerName="root";
   ContainerCreateStatus status=docker.containerCreate(containerConfig,containerName);
   rootDockerContainerId=status.getId();
