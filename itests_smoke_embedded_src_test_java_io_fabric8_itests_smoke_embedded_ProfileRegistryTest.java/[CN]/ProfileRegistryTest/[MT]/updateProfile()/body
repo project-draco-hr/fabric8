@@ -1,0 +1,21 @@
+{
+  String versionId="1.0";
+  Assert.assertFalse(profileRegistry.hasProfile(versionId,"prfA"));
+  ProfileBuilder pbuilder=ProfileBuilder.Factory.create(versionId,"prfA");
+  try {
+    profileRegistry.updateProfile(pbuilder.getProfile());
+    Assert.fail("IllegalStateException expected");
+  }
+ catch (  IllegalStateException ex) {
+    Assert.assertTrue(ex.getMessage(),ex.getMessage().contains("Profile does not exist: 1.0/prfA"));
+  }
+  String profileId=profileRegistry.createProfile(pbuilder.getProfile());
+  Profile prfA=profileRegistry.getRequiredProfile(versionId,profileId);
+  Assert.assertTrue(prfA.getAttributes().isEmpty());
+  pbuilder=ProfileBuilder.Factory.createFrom(prfA).addAttribute("foo","bar");
+  profileId=profileRegistry.updateProfile(pbuilder.getProfile());
+  prfA=profileRegistry.getRequiredProfile(versionId,profileId);
+  Assert.assertEquals("bar",prfA.getAttributes().get("foo"));
+  profileRegistry.deleteProfile(versionId,profileId);
+  Assert.assertFalse(profileRegistry.hasProfile(versionId,"prfA"));
+}

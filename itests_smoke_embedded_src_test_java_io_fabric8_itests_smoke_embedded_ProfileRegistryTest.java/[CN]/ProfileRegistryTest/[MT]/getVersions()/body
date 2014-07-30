@@ -1,0 +1,13 @@
+{
+  List<String> versionIds=profileRegistry.getVersionIds();
+  Assert.assertEquals(1,versionIds.size());
+  VersionBuilder vbuilder=VersionBuilder.Factory.create("1.1");
+  String versionId=profileRegistry.createVersion(vbuilder.getVersion());
+  versionIds=profileRegistry.getVersionIds();
+  Assert.assertEquals(2,versionIds.size());
+  Assert.assertEquals("1.0",versionIds.get(0));
+  Assert.assertEquals("1.1",versionIds.get(1));
+  profileRegistry.deleteVersion(versionId);
+  versionIds=profileRegistry.getVersionIds();
+  Assert.assertEquals(1,versionIds.size());
+}

@@ -1,0 +1,17 @@
+{
+  LockHandle writeLock=aquireWriteLock();
+  try {
+    if (checkoutProfileBranch(getGit(),versionId,profileId)) {
+      return versionCache.get(versionId);
+    }
+ else {
+      return null;
+    }
+  }
+ catch (  Exception e) {
+    throw FabricException.launderThrowable(e);
+  }
+ finally {
+    writeLock.unlock();
+  }
+}

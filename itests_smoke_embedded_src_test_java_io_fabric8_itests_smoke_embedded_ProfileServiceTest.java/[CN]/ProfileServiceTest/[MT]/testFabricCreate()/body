@@ -1,9 +1,4 @@
 {
-  Builder<?> builder=CreateEnsembleOptions.builder().agentEnabled(false).clean(true).zookeeperPassword(SYSTEM_PASSWORD).waitForProvision(false);
-  CreateEnsembleOptions options=builder.build();
-  ZooKeeperClusterBootstrap bootstrap=ServiceLocator.getRequiredService(ZooKeeperClusterBootstrap.class);
-  bootstrap.create(options);
-  ProfileService profileService=ServiceLocator.getRequiredService(ProfileService.class);
   ProfileBuilder pbA10=ProfileBuilder.Factory.create("1.0","prfA").addConfiguration("pidA",Collections.singletonMap("keyA","valA"));
   Profile prfA10=profileService.createProfile(pbA10.getProfile());
   Assert.assertEquals("1.0",prfA10.getVersion());
@@ -23,7 +18,6 @@
   Assert.assertEquals("prfA",prfA11b.getId());
   Assert.assertEquals("valB",prfA11b.getConfiguration("pidA").get("keyB"));
   Assert.assertNotEquals(prfA11a,prfA11b);
-  System.out.println(Profiles.getProfileDifference(prfA11a,prfA11b));
   profileService.getRequiredVersion("1.0").getRequiredProfile("prfA");
   profileService.getRequiredVersion("1.1").getRequiredProfile("prfA");
   profileService.deleteProfile(null,prfA10.getVersion(),prfA10.getId(),true);

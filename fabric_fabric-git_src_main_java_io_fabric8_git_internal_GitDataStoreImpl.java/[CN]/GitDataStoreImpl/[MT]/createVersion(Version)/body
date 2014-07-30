@@ -5,10 +5,12 @@
     LOGGER.info("Create version: {}",version);
     GitOperation<String> gitop=new GitOperation<String>(){
       public String call(      Git git,      GitContext context) throws Exception {
-        context.commitMessage("Create version: " + version);
         String versionId=version.getId();
+        IllegalStateAssertion.assertFalse(checkoutProfileBranch(git,versionId,null),"Version already exists: " + versionId);
+        GitHelpers.checkoutTag(git,GitHelpers.ROOT_TAG);
         createOrCheckoutVersion(git,version.getId());
-        setVersionAttributesInternal(git,context,versionId,version.getAttributes());
+        setVersionAttributes(git,context,versionId,version.getAttributes());
+        context.commitMessage("Create version: " + version);
         for (        Profile profile : version.getProfiles()) {
           createOrUpdateProfile(context,profile,true,new HashSet<String>());
         }

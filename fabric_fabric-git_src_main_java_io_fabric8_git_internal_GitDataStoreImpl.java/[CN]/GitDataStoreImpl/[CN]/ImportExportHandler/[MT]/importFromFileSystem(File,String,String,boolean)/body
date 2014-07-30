@@ -2,6 +2,7 @@
   assertWriteLock();
   GitOperation<Void> gitop=new GitOperation<Void>(){
     public Void call(    Git git,    GitContext context) throws Exception {
+      GitHelpers.checkoutTag(git,GitHelpers.ROOT_TAG);
       createOrCheckoutVersion(git,versionId);
       File toDir=GitHelpers.getRootGitDirectory(git);
       if (Strings.isNotBlank(destinationPath)) {

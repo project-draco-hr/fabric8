@@ -1,0 +1,11 @@
+{
+  Assert.assertTrue(profileRegistry.hasVersion("1.0"));
+  Assert.assertFalse(profileRegistry.hasVersion("1.1"));
+  VersionBuilder vbuilder=VersionBuilder.Factory.create("1.1");
+  String versionId=profileRegistry.createVersion(vbuilder.getVersion());
+  Assert.assertTrue(profileRegistry.hasVersion("1.0"));
+  Assert.assertTrue(profileRegistry.hasVersion("1.1"));
+  profileRegistry.deleteVersion(versionId);
+  Assert.assertTrue(profileRegistry.hasVersion("1.0"));
+  Assert.assertFalse(profileRegistry.hasVersion("1.1"));
+}

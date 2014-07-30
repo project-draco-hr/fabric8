@@ -1,16 +1,16 @@
 {
+  IllegalStateAssertion.assertFalse("master".equals(branch),"Cannot remove master branch");
   if (localBranchExists(git,branch)) {
     String current=currentBranch(git);
     if (equals(current,branch)) {
       checkoutBranch(git,"master");
-      return;
     }
     List<String> list=git.branchDelete().setBranchNames(branch).setForce(true).call();
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("Deleted branch " + branch + " with results "+ list);
-    }
+    LOGGER.debug("Deleted branch {} with results: {}",branch,list);
+    return true;
   }
  else {
-    LOG.debug("Branch " + branch + "not found!");
+    LOGGER.debug("Branch {} not found!",branch);
+    return true;
   }
 }

@@ -3,19 +3,20 @@
   try {
     assertValid();
     LOGGER.info("Create version: {} => {}",sourceId,targetId);
-    GitOperation<Void> gitop=new GitOperation<Void>(){
-      public Void call(      Git git,      GitContext context) throws Exception {
-        checkoutVersion(git,sourceId);
+    GitOperation<String> gitop=new GitOperation<String>(){
+      public String call(      Git git,      GitContext context) throws Exception {
+        IllegalStateAssertion.assertFalse(checkoutProfileBranch(git,targetId,null),"Version already exists: " + targetId);
+        checkoutRequiredProfileBranch(git,sourceId,null);
         createOrCheckoutVersion(git,targetId);
         if (attributes != null) {
-          setVersionAttributesInternal(git,context,targetId,attributes);
+          setVersionAttributes(git,context,targetId,attributes);
         }
         context.commitMessage("Create version: " + sourceId + " => "+ targetId);
-        return null;
+        return targetId;
       }
     }
 ;
-    executeWrite(gitop,true);
+    return executeWrite(gitop,true);
   }
   finally {
     writeLock.unlock();

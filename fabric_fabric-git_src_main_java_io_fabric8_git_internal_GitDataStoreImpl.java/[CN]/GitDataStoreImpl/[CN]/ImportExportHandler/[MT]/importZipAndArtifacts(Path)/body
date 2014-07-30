@@ -49,8 +49,8 @@
   for (  String profileZipUrl : profiles) {
     String token="\\$\\{version:fabric\\}";
     String url=profileZipUrl.replaceFirst(token,fabricVersion);
-    url=removeTokens(url);
-    url=resolveExpression(url,null,false);
+    url=EnvPlaceholderResolver.removeTokens(url);
+    url=EnvPlaceholderResolver.resolveExpression(url,null,false);
     String[] urls=url.split(",");
     for (    String s : urls) {
       s=s.trim();

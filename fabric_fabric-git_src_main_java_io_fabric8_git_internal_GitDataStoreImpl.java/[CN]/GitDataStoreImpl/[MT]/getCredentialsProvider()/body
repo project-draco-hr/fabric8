@@ -8,8 +8,8 @@
   }
  else {
     RuntimeProperties sysprops=runtimeProperties.get();
-    username=getContainerLogin(sysprops);
-    password=generateContainerToken(sysprops,curator.get());
+    username=ZooKeeperUtils.getContainerLogin(sysprops);
+    password=ZooKeeperUtils.generateContainerToken(sysprops,curator.get());
   }
   return new UsernamePasswordCredentialsProvider(username,password);
 }
