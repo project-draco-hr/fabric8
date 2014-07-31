@@ -4,20 +4,28 @@
   CommandSupport.executeCommand("fabric:profile-edit --pid org.apache.karaf.log/size=102 test");
   CommandSupport.executeCommand("fabric:profile-edit --pid org.apache.karaf.shell/fabric.config.merge=true test");
   CommandSupport.executeCommand("fabric:profile-edit --pid org.apache.karaf.shell/sshIdleTimeout=1800002 test");
-  Set<Container> containers=ContainerBuilder.child(1).withName("smoke.childC").withProfiles("test").assertProvisioningResult().build();
+  ModuleContext moduleContext=RuntimeLocator.getRequiredRuntime().getModuleContext();
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(moduleContext,FabricService.class);
   try {
-    Assert.assertEquals("One container",1,containers.size());
-    Container child=containers.iterator().next();
-    Assert.assertEquals("smoke.childC",child.getId());
-    Assert.assertEquals("root",child.getParent().getId());
-    String logPid=CommandSupport.executeCommand("fabric:container-connect -u admin -p admin " + child.getId() + " config:proplist --pid org.apache.karaf.log");
-    String shellPid=CommandSupport.executeCommand("fabric:container-connect -u admin -p admin " + child.getId() + " config:proplist --pid org.apache.karaf.shell");
-    Assert.assertFalse(logPid.contains("pattern"));
-    Assert.assertTrue(logPid.contains("size = 102"));
-    Assert.assertTrue(shellPid.contains("sshHost"));
-    Assert.assertTrue(shellPid.contains("sshIdleTimeout = 1800002"));
+    FabricService fabricService=fabricProxy.getService();
+    Set<Container> containers=ContainerBuilder.child(1).withName("smoke.childC").withProfiles("test").assertProvisioningResult().build(fabricService);
+    try {
+      Assert.assertEquals("One container",1,containers.size());
+      Container child=containers.iterator().next();
+      Assert.assertEquals("smoke.childC",child.getId());
+      Assert.assertEquals("root",child.getParent().getId());
+      String logPid=CommandSupport.executeCommand("fabric:container-connect -u admin -p admin " + child.getId() + " config:proplist --pid org.apache.karaf.log");
+      String shellPid=CommandSupport.executeCommand("fabric:container-connect -u admin -p admin " + child.getId() + " config:proplist --pid org.apache.karaf.shell");
+      Assert.assertFalse(logPid.contains("pattern"));
+      Assert.assertTrue(logPid.contains("size = 102"));
+      Assert.assertTrue(shellPid.contains("sshHost"));
+      Assert.assertTrue(shellPid.contains("sshIdleTimeout = 1800002"));
+    }
+  finally {
+      ContainerBuilder.stop(fabricService,containers);
+    }
   }
   finally {
-    ContainerBuilder.stop(containers);
+    fabricProxy.close();
   }
 }

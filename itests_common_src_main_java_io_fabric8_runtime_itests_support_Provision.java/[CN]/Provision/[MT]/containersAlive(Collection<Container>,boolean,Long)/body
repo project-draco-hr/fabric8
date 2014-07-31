@@ -10,11 +10,11 @@
     waitForProvisionTasks.add(completionService.submit(new WaitForAliveTask(container,alive,timeout)));
     sb.append(container.getId()).append(" ");
   }
-  System.out.println("Waiting for containers: [" + sb.toString() + "] to reach Alive:"+ alive);
+  System.out.println("Waiting for containers: [" + sb.toString() + "] to reach Alive: "+ alive);
   for (  Container container : containers) {
     Future<Boolean> f=completionService.poll(timeout,TimeUnit.MILLISECONDS);
     if (f == null || !f.get()) {
-      throw new Exception("Container " + container.getId() + " failed to reach Alive:"+ alive);
+      throw new Exception("Container " + container.getId() + " failed to reach Alive: "+ alive);
     }
   }
 }

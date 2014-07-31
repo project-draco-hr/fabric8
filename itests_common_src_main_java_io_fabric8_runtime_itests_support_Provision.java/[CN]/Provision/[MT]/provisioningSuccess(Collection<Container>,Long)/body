@@ -1,25 +1,24 @@
 {
-  if (containers.isEmpty()) {
-    return;
-  }
-  boolean running=true;
+  Set<Container> cntset=new HashSet<>(containers);
   long startedAt=System.currentTimeMillis();
   long remaining=timeout;
-  while (running && !Thread.interrupted()) {
-    containerStatus(containers,remaining);
-    remaining=timeout + startedAt - System.currentTimeMillis();
+  while (!cntset.isEmpty() && remaining > 0 && !Thread.interrupted()) {
+    containerStatus(containers,"success",remaining);
+    remaining=startedAt + timeout - System.currentTimeMillis();
     for (    Container container : containers) {
       if (!container.isAliveAndOK()) {
         if (container.getProvisionException() != null) {
           throw new Exception(container.getProvisionException());
         }
- else         if (startedAt + timeout < System.currentTimeMillis()) {
+ else         if (remaining < 0) {
           throw new Exception("Container " + container.getId() + " failed to provision. Status:"+ container.getProvisionStatus()+ " Exception:"+ container.getProvisionException());
         }
       }
  else {
-        running=false;
+        cntset.remove(container);
       }
     }
+    Thread.sleep(1000);
+    remaining=startedAt + timeout - System.currentTimeMillis();
   }
 }

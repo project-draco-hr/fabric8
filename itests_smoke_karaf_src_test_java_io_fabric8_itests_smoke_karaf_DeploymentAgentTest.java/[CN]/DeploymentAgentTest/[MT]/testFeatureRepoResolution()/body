@@ -6,21 +6,29 @@
   CommandSupport.executeCommand("fabric:profile-edit --features fabric-dosgi test-profile 1.1");
   CommandSupport.executeCommand("fabric:profile-edit --pid io.fabric8.agent/org.ops4j.pax.url.mvn.repositories=http://repo1.maven.org/maven2@id=m2central default 1.1");
   CommandSupport.executeCommand("fabric:profile-edit --pid test-profile 1.1");
-  Set<Container> containers=ContainerBuilder.create().withName("smoke.cntA").withProfiles("test-profile").assertProvisioningResult().build();
+  ModuleContext moduleContext=RuntimeLocator.getRequiredRuntime().getModuleContext();
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(moduleContext,FabricService.class);
   try {
-    for (    Container container : containers) {
-      CommandSupport.executeCommand("fabric:container-upgrade 1.1 " + container.getId());
-      System.out.flush();
+    FabricService fabricService=fabricProxy.getService();
+    Set<Container> containers=ContainerBuilder.create().withName("smoke.cntA").withProfiles("test-profile").assertProvisioningResult().build(fabricService);
+    try {
+      for (      Container container : containers) {
+        CommandSupport.executeCommand("fabric:container-upgrade 1.1 " + container.getId());
+        System.out.flush();
+      }
+      Provision.provisioningSuccess(containers,FabricEnsembleSupport.PROVISION_TIMEOUT);
+      CommandSupport.executeCommand("fabric:container-list");
+      for (      Container container : containers) {
+        CommandSupport.executeCommand("fabric:container-connect -u admin -p admin " + container.getId() + " osgi:list");
+        CommandSupport.executeCommand("fabric:container-connect -u admin -p admin " + container.getId() + " config:proplist --pid org.ops4j.pax.url.mvn");
+        System.out.flush();
+      }
     }
-    Provision.provisioningSuccess(containers,FabricEnsembleSupport.PROVISION_TIMEOUT);
-    CommandSupport.executeCommand("fabric:container-list");
-    for (    Container container : containers) {
-      CommandSupport.executeCommand("fabric:container-connect -u admin -p admin " + container.getId() + " osgi:list");
-      CommandSupport.executeCommand("fabric:container-connect -u admin -p admin " + container.getId() + " config:proplist --pid org.ops4j.pax.url.mvn");
-      System.out.flush();
+  finally {
+      ContainerBuilder.stop(fabricService,containers);
     }
   }
   finally {
-    ContainerBuilder.stop(containers);
+    fabricProxy.close();
   }
 }

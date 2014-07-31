@@ -3,13 +3,21 @@
   CommandSupport.executeCommand("fabric:profile-create --parents default test-profile");
   CommandSupport.executeCommand("fabric:profile-edit --pid io.fabric8.agent/resolve.optional.imports=true test-profile");
   CommandSupport.executeCommand("fabric:profile-edit --features spring-struts test-profile");
-  Set<Container> containers=ContainerBuilder.create().withName("smoke.cntB").withProfiles("test-profile").assertProvisioningResult().build();
+  ModuleContext moduleContext=RuntimeLocator.getRequiredRuntime().getModuleContext();
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(moduleContext,FabricService.class);
   try {
-    String command="fabric:container-connect -u admin -p admin " + containers.iterator().next().getId() + " osgi:list -s | grep org.apache.servicemix.bundles.struts";
-    String result=CommandSupport.executeCommand(command);
-    assertTrue("Result contains struts, but was: " + result,result.contains("org.apache.servicemix.bundles.struts"));
+    FabricService fabricService=fabricProxy.getService();
+    Set<Container> containers=ContainerBuilder.create().withName("smoke.cntB").withProfiles("test-profile").assertProvisioningResult().build(fabricService);
+    try {
+      String command="fabric:container-connect -u admin -p admin " + containers.iterator().next().getId() + " osgi:list -s | grep org.apache.servicemix.bundles.struts";
+      String result=CommandSupport.executeCommand(command);
+      assertTrue("Result contains struts, but was: " + result,result.contains("org.apache.servicemix.bundles.struts"));
+    }
+  finally {
+      ContainerBuilder.stop(fabricService,containers);
+    }
   }
   finally {
-    ContainerBuilder.stop(containers);
+    fabricProxy.close();
   }
 }

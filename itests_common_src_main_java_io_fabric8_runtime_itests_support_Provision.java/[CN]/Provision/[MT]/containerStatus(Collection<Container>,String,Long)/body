@@ -7,7 +7,7 @@
     waitForProvisionTasks.add(completionService.submit(new WaitForProvisionTask(c,status,timeout)));
     sb.append(c.getId()).append(" ");
   }
-  System.out.println("Waiting for containers: [" + sb.toString() + "] to successfully provision");
+  System.out.println("Waiting for containers: [" + sb.toString() + "] to reach status: "+ status);
   for (int i=0; i < containers.size(); i++) {
     completionService.poll(timeout,TimeUnit.MILLISECONDS);
   }
