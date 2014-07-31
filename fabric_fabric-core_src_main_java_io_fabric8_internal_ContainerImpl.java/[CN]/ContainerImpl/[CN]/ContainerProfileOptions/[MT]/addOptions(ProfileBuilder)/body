@@ -1,3 +1,17 @@
 {
-  return builder.addParents(getParents());
+  List<String> missingProfiles=new ArrayList<>();
+  for (  String profileId : dataStore.getContainerProfiles(cntId)) {
+    Profile profile=version.getProfile(profileId);
+    if (profile != null) {
+      builder.addParent(profile);
+    }
+ else {
+      missingProfiles.add(profileId);
+    }
+  }
+  if (!missingProfiles.isEmpty()) {
+    LOGGER.warn("Container overlay has missing profiles: {}",missingProfiles);
+    builder.addAttribute("missing.profiles",missingProfiles.toString());
+  }
+  return builder;
 }

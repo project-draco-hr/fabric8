@@ -1,8 +1,4 @@
 {
-  byte[] bytes=fileMapping.get(pid + Profile.PROPERTIES_SUFFIX);
-  if (bytes == null) {
-    return Collections.emptyMap();
-  }
-  Map<String,String> config=DataStoreUtils.toMap(bytes);
+  Map<String,String> config=getConfigurationInternal(pid);
   return Collections.unmodifiableMap(config);
 }

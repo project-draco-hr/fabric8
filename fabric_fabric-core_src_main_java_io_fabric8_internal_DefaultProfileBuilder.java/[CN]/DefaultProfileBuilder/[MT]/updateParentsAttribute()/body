@@ -1,8 +1,8 @@
 {
-  Map<String,String> agentConfig=getMutableAgentConfiguration();
-  agentConfig.remove(PARENTS_ATTRIBUTE_KEY);
+  Map<String,String> config=getConfigurationInternal(Constants.AGENT_PID);
+  config.remove(PARENTS_ATTRIBUTE_KEY);
   if (parentMapping.size() > 0) {
-    agentConfig.put(PARENTS_ATTRIBUTE_KEY,parentsAttributeValue());
+    config.put(PARENTS_ATTRIBUTE_KEY,parentsAttributeValue());
   }
-  addConfiguration(Constants.AGENT_PID,agentConfig);
+  addConfiguration(Constants.AGENT_PID,config);
 }
