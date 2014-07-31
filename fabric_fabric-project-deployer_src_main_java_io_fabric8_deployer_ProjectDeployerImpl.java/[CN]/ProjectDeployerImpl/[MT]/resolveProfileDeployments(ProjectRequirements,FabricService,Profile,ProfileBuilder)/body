@@ -21,12 +21,23 @@
     boolean isKarafContainer=parentIds.contains("karaf") || parentIds.contains("containers-karaf");
     boolean addBundleDependencies=Objects.equal("bundle",rootDependency.getType()) || isKarafContainer;
     if (addBundleDependencies && requirements.isUseResolver()) {
-      List<Feature> allFeatures=new ArrayList<Feature>();
-      for (      String repoUriWithExpressions : overlay.getRepositories()) {
-        String repoUri=VersionPropertyPointerResolver.replaceVersions(fabric,overlay.getConfigurations(),repoUriWithExpressions);
-        RepositoryImpl repo=new RepositoryImpl(URI.create(repoUri));
-        repo.load();
-        allFeatures.addAll(Arrays.asList(repo.getFeatures()));
+      List<Feature> availableFeatures=new ArrayList<Feature>();
+      addAvailableFeaturesFromProfile(availableFeatures,fabric,overlay);
+      Set<String> currentBundleLocations=new HashSet<>();
+      currentBundleLocations.addAll(bundles);
+      DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,executorService);
+      Set<Feature> currentFeatures=AgentUtils.getFeatures(fabric,downloadManager,overlay);
+      addBundlesFromProfile(currentBundleLocations,overlay);
+      List<String> parentProfileIds=requirements.getParentProfiles();
+      if (parentProfileIds != null) {
+        for (        String parentProfileId : parentProfileIds) {
+          Profile parentProfile=profileService.getProfile(profile.getVersion(),parentProfileId);
+          Profile parentOverlay=profileService.getOverlayProfile(parentProfile);
+          Set<Feature> parentFeatures=AgentUtils.getFeatures(fabric,downloadManager,parentOverlay);
+          currentFeatures.addAll(parentFeatures);
+          addAvailableFeaturesFromProfile(availableFeatures,fabric,parentOverlay);
+          addBundlesFromProfile(currentBundleLocations,parentOverlay);
+        }
       }
       for (      DependencyDTO dependency : rootDependency.getChildren()) {
         if ("test".equals(dependency.getScope()) || "provided".equals(dependency.getScope())) {
@@ -44,22 +55,52 @@
           }
         }
         String prefix=dependency.toBundleUrlWithoutVersion();
-        List<Feature> matching=new ArrayList<>();
-        for (        Feature feature : allFeatures) {
-          for (          BundleInfo bi : feature.getBundles()) {
-            if (!bi.isDependency() && bi.getLocation().startsWith(prefix)) {
-              matching.add(feature);
-              break;
-            }
-          }
-        }
-        if (matching.size() == 1) {
-          LOG.info("Found a matching feature for bundle " + dependency.toBundleUrl() + ": "+ matching.get(0).getId());
-          features.add(matching.get(0).getName());
+        Feature feature=findFeatureWithBundleLocationPrefix(currentFeatures,prefix);
+        if (feature != null) {
+          LOG.info("Feature is already is in the profile " + feature.getId() + " for "+ dependency.toBundleUrl());
         }
  else {
-          LOG.info("Adding optional bundle: " + dependency.toBundleUrlWithType());
-          optionals.add(dependency.toBundleUrlWithType());
+          feature=findFeatureWithBundleLocationPrefix(availableFeatures,prefix);
+          if (feature != null) {
+            String name=feature.getName();
+            if (features.contains(name)) {
+              LOG.info("Feature is already added " + name + " for "+ dependency.toBundleUrl());
+            }
+ else {
+              LOG.info("Found a matching feature for bundle " + dependency.toBundleUrl() + ": "+ feature.getId());
+              features.add(name);
+            }
+          }
+ else {
+            String bundleUrlWithType=dependency.toBundleUrlWithType();
+            String foundBundleUri=findBundleUri(currentBundleLocations,prefix);
+            if (foundBundleUri != null) {
+              LOG.info("Bundle already included " + foundBundleUri + " for "+ bundleUrlWithType);
+            }
+ else {
+              boolean ignore=false;
+              String bundleWithoutMvnPrefix=getMavenCoords(bundleUrlWithType);
+              for (              String ignoreBundlePrefix : RESOLVER_IGNORE_BUNDLE_PREFIXES) {
+                if (bundleWithoutMvnPrefix.startsWith(ignoreBundlePrefix)) {
+                  ignore=true;
+                  break;
+                }
+              }
+              if (ignore) {
+                LOG.info("Ignoring bundle: " + bundleUrlWithType);
+              }
+ else {
+                boolean optional=dependency.isOptional();
+                LOG.info("Adding " + (optional ? "optional " : "") + " bundle: "+ bundleUrlWithType);
+                if (optional) {
+                  optionals.add(bundleUrlWithType);
+                }
+ else {
+                  bundles.add(bundleUrlWithType);
+                }
+              }
+            }
+          }
         }
       }
       builder.setOptionals(optionals).setFeatures(features);

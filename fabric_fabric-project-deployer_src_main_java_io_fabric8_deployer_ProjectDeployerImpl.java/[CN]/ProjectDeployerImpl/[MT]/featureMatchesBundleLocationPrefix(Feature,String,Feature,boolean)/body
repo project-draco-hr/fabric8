@@ -1,0 +1,16 @@
+{
+  for (  BundleInfo bi : feature.getBundles()) {
+    if (!bi.isDependency() && bi.getLocation().startsWith(prefix)) {
+      return owningFeature;
+    }
+  }
+  if (includeDependencies) {
+    for (    Feature dependency : feature.getDependencies()) {
+      Feature answer=featureMatchesBundleLocationPrefix(dependency,prefix,owningFeature,true);
+      if (answer != null) {
+        return answer;
+      }
+    }
+  }
+  return null;
+}
