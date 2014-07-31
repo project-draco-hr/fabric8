@@ -6,8 +6,8 @@
       public String call(      Git git,      GitContext context) throws Exception {
         String versionId=profile.getVersion();
         String profileId=profile.getId();
-        getRequiredProfile(versionId,profileId);
-        return createOrUpdateProfile(context,profile,false,new HashSet<String>());
+        Profile lastProfile=getRequiredProfile(versionId,profileId);
+        return createOrUpdateProfile(context,lastProfile,profile,new HashSet<String>());
       }
     }
 ;

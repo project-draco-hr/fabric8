@@ -11,17 +11,17 @@
     ProfileBuilder builder=ProfileBuilder.Factory.create(profile.getVersion(),profileId);
     builder.addOptions(new OverlayOptionsProvider(profile,environment));
     overlayProfile=builder.getProfile();
-    if (LOGGER.isDebugEnabled()) {
+    if (LOGGER.isInfoEnabled()) {
 synchronized (lastOverlayProfiles) {
         Profile lastOverlay=lastOverlayProfiles.get(profileId);
         String longString=Profiles.getProfileInfo(overlayProfile,true);
         String lastString=lastOverlay != null ? Profiles.getProfileInfo(lastOverlay,true) : null;
         if (lastOverlay == null || !longString.equals(lastString)) {
-          LOGGER.debug("Changed Overlay" + longString);
+          LOGGER.info("Changed Overlay" + longString);
           if (lastOverlay != null) {
-            LOGGER.debug("Overlay" + Profiles.getProfileDifference(lastOverlay,overlayProfile));
+            LOGGER.info("Overlay" + Profiles.getProfileDifference(lastOverlay,overlayProfile));
           }
-          LOGGER.debug("Called from ",new RuntimeException());
+          LOGGER.info("Called from ",new RuntimeException());
           lastOverlayProfiles.put(profileId,overlayProfile);
         }
       }

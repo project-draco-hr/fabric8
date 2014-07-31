@@ -5,10 +5,17 @@
   if (!profiles.contains(profileId)) {
     List<Profile> parents=profile.getParents();
     for (    Profile parent : parents) {
-      createOrUpdateProfile(context,parent,allowCreate,profiles);
+      Profile lastParent=getProfileFromCache(parent.getVersion(),parent.getId());
+      createOrUpdateProfile(context,lastParent,parent,profiles);
     }
-    LOGGER.info(allowCreate ? "Create {}" : "Update {}",Profiles.getProfileInfo(profile,false));
-    if (allowCreate) {
+    if (lastProfile == null) {
+      LOGGER.info("Create {}",Profiles.getProfileInfo(profile,false));
+    }
+ else {
+      LOGGER.info("Update {}",profile);
+      LOGGER.info("Update {}",Profiles.getProfileDifference(lastProfile,profile));
+    }
+    if (lastProfile == null) {
       createProfileDirectoryAfterCheckout(context,versionId,profileId);
     }
     Map<String,byte[]> fileConfigurations=profile.getFileConfigurations();
