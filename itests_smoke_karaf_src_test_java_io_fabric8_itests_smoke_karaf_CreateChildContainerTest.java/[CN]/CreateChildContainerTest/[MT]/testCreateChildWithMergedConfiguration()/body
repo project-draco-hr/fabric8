@@ -4,11 +4,11 @@
   CommandSupport.executeCommand("fabric:profile-edit --pid org.apache.karaf.log/size=102 test");
   CommandSupport.executeCommand("fabric:profile-edit --pid org.apache.karaf.shell/fabric.config.merge=true test");
   CommandSupport.executeCommand("fabric:profile-edit --pid org.apache.karaf.shell/sshIdleTimeout=1800002 test");
-  Set<Container> containers=ContainerBuilder.child(1).withName("childC").withProfiles("test").assertProvisioningResult().build();
+  Set<Container> containers=ContainerBuilder.child(1).withName("smoke.childC").withProfiles("test").assertProvisioningResult().build();
   try {
     Assert.assertEquals("One container",1,containers.size());
     Container child=containers.iterator().next();
-    Assert.assertEquals("childC",child.getId());
+    Assert.assertEquals("smoke.childC",child.getId());
     Assert.assertEquals("root",child.getParent().getId());
     String logPid=CommandSupport.executeCommand("fabric:container-connect -u admin -p admin " + child.getId() + " config:proplist --pid org.apache.karaf.log");
     String shellPid=CommandSupport.executeCommand("fabric:container-connect -u admin -p admin " + child.getId() + " config:proplist --pid org.apache.karaf.shell");

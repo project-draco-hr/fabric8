@@ -3,7 +3,7 @@
   CommandSupport.executeCommand("fabric:profile-create --parents default test-profile");
   CommandSupport.executeCommand("fabric:profile-edit --pid io.fabric8.agent/resolve.optional.imports=true test-profile");
   CommandSupport.executeCommand("fabric:profile-edit --features spring-struts test-profile");
-  Set<Container> containers=ContainerBuilder.create().withName("cntB").withProfiles("test-profile").assertProvisioningResult().build();
+  Set<Container> containers=ContainerBuilder.create().withName("smoke.cntB").withProfiles("test-profile").assertProvisioningResult().build();
   try {
     String command="fabric:container-connect -u admin -p admin " + containers.iterator().next().getId() + " osgi:list -s | grep org.apache.servicemix.bundles.struts";
     String result=CommandSupport.executeCommand(command);

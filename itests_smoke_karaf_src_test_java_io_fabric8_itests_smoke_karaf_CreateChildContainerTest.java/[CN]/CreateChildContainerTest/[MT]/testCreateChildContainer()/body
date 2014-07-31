@@ -1,10 +1,10 @@
 {
   System.err.println(CommandSupport.executeCommand("fabric:create --force --clean -n"));
-  Set<Container> containers=ContainerBuilder.child(1).withName("childA").build();
+  Set<Container> containers=ContainerBuilder.child(1).withName("smoke.childA").build();
   try {
     Assert.assertEquals("One container",1,containers.size());
     Container child=containers.iterator().next();
-    Assert.assertEquals("childA",child.getId());
+    Assert.assertEquals("smoke.childA",child.getId());
     Assert.assertEquals("root",child.getParent().getId());
   }
   finally {
