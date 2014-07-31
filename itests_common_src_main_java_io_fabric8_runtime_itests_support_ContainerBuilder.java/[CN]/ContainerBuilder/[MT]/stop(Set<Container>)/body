@@ -4,12 +4,12 @@
   try {
     FabricService fabricService=fabricProxy.getService();
     for (    Container aux : containers) {
+      String cntId=aux.getId();
       try {
-        Container updated=fabricService.getContainer(aux.getId());
-        updated.stop(true);
+        fabricService.stopContainer(cntId,true);
       }
  catch (      Exception ex) {
-        ex.printStackTrace(System.err);
+        new FabricException("Cannot stop container: " + cntId,ex).printStackTrace(System.err);
       }
     }
   }
