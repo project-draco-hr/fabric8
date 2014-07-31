@@ -125,11 +125,13 @@
       containerList+=container;
       index++;
     }
+    LOGGER.info("Creating parent ensemble profile for id: {}.",ensembleProfileId);
     LockHandle writeLock=profileRegistry.get().aquireWriteLock();
     try {
       ensembleProfileBuilder.addFileConfiguration(ensemblePropertiesName,DataStoreUtils.toBytes(ensembleProperties));
       profileRegistry.get().createProfile(ensembleProfileBuilder.getProfile());
       for (      Profile memberProfile : memberProfiles) {
+        LOGGER.info("Creating member ensemble profile with id: {}.",memberProfile.getId());
         profileRegistry.get().createProfile(memberProfile);
       }
     }
@@ -140,6 +142,7 @@
     for (    String container : containers) {
       List<String> profiles=new LinkedList<String>(dataStore.get().getContainerProfiles(container));
       profiles.add("fabric-ensemble-" + newClusterId + "-"+ Integer.toString(index));
+      LOGGER.info("Assigning member ensemble profile with id: {} to {}.",ensembleProfileId + "-" + index,container);
       dataStore.get().setContainerProfiles(container,profiles);
       index++;
     }
@@ -153,9 +156,11 @@
       dst.start();
       try {
         long t0=System.currentTimeMillis();
+        LOGGER.info("Waiting for ensemble {} to become ready.",newClusterId);
         if (!dst.getZookeeperClient().blockUntilConnectedOrTimedOut()) {
           throw new EnsembleModificationFailed("Timed out connecting to new ensemble.",EnsembleModificationFailed.Reason.TIMEOUT);
         }
+        LOGGER.info("Copying data from the old ensemble to the new one");
         copy(curator.get(),dst,"/fabric");
         setData(dst,ZkPath.CONFIG_ENSEMBLES.getPath(),newClusterId);
         setData(dst,ZkPath.CONFIG_ENSEMBLE.getPath(newClusterId),containerList);
@@ -169,10 +174,10 @@ synchronized (result) {
           }
         }
 );
+        LOGGER.info("Migrating containers to the new ensemble using url {}.",connectionUrl);
         setData(dst,ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),PasswordEncoder.encode(options.getZookeeperPassword()));
         setData(dst,ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl);
-        setData(curator.get(),ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),PasswordEncoder.encode(options.getZookeeperPassword()));
-        setData(curator.get(),ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl);
+        curator.get().inTransaction().setData().forPath(ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath(),PasswordEncoder.encode(options.getZookeeperPassword()).getBytes(Charsets.UTF_8)).and().setData().forPath(ZkPath.CONFIG_ENSEMBLE_URL.getPath(),connectionUrl.getBytes(Charsets.UTF_8)).and().commit();
         boolean allStarted=false;
         while (!allStarted && System.currentTimeMillis() - t0 < options.getMigrationTimeout()) {
           allStarted=true;
@@ -186,6 +191,7 @@ synchronized (result) {
         if (!allStarted) {
           throw new EnsembleModificationFailed("Timeout waiting for containers to join the new ensemble",EnsembleModificationFailed.Reason.TIMEOUT);
         }
+        LOGGER.info("Migration successful. Cleaning up");
 synchronized (result) {
           if (result.get() == null) {
             result.wait();

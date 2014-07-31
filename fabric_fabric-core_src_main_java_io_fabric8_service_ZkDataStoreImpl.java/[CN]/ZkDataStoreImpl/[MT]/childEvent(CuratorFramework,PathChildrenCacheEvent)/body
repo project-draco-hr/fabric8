@@ -6,6 +6,7 @@ case CHILD_REMOVED:
 case CHILD_UPDATED:
 case INITIALIZED:
       if (shouldRunCallbacks(event.getData().getPath())) {
+        LOGGER.info("Event {} detected on {}. Sending notification.",event.getType().name(),event.getData().getPath());
         fireChangeNotifications();
       }
     break;
