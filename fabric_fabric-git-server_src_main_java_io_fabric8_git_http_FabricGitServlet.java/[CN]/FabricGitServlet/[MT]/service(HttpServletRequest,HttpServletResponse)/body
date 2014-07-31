@@ -2,24 +2,14 @@
   String service=req.getParameter("service");
   boolean isPush=service != null && service.equals("git-receive-pack");
   LOGGER.trace("FabricGitServlet service git service={}, isPush={}",service,isPush);
-  Lock lock=isPush ? rwLock.writeLock() : rwLock.readLock();
+  super.service(req,res);
   try {
-    lock.lock();
-    super.service(req,res);
-  }
-  finally {
-    lock.unlock();
     if (isPush) {
-      int value=counter.getCount();
-      int newValue=value + 1;
-      LOGGER.debug("Updating counter to {}",newValue);
-      try {
-        counter.trySetCount(newValue);
-      }
- catch (      Exception e) {
-        LOGGER.debug("Error updating counter on ZkPath: " + path + " due "+ e.getMessage()+ ". This exception is ignored.",e);
-        LOGGER.warn("Error updating counter on ZkPath: " + path + " due "+ e.getMessage()+ ". This exception is ignored.");
-      }
+      while (!counter.trySetCount(counter.getCount() + 1))       ;
     }
+  }
+ catch (  Exception e) {
+    LOGGER.debug("Error updating counter on ZkPath: " + path + " due "+ e.getMessage()+ ". This exception is ignored.",e);
+    LOGGER.warn("Error updating counter on ZkPath: " + path + " due "+ e.getMessage()+ ". This exception is ignored.");
   }
 }
