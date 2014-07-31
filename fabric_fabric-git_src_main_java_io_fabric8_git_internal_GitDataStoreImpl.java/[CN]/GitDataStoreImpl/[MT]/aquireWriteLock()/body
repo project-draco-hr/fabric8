@@ -11,6 +11,14 @@
   allowPullInThreadContext();
   return new LockHandle(){
     @Override public void unlock(){
+      if (notificationRequired && readWriteLock.getWriteHoldCount() == 1) {
+        try {
+          dataStore.get().fireChangeNotifications();
+        }
+  finally {
+          notificationRequired=false;
+        }
+      }
       writeLock.unlock();
     }
   }

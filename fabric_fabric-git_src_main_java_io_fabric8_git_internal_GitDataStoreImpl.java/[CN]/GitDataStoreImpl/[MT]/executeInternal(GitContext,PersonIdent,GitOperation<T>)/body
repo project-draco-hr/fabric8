@@ -28,7 +28,8 @@
       doPushInternal(git,context,getCredentialsProvider());
     }
     if (changeNotification) {
-      fireChangeNotification();
+      versionCache.invalidateAll();
+      notificationRequired=true;
     }
     return result;
   }

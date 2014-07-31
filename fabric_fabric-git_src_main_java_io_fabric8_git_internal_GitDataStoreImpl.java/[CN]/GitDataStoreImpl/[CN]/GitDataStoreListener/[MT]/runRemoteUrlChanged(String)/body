@@ -18,8 +18,9 @@
           config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
           config.save();
           if (doPullInternal(git,context,getCredentialsProvider(),false)) {
-            fireChangeNotification();
             doPushInternal(git,context,getCredentialsProvider());
+            versionCache.invalidateAll();
+            notificationRequired=true;
           }
         }
         return null;
