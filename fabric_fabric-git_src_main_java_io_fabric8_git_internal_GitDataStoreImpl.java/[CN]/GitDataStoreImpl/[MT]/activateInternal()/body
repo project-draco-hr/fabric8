@@ -25,28 +25,20 @@
   LOGGER.info("Starting to push to remote git repository every {} millis",gitPushInterval);
   threadPool.scheduleWithFixedDelay(new Runnable(){
     @Override public void run(){
-      LockHandle writeLock=aquireWriteLock();
-      try {
-        if (!initialPull.compareAndSet(false,true)) {
-          LOGGER.trace("Performing initial pull");
-          initialPull.set(pull());
-          LOGGER.info("Initial pull completed with " + (initialPull.get() ? "success" : "failure"));
+      if (pullCount.get() > 0) {
+        LockHandle writeLock=aquireWriteLock();
+        try {
+          LOGGER.trace("Performing timed push");
+          push();
+          LOGGER.debug("Performed timed push done");
         }
-        if (gitPullOnPush) {
-          LOGGER.trace("Performing timed pull");
-          pull();
-          LOGGER.debug("Performed timed pull done");
+ catch (        Throwable e) {
+          LOGGER.debug("Error during performed timed pull/push due " + e.getMessage(),e);
+          LOGGER.warn("Error during performed timed pull/push due " + e.getMessage() + ". This exception is ignored.");
         }
-        LOGGER.trace("Performing timed push");
-        push();
-        LOGGER.debug("Performed timed push done");
-      }
- catch (      Throwable e) {
-        LOGGER.debug("Error during performed timed pull/push due " + e.getMessage(),e);
-        LOGGER.warn("Error during performed timed pull/push due " + e.getMessage() + ". This exception is ignored.");
-      }
  finally {
-        writeLock.unlock();
+          writeLock.unlock();
+        }
       }
     }
     @Override public String toString(){
@@ -54,29 +46,26 @@
     }
   }
 ,1000,gitPushInterval,TimeUnit.MILLISECONDS);
-  if (!gitPullOnPush) {
-    LOGGER.info("Using ZooKeeper SharedCount to react when master git repo is changed, so we can do a git pull to the local git repo.");
-    counter=new SharedCount(curator.get(),ZkPath.GIT_TRIGGER.getPath(),0);
-    counter.addListener(new SharedCountListener(){
-      @Override public void countHasChanged(      SharedCountReader sharedCountReader,      int value) throws Exception {
-        Thread.sleep(1000);
-        LOGGER.info("Watch counter updated to " + value + ", doing a pull");
-        LockHandle writeLock=aquireWriteLock();
-        try {
-          pull();
-        }
- catch (        Throwable e) {
-          LOGGER.debug("Error during pull due " + e.getMessage(),e);
-          LOGGER.warn("Error during pull due " + e.getMessage() + ". This exception is ignored.");
-        }
- finally {
-          writeLock.unlock();
-        }
+  LOGGER.info("Using ZooKeeper SharedCount to react when master git repo is changed, so we can do a git pull to the local git repo.");
+  counter=new SharedCount(curator.get(),ZkPath.GIT_TRIGGER.getPath(),0);
+  counter.addListener(new SharedCountListener(){
+    @Override public void countHasChanged(    SharedCountReader sharedCountReader,    int value) throws Exception {
+      LOGGER.info("Watch counter updated to " + value + ", doing a pull");
+      LockHandle writeLock=aquireWriteLock();
+      try {
+        pull();
       }
-      @Override public void stateChanged(      CuratorFramework curatorFramework,      ConnectionState connectionState){
+ catch (      Throwable e) {
+        LOGGER.debug("Error during pull due " + e.getMessage(),e);
+        LOGGER.warn("Error during pull due " + e.getMessage() + ". This exception is ignored.");
+      }
+ finally {
+        writeLock.unlock();
       }
     }
-);
-    counter.start();
+    @Override public void stateChanged(    CuratorFramework curatorFramework,    ConnectionState connectionState){
+    }
   }
+);
+  counter.start();
 }

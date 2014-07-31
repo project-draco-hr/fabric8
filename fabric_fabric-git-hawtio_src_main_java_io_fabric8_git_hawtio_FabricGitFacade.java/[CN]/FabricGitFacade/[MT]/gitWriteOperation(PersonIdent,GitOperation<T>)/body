@@ -1,5 +1,4 @@
 {
-  GitContext context=new GitContext();
-  context.requireCommit();
-  return gitDataStore.get().gitOperation(personIdent,operation,true,context);
+  GitContext context=new GitContext().requireCommit().requirePush();
+  return gitDataStore.get().gitOperation(context,gitop,personIdent);
 }

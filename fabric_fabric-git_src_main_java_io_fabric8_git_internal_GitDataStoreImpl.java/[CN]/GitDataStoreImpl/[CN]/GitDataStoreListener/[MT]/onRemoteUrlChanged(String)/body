@@ -1,16 +1,12 @@
 {
   final String actualUrl=configuredUrl != null ? configuredUrl : updatedUrl;
-  if (isValid()) {
-    threadPool.submit(new Runnable(){
-      @Override public void run(){
-        if (isValid() && actualUrl != null) {
-          runRemoteUrlChanged(actualUrl);
-        }
-      }
-      @Override public String toString(){
-        return "RemoteUrlChangedTask";
-      }
+  threadPool.submit(new Runnable(){
+    @Override public void run(){
+      runRemoteUrlChanged(actualUrl);
     }
-);
+    @Override public String toString(){
+      return "RemoteUrlChangedTask";
+    }
   }
+);
 }

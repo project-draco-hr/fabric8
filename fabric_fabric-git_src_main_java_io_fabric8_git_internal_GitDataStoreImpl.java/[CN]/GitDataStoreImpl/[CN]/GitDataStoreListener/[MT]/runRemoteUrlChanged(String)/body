@@ -11,7 +11,7 @@
         Repository repository=git.getRepository();
         StoredConfig config=repository.getConfig();
         String currentUrl=config.getString("remote","origin","url");
-        if (updateUrl != null && !updateUrl.equals(currentUrl)) {
+        if (!updateUrl.equals(currentUrl)) {
           LOGGER.info("Performing on remote url changed from: {} to: {}",currentUrl,updateUrl);
           remoteUrl=updateUrl;
           config.setString("remote","origin","url",updateUrl);
