@@ -125,13 +125,14 @@
       containerList+=container;
       index++;
     }
-    LOGGER.info("Creating parent ensemble profile for id: {}.",ensembleProfileId);
     LockHandle writeLock=profileRegistry.get().aquireWriteLock();
     try {
       ensembleProfileBuilder.addFileConfiguration(ensemblePropertiesName,DataStoreUtils.toBytes(ensembleProperties));
-      profileRegistry.get().createProfile(ensembleProfileBuilder.getProfile());
+      Profile ensembleProfile=ensembleProfileBuilder.getProfile();
+      LOGGER.info("Creating parent ensemble profile: {}",ensembleProfile);
+      profileRegistry.get().createProfile(ensembleProfile);
       for (      Profile memberProfile : memberProfiles) {
-        LOGGER.info("Creating member ensemble profile with id: {}.",memberProfile.getId());
+        LOGGER.info("Creating member ensemble profile: {}",memberProfile);
         profileRegistry.get().createProfile(memberProfile);
       }
     }
