@@ -1,6 +1,7 @@
 {
   assertWriteLock();
   IllegalStateAssertion.assertTrue(context.incrementPullCount(),"Pull not required in context");
+  IllegalStateAssertion.assertTrue(isPullAllowedInThreadContext(),"Pull not not allowed in thread context");
   try {
     Repository repository=git.getRepository();
     StoredConfig config=repository.getConfig();
@@ -9,7 +10,7 @@
       LOGGER.info("No remote repository defined for the git repository at {} so not doing a pull",GitHelpers.getRootGitDirectory(git));
       return false;
     }
-    LOGGER.info("Performing a fetch in git repository {} on remote URL: {}",GitHelpers.getRootGitDirectory(git),url);
+    LOGGER.info("Performing a pull git repository {} on remote URL: {}",GitHelpers.getRootGitDirectory(git),url);
     git.reset().setMode(ResetType.HARD).call();
     try {
       git.fetch().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setRemote(remoteRef.get()).call();
@@ -92,5 +93,8 @@
     LOGGER.debug("Failed to pull from the remote git repo " + GitHelpers.getRootGitDirectory(git),ex);
     LOGGER.warn("Failed to pull from the remote git repo " + GitHelpers.getRootGitDirectory(git) + " due "+ ex.getMessage()+ ". This exception is ignored.");
     return false;
+  }
+ finally {
+    pullAllowedAssociation.set(Boolean.FALSE);
   }
 }

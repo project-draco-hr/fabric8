@@ -2,13 +2,6 @@
   LockHandle writeLock=aquireWriteLock();
   try {
     assertValid();
-    if (LOGGER.isDebugEnabled()) {
-      Profile wasProfile=getRequiredProfile(profile.getVersion(),profile.getId());
-      LOGGER.debug("Update " + Profiles.getProfileDifference(wasProfile,profile));
-    }
- else {
-      LOGGER.info("Update {}",profile);
-    }
     GitOperation<String> gitop=new GitOperation<String>(){
       public String call(      Git git,      GitContext context) throws Exception {
         checkoutProfileBranch(profile.getVersion(),profile.getId());

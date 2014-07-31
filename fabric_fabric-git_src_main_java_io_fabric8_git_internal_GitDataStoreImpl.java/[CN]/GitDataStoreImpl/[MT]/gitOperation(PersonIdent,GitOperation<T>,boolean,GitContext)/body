@@ -2,7 +2,8 @@
   LockHandle writeLock=aquireWriteLock();
   try {
     assertValid();
-    return executeInternal(context.setRequirePull(pullFirst),personIdent,operation);
+    LOGGER.info("External call to execute a git operation: " + gitop);
+    return executeInternal(context.setRequirePull(pullFirst),personIdent,gitop);
   }
   finally {
     writeLock.unlock();

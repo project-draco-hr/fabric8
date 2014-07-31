@@ -8,6 +8,7 @@
     success=false;
   }
   IllegalStateAssertion.assertTrue(success,"Cannot obtain profile write lock in time");
+  allowPullInThreadContext();
   return new LockHandle(){
     @Override public void unlock(){
       writeLock.unlock();

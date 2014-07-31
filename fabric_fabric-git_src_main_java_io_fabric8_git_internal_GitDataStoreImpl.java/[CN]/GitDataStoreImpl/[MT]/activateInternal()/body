@@ -21,13 +21,7 @@
       gitListener.runRemoteUrlChanged(remoteUrl);
     }
   }
-  LockHandle writeLock=aquireWriteLock();
-  try {
-    getInitialVersions();
-  }
-  finally {
-    writeLock.unlock();
-  }
+  getInitialVersions();
   LOGGER.info("Starting to push to remote git repository every {} millis",gitPushInterval);
   threadPool.scheduleWithFixedDelay(new Runnable(){
     @Override public void run(){

@@ -16,7 +16,7 @@
       personIdent=new PersonIdent(repository);
     }
     boolean changeNotification=false;
-    if (context.isRequirePull()) {
+    if (context.isRequirePull() && isPullAllowedInThreadContext()) {
       changeNotification=doPullInternal(git,context,getCredentialsProvider(),false);
     }
     T result=operation.call(git,context);

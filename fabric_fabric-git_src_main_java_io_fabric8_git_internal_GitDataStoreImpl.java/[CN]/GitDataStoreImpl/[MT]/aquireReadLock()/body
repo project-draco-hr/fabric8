@@ -8,6 +8,7 @@
     success=false;
   }
   IllegalStateAssertion.assertTrue(success,"Cannot obtain profile read lock in time");
+  allowPullInThreadContext();
   return new LockHandle(){
     @Override public void unlock(){
       readLock.unlock();
