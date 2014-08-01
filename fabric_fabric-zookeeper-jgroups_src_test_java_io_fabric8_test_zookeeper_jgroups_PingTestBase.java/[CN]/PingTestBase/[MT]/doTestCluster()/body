@@ -1,0 +1,41 @@
+{
+  Util.waitUntilAllChannelsHaveSameSize(10000,1000,channels);
+  JChannel first=channels[0], last=channels[NUM - 1];
+  for (int i=1; i <= 10; i++) {
+    first.send(last.getAddress(),i);
+  }
+  List<Integer> msgs=receivers[NUM - 1].getList();
+  Util.waitUntilListHasSize(msgs,10,10000,1000);
+  System.out.println("msgs = " + msgs);
+  for (int i=1; i < 10; i++) {
+    Assert.assertTrue(msgs.contains(i));
+  }
+  clearReceivers();
+  for (int i=0; i < NUM; i++) {
+    JChannel ch=channels[i];
+    int num=(i + 1) * 10;
+    for (int j=0; j <= 5; j++) {
+      ch.send(null,num + j);
+    }
+  }
+  final int expected_size=NUM * 6;
+  final List<Integer> expected_numbers=new ArrayList<>(expected_size);
+  for (int i=0; i < NUM; i++) {
+    int num=(i + 1) * 10;
+    for (int j=0; j <= 5; j++) {
+      expected_numbers.add(num + j);
+    }
+  }
+  for (int i=0; i < NUM; i++) {
+    List<Integer> list=receivers[i].getList();
+    Util.waitUntilListHasSize(list,expected_size,10000,1000);
+    System.out.println("list[" + i + "]: "+ list);
+  }
+  for (int i=0; i < NUM; i++) {
+    List<Integer> list=receivers[i].getList();
+    for (    int num : expected_numbers) {
+      Assert.assertTrue(list.contains(num));
+    }
+  }
+  clearReceivers();
+}

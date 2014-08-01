@@ -1,0 +1,13 @@
+{
+  if (cnxnFactory != null) {
+    cnxnFactory.shutdown();
+    cnxnFactory.join();
+  }
+  if (zkServer != null) {
+    if (zkServer.getZKDatabase() != null) {
+      zkServer.getZKDatabase().close();
+    }
+  }
+  cnxnFactory=null;
+  zkServer=null;
+}

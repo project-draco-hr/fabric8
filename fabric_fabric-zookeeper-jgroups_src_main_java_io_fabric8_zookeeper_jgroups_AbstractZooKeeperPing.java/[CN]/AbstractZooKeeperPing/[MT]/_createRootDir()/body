@@ -1,0 +1,10 @@
+{
+  try {
+    if (curator.checkExists().forPath(localNodePath) == null) {
+      curator.create().creatingParentsIfNeeded().withMode(getCreateMode()).forPath(localNodePath);
+    }
+  }
+ catch (  Exception e) {
+    throw new RuntimeException(String.format("Failed to create dir %s in ZooKeeper.",localNodePath),e);
+  }
+}

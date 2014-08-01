@@ -1,0 +1,12 @@
+{
+  String zkURL=System.getenv("FABRIC8_ZOOKEEPER_URL");
+  if (zkURL != null) {
+    connection=zkURL;
+  }
+  String zkPassword=System.getenv("FABRIC8_ZOOKEEPER_PASSWORD");
+  if (zkPassword != null) {
+    password=PasswordEncoder.decode(zkPassword);
+    setAclProvider(new CuratorACLManager());
+  }
+  super.init();
+}
