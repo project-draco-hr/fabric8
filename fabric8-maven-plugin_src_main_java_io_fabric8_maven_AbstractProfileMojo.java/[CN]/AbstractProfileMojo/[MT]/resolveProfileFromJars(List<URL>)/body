@@ -1,14 +1,6 @@
 {
-  URLClassLoader classLoader=new URLClassLoader(jars.toArray(new URL[jars.size()]));
-  Map<String,String> mainToProfileMap=getDefaultClassToProfileMap();
-  Set<Map.Entry<String,String>> entries=mainToProfileMap.entrySet();
-  for (  Map.Entry<String,String> entry : entries) {
-    String mainClass=entry.getKey();
-    String profileName=entry.getValue();
-    if (hasClass(classLoader,mainClass)) {
-      getLog().info("Found class: " + mainClass + " so defaulting the parent profile: "+ profileName);
-      return profileName;
-    }
-  }
-  return "containers-java";
+  URLClassLoader classLoader=createURLClassLoader(urls);
+  Map<String,String> mainToProfileMap=getDefaultJavaClassToParentProfileMap();
+  String defaultProfile="containers-java";
+  return resolveProfileFromClassMap(classLoader,mainToProfileMap,defaultProfile);
 }
