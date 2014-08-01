@@ -51,6 +51,7 @@
   counter.addListener(new SharedCountListener(){
     @Override public void countHasChanged(    SharedCountReader sharedCountReader,    int value) throws Exception {
       LOGGER.info("Watch counter updated to " + value + ", doing a pull");
+      Thread.sleep(1000);
       LockHandle writeLock=aquireWriteLock();
       try {
         pull();
