@@ -3,7 +3,7 @@
   LockHandle writeLock=aquireWriteLock();
   try {
     if (!isValid()) {
-      LOGGER.warn("Remote URL change on invalid component: " + updateUrl);
+      LOGGER.warn("Remote url change on invalid component: " + updateUrl);
       return;
     }
     GitOperation<Void> gitop=new GitOperation<Void>(){
@@ -12,13 +12,14 @@
         StoredConfig config=repository.getConfig();
         String currentUrl=config.getString("remote","origin","url");
         if (!updateUrl.equals(currentUrl)) {
-          LOGGER.info("Performing on remote url changed from: {} to: {}",currentUrl,updateUrl);
+          LOGGER.info("Remote url change from: {} to: {}",currentUrl,updateUrl);
           remoteUrl=updateUrl;
           config.setString("remote","origin","url",updateUrl);
           config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
           config.save();
-          if (doPullInternal(git,context,getCredentialsProvider(),false)) {
-            doPushInternal(git,context,getCredentialsProvider());
+          boolean hasChanged=doPullInternal(git,context,getCredentialsProvider(),false);
+          hasChanged|=doPushInternal(git,context,getCredentialsProvider(),null);
+          if (hasChanged) {
             versionCache.invalidateAll();
             notificationRequired=true;
           }
@@ -27,8 +28,7 @@
       }
     }
 ;
-    GitContext context=new GitContext().requirePull();
-    executeInternal(context,null,gitop);
+    executeInternal(new GitContext(),null,gitop);
   }
   finally {
     writeLock.unlock();

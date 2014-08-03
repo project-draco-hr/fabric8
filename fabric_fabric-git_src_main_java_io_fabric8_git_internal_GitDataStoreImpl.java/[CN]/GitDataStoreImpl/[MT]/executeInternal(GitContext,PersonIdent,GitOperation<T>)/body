@@ -15,21 +15,20 @@
     if (personIdent == null) {
       personIdent=new PersonIdent(repository);
     }
-    boolean changeNotification=false;
-    if (context.isRequirePull() && isPullAllowedInThreadContext()) {
-      changeNotification=doPullInternal(git,context,getCredentialsProvider(),false);
+    if (context.isRequirePull()) {
+      if (doPullInternal(git,context,getCredentialsProvider(),false)) {
+        versionCache.invalidateAll();
+        notificationRequired=true;
+      }
     }
     T result=operation.call(git,context);
     if (context.isRequireCommit()) {
-      doCommitInternal(git,context);
-      changeNotification=true;
-    }
-    if (context.isRequirePush()) {
-      doPushInternal(git,context,getCredentialsProvider());
-    }
-    if (changeNotification) {
+      doCommit(git,context);
       versionCache.invalidateAll();
       notificationRequired=true;
+    }
+    if (context.isRequirePush()) {
+      doPushInternal(git,context,getCredentialsProvider(),null);
     }
     return result;
   }

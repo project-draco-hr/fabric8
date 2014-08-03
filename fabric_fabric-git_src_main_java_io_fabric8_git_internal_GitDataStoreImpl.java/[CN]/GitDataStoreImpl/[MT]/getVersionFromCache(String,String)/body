@@ -2,7 +2,8 @@
   LockHandle writeLock=aquireWriteLock();
   try {
     assertValid();
-    if (checkoutProfileBranch(getGit(),versionId,profileId)) {
+    String branch=GitHelpers.getProfileBranch(versionId,profileId);
+    if (GitHelpers.localBranchExists(getGit(),branch)) {
       return versionCache.get(versionId);
     }
  else {

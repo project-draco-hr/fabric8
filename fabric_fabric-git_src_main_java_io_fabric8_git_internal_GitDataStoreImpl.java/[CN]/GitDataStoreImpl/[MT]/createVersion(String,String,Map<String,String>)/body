@@ -7,8 +7,8 @@
     LOGGER.info("Create version: {} => {}",sourceId,targetId);
     GitOperation<String> gitop=new GitOperation<String>(){
       public String call(      Git git,      GitContext context) throws Exception {
-        IllegalStateAssertion.assertFalse(checkoutProfileBranch(git,targetId,null),"Version already exists: " + targetId);
-        checkoutRequiredProfileBranch(git,sourceId,null);
+        IllegalStateAssertion.assertNull(checkoutProfileBranch(git,context,targetId,null),"Version already exists: " + targetId);
+        checkoutRequiredProfileBranch(git,context,sourceId,null);
         createOrCheckoutVersion(git,targetId);
         if (attributes != null) {
           setVersionAttributes(git,context,targetId,attributes);

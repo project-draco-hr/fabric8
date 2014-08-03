@@ -1,0 +1,19 @@
+{
+  assertWriteLock();
+  File profileDir=GitHelpers.getProfileDirectory(getGit(),profileId);
+  if (profileDir.exists()) {
+    File[] files=profileDir.listFiles(new FilenameFilter(){
+      @Override public boolean accept(      File dir,      String name){
+        return !AGENT_METADATA_FILE.equals(name);
+      }
+    }
+);
+    for (    File file : files) {
+      recursiveDeleteAndRemove(getGit(),file);
+    }
+  }
+  if (!fileConfigurations.isEmpty()) {
+    setFileConfigurations(getGit(),profileId,fileConfigurations);
+    context.commitMessage("Update configurations for profile: " + profileId);
+  }
+}

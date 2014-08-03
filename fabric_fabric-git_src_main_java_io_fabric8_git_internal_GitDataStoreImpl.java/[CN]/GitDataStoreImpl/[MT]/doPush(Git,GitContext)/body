@@ -1,13 +1,15 @@
 {
   IllegalArgumentAssertion.assertNotNull(git,"git");
   IllegalArgumentAssertion.assertNotNull(context,"context");
-  LockHandle readLock=aquireReadLock();
+  LockHandle writeLock=aquireWriteLock();
   try {
     assertValid();
     LOGGER.info("External call to push");
-    return doPushInternal(git,context,getCredentialsProvider());
+    List<PushResult> results=new ArrayList<>();
+    doPushInternal(git,context,getCredentialsProvider(),results);
+    return results;
   }
   finally {
-    readLock.unlock();
+    writeLock.unlock();
   }
 }

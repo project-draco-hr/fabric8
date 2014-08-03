@@ -2,7 +2,12 @@
   LOGGER.info("Starting up GitDataStore " + this);
   DataStoreTemplate template=runtimeProperties.get().removeRuntimeAttribute(DataStoreTemplate.class);
   if (template != null) {
-    LOGGER.debug("Using template: " + template);
+    Ref rootTag=getGit().getRepository().getRef(GitHelpers.ROOT_TAG);
+    if (rootTag == null) {
+      getGit().commit().setMessage("First Commit").setCommitter("fabric","user@fabric").call();
+      getGit().tag().setName(GitHelpers.ROOT_TAG).setMessage("Tag the root commit").call();
+    }
+    LOGGER.debug("Running datastore bootstrap template: " + template);
     template.doWith(this,dataStore.get());
   }
   GitProxyService proxyService=gitProxyService.get();

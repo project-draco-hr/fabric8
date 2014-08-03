@@ -1,0 +1,16 @@
+{
+  final String versionId="1.0";
+  Assert.assertFalse(profileRegistry.hasProfile(versionId,"prfC"));
+  Assert.assertFalse(profileRegistry.hasProfile(versionId,"prfD"));
+  createProfileRemote(versionId,"prfC");
+  ProfileBuilder pbuilder=ProfileBuilder.Factory.create(versionId,"prfD");
+  try {
+    profileRegistry.createProfile(pbuilder.getProfile());
+    Assert.fail("IllegalStateException expected");
+  }
+ catch (  IllegalStateException ex) {
+    Assert.assertTrue(ex.getMessage(),ex.getMessage().startsWith("Cannot fast forward"));
+  }
+  Assert.assertFalse(profileRegistry.hasProfile(versionId,"prfD"));
+  deleteProfileRemote(versionId,"prfC");
+}

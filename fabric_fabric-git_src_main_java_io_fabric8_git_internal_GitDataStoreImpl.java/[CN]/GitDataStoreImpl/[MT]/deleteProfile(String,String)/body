@@ -7,7 +7,7 @@
     LOGGER.info("Delete " + ProfileBuilder.Factory.create(versionId,profileId).getProfile());
     GitOperation<Void> gitop=new GitOperation<Void>(){
       public Void call(      Git git,      GitContext context) throws Exception {
-        checkoutRequiredProfileBranch(git,GitHelpers.getProfileBranch(versionId,profileId),null);
+        checkoutRequiredProfileBranch(git,context,versionId,profileId);
         File profileDirectory=GitHelpers.getProfileDirectory(git,profileId);
         recursiveDeleteAndRemove(git,profileDirectory);
         context.commitMessage("Removed profile " + profileId);

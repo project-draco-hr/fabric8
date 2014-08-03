@@ -7,7 +7,7 @@
     GitOperation<String> gitop=new GitOperation<String>(){
       public String call(      Git git,      GitContext context) throws Exception {
         String versionId=version.getId();
-        IllegalStateAssertion.assertFalse(checkoutProfileBranch(git,versionId,null),"Version already exists: " + versionId);
+        IllegalStateAssertion.assertNull(checkoutProfileBranch(git,context,versionId,null),"Version already exists: " + versionId);
         GitHelpers.checkoutTag(git,GitHelpers.ROOT_TAG);
         createOrCheckoutVersion(git,version.getId());
         setVersionAttributes(git,context,versionId,version.getAttributes());

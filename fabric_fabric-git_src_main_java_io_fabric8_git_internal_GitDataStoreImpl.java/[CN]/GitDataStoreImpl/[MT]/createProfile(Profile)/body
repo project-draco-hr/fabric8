@@ -1,5 +1,6 @@
 {
   IllegalStateAssertion.assertNotNull(profile,"profile");
+  assertNoParentProfilesWithMasterBranch(profile);
   LockHandle writeLock=aquireWriteLock();
   try {
     assertValid();
@@ -9,7 +10,7 @@
         String profileId=profile.getId();
         Version version=getRequiredVersion(versionId);
         IllegalStateAssertion.assertFalse(version.hasProfile(profileId),"Profile already exists: " + profileId);
-        checkoutRequiredProfileBranch(git,versionId,profileId);
+        checkoutRequiredProfileBranch(git,context,versionId,profileId);
         return createOrUpdateProfile(context,null,profile,new HashSet<String>());
       }
     }

@@ -1,0 +1,10 @@
+{
+  String branch=checkoutProfileBranch(git,context,versionId,profileId);
+  IllegalStateAssertion.assertNotNull(branch,"Cannot checkout profile branch: " + versionId + "/"+ profileId);
+  RevCommit lastCommit=GitHelpers.getVersionLastCommit(git,branch);
+  LOGGER.info("Last commit for {}/{}: {}",versionId,profileId,lastCommit);
+  if (lastCommit != null) {
+    String checkoutId=lastCommit.getId().abbreviate(GIT_COMMIT_SHORT_LENGTH).name();
+    context.setCheckoutId(checkoutId);
+  }
+}

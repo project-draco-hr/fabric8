@@ -1,10 +1,10 @@
 {
   VersionBuilder vbuilder=VersionBuilder.Factory.create(versionId);
-  populateVersionBuilder(git,vbuilder,"master",versionId);
-  populateVersionBuilder(git,vbuilder,versionId,versionId);
+  populateVersionBuilder(git,context,vbuilder,"master",versionId);
+  populateVersionBuilder(git,context,vbuilder,versionId,versionId);
   Version auxVersion=vbuilder.getVersion();
   vbuilder=VersionBuilder.Factory.create(versionId);
-  vbuilder.setAttributes(getVersionAttributesInternal(git,context,versionId));
+  vbuilder.setAttributes(getVersionAttributes(git,context,versionId));
   for (  Profile profile : auxVersion.getProfiles()) {
     resolveVersionProfiles(vbuilder,auxVersion,profile.getId(),new HashMap<String,Profile>());
   }

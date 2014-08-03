@@ -1,0 +1,17 @@
+{
+  final String versionId="1.0";
+  Assert.assertFalse(profileRegistry.hasProfile(versionId,"prfB"));
+  createProfileRemote(versionId,"prfB");
+  GitOperation<Profile> gitop=new GitOperation<Profile>(){
+    public Profile call(    Git git,    GitContext context) throws Exception {
+      return profileRegistry.getProfile(versionId,"prfB");
+    }
+  }
+;
+  Profile profile=gitDataStore.gitOperation(new GitContext().requirePull(),gitop,null);
+  Assert.assertEquals("1.0",profile.getVersion());
+  Assert.assertEquals("prfB",profile.getId());
+  deleteProfileRemote(versionId,"prfB");
+  profile=gitDataStore.gitOperation(new GitContext().requirePull(),gitop,null);
+  Assert.assertNull(profile);
+}

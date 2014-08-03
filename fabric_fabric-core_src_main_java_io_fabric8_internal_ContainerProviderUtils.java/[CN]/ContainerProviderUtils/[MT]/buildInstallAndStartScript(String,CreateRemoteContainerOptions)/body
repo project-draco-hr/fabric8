@@ -65,7 +65,7 @@
   for (  Map.Entry<String,String> entry : options.getDataStoreProperties().entrySet()) {
     String key=entry.getKey();
     String value=entry.getValue();
-    replacePropertyValue(sb,"etc/" + Constants.DATASTORE_TYPE_PID + ".cfg",key,value);
+    replacePropertyValue(sb,"etc/" + Constants.DATASTORE_PID + ".cfg",key,value);
   }
   sb.append("BIND_ADDRESS=").append(options.getBindAddress() != null && !options.getBindAddress().isEmpty() ? options.getBindAddress() : "0.0.0.0").append("\n");
   sb.append("SSH_PORT=").append("\"").append("`find_free_port ").append(Ports.mapPortToRange(DEFAULT_SSH_PORT,options.getMinimumPort(),options.getMaximumPort())).append(" ").append(options.getMaximumPort()).append("`\"").append("\n");

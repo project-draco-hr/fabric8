@@ -1,0 +1,36 @@
+{
+  assertWriteLock();
+  Repository repository=git.getRepository();
+  StoredConfig config=repository.getConfig();
+  String url=config.getString("remote",remoteRef.get(),"url");
+  if (url == null) {
+    LOGGER.info("No remote repository defined, so not doing a push");
+    return false;
+  }
+  List<RemoteRefUpdate> rejectedUpdates=new ArrayList<>();
+  Iterator<PushResult> resit=git.push().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setPushAll().call().iterator();
+  while (resit.hasNext()) {
+    PushResult pushResult=resit.next();
+    if (results != null) {
+      results.add(pushResult);
+    }
+    for (    RemoteRefUpdate refUpdate : pushResult.getRemoteUpdates()) {
+      LOGGER.info("Remote ref update: {}" + refUpdate);
+      Status status=refUpdate.getStatus();
+      if (status != Status.OK && status != Status.UP_TO_DATE) {
+        rejectedUpdates.add(refUpdate);
+      }
+    }
+  }
+  if (!rejectedUpdates.isEmpty()) {
+    String checkoutId=context.getCheckoutId();
+    if (checkoutId != null) {
+      String branch=GitHelpers.currentBranch(git);
+      RevCommit commit=CommitUtils.getCommit(git.getRepository(),checkoutId);
+      LOGGER.warn("Resetting branch '{}' to: {}",branch,commit);
+      git.reset().setMode(ResetType.HARD).setRef(checkoutId).call();
+    }
+    throw new IllegalStateException("Cannot fast forward, remote repository has already changed.");
+  }
+  return false;
+}
