@@ -1,8 +1,4 @@
 {
-  Builder<?> builder=CreateEnsembleOptions.builder().agentEnabled(false).clean(true).waitForProvision(false);
-  CreateEnsembleOptions options=builder.build();
-  ZooKeeperClusterBootstrap bootstrap=ServiceLocator.getRequiredService(ZooKeeperClusterBootstrap.class);
-  bootstrap.create(options);
   FabricService fabricService=ServiceLocator.getRequiredService(FabricService.class);
   Container[] containers=fabricService.getContainers();
   Assert.assertNotNull("Containers not null",containers);
