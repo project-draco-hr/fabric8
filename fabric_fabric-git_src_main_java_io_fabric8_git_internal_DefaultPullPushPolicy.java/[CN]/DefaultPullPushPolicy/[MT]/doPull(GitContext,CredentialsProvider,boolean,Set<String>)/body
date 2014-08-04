@@ -1,16 +1,15 @@
 {
-  assertWriteLock();
   try {
     Repository repository=git.getRepository();
     StoredConfig config=repository.getConfig();
-    String url=config.getString("remote",remoteRef.get(),"url");
+    String url=config.getString("remote",remoteRef,"url");
     if (url == null) {
       LOGGER.info("No remote repository defined, so not doing a pull");
       return false;
     }
     LOGGER.info("Performing a pull on remote URL: {}",url);
     try {
-      git.fetch().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setRemote(remoteRef.get()).call();
+      git.fetch().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setRemote(remoteRef).call();
       lastFetchWarning=null;
     }
  catch (    Exception ex) {
@@ -26,8 +25,8 @@
     Map<String,Ref> remoteBranches=new HashMap<String,Ref>();
     Set<String> gitVersions=new HashSet<String>();
     for (    Ref ref : git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call()) {
-      if (ref.getName().startsWith("refs/remotes/" + remoteRef.get() + "/")) {
-        String name=ref.getName().substring(("refs/remotes/" + remoteRef.get() + "/").length());
+      if (ref.getName().startsWith("refs/remotes/" + remoteRef + "/")) {
+        String name=ref.getName().substring(("refs/remotes/" + remoteRef + "/").length());
         remoteBranches.put(name,ref);
         gitVersions.add(name);
       }
@@ -39,39 +38,38 @@
     }
     boolean hasChanged=false;
     if (!remoteBranches.isEmpty()) {
-      for (      String version : gitVersions) {
-        if (!remoteBranches.containsKey(version)) {
-          if (doDeleteBranches && !version.equals(MASTER_BRANCH)) {
+      for (      String versionId : gitVersions) {
+        if (!remoteBranches.containsKey(versionId)) {
+          if (doDeleteBranches && !versionId.equals(GitHelpers.MASTER_BRANCH)) {
             try {
-              git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
+              git.branchDelete().setBranchNames(localBranches.get(versionId).getName()).setForce(true).call();
             }
  catch (            CannotDeleteCurrentBranchException ex) {
-              git.checkout().setName(MASTER_BRANCH).setForce(true).call();
-              git.branchDelete().setBranchNames(localBranches.get(version).getName()).setForce(true).call();
+              git.checkout().setName(GitHelpers.MASTER_BRANCH).setForce(true).call();
+              git.branchDelete().setBranchNames(localBranches.get(versionId).getName()).setForce(true).call();
             }
-            removeVersionFromCaches(version);
+            versionCache.remove(versionId);
             hasChanged=true;
           }
         }
- else         if (!localBranches.containsKey(version)) {
-          cacheVersionId(version);
-          git.checkout().setCreateBranch(true).setName(version).setStartPoint(remoteRef.get() + "/" + version).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).setForce(true).call();
+ else         if (!localBranches.containsKey(versionId)) {
+          versionCache.add(versionId);
+          git.checkout().setCreateBranch(true).setName(versionId).setStartPoint(remoteRef + "/" + versionId).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).setForce(true).call();
           hasChanged=true;
         }
  else {
-          String localCommit=localBranches.get(version).getObjectId().getName();
-          String remoteCommit=remoteBranches.get(version).getObjectId().getName();
+          String localCommit=localBranches.get(versionId).getObjectId().getName();
+          String remoteCommit=remoteBranches.get(versionId).getObjectId().getName();
           if (!localCommit.equals(remoteCommit)) {
             git.clean().setCleanDirectories(true).call();
             git.checkout().setName("HEAD").setForce(true).call();
-            git.checkout().setName(version).setForce(true).call();
-            MergeResult result=git.merge().setFastForward(FastForwardMode.FF_ONLY).include(remoteBranches.get(version).getObjectId()).call();
+            git.checkout().setName(versionId).setForce(true).call();
+            MergeResult result=git.merge().setFastForward(FastForwardMode.FF_ONLY).include(remoteBranches.get(versionId).getObjectId()).call();
             hasChanged=result.getMergeStatus() != MergeResult.MergeStatus.ALREADY_UP_TO_DATE && hasChanged(git,localCommit,remoteCommit);
           }
         }
       }
     }
-    pullCount.incrementAndGet();
     if (hasChanged) {
       LOGGER.info("Changed after pull!");
       LOGGER.debug("Called from ...",new RuntimeException());

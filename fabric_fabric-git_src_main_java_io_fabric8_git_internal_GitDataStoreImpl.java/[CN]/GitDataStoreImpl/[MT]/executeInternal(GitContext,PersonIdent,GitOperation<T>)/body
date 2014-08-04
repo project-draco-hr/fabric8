@@ -16,7 +16,7 @@
       personIdent=new PersonIdent(repository);
     }
     if (context.isRequirePull()) {
-      if (doPullInternal(git,context,getCredentialsProvider(),false)) {
+      if (pullPushPolicy.doPull(context,getCredentialsProvider(),false,versions)) {
         versionCache.invalidateAll();
         notificationRequired=true;
       }
@@ -28,7 +28,7 @@
       notificationRequired=true;
     }
     if (context.isRequirePush()) {
-      doPushInternal(git,context,getCredentialsProvider(),null);
+      pullPushPolicy.doPush(context,getCredentialsProvider(),null);
     }
     return result;
   }

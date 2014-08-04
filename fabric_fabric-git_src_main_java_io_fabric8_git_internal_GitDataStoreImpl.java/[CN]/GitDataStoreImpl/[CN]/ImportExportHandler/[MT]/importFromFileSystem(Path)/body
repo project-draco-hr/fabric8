@@ -3,9 +3,9 @@
   try {
     assertValid();
     File sourceDir=importPath.toFile();
-    if (!sourceDir.isDirectory())     throw new IllegalArgumentException("Not a valid source dir: " + sourceDir.getAbsolutePath());
-    File fabricsDir=new File(sourceDir,"fabric");
-    File configs=new File(fabricsDir,"configs");
+    IllegalArgumentAssertion.assertTrue(sourceDir.isDirectory(),"Not a valid source dir: " + sourceDir);
+    File fabricDir=new File(sourceDir,"fabric");
+    File configs=new File(fabricDir,"configs");
     String defaultVersion=dataStore.get().getDefaultVersion();
     if (configs.exists()) {
       LOGGER.info("Importing the old ZooKeeper layout");
@@ -27,7 +27,7 @@
           }
         }
       }
-      File metrics=new File(fabricsDir,"metrics");
+      File metrics=new File(fabricDir,"metrics");
       if (metrics.exists()) {
         LOGGER.info("Importing metrics from " + metrics + " to branch "+ defaultVersion);
         importFromFileSystem(metrics,GitHelpers.CONFIGS,defaultVersion,false);
@@ -35,8 +35,8 @@
     }
  else {
       String version="1.0";
-      LOGGER.info("Importing " + fabricsDir + " as version "+ version);
-      importFromFileSystem(fabricsDir,"",version,false);
+      LOGGER.info("Importing " + fabricDir + " as version "+ version);
+      importFromFileSystem(fabricDir,"",version,false);
     }
   }
   finally {

@@ -10,15 +10,15 @@
       @Override public Void call(      Git git,      GitContext context) throws Exception {
         Repository repository=git.getRepository();
         StoredConfig config=repository.getConfig();
-        String currentUrl=config.getString("remote","origin","url");
+        String currentUrl=config.getString("remote",GitHelpers.REMOTE_ORIGIN,"url");
         if (!updateUrl.equals(currentUrl)) {
           LOGGER.info("Remote url change from: {} to: {}",currentUrl,updateUrl);
           remoteUrl=updateUrl;
-          config.setString("remote","origin","url",updateUrl);
-          config.setString("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*");
+          config.setString("remote",GitHelpers.REMOTE_ORIGIN,"url",updateUrl);
+          config.setString("remote",GitHelpers.REMOTE_ORIGIN,"fetch","+refs/heads/*:refs/remotes/origin/*");
           config.save();
-          boolean hasChanged=doPullInternal(git,context,getCredentialsProvider(),false);
-          hasChanged|=doPushInternal(git,context,getCredentialsProvider(),null);
+          boolean hasChanged=pullPushPolicy.doPull(context,getCredentialsProvider(),false,versions);
+          hasChanged|=pullPushPolicy.doPush(context,getCredentialsProvider(),null);
           if (hasChanged) {
             versionCache.invalidateAll();
             notificationRequired=true;

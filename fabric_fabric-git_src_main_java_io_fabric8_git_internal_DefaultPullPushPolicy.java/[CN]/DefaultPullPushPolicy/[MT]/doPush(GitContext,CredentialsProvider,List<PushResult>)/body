@@ -1,7 +1,6 @@
 {
-  assertWriteLock();
   StoredConfig config=git.getRepository().getConfig();
-  String remoteUrl=config.getString("remote",remoteRef.get(),"url");
+  String remoteUrl=config.getString("remote",remoteRef,"url");
   if (remoteUrl == null) {
     LOGGER.info("No remote repository defined, so not doing a push");
     return false;
