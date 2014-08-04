@@ -5,9 +5,8 @@
   try {
     assertValid();
     LOGGER.info("External call to push");
-    List<PushResult> results=new ArrayList<>();
-    pullPushPolicy.doPush(context,getCredentialsProvider(),results);
-    return results;
+    PushPolicyResult pushResult=doPushInternal(context,getCredentialsProvider());
+    return pushResult.getPushResults();
   }
   finally {
     writeLock.unlock();

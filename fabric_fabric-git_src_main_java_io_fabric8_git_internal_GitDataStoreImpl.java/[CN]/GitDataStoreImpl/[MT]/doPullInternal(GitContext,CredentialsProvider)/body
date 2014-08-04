@@ -1,0 +1,21 @@
+{
+  PullPolicyResult pullResult=pullPushPolicy.doPull(context,getCredentialsProvider());
+  if (pullResult.getLastException() != null) {
+    throw pullResult.getLastException();
+  }
+  if (pullResult.localUpdateRequired()) {
+    versionCache.invalidateAll();
+    notificationRequired=true;
+  }
+  if (!versions.equals(pullResult.getVersions())) {
+    versions.clear();
+    versions.addAll(pullResult.getVersions());
+    versionCache.invalidateAll();
+    notificationRequired=true;
+  }
+  if (pullResult.remoteUpdateRequired()) {
+    doPushInternal(context,credentialsProvider);
+    notificationRequired=true;
+  }
+  return pullResult;
+}

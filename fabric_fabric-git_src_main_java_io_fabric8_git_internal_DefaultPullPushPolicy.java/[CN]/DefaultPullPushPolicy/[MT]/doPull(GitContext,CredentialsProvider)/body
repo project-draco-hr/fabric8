@@ -1,0 +1,101 @@
+{
+  Repository repository=git.getRepository();
+  StoredConfig config=repository.getConfig();
+  String url=config.getString("remote",remoteRef,"url");
+  if (url == null) {
+    LOGGER.info("No remote repository defined, so not doing a pull");
+    return new AbstractPullPolicyResult();
+  }
+  LOGGER.info("Performing a pull on remote URL: {}",url);
+  int retries=5;
+  GitAPIException lastException=null;
+  while (0 < retries--) {
+    try {
+      git.fetch().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setRemote(remoteRef).call();
+      lastException=null;
+      retries=0;
+    }
+ catch (    GitAPIException ex) {
+      lastException=ex;
+      try {
+        Thread.sleep(1000L);
+      }
+ catch (      InterruptedException ignored) {
+      }
+    }
+  }
+  if (lastException != null) {
+    return new AbstractPullPolicyResult(lastException);
+  }
+  Map<String,Ref> localBranches=new HashMap<String,Ref>();
+  Map<String,Ref> remoteBranches=new HashMap<String,Ref>();
+  Set<String> allBranches=new HashSet<String>();
+  try {
+    for (    Ref ref : git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call()) {
+      if (ref.getName().startsWith("refs/remotes/" + remoteRef + "/")) {
+        String name=ref.getName().substring(("refs/remotes/" + remoteRef + "/").length());
+        remoteBranches.put(name,ref);
+        allBranches.add(name);
+      }
+ else       if (ref.getName().startsWith("refs/heads/")) {
+        String name=ref.getName().substring(("refs/heads/").length());
+        localBranches.put(name,ref);
+        allBranches.add(name);
+      }
+    }
+    boolean localChange=false;
+    boolean remoteChange=false;
+    Set<String> versions=new TreeSet<>();
+    if (!remoteBranches.isEmpty()) {
+      for (      String branch : allBranches) {
+        if (localBranches.containsKey(branch) && !remoteBranches.containsKey(branch) && !GitHelpers.MASTER_BRANCH.equals(branch)) {
+          LOGGER.info("Deleting local branch: {}",branch);
+          if (branch.equals(GitHelpers.currentBranch(git))) {
+            git.checkout().setName(GitHelpers.MASTER_BRANCH).setForce(true).call();
+          }
+          git.branchDelete().setBranchNames(branch).setForce(true).call();
+          localChange=true;
+        }
+ else         if (!localBranches.containsKey(branch) && remoteBranches.containsKey(branch)) {
+          LOGGER.info("Adding local branch: {}",branch);
+          git.checkout().setCreateBranch(true).setName(branch).setStartPoint(remoteRef + "/" + branch).setUpstreamMode(SetupUpstreamMode.TRACK).setForce(true).call();
+          versions.add(branch);
+          localChange=true;
+        }
+ else         if (localBranches.containsKey(branch) && remoteBranches.containsKey(branch)) {
+          ObjectId localObjectId=localBranches.get(branch).getObjectId();
+          ObjectId remoteObjectId=remoteBranches.get(branch).getObjectId();
+          String localCommit=localObjectId.getName();
+          String remoteCommit=remoteObjectId.getName();
+          if (!localCommit.equals(remoteCommit)) {
+            LOGGER.info("Updating local branch: {}",branch);
+            git.clean().setCleanDirectories(true).call();
+            git.checkout().setName("HEAD").setForce(true).call();
+            git.checkout().setName(branch).setForce(true).call();
+            MergeResult result=git.merge().setFastForward(FastForwardMode.FF_ONLY).include(remoteObjectId).call();
+            MergeStatus mergeStatus=result.getMergeStatus();
+            if (mergeStatus == MergeStatus.FAST_FORWARD) {
+              localChange=true;
+            }
+ else             if (mergeStatus != MergeStatus.ALREADY_UP_TO_DATE) {
+              throw new IllegalStateException("Cannot fast forward branch: " + branch);
+            }
+          }
+          versions.add(branch);
+        }
+      }
+    }
+    PullPolicyResult result=new AbstractPullPolicyResult(versions,localChange,remoteChange,null);
+    if (result.localUpdateRequired()) {
+      LOGGER.info("Changed after pull!");
+      LOGGER.debug("Called from ...",new RuntimeException());
+    }
+ else {
+      LOGGER.info("No change after pull!");
+    }
+    return result;
+  }
+ catch (  Exception ex) {
+    return new AbstractPullPolicyResult(ex);
+  }
+}

@@ -17,12 +17,7 @@
           config.setString("remote",GitHelpers.REMOTE_ORIGIN,"url",updateUrl);
           config.setString("remote",GitHelpers.REMOTE_ORIGIN,"fetch","+refs/heads/*:refs/remotes/origin/*");
           config.save();
-          boolean hasChanged=pullPushPolicy.doPull(context,getCredentialsProvider(),false,versions);
-          hasChanged|=pullPushPolicy.doPush(context,getCredentialsProvider(),null);
-          if (hasChanged) {
-            versionCache.invalidateAll();
-            notificationRequired=true;
-          }
+          doPullInternal(context,getCredentialsProvider());
         }
         return null;
       }
