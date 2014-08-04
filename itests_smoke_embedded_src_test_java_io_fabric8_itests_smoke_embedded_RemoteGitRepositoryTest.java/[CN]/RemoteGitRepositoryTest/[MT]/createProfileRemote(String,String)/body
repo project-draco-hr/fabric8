@@ -1,9 +1,0 @@
-{
-  checkoutBranch(versionId);
-  Properties properties=new Properties();
-  File pidFile=new File(remoteRoot,"fabric/profiles/" + profileId + ".profile/"+ Constants.AGENT_PID);
-  pidFile.getParentFile().mkdirs();
-  properties.store(new FileOutputStream(pidFile),"Profile: " + profileId);
-  git.add().addFilepattern(".").call();
-  git.commit().setMessage("Create profile: " + profileId).call();
-}

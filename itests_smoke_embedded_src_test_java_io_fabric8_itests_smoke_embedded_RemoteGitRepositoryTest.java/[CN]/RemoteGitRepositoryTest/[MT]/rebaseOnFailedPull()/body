@@ -1,0 +1,28 @@
+{
+  final String versionId="1.0";
+  Assert.assertFalse(profileRegistry.hasProfile(versionId,"prfE"));
+  Assert.assertFalse(profileRegistry.hasProfile(versionId,"prfF"));
+  checkoutBranch(versionId);
+  RevCommit head=CommitUtils.getHead(git.getRepository());
+  ProfileBuilder pbuilder=ProfileBuilder.Factory.create(versionId,"prfE");
+  profileRegistry.createProfile(pbuilder.getProfile());
+  Assert.assertTrue(profileExists("1.0","prfE"));
+  git.reset().setMode(ResetType.HARD).setRef(head.getName()).call();
+  Assert.assertFalse(profileExists("1.0","prfE"));
+  createProfileRemote(versionId,"prfF",null);
+  Assert.assertTrue(profileExists("1.0","prfF"));
+  GitOperation<Profile> gitop=new GitOperation<Profile>(){
+    public Profile call(    Git git,    GitContext context) throws Exception {
+      return profileRegistry.getProfile(versionId,"prfF");
+    }
+  }
+;
+  GitContext context=new GitContext().requirePull();
+  Profile profile=gitDataStore.gitOperation(context,gitop,null);
+  Assert.assertEquals("1.0",profile.getVersion());
+  Assert.assertEquals("prfF",profile.getId());
+  profileRegistry.deleteProfile(versionId,"prfE");
+  profileRegistry.deleteProfile(versionId,"prfF");
+  Assert.assertFalse(profileRegistry.hasProfile(versionId,"prfE"));
+  Assert.assertFalse(profileRegistry.hasProfile(versionId,"prfF"));
+}

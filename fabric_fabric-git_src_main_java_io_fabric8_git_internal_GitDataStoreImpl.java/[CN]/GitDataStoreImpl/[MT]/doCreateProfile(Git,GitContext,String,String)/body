@@ -1,6 +1,6 @@
 {
   File profileDirectory=GitHelpers.getProfileDirectory(git,profileId);
-  File metadataFile=new File(profileDirectory,AGENT_METADATA_FILE);
+  File metadataFile=new File(profileDirectory,Constants.AGENT_PROPERTIES);
   IllegalStateAssertion.assertFalse(metadataFile.exists(),"Profile metadata file already exists: " + metadataFile);
   profileDirectory.mkdirs();
   Files.writeToFile(metadataFile,"#Profile:" + profileId + "\n",Charset.defaultCharset());

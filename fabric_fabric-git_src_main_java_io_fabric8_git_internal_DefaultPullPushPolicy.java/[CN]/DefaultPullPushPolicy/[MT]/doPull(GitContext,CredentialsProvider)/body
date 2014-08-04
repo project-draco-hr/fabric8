@@ -46,43 +46,63 @@
     boolean localChange=false;
     boolean remoteChange=false;
     Set<String> versions=new TreeSet<>();
-    if (!remoteBranches.isEmpty()) {
-      for (      String branch : allBranches) {
-        if (localBranches.containsKey(branch) && !remoteBranches.containsKey(branch) && !GitHelpers.MASTER_BRANCH.equals(branch)) {
-          LOGGER.info("Deleting local branch: {}",branch);
-          if (branch.equals(GitHelpers.currentBranch(git))) {
-            git.checkout().setName(GitHelpers.MASTER_BRANCH).setForce(true).call();
+    if (remoteBranches.isEmpty()) {
+      LOGGER.info("Pulled from an empty remote repository");
+      return new AbstractPullPolicyResult(versions,false,true,null);
+    }
+    IllegalStateAssertion.assertTrue(remoteBranches.containsKey(GitHelpers.MASTER_BRANCH),"Remote repository does not have a master branch");
+    if (localBranches.containsKey(GitHelpers.MASTER_BRANCH)) {
+      git.checkout().setName(GitHelpers.MASTER_BRANCH).setForce(true).call();
+    }
+    for (    String branch : allBranches) {
+      if (localBranches.containsKey(branch) && !remoteBranches.containsKey(branch) && !GitHelpers.MASTER_BRANCH.equals(branch)) {
+        LOGGER.info("Deleting local branch: {}",branch);
+        git.branchDelete().setBranchNames(branch).setForce(true).call();
+        localChange=true;
+      }
+ else       if (!localBranches.containsKey(branch) && remoteBranches.containsKey(branch)) {
+        LOGGER.info("Adding local branch: {}",branch);
+        git.checkout().setCreateBranch(true).setName(branch).setStartPoint(remoteRef + "/" + branch).setUpstreamMode(SetupUpstreamMode.TRACK).setForce(true).call();
+        versions.add(branch);
+        localChange=true;
+      }
+ else       if (localBranches.containsKey(branch) && remoteBranches.containsKey(branch)) {
+        ObjectId localObjectId=localBranches.get(branch).getObjectId();
+        ObjectId remoteObjectId=remoteBranches.get(branch).getObjectId();
+        String localCommit=localObjectId.getName();
+        String remoteCommit=remoteObjectId.getName();
+        if (!localCommit.equals(remoteCommit)) {
+          LOGGER.info("Updating local branch: {}",branch);
+          git.clean().setCleanDirectories(true).call();
+          git.checkout().setName("HEAD").setForce(true).call();
+          git.checkout().setName(branch).setForce(true).call();
+          MergeResult mergeResult=git.merge().setFastForward(FastForwardMode.FF_ONLY).include(remoteObjectId).call();
+          MergeStatus mergeStatus=mergeResult.getMergeStatus();
+          if (mergeStatus == MergeStatus.FAST_FORWARD) {
+            localChange=true;
           }
-          git.branchDelete().setBranchNames(branch).setForce(true).call();
-          localChange=true;
-        }
- else         if (!localBranches.containsKey(branch) && remoteBranches.containsKey(branch)) {
-          LOGGER.info("Adding local branch: {}",branch);
-          git.checkout().setCreateBranch(true).setName(branch).setStartPoint(remoteRef + "/" + branch).setUpstreamMode(SetupUpstreamMode.TRACK).setForce(true).call();
-          versions.add(branch);
-          localChange=true;
-        }
- else         if (localBranches.containsKey(branch) && remoteBranches.containsKey(branch)) {
-          ObjectId localObjectId=localBranches.get(branch).getObjectId();
-          ObjectId remoteObjectId=remoteBranches.get(branch).getObjectId();
-          String localCommit=localObjectId.getName();
-          String remoteCommit=remoteObjectId.getName();
-          if (!localCommit.equals(remoteCommit)) {
-            LOGGER.info("Updating local branch: {}",branch);
-            git.clean().setCleanDirectories(true).call();
-            git.checkout().setName("HEAD").setForce(true).call();
-            git.checkout().setName(branch).setForce(true).call();
-            MergeResult result=git.merge().setFastForward(FastForwardMode.FF_ONLY).include(remoteObjectId).call();
-            MergeStatus mergeStatus=result.getMergeStatus();
-            if (mergeStatus == MergeStatus.FAST_FORWARD) {
+ else           if (mergeStatus == MergeStatus.ABORTED) {
+            LOGGER.info("Cannot fast forward branch {}, attempting rebase",branch);
+            RebaseResult rebaseResult=git.rebase().setUpstream(remoteCommit).call();
+            RebaseResult.Status rebaseStatus=rebaseResult.getStatus();
+            if (rebaseStatus == RebaseResult.Status.OK) {
+              localChange=true;
+              remoteChange=true;
+            }
+ else {
+              LOGGER.info("Rebase on branch {} failed, restoring remote branch",branch);
+              git.rebase().setOperation(Operation.ABORT).call();
+              git.checkout().setName(GitHelpers.MASTER_BRANCH).setForce(true).call();
+              git.branchDelete().setBranchNames(branch).setForce(true).call();
+              git.checkout().setCreateBranch(true).setName(branch).setStartPoint(remoteRef + "/" + branch).setUpstreamMode(SetupUpstreamMode.TRACK).setForce(true).call();
               localChange=true;
             }
- else             if (mergeStatus != MergeStatus.ALREADY_UP_TO_DATE) {
-              throw new IllegalStateException("Cannot fast forward branch: " + branch);
-            }
           }
-          versions.add(branch);
+ else {
+            throw new IllegalStateException("Cannot fast forward branch " + branch + ", status: "+ mergeStatus);
+          }
         }
+        versions.add(branch);
       }
     }
     PullPolicyResult result=new AbstractPullPolicyResult(versions,localChange,remoteChange,null);

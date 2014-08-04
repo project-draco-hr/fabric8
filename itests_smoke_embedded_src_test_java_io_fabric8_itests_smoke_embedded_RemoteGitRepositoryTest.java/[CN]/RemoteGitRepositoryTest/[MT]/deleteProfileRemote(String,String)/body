@@ -1,6 +1,7 @@
 {
   checkoutBranch(versionId);
   Path profilePath=new File(remoteRoot,"fabric/profiles/" + profileId + ".profile").toPath();
-  recursiveRemove(profilePath);
-  git.commit().setMessage("Delete profile: " + profileId).call();
+  if (recursiveRemove(profilePath)) {
+    git.commit().setMessage("Delete profile: " + profileId).call();
+  }
 }

@@ -1,10 +1,12 @@
 {
+  final AtomicInteger fileCount=new AtomicInteger();
   if (rootPath.toFile().exists()) {
     Files.walkFileTree(rootPath,new SimpleFileVisitor<Path>(){
       public FileVisitResult visitFile(      Path path,      BasicFileAttributes attrs) throws IOException {
         Path pattern=remoteRoot.toPath().relativize(path);
         try {
           git.rm().addFilepattern(pattern.toString()).call();
+          fileCount.incrementAndGet();
         }
  catch (        Exception ex) {
           throw new IllegalStateException(ex);
@@ -14,4 +16,5 @@
     }
 );
   }
+  return fileCount.get() > 0;
 }
