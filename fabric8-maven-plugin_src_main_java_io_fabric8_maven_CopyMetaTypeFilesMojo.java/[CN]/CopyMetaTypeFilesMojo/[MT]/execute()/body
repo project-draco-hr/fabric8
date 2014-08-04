@@ -1,7 +1,10 @@
 {
-  if (!inputDir.exists() || !inputDir.isDirectory()) {
-    throw new MojoExecutionException("No input folder " + inputDir.getPath());
-  }
   outputDir.mkdirs();
-  processFolder(inputDir);
+  if (inputDir.exists() && inputDir.isDirectory()) {
+    processFolder(inputDir);
+  }
+ else {
+    getLog().warn("inputDir " + inputDir + " is not an existing directory");
+  }
+  processClassPath();
 }

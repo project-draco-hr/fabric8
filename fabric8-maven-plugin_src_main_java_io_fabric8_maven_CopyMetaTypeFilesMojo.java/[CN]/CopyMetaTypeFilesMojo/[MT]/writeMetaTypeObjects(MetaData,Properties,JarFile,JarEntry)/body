@@ -1,10 +1,13 @@
 {
-  Map<String,Object> objectClassDefinitions=metadata.getObjectClassDefinitions();
-  Set<Map.Entry<String,Object>> entries=objectClassDefinitions.entrySet();
+  Map<String,Object> map=metadata.getDesignates();
+  Set<Map.Entry<String,Object>> entries=map.entrySet();
   for (  Map.Entry<String,Object> entry : entries) {
     String pid=entry.getKey();
-    Object value=entry.getValue();
     File pidOutDir=new File(outputDir,pid);
+    if (pidOutDir.exists()) {
+      System.out.println("PID " + pid + " already exists at "+ pidOutDir);
+      return;
+    }
     pidOutDir.mkdirs();
     File xmlFile=new File(pidOutDir,"metatype.xml");
     InputStream in=jarFile.getInputStream(jarEntry);

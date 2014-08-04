@@ -1,0 +1,20 @@
+{
+  try {
+    Set<String> elements=new HashSet<>();
+    elements.addAll(project.getCompileClasspathElements());
+    elements.addAll(project.getRuntimeClasspathElements());
+    elements.addAll(project.getSystemClasspathElements());
+    for (    Object object : elements) {
+      if (object != null) {
+        String path=object.toString();
+        File file=new File(path);
+        if (file.isFile() && isJar(file)) {
+          processJar(file);
+        }
+      }
+    }
+  }
+ catch (  Exception e) {
+    throw new MojoExecutionException("Failed to resolve classpath: " + e,e);
+  }
+}

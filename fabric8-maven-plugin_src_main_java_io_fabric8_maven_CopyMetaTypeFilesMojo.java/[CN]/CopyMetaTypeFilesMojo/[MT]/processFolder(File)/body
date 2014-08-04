@@ -3,13 +3,8 @@
     File[] files=input.listFiles();
     if (files != null) {
       for (      File file : files) {
-        if (file.isFile() && file.getName().endsWith(".jar")) {
-          try {
-            processJar(file);
-          }
- catch (          IOException e) {
-            throw new MojoExecutionException("Failed to process jar " + file + ". "+ e,e);
-          }
+        if (file.isFile() && isJar(file)) {
+          processJar(file);
         }
  else         if (file.isDirectory()) {
           processFolder(file);
