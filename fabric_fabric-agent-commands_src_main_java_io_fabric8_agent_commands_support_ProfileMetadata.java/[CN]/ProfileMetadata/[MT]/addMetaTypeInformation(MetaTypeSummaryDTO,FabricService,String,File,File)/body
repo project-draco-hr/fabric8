@@ -1,0 +1,13 @@
+{
+  if (!xmlFile.exists()) {
+    LOG.info("Warning! " + xmlFile + " does not exist so no OSGi MetaType metadata");
+    return;
+  }
+  MetaDataReader reader=new MetaDataReader();
+  MetaData metadata=reader.parse(new FileInputStream(xmlFile));
+  Properties properties=new Properties();
+  if (propertiesFile.exists() && propertiesFile.isFile()) {
+    properties.load(new FileInputStream(propertiesFile));
+  }
+  addMetaData(summary,metadata,properties);
+}

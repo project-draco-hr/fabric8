@@ -9,6 +9,7 @@
   Profile immediateProfile=profileService.getProfile(versionId,profileId);
   Objects.notNull(immediateProfile,"Profile for versionId: " + versionId + ", profileId: "+ profileId);
   Profile profile=profileService.getOverlayProfile(immediateProfile);
+  Set<String> pids=new HashSet<>();
   Map<String,File> fileMap=AgentUtils.downloadProfileArtifacts(service,downloadManager,profile);
   Set<Map.Entry<String,File>> entries=fileMap.entrySet();
   for (  Map.Entry<String,File> entry : entries) {
@@ -19,6 +20,23 @@
       continue;
     }
     addMetaTypeInformation(answer,service,uri,file);
+    pids.add(uri);
+  }
+  if (metaTypeFolder != null && metaTypeFolder.exists() && metaTypeFolder.isDirectory()) {
+    Set<String> configurationFileNames=profile.getConfigurationFileNames();
+    for (    String configName : configurationFileNames) {
+      if (configName.endsWith(PROPERTIES_SUFFIX) && configName.indexOf('/') < 0) {
+        String pid=configName.substring(0,configName.length() - PROPERTIES_SUFFIX.length());
+        if (pid.length() > 0) {
+          if (pids.add(pid)) {
+            File pidFolder=new File(metaTypeFolder,pid);
+            File xmlFile=new File(pidFolder,"metatype.xml");
+            File propertiesFile=new File(pidFolder,"metatype.properties");
+            addMetaTypeInformation(answer,service,pid,xmlFile,propertiesFile);
+          }
+        }
+      }
+    }
   }
   return answer;
 }

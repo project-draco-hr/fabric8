@@ -1,27 +1,42 @@
 {
   JarFile jarFile=new JarFile(file);
   Enumeration<JarEntry> entries=jarFile.entries();
+  Map<String,MetaData> metadataMap=new HashMap<>();
+  Map<String,Properties> propertiesMap=new HashMap<>();
   while (entries.hasMoreElements()) {
     JarEntry entry=entries.nextElement();
     String name=entry.getName();
     if (name.startsWith("OSGI-INF/metatype/")) {
-      if (name.endsWith(".xml")) {
+      if (name.endsWith(XML_SUFFIX)) {
         MetaDataReader reader=new MetaDataReader();
         InputStream in=jarFile.getInputStream(entry);
         if (in != null) {
           MetaData metadata=reader.parse(in);
-          Properties properties=new Properties();
-          String propertiesFile=name.substring(0,name.length() - 3) + "properties";
-          ZipEntry propertiesEntry=jarFile.getEntry(propertiesFile);
-          if (propertiesEntry != null) {
-            InputStream propertiesIn=jarFile.getInputStream(entry);
-            if (propertiesIn != null) {
-              properties.load(propertiesIn);
-            }
+          if (metadata != null) {
+            String pid=name.substring(0,name.length() - XML_SUFFIX.length());
+            metadataMap.put(pid,metadata);
           }
-          addMetaData(summary,metadata,properties);
+        }
+      }
+ else       if (name.endsWith(PROPERTIES_SUFFIX)) {
+        String pid=name.substring(0,name.length() - PROPERTIES_SUFFIX.length());
+        Properties properties=new Properties();
+        InputStream in=jarFile.getInputStream(entry);
+        if (in != null) {
+          properties.load(in);
+          propertiesMap.put(pid,properties);
         }
       }
     }
+  }
+  Set<Map.Entry<String,MetaData>> metadataEntries=metadataMap.entrySet();
+  for (  Map.Entry<String,MetaData> metadataEntry : metadataEntries) {
+    String pid=metadataEntry.getKey();
+    MetaData metadata=metadataEntry.getValue();
+    Properties properties=propertiesMap.get(pid);
+    if (properties == null) {
+      properties=new Properties();
+    }
+    addMetaData(summary,metadata,properties);
   }
 }
