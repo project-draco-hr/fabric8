@@ -1,0 +1,24 @@
+{
+  MetaTypeSummaryDTO answer=new MetaTypeSummaryDTO();
+  FabricService service=fabricService.get();
+  Objects.notNull(service,"FabricService");
+  ProfileService profileService=service.adapt(ProfileService.class);
+  Objects.notNull(profileService,"ProfileService");
+  DownloadManager downloadManager=DownloadManagers.createDownloadManager(service,executorService);
+  Objects.notNull(downloadManager,"DownloadManager");
+  Profile immediateProfile=profileService.getProfile(versionId,profileId);
+  Objects.notNull(immediateProfile,"Profile for versionId: " + versionId + ", profileId: "+ profileId);
+  Profile profile=profileService.getOverlayProfile(immediateProfile);
+  Map<String,File> fileMap=AgentUtils.downloadProfileArtifacts(service,downloadManager,profile);
+  Set<Map.Entry<String,File>> entries=fileMap.entrySet();
+  for (  Map.Entry<String,File> entry : entries) {
+    String uri=entry.getKey();
+    File file=entry.getValue();
+    if (!file.exists() || !file.isFile()) {
+      LOG.warn("File " + file + " is not an existing file for "+ uri+ ". Ignoring");
+      continue;
+    }
+    addMetaTypeInformation(answer,service,uri,file);
+  }
+  return answer;
+}

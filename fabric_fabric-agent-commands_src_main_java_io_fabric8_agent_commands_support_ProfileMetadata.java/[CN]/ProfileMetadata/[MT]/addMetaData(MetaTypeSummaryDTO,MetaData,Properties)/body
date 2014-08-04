@@ -1,0 +1,15 @@
+{
+  Map<String,Object> objectClassDefinitions=metadata.getObjectClassDefinitions();
+  Set<Map.Entry<String,Object>> entries=objectClassDefinitions.entrySet();
+  for (  Map.Entry<String,Object> entry : entries) {
+    String pid=entry.getKey();
+    Object value=entry.getValue();
+    if (value instanceof OCD) {
+      OCD ocd=(OCD)value;
+      MetaTypeObjectSummaryDTO object=summary.getOrCreateMetaTypeSummaryDTO(pid);
+      object.setId(pid);
+      object.setName(localize(resources,ocd.getName()));
+      object.setDescription(localize(resources,ocd.getDescription()));
+    }
+  }
+}
