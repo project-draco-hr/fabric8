@@ -1,0 +1,27 @@
+{
+  JarFile jarFile=new JarFile(file);
+  Enumeration<JarEntry> entries=jarFile.entries();
+  while (entries.hasMoreElements()) {
+    JarEntry entry=entries.nextElement();
+    String name=entry.getName();
+    if (name.startsWith("OSGI-INF/metatype/")) {
+      if (name.endsWith(".xml")) {
+        MetaDataReader reader=new MetaDataReader();
+        InputStream in=jarFile.getInputStream(entry);
+        if (in != null) {
+          MetaData metadata=reader.parse(in);
+          Properties properties=new Properties();
+          String propertiesFile=name.substring(0,name.length() - 3) + "properties";
+          ZipEntry propertiesEntry=jarFile.getEntry(propertiesFile);
+          if (propertiesEntry != null) {
+            InputStream propertiesIn=jarFile.getInputStream(entry);
+            if (propertiesIn != null) {
+              properties.load(propertiesIn);
+            }
+          }
+          writeMetaTypeObjects(metadata,properties,jarFile,entry);
+        }
+      }
+    }
+  }
+}

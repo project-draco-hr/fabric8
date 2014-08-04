@@ -1,0 +1,17 @@
+{
+  Map<String,Object> objectClassDefinitions=metadata.getObjectClassDefinitions();
+  Set<Map.Entry<String,Object>> entries=objectClassDefinitions.entrySet();
+  for (  Map.Entry<String,Object> entry : entries) {
+    String pid=entry.getKey();
+    Object value=entry.getValue();
+    File pidOutDir=new File(outputDir,pid);
+    pidOutDir.mkdirs();
+    File xmlFile=new File(pidOutDir,"metatype.xml");
+    InputStream in=jarFile.getInputStream(jarEntry);
+    Files.copy(in,new FileOutputStream(xmlFile));
+    if (properties.size() > 0) {
+      File propertiesFile=new File(pidOutDir,"metatype.properties");
+      properties.store(new FileOutputStream(propertiesFile),"Generated from jar by fabric8-maven-plugin");
+    }
+  }
+}
