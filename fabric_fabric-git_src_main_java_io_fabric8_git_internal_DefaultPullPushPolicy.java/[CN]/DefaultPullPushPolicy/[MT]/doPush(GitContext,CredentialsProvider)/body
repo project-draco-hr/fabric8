@@ -24,9 +24,16 @@
       }
     }
   }
+  if (lastException != null) {
+    return new AbstractPushPolicyResult(lastException);
+  }
   List<PushResult> pushResults=new ArrayList<>();
   List<RemoteRefUpdate> acceptedUpdates=new ArrayList<>();
   List<RemoteRefUpdate> rejectedUpdates=new ArrayList<>();
+  if (lastException instanceof TransportException) {
+    LOGGER.warn("Cannot push because of: {}",lastException.toString());
+    return new AbstractPushPolicyResult(pushResults,acceptedUpdates,rejectedUpdates,lastException);
+  }
   while (resit != null && resit.hasNext()) {
     PushResult pushResult=resit.next();
     pushResults.add(pushResult);

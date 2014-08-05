@@ -1,15 +1,16 @@
 {
   PullPolicyResult pullResult=pullPushPolicy.doPull(context,getCredentialsProvider());
   if (pullResult.getLastException() != null) {
-    throw pullResult.getLastException();
+    LOGGER.warn("Pull failed",pullResult.getLastException());
   }
   if (pullResult.localUpdateRequired()) {
     versionCache.invalidateAll();
     notificationRequired=true;
   }
-  if (!versions.equals(pullResult.getVersions())) {
+  Set<String> pullVersions=pullResult.getVersions();
+  if (!pullVersions.isEmpty() && !pullVersions.equals(versions)) {
     versions.clear();
-    versions.addAll(pullResult.getVersions());
+    versions.addAll(pullVersions);
     versionCache.invalidateAll();
     notificationRequired=true;
   }
