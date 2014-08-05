@@ -1,6 +1,6 @@
 {
   RuntimeProperties sysprops=runtimeProperties.get();
-  String runtimeIdentity=sysprops.getRuntimeIdentity();
+  runtimeIdentity=sysprops.getRuntimeIdentity();
   String version=sysprops.getProperty("fabric.version",ZkDefs.DEFAULT_VERSION);
   String profiles=sysprops.getProperty("fabric.profiles");
   try {
@@ -20,15 +20,16 @@
     ZooKeeperUtils.createDefault(curator.get(),CONTAINER_RESOLVER.getPath(runtimeIdentity),getContainerResolutionPolicy(curator.get(),runtimeIdentity));
     setData(curator.get(),CONTAINER_LOCAL_HOSTNAME.getPath(runtimeIdentity),HostUtils.getLocalHostName());
     setData(curator.get(),CONTAINER_LOCAL_IP.getPath(runtimeIdentity),HostUtils.getLocalIp());
-    setData(curator.get(),CONTAINER_IP.getPath(runtimeIdentity),getContainerPointer(curator.get(),runtimeIdentity));
     for (    String resolver : ZkDefs.VALID_RESOLVERS) {
       String address=String.valueOf(bootstrapConfiguration.get().getConfiguration().get(resolver));
       if (address != null && !address.isEmpty() && exists(curator.get(),CONTAINER_ADDRESS.getPath(runtimeIdentity,resolver)) == null) {
         setData(curator.get(),CONTAINER_ADDRESS.getPath(runtimeIdentity,resolver),address);
       }
     }
+    ip=getSubstitutedData(curator.get(),getContainerPointer(curator.get(),runtimeIdentity));
+    setData(curator.get(),CONTAINER_IP.getPath(runtimeIdentity),ip);
     createDefault(curator.get(),CONTAINER_GEOLOCATION.getPath(runtimeIdentity),geoLocationService.get().getGeoLocation());
-    Container current=getContainer();
+    Container current=new ImmutableContainerBuilder().id(runtimeIdentity).ip(ip).build();
     System.setProperty(SystemProperties.JAVA_RMI_SERVER_HOSTNAME,current.getIp());
     registerJmx(current);
     registerSsh(current);

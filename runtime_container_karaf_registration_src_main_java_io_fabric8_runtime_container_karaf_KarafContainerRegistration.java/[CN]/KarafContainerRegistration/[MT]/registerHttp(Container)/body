@@ -8,12 +8,12 @@
   Configuration configuration=configAdmin.get().getConfiguration(HTTP_PID,null);
   if (httpEnabled) {
     int httpPort=getHttpPort(container);
-    fabricService.get().getPortService().registerPort(container,HTTP_PID,HTTP_BINDING_PORT_KEY,httpPort);
+    portService.get().registerPort(container,HTTP_PID,HTTP_BINDING_PORT_KEY,httpPort);
     updateIfNeeded(configuration,HTTP_BINDING_PORT_KEY,httpPort);
   }
   if (httpsEnabled) {
     int httpsPort=getHttpsPort(container);
-    fabricService.get().getPortService().registerPort(container,HTTP_PID,HTTPS_BINDING_PORT_KEY,httpsPort);
+    portService.get().registerPort(container,HTTP_PID,HTTPS_BINDING_PORT_KEY,httpsPort);
     updateIfNeeded(configuration,HTTPS_BINDING_PORT_KEY,httpsPort);
   }
 }

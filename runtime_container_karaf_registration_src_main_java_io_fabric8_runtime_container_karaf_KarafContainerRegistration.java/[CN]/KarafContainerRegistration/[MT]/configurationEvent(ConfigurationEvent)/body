@@ -1,7 +1,7 @@
 {
   if (isValid()) {
     try {
-      Container current=getContainer();
+      Container current=new ImmutableContainerBuilder().id(runtimeIdentity).ip(ip).build();
       RuntimeProperties sysprops=runtimeProperties.get();
       String runtimeIdentity=sysprops.getRuntimeIdentity();
       if (event.getPid().equals(SSH_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
@@ -10,9 +10,9 @@
         int sshConnectionPort=getSshConnectionPort(current,sshPort);
         String sshUrl=getSshUrl(runtimeIdentity,sshConnectionPort);
         setData(curator.get(),CONTAINER_SSH.getPath(runtimeIdentity),sshUrl);
-        if (fabricService.get().getPortService().lookupPort(current,SSH_PID,SSH_BINDING_PORT_KEY) != sshPort) {
-          fabricService.get().getPortService().unregisterPort(current,SSH_PID);
-          fabricService.get().getPortService().registerPort(current,SSH_PID,SSH_BINDING_PORT_KEY,sshPort);
+        if (portService.get().lookupPort(current,SSH_PID,SSH_BINDING_PORT_KEY) != sshPort) {
+          portService.get().unregisterPort(current,SSH_PID);
+          portService.get().registerPort(current,SSH_PID,SSH_BINDING_PORT_KEY,sshPort);
         }
       }
       if (event.getPid().equals(HTTP_PID) && event.getType() == ConfigurationEvent.CM_UPDATED) {
@@ -24,9 +24,9 @@
         if (httpEnabled) {
           int httpPort=Integer.parseInt((String)config.getProperties().get(HTTP_BINDING_PORT_KEY));
           httpConnectionPort=getHttpConnectionPort(current,httpPort);
-          if (fabricService.get().getPortService().lookupPort(current,HTTP_PID,HTTP_BINDING_PORT_KEY) != httpPort) {
-            fabricService.get().getPortService().unregisterPort(current,HTTP_PID,HTTP_BINDING_PORT_KEY);
-            fabricService.get().getPortService().registerPort(current,HTTP_PID,HTTP_BINDING_PORT_KEY,httpPort);
+          if (portService.get().lookupPort(current,HTTP_PID,HTTP_BINDING_PORT_KEY) != httpPort) {
+            portService.get().unregisterPort(current,HTTP_PID,HTTP_BINDING_PORT_KEY);
+            portService.get().registerPort(current,HTTP_PID,HTTP_BINDING_PORT_KEY,httpPort);
           }
         }
         if (httpsEnabled) {
@@ -34,9 +34,9 @@
           if (httpConnectionPort == -1) {
             httpConnectionPort=getHttpsConnectionPort(current);
           }
-          if (fabricService.get().getPortService().lookupPort(current,HTTP_PID,HTTPS_BINDING_PORT_KEY) != httpsPort) {
-            fabricService.get().getPortService().unregisterPort(current,HTTP_PID,HTTPS_BINDING_PORT_KEY);
-            fabricService.get().getPortService().registerPort(current,HTTP_PID,HTTPS_BINDING_PORT_KEY,httpsPort);
+          if (portService.get().lookupPort(current,HTTP_PID,HTTPS_BINDING_PORT_KEY) != httpsPort) {
+            portService.get().unregisterPort(current,HTTP_PID,HTTPS_BINDING_PORT_KEY);
+            portService.get().registerPort(current,HTTP_PID,HTTPS_BINDING_PORT_KEY,httpsPort);
           }
         }
         String httpUrl=getHttpUrl(protocol,runtimeIdentity,httpConnectionPort);
@@ -51,10 +51,10 @@
         String jmxUrl=getJmxUrl(runtimeIdentity,rmiServerConnectionPort,rmiRegistryConnectionPort);
         setData(curator.get(),CONTAINER_JMX.getPath(runtimeIdentity),jmxUrl);
         System.setProperty(SystemProperties.JAVA_RMI_SERVER_HOSTNAME,current.getIp());
-        if (fabricService.get().getPortService().lookupPort(current,MANAGEMENT_PID,RMI_REGISTRY_BINDING_PORT_KEY) != rmiRegistryPort || fabricService.get().getPortService().lookupPort(current,MANAGEMENT_PID,RMI_SERVER_BINDING_PORT_KEY) != rmiServerPort) {
-          fabricService.get().getPortService().unregisterPort(current,MANAGEMENT_PID);
-          fabricService.get().getPortService().registerPort(current,MANAGEMENT_PID,RMI_SERVER_BINDING_PORT_KEY,rmiServerPort);
-          fabricService.get().getPortService().registerPort(current,MANAGEMENT_PID,RMI_REGISTRY_BINDING_PORT_KEY,rmiRegistryPort);
+        if (portService.get().lookupPort(current,MANAGEMENT_PID,RMI_REGISTRY_BINDING_PORT_KEY) != rmiRegistryPort || portService.get().lookupPort(current,MANAGEMENT_PID,RMI_SERVER_BINDING_PORT_KEY) != rmiServerPort) {
+          portService.get().unregisterPort(current,MANAGEMENT_PID);
+          portService.get().registerPort(current,MANAGEMENT_PID,RMI_SERVER_BINDING_PORT_KEY,rmiServerPort);
+          portService.get().registerPort(current,MANAGEMENT_PID,RMI_REGISTRY_BINDING_PORT_KEY,rmiRegistryPort);
         }
       }
     }

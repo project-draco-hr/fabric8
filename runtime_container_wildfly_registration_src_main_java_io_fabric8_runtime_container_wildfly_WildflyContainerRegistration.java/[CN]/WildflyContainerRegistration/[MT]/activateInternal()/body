@@ -1,6 +1,6 @@
 {
   RuntimeProperties sysprops=runtimeProperties.get();
-  String runtimeIdentity=sysprops.getRuntimeIdentity();
+  runtimeIdentity=sysprops.getRuntimeIdentity();
   String version=sysprops.getProperty("fabric.version",ZkDefs.DEFAULT_VERSION);
   String profiles=sysprops.getProperty("fabric.profiles");
   try {
@@ -26,14 +26,10 @@
         setData(curator.get(),CONTAINER_ADDRESS.getPath(runtimeIdentity,resolver),address);
       }
     }
+    ip=getSubstitutedData(curator.get(),getContainerPointer(curator.get(),runtimeIdentity));
+    setData(curator.get(),CONTAINER_IP.getPath(runtimeIdentity),ip);
     createDefault(curator.get(),CONTAINER_GEOLOCATION.getPath(runtimeIdentity),geoLocationService.get().getGeoLocation());
-    for (    String resolver : ZkDefs.VALID_RESOLVERS) {
-      String address=sysprops.getProperty(resolver);
-      if (address != null && !address.isEmpty() && ZooKeeperUtils.exists(curator.get(),CONTAINER_ADDRESS.getPath(runtimeIdentity,resolver)) == null) {
-        ZooKeeperUtils.setData(curator.get(),CONTAINER_ADDRESS.getPath(runtimeIdentity,resolver),address);
-      }
-    }
-    Container current=getContainer();
+    Container current=new ImmutableContainerBuilder().id(runtimeIdentity).ip(ip).build();
     registerHttp(current);
     registerJmx(current);
     String minimumPort=sysprops.getProperty(ZkDefs.MINIMUM_PORT);
