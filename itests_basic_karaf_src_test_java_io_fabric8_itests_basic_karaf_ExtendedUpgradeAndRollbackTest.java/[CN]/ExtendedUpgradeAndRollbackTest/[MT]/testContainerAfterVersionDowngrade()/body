@@ -9,7 +9,7 @@
     Set<Container> containers=ContainerBuilder.create().withName("camel").withProfiles("feature-camel").assertProvisioningResult().build(fabricService);
     try {
       System.out.println(CommandSupport.executeCommand("fabric:container-rollback --all 1.0"));
-      Provision.provisioningSuccess(containers,FabricEnsembleSupport.PROVISION_TIMEOUT);
+      ProvisionSupport.provisioningSuccess(containers,ProvisionSupport.PROVISION_TIMEOUT);
       for (      Container container : containers) {
         Assert.assertEquals("Container should have version 1.0","1.0",container.getVersion().getId());
         Assert.assertNotNull(ZooKeeperUtils.exists(ServiceLocator.awaitService(CuratorFramework.class),"/fabric/configs/versions/1.0/containers/" + container.getId()));

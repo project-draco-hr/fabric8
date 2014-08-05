@@ -7,7 +7,7 @@
   try {
     FabricService fabricService=fabricProxy.getService();
     Set<Container> containers=ContainerBuilder.child(1).withName("smoke.childB").withProfiles("p1").build(fabricService);
-    Provision.provisioningSuccess(containers,FabricEnsembleSupport.PROVISION_TIMEOUT);
+    ProvisionSupport.provisioningSuccess(containers,ProvisionSupport.PROVISION_TIMEOUT);
     try {
       Container child=containers.iterator().next();
       String ensembleUrl=CommandSupport.executeCommand("fabric:container-connect -u admin -p admin " + child.getId() + " zk:get /fabric/configs/ensemble/url");

@@ -15,7 +15,7 @@
         Container cnt2=containerQueue.removeFirst();
         addedContainers.add(cnt1);
         addedContainers.add(cnt2);
-        FabricEnsembleSupport.addToEnsemble(fabricService,cnt1,cnt2);
+        EnsembleSupport.addToEnsemble(fabricService,cnt1,cnt2);
         System.err.println(CommandSupport.executeCommand("config:proplist --pid io.fabric8.zookeeper"));
         System.err.println(CommandSupport.executeCommand("fabric:container-list"));
         System.err.println(CommandSupport.executeCommand("fabric:ensemble-list"));
@@ -24,7 +24,7 @@
         List<String> ensembleContainersResult=zooKeeperClusterService.getEnsembleContainers();
         Assert.assertTrue(ensembleContainersResult.contains(cnt1.getId()));
         Assert.assertTrue(ensembleContainersResult.contains(cnt2.getId()));
-        Provision.provisioningSuccess(Arrays.asList(fabricService.getContainers()),FabricEnsembleSupport.PROVISION_TIMEOUT);
+        ProvisionSupport.provisioningSuccess(Arrays.asList(fabricService.getContainers()),ProvisionSupport.PROVISION_TIMEOUT);
       }
       System.out.println(CommandSupport.executeCommand("fabric:version-create"));
       System.out.println(CommandSupport.executeCommand("fabric:container-upgrade --all 1.2"));
@@ -33,7 +33,7 @@
         Container cnt2=addedContainers.removeFirst();
         containerQueue.add(cnt1);
         containerQueue.add(cnt2);
-        FabricEnsembleSupport.removeFromEnsemble(fabricService,cnt1,cnt2);
+        EnsembleSupport.removeFromEnsemble(fabricService,cnt1,cnt2);
         System.err.println(CommandSupport.executeCommand("config:proplist --pid io.fabric8.zookeeper"));
         System.err.println(CommandSupport.executeCommand("fabric:container-list"));
         System.err.println(CommandSupport.executeCommand("fabric:ensemble-list"));
@@ -42,7 +42,7 @@
         List<String> ensembleContainersResult=zooKeeperClusterService.getEnsembleContainers();
         Assert.assertFalse(ensembleContainersResult.contains(cnt1.getId()));
         Assert.assertFalse(ensembleContainersResult.contains(cnt2.getId()));
-        Provision.provisioningSuccess(Arrays.asList(fabricService.getContainers()),FabricEnsembleSupport.PROVISION_TIMEOUT);
+        ProvisionSupport.provisioningSuccess(Arrays.asList(fabricService.getContainers()),ProvisionSupport.PROVISION_TIMEOUT);
       }
     }
   finally {

@@ -16,7 +16,7 @@
         CommandSupport.executeCommand("fabric:container-upgrade 1.1 " + container.getId());
         System.out.flush();
       }
-      Provision.provisioningSuccess(containers,FabricEnsembleSupport.PROVISION_TIMEOUT);
+      ProvisionSupport.provisioningSuccess(containers,ProvisionSupport.PROVISION_TIMEOUT);
       CommandSupport.executeCommand("fabric:container-list");
       for (      Container container : containers) {
         CommandSupport.executeCommand("fabric:container-connect -u admin -p admin " + container.getId() + " osgi:list");

@@ -5,7 +5,7 @@
   try {
     FabricService fabricService=fabricProxy.getService();
     System.out.println(CommandSupport.executeCommand("fabric:profile-create --parents default child-profile"));
-    Assert.assertTrue(Provision.profileAvailable("child-profile","1.0",FabricEnsembleSupport.PROVISION_TIMEOUT));
+    Assert.assertTrue(ProvisionSupport.profileAvailable("child-profile","1.0",ProvisionSupport.PROVISION_TIMEOUT));
     Set<Container> containers=ContainerBuilder.create(1,1).withName("basic.cnt").withProfiles("child-profile").assertProvisioningResult().build(fabricService);
     try {
       Container child1=containers.iterator().next();
@@ -17,7 +17,7 @@
       System.out.println(CommandSupport.executeCommand("fabric:profile-edit --pid org.apache.karaf.management/serviceUrl=service:jmx:rmi://localhost:55555/jndi/rmi://localhost:1099/karaf-" + child1.getId() + " child-profile"));
       String sshUrl=child1.getSshUrl();
       String jmxUrl=child1.getJmxUrl();
-      long end=System.currentTimeMillis() + FabricEnsembleSupport.PROVISION_TIMEOUT;
+      long end=System.currentTimeMillis() + ProvisionSupport.PROVISION_TIMEOUT;
       while (System.currentTimeMillis() < end && (!sshUrl.endsWith("8105") || !jmxUrl.contains("55555"))) {
         Thread.sleep(1000L);
         sshUrl=child1.getSshUrl();

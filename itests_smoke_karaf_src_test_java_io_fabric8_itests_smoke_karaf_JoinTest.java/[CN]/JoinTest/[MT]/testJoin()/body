@@ -10,7 +10,7 @@
     System.err.println(CommandSupport.executeCommand("admin:create --featureURL mvn:io.fabric8/fabric8-karaf/" + version + "/xml/features --feature fabric-git --feature fabric-agent --feature fabric-boot-commands smoke.childD"));
     try {
       System.err.println(CommandSupport.executeCommand("admin:start smoke.childD"));
-      Provision.instanceStarted(Arrays.asList("smoke.childD"),FabricEnsembleSupport.PROVISION_TIMEOUT);
+      ProvisionSupport.instanceStarted(Arrays.asList("smoke.childD"),ProvisionSupport.PROVISION_TIMEOUT);
       System.err.println(CommandSupport.executeCommand("admin:list"));
       String joinCommand="fabric:join -f --zookeeper-password " + fabricService.getZookeeperPassword() + " "+ fabricService.getZookeeperUrl();
       String response="";
@@ -19,10 +19,10 @@
         Thread.sleep(1000);
       }
       System.err.println(CommandSupport.executeCommand("ssh:ssh -l karaf -P karaf -p " + adminService.getInstance("smoke.childD").getSshPort() + " localhost "+ joinCommand));
-      Provision.containersExist(Arrays.asList("smoke.childD"),FabricEnsembleSupport.PROVISION_TIMEOUT);
+      ProvisionSupport.containersExist(Arrays.asList("smoke.childD"),ProvisionSupport.PROVISION_TIMEOUT);
       Container childD=fabricService.getContainer("smoke.childD");
       System.err.println(CommandSupport.executeCommand("fabric:container-list"));
-      Provision.containerStatus(Arrays.asList(childD),"success",FabricEnsembleSupport.PROVISION_TIMEOUT);
+      ProvisionSupport.containerStatus(Arrays.asList(childD),"success",ProvisionSupport.PROVISION_TIMEOUT);
       System.err.println(CommandSupport.executeCommand("fabric:container-list"));
     }
   finally {
