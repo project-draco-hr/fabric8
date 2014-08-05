@@ -9,11 +9,9 @@
       if (properties == null) {
         properties=new Hashtable<String,Object>();
       }
-      properties.put("fabric.git.url",gitRemoteUrl);
+      properties.put("fabric.git.url",gitRemoteUrl.get());
       conf.update(properties);
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Setting pid " + GIT_PID + " config admin to: "+ properties);
-      }
+      LOGGER.debug("Setting pid " + GIT_PID + " config admin to: {}",properties);
     }
   }
  catch (  Throwable e) {

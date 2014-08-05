@@ -9,7 +9,7 @@
     GitNode state=createState();
     group.update(state);
     String url=state.getUrl();
-    gitRemoteUrl=ZooKeeperUtils.getSubstitutedData(curator.get(),url);
+    gitRemoteUrl.set(ZooKeeperUtils.getSubstitutedData(curator.get(),url));
     if (group.isMaster()) {
       updateConfigAdmin();
     }

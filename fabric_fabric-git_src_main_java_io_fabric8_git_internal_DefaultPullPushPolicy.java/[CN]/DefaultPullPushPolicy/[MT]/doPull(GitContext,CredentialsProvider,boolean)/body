@@ -48,14 +48,17 @@
     Set<String> versions=new TreeSet<>();
     if (remoteBranches.isEmpty()) {
       LOGGER.info("Pulled from an empty remote repository");
-      return new AbstractPullPolicyResult(versions,false,true,null);
+      return new AbstractPullPolicyResult(versions,false,!localBranches.isEmpty(),null);
+    }
+ else {
+      LOGGER.info("Processing remote branches: {}",remoteBranches);
     }
     IllegalStateAssertion.assertTrue(remoteBranches.containsKey(GitHelpers.MASTER_BRANCH),"Remote repository does not have a master branch");
     if (localBranches.containsKey(GitHelpers.MASTER_BRANCH)) {
       git.checkout().setName(GitHelpers.MASTER_BRANCH).setForce(true).call();
     }
     for (    String branch : allBranches) {
-      if (localBranches.containsKey(branch) && !remoteBranches.containsKey(branch) && !GitHelpers.MASTER_BRANCH.equals(branch)) {
+      if (allowVersionDelete && localBranches.containsKey(branch) && !remoteBranches.containsKey(branch)&& !GitHelpers.MASTER_BRANCH.equals(branch)) {
         LOGGER.info("Deleting local branch: {}",branch);
         git.branchDelete().setBranchNames(branch).setForce(true).call();
         localChange=true;
