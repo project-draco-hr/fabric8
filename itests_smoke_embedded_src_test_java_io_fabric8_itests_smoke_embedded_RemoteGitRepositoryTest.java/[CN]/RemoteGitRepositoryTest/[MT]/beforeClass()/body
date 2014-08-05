@@ -3,12 +3,21 @@
   Builder<?> builder=CreateEnsembleOptions.builder().agentEnabled(false).clean(true).waitForProvision(false);
   ServiceLocator.getRequiredService(ZooKeeperClusterBootstrap.class).create(builder.build());
   Path dataPath=ServiceLocator.getRequiredService(RuntimeProperties.class).getDataPath();
+  Path localRepoPath=dataPath.resolve(Paths.get("git","local","fabric"));
   Path remoteRepoPath=dataPath.resolve(Paths.get("git","remote","fabric"));
   remoteRoot=remoteRepoPath.toFile();
   recursiveDelete(remoteRoot.toPath());
   remoteRoot.mkdirs();
   URL remoteUrl=remoteRepoPath.toFile().toURI().toURL();
-  git=Git.init().setDirectory(remoteRoot).call();
+  git=Git.cloneRepository().setURI(localRepoPath.toFile().toURI().toString()).setDirectory(remoteRoot).setCloneAllBranches(true).setNoCheckout(true).call();
+  for (  Ref ref : git.branchList().setListMode(ListMode.REMOTE).call()) {
+    String refName=ref.getName();
+    String startPoint=refName.substring(refName.indexOf("origin"));
+    String branchName=refName.substring(refName.lastIndexOf('/') + 1);
+    git.checkout().setCreateBranch(true).setName(branchName).setStartPoint(startPoint).call();
+  }
+  checkoutRequiredBranch("master");
+  checkoutRequiredBranch("1.0");
   ConfigurationAdmin configAdmin=ServiceLocator.getRequiredService(ConfigurationAdmin.class);
   Configuration config=configAdmin.getConfiguration(Constants.DATASTORE_PID);
   Dictionary<String,Object> properties=config.getProperties();

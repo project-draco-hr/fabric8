@@ -1,10 +1,3 @@
 {
-  PushPolicyResult pushResult=pullPushPolicy.doPush(context,credentialsProvider);
-  if (pushResult.getLastException() != null) {
-    LOGGER.warn("Push failed",pushResult.getLastException());
-  }
-  if (!pushResult.getRejectedUpdates().isEmpty()) {
-    throw new IllegalStateException("Push rejected: " + pushResult.getRejectedUpdates());
-  }
-  return pushResult;
+  return pullPushPolicy.doPush(context,credentialsProvider);
 }

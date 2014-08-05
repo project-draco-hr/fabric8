@@ -16,7 +16,7 @@
       personIdent=new PersonIdent(repository);
     }
     if (context.isRequirePull()) {
-      doPullInternal(context,getCredentialsProvider(),true);
+      doPullInternal(context,getCredentialsProvider(),false);
     }
     T result=operation.call(git,context);
     if (context.isRequireCommit()) {
@@ -25,7 +25,10 @@
       notificationRequired=true;
     }
     if (context.isRequirePush()) {
-      doPushInternal(context,getCredentialsProvider());
+      PushPolicyResult pushResult=doPushInternal(context,getCredentialsProvider());
+      if (!pushResult.getRejectedUpdates().isEmpty()) {
+        throw new IllegalStateException("Push rejected: " + pushResult.getRejectedUpdates());
+      }
     }
     return result;
   }

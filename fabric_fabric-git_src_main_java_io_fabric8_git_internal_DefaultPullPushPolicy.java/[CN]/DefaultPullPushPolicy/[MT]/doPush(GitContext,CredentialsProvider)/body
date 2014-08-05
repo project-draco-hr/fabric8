@@ -25,20 +25,16 @@
     }
   }
   if (lastException != null) {
+    LOGGER.warn("Cannot push because of: {}",lastException.toString());
     return new AbstractPushPolicyResult(lastException);
   }
   List<PushResult> pushResults=new ArrayList<>();
   List<RemoteRefUpdate> acceptedUpdates=new ArrayList<>();
   List<RemoteRefUpdate> rejectedUpdates=new ArrayList<>();
-  if (lastException instanceof TransportException) {
-    LOGGER.warn("Cannot push because of: {}",lastException.toString());
-    return new AbstractPushPolicyResult(pushResults,acceptedUpdates,rejectedUpdates,lastException);
-  }
-  while (resit != null && resit.hasNext()) {
+  while (resit.hasNext()) {
     PushResult pushResult=resit.next();
     pushResults.add(pushResult);
     for (    RemoteRefUpdate refUpdate : pushResult.getRemoteUpdates()) {
-      LOGGER.info("Remote ref update: {}" + refUpdate);
       Status status=refUpdate.getStatus();
       if (status == Status.OK || status == Status.UP_TO_DATE) {
         acceptedUpdates.add(refUpdate);
@@ -48,19 +44,23 @@
       }
     }
   }
-  if (lastException != null || !rejectedUpdates.isEmpty()) {
-    String checkoutId=context.getCheckoutId();
-    if (checkoutId != null) {
-      String branch=GitHelpers.currentBranch(git);
-      RevCommit commit=CommitUtils.getCommit(git.getRepository(),checkoutId);
-      LOGGER.warn("Resetting branch '{}' to: {}",branch,commit);
-      try {
-        git.reset().setMode(ResetType.HARD).setRef(checkoutId).call();
-      }
- catch (      Exception ex) {
-        LOGGER.error("Cannot reset branch '" + branch + "' to: "+ commit,ex);
-      }
+  for (  RemoteRefUpdate rejectedRef : rejectedUpdates) {
+    LOGGER.warn("Rejected push: {}" + rejectedRef);
+    String refName=rejectedRef.getRemoteName();
+    String branch=refName.substring(refName.lastIndexOf('/') + 1);
+    try {
+      GitHelpers.checkoutBranch(git,branch);
+      FetchResult fetchResult=git.fetch().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setRemote(remoteRef).setRefSpecs(new RefSpec("refs/heads/" + branch)).call();
+      Ref fetchRef=fetchResult.getAdvertisedRef("refs/heads/" + branch);
+      git.branchRename().setOldName(branch).setNewName(branch + "-tmp").call();
+      git.checkout().setCreateBranch(true).setName(branch).setStartPoint(fetchRef.getObjectId().getName()).call();
+      git.branchDelete().setBranchNames(branch + "-tmp").call();
+    }
+ catch (    GitAPIException ex) {
+      LOGGER.warn("Cannot reset branch {}, because of: {}",branch,ex.toString());
     }
   }
-  return new AbstractPushPolicyResult(pushResults,acceptedUpdates,rejectedUpdates,lastException);
+  PushPolicyResult result=new AbstractPushPolicyResult(pushResults,acceptedUpdates,rejectedUpdates,lastException);
+  LOGGER.info("Push result: {}",result);
+  return result;
 }
