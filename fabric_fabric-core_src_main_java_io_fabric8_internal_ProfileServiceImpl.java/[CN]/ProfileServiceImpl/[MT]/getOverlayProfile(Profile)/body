@@ -1,28 +1,31 @@
 {
   assertValid();
   Profile overlayProfile;
-  if (profile.isOverlay()) {
-    LOGGER.debug("getOverlayProfile, given profile is already an overlay: " + profile);
-    overlayProfile=profile;
-  }
+synchronized (this) {
+    if (profile.isOverlay()) {
+      LOGGER.debug("getOverlayProfile, given profile is already an overlay: " + profile);
+      overlayProfile=profile;
+    }
  else {
-    String profileId=profile.getId();
-    String environment=runtimeProperties.get().getProperty(SystemProperties.FABRIC_ENVIRONMENT);
-    ProfileBuilder builder=ProfileBuilder.Factory.create(profile.getVersion(),profileId);
-    builder.addOptions(new OverlayOptionsProvider(profile,environment));
-    overlayProfile=builder.getProfile();
-    if (LOGGER.isInfoEnabled()) {
-synchronized (lastOverlayProfiles) {
-        Profile lastOverlay=lastOverlayProfiles.get(profileId);
+      String profileId=profile.getId();
+      String environment=runtimeProperties.get().getProperty(SystemProperties.FABRIC_ENVIRONMENT);
+      ProfileBuilder builder=ProfileBuilder.Factory.create(profile.getVersion(),profileId);
+      builder.addOptions(new OverlayOptionsProvider(profile,environment));
+      overlayProfile=builder.getProfile();
+      if (LOGGER.isInfoEnabled()) {
+        OverlayAudit audit=getOverlayAudit();
+        Profile lastOverlay=audit.overlayProfiles.get(profileId);
         String longString=Profiles.getProfileInfo(overlayProfile,true);
         String lastString=lastOverlay != null ? Profiles.getProfileInfo(lastOverlay,true) : null;
-        if (lastOverlay == null || !longString.equals(lastString)) {
-          LOGGER.info("Changed Overlay" + longString);
-          if (lastOverlay != null) {
-            LOGGER.info("Overlay" + Profiles.getProfileDifference(lastOverlay,overlayProfile));
-          }
+        if (lastOverlay == null) {
+          LOGGER.info("Overlay" + longString);
           LOGGER.info("Called from ",new RuntimeException());
-          lastOverlayProfiles.put(profileId,overlayProfile);
+          audit.overlayProfiles.put(profileId,overlayProfile);
+        }
+ else         if (!longString.equals(lastString)) {
+          LOGGER.info("Overlay" + Profiles.getProfileDifference(lastOverlay,overlayProfile));
+          LOGGER.info("Called from ",new RuntimeException());
+          audit.overlayProfiles.put(profileId,overlayProfile);
         }
       }
     }

@@ -1,7 +1,9 @@
 {
+  IllegalArgumentAssertion.assertNotNull(key,"key");
+  IllegalArgumentAssertion.assertNotNull(value,"value");
 synchronized (attributes) {
-    Object exist=attributes.get(key);
+    Object exist=attributes.get(key.getName());
     IllegalStateAssertion.assertNull(exist,"Runtime already contains attribute: " + exist);
-    attributes.put(key,value);
+    attributes.put(key.getName(),value);
   }
 }
