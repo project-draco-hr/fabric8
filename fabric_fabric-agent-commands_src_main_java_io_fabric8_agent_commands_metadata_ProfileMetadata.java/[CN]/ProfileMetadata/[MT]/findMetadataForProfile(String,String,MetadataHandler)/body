@@ -1,5 +1,4 @@
 {
-  MetaTypeSummaryDTO answer=new MetaTypeSummaryDTO();
   FabricService service=fabricService.get();
   Objects.notNull(service,"FabricService");
   ProfileService profileService=service.adapt(ProfileService.class);
@@ -19,7 +18,7 @@
       LOG.warn("File " + file + " is not an existing file for "+ uri+ ". Ignoring");
       continue;
     }
-    addMetaTypeInformation(answer,service,uri,file);
+    addMetaTypeInformation(handler,uri,file);
     pids.add(uri);
   }
   if (metaTypeFolder != null && metaTypeFolder.exists() && metaTypeFolder.isDirectory()) {
@@ -32,11 +31,10 @@
             File pidFolder=new File(metaTypeFolder,pid);
             File xmlFile=new File(pidFolder,"metatype.xml");
             File propertiesFile=new File(pidFolder,"metatype.properties");
-            addMetaTypeInformation(answer,service,pid,xmlFile,propertiesFile);
+            addMetaTypeInformation(handler,xmlFile,propertiesFile);
           }
         }
       }
     }
   }
-  return answer;
 }
