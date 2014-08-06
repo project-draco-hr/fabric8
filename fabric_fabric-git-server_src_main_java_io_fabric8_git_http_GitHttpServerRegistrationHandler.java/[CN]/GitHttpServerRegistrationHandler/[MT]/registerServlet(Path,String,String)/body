@@ -4,7 +4,7 @@
   String servletBase=basePath.toFile().getAbsolutePath();
   File fabricRoot=fabricRepoPath.toFile();
   if (!fabricRoot.exists()) {
-    File localRepo=gitService.get().getGit().getRepository().getDirectory();
+    File localRepo=gitDataStore.get().getGit().getRepository().getDirectory();
     Git.cloneRepository().setTimeout(10).setBare(true).setNoCheckout(true).setCloneAllBranches(true).setDirectory(fabricRoot).setURI(localRepo.toURI().toString()).call().getRepository().close();
   }
   HttpContext base=httpService.get().createDefaultHttpContext();
