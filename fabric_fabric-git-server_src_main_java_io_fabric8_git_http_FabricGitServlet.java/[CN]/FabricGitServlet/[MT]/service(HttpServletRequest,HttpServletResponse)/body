@@ -1,15 +1,28 @@
 {
-  String service=req.getParameter("service");
-  boolean isPush=service != null && service.equals("git-receive-pack");
-  LOGGER.trace("FabricGitServlet service git service={}, isPush={}",service,isPush);
+  LOGGER.debug("GitHttp service req={}",req);
   super.service(req,res);
-  try {
-    if (isPush) {
-      while (!counter.trySetCount(counter.getCount() + 1))       ;
+  LOGGER.debug("GitHttp service res={}",res);
+  String resContentType=res.getContentType();
+  if (resContentType.contains("x-git-receive-pack-result")) {
+    LOGGER.info("GitHttp service res={}",res);
+    int httpStatus=0;
+    try {
+      Method method=res.getClass().getMethod("getStatus");
+      httpStatus=(Integer)method.invoke(res,new Object[]{});
     }
-  }
- catch (  Exception e) {
-    LOGGER.debug("Error updating counter on ZkPath: " + path + " due "+ e.getMessage()+ ". This exception is ignored.",e);
-    LOGGER.warn("Error updating counter on ZkPath: " + path + " due "+ e.getMessage()+ ". This exception is ignored.");
+ catch (    Exception ex) {
+      LOGGER.error("Cannot obtain http response code: " + ex);
+    }
+    if (httpStatus == HttpServletResponse.SC_OK) {
+      try {
+        List<Ref> refs=git.branchList().call();
+        LOGGER.info("Remote git content updated: {}",refs);
+        while (!counter.trySetCount(counter.getCount() + 1))         ;
+      }
+ catch (      Exception ex) {
+        LOGGER.debug("Error incrementing shared counter: " + ex + ". This exception is ignored.",ex);
+        LOGGER.warn("Error incrementing shared counter: " + ex + ". This exception is ignored.");
+      }
+    }
   }
 }

@@ -1,11 +1,11 @@
 {
   super.init(config);
   try {
-    this.counter=new SharedCount(curator,path,0);
-    this.counter.start();
+    counter=new SharedCount(curator,ZkPath.GIT_TRIGGER.getPath(),0);
+    counter.start();
   }
- catch (  Exception e) {
-    LOGGER.error("Error starting SharedCount for ZkNode " + path + " due "+ e.getMessage(),e);
-    throw new ServletException("Error starting SharedCount for ZkNode " + path,e);
+ catch (  Exception ex) {
+    LOGGER.error("Error starting SharedCount",ex);
+    throw new ServletException("Error starting SharedCount",ex);
   }
 }

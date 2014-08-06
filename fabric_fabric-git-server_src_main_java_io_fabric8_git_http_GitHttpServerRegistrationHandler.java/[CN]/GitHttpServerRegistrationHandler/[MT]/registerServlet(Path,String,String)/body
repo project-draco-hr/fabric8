@@ -5,7 +5,10 @@
   File fabricRoot=fabricRepoPath.toFile();
   if (!fabricRoot.exists()) {
     File localRepo=gitDataStore.get().getGit().getRepository().getDirectory();
-    Git.cloneRepository().setTimeout(10).setBare(true).setNoCheckout(true).setCloneAllBranches(true).setDirectory(fabricRoot).setURI(localRepo.toURI().toString()).call().getRepository().close();
+    git=Git.cloneRepository().setTimeout(10).setBare(true).setNoCheckout(true).setCloneAllBranches(true).setDirectory(fabricRoot).setURI(localRepo.toURI().toString()).call();
+  }
+ else {
+    git=Git.open(fabricRoot);
   }
   HttpContext base=httpService.get().createDefaultHttpContext();
   HttpContext secure=new GitSecureHttpContext(base,curator.get(),realm,role);
@@ -13,5 +16,5 @@
   initParams.put("base-path",servletBase);
   initParams.put("repository-root",servletBase);
   initParams.put("export-all","true");
-  httpService.get().registerServlet("/git",new FabricGitServlet(curator.get()),initParams,secure);
+  httpService.get().registerServlet("/git",new FabricGitServlet(git,curator.get()),initParams,secure);
 }
