@@ -5,15 +5,17 @@
   answer.setDescription(localize(resources,ocd.getDescription()));
   List<MetaTypeAttributeDTO> attributeList=new ArrayList<>();
   Map<String,Object> attributes=ocd.getAttributeDefinitions();
-  Set<Map.Entry<String,Object>> entries=attributes.entrySet();
-  for (  Map.Entry<String,Object> entry : entries) {
-    String name=entry.getKey();
-    Object value=entry.getValue();
-    if (value instanceof AD) {
-      AD ad=(AD)value;
-      MetaTypeAttributeDTO attributeDTO=createMetaTypeAttributeDTO(resources,ocd,name,ad);
-      if (attributeDTO != null) {
-        attributeList.add(attributeDTO);
+  if (attributes != null) {
+    Set<Map.Entry<String,Object>> entries=attributes.entrySet();
+    for (    Map.Entry<String,Object> entry : entries) {
+      String name=entry.getKey();
+      Object value=entry.getValue();
+      if (value instanceof AD) {
+        AD ad=(AD)value;
+        MetaTypeAttributeDTO attributeDTO=createMetaTypeAttributeDTO(resources,ocd,name,ad);
+        if (attributeDTO != null) {
+          attributeList.add(attributeDTO);
+        }
       }
     }
   }

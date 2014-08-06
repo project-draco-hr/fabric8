@@ -1,0 +1,22 @@
+{
+  MetaData metadata;
+  if (!xmlFile.exists()) {
+    LOG.info("Warning! " + xmlFile + " does not exist so no OSGi MetaType metadata");
+    metadata=new MetaData();
+    Designate designate=new Designate();
+    designate.setPid(pid);
+    metadata.addDesignate(designate);
+    OCD ocd=new OCD();
+    ocd.setId(pid);
+    metadata.addObjectClassDefinition(ocd);
+  }
+ else {
+    MetaDataReader reader=new MetaDataReader();
+    metadata=reader.parse(new FileInputStream(xmlFile));
+  }
+  Properties properties=new Properties();
+  if (propertiesFile.exists() && propertiesFile.isFile()) {
+    properties.load(new FileInputStream(propertiesFile));
+  }
+  handler.invoke(metadata,properties);
+}
