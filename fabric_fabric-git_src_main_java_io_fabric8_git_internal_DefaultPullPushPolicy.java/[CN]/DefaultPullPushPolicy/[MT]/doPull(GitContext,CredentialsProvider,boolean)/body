@@ -7,21 +7,15 @@
     return new AbstractPullPolicyResult();
   }
   LOGGER.info("Performing a pull on remote URL: {}",remoteUrl);
-  int retries=5;
   GitAPIException lastException=null;
-  while (0 < retries--) {
+  for (int i=0; i < 3; i++) {
     try {
       git.fetch().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setRemote(remoteRef).call();
       lastException=null;
-      retries=0;
+      break;
     }
  catch (    GitAPIException ex) {
       lastException=ex;
-      try {
-        Thread.sleep(1000L);
-      }
- catch (      InterruptedException ignored) {
-      }
     }
   }
   if (lastException != null) {
