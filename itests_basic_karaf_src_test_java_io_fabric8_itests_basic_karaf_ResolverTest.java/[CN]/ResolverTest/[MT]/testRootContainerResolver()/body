@@ -1,14 +1,14 @@
 {
-  System.out.println(executeCommand("fabric:create -n --wait-for-provisioning"));
-  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(bundleContext,FabricService.class);
+  System.out.println(CommandSupport.executeCommand("fabric:create --force --clean -n"));
+  ModuleContext moduleContext=RuntimeLocator.getRequiredRuntime().getModuleContext();
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(moduleContext,FabricService.class);
   try {
     FabricService fabricService=fabricProxy.getService();
     Container current=fabricService.getCurrentContainer();
-    ServiceLocator.awaitService(bundleContext,ContainerRegistration.class);
+    ServiceLocator.awaitService(ContainerRegistration.class);
     Assert.assertEquals("localhostname",current.getResolver());
     String sshUrlWithLocalhostResolver=current.getSshUrl();
-    waitForFabricCommands();
-    System.out.println(executeCommand("fabric:container-resolver-set --container root localip"));
+    System.out.println(CommandSupport.executeCommand("fabric:container-resolver-set --container root localip"));
     Assert.assertEquals("localip",current.getResolver());
     String sshUrlWithLocalIpResolver=current.getSshUrl();
     System.out.println("SSH URL with " + sshUrlWithLocalhostResolver + " resolver: localhostname");

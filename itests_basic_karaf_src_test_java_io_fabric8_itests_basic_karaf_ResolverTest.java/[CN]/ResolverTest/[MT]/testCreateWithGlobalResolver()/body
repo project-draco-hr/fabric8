@@ -1,0 +1,13 @@
+{
+  System.out.println(CommandSupport.executeCommand("fabric:create --force --clean -n -g manualip --manual-ip localhost -b localhost"));
+  ModuleContext moduleContext=RuntimeLocator.getRequiredRuntime().getModuleContext();
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(moduleContext,FabricService.class);
+  try {
+    FabricService fabricService=fabricProxy.getService();
+    Container current=fabricService.getCurrentContainer();
+    Assert.assertEquals("manualip",current.getResolver());
+  }
+  finally {
+    fabricProxy.close();
+  }
+}

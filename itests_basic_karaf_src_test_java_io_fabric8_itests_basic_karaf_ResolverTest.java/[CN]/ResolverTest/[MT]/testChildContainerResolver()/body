@@ -1,0 +1,41 @@
+{
+  System.out.println(CommandSupport.executeCommand("fabric:create --force --clean -n"));
+  ModuleContext moduleContext=RuntimeLocator.getRequiredRuntime().getModuleContext();
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(moduleContext,FabricService.class);
+  try {
+    FabricService fabricService=fabricProxy.getService();
+    CuratorFramework curator=fabricService.adapt(CuratorFramework.class);
+    Set<Container> containers=ContainerBuilder.create(1,1).withName("basic.cntF").withProfiles("default").assertProvisioningResult().build(fabricService);
+    try {
+      Container cntF=containers.iterator().next();
+      Assert.assertEquals("localhostname",getSubstitutedPath(curator,ZkPath.CONTAINER_RESOLVER.getPath(cntF.getId())));
+      String sshUrlWithLocalhostResolver=cntF.getSshUrl();
+      CommandSupport.executeCommand("fabric:container-resolver-set --container " + cntF.getId() + " localip");
+      Assert.assertEquals("localip",getSubstitutedPath(curator,ZkPath.CONTAINER_RESOLVER.getPath(cntF.getId())));
+      String sshUrlWithLocalIpResolver=cntF.getSshUrl();
+      System.out.println("SSH URL with " + sshUrlWithLocalhostResolver + " resolver: localhostname");
+      System.out.println("SSH URL with " + sshUrlWithLocalIpResolver + " resolver: localip");
+      Assert.assertNotSame(sshUrlWithLocalhostResolver,sshUrlWithLocalIpResolver);
+      setData(curator,ZkPath.CONTAINER_PUBLIC_IP.getPath(cntF.getId()),"my.public.ip.address");
+      CommandSupport.executeCommand("fabric:container-resolver-set --container " + cntF.getId() + " publicip");
+      Assert.assertEquals("publicip",getSubstitutedPath(curator,ZkPath.CONTAINER_RESOLVER.getPath(cntF.getId())));
+      String sshUrlWithPublicIpResolver=cntF.getSshUrl();
+      System.out.println("SSH URL with " + sshUrlWithPublicIpResolver + " resolver: publicip");
+      Assert.assertNotNull(sshUrlWithPublicIpResolver);
+      Assert.assertTrue(sshUrlWithPublicIpResolver.startsWith("my.public.ip.address"));
+      setData(curator,ZkPath.CONTAINER_MANUAL_IP.getPath(cntF.getId()),"my.manual.ip.address");
+      CommandSupport.executeCommand("fabric:container-resolver-set --container " + cntF.getId() + " manualip");
+      Assert.assertEquals("manualip",getSubstitutedPath(curator,ZkPath.CONTAINER_RESOLVER.getPath(cntF.getId())));
+      String sshUrlWithManualIpResolver=cntF.getSshUrl();
+      System.out.println("SSH URL with " + sshUrlWithManualIpResolver + " resolver: manualip");
+      Assert.assertNotNull(sshUrlWithManualIpResolver);
+      Assert.assertTrue(sshUrlWithManualIpResolver.startsWith("my.manual.ip.address"));
+    }
+  finally {
+      ContainerBuilder.destroy(fabricService,containers);
+    }
+  }
+  finally {
+    fabricProxy.close();
+  }
+}
