@@ -8,15 +8,11 @@
   LOGGER.info("Pushing last change to: {}",remoteUrl);
   Iterator<PushResult> resit=null;
   GitAPIException lastException=null;
-  for (int i=0; i < 3; i++) {
-    try {
-      resit=git.push().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setPushAll().call().iterator();
-      lastException=null;
-      break;
-    }
- catch (    GitAPIException ex) {
-      lastException=ex;
-    }
+  try {
+    resit=git.push().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setPushAll().call().iterator();
+  }
+ catch (  GitAPIException ex) {
+    lastException=ex;
   }
   if (lastException != null) {
     LOGGER.warn("Cannot push because of: {}",lastException.toString());

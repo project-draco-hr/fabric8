@@ -8,15 +8,11 @@
   }
   LOGGER.info("Performing a pull on remote URL: {}",remoteUrl);
   GitAPIException lastException=null;
-  for (int i=0; i < 3; i++) {
-    try {
-      git.fetch().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setRemote(remoteRef).call();
-      lastException=null;
-      break;
-    }
- catch (    GitAPIException ex) {
-      lastException=ex;
-    }
+  try {
+    git.fetch().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setRemote(remoteRef).call();
+  }
+ catch (  GitAPIException ex) {
+    lastException=ex;
   }
   if (lastException != null) {
     LOGGER.warn("Pull failed because of: {}",lastException.toString());
