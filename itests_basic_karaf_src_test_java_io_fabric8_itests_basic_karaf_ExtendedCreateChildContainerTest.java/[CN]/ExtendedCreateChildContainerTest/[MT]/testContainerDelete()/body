@@ -1,0 +1,32 @@
+{
+  System.out.println(CommandSupport.executeCommand("fabric:create --force --clean -n"));
+  ModuleContext moduleContext=RuntimeLocator.getRequiredRuntime().getModuleContext();
+  ServiceProxy<FabricService> fabricProxy=ServiceProxy.createServiceProxy(moduleContext,FabricService.class);
+  try {
+    FabricService fabricService=fabricProxy.getService();
+    System.out.println(CommandSupport.executeCommand("fabric:version-create"));
+    Set<Container> containers=ContainerBuilder.child(1).withName("basic.cntB").assertProvisioningResult().build(fabricService);
+    try {
+      CuratorFramework curator=ServiceLocator.awaitService(CuratorFramework.class);
+      for (      Container cnt : new HashSet<>(containers)) {
+        try {
+          cnt.destroy();
+          containers.remove(cnt);
+          Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.1",cnt.getId())));
+          Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath("1.0",cnt.getId())));
+          Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONTAINER.getPath(cnt.getId())));
+          Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONTAINER_DOMAINS.getPath(cnt.getId())));
+          Assert.assertNull(ZooKeeperUtils.exists(curator,ZkPath.CONTAINER_PROVISION.getPath(cnt.getId())));
+        }
+ catch (        Exception ex) {
+        }
+      }
+    }
+  finally {
+      ContainerBuilder.destroy(fabricService,containers);
+    }
+  }
+  finally {
+    fabricProxy.close();
+  }
+}
