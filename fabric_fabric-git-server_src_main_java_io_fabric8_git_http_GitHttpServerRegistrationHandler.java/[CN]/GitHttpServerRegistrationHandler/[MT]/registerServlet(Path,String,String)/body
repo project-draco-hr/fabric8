@@ -2,22 +2,16 @@
   basePath=dataPath.resolve(Paths.get("git","servlet"));
   Path fabricRepoPath=basePath.resolve("fabric");
   String servletBase=basePath.toFile().getAbsolutePath();
-  LockHandle readLock=profileRegistry.get().aquireReadLock();
-  try {
-    File fabricRoot=fabricRepoPath.toFile();
-    if (!fabricRoot.exists()) {
-      File localRepo=gitService.get().getGit().getRepository().getDirectory();
-      Git.cloneRepository().setTimeout(10).setBare(true).setNoCheckout(true).setCloneAllBranches(true).setDirectory(fabricRoot).setURI(localRepo.toURI().toString()).call().getRepository().close();
-    }
-    HttpContext base=httpService.get().createDefaultHttpContext();
-    HttpContext secure=new GitSecureHttpContext(base,curator.get(),realm,role);
-    Dictionary<String,Object> initParams=new Hashtable<String,Object>();
-    initParams.put("base-path",servletBase);
-    initParams.put("repository-root",servletBase);
-    initParams.put("export-all","true");
-    httpService.get().registerServlet("/git",new FabricGitServlet(curator.get()),initParams,secure);
+  File fabricRoot=fabricRepoPath.toFile();
+  if (!fabricRoot.exists()) {
+    File localRepo=gitService.get().getGit().getRepository().getDirectory();
+    Git.cloneRepository().setTimeout(10).setBare(true).setNoCheckout(true).setCloneAllBranches(true).setDirectory(fabricRoot).setURI(localRepo.toURI().toString()).call().getRepository().close();
   }
-  finally {
-    readLock.unlock();
-  }
+  HttpContext base=httpService.get().createDefaultHttpContext();
+  HttpContext secure=new GitSecureHttpContext(base,curator.get(),realm,role);
+  Dictionary<String,Object> initParams=new Hashtable<String,Object>();
+  initParams.put("base-path",servletBase);
+  initParams.put("repository-root",servletBase);
+  initParams.put("export-all","true");
+  httpService.get().registerServlet("/git",new FabricGitServlet(curator.get()),initParams,secure);
 }
