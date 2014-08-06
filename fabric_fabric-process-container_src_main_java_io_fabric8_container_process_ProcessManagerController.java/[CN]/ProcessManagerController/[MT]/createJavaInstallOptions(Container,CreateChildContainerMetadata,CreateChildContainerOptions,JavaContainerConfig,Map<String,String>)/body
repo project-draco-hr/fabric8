@@ -1,6 +1,9 @@
 {
   boolean isJavaContainer=true;
   javaConfig.updateEnvironmentVariables(environmentVariables,isJavaContainer);
+  Set<String> profileIds=options.getProfiles();
+  String versionId=options.getVersion();
+  JolokiaAgentHelper.updateSystemPropertiesEnvironmentVariable(environmentVariables,fabricService,versionId,profileIds);
   configureInstallOptionsJolokia(container.getId(),environmentVariables,javaConfig,isJavaContainer);
   Map<String,File> jarsFromProfiles=extractJarsFromProfiles(container,options);
   InstallOptions.InstallOptionsBuilder builder=InstallOptions.builder();
