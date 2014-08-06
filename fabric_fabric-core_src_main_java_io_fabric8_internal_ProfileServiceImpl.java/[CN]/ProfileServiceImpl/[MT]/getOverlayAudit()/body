@@ -1,8 +1,10 @@
 {
-  RuntimeProperties sysprops=runtimeProperties.get();
-  OverlayAudit audit=sysprops.getRuntimeAttribute(OverlayAudit.class);
-  if (audit == null) {
-    sysprops.putRuntimeAttribute(OverlayAudit.class,audit=new OverlayAudit());
+synchronized (runtimeProperties) {
+    RuntimeProperties sysprops=runtimeProperties.get();
+    OverlayAudit audit=sysprops.getRuntimeAttribute(OverlayAudit.class);
+    if (audit == null) {
+      sysprops.putRuntimeAttribute(OverlayAudit.class,audit=new OverlayAudit());
+    }
+    return audit;
   }
-  return audit;
 }
