@@ -5,7 +5,6 @@
   try {
     FabricService fabricService=fabricProxy.getService();
     Container current=fabricService.getCurrentContainer();
-    ServiceLocator.awaitService(ContainerRegistration.class);
     Assert.assertEquals("localhostname",current.getResolver());
     String sshUrlWithLocalhostResolver=current.getSshUrl();
     System.out.println(CommandSupport.executeCommand("fabric:container-resolver-set --container root localip"));
