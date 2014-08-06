@@ -1,0 +1,12 @@
+{
+  Map<String,String> answer=null;
+  Version version=profileService.getVersion(versionId);
+  if (version != null) {
+    Profile profile=version.getRequiredProfile(profileId);
+    if (profile != null) {
+      Profile overlayProfile=profileService.getOverlayProfile(profile);
+      answer=overlayProfile.getConfiguration(pid);
+    }
+  }
+  return answer;
+}
