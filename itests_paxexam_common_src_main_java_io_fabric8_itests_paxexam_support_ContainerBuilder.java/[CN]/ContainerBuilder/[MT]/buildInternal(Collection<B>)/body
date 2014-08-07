@@ -1,6 +1,7 @@
 {
   Set<ContainerProxy> containers=new HashSet<ContainerProxy>();
   BundleContext bundleContext=getBundleContext();
+  ServiceLocator.awaitService(getBundleContext(),FabricComplete.class);
   FabricService fabricService=fabricServiceServiceProxy.getService();
   CompletionService<Set<ContainerProxy>> completionService=new ExecutorCompletionService<Set<ContainerProxy>>(executorService);
   int tasks=0;
