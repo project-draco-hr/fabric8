@@ -5,7 +5,7 @@
   try {
     FabricService fabricService=fabricProxy.getService();
     System.out.println(CommandSupport.executeCommand("fabric:version-create --parent 1.0 1.1"));
-    Set<Container> containers=ContainerBuilder.create().withName("camel").withProfiles("feature-camel").assertProvisioningResult().build(fabricService);
+    Set<Container> containers=ContainerBuilder.create().withName("basic.camelA").withProfiles("feature-camel").assertProvisioningResult().build(fabricService);
     try {
       CountDownLatch latch=WaitForConfigurationChange.on(fabricService);
       System.out.println(CommandSupport.executeCommand("fabric:profile-edit --features camel-script --features camel-hazelcast feature-camel 1.1"));
@@ -32,7 +32,7 @@
       }
     }
   finally {
-      ContainerBuilder.destroy(fabricService,containers);
+      ContainerBuilder.stop(fabricService,containers);
     }
   }
   finally {
