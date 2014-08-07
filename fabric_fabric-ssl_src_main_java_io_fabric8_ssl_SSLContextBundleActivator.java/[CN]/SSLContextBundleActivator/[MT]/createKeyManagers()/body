@@ -1,0 +1,14 @@
+{
+  String keystore=System.getProperty("javax.net.ssl.keyStore");
+  KeyManager[] keyManagers=null;
+  if (keystore != null) {
+    char[] password=System.getProperty("javax.net.ssl.keyStorePassword","").toCharArray();
+    String type=System.getProperty("javax.net.ssl.keyStoreType","jks");
+    KeyStore store=KeyStore.getInstance(type);
+    store.load(new FileInputStream(keystore),password);
+    KeyManagerFactory factory=KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+    factory.init(store,password);
+    keyManagers=factory.getKeyManagers();
+  }
+  return keyManagers;
+}
