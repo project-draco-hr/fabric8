@@ -2,9 +2,9 @@
   List<RemoteRepository> repos=new ArrayList<RemoteRepository>();
   for (int i=0; i < repositories.length; i++) {
     String text=repositories[i].trim();
-    Authentication authentication=getAuthentication(text);
+    String[] authentication=getAuthenticationPair(text);
     if (authentication != null) {
-      text=text.replaceFirst(String.format("%s:%s@",authentication.getUsername(),authentication.getPassword()),"");
+      text=text.replaceFirst(String.format("%s:%s@",authentication[0],authentication[1]),"");
     }
     boolean snapshot=false;
     while (true) {
@@ -26,11 +26,16 @@
       }
       text=text.substring(0,idx);
     }
-    RemoteRepository repository=new RemoteRepository("repos" + i,"default",text);
+    RemoteRepository.Builder builder=new RemoteRepository.Builder("repos" + i,"default",text);
     RepositoryPolicy policy=new RepositoryPolicy(true,RepositoryPolicy.UPDATE_POLICY_DAILY,RepositoryPolicy.CHECKSUM_POLICY_WARN);
-    repository.setPolicy(snapshot,policy);
-    repository.setAuthentication(authentication);
-    repos.add(repository);
+    if (snapshot) {
+      builder.setSnapshotPolicy(policy);
+    }
+ else {
+      builder.setPolicy(policy);
+    }
+    builder.setAuthentication(getAuthentication(authentication));
+    repos.add(builder.build());
   }
   return repos;
 }

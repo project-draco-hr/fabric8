@@ -19,5 +19,5 @@
     throw new IllegalArgumentException("Missing 'password' in file: " + REPO_FILE);
   }
   log.debug("Using user {} to access repo.fusesource.com",username);
-  return new Authentication(username,password);
+  return new AuthenticationBuilder().addUsername(username).addPassword(password).build();
 }

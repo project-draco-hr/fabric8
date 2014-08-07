@@ -17,7 +17,7 @@
     }
     group.candidates.put(node,pos);
     VersionConstraint versionConstraint=node.getVersionConstraint();
-    if (versionConstraint != null && versionConstraint.getRanges() != null && !versionConstraint.getRanges().isEmpty()) {
+    if (versionConstraint != null && versionConstraint.getRange() != null) {
       group.constraints.add(versionConstraint);
     }
     if (group.version == null || isNearer(pos,node.getVersion(),group.position,group.version)) {
@@ -46,7 +46,7 @@
         for (        VersionConstraint constraint : group.constraints) {
           versions.add(constraint.toString());
         }
-        throw new UnsolvableVersionConflictException(group.key,versions);
+        throw new UnsolvableVersionConflictException(Collections.<List<DependencyNode>>emptyList());
       }
     }
   }

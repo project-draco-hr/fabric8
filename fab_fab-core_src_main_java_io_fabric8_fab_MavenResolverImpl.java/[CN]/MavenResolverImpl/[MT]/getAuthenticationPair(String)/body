@@ -1,17 +1,16 @@
 {
-  Authentication authentication=null;
   try {
     URL url=new URL(text);
     String authority=url.getUserInfo();
     if (Strings.notEmpty(authority)) {
       String[] parts=authority.split(":");
       if (parts.length == 2) {
-        authentication=new Authentication(parts[0],parts[1]);
+        return parts;
       }
     }
   }
  catch (  MalformedURLException e) {
     LOGGER.warn("{} does not look like a valid repository URL");
   }
-  return authentication;
+  return null;
 }

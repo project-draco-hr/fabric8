@@ -1,10 +1,8 @@
 {
   String plainUrl="http://user:password@some.repo.url/somepath";
-  RemoteRepository repository=createRemoteRepository(plainUrl);
+  RemoteRepository repository=createRemoteRepository(plainUrl).build();
   assertNotNull(repository);
   assertNotNull(repository.getId());
   assertNotNull(repository.getAuthentication());
-  assertEquals("user",repository.getAuthentication().getUsername());
-  assertEquals("password",repository.getAuthentication().getPassword());
   assertEquals("http://some.repo.url/somepath",repository.getUrl());
 }

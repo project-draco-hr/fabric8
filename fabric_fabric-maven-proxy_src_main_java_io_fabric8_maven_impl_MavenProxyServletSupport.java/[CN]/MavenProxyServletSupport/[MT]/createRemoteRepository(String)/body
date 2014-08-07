@@ -1,25 +1,25 @@
 {
   String id;
-  RemoteRepository remoteRepository=null;
+  RemoteRepository.Builder remoteRepository;
   repositoryUrl=repositoryUrl.trim();
-  Authentication authentication=getAuthentication(repositoryUrl);
-  if (authentication != null) {
-    repositoryUrl=repositoryUrl.replaceFirst(String.format("%s:%s@",authentication.getUsername(),authentication.getPassword()),"");
+  String[] parts=getAuthenticationPair(repositoryUrl);
+  if (parts != null) {
+    repositoryUrl=repositoryUrl.replaceFirst(String.format("%s:%s@",parts[0],parts[1]),"");
   }
   Matcher idMatcher=REPOSITORY_ID_REGEX.matcher(repositoryUrl);
   if (idMatcher.matches()) {
     id=idMatcher.group(2);
     repositoryUrl=cleanUpRepositorySpec(repositoryUrl);
-    remoteRepository=new RemoteRepository(id + Math.abs(repositoryUrl.hashCode()),DEFAULT_REPO_ID,repositoryUrl);
+    remoteRepository=new RemoteRepository.Builder(id + Math.abs(repositoryUrl.hashCode()),DEFAULT_REPO_ID,repositoryUrl);
   }
  else {
     id="rep-" + Math.abs(repositoryUrl.hashCode());
     repositoryUrl=cleanUpRepositorySpec(repositoryUrl);
-    remoteRepository=new RemoteRepository("repo-" + Math.abs(repositoryUrl.hashCode()),DEFAULT_REPO_ID,repositoryUrl);
+    remoteRepository=new RemoteRepository.Builder("repo-" + Math.abs(repositoryUrl.hashCode()),DEFAULT_REPO_ID,repositoryUrl);
   }
   remoteRepository.setId(id);
-  if (authentication != null) {
-    remoteRepository.setAuthentication(authentication);
+  if (parts != null) {
+    remoteRepository.setAuthentication(getAuthentication(parts));
   }
   return remoteRepository;
 }

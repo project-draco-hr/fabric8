@@ -2,7 +2,9 @@
   this.localRepository=new LocalRepository(localRepoDir);
   this.remoteRepos=repositories;
   try {
-    this.repositorySystem=new DefaultPlexusContainer().lookup(RepositorySystem.class);
+    ContainerConfiguration configuration=new DefaultContainerConfiguration();
+    configuration.setAutoWiring(true);
+    this.repositorySystem=new DefaultPlexusContainer(configuration).lookup(RepositorySystem.class);
   }
  catch (  Exception e) {
     throw new RuntimeException(e.getMessage(),e);

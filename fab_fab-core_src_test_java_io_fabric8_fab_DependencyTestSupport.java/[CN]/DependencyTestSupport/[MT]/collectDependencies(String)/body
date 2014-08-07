@@ -3,9 +3,9 @@
   assertNotNull("Could not find: " + pomName + " on the classpath",resource);
   File rootPom=new File(resource.getPath());
   DependencyTreeResult node=mavenResolver.collectDependencies(rootPom,false);
-  if (LOG.isDebugEnabled()) {
-    LOG.debug("File: " + pomName);
-    LOG.debug(node.getTreeDescription());
+  if (LOG.isLoggable(Level.FINE)) {
+    LOG.fine("File: " + pomName);
+    LOG.fine(node.getTreeDescription());
   }
   List<DependencyTree.DuplicateDependency> duplicateDependencies=node.getTree().checkForDuplicateDependencies();
   assertEquals("Should not have duplicates: " + duplicateDependencies,0,duplicateDependencies.size());

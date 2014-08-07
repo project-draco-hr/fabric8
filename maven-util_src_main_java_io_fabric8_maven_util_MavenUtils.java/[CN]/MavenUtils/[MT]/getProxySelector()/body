@@ -2,8 +2,10 @@
   DefaultProxySelector selector=new DefaultProxySelector();
   Settings settings=getSettings();
   for (  org.apache.maven.settings.Proxy proxy : settings.getProxies()) {
-    Authentication auth=new Authentication(proxy.getUsername(),proxy.getPassword());
-    org.sonatype.aether.repository.Proxy p=new Proxy(proxy.getProtocol(),proxy.getHost(),proxy.getPort(),auth);
+    AuthenticationBuilder builder=new AuthenticationBuilder();
+    builder.addUsername(proxy.getUsername());
+    builder.addPassword(proxy.getPassword());
+    org.eclipse.aether.repository.Proxy p=new Proxy(proxy.getProtocol(),proxy.getHost(),proxy.getPort(),builder.build());
     selector.add(p,proxy.getNonProxyHosts());
   }
   return selector;

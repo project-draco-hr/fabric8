@@ -1,7 +1,9 @@
 {
-  MavenRepositorySystemSession session=new MavenRepositorySystemSession();
-  session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(localRepository));
+  DefaultRepositorySystemSession session=new DefaultRepositorySystemSession();
+  session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(session,localRepository));
   session.setTransferListener(new ConsoleTransferListener(System.out));
   session.setRepositoryListener(new ConsoleRepositoryListener());
+  session.setConfigProperties(System.getProperties());
+  session.setSystemProperties(System.getProperties());
   return session;
 }
