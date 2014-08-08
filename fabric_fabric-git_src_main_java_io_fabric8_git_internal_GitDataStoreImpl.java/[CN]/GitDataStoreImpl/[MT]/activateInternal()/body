@@ -34,24 +34,21 @@
       threadPool.submit(new Runnable(){
         @Override public void run(){
           LOGGER.info("Watch counter updated to " + value + ", doing a pull");
-          LockHandle writeLock=aquireWriteLock();
-          try {
-            doPullInternal(new GitContext(),getCredentialsProvider(),true);
-          }
- catch (          Throwable e) {
-            LOGGER.debug("Error during pull due " + e.getMessage(),e);
-            LOGGER.warn("Error during pull due " + e.getMessage() + ". This exception is ignored.");
-          }
- finally {
-            writeLock.unlock();
-          }
+          doPullInternal();
         }
       }
 );
     }
     @Override public void stateChanged(    CuratorFramework curatorFramework,    ConnectionState connectionState){
-    }
+switch (connectionState) {
+case CONNECTED:
+case RECONNECTED:
+        LOGGER.info("Shared Counter (Re)connected, doing a pull");
+      doPullInternal();
   }
+}
+}
 );
-  counter.start();
+counter.start();
+doPullInternal();
 }

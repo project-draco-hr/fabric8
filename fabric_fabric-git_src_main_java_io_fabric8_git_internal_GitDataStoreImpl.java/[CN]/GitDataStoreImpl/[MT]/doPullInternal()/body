@@ -1,0 +1,13 @@
+{
+  LockHandle writeLock=aquireWriteLock();
+  try {
+    doPullInternal(new GitContext(),getCredentialsProvider(),true);
+  }
+ catch (  Throwable e) {
+    LOGGER.debug("Error during pull due " + e.getMessage(),e);
+    LOGGER.warn("Error during pull due " + e.getMessage() + ". This exception is ignored.");
+  }
+ finally {
+    writeLock.unlock();
+  }
+}
