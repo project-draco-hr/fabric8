@@ -11,5 +11,8 @@
     answer.putAll(environmentVariables);
   }
   answer.put(EnvironmentVariables.FABRIC8_PROFILES,join(getProfiles(),","));
+  if (answer.get(JAVA_OPTS) == null) {
+    answer.put(JAVA_OPTS,DEFAULT_JAVA_OPTS);
+  }
   return answer;
 }
