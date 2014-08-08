@@ -1,0 +1,10 @@
+{
+  List<DependencyNode> newChildren=new ArrayList<>();
+  for (  DependencyNode childNode : node.getChildren()) {
+    if (visited.add(childNode)) {
+      newChildren.add(childNode);
+      visit(childNode,visited);
+    }
+  }
+  node.setChildren(newChildren);
+}

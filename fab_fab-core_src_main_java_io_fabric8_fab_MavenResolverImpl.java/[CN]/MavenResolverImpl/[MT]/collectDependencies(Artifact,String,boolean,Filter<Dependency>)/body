@@ -42,7 +42,7 @@
       pomNode=node;
     }
   }
-  DependencyGraphTransformationContext tranformContext=new DependencyGraphTransformationContext(){
+  final DependencyGraphTransformationContext tranformContext=new DependencyGraphTransformationContext(){
     Map map=new HashMap();
     public RepositorySystemSession getSession(){
       return session;
@@ -56,6 +56,8 @@
   }
 ;
   DependencyGraphTransformer transformer=new ReplaceConflictingVersionResolver();
+  pomNode=transformer.transformGraph(pomNode,tranformContext);
+  transformer=new DuplicateTransformer();
   pomNode=transformer.transformGraph(pomNode,tranformContext);
   DependencyTreeResult result=new DependencyTreeResult(pomNode,this,excludeDependencyFilter);
   List<DependencyTree.DuplicateDependency> duplicates=result.getTree().checkForDuplicateDependencies();
