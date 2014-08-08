@@ -53,11 +53,13 @@
   }
   LOG.info("Got port configuration: " + ports);
   Map<String,String> environmentVariables=ChildContainers.getEnvironmentVariables(service,options);
+  DockerProviderConfig configOverlayDockerProvider=createDockerProviderConfig(configOverlay,environmentVariables);
   String image=JolokiaAgentHelper.substituteVariableExpression(containerConfig.getImage(),environmentVariables,service,curator.getOptional(),true);
   if (Strings.isNullOrBlank(image)) {
-    image=JolokiaAgentHelper.substituteVariableExpression(configOverlay.get(DockerConstants.PROPERTIES.IMAGE),environmentVariables,service,curator.getOptional(),true);
+    image=configOverlayDockerProvider.getImage();
     if (Strings.isNullOrBlank(image)) {
-      image=JolokiaAgentHelper.substituteVariableExpression(dockerProviderConfig.get(DockerConstants.PROPERTIES.IMAGE),environmentVariables,service,curator.getOptional(),true);
+      DockerProviderConfig dockerProviderConfigObject=createDockerProviderConfig(dockerProviderConfig,environmentVariables);
+      image=dockerProviderConfigObject.getImage();
     }
     if (Strings.isNullOrBlank(image)) {
       image=System.getenv(DockerConstants.EnvironmentVariables.FABRIC8_DOCKER_DEFAULT_IMAGE);
@@ -74,7 +76,7 @@
   }
   String[] cmd=containerConfig.getCmd();
   if (cmd == null || cmd.length == 0) {
-    String value=configOverlay.get(DockerConstants.PROPERTIES.CMD);
+    String value=configOverlayDockerProvider.getCmd();
     if (Strings.isNullOrBlank(value)) {
       cmd=null;
     }
@@ -140,15 +142,15 @@
   }
   environmentVariables.put(EnvironmentVariables.FABRIC8_GLOBAL_RESOLVER,ZkDefs.MANUAL_IP);
   environmentVariables.put(EnvironmentVariables.FABRIC8_FABRIC_ENVIRONMENT,DockerConstants.SCHEME);
-  String libDir=configOverlay.get(DockerConstants.PROPERTIES.JAVA_LIBRARY_PATH);
-  String homeDir=configOverlay.get(DockerConstants.PROPERTIES.HOME_PATH);
+  String libDir=configOverlayDockerProvider.getJavaLibraryPath();
+  String homeDir=configOverlayDockerProvider.getHomePath();
   if (!Strings.isNullOrBlank(libDir)) {
     if (container != null) {
       container.setProvisionResult("preparing");
       container.setAlive(true);
     }
-    String imageRepository=configOverlay.get(DockerConstants.PROPERTIES.IMAGE_REPOSITORY);
-    String entryPoint=configOverlay.get(DockerConstants.PROPERTIES.IMAGE_ENTRY_POINT);
+    String imageRepository=configOverlayDockerProvider.getImageRepository();
+    String entryPoint=configOverlayDockerProvider.getImageEntryPoint();
     List<String> names=new ArrayList<String>(profileIds);
     names.add(versionId);
     String tag="fabric8-" + Strings.join(names,"-").replace('.','-');
