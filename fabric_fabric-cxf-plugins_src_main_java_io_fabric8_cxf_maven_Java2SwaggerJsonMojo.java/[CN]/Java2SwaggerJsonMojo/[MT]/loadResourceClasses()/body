@@ -1,0 +1,12 @@
+{
+  List<Class<?>> resourceClasses=new ArrayList<Class<?>>(classResourceNames.size());
+  for (  String className : classResourceNames) {
+    try {
+      resourceClasses.add(getClassLoader().loadClass(className));
+    }
+ catch (    Exception e) {
+      throw new MojoExecutionException(e.getMessage(),e);
+    }
+  }
+  return resourceClasses;
+}

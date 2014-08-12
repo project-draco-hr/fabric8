@@ -1,0 +1,45 @@
+{
+  if (outputFile == null && project != null) {
+    String name=null;
+    if (outputFileName != null) {
+      name=outputFileName;
+    }
+ else     if (resourceClasses.size() == 1) {
+      name=resourceClasses.get(0).getSimpleName();
+    }
+ else {
+      name="application";
+    }
+    outputFile=(project.getBuild().getDirectory() + "/generated/json/" + name+ "."+ outputFileExtension).replace("/",File.separator);
+  }
+  BufferedWriter writer=null;
+  try {
+    FileUtils.mkDir(new File(outputFile).getParentFile());
+    writer=new BufferedWriter(new FileWriter(outputFile));
+    writer.write(swagger);
+  }
+ catch (  IOException e) {
+    throw new MojoExecutionException(e.getMessage(),e);
+  }
+ finally {
+    try {
+      if (writer != null) {
+        writer.close();
+      }
+    }
+ catch (    IOException e) {
+      throw new MojoExecutionException(e.getMessage(),e);
+    }
+  }
+  if (attachSwagger && outputFile != null) {
+    File jsonFile=new File(outputFile);
+    if (jsonFile.exists()) {
+      if (classifier != null) {
+        projectHelper.attachArtifact(project,"json",classifier,jsonFile);
+      }
+ else {
+        projectHelper.attachArtifact(project,"json",jsonFile);
+      }
+    }
+  }
+}

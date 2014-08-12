@@ -1,0 +1,45 @@
+{
+  List<Class<?>> resourceClasses=loadResourceClasses();
+  List<Object> resourceObjects=new ArrayList<Object>();
+  for (  Class<?> resourceClass : resourceClasses) {
+    try {
+      resourceObjects.add(resourceClass.newInstance());
+    }
+ catch (    InstantiationException e) {
+      throw new MojoExecutionException(e.getMessage(),e);
+    }
+catch (    IllegalAccessException e) {
+      throw new MojoExecutionException(e.getMessage(),e);
+    }
+  }
+  Thread.currentThread().setContextClassLoader(getClassLoader());
+  List<Feature> features=new ArrayList<Feature>();
+  features.add(new SwaggerFeature());
+  JAXRSServerFactoryBean serverFacBean=new JAXRSServerFactoryBean();
+  serverFacBean.setAddress(address);
+  serverFacBean.setServiceBeans(resourceObjects);
+  serverFacBean.setFeatures(features);
+  Server server=serverFacBean.create();
+  InputStream in=null;
+  try {
+    String res="";
+    for (    Class<?> resourceClass : resourceClasses) {
+      com.wordnik.swagger.annotations.Api api=resourceClass.getAnnotation(com.wordnik.swagger.annotations.Api.class);
+      if (api != null) {
+        String apiPath=api.value();
+        String serverAddress=server.getEndpoint().getEndpointInfo().getAddress();
+        String apiDocs=serverAddress + "/api-docs";
+        URL url=new URL(apiDocs + apiPath);
+        in=url.openStream();
+        res=res + getStringFromInputStream(in);
+      }
+    }
+    generateJson(resourceClasses,res);
+  }
+ catch (  Exception e) {
+    throw new MojoExecutionException(e.getMessage(),e);
+  }
+ finally {
+    server.stop();
+  }
+}
