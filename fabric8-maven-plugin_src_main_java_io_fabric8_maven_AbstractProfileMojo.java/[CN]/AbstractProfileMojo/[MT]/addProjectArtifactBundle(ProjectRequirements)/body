@@ -1,9 +1,12 @@
 {
   DependencyDTO rootDependency=requirements.getRootDependency();
   if (rootDependency != null) {
-    String url=rootDependency.toBundleUrlWithType();
-    if (!requirements.getBundles().contains(url)) {
-      requirements.getBundles().add(url);
+    StringBuilder urlBuffer=new StringBuilder(rootDependency.toBundleUrl());
+    appendTypeToArtifactBundle(urlBuffer,rootDependency);
+    appendClassifierToArtifactBundle(urlBuffer,rootDependency);
+    String urlString=urlBuffer.toString();
+    if (!requirements.getBundles().contains(urlString)) {
+      requirements.getBundles().add(urlString);
     }
   }
 }
