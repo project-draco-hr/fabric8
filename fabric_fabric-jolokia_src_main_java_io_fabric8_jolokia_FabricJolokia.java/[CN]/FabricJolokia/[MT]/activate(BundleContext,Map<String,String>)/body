@@ -1,5 +1,6 @@
 {
   configurer.configure(properties,this);
-  httpService.get().registerServlet(getServletAlias(),new JolokiaServlet(bundleContext),new Hashtable(),new BasicAuthenticationHttpContext(realm,new JaasAuthenticator(realm)));
+  context=new JolokiaSecureHttpContext(realm,role);
+  httpService.get().registerServlet(getServletAlias(),new JolokiaServlet(bundleContext),new Hashtable(),context);
   activateComponent();
 }
