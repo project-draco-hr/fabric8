@@ -1,9 +1,0 @@
-{
-  template.sendBody("seda:in","Hello World");
-  String xml=local.dumpRoutesStatsAsXml(context.getManagementName());
-  assertNotNull(xml);
-  Document doc=context().getTypeConverter().convertTo(Document.class,xml);
-  assertNotNull(doc);
-  int processors=doc.getDocumentElement().getElementsByTagName("processorStat").getLength();
-  assertEquals(2,processors);
-}
