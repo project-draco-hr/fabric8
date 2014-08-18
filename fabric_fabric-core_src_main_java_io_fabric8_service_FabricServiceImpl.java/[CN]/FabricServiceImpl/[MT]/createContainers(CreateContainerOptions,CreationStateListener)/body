@@ -31,6 +31,11 @@
     final CountDownLatch latch=new CountDownLatch(number);
     Set<String> ignoreContainerNames=new HashSet<>();
     Container[] containers=getContainers();
+    for (    Container container : containers) {
+      if (container.getId().equals(options.getName())) {
+        throw new IllegalArgumentException("A container with name " + options.getName() + " already exists.");
+      }
+    }
     for (int i=1; i <= number; i++) {
       NameValidator validator=Containers.createNameValidator(containers,ignoreContainerNames);
       String containerName=Containers.createUniqueContainerName(containers,originalName,validator);
