@@ -1,22 +1,21 @@
 {
   if (initialized.get()) {
     if (started.compareAndSet(false,true)) {
-      Timer oldValue=backgroundTimerRef.getAndSet(new Timer(true));
-      if (oldValue != null) {
-        oldValue.cancel();
-      }
-      TimerTask deadThread=new TimerTask(){
+      backgroundThread=new Thread(new Runnable(){
         @Override public void run(){
-          for (          ThreadMetrics tm : threadMetricsMap.values()) {
-            if (tm.isDead()) {
-              tm.destroy();
-              threadMetricsMap.remove(tm.getThread());
+          while (started.get()) {
+            try {
+              Thread.sleep(HOUSE_KEEPING_TIME);
+              doHouseKeeping.set(true);
+            }
+ catch (            Throwable e) {
             }
           }
         }
       }
-;
-      backgroundTimerRef.get().scheduleAtFixedRate(deadThread,0,2 * 1000);
+);
+      backgroundThread.setDaemon(true);
+      backgroundThread.start();
     }
   }
 }

@@ -1,0 +1,11 @@
+{
+  try {
+    String threadIdentity=threadName + "[" + threadId+ "]";
+    ObjectName objectName=new ObjectName(DEFAULT_DOMAIN + ":" + "type=ThreadContextMetrics"+ ",threadName="+ ObjectName.quote(threadIdentity)+ ",rank="+ ObjectName.quote("rank" + rank));
+    registerMBean(objectName,threadMetrics);
+    objectNameMap.put(threadMetrics,objectName);
+  }
+ catch (  Throwable e) {
+    LOG.error("Failed to register mbean " + threadMetrics.toString(),e);
+  }
+}

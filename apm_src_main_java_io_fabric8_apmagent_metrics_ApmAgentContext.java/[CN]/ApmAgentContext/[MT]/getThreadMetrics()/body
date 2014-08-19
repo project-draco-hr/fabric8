@@ -1,11 +1,8 @@
 {
-  List<ThreadMetrics> result=new ArrayList<>();
-  for (  ThreadMetrics threadMetrics : threadMetricsMap.values()) {
-    result.add(threadMetrics);
-  }
+  List<ThreadMetrics> result=new ArrayList<>(threadMetricsMap.values());
   Collections.sort(result,new Comparator<ThreadMetrics>(){
     @Override public int compare(    ThreadMetrics threadMetrics1,    ThreadMetrics threadMetrics2){
-      return (int)(threadMetrics1.getCpuTime() - threadMetrics2.getCpuTime());
+      return (int)(threadMetrics2.getCpuTime() - threadMetrics1.getCpuTime());
     }
   }
 );

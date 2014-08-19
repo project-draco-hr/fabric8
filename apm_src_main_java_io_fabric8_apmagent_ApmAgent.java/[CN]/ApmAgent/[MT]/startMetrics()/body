@@ -2,10 +2,13 @@
   if (isInitialized() && started.compareAndSet(false,true)) {
     apmAgentContext.start();
     try {
-      instrumentApplication();
+      Strategy s=this.strategy;
+      if (s != null) {
+        s.start();
+      }
     }
  catch (    Throwable e) {
-      LOG.error("Failed to instrument application ",e);
+      LOG.error("Failed to start strategy ",e);
     }
   }
 }

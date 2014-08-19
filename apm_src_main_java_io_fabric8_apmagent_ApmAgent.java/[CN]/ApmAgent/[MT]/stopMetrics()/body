@@ -1,5 +1,14 @@
 {
   if (isInitialized() && started.compareAndSet(true,false)) {
+    try {
+      Strategy s=this.strategy;
+      if (s != null) {
+        s.stop();
+      }
+    }
+ catch (    Throwable e) {
+      LOG.error("Failed to stop strategy",e);
+    }
     apmAgentContext.stop();
   }
 }

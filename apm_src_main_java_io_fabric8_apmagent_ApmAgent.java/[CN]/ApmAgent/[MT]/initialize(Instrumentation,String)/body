@@ -1,12 +1,11 @@
 {
   boolean result;
   if ((result=initialized.compareAndSet(false,true))) {
-    this.instrumentation=instrumentation;
-    cleanUp.set(false);
-    this.instrumentation=instrumentation;
     PropertyUtils.setProperties(configuration,args);
     configuration.addChangeListener(this);
     apmAgentContext.initialize();
+    this.strategy=new TraceStrategy(apmAgentContext,instrumentation);
+    this.strategy.initialize();
     Thread cleanup=new Thread(){
       @Override public void run(){
         try {

@@ -1,0 +1,29 @@
+{
+  if (configuration.isAsyncTransformation() && transformThread == null) {
+    transformThread=new Thread(new Runnable(){
+      @Override public void run(){
+        while (initialized.get() && !blockingQueue.isEmpty()) {
+          try {
+            Class<?> aClass=blockingQueue.take();
+            if (aClass != null) {
+              if (isInstrumentClass(aClass)) {
+                try {
+                  instrumentation.retransformClasses(new Class[]{aClass});
+                }
+ catch (                Throwable e) {
+                  LOG.error("Could not transform " + aClass.getName(),e);
+                }
+              }
+            }
+          }
+ catch (          InterruptedException e) {
+            shutDown();
+          }
+        }
+      }
+    }
+);
+    transformThread.setDaemon(true);
+    transformThread.start();
+  }
+}

@@ -1,0 +1,18 @@
+{
+  ArrayList<? extends MethodMetrics> list=new ArrayList<>(collection);
+  Collections.sort(list,new Comparator<MethodMetrics>(){
+    @Override public int compare(    MethodMetrics methodMetrics1,    MethodMetrics methodMetrics2){
+      return (int)((int)methodMetrics2.getLoad() - (int)methodMetrics1.getLoad());
+    }
+  }
+);
+  int totalLoad=0;
+  for (  MethodMetrics m : list) {
+    totalLoad+=m.getLoad();
+  }
+  for (  MethodMetrics m : list) {
+    int percentage=(int)((m.getLoad() * 100) / totalLoad);
+    m.setPercentage(percentage);
+  }
+  return list;
+}

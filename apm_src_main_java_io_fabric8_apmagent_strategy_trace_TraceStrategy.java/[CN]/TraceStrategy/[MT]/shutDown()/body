@@ -1,0 +1,19 @@
+{
+  if (initialized.compareAndSet(true,false)) {
+    stop();
+    configuration.removeChangeListener(this);
+    instrumentation.removeTransformer(this);
+    Thread t=transformThread;
+    transformThread=null;
+    if (t != null && !t.isInterrupted()) {
+      t.interrupt();
+    }
+    cleanUp.set(true);
+    try {
+      instrumentApplication();
+    }
+ catch (    Throwable e) {
+      LOG.error("Failed to shutdown",e);
+    }
+  }
+}

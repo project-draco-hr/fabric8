@@ -4,4 +4,7 @@
   this.threadMXBean=ManagementFactory.getThreadMXBean();
   this.threadInfo=threadMXBean.getThreadInfo(thread.getId());
   this.thread=thread;
+  ApmConfiguration configuration=apmAgentContext.getConfiguration();
+  this.monitoredThreadMethodMetrics=new MonitoredThreadMethodMetrics(thread,apmAgentContext);
+  this.monitoredThreadMethodMetrics.setMonitorSize(configuration.getThreadMetricDepth());
 }

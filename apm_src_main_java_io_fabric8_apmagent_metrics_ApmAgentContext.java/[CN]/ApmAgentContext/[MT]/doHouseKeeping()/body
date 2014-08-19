@@ -1,0 +1,20 @@
+{
+  if (doHouseKeeping.compareAndSet(true,false)) {
+    try {
+      List<ThreadMetrics> threadMetricsList=getThreadMetrics();
+      for (      ThreadMetrics tm : threadMetricsList) {
+        if (tm.isDead()) {
+          tm.destroy();
+          threadMetricsMap.remove(tm.getThread());
+        }
+      }
+      monitoredMethodMetrics.calculateMethodMetrics(getMethodMetrics());
+      for (      ThreadMetrics threadMetrics : threadMetricsList) {
+        threadMetrics.calculateMethodMetrics();
+      }
+    }
+ catch (    Throwable e) {
+      e.printStackTrace();
+    }
+  }
+}

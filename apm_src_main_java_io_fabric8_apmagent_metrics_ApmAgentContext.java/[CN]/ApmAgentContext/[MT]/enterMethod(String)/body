@@ -10,9 +10,7 @@
     MethodMetrics methodMetrics=methodMetricsMap.get(fullMethodName);
     if (methodMetrics == null) {
       methodMetrics=new MethodMetrics(fullMethodName);
-      if (methodMetricsMap.putIfAbsent(fullMethodName,methodMetrics) == null) {
-        registerMethodMetricsMBean(methodMetrics);
-      }
+      methodMetricsMap.putIfAbsent(fullMethodName,methodMetrics);
     }
   }
 }

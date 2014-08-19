@@ -2,15 +2,11 @@
   if (initialized.compareAndSet(true,false)) {
     configuration.removeChangeListener(this);
     apmAgentContext.shutDown();
-    instrumentation.removeTransformer(this);
-    Thread t=transformThread;
-    transformThread=null;
-    if (t != null && !t.isInterrupted()) {
-      t.interrupt();
-    }
-    cleanUp.set(true);
     try {
-      instrumentApplication();
+      Strategy s=this.strategy;
+      if (s != null) {
+        s.shutDown();
+      }
     }
  catch (    Throwable e) {
       LOG.error("Failed to shutdown",e);
