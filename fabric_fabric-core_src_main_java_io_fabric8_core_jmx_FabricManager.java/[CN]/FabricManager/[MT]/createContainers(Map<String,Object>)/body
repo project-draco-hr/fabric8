@@ -31,7 +31,7 @@
     LOG.debug("Created container options: " + build + " with profiles "+ build.getProfiles());
   }
   CreateContainerMetadata<?> metadatas[]=fabricService.createContainers(build);
-  Map<String,String> rc=new HashMap<String,String>();
+  Map<String,String> rc=new LinkedHashMap<String,String>();
   for (  CreateContainerMetadata<?> metadata : metadatas) {
     if (!metadata.isSuccess()) {
       LOG.warn("Failed to create container {}: ",metadata.getContainerName(),metadata.getFailure());

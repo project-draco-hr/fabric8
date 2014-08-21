@@ -1,11 +1,11 @@
 {
   Pattern pattern=Pattern.compile(filename);
-  Map<String,Object> answer=new HashMap<String,Object>();
+  Map<String,Object> answer=new TreeMap<String,Object>();
   Version version=profileService.getVersion(versionId);
   for (  String profileId : profileIds) {
     Profile profile=version.getRequiredProfile(profileId);
     if (profile != null) {
-      Map<String,String> files=new HashMap<String,String>();
+      Map<String,String> files=new TreeMap<String,String>();
       Map<String,byte[]> configs=profile.getFileConfigurations();
       for (      Map.Entry<String,byte[]> configEntry : configs.entrySet()) {
         if (pattern.matcher(configEntry.getKey()).matches()) {
