@@ -34,7 +34,10 @@
       jar.close();
     }
   }
- catch (  Exception e) {
+ catch (  java.io.FileNotFoundException fe) {
+    logger.debug("Could not find deployed file" + artifact.getAbsolutePath(),fe);
+  }
+catch (  Exception e) {
     logger.error("Unable to parse deployed file " + artifact.getAbsolutePath(),e);
   }
   return false;
