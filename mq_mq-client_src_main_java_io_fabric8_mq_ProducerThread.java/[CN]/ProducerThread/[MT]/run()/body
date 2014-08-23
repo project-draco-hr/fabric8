@@ -3,11 +3,13 @@
   try {
     producer=service.createProducer(dest);
     producer.setDeliveryMode(persistent ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT);
+    producer.setTimeToLive(msgTTL);
     initPayLoad();
     running=true;
     for (sentCount=0; sentCount < messageCount; sentCount++) {
       if (!running)       break;
       Message message=createMessage(sentCount);
+      if ((msgGroupID != null) && (!msgGroupID.isEmpty()))       message.setStringProperty("JMSXGroupID",msgGroupID);
       producer.send(message);
       LOG.info("Sent: " + (message instanceof TextMessage ? ((TextMessage)message).getText() : message.getJMSMessageID()));
       if (transactionBatchSize > 0 && sentCount > 0 && sentCount % transactionBatchSize == 0) {

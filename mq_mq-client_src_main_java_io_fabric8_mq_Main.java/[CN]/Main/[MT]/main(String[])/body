@@ -8,7 +8,10 @@
   while (!arg1.isEmpty()) {
     try {
       String arg=arg1.removeFirst();
-      if ("--size".equals(arg)) {
+      if ("--ttl".equals(arg)) {
+        main.ttl=Long.parseLong(shift(arg1));
+      }
+ else       if ("--size".equals(arg)) {
         main.size=Integer.parseInt(shift(arg1));
       }
  else       if ("--count".equals(arg)) {
@@ -22,6 +25,9 @@
       }
  else       if ("--brokerUrl".equals(arg)) {
         main.brokerUrl=shift(arg1);
+      }
+ else       if ("--groupId".equals(arg)) {
+        main.groupID=shift(arg1);
       }
  else       if ("--user".equals(arg)) {
         main.user=shift(arg1);
