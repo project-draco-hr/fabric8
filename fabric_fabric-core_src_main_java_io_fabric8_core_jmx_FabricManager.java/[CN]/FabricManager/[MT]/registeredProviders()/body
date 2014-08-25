@@ -1,8 +1,4 @@
 {
-  Map<String,ContainerProvider> providers=fabricService.getValidProviders();
-  Map<String,String> answer=new TreeMap<String,String>();
-  for (  Map.Entry<String,ContainerProvider> providerEntry : providers.entrySet()) {
-    answer.put(providerEntry.getKey(),providerEntry.getValue().getOptionsType().getName());
-  }
-  return answer;
+  Map<String,ContainerProvider> providers=fabricService.getProviders();
+  return toJsonMap(providers);
 }
