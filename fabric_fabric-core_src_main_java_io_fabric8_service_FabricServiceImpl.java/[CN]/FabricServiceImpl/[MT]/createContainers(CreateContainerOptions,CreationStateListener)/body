@@ -5,6 +5,9 @@
     if (provider == null) {
       throw new FabricException("Unable to find a container provider supporting '" + options.getProviderType() + "'");
     }
+    if (!provider.isValidProvider()) {
+      throw new FabricException("The provider '" + options.getProviderType() + "' is not valid in current environment");
+    }
     String originalName=options.getName();
     if (originalName == null || originalName.length() == 0) {
       throw new FabricException("A name must be specified when creating containers");

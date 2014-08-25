@@ -1,0 +1,10 @@
+{
+  assertValid();
+  Map<String,ContainerProvider> validProviders=new HashMap<String,ContainerProvider>();
+  for (  ContainerProvider cp : getProviders().values()) {
+    if (cp.isValidProvider()) {
+      validProviders.put(cp.getScheme(),cp);
+    }
+  }
+  return Collections.unmodifiableMap(validProviders);
+}

@@ -7,7 +7,11 @@
     throw new RuntimeException("No providerType provided");
   }
   CreateContainerBasicOptions.Builder builder=null;
-  Class clazz=fabricService.getProviders().get(providerType).getOptionsType();
+  ContainerProvider provider=fabricService.getValidProviders().get(providerType);
+  if (provider == null) {
+    throw new RuntimeException("Can't find valid provider of type: " + providerType);
+  }
+  Class clazz=provider.getOptionsType();
   try {
     builder=(CreateContainerBasicOptions.Builder)clazz.getMethod("builder").invoke(null);
   }
