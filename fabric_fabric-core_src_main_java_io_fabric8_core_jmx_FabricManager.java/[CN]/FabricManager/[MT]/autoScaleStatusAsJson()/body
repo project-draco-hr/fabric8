@@ -1,0 +1,14 @@
+{
+  AutoScaleStatus dto=autoScaleStatus();
+  if (dto != null) {
+    try {
+      return getObjectMapper().writerWithDefaultPrettyPrinter().withType(AutoScaleStatus.class).writeValueAsString(dto);
+    }
+ catch (    JsonProcessingException e) {
+      throw new RuntimeException("Error writing data as json",e);
+    }
+  }
+ else {
+    return null;
+  }
+}
