@@ -11,6 +11,9 @@
     }
   }
   CreateOpenshiftContainerOptions.Builder builder=CreateOpenshiftContainerOptions.builder().name(name).serverUrl(serverUrl).login(login).password(password).version(versionId).resolver("publichostname").ensembleServer(isEnsembleServer).zookeeperUrl(fabricService.getZookeeperUrl()).zookeeperPassword(isEnsembleServer && zookeeperPassword != null ? zookeeperPassword : fabricService.getZookeeperPassword()).proxyUri(proxyUri != null ? proxyUri : fabricService.getMavenRepoURI()).profiles(getProfileNames()).dataStoreProperties(getDataStoreProperties());
+  if (gearSize != null) {
+    builder.gearProfile(gearSize);
+  }
   CreateContainerMetadata[] metadatas=fabricService.createContainers(builder.build());
   if (isEnsembleServer && metadatas != null && metadatas.length > 0 && metadatas[0].isSuccess()) {
     ShellUtils.storeZookeeperPassword(session,metadatas[0].getCreateOptions().getZookeeperPassword());
