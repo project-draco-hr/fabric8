@@ -1,0 +1,21 @@
+{
+  long lastTime=0;
+  while (started.get()) {
+    try {
+      for (      Map.Entry<Thread,StackTraceElement[]> threadEntry : Thread.getAllStackTraces().entrySet()) {
+        if (threadEntry.getKey() != Thread.currentThread()) {
+          addMeasurement(threadEntry.getKey(),threadEntry.getValue());
+        }
+      }
+      long currentTime=System.currentTimeMillis();
+      if ((currentTime - lastTime) > CLEANUP_INTERVAL) {
+        cleanup();
+        lastTime=currentTime;
+      }
+      Thread.sleep(configuration.getSamplingInterval());
+    }
+ catch (    InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
+  }
+}

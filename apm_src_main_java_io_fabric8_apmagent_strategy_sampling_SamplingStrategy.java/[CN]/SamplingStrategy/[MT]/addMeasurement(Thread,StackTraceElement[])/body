@@ -1,0 +1,17 @@
+{
+  if (thread != null && thread.isAlive() && stackTraceElements != null && stackTraceElements.length > 0) {
+    StackTraceElement topOfStack=stackTraceElements[0];
+    String currentMethod=getCurrentMethod(topOfStack);
+    if (configuration.isAudit(topOfStack.getClassName(),topOfStack.getMethodName())) {
+      String lastMethod=currentMethods.put(thread.getId(),currentMethod);
+      if (lastMethod == null) {
+        context.enterMethod(thread,currentMethod,true);
+      }
+ else       if (!lastMethod.equals(currentMethod)) {
+        context.exitMethod(thread,lastMethod,true);
+      }
+ else {
+      }
+    }
+  }
+}

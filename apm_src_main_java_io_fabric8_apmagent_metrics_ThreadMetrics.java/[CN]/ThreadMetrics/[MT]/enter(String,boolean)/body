@@ -1,0 +1,11 @@
+{
+  ThreadContextMethodMetrics threadContextMethodMetrics=methods.get(methodName);
+  if (threadContextMethodMetrics == null) {
+    threadContextMethodMetrics=new ThreadContextMethodMetrics(thread,this.methodStackRef,methodName);
+    threadContextMethodMetrics.setActive(apmAgentContext.isMonitorByDefault());
+    methods.putIfAbsent(methodName,threadContextMethodMetrics);
+  }
+  if (alwaysActive || threadContextMethodMetrics.isActive()) {
+    threadContextMethodMetrics.onEnter();
+  }
+}

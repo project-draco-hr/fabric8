@@ -1,0 +1,20 @@
+{
+  List<ThreadInfo> removeList=null;
+  ThreadMXBean threadMXBean=ManagementFactory.getThreadMXBean();
+  for (  Long id : currentMethods.keySet()) {
+    ThreadInfo threadInfo=threadMXBean.getThreadInfo(id);
+    if (threadInfo != null) {
+      if (threadInfo.getThreadState() == Thread.State.TERMINATED) {
+        if (removeList == null) {
+          removeList=new ArrayList<>();
+        }
+        removeList.add(threadInfo);
+      }
+    }
+  }
+  if (removeList != null) {
+    for (    ThreadInfo threadInfo : removeList) {
+      currentMethods.remove(threadInfo.getThreadId());
+    }
+  }
+}

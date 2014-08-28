@@ -6,5 +6,20 @@
     if (configuration.isThreadMetricDepthChanged()) {
       apmAgentContext.threadMetricsDepthChanged();
     }
+    if (configuration.isStrategyChanged()) {
+      boolean hasStarted=this.started.get();
+      if (initialized.get()) {
+        shutDown();
+        try {
+          initialize(this.instrumentation,null);
+          if (hasStarted) {
+            startMetrics();
+          }
+        }
+ catch (        Exception e) {
+          LOG.error("Could not re-initialize");
+        }
+      }
+    }
   }
 }
