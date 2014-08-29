@@ -7,10 +7,15 @@
   if (data != null) {
     String readMe=new String(data).trim();
     StringTokenizer iter=new StringTokenizer(readMe,"\n");
+    boolean first=true;
     while (iter.hasMoreTokens()) {
       String text=iter.nextToken();
       if (text != null) {
         text=text.trim();
+        if (text.startsWith("#") && first) {
+          first=false;
+          continue;
+        }
         while (text.startsWith("#")) {
           text=text.substring(1);
         }
