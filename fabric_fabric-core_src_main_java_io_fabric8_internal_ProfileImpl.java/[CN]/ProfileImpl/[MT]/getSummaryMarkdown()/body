@@ -12,11 +12,11 @@
       String text=iter.nextToken();
       if (text != null) {
         text=text.trim();
-        if (text.startsWith("#") && first) {
+        if (skipSummaryLine(text) && first) {
           first=false;
           continue;
         }
-        while (text.startsWith("#")) {
+        while (skipSummaryLine(text)) {
           text=text.substring(1);
         }
         text=text.trim();
