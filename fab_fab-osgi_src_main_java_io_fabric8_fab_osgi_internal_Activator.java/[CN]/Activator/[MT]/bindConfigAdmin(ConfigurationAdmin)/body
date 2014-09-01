@@ -1,0 +1,30 @@
+{
+  File data=new File(System.getProperty("karaf.data","."));
+  OsgiModuleRegistry registry=new OsgiModuleRegistry();
+  registry.setDirectory(new File(data,"fab-module-registry"));
+  registry.setConfigurationAdmin(configAdmin);
+  registry.setPid("io.fabric8.fab.osgi.registry");
+  registry.load();
+  final FabResolverFactoryImpl factory=new FabResolverFactoryImpl();
+  factory.setRegistry(registry);
+  factory.setBundleContext(bundleContext);
+  factory.setConfigurationAdmin(configAdmin);
+  registerFabResolverFactory(factory);
+  ServiceTracker<FeaturesService,FeaturesService> featuresServiceTracker=new ServiceTracker<FeaturesService,FeaturesService>(bundleContext,FeaturesService.class,null){
+    @Override public FeaturesService addingService(    ServiceReference<FeaturesService> reference){
+      FeaturesService fs=super.addingService(reference);
+      factory.setFeaturesService(fs);
+      return fs;
+    }
+    @Override public void removedService(    ServiceReference<FeaturesService> reference,    FeaturesService service){
+      factory.setFeaturesService(null);
+      super.removedService(reference,service);
+    }
+  }
+;
+  featuresServiceTracker.open();
+  FabURLHandler handler=new FabURLHandler();
+  handler.setFabResolverFactory(factory);
+  handler.setServiceProvider(factory);
+  registerURLHandler(handler);
+}
