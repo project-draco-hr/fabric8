@@ -13,17 +13,22 @@
     configProps.put("java.specification.version",javase);
   }
   configProps.substitute();
-  Map<String,String> headers=new HashMap<>();
-  headers.put(Constants.BUNDLE_MANIFESTVERSION,"2");
-  headers.put(Constants.BUNDLE_SYMBOLICNAME,"system-bundle");
-  headers.put(Constants.BUNDLE_VERSION,"0.0.0");
+  Attributes attributes=new Attributes();
+  attributes.putValue(Constants.BUNDLE_MANIFESTVERSION,"2");
+  attributes.putValue(Constants.BUNDLE_SYMBOLICNAME,"system-bundle");
+  attributes.putValue(Constants.BUNDLE_VERSION,"0.0.0");
   String exportPackages=configProps.getProperty("org.osgi.framework.system.packages");
   if (configProps.containsKey("org.osgi.framework.system.packages.extra")) {
     exportPackages+="," + configProps.getProperty("org.osgi.framework.system.packages.extra");
   }
-  headers.put(Constants.EXPORT_PACKAGE,exportPackages);
+  attributes.putValue(Constants.EXPORT_PACKAGE,exportPackages);
   String systemCaps=configProps.getProperty("org.osgi.framework.system.capabilities");
-  headers.put(Constants.PROVIDE_CAPABILITY,systemCaps);
+  attributes.putValue(Constants.PROVIDE_CAPABILITY,systemCaps);
+  attributes=DeploymentBuilder.overrideAttributes(attributes,metadata);
+  Map<String,String> headers=new HashMap<String,String>();
+  for (  Map.Entry attr : attributes.entrySet()) {
+    headers.put(attr.getKey().toString(),attr.getValue().toString());
+  }
   Resource resource=ResourceBuilder.build("system-bundle",headers);
   return resource;
 }

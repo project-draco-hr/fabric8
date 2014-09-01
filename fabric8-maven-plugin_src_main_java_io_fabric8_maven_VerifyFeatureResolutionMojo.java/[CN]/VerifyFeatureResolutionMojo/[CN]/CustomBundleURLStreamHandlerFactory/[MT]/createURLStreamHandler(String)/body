@@ -15,6 +15,32 @@
     }
 ;
   }
+ else   if (protocol.equals("blueprint")) {
+    return new URLStreamHandler(){
+      @Override protected URLConnection openConnection(      URL url) throws IOException {
+        return new URLConnection(url){
+          @Override public void connect() throws IOException {
+          }
+          @Override public InputStream getInputStream() throws IOException {
+            try {
+              ByteArrayOutputStream os=new ByteArrayOutputStream();
+              BlueprintTransformer.transform(new URL(url.getPath()),os);
+              os.close();
+              return new ByteArrayInputStream(os.toByteArray());
+            }
+ catch (            Exception e) {
+              throw (IOException)new IOException("Error opening blueprint xml url").initCause(e);
+            }
+          }
+        }
+;
+      }
+    }
+;
+  }
+ else   if (protocol.equals("war")) {
+    return new org.ops4j.pax.url.war.Handler();
+  }
  else {
     return null;
   }

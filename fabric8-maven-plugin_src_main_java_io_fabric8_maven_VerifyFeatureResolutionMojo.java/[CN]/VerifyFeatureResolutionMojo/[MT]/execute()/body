@@ -1,4 +1,12 @@
 {
+  try {
+    Field field=URL.class.getDeclaredField("factory");
+    field.setAccessible(true);
+    field.set(null,null);
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
   URL.setURLStreamHandlerFactory(new CustomBundleURLStreamHandlerFactory());
   System.setProperty("karaf.home","target/karaf");
   System.setProperty("karaf.data","target/karaf/data");
@@ -28,7 +36,26 @@
     manager=new DownloadManager(config,executor);
     repositories=loadRepositories(manager,descriptors);
     for (    String repoUri : repositories.keySet()) {
-      allFeatures.put(repoUri,repositories.get(repoUri).getFeatures());
+      Feature[] features=repositories.get(repoUri).getFeatures();
+      for (      Feature feature : features) {
+        for (        org.apache.karaf.features.BundleInfo bi : feature.getBundles()) {
+          String loc=bi.getLocation();
+          String nloc=null;
+          if (loc.contains("file:")) {
+            for (            ConfigFileInfo cfi : feature.getConfigurationFiles()) {
+              if (cfi.getFinalname().substring(1).equals(loc.substring(loc.indexOf("file:") + "file:".length()))) {
+                nloc=cfi.getLocation();
+              }
+            }
+          }
+          if (nloc != null) {
+            Field field=bi.getClass().getDeclaredField("location");
+            field.setAccessible(true);
+            field.set(bi,loc.substring(0,loc.indexOf("file:")) + nloc);
+          }
+        }
+      }
+      allFeatures.put(repoUri,features);
     }
   }
  catch (  Exception e) {
