@@ -1,24 +1,14 @@
 {
-  Map<String,String> replaceProperties=new HashMap<String,String>();
-  ZipInputStream zip=null;
+  final Map<String,String> replaceProperties=new HashMap<String,String>();
+  ZipFile zip=null;
   try {
-    zip=new ZipInputStream(archetypeIn);
-    boolean ok=true;
-    while (ok) {
-      ZipEntry entry=zip.getNextEntry();
-      if (entry == null) {
-        ok=false;
+    zip=new ZipFile(archetypeFile);
+    ZipEntry entry=zip.getEntry("META-INF/maven/archetype-metadata.xml");
+    if (entry != null) {
+      try (InputStream inputStream=zip.getInputStream(entry)){
+        parseReplaceProperties(inputStream,replaceProperties);
       }
- else {
-        if (!entry.isDirectory()) {
-          String fullName=entry.getName();
-          if (fullName != null && fullName.equals("META-INF/maven/archetype-metadata.xml")) {
-            parseReplaceProperties(zip,replaceProperties);
-          }
-        }
-        zip.closeEntry();
-      }
-    }
+     }
   }
  catch (  Exception e) {
     throw new IOException(e.getMessage(),e);

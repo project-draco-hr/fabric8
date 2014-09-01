@@ -2,15 +2,11 @@
   Archetype archetype=archetypeService.getArchetype(archetypeGAV);
   if (archetype != null) {
     System.out.println(String.format("Generating %s:%s in %s",archetype.groupId,archetype.artifactId,target.getCanonicalPath()));
-    InputStream archetypeInputStream=fetchArchetype(archetype);
-    if (archetypeInputStream == null) {
+    File archetypeFile=fetchArchetype(archetype);
+    if (archetypeFile == null || !archetypeFile.exists()) {
       System.err.println("No archetype found for \"" + archetypeGAV + "\" coordinates");
       return null;
     }
-    ByteArrayOutputStream baos=new ByteArrayOutputStream();
-    IOUtils.copy(archetypeInputStream,baos);
-    IOUtils.closeQuietly(archetypeInputStream);
-    InputStream stream=new ByteArrayInputStream(baos.toByteArray());
     String defaultGroupId="io.fabric8";
     String defaultArtifactId=archetype.artifactId + "-example";
     String defaultVersion="1.0-SNAPSHOT";
@@ -24,7 +20,7 @@
     String defaultPackageName=(groupId + "." + artifactId).replaceAll("-",".");
     String packageName=ShellUtils.readLine(session,String.format("Define value for property 'package' (%s):",defaultPackageName),false);
     packageName=packageName == null || packageName.trim().equals("") ? defaultPackageName : packageName;
-    ArchetypeHelper helper=new ArchetypeHelper(stream,target,groupId,artifactId,version);
+    ArchetypeHelper helper=new ArchetypeHelper(archetypeFile,target,groupId,artifactId,version);
     helper.setPackageName(packageName);
     Map<String,String> properties=helper.parseProperties();
     if (!properties.isEmpty()) {
@@ -36,7 +32,6 @@
       }
     }
     helper.setOverrideProperties(properties);
-    stream.reset();
     helper.execute();
   }
  else {

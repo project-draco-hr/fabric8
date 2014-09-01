@@ -5,69 +5,61 @@
   }
   String packageDir=packageName.replace('.','/');
   info("Creating archetype using Maven groupId: " + groupId + ", artifactId: "+ artifactId+ ", version: "+ version+ " in directory: "+ outputDir);
-  Map<String,String> replaceProperties=new HashMap<String,String>();
-  ZipInputStream zip=null;
+  Map<String,String> replaceProperties=parseProperties();
+  replaceProperties.putAll(overrideProperties);
+  info("Using replace properties: " + replaceProperties);
+  ZipFile zip=null;
   try {
-    zip=new ZipInputStream(archetypeIn);
-    boolean ok=true;
-    while (ok) {
-      ZipEntry entry=zip.getNextEntry();
-      if (entry == null) {
-        ok=false;
-      }
+    zip=new ZipFile(archetypeFile);
+    Enumeration<? extends ZipEntry> entries=zip.entries();
+    while (entries.hasMoreElements()) {
+      final ZipEntry entry=entries.nextElement();
+      if (!entry.isDirectory()) {
+        String fullName=entry.getName();
+        if (fullName != null && fullName.startsWith(zipEntryPrefix)) {
+          String name=replaceFileProperties(fullName.substring(zipEntryPrefix.length()),replaceProperties);
+          debug("Processing resource: " + name);
+          int idx=name.lastIndexOf('/');
+          Matcher matcher=sourcePathRegexPattern.matcher(name);
+          String dirName;
+          if (packageName.length() > 0 && idx > 0 && matcher.matches()) {
+            String prefix=matcher.group(1);
+            dirName=prefix + packageDir + "/"+ name.substring(prefix.length());
+          }
+ else           if (packageName.length() > 0 && name.startsWith(webInfResources)) {
+            dirName="src/main/webapp/WEB-INF/" + packageDir + "/resources"+ name.substring(webInfResources.length());
+          }
  else {
-        if (!entry.isDirectory()) {
-          String fullName=entry.getName();
-          if (fullName != null && fullName.startsWith(zipEntryPrefix)) {
-            String name=replaceFileProperties(fullName.substring(zipEntryPrefix.length()),replaceProperties);
-            debug("Processing resource: " + name);
-            int idx=name.lastIndexOf('/');
-            Matcher matcher=sourcePathRegexPattern.matcher(name);
-            String dirName;
-            if (packageName.length() > 0 && idx > 0 && matcher.matches()) {
-              String prefix=matcher.group(1);
-              dirName=prefix + packageDir + "/"+ name.substring(prefix.length());
+            dirName=name;
+          }
+          File file=new File(outputDir,dirName);
+          file.getParentFile().mkdirs();
+          FileOutputStream out=null;
+          try {
+            out=new FileOutputStream(file);
+            boolean isBinary=false;
+            for (            String suffix : binarySuffixes) {
+              if (name.endsWith(suffix)) {
+                isBinary=true;
+                break;
+              }
             }
- else             if (packageName.length() > 0 && name.startsWith(webInfResources)) {
-              dirName="src/main/webapp/WEB-INF/" + packageDir + "/resources"+ name.substring(webInfResources.length());
+            if (isBinary) {
+              copy(zip.getInputStream(entry),out);
             }
  else {
-              dirName=name;
-            }
-            File file=new File(outputDir,dirName);
-            file.getParentFile().mkdirs();
-            FileOutputStream out=null;
-            try {
-              out=new FileOutputStream(file);
-              boolean isBinary=false;
-              for (              String suffix : binarySuffixes) {
-                if (name.endsWith(suffix)) {
-                  isBinary=true;
-                  break;
-                }
-              }
-              if (isBinary) {
-                copy(zip,out);
-              }
- else {
-                ByteArrayOutputStream bos=new ByteArrayOutputStream();
-                copy(zip,bos);
-                String text=new String(bos.toByteArray(),"UTF-8");
-                out.write(transformContents(text,replaceProperties).getBytes());
-              }
-            }
-  finally {
-              if (out != null) {
-                out.close();
-              }
+              ByteArrayOutputStream bos=new ByteArrayOutputStream();
+              copy(zip.getInputStream(entry),bos);
+              String text=new String(bos.toByteArray(),"UTF-8");
+              out.write(transformContents(text,replaceProperties).getBytes());
             }
           }
- else           if (fullName != null && fullName.equals("META-INF/maven/archetype-metadata.xml")) {
-            parseReplaceProperties(zip,replaceProperties);
-            replaceProperties.putAll(overrideProperties);
+  finally {
+            if (out != null) {
+              out.close();
+            }
           }
         }
-        zip.closeEntry();
       }
     }
   }
@@ -79,7 +71,6 @@
       zip.close();
     }
   }
-  info("Using replace properties: " + replaceProperties);
   if (!replaceProperties.isEmpty()) {
     File pom=new File(outputDir,"pom.xml");
     FileReader reader=new FileReader(pom);
