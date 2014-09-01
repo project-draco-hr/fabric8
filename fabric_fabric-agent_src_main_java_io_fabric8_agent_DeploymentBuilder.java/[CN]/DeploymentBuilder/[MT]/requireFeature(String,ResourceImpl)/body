@@ -1,11 +1,3 @@
 {
-  String[] split=feature.split("/");
-  String name=split[0].trim();
-  String version=(split.length > 1) ? split[1].trim() : "";
-  VersionRange range=version.length() == 0 ? VersionRange.ANY_VERSION : new VersionRange(version);
-  Map<String,Object> attrs=new HashMap<String,Object>();
-  attrs.put(IdentityNamespace.IDENTITY_NAMESPACE,name);
-  attrs.put(IdentityNamespace.CAPABILITY_TYPE_ATTRIBUTE,FeatureNamespace.TYPE_FEATURE);
-  attrs.put(IdentityNamespace.CAPABILITY_VERSION_ATTRIBUTE,range);
-  resource.addRequirement(new RequirementImpl(resource,IdentityNamespace.IDENTITY_NAMESPACE,Collections.<String,String>emptyMap(),attrs));
+  requireFeature(feature,resource,false);
 }
