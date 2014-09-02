@@ -5,6 +5,7 @@
   registry.setConfigurationAdmin(configAdmin);
   registry.setPid("io.fabric8.fab.osgi.registry");
   registry.load();
+  registerModuleRegistry(registry);
   final FabResolverFactoryImpl factory=new FabResolverFactoryImpl();
   factory.setRegistry(registry);
   factory.setBundleContext(bundleContext);
@@ -27,4 +28,5 @@
   handler.setFabResolverFactory(factory);
   handler.setServiceProvider(factory);
   registerURLHandler(handler);
+  registerFabDeploymentListener(new FabDeploymentListener());
 }
