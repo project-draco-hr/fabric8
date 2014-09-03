@@ -1,5 +1,9 @@
 {
   Container currentContainer=fabricService.get().getCurrentContainer();
+  if (currentContainer == null) {
+    LOGGER.warn("No current container yet so cannot update!");
+    return;
+  }
   Profile overlayProfile=currentContainer.getOverlayProfile();
   Profile effectiveProfile=Profiles.getEffectiveProfile(fabricService.get(),overlayProfile);
   Map<String,Map<String,String>> configurations=effectiveProfile.getConfigurations();
