@@ -11,7 +11,10 @@
         provider.stop(container);
       }
  catch (      Exception ex) {
-        providerException=ex;
+        boolean stopped="Instance already stopped".equals(ex.getMessage());
+        if (!stopped) {
+          providerException=ex;
+        }
       }
       provider.destroy(container);
       destroyed=true;
