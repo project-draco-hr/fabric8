@@ -1,4 +1,11 @@
 {
+  FabricService service=getFabricService();
+  if (service != null) {
+    String environment=service.getEnvironment();
+    if (Objects.equal(environment,"docker") || Objects.equal(environment,"openshift")) {
+      return false;
+    }
+  }
   boolean openshiftFuseEnv=Strings.notEmpty(System.getenv("OPENSHIFT_FUSE_DIR"));
   boolean openshiftAmqEnv=Strings.notEmpty(System.getenv("OPENSHIFT_AMQ_DIR"));
   return !(openshiftFuseEnv || openshiftAmqEnv);
