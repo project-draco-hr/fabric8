@@ -3,15 +3,20 @@
   String pattern=path + (path.length() > 0 && !path.endsWith(File.separator) ? File.separator : "") + name;
   File toFile=new File(toDir,name);
   if (from.isDirectory()) {
-    if (useToDirAsDestination) {
-      toFile=toDir;
-    }
-    toFile.mkdirs();
-    File[] files=from.listFiles();
-    if (files != null) {
-      for (      File file : files) {
-        recursiveCopyAndAdd(git,file,toFile,pattern,false);
+    if (acceptDirectory(from)) {
+      if (useToDirAsDestination) {
+        toFile=toDir;
       }
+      toFile.mkdirs();
+      File[] files=from.listFiles();
+      if (files != null) {
+        for (        File file : files) {
+          recursiveCopyAndAdd(git,file,toFile,pattern,false);
+        }
+      }
+    }
+ else {
+      LOGGER.debug("Skip importing from directory: {}",from);
     }
   }
  else {
