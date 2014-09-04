@@ -154,9 +154,9 @@
     List<String> names=new ArrayList<String>(profileIds);
     names.add(versionId);
     String tag="fabric8-" + Strings.join(names,"-").replace('.','-');
-    JavaDockerContainerImageBuilder builder=new JavaDockerContainerImageBuilder();
-    JavaContainerOptions javaContainerOptions=new JavaContainerOptions(image,imageRepository,tag,libDir,homeDir,entryPoint);
-    String actualImage=builder.generateContainerImage(service,container,profileOverlays,docker,javaContainerOptions,javaConfig,options,downloadExecutor,environmentVariables);
+    CustomDockerContainerImageBuilder builder=new CustomDockerContainerImageBuilder();
+    CustomDockerContainerImageOptions customDockerContainerImageOptions=new CustomDockerContainerImageOptions(image,imageRepository,tag,libDir,homeDir,entryPoint);
+    String actualImage=builder.generateContainerImage(service,container,profileOverlays,docker,customDockerContainerImageOptions,javaConfig,options,downloadExecutor,environmentVariables);
     containerConfig.setImage(actualImage);
   }
   List<String> env=containerConfig.getEnv();
