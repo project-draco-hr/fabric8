@@ -1,0 +1,13 @@
+{
+  Collection<PatchServiceImpl.PatchDescriptor> patches=new LinkedList<PatchServiceImpl.PatchDescriptor>();
+  patches.add(getPatchDescriptor("test3.patch"));
+  patches.add(getPatchDescriptor("test4.patch"));
+  Version version=buildVersion("1.1").withProfiles("karaf","default","patch-prereq4a","patch-prereq3").done();
+  try {
+    PatchServiceImpl.checkRequirements(version,patches);
+    fail("Patch should not have passed requirements check - required patch is missing");
+  }
+ catch (  RuntimeException e) {
+    assertTrue(e.getMessage().toLowerCase().contains("required patch 'prereq4b' is missing"));
+  }
+}

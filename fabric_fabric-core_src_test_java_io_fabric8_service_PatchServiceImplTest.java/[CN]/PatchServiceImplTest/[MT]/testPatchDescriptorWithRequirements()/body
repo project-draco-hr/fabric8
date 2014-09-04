@@ -1,7 +1,8 @@
 {
-  PatchServiceImpl.PatchDescriptor descriptor=getPatchDescriptor("test1.patch");
+  PatchServiceImpl.PatchDescriptor descriptor=getPatchDescriptor("test3.patch");
   assertEquals(2,descriptor.getBundles().size());
   assertTrue(descriptor.getBundles().contains("mvn:io.fabric8.test/test1/1.2.0"));
   assertTrue(descriptor.getBundles().contains("mvn:io.fabric8.test/test2/1.2.0"));
-  assertTrue(descriptor.getRequirements().isEmpty());
+  assertEquals(1,descriptor.getRequirements().size());
+  assertTrue(descriptor.getRequirements().contains("prereq3"));
 }

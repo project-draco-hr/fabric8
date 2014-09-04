@@ -11,4 +11,10 @@
     }
     this.bundles.add(url);
   }
+  this.requirements=new LinkedList<String>();
+  count=Integer.parseInt(properties.getProperty(PATCH_REQUIREMENTS + "." + PATCH_COUNT,"0"));
+  for (int i=0; i < count; i++) {
+    String requirement=properties.getProperty(PATCH_REQUIREMENTS + "." + Integer.toString(i));
+    this.requirements.add(requirement);
+  }
 }

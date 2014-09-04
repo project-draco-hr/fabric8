@@ -60,10 +60,11 @@
   finally {
       close(zis);
     }
+    checkRequirements(version,descriptors);
     List<Profile> profiles=version.getProfiles();
     for (    PatchDescriptor descriptor : descriptors) {
       String profileId="patch-" + descriptor.getId();
-      Profile profile=null;
+      Profile profile=getPatchProfile(version,descriptor);
       for (      Profile p : profiles) {
         if (profileId.equals(p.getId())) {
           profile=p;
