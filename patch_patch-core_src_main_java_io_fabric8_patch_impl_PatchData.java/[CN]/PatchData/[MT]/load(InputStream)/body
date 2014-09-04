@@ -14,5 +14,12 @@
       ranges.put(bundle,props.getProperty(key + "." + RANGE));
     }
   }
-  return new PatchData(id,desc,bundles,ranges);
+  List<String> requirements=new ArrayList<String>();
+  int requirementCount=Integer.parseInt(props.getProperty(REQUIREMENTS + "." + COUNT,"0"));
+  for (int i=0; i < requirementCount; i++) {
+    String key=REQUIREMENTS + "." + Integer.toString(i);
+    String requirement=props.getProperty(key);
+    requirements.add(requirement);
+  }
+  return new PatchData(id,desc,bundles,ranges,requirements);
 }

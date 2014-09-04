@@ -1,0 +1,8 @@
+{
+  ServiceImpl service=createMockServiceImpl();
+  Patch patch=ServiceImpl.doLoad(service,getClass().getClassLoader().getResourceAsStream("test-with-prereq.patch"));
+  assertEquals(2,patch.getBundles().size());
+  assertEquals(1,patch.getRequirements().size());
+  assertTrue(patch.getRequirements().contains("prereq1"));
+  assertNull(patch.getVersionRange("mvn:io.fabric8.test/test2/1.0.0"));
+}

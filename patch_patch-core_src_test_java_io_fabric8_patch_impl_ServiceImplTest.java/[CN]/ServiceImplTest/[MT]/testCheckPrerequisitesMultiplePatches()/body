@@ -1,0 +1,13 @@
+{
+  ServiceImpl service=createMockServiceImpl(getDirectoryForResource("prereq/patch1.patch"));
+  Collection<Patch> patches=new LinkedList<Patch>();
+  patches.add(service.getPatch("patch3"));
+  service.checkPrerequisites(patches);
+  patches.add(service.getPatch("patch2"));
+  try {
+    service.checkPrerequisites(patches);
+    fail("Should not pass check if one of the patches is missing a requirement");
+  }
+ catch (  PatchException e) {
+  }
+}

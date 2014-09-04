@@ -1,11 +1,5 @@
 {
-  URL base=getClass().getClassLoader().getResource("log4j.properties");
-  try {
-    baseDir=new File(base.toURI()).getParentFile();
-  }
- catch (  URISyntaxException e) {
-    baseDir=new File(base.getPath()).getParentFile();
-  }
+  baseDir=getDirectoryForResource("log4j.properties");
   URL.setURLStreamHandlerFactory(new CustomBundleURLStreamHandlerFactory());
   generateData();
 }

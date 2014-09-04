@@ -1,0 +1,12 @@
+{
+  ServiceImpl service=createMockServiceImpl(getDirectoryForResource("prereq/patch2.patch"));
+  Patch patch=service.getPatch("patch2");
+  assertNotNull(patch);
+  try {
+    service.checkPrerequisites(patch);
+    fail("Patch will prerequisites that are not yet installed should not pass check");
+  }
+ catch (  PatchException e) {
+    assertTrue(e.getMessage().toLowerCase().contains("required patch 'prereq2' is not installed"));
+  }
+}

@@ -1,0 +1,26 @@
+{
+  File patchFile=new File(storage,"temp/" + id + ".zip");
+  File pd=new File(storage,"temp/" + id + "/"+ id+ ".patch");
+  pd.getParentFile().mkdirs();
+  Properties props=new Properties();
+  props.put("id",id);
+  props.put("bundle.count","1");
+  props.put("bundle.0",mvnUrl);
+  if (range != null) {
+    props.put("bundle.0.range",range);
+  }
+  if (requirement != null) {
+    props.put("requirement.count","1");
+    props.put("requirement.O",requirement);
+  }
+  FileOutputStream fos=new FileOutputStream(pd);
+  props.store(fos,null);
+  fos.close();
+  File bf=new File(storage,"temp/" + id + "/repository/"+ Offline.mvnurlToArtifact(mvnUrl,true).getPath());
+  bf.getParentFile().mkdirs();
+  copy(new FileInputStream(bundle),new FileOutputStream(bf));
+  fos=new FileOutputStream(patchFile);
+  jarDir(pd.getParentFile(),fos);
+  fos.close();
+  return patchFile;
+}
