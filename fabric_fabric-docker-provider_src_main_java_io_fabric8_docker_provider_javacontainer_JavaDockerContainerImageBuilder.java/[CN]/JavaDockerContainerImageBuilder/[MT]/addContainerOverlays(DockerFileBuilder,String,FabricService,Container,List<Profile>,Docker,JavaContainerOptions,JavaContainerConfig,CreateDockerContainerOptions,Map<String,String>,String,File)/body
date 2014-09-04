@@ -17,7 +17,8 @@
         }
         variables.putAll(environmentVariables);
         LOGGER.info("Using template variables for MVEL: " + variables);
-        new ApplyConfigurationStep(dockerFile,profileRestApi,configuration,variables,getTempDirectory(),homeDirAndSeparator).install();
+        overlaysDir.mkdirs();
+        new ApplyConfigurationStep(dockerFile,profileRestApi,configuration,variables,overlaysDir,homeDirAndSeparator).install();
       }
     }
   }

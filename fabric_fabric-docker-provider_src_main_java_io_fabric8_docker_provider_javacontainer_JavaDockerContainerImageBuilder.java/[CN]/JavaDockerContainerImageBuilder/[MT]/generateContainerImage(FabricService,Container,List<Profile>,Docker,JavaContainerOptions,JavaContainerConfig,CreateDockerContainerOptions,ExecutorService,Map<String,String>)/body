@@ -1,7 +1,7 @@
 {
   String libDirAndSeparator=ensureEndsWithFileSeparator(options.getJavaLibraryPath());
   String homeDirAndSeparator=ensureEndsWithFileSeparator(options.getHomePath());
-  Map<String,Parser> artifacts=JavaContainers.getJavaContainerArtifacts(fabric,profileList,downloadExecutor);
+  Map<String,File> artifacts=JavaContainers.getJavaContainerArtifactsFiles(fabric,profileList,downloadExecutor);
   URI mavenRepoURI=fabric.getMavenRepoURI();
   String repoTextPrefix=mavenRepoURI.toString();
   int idx=repoTextPrefix.indexOf("://");
@@ -12,21 +12,23 @@
   String baseImage=options.getBaseImage();
   String tag=options.getNewImageTag();
   DockerFileBuilder dockerFile=DockerFileBuilder.from(baseImage);
-  Set<Map.Entry<String,Parser>> entries=artifacts.entrySet();
-  for (  Map.Entry<String,Parser> entry : entries) {
-    Parser parser=entry.getValue();
-    String path=parser.getArtifactPath();
-    String url=repoTextPrefix + path;
-    String version=parser.getVersion();
-    String snapshotModifier="";
-    if (version != null && version.contains("SNAPSHOT")) {
-      long time=new Date().getTime();
-      url+="?t=" + time;
-      snapshotModifier="-" + time;
-    }
-    String fileName=parser.getArtifact() + "-" + version+ snapshotModifier+ "."+ parser.getType();
-    String filePath=libDirAndSeparator + fileName;
-    dockerFile.add(url,filePath);
+  File tmpDockerfileDir=File.createTempFile("fabric-",".dockerfiledir");
+  tmpDockerfileDir.delete();
+  tmpDockerfileDir.mkdirs();
+  String libDirPath="lib";
+  File uploadLibDir=new File(tmpDockerfileDir,libDirPath);
+  String overlaysDirPath="overlays";
+  File overlaysDir=new File(tmpDockerfileDir,overlaysDirPath);
+  int libFileCount=0;
+  Set<Map.Entry<String,File>> entries=artifacts.entrySet();
+  for (  Map.Entry<String,File> entry : entries) {
+    File file=entry.getValue();
+    uploadLibDir.mkdirs();
+    Files.copy(file,new File(uploadLibDir,file.getName()));
+    libFileCount++;
+  }
+  if (libFileCount > 0) {
+    dockerFile.add(libDirPath,libDirAndSeparator);
   }
   if (container != null) {
     List<String> bundles=new ArrayList<String>();
@@ -41,7 +43,11 @@
   }
   String restAPI=fabric.getRestAPI();
   if (Strings.isNotBlank(restAPI)) {
-    addContainerOverlays(dockerFile,restAPI,fabric,container,profileList,docker,options,javaConfig,containerOptions,envVars,homeDirAndSeparator);
+    addContainerOverlays(dockerFile,restAPI,fabric,container,profileList,docker,options,javaConfig,containerOptions,envVars,homeDirAndSeparator,overlaysDir);
+    String[] childFiles=overlaysDir.list();
+    if (childFiles != null && childFiles.length > 0) {
+      dockerFile.add(overlaysDirPath,homeDirAndSeparator);
+    }
   }
  else {
     LOGGER.error("Cannot perform container overlays as there is no REST API for fabric8!");
@@ -57,26 +63,18 @@
   if (Strings.isNotBlank(entryPoint)) {
     dockerFile.cmd(entryPoint);
   }
-  File tmpFile=File.createTempFile("fabric-",".dockerfiledir");
-  tmpFile.delete();
-  tmpFile.mkdirs();
-  dockerFile.writeTo(new File(tmpFile,"Dockerfile"));
-  String[] commands=new String[]{"docker","build","-t",tag,tmpFile.getCanonicalPath()};
-  String message=join(asList(commands)," ");
-  LOGGER.info("Executing commands: " + message);
-  String answer=null;
-  String errors=null;
-  String dockerHost=resolveDockerHost();
+  dockerFile.writeTo(new File(tmpDockerfileDir,"Dockerfile"));
+  File tmpArchive=File.createTempFile("fabric8-",".dockerarchive");
+  createDockerArchive(tmpArchive,tmpDockerfileDir);
+  LOGGER.info("Created archive " + tmpArchive.getCanonicalPath() + " from docker archive folder "+ tmpDockerfileDir.getCanonicalPath());
+  String answer=tag;
+  Object errors=null;
   try {
-    ProcessBuilder dockerBuild=new ProcessBuilder().command(commands);
-    Map<String,String> env=dockerBuild.environment();
-    env.put("DOCKER_HOST",dockerHost);
-    Process process=dockerBuild.start();
-    answer=parseCreatedImage(process.getInputStream(),message);
-    errors=processErrors(process.getErrorStream(),message);
+    Object results=docker.build(tmpArchive,tag,0,0,1,1);
+    LOGGER.info("Docker Build Result: " + results);
   }
  catch (  Exception e) {
-    LOGGER.error("Failed to execute process " + "stdin" + " for " + message + ": "+ e,e);
+    LOGGER.error("Failed to upload docker folder: " + tmpDockerfileDir + ": "+ Dockers.dockerErrorMessage(e)+ ". "+ e,e);
     throw e;
   }
   if (answer == null) {

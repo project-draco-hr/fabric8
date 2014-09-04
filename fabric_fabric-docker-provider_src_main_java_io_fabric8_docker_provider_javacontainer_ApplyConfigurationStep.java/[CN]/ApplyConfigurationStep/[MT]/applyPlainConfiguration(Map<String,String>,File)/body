@@ -1,8 +1,9 @@
 {
   for (  Map.Entry<String,String> entry : configuration.entrySet()) {
     String path=entry.getKey();
+    String content=entry.getValue();
     int slashIndex=path.indexOf("/");
     String resourcePath=slashIndex > 0 ? path.substring(slashIndex) : path;
-    copyToContent(resourcePath);
+    copyToContent(resourcePath,content);
   }
 }
