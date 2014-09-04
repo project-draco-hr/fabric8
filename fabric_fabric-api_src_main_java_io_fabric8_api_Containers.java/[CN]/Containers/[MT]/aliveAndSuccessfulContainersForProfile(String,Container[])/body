@@ -2,10 +2,8 @@
   List<Container> answer=new ArrayList<Container>();
   List<Container> containers=containersForProfile(allContainers,profile);
   for (  Container container : containers) {
-    boolean alive=container.isAlive();
-    boolean provisioningPending=container.isProvisioningPending();
-    String provisionResult=container.getProvisionResult();
-    if (alive && !provisioningPending && Container.PROVISION_SUCCESS.equals(provisionResult)) {
+    boolean aliveAndProvisionSuccess=isAliveAndProvisionSuccess(container);
+    if (aliveAndProvisionSuccess) {
       answer.add(container);
     }
   }
