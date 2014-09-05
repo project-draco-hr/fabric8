@@ -9,6 +9,9 @@ synchronized (this) {
  else {
       String profileId=profile.getId();
       String environment=runtimeProperties.get().getProperty(SystemProperties.FABRIC_ENVIRONMENT);
+      if (environment == null) {
+        environment=System.getProperty(SystemProperties.FABRIC_PROFILE_ENVIRONMENT);
+      }
       ProfileBuilder builder=ProfileBuilder.Factory.create(profile.getVersion(),profileId);
       builder.addOptions(new OverlayOptionsProvider(profile,environment));
       overlayProfile=builder.getProfile();
