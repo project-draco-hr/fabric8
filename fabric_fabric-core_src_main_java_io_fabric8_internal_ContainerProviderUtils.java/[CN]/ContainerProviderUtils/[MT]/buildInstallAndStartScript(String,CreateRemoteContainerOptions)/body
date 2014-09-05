@@ -3,6 +3,10 @@
   String systemDistPath=String.format(SYSTEM_DIST,"karaf",FabricConstants.FABRIC_VERSION);
   StringBuilder sb=new StringBuilder();
   sb.append("#!/bin/bash").append("\n");
+  if (logger.isTraceEnabled()) {
+    sb.append("set -x ").append("\n");
+    sb.append("export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }' ").append("\n");
+  }
   if (options.getEnvironmentalVariables() != null && !options.getEnvironmentalVariables().isEmpty()) {
     for (    Map.Entry<String,String> entry : options.getEnvironmentalVariables().entrySet()) {
       sb.append("export ").append(entry.getKey()).append("=\"").append(entry.getValue()).append("\"").append("\n");
