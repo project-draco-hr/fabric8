@@ -2,6 +2,7 @@
   Set<String> profileIds=containerOptions.getProfiles();
   String versionId=containerOptions.getVersion();
   String layout=javaConfig.getOverlayFolder();
+  int overlays=0;
   if (layout != null) {
     for (    Profile profile : profiles) {
       Map<String,String> configuration=ProcessUtils.getProcessLayout(fabricService,profile,layout);
@@ -19,6 +20,7 @@
         LOGGER.info("Using template variables for MVEL: " + variables);
         overlaysDir.mkdirs();
         new ApplyConfigurationStep(dockerFile,profileRestApi,configuration,variables,overlaysDir,homeDirAndSeparator).install();
+        overlays++;
       }
     }
   }
@@ -43,9 +45,11 @@
           if (stream != null) {
             Files.copy(stream,new BufferedOutputStream(new FileOutputStream(newFile)));
             dockerFile.add(localPath,homeDirAndSeparator + localPath);
+            overlays++;
           }
         }
       }
     }
   }
+  return overlays;
 }
