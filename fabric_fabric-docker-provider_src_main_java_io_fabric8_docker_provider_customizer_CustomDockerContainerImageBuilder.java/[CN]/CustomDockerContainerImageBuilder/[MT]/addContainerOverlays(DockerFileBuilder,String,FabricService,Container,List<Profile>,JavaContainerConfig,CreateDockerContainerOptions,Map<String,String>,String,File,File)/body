@@ -37,7 +37,13 @@
           LOGGER.warn("Ignoring invalid URL '" + urlText + "' for overlay resource "+ localPath+ ". "+ e,e);
         }
         if (url != null) {
-          LOGGER.warn("TODO - add overlay resources into a docker file for URL: " + url);
+          File newFile=new File(tmpDockerfileDir,localPath);
+          newFile.getParentFile().mkdirs();
+          InputStream stream=url.openStream();
+          if (stream != null) {
+            Files.copy(stream,new BufferedOutputStream(new FileOutputStream(newFile)));
+            dockerFile.add(localPath,homeDirAndSeparator + localPath);
+          }
         }
       }
     }

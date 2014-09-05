@@ -11,7 +11,7 @@
   List<Profile> profileOverlays=new ArrayList<>();
   Version version=null;
   if (profileIds != null && versionId != null) {
-    ProfileService profileService=fabricService.get().adapt(ProfileService.class);
+    ProfileService profileService=service.adapt(ProfileService.class);
     version=profileService.getVersion(versionId);
     if (version != null) {
       for (      String profileId : profileIds) {
@@ -54,7 +54,8 @@
   LOG.info("Got port configuration: " + ports);
   Map<String,String> environmentVariables=ChildContainers.getEnvironmentVariables(service,options,DockerConstants.SCHEME);
   DockerProviderConfig configOverlayDockerProvider=createDockerProviderConfig(configOverlay,environmentVariables);
-  String image=JolokiaAgentHelper.substituteVariableExpression(containerConfig.getImage(),environmentVariables,service,curator.getOptional(),true);
+  CuratorFramework curatorOptional=curator.getOptional();
+  String image=JolokiaAgentHelper.substituteVariableExpression(containerConfig.getImage(),environmentVariables,service,curatorOptional,true);
   if (Strings.isNullOrBlank(image)) {
     image=configOverlayDockerProvider.getImage();
     if (Strings.isNullOrBlank(image)) {
@@ -160,6 +161,7 @@
     String actualImage=builder.generateContainerImage(service,container,profileOverlays,docker,customDockerContainerImageOptions,javaConfig,options,downloadExecutor,environmentVariables);
     containerConfig.setImage(actualImage);
   }
+  JolokiaAgentHelper.substituteEnvironmentVariableExpressions(environmentVariables,environmentVariables,service,curatorOptional,false);
   List<String> env=containerConfig.getEnv();
   if (env == null) {
     env=new ArrayList<>();
