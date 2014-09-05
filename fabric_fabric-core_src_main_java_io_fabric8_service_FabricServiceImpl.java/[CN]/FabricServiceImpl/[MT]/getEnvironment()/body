@@ -1,4 +1,12 @@
 {
   assertValid();
-  return runtimeProperties.get().getProperty(SystemProperties.FABRIC_ENVIRONMENT);
+  String answer=runtimeProperties.get().getProperty(SystemProperties.FABRIC_ENVIRONMENT);
+  if (answer == null) {
+    Container currentContainer=getCurrentContainer();
+    if (currentContainer != null) {
+      Map<String,String> systemProperties=currentContainer.getOverlayProfile().getConfiguration(Constants.SYSTEM_PROPERTIES_PID);
+      answer=systemProperties.get(SystemProperties.FABRIC_ENVIRONMENT);
+    }
+  }
+  return answer;
 }
