@@ -1,0 +1,31 @@
+{
+  Map<String,String> overlayConfig=new HashMap<String,String>();
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
+  if (profileService != null) {
+    Version version=null;
+    if (versionId == null) {
+      version=fabricService.getRequiredDefaultVersion();
+    }
+ else {
+      version=profileService.getRequiredVersion(versionId);
+    }
+    if (profileIds != null) {
+      for (      String profileId : profileIds) {
+        Profile profile=version.getRequiredProfile(profileId);
+        Profile overlay=profileService.getOverlayProfile(profile);
+        Map<String,String> profileConfig=null;
+        if (!Strings.isNullOrBlank(environment)) {
+          String envPid=pid + "#" + environment;
+          profileConfig=overlay.getConfiguration(envPid);
+        }
+        if (profileConfig == null) {
+          profileConfig=overlay.getConfiguration(pid);
+        }
+        if (profileConfig != null) {
+          overlayConfig.putAll(profileConfig);
+        }
+      }
+    }
+  }
+  return overlayConfig;
+}

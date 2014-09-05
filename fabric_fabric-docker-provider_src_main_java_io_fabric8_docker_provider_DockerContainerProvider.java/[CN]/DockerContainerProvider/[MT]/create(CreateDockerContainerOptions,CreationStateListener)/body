@@ -52,7 +52,7 @@
     }
   }
   LOG.info("Got port configuration: " + ports);
-  Map<String,String> environmentVariables=ChildContainers.getEnvironmentVariables(service,options);
+  Map<String,String> environmentVariables=ChildContainers.getEnvironmentVariables(service,options,DockerConstants.SCHEME);
   DockerProviderConfig configOverlayDockerProvider=createDockerProviderConfig(configOverlay,environmentVariables);
   String image=JolokiaAgentHelper.substituteVariableExpression(containerConfig.getImage(),environmentVariables,service,curator.getOptional(),true);
   if (Strings.isNullOrBlank(image)) {

@@ -1,0 +1,42 @@
+{
+  Set<String> profileIds=options.getProfiles();
+  String versionId=options.getVersion();
+  String zookeeperUrl=service.getZookeeperUrl();
+  String zookeeperUser=service.getZooKeeperUser();
+  String zookeeperPasswordRaw=service.getZookeeperPassword();
+  String zookeeperPassword=zookeeperPasswordRaw;
+  if (zookeeperPassword != null) {
+    zookeeperPassword=PasswordEncoder.encode(zookeeperPassword);
+  }
+  String localIp=service.getCurrentContainer().getLocalIp();
+  if (!Strings.isNullOrBlank(localIp)) {
+    int idx=zookeeperUrl.lastIndexOf(':');
+    if (idx > 0) {
+      localIp+=zookeeperUrl.substring(idx);
+    }
+    zookeeperUrl=localIp;
+  }
+  Map<String,String> envVarsOverlay=Profiles.getOverlayConfiguration(service,profileIds,versionId,EnvironmentVariables.ENVIRONMENT_VARIABLES_PID,environment);
+  String containerName=options.getName();
+  envVarsOverlay.put(EnvironmentVariables.KARAF_NAME,containerName);
+  envVarsOverlay.put(EnvironmentVariables.RUNTIME_ID,containerName);
+  if (!options.isEnsembleServer()) {
+    if (!envVarsOverlay.containsKey(EnvironmentVariables.ZOOKEEPER_URL)) {
+      envVarsOverlay.put(EnvironmentVariables.ZOOKEEPER_URL,zookeeperUrl);
+    }
+    if (!envVarsOverlay.containsKey(EnvironmentVariables.ZOOKEEPER_USER)) {
+      envVarsOverlay.put(EnvironmentVariables.ZOOKEEPER_USER,zookeeperUser);
+    }
+    if (!envVarsOverlay.containsKey(EnvironmentVariables.ZOOKEEPER_PASSWORD)) {
+      envVarsOverlay.put(EnvironmentVariables.ZOOKEEPER_PASSWORD,zookeeperPassword);
+    }
+    if (!envVarsOverlay.containsKey(EnvironmentVariables.ZOOKEEPER_PASSWORD_RAW)) {
+      envVarsOverlay.put(EnvironmentVariables.ZOOKEEPER_PASSWORD_RAW,zookeeperPasswordRaw);
+    }
+    if (!envVarsOverlay.containsKey(EnvironmentVariables.ZOOKEEPER_PASSWORD_ENCODE)) {
+      String zkPasswordEncode=System.getProperty("zookeeper.password.encode","true");
+      envVarsOverlay.put(EnvironmentVariables.ZOOKEEPER_PASSWORD_ENCODE,zkPasswordEncode);
+    }
+  }
+  return envVarsOverlay;
+}
