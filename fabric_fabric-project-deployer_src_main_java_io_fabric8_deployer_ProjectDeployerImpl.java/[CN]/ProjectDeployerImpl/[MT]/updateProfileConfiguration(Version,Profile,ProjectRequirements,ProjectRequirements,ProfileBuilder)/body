@@ -24,7 +24,7 @@
   String webContextPath=requirements.getWebContextPath();
   if (!Strings.isEmpty(webContextPath)) {
     Map<String,String> contextPathConfig=new HashMap<>();
-    Map<String,String> oldValue=profile.getConfiguration(ChildConstants.WEB_CONTEXT_PATHS_PID);
+    Map<String,String> oldValue=profile.getConfiguration(Constants.WEB_CONTEXT_PATHS_PID);
     if (oldValue != null) {
       contextPathConfig.putAll(oldValue);
     }
@@ -32,7 +32,7 @@
     String current=contextPathConfig.get(key);
     if (!Objects.equal(current,webContextPath)) {
       contextPathConfig.put(key,webContextPath);
-      builder.addConfiguration(ChildConstants.WEB_CONTEXT_PATHS_PID,contextPathConfig);
+      builder.addConfiguration(Constants.WEB_CONTEXT_PATHS_PID,contextPathConfig);
     }
   }
   String description=requirements.getDescription();

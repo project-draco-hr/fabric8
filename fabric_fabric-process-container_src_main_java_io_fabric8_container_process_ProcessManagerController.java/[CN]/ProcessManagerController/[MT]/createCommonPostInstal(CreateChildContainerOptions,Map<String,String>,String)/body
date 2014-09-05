@@ -6,7 +6,7 @@
   if (layout != null) {
     Map<String,String> configuration=ProcessUtils.getProcessLayout(fabricService,profiles,layout);
     if (configuration != null && !configuration.isEmpty()) {
-      Map variables=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.TEMPLATE_VARIABLES_PID);
+      Map variables=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,Constants.TEMPLATE_VARIABLES_PID);
       if (variables == null) {
         variables=new HashMap();
       }
@@ -18,7 +18,7 @@
       answer=new ApplyConfigurationTask(configuration,variables);
     }
   }
-  Map<String,String> overlayResources=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.PROCESS_CONTAINER_OVERLAY_RESOURCES_PID);
+  Map<String,String> overlayResources=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,Constants.PROCESS_CONTAINER_OVERLAY_RESOURCES_PID);
   if (overlayResources != null && !overlayResources.isEmpty()) {
     answer=CompositeTask.combine(answer,new DownloadResourcesTask(overlayResources));
   }

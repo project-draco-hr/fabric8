@@ -7,7 +7,7 @@
   Map<String,String> emptyMap=new HashMap<String,String>();
   Set<String> profileIds=options.getProfiles();
   String versionId=options.getVersion();
-  Map<String,String> ports=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.PORTS_PID);
+  Map<String,String> ports=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,Constants.PORTS_PID);
   SortedMap<Integer,String> sortedInternalPorts=new TreeMap<Integer,String>();
   for (  Map.Entry<String,String> portEntry : ports.entrySet()) {
     String portName=portEntry.getKey();
@@ -18,7 +18,7 @@
         port=Integer.parseInt(portText);
       }
  catch (      NumberFormatException e) {
-        LOG.warn("Ignoring bad port number for " + portName + " value '"+ portText+ "' in PID: "+ ChildConstants.PORTS_PID);
+        LOG.warn("Ignoring bad port number for " + portName + " value '"+ portText+ "' in PID: "+ Constants.PORTS_PID);
       }
       if (port != null) {
         sortedInternalPorts.put(port,portName);

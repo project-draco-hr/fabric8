@@ -7,7 +7,7 @@
       Map<String,String> configuration=ProcessUtils.getProcessLayout(fabricService,profile,layout);
       if (configuration != null && !configuration.isEmpty()) {
         String profileRestApi=restAPI + "/version/" + profile.getVersion()+ "/profile/"+ profile.getId()+ "/overlay/file/"+ layout+ (layout.endsWith("/") ? "" : "/");
-        Map variables=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.TEMPLATE_VARIABLES_PID);
+        Map variables=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,Constants.TEMPLATE_VARIABLES_PID);
         if (variables == null) {
           variables=new HashMap();
         }
@@ -22,7 +22,7 @@
       }
     }
   }
-  Map<String,String> overlayResources=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.PROCESS_CONTAINER_OVERLAY_RESOURCES_PID);
+  Map<String,String> overlayResources=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,Constants.PROCESS_CONTAINER_OVERLAY_RESOURCES_PID);
   if (overlayResources != null && !overlayResources.isEmpty()) {
     Set<Map.Entry<String,String>> entries=overlayResources.entrySet();
     for (    Map.Entry<String,String> entry : entries) {

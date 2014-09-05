@@ -7,7 +7,7 @@
   if (!configObject.isInternalAgent()) {
     Map<String,File> javaArtifacts=JavaContainers.getJavaContainerArtifactsFiles(fabricService,profiles,downloadExecutor);
     if (!javaArtifacts.isEmpty()) {
-      Map<String,String> contextPathConfiguration=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,ChildConstants.WEB_CONTEXT_PATHS_PID);
+      Map<String,String> contextPathConfiguration=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,Constants.WEB_CONTEXT_PATHS_PID);
       Map<String,String> locationToContextPathMap=new HashMap<String,String>();
       Set<String> locations=javaArtifacts.keySet();
       for (      String location : locations) {
@@ -30,7 +30,7 @@
         String groupIdAndArtifactId=contextPathEntry.getKey();
         String contextPath=contextPathEntry.getValue();
         if (!locationToContextPathMap.containsValue(contextPath)) {
-          LOG.warn("Properties file " + ChildConstants.WEB_CONTEXT_PATHS_PID + " for profile(s) "+ profileIds+ " has unmatched contextPath mapping to "+ contextPath+ " for group id and artifact id key "+ groupIdAndArtifactId+ " when has matched values: "+ locationToContextPathMap.values());
+          LOG.warn("Properties file " + Constants.WEB_CONTEXT_PATHS_PID + " for profile(s) "+ profileIds+ " has unmatched contextPath mapping to "+ contextPath+ " for group id and artifact id key "+ groupIdAndArtifactId+ " when has matched values: "+ locationToContextPathMap.values());
         }
       }
       answer=CompositeTask.combine(answer,new InstallDeploymentsTask(javaArtifacts,locationToContextPathMap));

@@ -12,7 +12,7 @@ synchronized (portLock) {
       }
       if (!usedPortByHost.contains(externalPortCounter)) {
         Container container=getFabricService().getCurrentContainer();
-        String pid=ChildConstants.PORTS_PID;
+        String pid=Constants.PORTS_PID;
         String key=containerId + "-" + portKey;
         getFabricService().getPortService().registerPort(container,pid,key,externalPortCounter);
         return externalPortCounter;

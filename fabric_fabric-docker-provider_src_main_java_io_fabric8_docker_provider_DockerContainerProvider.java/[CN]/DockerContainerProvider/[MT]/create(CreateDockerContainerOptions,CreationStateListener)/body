@@ -24,7 +24,7 @@
             configOverlay.putAll(dockerConfig);
           }
           if (ports == null || ports.size() == 0) {
-            ports=overlay.getConfiguration(ChildConstants.PORTS_PID);
+            ports=overlay.getConfiguration(Constants.PORTS_PID);
           }
         }
       }
@@ -45,9 +45,9 @@
       version=service.getRequiredDefaultVersion();
     }
     Profile dockerProfile=version.getRequiredProfile("docker");
-    ports=dockerProfile.getConfiguration(ChildConstants.PORTS_PID);
+    ports=dockerProfile.getConfiguration(Constants.PORTS_PID);
     if (ports == null || ports.size() == 0) {
-      LOG.warn("Could not a docker ports configuration for: " + ChildConstants.PORTS_PID);
+      LOG.warn("Could not a docker ports configuration for: " + Constants.PORTS_PID);
       ports=new HashMap<String,String>();
     }
   }
@@ -100,7 +100,7 @@
         port=Integer.parseInt(portText);
       }
  catch (      NumberFormatException e) {
-        LOG.warn("Ignoring bad port number for " + portName + " value '"+ portText+ "' in PID: "+ ChildConstants.PORTS_PID);
+        LOG.warn("Ignoring bad port number for " + portName + " value '"+ portText+ "' in PID: "+ Constants.PORTS_PID);
       }
       if (port != null) {
         sortedInternalPorts.put(port,portName);
@@ -114,7 +114,7 @@
   }
   String dockerHost=dockerFactory.getDockerHost();
   String jolokiaUrl=null;
-  Map<String,String> javaContainerConfig=Profiles.getOverlayConfiguration(service,profileIds,versionId,ChildConstants.JAVA_CONTAINER_PID);
+  Map<String,String> javaContainerConfig=Profiles.getOverlayConfiguration(service,profileIds,versionId,Constants.JAVA_CONTAINER_PID);
   JavaContainerConfig javaConfig=new JavaContainerConfig();
   configurer.configure(javaContainerConfig,javaConfig);
   boolean isJavaContainer=ChildContainers.isJavaContainer(getFabricService(),options);
