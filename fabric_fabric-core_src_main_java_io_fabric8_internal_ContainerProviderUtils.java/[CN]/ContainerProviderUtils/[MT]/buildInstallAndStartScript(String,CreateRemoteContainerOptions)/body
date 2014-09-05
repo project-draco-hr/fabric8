@@ -65,7 +65,7 @@
     lines.add(ZkDefs.MANUAL_IP + "=" + options.getManualIp());
   }
   appendFile(sb,"etc/system.properties",lines);
-  replaceLineInFile(sb,"etc/system.properties","karaf.name=root","karaf.name=" + name);
+  replaceLineInFile(sb,"etc/system.properties","karaf.name\\s*=\\s*root","karaf.name=" + name);
   for (  Map.Entry<String,String> entry : options.getDataStoreProperties().entrySet()) {
     String key=entry.getKey();
     String value=entry.getValue();
