@@ -2,7 +2,8 @@
   assertWriteLock();
   GitOperation<Version> gitop=new GitOperation<Version>(){
     public Version call(    Git git,    GitContext context) throws Exception {
-      return loadVersion(git,context,versionId);
+      String revision=git.getRepository().getRefDatabase().getRef(versionId).getObjectId().getName();
+      return loadVersion(git,context,versionId,revision);
     }
   }
 ;
