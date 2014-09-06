@@ -7,7 +7,9 @@
       Map<String,String> systemProperties=currentContainer.getOverlayProfile().getConfiguration(Constants.SYSTEM_PROPERTIES_PID);
       answer=systemProperties.get(SystemProperties.FABRIC_ENVIRONMENT);
     }
-    System.setProperty(SystemProperties.FABRIC_PROFILE_ENVIRONMENT,answer);
+    if (answer != null) {
+      System.setProperty(SystemProperties.FABRIC_PROFILE_ENVIRONMENT,answer);
+    }
   }
   return answer;
 }
