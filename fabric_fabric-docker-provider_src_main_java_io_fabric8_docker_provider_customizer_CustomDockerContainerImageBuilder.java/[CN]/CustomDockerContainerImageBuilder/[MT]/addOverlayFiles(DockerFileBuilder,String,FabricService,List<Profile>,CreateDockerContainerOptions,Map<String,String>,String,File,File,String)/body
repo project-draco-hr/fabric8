@@ -1,13 +1,12 @@
 {
   Set<String> profileIds=containerOptions.getProfiles();
   String versionId=containerOptions.getVersion();
-  String layout=javaConfig.getOverlayFolder();
   int overlays=0;
-  if (layout != null) {
+  if (profileOverlayFolder != null) {
     for (    Profile profile : profiles) {
-      Map<String,String> configuration=ProcessUtils.getProcessLayout(fabricService,profile,layout);
+      Map<String,String> configuration=ProcessUtils.getProcessLayout(fabricService,profile,profileOverlayFolder);
       if (configuration != null && !configuration.isEmpty()) {
-        String profileRestApi=restAPI + "/version/" + profile.getVersion()+ "/profile/"+ profile.getId()+ "/overlay/file/"+ layout+ (layout.endsWith("/") ? "" : "/");
+        String profileRestApi=restAPI + "/version/" + profile.getVersion()+ "/profile/"+ profile.getId()+ "/overlay/file/"+ profileOverlayFolder+ (profileOverlayFolder.endsWith("/") ? "" : "/");
         Map variables=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,Constants.TEMPLATE_VARIABLES_PID);
         if (variables == null) {
           variables=new HashMap();
