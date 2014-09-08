@@ -1,5 +1,7 @@
 {
   boolean locked=readWriteLock.getReadHoldCount() > 0 || readWriteLock.isWriteLockedByCurrentThread();
   IllegalStateAssertion.assertTrue(!strictLockAssert || locked,"No read lock obtained");
-  if (!locked)   LOGGER.warn("No read lock obtained");
+  if (!locked) {
+    LOGGER.warn("No read lock obtained");
+  }
 }
