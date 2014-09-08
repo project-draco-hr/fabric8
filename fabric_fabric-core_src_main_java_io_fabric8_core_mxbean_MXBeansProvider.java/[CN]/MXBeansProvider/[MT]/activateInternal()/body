@@ -1,0 +1,10 @@
+{
+  MBeanServer server=mbeanServer.get();
+  try {
+    ProfilesManager profileMXBean=new ProfilesManagerImpl();
+    server.registerMBean(new StandardMBean(profileMXBean,ProfilesManager.class,false),ProfilesManager.OBJECT_NAME);
+  }
+ catch (  JMException ex) {
+    throw new IllegalStateException(ex);
+  }
+}
