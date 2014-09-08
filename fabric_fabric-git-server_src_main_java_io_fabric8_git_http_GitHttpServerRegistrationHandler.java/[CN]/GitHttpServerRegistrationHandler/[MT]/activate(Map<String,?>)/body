@@ -1,8 +1,8 @@
 {
   RuntimeProperties sysprops=runtimeProperties.get();
-  String realm=getConfiguredRealm(sysprops,configuration);
-  String role=getConfiguredRole(sysprops,configuration);
-  registerServlet(sysprops.getDataPath(),realm,role);
+  realm=getConfiguredRealm(sysprops,configuration);
+  role=getConfiguredRole(sysprops,configuration);
+  dataPath=sysprops.getDataPath();
   activateComponent();
   group=new ZooKeeperGroup<GitNode>(curator.get(),ZkPath.GIT.getPath(),GitNode.class);
   group.add(this);
