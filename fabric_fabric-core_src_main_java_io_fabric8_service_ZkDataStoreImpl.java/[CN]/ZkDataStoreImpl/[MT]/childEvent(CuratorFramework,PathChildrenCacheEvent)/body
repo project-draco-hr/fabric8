@@ -1,12 +1,14 @@
 {
   if (isValid()) {
-switch (event.getType()) {
+    String path=event.getData().getPath();
+    PathChildrenCacheEvent.Type type=event.getType();
+switch (type) {
 case CHILD_ADDED:
 case CHILD_REMOVED:
 case CHILD_UPDATED:
 case INITIALIZED:
-      if (shouldRunCallbacks(event.getData().getPath())) {
-        LOGGER.info("Event {} detected on {} with data {}. Sending notification.",event.getType().name(),event.getData().getPath(),new String(event.getData().getData(),"UTF-8"));
+      if (shouldRunCallbacks(type,path)) {
+        LOGGER.info("Event {} detected on {} with data {}. Sending notification.",type.name(),path,new String(event.getData().getData(),"UTF-8"));
         fireChangeNotifications();
       }
     break;

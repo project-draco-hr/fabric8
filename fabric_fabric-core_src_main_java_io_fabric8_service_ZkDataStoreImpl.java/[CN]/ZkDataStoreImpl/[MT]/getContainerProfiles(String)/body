@@ -3,9 +3,9 @@
   try {
     String str=null;
     if (Strings.isNotBlank(containerId)) {
-      String versionId=getStringData(treeCache,ZkPath.CONFIG_CONTAINER.getPath(containerId));
+      String versionId=getStringData(configCache,ZkPath.CONFIG_CONTAINER.getPath(containerId));
       if (Strings.isNotBlank(versionId)) {
-        str=getStringData(treeCache,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId));
+        str=getStringData(configCache,ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(versionId,containerId));
       }
     }
     return str == null || str.isEmpty() ? Collections.<String>emptyList() : Arrays.asList(str.trim().split(" +"));
