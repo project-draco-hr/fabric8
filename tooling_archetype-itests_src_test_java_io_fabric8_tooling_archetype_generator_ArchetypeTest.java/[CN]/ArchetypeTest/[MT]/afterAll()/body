@@ -1,17 +1,31 @@
 {
   final int[] resultPointer=new int[1];
+  StringWriter sw=new StringWriter();
+  Set<String> modules=new HashSet<String>();
   for (  final String outDir : outDirs) {
-    Thread t=new Thread(new Runnable(){
-      @Override public void run(){
-        System.out.println("Invoking project in " + outDir);
-        MavenCli maven=new MavenCli();
-        resultPointer[0]=maven.doMain(new String[]{"package"},outDir,System.out,System.out);
-        System.out.println("result: " + resultPointer[0]);
-      }
+    String module=new File(outDir).getName();
+    if (modules.add(module)) {
+      sw.append(String.format("        <module>%s</module>\n",module));
     }
-);
-    t.start();
-    t.join();
-    assertEquals("Build of project " + outDir + " failed. Result = "+ resultPointer[0],0,resultPointer[0]);
   }
+  sw.close();
+  ByteArrayOutputStream baos=new ByteArrayOutputStream();
+  IOUtils.copy(ArchetypeTest.class.getResourceAsStream("/archetypes-test-pom.xml"),baos);
+  String pom=new String(baos.toByteArray()).replace("        <!-- to be replaced -->",sw.toString());
+  FileWriter modulePom=new FileWriter("target/archetypes-test-pom.xml");
+  IOUtils.copy(new StringReader(pom),modulePom);
+  modulePom.close();
+  final String outDir=new File("target").getCanonicalPath();
+  Thread t=new Thread(new Runnable(){
+    @Override public void run(){
+      System.out.println("Invoking projects in " + outDir);
+      MavenCli maven=new MavenCli();
+      resultPointer[0]=maven.doMain(new String[]{"package","-f","archetypes-test-pom.xml"},outDir,System.out,System.out);
+      System.out.println("result: " + resultPointer[0]);
+    }
+  }
+);
+  t.start();
+  t.join();
+  assertEquals("Build of project " + outDir + " failed. Result = "+ resultPointer[0],0,resultPointer[0]);
 }
