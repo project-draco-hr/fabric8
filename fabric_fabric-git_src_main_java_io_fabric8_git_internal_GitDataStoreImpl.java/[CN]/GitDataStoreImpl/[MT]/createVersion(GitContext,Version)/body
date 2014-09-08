@@ -1,0 +1,27 @@
+{
+  IllegalStateAssertion.assertNotNull(version,"version");
+  LockHandle writeLock=aquireWriteLock();
+  try {
+    assertValid();
+    LOGGER.debug("Create version: {}",version);
+    GitOperation<String> gitop=new GitOperation<String>(){
+      public String call(      Git git,      GitContext context) throws Exception {
+        String versionId=version.getId();
+        IllegalStateAssertion.assertNull(checkoutProfileBranch(git,context,versionId,null),"Version already exists: " + versionId);
+        GitHelpers.checkoutTag(git,GitHelpers.ROOT_TAG);
+        createOrCheckoutVersion(git,version.getId());
+        setVersionAttributes(git,context,versionId,version.getAttributes());
+        context.commitMessage("Create version: " + version);
+        for (        Profile profile : version.getProfiles()) {
+          createOrUpdateProfile(context,null,profile,new HashSet<String>());
+        }
+        return versionId;
+      }
+    }
+;
+    return executeInternal(context,null,gitop);
+  }
+  finally {
+    writeLock.unlock();
+  }
+}

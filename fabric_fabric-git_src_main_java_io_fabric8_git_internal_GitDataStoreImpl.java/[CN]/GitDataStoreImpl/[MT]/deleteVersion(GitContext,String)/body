@@ -1,0 +1,20 @@
+{
+  IllegalStateAssertion.assertNotNull(versionId,"versionId");
+  LockHandle writeLock=aquireWriteLock();
+  try {
+    assertValid();
+    LOGGER.debug("Delete version: " + versionId);
+    GitOperation<Void> gitop=new GitOperation<Void>(){
+      public Void call(      Git git,      GitContext context) throws Exception {
+        removeVersionFromCaches(versionId);
+        GitHelpers.removeBranch(git,versionId);
+        return null;
+      }
+    }
+;
+    executeInternal(context,null,gitop);
+  }
+  finally {
+    writeLock.unlock();
+  }
+}

@@ -1,0 +1,18 @@
+{
+  LockHandle readLock=aquireReadLock();
+  try {
+    assertValid();
+    GitOperation<List<String>> gitop=new GitOperation<List<String>>(){
+      public List<String> call(      Git git,      GitContext context) throws Exception {
+        List<String> result=new ArrayList<>(versions);
+        Collections.sort(result,VersionSequence.getComparator());
+        return Collections.unmodifiableList(result);
+      }
+    }
+;
+    return executeInternal(context,null,gitop);
+  }
+  finally {
+    readLock.unlock();
+  }
+}

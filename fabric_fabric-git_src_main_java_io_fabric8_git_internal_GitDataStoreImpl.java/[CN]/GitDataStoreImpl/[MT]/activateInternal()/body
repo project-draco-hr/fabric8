@@ -41,11 +41,16 @@
     }
     @Override public void stateChanged(    CuratorFramework curatorFramework,    ConnectionState connectionState){
 switch (connectionState) {
+case SUSPENDED:
+case READ_ONLY:
+case LOST:
+        break;
 case CONNECTED:
 case RECONNECTED:
-        LOGGER.info("Shared Counter (Re)connected, doing a pull");
-      doPullInternal();
-  }
+      LOGGER.info("Shared Counter (Re)connected, doing a pull");
+    doPullInternal();
+  break;
+}
 }
 }
 );

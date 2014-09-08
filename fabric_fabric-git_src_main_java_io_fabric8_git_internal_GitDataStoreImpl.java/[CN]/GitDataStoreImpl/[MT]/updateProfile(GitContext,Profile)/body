@@ -1,0 +1,28 @@
+{
+  IllegalStateAssertion.assertNotNull(profile,"profile");
+  assertNoParentProfilesWithMasterBranch(profile);
+  LockHandle writeLock=aquireWriteLock();
+  try {
+    assertValid();
+    final String versionId=profile.getVersion();
+    final String profileId=profile.getId();
+    final Profile lastProfile=getRequiredProfile(versionId,profileId);
+    if (!lastProfile.equals(profile)) {
+      GitOperation<String> gitop=new GitOperation<String>(){
+        public String call(        Git git,        GitContext context) throws Exception {
+          checkoutRequiredProfileBranch(git,context,versionId,profileId);
+          return createOrUpdateProfile(context,lastProfile,profile,new HashSet<String>());
+        }
+      }
+;
+      return executeInternal(context,null,gitop);
+    }
+ else {
+      LOGGER.debug("Skip unchanged profile update for: {}",profile);
+      return lastProfile.getId();
+    }
+  }
+  finally {
+    writeLock.unlock();
+  }
+}

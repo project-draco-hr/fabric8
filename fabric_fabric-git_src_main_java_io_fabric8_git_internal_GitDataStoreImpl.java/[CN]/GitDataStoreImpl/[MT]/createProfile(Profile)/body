@@ -1,23 +1,3 @@
 {
-  IllegalStateAssertion.assertNotNull(profile,"profile");
-  assertNoParentProfilesWithMasterBranch(profile);
-  LockHandle writeLock=aquireWriteLock();
-  try {
-    assertValid();
-    GitOperation<String> gitop=new GitOperation<String>(){
-      public String call(      Git git,      GitContext context) throws Exception {
-        String versionId=profile.getVersion();
-        String profileId=profile.getId();
-        Version version=getRequiredVersion(versionId);
-        IllegalStateAssertion.assertFalse(version.hasProfile(profileId),"Profile already exists: " + profileId);
-        checkoutRequiredProfileBranch(git,context,versionId,profileId);
-        return createOrUpdateProfile(context,null,profile,new HashSet<String>());
-      }
-    }
-;
-    return executeWrite(gitop);
-  }
-  finally {
-    writeLock.unlock();
-  }
+  return createProfile(newGitWriteContext(),profile);
 }

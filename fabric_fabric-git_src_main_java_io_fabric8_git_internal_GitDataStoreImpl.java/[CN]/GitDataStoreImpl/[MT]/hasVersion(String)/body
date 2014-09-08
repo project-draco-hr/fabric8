@@ -1,17 +1,3 @@
 {
-  IllegalStateAssertion.assertNotNull(versionId,"versionId");
-  LockHandle readLock=aquireReadLock();
-  try {
-    assertValid();
-    GitOperation<Boolean> gitop=new GitOperation<Boolean>(){
-      public Boolean call(      Git git,      GitContext context) throws Exception {
-        return versions.contains(versionId);
-      }
-    }
-;
-    return executeRead(gitop);
-  }
-  finally {
-    readLock.unlock();
-  }
+  return hasVersion(newGitReadContext(),versionId);
 }
