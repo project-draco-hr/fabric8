@@ -11,12 +11,13 @@
   }
   new Thread("system command output processor"){
     @Override public void run(){
-      StringBuffer buffer=new StringBuffer();
       BufferedReader reader=new BufferedReader(new InputStreamReader(process.getInputStream(),Charsets.UTF_8));
       try {
         while (true) {
           String line=reader.readLine();
-          if (line == null)           break;
+          if (line == null) {
+            break;
+          }
           LOG.info(String.format("%s: %s",args[0],line));
         }
       }

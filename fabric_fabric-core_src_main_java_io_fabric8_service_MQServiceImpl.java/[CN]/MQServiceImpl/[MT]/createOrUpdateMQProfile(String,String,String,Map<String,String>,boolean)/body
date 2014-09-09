@@ -8,13 +8,18 @@
     parentProfileName=replicated ? MQ_PROFILE_REPLICATED : MQ_PROFILE_BASE;
   }
   Profile parentProfile=version.getRequiredProfile(parentProfileName);
-  if (brokerName == null || profileId == null)   return parentProfile;
+  if (brokerName == null || profileId == null) {
+    return parentProfile;
+  }
   String pidName=getBrokerPID(brokerName);
   ProfileBuilder builder;
   Map<String,String> config=null;
   boolean create=!version.hasProfile(profileId);
   if (create) {
     builder=ProfileBuilder.Factory.create(versionId,profileId);
+    if (parentProfile != null) {
+      builder.addParent(parentProfile);
+    }
   }
  else {
     Profile profile=version.getRequiredProfile(profileId);
@@ -25,7 +30,7 @@
   if (config == null) {
     config=new HashMap<>(parentProfileConfig);
   }
-  if ("true".equals(configs.get("ssl"))) {
+  if (configs != null && "true".equals(configs.get("ssl"))) {
     byte[] keystore=builder.getFileConfiguration("keystore.jks");
     if (keystore == null) {
       try {
@@ -91,7 +96,7 @@
         configs.put("truststore.file","profile:truststore.jks");
       }
  catch (      IOException e) {
-        LOG.info("Failed to generate truststore.jks: " + e,e);
+        LOG.info("Failed to generate truststore.jks due: " + e.getMessage(),e);
       }
     }
   }
