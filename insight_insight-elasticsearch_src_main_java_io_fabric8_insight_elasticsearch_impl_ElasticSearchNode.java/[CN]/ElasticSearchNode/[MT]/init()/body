@@ -1,0 +1,7 @@
+{
+  FabricService fs=fabricService.get();
+  Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+  Settings settings=ImmutableSettings.settingsBuilder().put("discovery.enabled",true).put("discovery.type",ZooKeeperDiscoveryModule.class).put("sonian.elasticsearch.zookeeper.client.host",fs.getZookeeperUrl()).put("sonian.elasticsearch.zookeeper.client.username",fs.getZooKeeperUser()).put("sonian.elasticsearch.zookeeper.client.username",fs.getZookeeperPassword()).put("sonian.elasticsearch.zookeeper.discovery.state_publishing.enabled",true).build();
+  nodeDelegate=nodeBuilder().data(dataEnabled).client(!dataEnabled).clusterName(clusterName).settings(settings).node();
+  nodeDelegate.start();
+}
