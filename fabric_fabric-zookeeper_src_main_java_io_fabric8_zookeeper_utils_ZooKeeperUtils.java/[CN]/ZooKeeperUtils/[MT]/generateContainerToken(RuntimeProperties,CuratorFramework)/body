@@ -16,7 +16,10 @@
       lastTokenGenerationTime=time;
     }
   }
- catch (  RuntimeException rte) {
+ catch (  KeeperException.NotReadOnlyException e) {
+    throw new FabricException("ZooKeeper server is partitioned. Currently working in read-only mode!");
+  }
+catch (  RuntimeException rte) {
     throw rte;
   }
 catch (  Exception ex) {

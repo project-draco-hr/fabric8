@@ -1,5 +1,5 @@
 {
-  CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().ensembleProvider(new FixedEnsembleProvider(curatorConfig.getZookeeperUrl())).connectionTimeoutMs(curatorConfig.getZookeeperConnectionTimeOut()).sessionTimeoutMs(curatorConfig.getZookeeperSessionTimeout()).retryPolicy(new RetryNTimes(curatorConfig.getZookeeperRetryMax(),curatorConfig.getZookeeperRetryInterval()));
+  CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().canBeReadOnly(true).ensembleProvider(new FixedEnsembleProvider(curatorConfig.getZookeeperUrl())).connectionTimeoutMs(curatorConfig.getZookeeperConnectionTimeOut()).sessionTimeoutMs(curatorConfig.getZookeeperSessionTimeout()).retryPolicy(new RetryNTimes(curatorConfig.getZookeeperRetryMax(),curatorConfig.getZookeeperRetryInterval()));
   if (!Strings.isNullOrEmpty(curatorConfig.getZookeeperPassword())) {
     String scheme="digest";
     byte[] auth=("fabric:" + PasswordEncoder.decode(curatorConfig.getZookeeperPassword())).getBytes();
