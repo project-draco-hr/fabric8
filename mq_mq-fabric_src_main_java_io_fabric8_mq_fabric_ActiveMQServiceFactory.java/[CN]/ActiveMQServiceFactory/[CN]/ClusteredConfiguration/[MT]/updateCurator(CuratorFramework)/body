@@ -42,6 +42,12 @@ synchronized (this) {
                         started.set(false);
                       }
                     }
+ else {
+                      if (discoveryAgent.getServices().isEmpty()) {
+                        info("Reconnected to the group",name);
+                        registerConnectors();
+                      }
+                    }
                   }
  else {
                     if (started.compareAndSet(true,false)) {

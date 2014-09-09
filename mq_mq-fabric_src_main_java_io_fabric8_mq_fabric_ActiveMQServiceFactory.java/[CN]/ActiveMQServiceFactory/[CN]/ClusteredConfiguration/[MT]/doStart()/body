@@ -51,18 +51,8 @@
   if (replicating) {
     discoveryAgent.start();
   }
-  List<String> services=new LinkedList<String>();
   if (!standalone || replicating) {
-    for (    String name : connectors) {
-      TransportConnector connector=server.getBroker().getConnectorByName(name);
-      if (connector == null) {
-        warn("ActiveMQ broker '%s' does not have a connector called '%s'",name,name);
-      }
- else {
-        services.add(connector.getConnectUri().getScheme() + "://${zk:" + System.getProperty("runtime.id")+ "/ip}:"+ connector.getPublishableConnectURI().getPort());
-      }
-    }
-    discoveryAgent.setServices(services.toArray(new String[services.size()]));
+    registerConnectors();
   }
   if (registerService) {
     osgiRegister(server.getBroker());
