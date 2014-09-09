@@ -11,7 +11,7 @@
   }
   new Thread("system command output processor"){
     @Override public void run(){
-      BufferedReader reader=new BufferedReader(new InputStreamReader(process.getInputStream(),Charsets.UTF_8));
+      BufferedReader reader=new BufferedReader(new InputStreamReader(process.getInputStream(),Charset.forName("UTF-8")));
       try {
         while (true) {
           String line=reader.readLine();
@@ -24,7 +24,7 @@
  catch (      IOException e) {
       }
  finally {
-        Closeables.closeQuietly(reader);
+        IOHelpers.close(reader);
       }
     }
   }
