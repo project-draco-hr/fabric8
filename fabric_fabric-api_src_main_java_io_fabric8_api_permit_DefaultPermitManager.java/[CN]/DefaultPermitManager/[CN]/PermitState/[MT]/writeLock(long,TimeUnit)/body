@@ -1,0 +1,10 @@
+{
+  WriteLock lock=rwlock.writeLock();
+  try {
+    if (!lock.tryLock() && !lock.tryLock(timeout,unit))     throw new PermitStateTimeoutException("Cannot aquire write lock for [" + key.getName() + "] in time",key,timeout,unit);
+  }
+ catch (  InterruptedException ex) {
+    throw new IllegalStateException(ex);
+  }
+  return lock;
+}

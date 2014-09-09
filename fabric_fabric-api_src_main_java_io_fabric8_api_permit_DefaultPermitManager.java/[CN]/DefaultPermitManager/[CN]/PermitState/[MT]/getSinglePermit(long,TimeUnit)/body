@@ -1,0 +1,10 @@
+{
+  try {
+    if (!semaphore.tryAcquire(timeout,unit)) {
+      throw new PermitStateTimeoutException("Cannot aquire permit for [" + key.getName() + "] in time",key,timeout,unit);
+    }
+  }
+ catch (  InterruptedException ex) {
+    throw new IllegalStateException(ex);
+  }
+}

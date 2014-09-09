@@ -1,0 +1,10 @@
+{
+  Permit<ProfileService> permit=permitManager.get().aquirePermit(ProfileService.PERMIT,false);
+  try {
+    ProfileService service=permit.getInstance();
+    return service.createVersion(version);
+  }
+  finally {
+    permit.release();
+  }
+}

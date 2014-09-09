@@ -1,0 +1,11 @@
+{
+  IllegalArgumentAssertion.assertNotNull(key,"key");
+synchronized (permits) {
+    PermitState<?> permitState=permits.get(key);
+    if (permitState == null) {
+      permitState=new PermitState<T>(key);
+      permits.put(key,permitState);
+    }
+    return (PermitState<T>)permitState;
+  }
+}
