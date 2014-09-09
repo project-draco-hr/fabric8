@@ -1,5 +1,9 @@
 {
-  httpService.get().unregister("/git");
-  git.getRepository().close();
-  Files.recursiveDelete(basePath.toFile());
+synchronized (gitRemoteUrl) {
+    if (basePath != null) {
+      httpService.get().unregister("/git");
+      git.getRepository().close();
+      Files.recursiveDelete(basePath.toFile());
+    }
+  }
 }

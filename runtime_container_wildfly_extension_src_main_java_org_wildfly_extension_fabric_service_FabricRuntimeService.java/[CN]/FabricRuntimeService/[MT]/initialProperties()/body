@@ -1,0 +1,8 @@
+{
+  ServerEnvironment serverEnv=getServerEnvironment();
+  File configsDir=new File(serverEnv.getServerConfigurationDir(),"fabric8" + File.separator + "etc");
+  Properties properties=super.initialProperties();
+  properties.setProperty(Constants.RUNTIME_CONFIGURATIONS_DIR,configsDir.getAbsolutePath());
+  properties.setProperty("org.osgi.service.http.port","8080");
+  return properties;
+}

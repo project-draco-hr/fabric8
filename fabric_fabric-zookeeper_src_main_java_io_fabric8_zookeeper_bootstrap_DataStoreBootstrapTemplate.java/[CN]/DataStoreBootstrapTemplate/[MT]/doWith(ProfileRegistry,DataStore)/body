@@ -18,7 +18,12 @@
         importPath=new File(homeDir,options.getImportPath());
       }
       if (options.isAutoImportEnabled()) {
-        profileRegistry.importFromFileSystem(importPath.getAbsolutePath());
+        if (importPath.isDirectory()) {
+          profileRegistry.importFromFileSystem(importPath.getAbsolutePath());
+        }
+ else {
+          LOGGER.warn("Profile import dir does not exist: {}",importPath);
+        }
       }
       ZooKeeperUtils.setData(curator,ZkPath.CONFIG_DEFAULT_VERSION.getPath(),versionId);
       Map<String,String> jaasConfig=Collections.singletonMap("encryption.enabled","${zk:/fabric/authentication/encryption.enabled}");
@@ -27,10 +32,18 @@
       zkProps.setProperty("zookeeper.password","${zk:" + ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath() + "}");
       Profile defaultProfile=profileRegistry.getProfile(versionId,"default");
       if (defaultProfile == null) {
-        ProfileBuilder builder=ProfileBuilder.Factory.create(versionId,"default");
-        builder.addConfiguration("io.fabric8.jaas",jaasConfig);
-        builder.addFileConfiguration("io.fabric8.zookeeper.properties",DataStoreUtils.toBytes(zkProps));
-        profileRegistry.createProfile(builder.getProfile());
+        ProfileBuilder prfBuilder=ProfileBuilder.Factory.create(versionId,"default");
+        prfBuilder.addConfiguration("io.fabric8.jaas",jaasConfig);
+        prfBuilder.addFileConfiguration("io.fabric8.zookeeper.properties",DataStoreUtils.toBytes(zkProps));
+        Profile profile=prfBuilder.getProfile();
+        if (profileRegistry.hasVersion(versionId)) {
+          profileRegistry.createProfile(profile);
+        }
+ else {
+          VersionBuilder verBuilder=VersionBuilder.Factory.create(versionId);
+          Version version=verBuilder.addProfile(profile).getVersion();
+          profileRegistry.createVersion(version);
+        }
       }
  else {
         ProfileBuilder builder=ProfileBuilder.Factory.createFrom(defaultProfile);

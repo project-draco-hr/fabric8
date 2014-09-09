@@ -12,7 +12,7 @@
     bootProperties=new Hashtable<>();
   }
   String runtimeIdentity=runtimeProperties.getRuntimeIdentity();
-  CreateEnsembleOptions.Builder builder=CreateEnsembleOptions.builder().zooKeeperServerTickTime(zooKeeperTickTime).zooKeeperServerInitLimit(zooKeeperInitLimit).zooKeeperServerSyncLimit(zooKeeperSyncLimit).zooKeeperServerDataDir(zooKeeperDataDir).fromRuntimeProperties(runtimeProperties).bootstrapTimeout(bootstrapTimeout).waitForProvision(waitForProvisioning).clean(clean);
+  CreateEnsembleOptions.Builder<?> builder=CreateEnsembleOptions.builder().zooKeeperServerTickTime(zooKeeperTickTime).zooKeeperServerInitLimit(zooKeeperInitLimit).zooKeeperServerSyncLimit(zooKeeperSyncLimit).zooKeeperServerDataDir(zooKeeperDataDir).fromRuntimeProperties(runtimeProperties).bootstrapTimeout(bootstrapTimeout).waitForProvision(waitForProvisioning).clean(clean);
   builder.version(version);
   if (containers == null || containers.isEmpty()) {
     containers=Arrays.asList(runtimeIdentity);
@@ -73,8 +73,8 @@
   bootProperties.put(ZkDefs.MAXIMUM_PORT,String.valueOf(maximumPort));
   newUser=newUser != null ? newUser : ShellUtils.retrieveFabricUser(session);
   newUserPassword=newUserPassword != null ? newUserPassword : ShellUtils.retrieveFabricUserPassword(session);
-  String karafEtc=runtimeProperties.getProperty(SystemProperties.KARAF_ETC);
-  Properties userProps=new Properties(new File(karafEtc,"users.properties"));
+  Path propsPath=runtimeProperties.getConfPath().resolve("users.properties");
+  Properties userProps=new Properties(propsPath.toFile());
   if (userProps.isEmpty()) {
     String[] credentials=promptForNewUser(newUser,newUserPassword);
     newUser=credentials[0];

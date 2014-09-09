@@ -33,6 +33,7 @@
 catch (  Exception ex) {
     throw new StartException(ex);
   }
+  graviaBootstrap.installGraviaServices(startContext,runtime);
   try {
     if (!latch.await(5,TimeUnit.SECONDS)) {
       throw new StartException("Cannot obtain ZooKeeperClusterBootstrap");

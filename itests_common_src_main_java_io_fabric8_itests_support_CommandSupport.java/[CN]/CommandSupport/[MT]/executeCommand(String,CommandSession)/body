@@ -1,8 +1,8 @@
 {
   LOGGER.info(cmdstr);
-  Bundle bundle=FrameworkUtil.getBundle(CommandSupport.class);
-  BundleContext context=bundle.getBundleContext();
-  ServiceRegistration<CommandSession> reg=context.registerService(CommandSession.class,commandSession,null);
+  Runtime runtime=RuntimeLocator.getRequiredRuntime();
+  Module module=runtime.getModule(CommandSupport.class.getClassLoader());
+  ServiceRegistration<CommandSession> reg=module.getModuleContext().registerService(CommandSession.class,commandSession,null);
   try {
     List<String> tokens=Arrays.asList(cmdstr.split("\\s"));
     String[] header=tokens.get(0).split(":");
@@ -10,6 +10,8 @@
     String filter="(&(osgi.command.scope=" + header[0] + ")(osgi.command.function="+ header[1]+ "))";
     AbstractCommand command=(AbstractCommand)ServiceLocator.awaitService(Function.class,filter);
     commandSession.put(AbstractCommand.class.getName(),command);
+    Class<?> actionClass=command.getActionClass();
+    LOGGER.debug("Using action: {} from {}",actionClass,actionClass.getClassLoader());
     boolean keepRunning=true;
     while (!Thread.currentThread().isInterrupted() && keepRunning) {
       try {
