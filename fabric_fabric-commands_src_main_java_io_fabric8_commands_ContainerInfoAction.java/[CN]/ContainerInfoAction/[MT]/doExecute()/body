@@ -10,6 +10,9 @@
   System.out.println(String.format(FORMAT,"Version:",container.getVersionId()));
   System.out.println(String.format(FORMAT,"Connected:",container.isAlive()));
   System.out.println(String.format(FORMAT,"Type:",emptyIfNull(container.getType())));
+  System.out.println(String.format(FORMAT,"Root:",container.isRoot()));
+  System.out.println(String.format(FORMAT,"Ensemble Server:",container.isEnsembleServer()));
+  System.out.println(String.format(FORMAT,"Managed:",container.isManaged()));
   Long processId=container.getProcessId();
   System.out.println(String.format(FORMAT,"Process ID:",((processId != null) ? processId.toString() : "")));
   if (Strings.isNotBlank(container.getLocation())) {
@@ -29,14 +32,30 @@
   if (Strings.isNotBlank(debugPort)) {
     System.out.println(String.format(FORMAT,"Debug Port:",debugPort));
   }
-  Profile[] profiles=container.getProfiles();
-  for (int i=0; i < profiles.length; i++) {
-    String id=profiles[i].getId();
-    if (i == 0) {
-      System.out.println(String.format(FORMAT,"Profiles:",id));
-    }
+  if (verbose != null && verbose) {
+    Profile[] profiles=container.getProfiles();
+    for (int i=0; i < profiles.length; i++) {
+      String id=profiles[i].getId();
+      if (i == 0) {
+        System.out.println(String.format(FORMAT,"Profiles:",id));
+      }
  else {
-      System.out.println(String.format(FORMAT,"",id));
+        System.out.println(String.format(FORMAT,"",id));
+      }
+    }
+    Container parent=container.getParent();
+    if (parent != null) {
+      System.out.println(String.format(FORMAT,"Parent:",parent.getId()));
+    }
+    Container[] children=container.getChildren();
+    for (int i=0; i < children.length; i++) {
+      String id=children[i].getId();
+      if (i == 0) {
+        System.out.println(String.format(FORMAT,"Children:",id));
+      }
+ else {
+        System.out.println(String.format(FORMAT,"",id));
+      }
     }
   }
   String blueprintStatus=dataStore.getContainerAttribute(containerName,DataStore.ContainerAttribute.BlueprintStatus,"",false,false);
