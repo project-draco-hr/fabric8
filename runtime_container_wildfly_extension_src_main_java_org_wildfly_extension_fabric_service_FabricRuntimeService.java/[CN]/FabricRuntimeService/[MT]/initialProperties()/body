@@ -1,8 +1,9 @@
 {
-  ServerEnvironment serverEnv=getServerEnvironment();
-  File configsDir=new File(serverEnv.getServerConfigurationDir(),"fabric8" + File.separator + "etc");
   Properties properties=super.initialProperties();
-  properties.setProperty(Constants.RUNTIME_CONFIGURATIONS_DIR,configsDir.getAbsolutePath());
+  ServerEnvironment serverEnv=getServerEnvironment();
+  File configurationDir=serverEnv.getServerConfigurationDir();
+  Path configsPath=Paths.get(configurationDir.toURI()).resolve(Paths.get("fabric8","etc"));
+  properties.setProperty(Constants.RUNTIME_CONFIGURATIONS_DIR,configsPath.toString());
   properties.setProperty("org.osgi.service.http.port","8080");
   return properties;
 }

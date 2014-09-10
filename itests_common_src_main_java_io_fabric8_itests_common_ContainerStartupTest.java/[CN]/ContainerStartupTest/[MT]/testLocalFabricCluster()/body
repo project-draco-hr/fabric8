@@ -1,5 +1,5 @@
 {
-  Builder<?> builder=CreateEnsembleOptions.builder().agentEnabled(false).clean(true).zookeeperPassword(SYSTEM_PASSWORD).waitForProvision(false);
+  Builder<?> builder=CreateEnsembleOptions.builder().agentEnabled(false).clean(true).zookeeperPassword(ADMIN_PASSWORD).waitForProvision(false);
   CreateEnsembleOptions options=builder.build();
   ZooKeeperClusterBootstrap bootstrap=ServiceLocator.getRequiredService(ZooKeeperClusterBootstrap.class);
   bootstrap.create(options);
@@ -9,5 +9,5 @@
   ConfigurationAdmin configurationAdmin=ServiceLocator.getRequiredService(ConfigurationAdmin.class);
   org.osgi.service.cm.Configuration configuration=configurationAdmin.getConfiguration(io.fabric8.api.Constants.ZOOKEEPER_CLIENT_PID);
   Dictionary<String,Object> dictionary=configuration.getProperties();
-  Assert.assertEquals("Expected provided zookeeper password",PasswordEncoder.encode(SYSTEM_PASSWORD),dictionary.get("zookeeper.password"));
+  Assert.assertEquals("Expected provided zookeeper password",PasswordEncoder.encode(ADMIN_PASSWORD),dictionary.get("zookeeper.password"));
 }
