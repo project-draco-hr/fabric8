@@ -29,7 +29,7 @@
       setData(curator.get(),CONTAINER_PUBLIC_IP.getPath(runtimeIdentity),System.getenv("OPENSHIFT_AMQ_IP"));
     }
     for (    String resolver : ZkDefs.VALID_RESOLVERS) {
-      String address=String.valueOf(bootstrapConfiguration.get().getConfiguration().get(resolver));
+      String address=(String)bootstrapConfiguration.get().getConfiguration().get(resolver);
       if (address != null && !address.isEmpty() && exists(curator.get(),CONTAINER_ADDRESS.getPath(runtimeIdentity,resolver)) == null) {
         setData(curator.get(),CONTAINER_ADDRESS.getPath(runtimeIdentity,resolver),address);
       }
