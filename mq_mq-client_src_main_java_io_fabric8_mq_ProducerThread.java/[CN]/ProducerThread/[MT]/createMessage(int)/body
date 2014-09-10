@@ -1,8 +1,29 @@
 {
+  Message message=null;
   if (payload != null) {
-    return service.createBytesMessage(payload);
+    message=service.createBytesMessage(payload);
   }
  else {
-    return service.createTextMessage("test message: " + i);
+    if (textMessageSize == null) {
+      message=service.createTextMessage("test message: " + i);
+    }
+ else {
+      if (sizeTypes.contains(textMessageSize)) {
+        if (textMessageSize.equals("100b")) {
+          message=service.createTextMessage(i + "::" + dummy100bMessage());
+        }
+ else         if (textMessageSize.equals("1K")) {
+          message=service.createTextMessage(i + "::" + dummy1KMessage());
+        }
+ else         if (textMessageSize.equals("10K")) {
+          message=service.createTextMessage(i + "::" + dummy10KMessage());
+        }
+      }
+ else {
+        LOG.info("Type size unknown : " + textMessageSize + ", we will use a text message of 100b");
+        message=service.createTextMessage(i + "::" + dummy100bMessage());
+      }
+    }
   }
+  return message;
 }

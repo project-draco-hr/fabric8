@@ -6,6 +6,8 @@
     producer.setTimeToLive(msgTTL);
     initPayLoad();
     running=true;
+    LOG.info("\nStarted to calculate elapsed time ...\n");
+    long tStart=System.currentTimeMillis();
     for (sentCount=0; sentCount < messageCount; sentCount++) {
       if (!running)       break;
       Message message=createMessage(sentCount);
@@ -20,6 +22,10 @@
         Thread.sleep(sleep);
       }
     }
+    long tEnd=System.currentTimeMillis();
+    long elapsed=(tEnd - tStart) / 1000;
+    LOG.info("\nElapsed time in second : " + elapsed + "s\n");
+    LOG.info("\nElapsed time in milli second : " + (tEnd - tStart) + "milli seconds\n");
   }
  catch (  Exception e) {
     e.printStackTrace();
