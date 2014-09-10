@@ -20,6 +20,9 @@
   if ((startDelim < 0) || (stopDelim < 0)) {
     return unescape(val);
   }
+  if (startDelim >= stopDelim) {
+    return unescape(val);
+  }
   String variable=val.substring(startDelim + DELIM_START.length(),stopDelim);
   if (cycleMap.get(variable) != null) {
     throw new IllegalArgumentException("recursive variable reference: " + variable);
