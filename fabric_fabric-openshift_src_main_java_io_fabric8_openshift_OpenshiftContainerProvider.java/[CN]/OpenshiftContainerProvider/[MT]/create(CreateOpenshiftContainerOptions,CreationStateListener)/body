@@ -59,6 +59,7 @@
     long t1;
     do {
       Thread.sleep(5000);
+      domain.refresh();
       application=domain.getApplicationByName(containerName);
       if (application != null) {
         break;
@@ -83,7 +84,7 @@
     application.addEmbeddableCartridges(list);
   }
   String gitUrl=application.getGitUrl();
-  CreateOpenshiftContainerMetadata metadata=new CreateOpenshiftContainerMetadata(domain.getId(),application.getUUID(),application.getCreationLog(),gitUrl);
+  CreateOpenshiftContainerMetadata metadata=new CreateOpenshiftContainerMetadata(domain.getId(),application.getUUID(),application.getMessages() == null ? "" : application.getCreationLog(),gitUrl);
   metadata.setContainerName(containerName);
   metadata.setCreateOptions(options);
   return metadata;
