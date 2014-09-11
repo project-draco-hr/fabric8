@@ -1,0 +1,15 @@
+{
+  if (removePaths != null) {
+    File baseDir=ProcessUtils.findInstallDir(installDir);
+    for (    String removePath : removePaths) {
+      File removeFile=new File(baseDir,removePath);
+      if (removeFile.exists()) {
+        LOG.info("Removing file " + removeFile);
+        Files.recursiveDelete(removeFile);
+      }
+ else {
+        LOG.warn("Post unpack removal path " + removePath + " does not exist at "+ removeFile);
+      }
+    }
+  }
+}

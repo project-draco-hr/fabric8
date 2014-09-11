@@ -3,7 +3,11 @@
   String versionId=options.getVersion();
   List<Profile> profiles=Profiles.getProfiles(fabricService,profileIds,versionId);
   String layout=configObject.getOverlayFolder();
+  String[] postUnpackRemoveFiles=configObject.getPostUnpackRemoveFiles();
   InstallTask answer=createCommonPostInstal(options,environmentVariables,layout);
+  if (postUnpackRemoveFiles != null && postUnpackRemoveFiles.length > 0) {
+    answer=CompositeTask.combine(answer,new RemoveFilesTask(postUnpackRemoveFiles));
+  }
   if (!configObject.isInternalAgent()) {
     Map<String,File> javaArtifacts=JavaContainers.getJavaContainerArtifactsFiles(fabricService,profiles,downloadExecutor);
     if (!javaArtifacts.isEmpty()) {
