@@ -1,5 +1,8 @@
 {
-  Archetype archetype=archetypeService.getArchetype(archetypeGAV);
+  Archetype archetype=archetypeService.getArchetypeByArtifact(archetypeGAV);
+  if (archetype == null) {
+    archetypeService.getArchetype(archetypeGAV);
+  }
   if (archetype != null) {
     Preferences preferences=Preferences.userNodeForPackage(getClass());
     if (target == null) {
@@ -23,14 +26,14 @@
     String defaultPackageName=(groupId + "." + artifactId).replaceAll("-",".");
     String packageName=ShellUtils.readLine(session,String.format("Define value for property 'package' (%s): ",defaultPackageName),false);
     if (directoryName == null) {
-      String defaultDirectoryName=isNotBlank(artifactId) ? artifactId : defaultArtifactId;
+      String defaultDirectoryName=isNullOrBlank(artifactId) ? defaultArtifactId : artifactId;
       directoryName=ShellUtils.readLine(session,String.format("Define value for property 'directoryName' (%s): ",defaultDirectoryName),false);
     }
-    groupId=isNotBlank(groupId) ? defaultGroupId : groupId;
-    artifactId=isNotBlank(artifactId) ? defaultArtifactId : artifactId;
-    version=isNotBlank(version) ? defaultVersion : version;
-    packageName=isNotBlank(packageName) ? defaultPackageName : packageName;
-    directoryName=isNotBlank(directoryName) ? artifactId : directoryName;
+    groupId=isNullOrBlank(groupId) ? defaultGroupId : groupId;
+    artifactId=isNullOrBlank(artifactId) ? defaultArtifactId : artifactId;
+    version=isNullOrBlank(version) ? defaultVersion : version;
+    packageName=isNullOrBlank(packageName) ? defaultPackageName : packageName;
+    directoryName=isNullOrBlank(directoryName) ? artifactId : directoryName;
     File childDir=new File(target,directoryName);
     ArchetypeHelper helper=new ArchetypeHelper(archetypeFile,childDir,groupId,artifactId,version);
     helper.setPackageName(packageName);

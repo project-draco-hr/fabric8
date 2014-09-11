@@ -1,7 +1,13 @@
 {
-  Archetype archetype=archetypeService.getArchetype(archetypeGAV);
+  Archetype archetype=archetypeService.getArchetypeByArtifact(archetypeGAV);
+  if (archetype == null) {
+    archetypeService.getArchetype(archetypeGAV);
+  }
   if (archetype != null) {
-    System.out.println(String.format(FORMAT,"Archetype coordinates:",toMavenCoordinates(archetype)));
+    System.out.println(String.format(FORMAT,"GroupId:",archetype.groupId));
+    System.out.println(String.format(FORMAT,"ArtifactId:",archetype.artifactId));
+    System.out.println(String.format(FORMAT,"Version:",archetype.version));
+    System.out.println(String.format(FORMAT,"Coordinate:",toMavenCoordinate(archetype)));
     System.out.println(String.format(FORMAT,"Description:",emptyIfNull(archetype.description)));
     System.out.println(String.format(FORMAT,"Repository:",emptyIfNull(archetype.repository)));
   }
