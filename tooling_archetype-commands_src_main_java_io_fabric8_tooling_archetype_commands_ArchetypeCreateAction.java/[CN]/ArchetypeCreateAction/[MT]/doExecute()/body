@@ -1,7 +1,43 @@
 {
-  Archetype archetype=archetypeService.getArchetypeByArtifact(archetypeGAV);
-  if (archetype == null) {
-    archetypeService.getArchetype(archetypeGAV);
+  Archetype archetype=null;
+  if (!isNullOrBlank(archetypeGAV)) {
+    archetype=archetypeService.getArchetypeByArtifact(archetypeGAV);
+    if (archetype == null) {
+      archetypeService.getArchetype(archetypeGAV);
+    }
+  }
+  while (archetype == null) {
+    List<Archetype> archetypes=archetypeService.listArchetypes(filter,true);
+    System.out.println("Choose archetype:");
+    Iterator<Archetype> it=archetypes.iterator();
+    int i=0;
+    while (it.hasNext()) {
+      Archetype select=it.next();
+      System.out.println(String.format("%-4s: -> %-50s %s","" + ++i,select.artifactId,select.description));
+    }
+    boolean choosing=true;
+    while (choosing) {
+      String choose=ShellUtils.readLine(session,String.format("Choose a number or apply filter (case insensitive): %d: ",i),false);
+      if (Strings.isNullOrBlank(choose)) {
+        choose="" + i;
+      }
+      try {
+        int no=Integer.valueOf(choose);
+        if (no >= 1 && no <= archetypes.size()) {
+          archetype=archetypes.get(no - 1);
+          break;
+        }
+ else {
+          System.out.println("Number " + no + " out of range. Please try again!");
+          continue;
+        }
+      }
+ catch (      NumberFormatException e) {
+        filter=choose;
+        choosing=false;
+        archetype=null;
+      }
+    }
   }
   if (archetype != null) {
     Preferences preferences=Preferences.userNodeForPackage(getClass());
@@ -16,6 +52,8 @@
       System.err.println("No archetype found for \"" + archetypeGAV + "\" coordinates");
       return null;
     }
+    System.out.println("----------------------------------------------------------------------------");
+    System.out.println("Using archetype: " + archetype.artifactId);
     String defaultGroupId="io.fabric8";
     String defaultArtifactId=archetype.artifactId + "-example";
     String defaultVersion="1.0-SNAPSHOT";
