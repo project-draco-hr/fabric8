@@ -6,7 +6,7 @@
       if (file.isDirectory()) {
         File projectDir=file;
         File projectPom=new File(projectDir,"pom.xml");
-        if (projectPom.exists() && archetypeUtils.isValidProjectPom(projectPom)) {
+        if (projectPom.exists() && !skipImport(projectDir) && archetypeUtils.isValidProjectPom(projectPom)) {
           String fileName=file.getName();
           String archetypeDirName=fileName.replace("example","archetype");
           if (fileName.equals(archetypeDirName)) {
