@@ -1,0 +1,19 @@
+{
+  PodListSchema podList=assertParseExampleFile("pod-list.json",PodListSchema.class);
+  List<PodSchema> items=podList.getItems();
+  assertNotEmpty("items",items);
+  PodSchema pod=items.get(0);
+  assertNotNull("pod1",pod);
+  assertEquals("pod1.id","my-pod-1",pod.getId());
+  DesiredState desiredState=pod.getDesiredState();
+  assertNotNull("pod1.desiredState",desiredState);
+  ManifestSchema manifest=desiredState.getManifest();
+  assertNotNull("pod1.desiredState.manifest",manifest);
+  List<ManifestContainer> containers=manifest.getContainers();
+  assertNotEmpty("pod1.desiredState.manifest.containers",containers);
+  ManifestContainer container=containers.get(0);
+  assertNotNull("pod1.desiredState.manifest.container[0]",container);
+  assertEquals("pod1.desiredState.manifest.container[0].name","nginx",container.getName());
+  assertEquals("pod1.desiredState.manifest.container[0].image","dockerfile/nginx",container.getImage());
+  System.out.println("pod1 container1 " + container);
+}

@@ -1,0 +1,10 @@
+{
+  ObjectMapper mapper=KubernetesFactory.createObjectMapper();
+  File exampleFile=new File(getKubernetesExamplesDir(),fileName);
+  assertFileExists(exampleFile);
+  T answer=mapper.reader(clazz).readValue(exampleFile);
+  assertNotNull("Null returned while unmarshalling " + exampleFile,answer);
+  System.out.println("Parsed: " + fileName + " as: "+ answer);
+  System.out.println();
+  return answer;
+}

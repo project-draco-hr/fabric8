@@ -1,0 +1,10 @@
+{
+  String dockerHost=System.getenv("KUBERNETES_MASTER");
+  if (isEmpty(dockerHost)) {
+    dockerHost=System.getProperty("kubernetes.master");
+  }
+  if (!isEmpty(dockerHost)) {
+    return dockerHost;
+  }
+  return DEFAULT_KUBERNETES_MASTER;
+}
