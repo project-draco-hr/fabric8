@@ -98,10 +98,10 @@
       }
       Properties memberProperties=new Properties();
       String memberPropertiesName="io.fabric8.zookeeper.server-" + newClusterId + ".properties";
-      String port1=Integer.toString(findPort(usedPorts,ip,mapPortToRange(Ports.DEFAULT_ZOOKEEPER_SERVER_PORT,minimumPort,maximumPort)));
+      String port1=publicPort(container,Integer.toString(findPort(usedPorts,ip,mapPortToRange(Ports.DEFAULT_ZOOKEEPER_SERVER_PORT,minimumPort,maximumPort))));
       if (containers.size() > 1) {
-        String port2=Integer.toString(findPort(usedPorts,ip,mapPortToRange(Ports.DEFAULT_ZOOKEEPER_PEER_PORT,minimumPort,maximumPort)));
-        String port3=Integer.toString(findPort(usedPorts,ip,mapPortToRange(Ports.DEFAULT_ZOOKEEPER_ELECTION_PORT,minimumPort,maximumPort)));
+        String port2=publicPort(container,Integer.toString(findPort(usedPorts,ip,mapPortToRange(Ports.DEFAULT_ZOOKEEPER_PEER_PORT,minimumPort,maximumPort))));
+        String port3=publicPort(container,Integer.toString(findPort(usedPorts,ip,mapPortToRange(Ports.DEFAULT_ZOOKEEPER_ELECTION_PORT,minimumPort,maximumPort))));
         ensembleProperties.put("server." + Integer.toString(index),"${zk:" + container + "/ip}:"+ port2+ ":"+ port3);
         memberProperties.put("server.id",Integer.toString(index));
       }
