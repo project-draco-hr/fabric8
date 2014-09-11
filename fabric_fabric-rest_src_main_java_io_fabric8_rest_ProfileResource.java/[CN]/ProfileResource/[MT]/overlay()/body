@@ -1,10 +1,6 @@
 {
   if (!profile.isOverlay()) {
-    FabricService fabricService=getFabricService();
-    ProfileService profileService=null;
-    if (fabricService != null) {
-      profileService=fabricService.adapt(ProfileService.class);
-    }
+    ProfileService profileService=getProfileService();
     if (profileService != null) {
       Profile overlay=profileService.getOverlayProfile(profile);
       return new ProfileResource(this,overlay);
