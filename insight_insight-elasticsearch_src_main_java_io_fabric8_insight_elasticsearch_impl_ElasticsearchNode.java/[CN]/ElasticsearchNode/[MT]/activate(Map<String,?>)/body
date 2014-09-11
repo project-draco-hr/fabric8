@@ -1,0 +1,9 @@
+{
+  configurer.configure(props,this);
+  Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+  ImmutableSettings.Builder settings=ImmutableSettings.settingsBuilder();
+  if (config != null) {
+    settings.loadFromUrl(new URL(config));
+  }
+  nodeDelegate=nodeBuilder().data(nodeData).client(!nodeData).clusterName(clusterName).settings(settings).node();
+}

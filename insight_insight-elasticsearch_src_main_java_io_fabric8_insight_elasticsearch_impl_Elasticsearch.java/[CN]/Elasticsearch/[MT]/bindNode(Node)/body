@@ -1,0 +1,11 @@
+{
+  ClusterAdminClient client=node.client().admin().cluster();
+  ClusterStatsResponse response=client.prepareClusterStats().execute().actionGet();
+  String clusterName=response.getClusterNameAsString();
+  Set<Node> nodeSet=nodesClusterMap.get(clusterName);
+  if (nodeSet == null) {
+    nodeSet=new HashSet<Node>();
+    nodesClusterMap.put(clusterName,nodeSet);
+  }
+  nodeSet.add(node);
+}

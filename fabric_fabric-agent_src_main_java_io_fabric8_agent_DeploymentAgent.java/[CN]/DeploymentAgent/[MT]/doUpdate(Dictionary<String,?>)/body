@@ -28,6 +28,7 @@
   Set<String> extensionLibsToRemove=new HashSet<String>(managedExtensionLibs.keySet());
   Set<String> sysPropsToRemove=new HashSet<String>(managedSysProps.keySet());
   Set<String> configPropsToRemove=new HashSet<String>(managedConfigProps.keySet());
+  Set<String> etcsToRemove=new HashSet<String>(managedEtcs.keySet());
   Properties configProps=new Properties(new File(KARAF_BASE + File.separator + "etc"+ File.separator+ "config.properties"));
   Properties systemProps=new Properties(new File(KARAF_BASE + File.separator + "etc"+ File.separator+ "system.properties"));
   for (  String key : properties.keySet()) {
@@ -91,6 +92,17 @@
         restart=true;
       }
     }
+ else     if (key.startsWith("etc.")) {
+      String value=properties.get(key);
+      File etcFile=manager.download(value).await().getFile();
+      String etcName=etcFile.getName();
+      Long checksum=ChecksumUtils.checksum(new FileInputStream(etcFile));
+      managedEtcs.put(etcName,"true");
+      etcsToRemove.remove(etcName);
+      if (!Long.toString(checksum).equals(etcChecksums.getProperty(etcName))) {
+        Files.copy(etcFile,new File(KARAF_ETC,etcName));
+      }
+    }
   }
   for (  String sysProp : sysPropsToRemove) {
     systemProps.remove(sysProp);
@@ -124,14 +136,22 @@
     managedExtensionLibs.remove(lib);
     restart=true;
   }
+  for (  String etc : etcsToRemove) {
+    File etcFile=new File(KARAF_ETC,etc);
+    etcFile.delete();
+    etcChecksums.remove(etc);
+    managedEtcs.remove(etc);
+  }
   libChecksums.save();
   endorsedChecksums.save();
   extensionChecksums.save();
+  etcChecksums.save();
   managedLibs.save();
   managedEndorsedLibs.save();
   managedExtensionLibs.save();
   managedConfigProps.save();
   managedSysProps.save();
+  managedEtcs.save();
   if (restart) {
     updateStatus("restarting",null);
     configProps.save();
