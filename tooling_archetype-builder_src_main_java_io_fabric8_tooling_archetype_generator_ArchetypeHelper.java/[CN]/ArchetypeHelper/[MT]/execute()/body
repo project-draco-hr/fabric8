@@ -4,10 +4,10 @@
     packageName=groupId + "." + artifactId;
   }
   String packageDir=packageName.replace('.','/');
-  info("Creating archetype using Maven groupId: " + groupId + ", artifactId: "+ artifactId+ ", version: "+ version+ " in directory: "+ outputDir);
+  debug("Creating archetype using Maven groupId: " + groupId + ", artifactId: "+ artifactId+ ", version: "+ version+ " in directory: "+ outputDir);
   Map<String,String> replaceProperties=parseProperties();
   replaceProperties.putAll(overrideProperties);
-  info("Using replace properties: " + replaceProperties);
+  debug("Using replace properties: " + replaceProperties);
   ZipFile zip=null;
   try {
     zip=new ZipFile(archetypeFile);
@@ -45,18 +45,18 @@
               }
             }
             if (isBinary) {
-              copy(zip.getInputStream(entry),out);
+              IOHelpers.copy(zip.getInputStream(entry),out);
             }
  else {
               ByteArrayOutputStream bos=new ByteArrayOutputStream();
-              copy(zip.getInputStream(entry),bos);
+              IOHelpers.copy(zip.getInputStream(entry),bos);
               String text=new String(bos.toByteArray(),"UTF-8");
               out.write(transformContents(text,replaceProperties).getBytes());
             }
           }
   finally {
             if (out != null) {
-              out.close();
+              IOHelpers.close(out);
             }
           }
         }
@@ -68,7 +68,7 @@
   }
  finally {
     if (zip != null) {
-      zip.close();
+      IOHelpers.close(zip);
     }
   }
   if (!replaceProperties.isEmpty()) {
