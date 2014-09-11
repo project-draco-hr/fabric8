@@ -3,8 +3,8 @@
   if (nodeSet != null) {
     for (    Node node : nodeSet) {
       ClusterAdminClient client=node.client().admin().cluster();
-      ClusterHealthResponse response=client.prepareHealth().execute().actionGet();
-      return response.toString();
+      NodesInfoResponse response=client.prepareNodesInfo().all().execute().actionGet();
+      return response;
     }
   }
   return null;
