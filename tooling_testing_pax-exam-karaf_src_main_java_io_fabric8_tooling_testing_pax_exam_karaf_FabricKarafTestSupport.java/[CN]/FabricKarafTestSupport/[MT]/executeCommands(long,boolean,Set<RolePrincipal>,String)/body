@@ -13,6 +13,11 @@
       subject.getPrincipals().add(new RolePrincipal("admin"));
       subject.getPrincipals().add(new RolePrincipal("manager"));
       subject.getPrincipals().add(new RolePrincipal("viewer"));
+      if (roles != null) {
+        for (        RolePrincipal role : roles) {
+          subject.getPrincipals().add(role);
+        }
+      }
       return Subject.doAs(subject,new PrivilegedAction<String>(){
         @Override public String run(){
           for (          String command : commands) {
