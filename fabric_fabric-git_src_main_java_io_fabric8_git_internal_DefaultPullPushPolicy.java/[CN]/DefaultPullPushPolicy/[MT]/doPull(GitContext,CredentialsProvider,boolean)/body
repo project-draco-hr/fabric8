@@ -7,11 +7,11 @@
     return new AbstractPullPolicyResult();
   }
   LOGGER.info("Performing a pull on remote URL: {}",remoteUrl);
-  GitAPIException lastException=null;
+  Exception lastException=null;
   try {
     git.fetch().setTimeout(gitTimeout).setCredentialsProvider(credentialsProvider).setRemote(remoteRef).call();
   }
- catch (  GitAPIException ex) {
+ catch (  GitAPIException|JGitInternalException ex) {
     lastException=ex;
   }
   if (lastException != null) {
