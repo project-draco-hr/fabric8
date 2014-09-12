@@ -1,7 +1,9 @@
 {
+  Version version=profileService.getRequiredVersion(profile.getVersion());
   List<Profile> profiles=new ArrayList<Profile>();
-  for (  Profile p : container.getProfiles()) {
-    if (!isAncestor(p,profile)) {
+  for (  String prfId : container.getProfileIds()) {
+    Profile p=version.getRequiredProfile(prfId);
+    if (!isAncestor(version,prfId,profile)) {
       profiles.add(p);
     }
   }

@@ -1,3 +1,6 @@
 {
-  return Collections.unmodifiableList(new ArrayList<>(parentMapping.keySet()));
+  Map<String,String> config=getConfigurationInternal(Constants.AGENT_PID);
+  String pspec=config.get(PARENTS_ATTRIBUTE_KEY);
+  String[] parentIds=pspec != null ? pspec.split(" ") : new String[0];
+  return Arrays.asList(parentIds);
 }

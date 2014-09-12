@@ -12,15 +12,16 @@ synchronized (this) {
       if (environment == null) {
         environment=System.getProperty(SystemProperties.FABRIC_PROFILE_ENVIRONMENT);
       }
+      Version version=getRequiredVersion(profile.getVersion());
       ProfileBuilder builder=ProfileBuilder.Factory.create(profile.getVersion(),profileId);
-      builder.addOptions(new OverlayOptionsProvider(profile,environment));
+      builder.addOptions(new OverlayOptionsProvider(version,profile,environment));
       overlayProfile=builder.getProfile();
       if (LOGGER.isInfoEnabled()) {
         OverlayAudit audit=getOverlayAudit();
 synchronized (audit) {
           Profile lastOverlay=audit.overlayProfiles.get(profileId);
           if (lastOverlay == null) {
-            LOGGER.info("Overlay" + Profiles.getProfileInfo(overlayProfile,true));
+            LOGGER.info("Overlay" + Profiles.getProfileInfo(overlayProfile));
             audit.overlayProfiles.put(profileId,overlayProfile);
           }
  else           if (!lastOverlay.equals(overlayProfile)) {

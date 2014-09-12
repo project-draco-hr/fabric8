@@ -1,7 +1,8 @@
 {
   if (!profiles.contains(profile)) {
-    for (    Profile p : profile.getParents()) {
-      fillParentProfiles(p,profiles);
+    for (    String parentId : profile.getParentIds()) {
+      Profile parent=version.getRequiredProfile(parentId);
+      fillParentProfiles(parent,profiles);
     }
     profiles.add(profile);
   }

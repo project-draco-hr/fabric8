@@ -2,8 +2,10 @@
   System.out.println("Parents are: " + parents);
   if (parents != null && parents.size() > 0 && version != null) {
     List<Profile> parentProfiles=Profiles.getProfiles(fabricService,parents,version);
-    builder.setParents(parentProfiles);
     System.out.println("Found parents: " + parentProfiles);
+    for (    Profile parent : parentProfiles) {
+      builder.addParent(parent.getId());
+    }
   }
   builder.setOverlay(overlay);
   builder.setLocked(locked);

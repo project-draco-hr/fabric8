@@ -38,7 +38,9 @@
       LOG.warn("Unable to load queries from profile " + profile.getId(),t);
     }
   }
-  for (  Profile p : profile.getParents()) {
-    loadProfile(p,queries);
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
+  Version version=profileService.getVersion(profile.getVersion());
+  for (  String parentId : profile.getParentIds()) {
+    loadProfile(version.getRequiredProfile(parentId),queries);
   }
 }

@@ -1,12 +1,8 @@
 {
-  List<Profile> list=new ArrayList<>();
+  List<String> list=new ArrayList<>();
   for (  String parentProfileId : parentProfileIds) {
-    Profile parentProfile=null;
     if (version.hasProfile(parentProfileId)) {
-      parentProfile=version.getRequiredProfile(parentProfileId);
-    }
-    if (parentProfile != null) {
-      list.add(parentProfile);
+      list.add(parentProfileId);
     }
  else {
       LOG.warn("Could not find parent profile: " + parentProfileId + " in version "+ version.getId());

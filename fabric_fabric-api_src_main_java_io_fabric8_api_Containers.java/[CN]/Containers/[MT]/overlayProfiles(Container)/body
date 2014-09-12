@@ -1,6 +1,7 @@
 {
-  Set<Profile> set=new LinkedHashSet<Profile>();
-  List<Profile> profiles=Arrays.asList(container.getProfiles());
-  recursiveAddProfiles(set,profiles);
-  return new ArrayList<Profile>(set);
+  Version version=container.getVersion();
+  Set<String> result=new LinkedHashSet<String>();
+  List<String> profiles=container.getProfileIds();
+  recursiveAddProfiles(version,result,profiles);
+  return Collections.unmodifiableList(new ArrayList<String>(result));
 }

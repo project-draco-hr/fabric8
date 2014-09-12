@@ -2,8 +2,8 @@
   List<String> ids=new ArrayList<String>();
   ProfileService profileService=fabricService.adapt(ProfileService.class);
   for (  Profile p : profileService.getRequiredVersion(self.getVersion()).getProfiles()) {
-    for (    Profile parent : p.getParents()) {
-      if (parent.getId().equals(self.getId())) {
+    for (    String parentId : p.getParentIds()) {
+      if (parentId.equals(self.getId())) {
         ids.add(p.getId());
         break;
       }
