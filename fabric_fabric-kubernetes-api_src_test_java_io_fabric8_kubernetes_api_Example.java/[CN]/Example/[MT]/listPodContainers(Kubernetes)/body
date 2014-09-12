@@ -1,0 +1,19 @@
+{
+  System.out.println("Looking up pods");
+  PodListSchema pods=kube.getPods();
+  System.out.println("Got pods: " + pods);
+  List<PodSchema> items=pods.getItems();
+  for (  PodSchema item : items) {
+    System.out.println("PodSchema " + item.getId() + " created: "+ item.getCreationTimestamp());
+    DesiredState desiredState=item.getDesiredState();
+    if (desiredState != null) {
+      ManifestSchema manifest=desiredState.getManifest();
+      if (manifest != null) {
+        List<ManifestContainer> containers=manifest.getContainers();
+        for (        ManifestContainer container : containers) {
+          System.out.println("Container " + container.getImage() + " "+ container.getCommand()+ " ports: "+ container.getPorts());
+        }
+      }
+    }
+  }
+}

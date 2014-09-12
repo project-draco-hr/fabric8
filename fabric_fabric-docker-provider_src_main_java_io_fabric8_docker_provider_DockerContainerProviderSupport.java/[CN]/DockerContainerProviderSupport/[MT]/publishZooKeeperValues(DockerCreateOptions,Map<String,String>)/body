@@ -1,0 +1,20 @@
+{
+  Map<String,Map<String,String>> publishConfigurations=Profiles.getOverlayFactoryConfigurations(getFabricService(),options.getProfiles(),options.getVersion(),ZooKeeperPublishConfig.PROCESS_CONTAINER_ZK_PUBLISH_PID);
+  Set<Map.Entry<String,Map<String,String>>> entries=publishConfigurations.entrySet();
+  for (  Map.Entry<String,Map<String,String>> entry : entries) {
+    String configName=entry.getKey();
+    Map<String,String> exportConfig=entry.getValue();
+    CuratorFramework curatorFramework=getCuratorFramework();
+    if (exportConfig != null && !exportConfig.isEmpty() && curatorFramework != null) {
+      JolokiaAgentHelper.substituteEnvironmentVariableExpressions(exportConfig,environmentVariables,getFabricService(),curatorFramework,true);
+      ZooKeeperPublishConfig config=new ZooKeeperPublishConfig();
+      try {
+        getConfigurer().configure(exportConfig,config);
+        config.publish(curatorFramework,null,null,null,environmentVariables);
+      }
+ catch (      Exception e) {
+        LOG.warn("Failed to publish configuration " + configName + " of "+ config+ " due to: "+ e,e);
+      }
+    }
+  }
+}

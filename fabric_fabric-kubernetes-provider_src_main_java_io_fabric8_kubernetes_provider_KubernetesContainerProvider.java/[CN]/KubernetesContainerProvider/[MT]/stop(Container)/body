@@ -1,0 +1,13 @@
+{
+  assertValid();
+  String id=getPodId(container);
+  if (!Strings.isNullOrBlank(id)) {
+    LOG.info("stopping pod " + id);
+    CreateKubernetesContainerMetadata metadata=getContainerMetadata(container);
+    if (metadata != null) {
+      stopJolokiaKeepAlive(metadata);
+    }
+    todo();
+    container.setProvisionResult(Container.PROVISION_STOPPED);
+  }
+}

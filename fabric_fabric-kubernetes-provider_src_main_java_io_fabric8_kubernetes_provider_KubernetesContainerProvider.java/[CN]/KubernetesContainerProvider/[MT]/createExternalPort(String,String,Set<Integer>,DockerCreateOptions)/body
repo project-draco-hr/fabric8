@@ -1,0 +1,22 @@
+{
+synchronized (portLock) {
+    while (true) {
+      if (externalPortCounter <= 0) {
+        externalPortCounter=options.getMinimumPort();
+        if (externalPortCounter == 0) {
+          externalPortCounter=DockerConstants.DEFAULT_EXTERNAL_PORT;
+        }
+      }
+ else {
+        externalPortCounter++;
+      }
+      if (!usedPortByHost.contains(externalPortCounter)) {
+        Container container=getFabricService().getCurrentContainer();
+        String pid=Constants.PORTS_PID;
+        String key=containerId + "-" + portKey;
+        getFabricService().getPortService().registerPort(container,pid,key,externalPortCounter);
+        return externalPortCounter;
+      }
+    }
+  }
+}

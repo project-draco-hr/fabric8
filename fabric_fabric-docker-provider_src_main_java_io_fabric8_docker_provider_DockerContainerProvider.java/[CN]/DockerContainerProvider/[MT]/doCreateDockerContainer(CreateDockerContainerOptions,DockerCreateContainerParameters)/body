@@ -1,0 +1,27 @@
+{
+  ContainerConfig containerConfig=parameters.getContainerConfig();
+  Map<String,String> environmentVariables=parameters.getEnvironmentVariables();
+  String containerType=parameters.getContainerType();
+  String jolokiaUrl=parameters.getJolokiaUrl();
+  String name=options.getName();
+  String dockerHost=dockerFactory.getDockerHost();
+  ContainerCreateStatus status=null;
+  CreateDockerContainerMetadata metadata=null;
+  try {
+    status=docker.containerCreate(containerConfig,name);
+    LOG.info("Got status: " + status);
+    options=options.updateManualIp(dockerHost);
+    metadata=newInstance(containerConfig,options,status,containerType);
+    publishZooKeeperValues(options,environmentVariables);
+    if (jolokiaUrl != null) {
+      metadata.setJolokiaUrl(jolokiaUrl);
+      startJolokiaKeepAlive(metadata);
+    }
+  }
+ catch (  Exception e) {
+    LOG.info("Failed to create container " + name + " from config "+ containerConfig+ ": "+ e+ Dockers.dockerErrorMessage(e),e);
+    throw e;
+  }
+  startDockerContainer(status.getId(),options);
+  return metadata;
+}

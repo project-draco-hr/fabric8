@@ -1,0 +1,55 @@
+{
+  Objects.notNull(kubernetes,"kubernetes");
+  ContainerConfig containerConfig=parameters.getContainerConfig();
+  Map<String,String> environmentVariables=parameters.getEnvironmentVariables();
+  String containerType=parameters.getContainerType();
+  String jolokiaUrl=parameters.getJolokiaUrl();
+  String name=options.getName();
+  Set<String> profileIds=options.getProfiles();
+  String versionId=options.getVersion();
+  FabricService service=getFabricService();
+  PodSchema pod=new PodSchema();
+  pod.setId(name);
+  Map<String,String> labels=new HashMap<>();
+  labels.put(LABELS.FABRIC8,"true");
+  labels.put(LABELS.CONTAINER,name);
+  String profileString=Strings.join(profileIds,",");
+  labels.put(LABELS.PROFILE,profileString);
+  labels.put(LABELS.VERSION,versionId);
+  Map<String,String> labelConfiguration=Profiles.getOverlayConfiguration(service,profileIds,versionId,KubernetesConstants.LABELS_PID,"kubernetes");
+  if (labelConfiguration != null) {
+    labels.putAll(labelConfiguration);
+  }
+  pod.setLabels(labels);
+  DesiredState desiredState=new DesiredState();
+  pod.setDesiredState(desiredState);
+  ManifestSchema manifest=new ManifestSchema();
+  manifest.setVersion(ManifestSchema.Version.V_1_BETA_1);
+  desiredState.setManifest(manifest);
+  ManifestContainer manifestContainer=new ManifestContainer();
+  manifestContainer.setName(name);
+  manifestContainer.setImage(options.getImage());
+  manifestContainer.setCommand(options.getCmd());
+  manifestContainer.setWorkingDir(options.getWorkingDir());
+  manifestContainer.setEnv(KubernetesHelper.createEnv(environmentVariables));
+  List<ManifestContainer> containers=new ArrayList<>();
+  containers.add(manifestContainer);
+  manifest.setContainers(containers);
+  try {
+    LOG.info("About to create pod on " + kubernetesFactory.getAddress() + " with "+ pod);
+    kubernetes.createPod(pod);
+  }
+ catch (  Exception e) {
+    LOG.info("Failed to create pod " + name + " from config "+ pod+ ": "+ e+ Dockers.dockerErrorMessage(e),e);
+    throw e;
+  }
+  ContainerCreateStatus status=null;
+  CreateKubernetesContainerMetadata metadata=null;
+  metadata=createKubernetesContainerMetadata(containerConfig,options,status,containerType);
+  publishZooKeeperValues(options,environmentVariables);
+  if (jolokiaUrl != null) {
+    metadata.setJolokiaUrl(jolokiaUrl);
+    startJolokiaKeepAlive(metadata);
+  }
+  return metadata;
+}
