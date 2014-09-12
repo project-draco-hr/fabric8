@@ -1,4 +1,13 @@
 {
+  Preferences preferences=Preferences.userNodeForPackage(getClass());
+  String current=preferences.get(ArchetypeWorkspace.PREFERENCE_WORKSPACE,null);
+  if (current == null) {
+    System.out.println("No workspace location has been set.");
+    System.out.println("Use the archetype-workspace command to set a workspace first.");
+    System.out.println("");
+    return null;
+  }
+  File target=new File(current);
   Archetype archetype=null;
   if (!isNullOrBlank(archetypeOrFilter)) {
     archetype=archetypeService.getArchetypeByArtifact(archetypeOrFilter);
@@ -39,13 +48,6 @@
       }
     }
   }
-  Preferences preferences=Preferences.userNodeForPackage(getClass());
-  if (target == null) {
-    target=new File(preferences.get("target",DEFAULT_TARGET));
-  }
- else {
-    preferences.put("target",target.getCanonicalPath());
-  }
   File archetypeFile=fetchArchetype(archetype);
   if (archetypeFile == null || !archetypeFile.exists()) {
     System.err.println("No archetype found for \"" + archetypeOrFilter + "\" coordinates");
@@ -80,26 +82,26 @@
     for (    String key : properties.keySet()) {
       System.out.println(String.format("Using property '%s' (%s): ",key,properties.get(key)));
     }
-  }
-  boolean choosing=true;
-  while (choosing) {
-    String confirm=ShellUtils.readLine(session,"Confirm additional properties configuration: (Y): ",false);
-    confirm=confirm == null || confirm.trim().equals("") ? "Y" : confirm;
-    if (!"Y".equalsIgnoreCase(confirm)) {
-      if (!properties.isEmpty()) {
-        System.out.println("----- Configure additional properties -----");
-        for (        String key : properties.keySet()) {
-          String p=ShellUtils.readLine(session,String.format("Define value for property '%s' (%s): ",key,properties.get(key)),false);
-          p=p == null || p.trim().equals("") ? properties.get(key) : p;
-          properties.put(key,p);
+    boolean choosing=true;
+    while (choosing) {
+      String confirm=ShellUtils.readLine(session,"Confirm additional properties configuration: (Y): ",false);
+      confirm=confirm == null || confirm.trim().equals("") ? "Y" : confirm;
+      if (!"Y".equalsIgnoreCase(confirm)) {
+        if (!properties.isEmpty()) {
+          System.out.println("----- Configure additional properties -----");
+          for (          String key : properties.keySet()) {
+            String p=ShellUtils.readLine(session,String.format("Define value for property '%s' (%s): ",key,properties.get(key)),false);
+            p=p == null || p.trim().equals("") ? properties.get(key) : p;
+            properties.put(key,p);
+          }
         }
       }
-    }
  else {
-      choosing=false;
+        choosing=false;
+      }
     }
+    helper.setOverrideProperties(properties);
   }
-  helper.setOverrideProperties(properties);
   String confirm=ShellUtils.readLine(session,"Create project: (Y): ",false);
   confirm=confirm == null || confirm.trim().equals("") ? "Y" : confirm;
   if ("Y".equalsIgnoreCase(confirm)) {
