@@ -1,0 +1,14 @@
+{
+  JMXServiceURL target=new JMXServiceURL(jmxUrl);
+  JMXConnector connector=null;
+  try {
+    connector=JMXConnectorFactory.connect(target,env);
+  }
+ catch (  FabricAuthenticationException|SecurityException ex) {
+    username=null;
+    password=null;
+    promptForJmxCredentialsIfNeeded();
+    connector=JMXConnectorFactory.connect(target,env);
+  }
+  return connector;
+}
