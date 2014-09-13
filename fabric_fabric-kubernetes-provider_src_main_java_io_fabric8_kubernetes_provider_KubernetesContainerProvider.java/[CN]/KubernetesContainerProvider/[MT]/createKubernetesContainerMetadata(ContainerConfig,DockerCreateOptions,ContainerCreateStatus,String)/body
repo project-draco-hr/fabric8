@@ -1,10 +1,14 @@
 {
   List<String> warnings=new ArrayList<String>();
-  String[] warningArray=status.getWarnings();
-  if (warningArray != null) {
-    Collections.addAll(warnings,warningArray);
+  String statusId="unknown";
+  if (status != null) {
+    statusId=status.getId();
+    String[] warningArray=status.getWarnings();
+    if (warningArray != null) {
+      Collections.addAll(warnings,warningArray);
+    }
   }
-  CreateKubernetesContainerMetadata metadata=new CreateKubernetesContainerMetadata(status.getId(),warnings);
+  CreateKubernetesContainerMetadata metadata=new CreateKubernetesContainerMetadata(statusId,warnings);
   String containerId=options.getName();
   metadata.setContainerName(containerId);
   metadata.setContainerType(containerType);
