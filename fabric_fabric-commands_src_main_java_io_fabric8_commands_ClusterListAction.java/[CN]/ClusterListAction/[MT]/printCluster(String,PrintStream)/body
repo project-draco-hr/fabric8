@@ -16,7 +16,14 @@
           clusters.put(clusterName,cluster);
         }
         ObjectMapper mapper=new ObjectMapper();
-        Map<String,Object> map=mapper.readValue(data,HashMap.class);
+        Map<String,Object> map=null;
+        try {
+          map=mapper.readValue(data,HashMap.class);
+        }
+ catch (        JsonParseException e) {
+          log.error("Error parsing JSON string: {}",text);
+          throw e;
+        }
         ClusterNode node=null;
         Object id=value(map,"id","container");
         if (id != null) {
