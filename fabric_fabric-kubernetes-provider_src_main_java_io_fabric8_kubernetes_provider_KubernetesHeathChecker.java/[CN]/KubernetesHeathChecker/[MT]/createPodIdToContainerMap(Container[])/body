@@ -2,7 +2,9 @@
   Map<String,Container> answer=new HashMap<>();
   if (containers != null) {
     for (    Container container : containers) {
-      String id=container.getId();
+      String containerId=container.getId();
+      String podId=containerNameToPodId(containerId);
+      answer.put(podId,container);
     }
   }
   return answer;

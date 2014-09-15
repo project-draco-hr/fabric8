@@ -2,9 +2,8 @@
   assertValid();
   String id=getPodId(container);
   if (!Strings.isNullOrBlank(id)) {
-    LOG.info("destroying pod " + id);
     try {
-      todo();
+      deletePod(id);
     }
  catch (    Exception e) {
       LOG.info("Could not remove pod: it probably no longer exists " + e + Dockers.dockerErrorMessage(e),e);

@@ -2,6 +2,13 @@
   assertValid();
   CreateKubernetesContainerMetadata containerMetadata=getContainerMetadata(container);
   CreateKubernetesContainerOptions options=containerMetadata.getCreateOptions();
-  String id=getPodId(container);
-  startPod(id,options);
+  try {
+    DockerCreateContainerParameters parameters=new DockerCreateContainerParameters(options).invoke();
+    doCreateDockerContainer(options,parameters);
+  }
+ catch (  Exception e) {
+    String message="Could not start pod: " + e + Dockers.dockerErrorMessage(e);
+    LOG.warn(message,e);
+    throw new RuntimeException(message,e);
+  }
 }

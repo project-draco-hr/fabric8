@@ -1,0 +1,32 @@
+{
+  Profile overlayProfile=container.getOverlayProfile();
+  String jolokiaPort=null;
+  if (overlayProfile != null) {
+    Map<String,String> configuration=overlayProfile.getConfiguration(Constants.PORTS_PID);
+    jolokiaPort=configuration.get(Constants.Ports.JOLOKIA);
+  }
+  String host=currentState.getHost();
+  String hostIP=currentState.getHostIP();
+  String hostOrIp=host;
+  if (Strings.isNullOrBlank(hostOrIp)) {
+    hostOrIp=hostIP;
+  }
+  if (!Strings.isNullOrBlank(host) && !Objects.equal(host,container.getPublicHostname())) {
+    container.setPublicHostname(host);
+  }
+  if (!Strings.isNullOrBlank(hostIP) && !Objects.equal(hostIP,container.getPublicIp())) {
+    container.setPublicIp(hostIP);
+  }
+  if (!Strings.isNullOrBlank(jolokiaPort) && !Strings.isNullOrBlank(hostOrIp)) {
+    String jolokiaUrl="http://" + hostOrIp + ":"+ jolokiaPort;
+    JolokiaAgentHelper.jolokiaKeepAliveCheck(zkMasterCache,service,jolokiaUrl,container);
+    return;
+  }
+  String provisionStatus=container.getProvisionStatus();
+  if (!Container.PROVISION_SUCCESS.equals(container.getProvisionResult())) {
+    container.setProvisionResult(Container.PROVISION_SUCCESS);
+  }
+  if (container.getProvisionException() != null) {
+    container.setProvisionException(null);
+  }
+}

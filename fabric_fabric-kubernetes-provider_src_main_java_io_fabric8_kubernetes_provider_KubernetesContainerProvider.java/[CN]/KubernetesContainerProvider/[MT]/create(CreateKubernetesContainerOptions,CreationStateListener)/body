@@ -1,4 +1,12 @@
 {
   DockerCreateContainerParameters parameters=new DockerCreateContainerParameters(options).invoke();
-  return doCreateDockerContainer(options,parameters);
+  doCreateDockerContainer(options,parameters);
+  ContainerConfig containerConfig=parameters.getContainerConfig();
+  Map<String,String> environmentVariables=parameters.getEnvironmentVariables();
+  String containerType=parameters.getContainerType();
+  ContainerCreateStatus status=null;
+  CreateKubernetesContainerMetadata metadata=null;
+  metadata=createKubernetesContainerMetadata(containerConfig,options,status,containerType);
+  publishZooKeeperValues(options,environmentVariables);
+  return metadata;
 }

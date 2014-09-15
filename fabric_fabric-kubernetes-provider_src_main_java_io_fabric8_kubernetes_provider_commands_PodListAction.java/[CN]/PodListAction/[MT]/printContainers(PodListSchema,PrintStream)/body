@@ -4,30 +4,33 @@
   if (items == null) {
     items=Collections.EMPTY_LIST;
   }
+  Filter<PodSchema> filter=KubernetesHelpers.createFilter(filterText);
   for (  PodSchema item : items) {
-    String id=item.getId();
-    CurrentState currentState=item.getCurrentState();
-    String status="";
-    String host="";
-    if (currentState != null) {
-      status=currentState.getStatus();
-      host=currentState.getHost();
-    }
-    Map<String,String> labelMap=item.getLabels();
-    String labels=toLabelsString(labelMap);
-    DesiredState desiredState=item.getDesiredState();
-    if (desiredState != null) {
-      ManifestSchema manifest=desiredState.getManifest();
-      if (manifest != null) {
-        List<ManifestContainer> containers=manifest.getContainers();
-        for (        ManifestContainer container : containers) {
-          String image=container.getImage();
-          String firstLine=String.format(FORMAT,id,image,host,labels,status);
-          out.println(firstLine);
-          id="";
-          host="";
-          status="";
-          labels="";
+    if (filter.matches(item)) {
+      String id=item.getId();
+      CurrentState currentState=item.getCurrentState();
+      String status="";
+      String host="";
+      if (currentState != null) {
+        status=currentState.getStatus();
+        host=currentState.getHost();
+      }
+      Map<String,String> labelMap=item.getLabels();
+      String labels=KubernetesHelpers.toLabelsString(labelMap);
+      DesiredState desiredState=item.getDesiredState();
+      if (desiredState != null) {
+        ManifestSchema manifest=desiredState.getManifest();
+        if (manifest != null) {
+          List<ManifestContainer> containers=manifest.getContainers();
+          for (          ManifestContainer container : containers) {
+            String image=container.getImage();
+            String firstLine=String.format(FORMAT,id,image,host,labels,status);
+            out.println(firstLine);
+            id="";
+            host="";
+            status="";
+            labels="";
+          }
         }
       }
     }

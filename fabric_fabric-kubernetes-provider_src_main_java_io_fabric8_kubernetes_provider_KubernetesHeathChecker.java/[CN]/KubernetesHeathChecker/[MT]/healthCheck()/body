@@ -2,16 +2,55 @@
   FabricService service=fabricService.get();
   Kubernetes kubernetes=getKubernetes();
   if (kubernetes != null && service != null) {
-    Map<String,Container> containerMap=createPodIdToContainerMap(service.getContainers());
     PodListSchema pods=kubernetes.getPods();
     List<PodSchema> items=pods.getItems();
-    for (    PodSchema item : items) {
-      DesiredState desiredState=item.getDesiredState();
-      if (desiredState != null) {
-        ManifestSchema manifest=desiredState.getManifest();
-        if (manifest != null) {
-          List<ManifestContainer> containers=manifest.getContainers();
-          for (          ManifestContainer container : containers) {
+    if (items != null) {
+      Map<String,Container> containerMap=createPodIdToContainerMap(service.getContainers());
+      for (      PodSchema item : items) {
+        String podId=item.getId();
+        CurrentState currentState=item.getCurrentState();
+        if (currentState != null) {
+          String host=currentState.getHost();
+          String hostIp=currentState.getHost();
+          String status=currentState.getStatus();
+          Container container=containerMap.remove(podId);
+          if (container != null) {
+            DesiredState desiredState=item.getDesiredState();
+            if (desiredState != null) {
+              ManifestSchema manifest=desiredState.getManifest();
+              if (manifest != null) {
+                List<ManifestContainer> containers=manifest.getContainers();
+                for (                ManifestContainer manifestContainer : containers) {
+                }
+              }
+            }
+            if (!container.isAlive()) {
+              container.setAlive(true);
+            }
+            if (status != null && status.toLowerCase().startsWith("running")) {
+              keepAliveCheck(service,status,container,currentState);
+            }
+ else {
+              if (container.isAlive()) {
+                container.setAlive(false);
+              }
+              if (!status.equals(container.getProvisionResult())) {
+                container.setProvisionResult(status);
+              }
+            }
+          }
+        }
+      }
+      Collection<Container> deadContainers=containerMap.values();
+      for (      Container container : deadContainers) {
+        CreateContainerMetadata<?> metadata=container.getMetadata();
+        if (metadata instanceof CreateKubernetesContainerMetadata) {
+          if (container.isAlive()) {
+            container.setAlive(false);
+          }
+          String status="stopped";
+          if (!status.equals(container.getProvisionResult())) {
+            container.setProvisionResult(status);
           }
         }
       }

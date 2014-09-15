@@ -2,12 +2,14 @@
   assertValid();
   String id=getPodId(container);
   if (!Strings.isNullOrBlank(id)) {
-    LOG.info("stopping pod " + id);
-    CreateKubernetesContainerMetadata metadata=getContainerMetadata(container);
-    if (metadata != null) {
-      stopJolokiaKeepAlive(metadata);
+    try {
+      deletePod(id);
     }
-    todo();
+ catch (    Exception e) {
+      String message="Could not remove pod: it probably no longer exists " + e + Dockers.dockerErrorMessage(e);
+      LOG.warn(message,e);
+      throw new RuntimeException(message,e);
+    }
     container.setProvisionResult(Container.PROVISION_STOPPED);
   }
 }

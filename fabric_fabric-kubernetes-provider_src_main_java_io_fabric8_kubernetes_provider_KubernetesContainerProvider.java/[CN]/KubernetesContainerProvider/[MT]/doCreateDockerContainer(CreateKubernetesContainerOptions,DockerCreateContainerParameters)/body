@@ -11,7 +11,7 @@
   String versionId=options.getVersion();
   FabricService service=getFabricService();
   PodSchema pod=new PodSchema();
-  pod.setId(name);
+  pod.setId(KubernetesHelpers.containerNameToPodId(name));
   Map<String,String> labels=new HashMap<>();
   labels.put(LABELS.FABRIC8,"true");
   labels.put(LABELS.CONTAINER,name);
@@ -48,13 +48,4 @@
     LOG.info("Failed to create pod " + name + " from config "+ pod+ ": "+ e+ Dockers.dockerErrorMessage(e),e);
     throw e;
   }
-  ContainerCreateStatus status=null;
-  CreateKubernetesContainerMetadata metadata=null;
-  metadata=createKubernetesContainerMetadata(containerConfig,options,status,containerType);
-  publishZooKeeperValues(options,environmentVariables);
-  if (jolokiaUrl != null) {
-    metadata.setJolokiaUrl(jolokiaUrl);
-    startJolokiaKeepAlive(metadata);
-  }
-  return metadata;
 }

@@ -1,0 +1,13 @@
+{
+  Kubernetes kubernetes=kubernetesService.getKubernetes();
+  Objects.notNull(kubernetes,"kubernetes");
+  Objects.notNull(pod,"pod");
+  PodSchema podInfo=kubernetes.getPodById(pod);
+  if (podInfo == null) {
+    System.out.println("No pod for id: " + pod);
+  }
+ else {
+    printPodInfo(podInfo);
+  }
+  return null;
+}
