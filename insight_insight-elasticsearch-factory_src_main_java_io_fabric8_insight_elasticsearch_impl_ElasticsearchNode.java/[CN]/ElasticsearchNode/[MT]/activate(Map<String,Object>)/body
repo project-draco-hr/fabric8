@@ -4,6 +4,7 @@
   for (  Map.Entry<String,Object> entry : props.entrySet()) {
     stringProps.put(entry.getKey(),entry.getValue().toString());
   }
+  Thread.currentThread().setContextClassLoader(Settings.class.getClassLoader());
   ImmutableSettings.Builder settings=ImmutableSettings.settingsBuilder();
   String configFilePath=stringProps.get("config");
   if (configFilePath != null) {
