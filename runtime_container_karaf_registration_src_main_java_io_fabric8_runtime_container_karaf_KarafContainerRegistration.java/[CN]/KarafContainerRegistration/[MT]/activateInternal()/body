@@ -16,17 +16,16 @@
     if (stat != null) {
       deleteSafe(curator.get(),domainsNode);
     }
-    boolean openshiftFuseEnv=Strings.notEmpty(System.getenv("OPENSHIFT_FUSE_DIR"));
-    boolean openshiftAmqEnv=Strings.notEmpty(System.getenv("OPENSHIFT_AMQ_DIR"));
+    boolean openshiftEnv=Strings.notEmpty(System.getenv("OPENSHIFT_FUSE_DIR"));
     ZooKeeperUtils.createDefault(curator.get(),CONTAINER_BINDADDRESS.getPath(runtimeIdentity),bootstrapConfiguration.get().getBindAddress());
     ZooKeeperUtils.createDefault(curator.get(),CONTAINER_RESOLVER.getPath(runtimeIdentity),getContainerResolutionPolicy(curator.get(),runtimeIdentity));
     setData(curator.get(),CONTAINER_LOCAL_HOSTNAME.getPath(runtimeIdentity),HostUtils.getLocalHostName());
-    setData(curator.get(),CONTAINER_LOCAL_IP.getPath(runtimeIdentity),HostUtils.getLocalIp());
-    if (openshiftFuseEnv) {
-      setData(curator.get(),CONTAINER_PUBLIC_IP.getPath(runtimeIdentity),System.getenv("OPENSHIFT_FUSE_IP"));
+    if (openshiftEnv) {
+      setData(curator.get(),CONTAINER_LOCAL_IP.getPath(runtimeIdentity),System.getenv("OPENSHIFT_FUSE_IP"));
+      setData(curator.get(),CONTAINER_PUBLIC_IP.getPath(runtimeIdentity),HostUtils.getLocalIp());
     }
-    if (openshiftAmqEnv) {
-      setData(curator.get(),CONTAINER_PUBLIC_IP.getPath(runtimeIdentity),System.getenv("OPENSHIFT_AMQ_IP"));
+ else {
+      setData(curator.get(),CONTAINER_LOCAL_IP.getPath(runtimeIdentity),HostUtils.getLocalIp());
     }
     for (    String resolver : ZkDefs.VALID_RESOLVERS) {
       String address=(String)bootstrapConfiguration.get().getConfiguration().get(resolver);
