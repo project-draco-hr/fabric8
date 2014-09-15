@@ -2,11 +2,12 @@
   ClassLoader tccl=Thread.currentThread().getContextClassLoader();
   try {
     getConfigurer().configure(configuration,this);
-    if (Strings.isNotBlank(dockerHost)) {
-      dockerFactory.setAddress(dockerHost);
+    kubernetesFactory=new KubernetesFactory();
+    if (Strings.isNotBlank(kubernetesMaster)) {
+      kubernetesFactory.setAddress(kubernetesMaster);
     }
-    Thread.currentThread().setContextClassLoader(Docker.class.getClassLoader());
-    this.docker=dockerFactory.createDocker();
+    Thread.currentThread().setContextClassLoader(Kubernetes.class.getClassLoader());
+    this.kubernetes=kubernetesFactory.createKubernetes();
   }
  catch (  Throwable e) {
     LOG.error("Failed to update configuration " + configuration + ". "+ e,e);

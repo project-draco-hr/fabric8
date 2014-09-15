@@ -1,0 +1,18 @@
+{
+  FabricService service=fabricService.get();
+  Kubernetes kubernetes=getKubernetes();
+  PodListSchema pods=kubernetes.getPods();
+  List<PodSchema> items=pods.getItems();
+  for (  PodSchema item : items) {
+    DesiredState desiredState=item.getDesiredState();
+    if (desiredState != null) {
+      ManifestSchema manifest=desiredState.getManifest();
+      if (manifest != null) {
+        List<ManifestContainer> containers=manifest.getContainers();
+        for (        ManifestContainer container : containers) {
+          System.out.println("Container " + container.getImage() + " "+ container.getCommand()+ " ports: "+ container.getPorts());
+        }
+      }
+    }
+  }
+}

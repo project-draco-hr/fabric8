@@ -1,4 +1,5 @@
 {
+  Kubernetes kubernetes=getKubernetes();
   Objects.notNull(kubernetes,"kubernetes");
   ContainerConfig containerConfig=parameters.getContainerConfig();
   Map<String,String> environmentVariables=parameters.getEnvironmentVariables();
@@ -40,7 +41,7 @@
   containers.add(manifestContainer);
   manifest.setContainers(containers);
   try {
-    LOG.info("About to create pod with image " + image + " on "+ kubernetesFactory.getAddress()+ " with "+ pod);
+    LOG.info("About to create pod with image " + image + " on "+ getKubernetesAddress()+ " with "+ pod);
     kubernetes.createPod(pod);
   }
  catch (  Exception e) {
