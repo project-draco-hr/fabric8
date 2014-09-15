@@ -1,24 +1,14 @@
 {
-  Profile overlayProfile=container.getOverlayProfile();
-  String jolokiaPort=null;
-  if (overlayProfile != null) {
-    Map<String,String> configuration=overlayProfile.getConfiguration(Constants.PORTS_PID);
-    jolokiaPort=configuration.get(Constants.Ports.JOLOKIA);
-  }
   String host=currentState.getHost();
-  String hostIP=currentState.getHostIP();
-  String hostOrIp=host;
-  if (Strings.isNullOrBlank(hostOrIp)) {
-    hostOrIp=hostIP;
-  }
+  String podIP=currentState.getPodIP();
   if (!Strings.isNullOrBlank(host) && !Objects.equal(host,container.getPublicHostname())) {
     container.setPublicHostname(host);
   }
-  if (!Strings.isNullOrBlank(hostIP) && !Objects.equal(hostIP,container.getPublicIp())) {
-    container.setPublicIp(hostIP);
+  if (!Strings.isNullOrBlank(podIP) && !Objects.equal(podIP,container.getPublicIp())) {
+    container.setPublicIp(podIP);
   }
-  if (!Strings.isNullOrBlank(jolokiaPort) && !Strings.isNullOrBlank(hostOrIp)) {
-    String jolokiaUrl="http://" + hostOrIp + ":"+ jolokiaPort;
+  String jolokiaUrl=getJolokiaURL(container,currentState,service);
+  if (jolokiaUrl != null) {
     JolokiaAgentHelper.jolokiaKeepAliveCheck(zkMasterCache,service,jolokiaUrl,container);
     return;
   }

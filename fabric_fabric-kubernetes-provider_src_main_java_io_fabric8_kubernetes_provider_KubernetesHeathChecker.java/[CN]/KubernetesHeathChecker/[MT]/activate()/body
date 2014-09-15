@@ -1,5 +1,5 @@
 {
-  CuratorFramework curator=this.curator.get();
+  CuratorFramework curator=getCuratorFramework();
   enableMasterZkCache(curator);
   group=new ZooKeeperGroup<KubernetesHealthCheckNode>(curator,ZkPath.KUBERNETES_HEALTH_CLUSTER.getPath(),KubernetesHealthCheckNode.class);
   group.add(this);

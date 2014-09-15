@@ -1,0 +1,42 @@
+{
+  Profile overlayProfile=container.getOverlayProfile();
+  String jolokiaPort=null;
+  Map<String,String> ports=null;
+  if (overlayProfile != null) {
+    ports=overlayProfile.getConfiguration(Constants.PORTS_PID);
+    jolokiaPort=ports.get(Constants.Ports.JOLOKIA);
+  }
+  String host=currentState.getHost();
+  String podIP=currentState.getPodIP();
+  String hostOrIp=podIP;
+  if (Strings.isNullOrBlank(hostOrIp)) {
+    hostOrIp=host;
+  }
+  if (jolokiaPort == null) {
+    CreateContainerMetadata<?> metadata=container.getMetadata();
+    if (metadata != null) {
+      Map<String,String> environmentVariables=ChildContainers.getEnvironmentVariables(service,metadata.getCreateOptions());
+      if (!environmentVariables.containsKey(EnvironmentVariables.FABRIC8_LISTEN_ADDRESS)) {
+        environmentVariables.put(EnvironmentVariables.FABRIC8_LISTEN_ADDRESS,hostOrIp);
+      }
+      if (ports != null) {
+        Set<Map.Entry<String,String>> entries=ports.entrySet();
+        for (        Map.Entry<String,String> entry : entries) {
+          String key=entry.getKey();
+          String value=entry.getValue();
+          String envVar="FABRIC8_" + key + "_PROXY_PORT";
+          if (!environmentVariables.containsKey(envVar)) {
+            environmentVariables.put(envVar,value);
+          }
+        }
+      }
+      JolokiaAgentHelper.substituteEnvironmentVariableExpressions(environmentVariables,environmentVariables,service,getCuratorFramework(),true);
+      return JolokiaAgentHelper.findJolokiaUrlFromEnvironmentVariables(environmentVariables,hostOrIp);
+    }
+  }
+  String jolokiaUrl=null;
+  if (!Strings.isNullOrBlank(jolokiaPort) && !Strings.isNullOrBlank(hostOrIp)) {
+    jolokiaUrl="http://" + hostOrIp + ":"+ jolokiaPort;
+  }
+  return jolokiaUrl;
+}

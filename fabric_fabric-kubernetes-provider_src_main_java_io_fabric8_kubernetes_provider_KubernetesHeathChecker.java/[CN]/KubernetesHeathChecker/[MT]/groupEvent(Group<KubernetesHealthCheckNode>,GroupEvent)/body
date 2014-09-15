@@ -7,7 +7,7 @@ case CHANGED:
       KubernetesHealthCheckNode state=createState();
       try {
         if (group.isMaster()) {
-          enableMasterZkCache(curator.get());
+          enableMasterZkCache(getCuratorFramework());
           LOGGER.info("KubernetesHeathChecker is the master");
           group.update(state);
           dataStore.trackConfiguration(runnable);
@@ -26,7 +26,7 @@ case CHANGED:
       }
     }
  else {
-      LOGGER.info("Not valid with master: " + group.isMaster() + " fabric: "+ fabricService.get()+ " curator: "+ curator.get());
+      LOGGER.info("Not valid with master: " + group.isMaster() + " fabric: "+ fabricService.get()+ " curator: "+ getCuratorFramework());
     }
   break;
 case DISCONNECTED:
