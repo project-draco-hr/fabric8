@@ -1,0 +1,15 @@
+{
+  if (javaType == String.class) {
+    return SimpleType.STRING;
+  }
+ else   if (javaType.isArray()) {
+    Class<?> compType=javaType.getComponentType();
+    return new ArrayType<>(1,getOpenType(compType));
+  }
+ else   if (!javaType.getName().startsWith("java.")) {
+    return getCompositeType(javaType);
+  }
+ else {
+    throw new OpenDataException("Unsupported java type for: " + javaType);
+  }
+}

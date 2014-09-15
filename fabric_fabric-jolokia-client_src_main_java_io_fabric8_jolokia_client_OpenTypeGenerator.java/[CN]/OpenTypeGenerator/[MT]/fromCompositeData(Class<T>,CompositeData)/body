@@ -1,0 +1,45 @@
+{
+  Method method=null;
+  try {
+    method=beanClass.getDeclaredMethod("from",new Class[]{CompositeData.class});
+  }
+ catch (  NoSuchMethodException|SecurityException ex) {
+  }
+  if (method != null && Modifier.isStatic(method.getModifiers()) && method.getReturnType() == beanClass) {
+    try {
+      return (T)method.invoke(beanClass,new Object[]{cdata});
+    }
+ catch (    Exception ex) {
+      OpenDataException ode=new OpenDataException("Cannot invoke from method: " + method);
+      ode.initCause(ex);
+      throw ode;
+    }
+  }
+  for (  Constructor<?> ctor : beanClass.getDeclaredConstructors()) {
+    ConstructorProperties props=ctor.getAnnotation(ConstructorProperties.class);
+    if (props != null) {
+      Class<?>[] paramTypes=ctor.getParameterTypes();
+      String[] paramNames=props.value();
+      List<Object> params=new ArrayList<>();
+      for (int i=0; i < paramNames.length; i++) {
+        Object value=cdata.get(paramNames[i]);
+        if (value instanceof CompositeData) {
+          Class<?> paramType=paramTypes[i];
+          params.add(fromCompositeData(paramType,(CompositeData)value));
+        }
+ else {
+          params.add(value);
+        }
+      }
+      try {
+        return (T)ctor.newInstance(params.toArray(new Object[params.size()]));
+      }
+ catch (      Exception ex) {
+        OpenDataException ode=new OpenDataException("Cannot invoke constructor: " + ctor);
+        ode.initCause(ex);
+        throw ode;
+      }
+    }
+  }
+  throw new OpenDataException("Cannot construct target type from: " + cdata);
+}

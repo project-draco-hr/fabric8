@@ -1,0 +1,19 @@
+{
+  JSONObject jsonObject=new JSONObject();
+  CompositeType ctype=cdata.getCompositeType();
+  for (  String key : ctype.keySet()) {
+    OpenType<?> otype=ctype.getType(key);
+    if (otype == SimpleType.STRING) {
+      String value=(String)cdata.get(key);
+      jsonObject.put(key,value);
+    }
+ else     if (otype instanceof CompositeType) {
+      CompositeData value=(CompositeData)cdata.get(key);
+      jsonObject.put(key,toJSONObject(value));
+    }
+ else {
+      throw new OpenDataException("Unsupported type '" + otype + " ' for: "+ key);
+    }
+  }
+  return jsonObject;
+}

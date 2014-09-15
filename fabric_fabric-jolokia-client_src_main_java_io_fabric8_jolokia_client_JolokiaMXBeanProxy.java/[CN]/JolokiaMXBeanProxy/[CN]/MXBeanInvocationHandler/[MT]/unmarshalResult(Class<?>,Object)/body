@@ -1,0 +1,27 @@
+{
+  Object result;
+  if (value instanceof JSONObject) {
+    result=JSONTypeGenerator.fromJSONObject(returnType,(JSONObject)value);
+  }
+ else   if (value instanceof JSONArray) {
+    List<Object> resultList=new ArrayList<>();
+    Class<?> componentType=returnType.getComponentType();
+    for (    Object obj : ((JSONArray)value).toArray()) {
+      resultList.add(unmarshalResult(componentType,obj));
+    }
+    if (componentType != null) {
+      Object[] array=(Object[])Array.newInstance(componentType,resultList.size());
+      result=resultList.toArray(array);
+    }
+ else {
+      result=resultList;
+    }
+  }
+ else   if (isSimpleType(value)) {
+    result=value;
+  }
+ else {
+    throw new IllegalArgumentException("Unsupported value type: " + value);
+  }
+  return result;
+}

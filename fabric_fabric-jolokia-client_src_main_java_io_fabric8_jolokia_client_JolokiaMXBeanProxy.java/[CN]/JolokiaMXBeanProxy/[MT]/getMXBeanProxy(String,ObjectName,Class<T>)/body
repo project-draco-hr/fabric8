@@ -1,0 +1,5 @@
+{
+  ClassLoader classLoader=mxbean.getClassLoader();
+  InvocationHandler handler=new MXBeanInvocationHandler(serviceURL,objectName,null,null);
+  return (T)Proxy.newProxyInstance(classLoader,new Class<?>[]{mxbean},handler);
+}
