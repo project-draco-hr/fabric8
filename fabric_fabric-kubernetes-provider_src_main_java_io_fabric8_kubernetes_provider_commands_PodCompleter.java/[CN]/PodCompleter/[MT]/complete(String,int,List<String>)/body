@@ -1,0 +1,22 @@
+{
+  StringsCompleter delegate=new StringsCompleter();
+  try {
+    Kubernetes kubernetes=kubernetesService.getKubernetes();
+    if (kubernetes != null) {
+      PodListSchema pods=kubernetes.getPods();
+      if (pods != null) {
+        List<PodSchema> items=pods.getItems();
+        if (items != null) {
+          for (          PodSchema item : items) {
+            String id=item.getId();
+            delegate.getStrings().add(id);
+          }
+        }
+      }
+    }
+  }
+ catch (  Exception ex) {
+    LOG.warn("Caught: " + ex,ex);
+  }
+  return delegate.complete(buffer,cursor,candidates);
+}
