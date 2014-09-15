@@ -1,8 +1,13 @@
 {
+  String answer;
   if (addressResolver != null) {
-    return addressResolver.getFullAddress(address);
+    answer=addressResolver.getFullAddress(address);
   }
  else {
-    return address;
+    answer=address;
   }
+  if (isFullAddress(address)) {
+    answer=toPublicAddress(address);
+  }
+  return answer;
 }
