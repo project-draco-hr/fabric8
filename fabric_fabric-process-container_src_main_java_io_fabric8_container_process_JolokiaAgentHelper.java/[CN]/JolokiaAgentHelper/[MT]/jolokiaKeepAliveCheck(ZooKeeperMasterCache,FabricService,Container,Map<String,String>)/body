@@ -12,10 +12,6 @@
   String user=fabric.getZooKeeperUser();
   String password=fabric.getZookeeperPassword();
   String url=jolokiaUrl;
-  int idx=jolokiaUrl.indexOf("://");
-  if (idx > 0) {
-    url="http://" + user + ":"+ password+ "@"+ jolokiaUrl.substring(idx + 3);
-  }
   if (!url.endsWith("/")) {
     url+="/";
   }
@@ -24,7 +20,12 @@
   boolean valid=false;
   try {
     URL theUrl=new URL(listUrl);
-    JsonNode jsonNode=jolokiaMapper.readTree(theUrl);
+    URLConnection urlConnection=theUrl.openConnection();
+    String authString=user + ":" + password;
+    String authStringEnc=Base64Encoder.encode(authString);
+    urlConnection.setRequestProperty("Authorization","Basic " + authStringEnc);
+    InputStream is=urlConnection.getInputStream();
+    JsonNode jsonNode=jolokiaMapper.readTree(is);
     if (jsonNode != null) {
       JsonNode value=jsonNode.get("value");
       if (value != null) {
