@@ -1,4 +1,19 @@
 {
+  Set<String> profileIds=options.getProfiles();
+  String versionId=options.getVersion();
+  Map<String,String> configuration=null;
+  FabricService service=getFabricService();
+  if (service != null) {
+    configuration=Profiles.getOverlayConfiguration(service,profileIds,versionId,KubernetesConstants.KUBERNETES_PID,"kubernetes");
+  }
+  if (configuration != null) {
+    KubernetesConfig config=new KubernetesConfig();
+    configurer.configure(configuration,config);
+    List<String> definitions=config.getDefinitions();
+    if (definitions != null && definitions.size() > 0) {
+      return doCreateKubernetesPodsControllersServices(service,options,config);
+    }
+  }
   DockerCreateContainerParameters parameters=new DockerCreateContainerParameters(options).invoke();
   doCreateDockerContainer(options,parameters);
   ContainerConfig containerConfig=parameters.getContainerConfig();
@@ -6,7 +21,7 @@
   String containerType=parameters.getContainerType();
   ContainerCreateStatus status=null;
   CreateKubernetesContainerMetadata metadata=null;
-  metadata=createKubernetesContainerMetadata(containerConfig,options,status,containerType);
+  metadata=createKubernetesContainerMetadata(options,status,containerType);
   publishZooKeeperValues(options,environmentVariables);
   return metadata;
 }

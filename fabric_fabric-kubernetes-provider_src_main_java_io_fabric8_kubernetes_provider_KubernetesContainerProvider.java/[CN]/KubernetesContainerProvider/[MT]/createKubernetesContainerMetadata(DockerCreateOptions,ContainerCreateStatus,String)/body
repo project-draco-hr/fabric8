@@ -1,4 +1,5 @@
 {
+  String containerId=options.getName();
   List<String> warnings=new ArrayList<String>();
   String statusId="unknown";
   if (status != null) {
@@ -8,11 +9,7 @@
       Collections.addAll(warnings,warningArray);
     }
   }
-  CreateKubernetesContainerMetadata metadata=new CreateKubernetesContainerMetadata(statusId,warnings);
-  String containerId=options.getName();
-  metadata.setContainerName(containerId);
-  metadata.setContainerType(containerType);
-  metadata.setOverridenResolver(ZkDefs.MANUAL_IP);
+  CreateKubernetesContainerMetadata metadata=createKubernetesContainerMetadata(containerId,containerType,statusId,warnings);
   metadata.setCreateOptions(options);
   return metadata;
 }
