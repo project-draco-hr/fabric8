@@ -7,7 +7,7 @@
   if (!Strings.isNullOrBlank(podIP) && !Objects.equal(podIP,container.getPublicIp())) {
     container.setPublicIp(podIP);
   }
-  String jolokiaUrl=getJolokiaURL(container,currentState,service);
+  String jolokiaUrl=getJolokiaURL(container,currentState,service,item);
   if (jolokiaUrl != null) {
     JolokiaAgentHelper.jolokiaKeepAliveCheck(zkMasterCache,service,jolokiaUrl,container);
     return;
