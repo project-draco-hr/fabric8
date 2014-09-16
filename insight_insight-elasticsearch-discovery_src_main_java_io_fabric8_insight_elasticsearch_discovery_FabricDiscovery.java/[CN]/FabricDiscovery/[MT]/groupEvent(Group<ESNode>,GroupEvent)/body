@@ -1,0 +1,10 @@
+{
+  ClassLoader tccl=Thread.currentThread().getContextClassLoader();
+  try {
+    Thread.currentThread().setContextClassLoader(FabricDiscovery.class.getClassLoader());
+    updateCluster();
+  }
+  finally {
+    Thread.currentThread().setContextClassLoader(tccl);
+  }
+}
