@@ -3,6 +3,9 @@
   Objects.notNull(kubernetes,"kubernetes");
   ContainerConfig containerConfig=parameters.getContainerConfig();
   Map<String,String> environmentVariables=parameters.getEnvironmentVariables();
+  environmentVariables.put(EnvironmentVariables.FABRIC8_LISTEN_ADDRESS,"0.0.0.0");
+  environmentVariables.remove(EnvironmentVariables.FABRIC8_GLOBAL_RESOLVER);
+  environmentVariables.remove(EnvironmentVariables.FABRIC8_MANUALIP);
   String containerType=parameters.getContainerType();
   String jolokiaUrl=parameters.getJolokiaUrl();
   String name=options.getName();
@@ -37,6 +40,41 @@
   }
   manifestContainer.setWorkingDir(options.getWorkingDir());
   manifestContainer.setEnv(KubernetesHelper.createEnv(environmentVariables));
+  Map<String,String> portConfigurations=Profiles.getOverlayConfiguration(service,profileIds,versionId,Constants.PORTS_PID,"kubernetes");
+  if (portConfigurations != null && portConfigurations.size() > 0) {
+    List<Port> ports=new ArrayList<>();
+    Set<Map.Entry<String,String>> entries=portConfigurations.entrySet();
+    for (    Map.Entry<String,String> entry : entries) {
+      String portName=entry.getKey();
+      String defaultPortValue=entry.getValue();
+      if (Strings.isNotBlank(defaultPortValue)) {
+        Integer portNumber=null;
+        try {
+          portNumber=Integer.parseInt(defaultPortValue);
+        }
+ catch (        NumberFormatException e) {
+          LOG.warn("Could not parse '" + defaultPortValue + "' as integer for port "+ portName+ " for profiles "+ profileIds+ " "+ versionId+ ". "+ e,e);
+        }
+        String hostPortText=environmentVariables.get("FABRIC8_" + portName + "_PROXY_PORT");
+        Integer hostPort=null;
+        if (hostPortText != null) {
+          try {
+            hostPort=Integer.parseInt(hostPortText);
+          }
+ catch (          NumberFormatException e) {
+            LOG.warn("Could not parse '" + hostPortText + "' as integer for port "+ portName+ " for profiles "+ profileIds+ " "+ versionId+ ". "+ e,e);
+          }
+        }
+        if (portNumber != null && hostPort != null) {
+          Port port=new Port();
+          port.setContainerPort(portNumber);
+          port.setHostPort(hostPort);
+          ports.add(port);
+        }
+      }
+    }
+    manifestContainer.setPorts(ports);
+  }
   List<ManifestContainer> containers=new ArrayList<>();
   containers.add(manifestContainer);
   manifest.setContainers(containers);

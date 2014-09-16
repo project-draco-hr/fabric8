@@ -1,0 +1,12 @@
+{
+  InterpolationHelper.SubstitutionCallback substitutionCallback=new InterpolationHelper.SubstitutionCallback(){
+    @Override public String getValue(    String key){
+      if (key.startsWith("container:")) {
+        return resolveExpression(service,containerId,key);
+      }
+      return null;
+    }
+  }
+;
+  return InterpolationHelper.substVarsPreserveUnresolved(value,"dummy",null,Collections.EMPTY_MAP,substitutionCallback);
+}

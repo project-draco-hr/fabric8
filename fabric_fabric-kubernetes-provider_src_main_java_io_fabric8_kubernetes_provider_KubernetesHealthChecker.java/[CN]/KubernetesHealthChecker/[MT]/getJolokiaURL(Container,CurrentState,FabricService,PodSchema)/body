@@ -47,7 +47,14 @@
           }
         }
       }
+      environmentVariables.put(EnvironmentVariables.FABRIC8_JOLOKIA_URL,"http://${container:publichostname}:${env:FABRIC8_HTTP_PROXY_PORT}/jolokia");
       JolokiaAgentHelper.substituteEnvironmentVariableExpressions(environmentVariables,environmentVariables,service,getCuratorFramework(),true);
+      ContainerPlaceholderResolver containerResolver=containerPlaceholderResolver.getOptional();
+      String jolokiaUrl=environmentVariables.get(EnvironmentVariables.FABRIC8_JOLOKIA_URL);
+      if (jolokiaUrl != null && containerResolver != null) {
+        jolokiaUrl=containerResolver.resolveContainerExpressions((String)jolokiaUrl,(FabricService)service,(Container)container,(Container)containerResolver);
+        environmentVariables.put(EnvironmentVariables.FABRIC8_JOLOKIA_URL,jolokiaUrl);
+      }
       return JolokiaAgentHelper.findJolokiaUrlFromEnvironmentVariables(environmentVariables,hostOrIp);
     }
   }

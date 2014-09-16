@@ -1,14 +1,4 @@
 {
-  Matcher namedMatcher=NAMED_CONTAINER_PATTERN.matcher(value);
-  Matcher currentMatcher=CURRENT_CONTAINER_PATTERN.matcher(value);
-  if (namedMatcher.matches()) {
-    String name=namedMatcher.group(1);
-    String attribute=namedMatcher.group(2);
-    return getContainerAttribute(fabricService,name,attribute);
-  }
- else   if (currentMatcher.matches()) {
-    String attribute=currentMatcher.group(1);
-    return getContainerAttribute(fabricService,fabricService.getCurrentContainerName(),attribute);
-  }
-  return "";
+  String currentContainerName=fabricService.getCurrentContainerName();
+  return resolveExpression(fabricService,currentContainerName,value);
 }
