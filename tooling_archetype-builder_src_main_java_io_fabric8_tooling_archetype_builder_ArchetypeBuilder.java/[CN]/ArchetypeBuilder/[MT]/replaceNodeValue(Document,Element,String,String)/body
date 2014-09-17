@@ -1,0 +1,19 @@
+{
+  NodeList children=parent.getChildNodes();
+  for (int cn=0; cn < children.getLength(); cn++) {
+    Node child=children.item(cn);
+    if (child instanceof Element && child.getNodeName().equals(name)) {
+      Element e=(Element)children.item(cn);
+      String answer=e.getTextContent();
+      e.setTextContent(newValue);
+      return answer;
+    }
+ else     if (child instanceof Element && child.hasChildNodes()) {
+      String answer=replaceNodeValue(doc,(Element)child,name,newValue);
+      if (answer != null) {
+        return answer;
+      }
+    }
+  }
+  return null;
+}
