@@ -1,0 +1,16 @@
+{
+  if (Strings.isNullOrBlank(textFilter)) {
+    return Filters.<ServiceSchema>trueFilter();
+  }
+ else {
+    return new Filter<ServiceSchema>(){
+      public String toString(){
+        return "ServiceFilter(" + textFilter + ")";
+      }
+      public boolean matches(      ServiceSchema entity){
+        return filterMatchesIdOrLabels(textFilter,entity.getId(),entity.getLabels());
+      }
+    }
+;
+  }
+}

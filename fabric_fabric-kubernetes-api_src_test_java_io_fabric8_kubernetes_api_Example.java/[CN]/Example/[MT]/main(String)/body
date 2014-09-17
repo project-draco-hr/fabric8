@@ -6,9 +6,11 @@
   System.out.println("Connecting to kubernetes on: " + kubeFactory.getAddress());
   try {
     Kubernetes kube=kubeFactory.createKubernetes();
-    listPodContainers(kube);
+    listPods(kube);
+    listServices(kube);
+    listReplicationControllers(kube);
     createPod(kube,kubeFactory);
-    listPodContainers(kube);
+    listPods(kube);
   }
  catch (  Exception e) {
     System.out.println("FAILED: " + e);

@@ -7,9 +7,8 @@
       public String toString(){
         return "PodFilter(" + textFilter + ")";
       }
-      public boolean matches(      PodSchema pod){
-        String text=toLabelsString(pod.getLabels());
-        return text.contains(textFilter) || pod.getId().contains(textFilter);
+      public boolean matches(      PodSchema entity){
+        return filterMatchesIdOrLabels(textFilter,entity.getId(),entity.getLabels());
       }
     }
 ;

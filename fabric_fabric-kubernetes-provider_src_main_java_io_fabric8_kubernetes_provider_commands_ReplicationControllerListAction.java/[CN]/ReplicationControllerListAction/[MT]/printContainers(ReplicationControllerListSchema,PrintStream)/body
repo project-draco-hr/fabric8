@@ -1,0 +1,24 @@
+{
+  TablePrinter table=new TablePrinter();
+  table.columns("id","labels","replicas","replica selector");
+  List<ReplicationControllerSchema> items=replicationControllers.getItems();
+  if (items == null) {
+    items=Collections.EMPTY_LIST;
+  }
+  Filter<ReplicationControllerSchema> filter=KubernetesHelpers.createReplicationControllerFilter(filterText);
+  for (  ReplicationControllerSchema item : items) {
+    if (filter.matches(item)) {
+      String id=item.getId();
+      String labels=KubernetesHelpers.toLabelsString(item.getLabels());
+      ControllerDesiredState desiredState=item.getDesiredState();
+      if (desiredState != null) {
+        String selector=KubernetesHelpers.toLabelsString(desiredState.getReplicaSelector());
+        table.row(id,labels,toPositiveNonZeroText(desiredState.getReplicas()),selector);
+      }
+ else {
+        table.row(id,labels);
+      }
+    }
+  }
+  table.print();
+}

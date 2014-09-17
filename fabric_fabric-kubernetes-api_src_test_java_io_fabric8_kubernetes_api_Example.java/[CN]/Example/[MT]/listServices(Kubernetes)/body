@@ -1,0 +1,9 @@
+{
+  System.out.println("Looking up services");
+  ServiceListSchema services=kube.getServices();
+  List<ServiceSchema> items=services.getItems();
+  for (  ServiceSchema item : items) {
+    System.out.println("Service " + item.getId() + " labels: "+ item.getLabels()+ " selector: "+ item.getSelector()+ " port: "+ item.getPort());
+  }
+  System.out.println();
+}

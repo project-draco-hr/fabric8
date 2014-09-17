@@ -54,13 +54,13 @@
                 }
               }
  else               if (Objects.equal("Controller",kind)) {
-                ControllerSchema controllerSchema=objectMapper.reader(ControllerSchema.class).readValue(json);
+                ReplicationControllerSchema replicationControllerSchema=objectMapper.reader(ReplicationControllerSchema.class).readValue(json);
                 LOG.info("Creating a controller from " + definition);
                 try {
-                  kubernetes.createReplicationController(controllerSchema);
+                  kubernetes.createReplicationController(replicationControllerSchema);
                 }
  catch (                Exception e) {
-                  LOG.error("Failed to create controller from " + definition + ". "+ e+ ". "+ controllerSchema,e);
+                  LOG.error("Failed to create controller from " + definition + ". "+ e+ ". "+ replicationControllerSchema,e);
                 }
               }
  else               if (Objects.equal("Service",kind)) {

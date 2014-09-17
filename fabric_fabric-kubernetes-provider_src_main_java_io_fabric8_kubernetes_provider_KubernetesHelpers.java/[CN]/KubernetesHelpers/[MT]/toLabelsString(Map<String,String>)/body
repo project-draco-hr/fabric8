@@ -1,13 +1,15 @@
 {
   StringBuilder buffer=new StringBuilder();
-  Set<Map.Entry<String,String>> entries=labelMap.entrySet();
-  for (  Map.Entry<String,String> entry : entries) {
-    if (buffer.length() > 0) {
-      buffer.append(",");
+  if (labelMap != null) {
+    Set<Map.Entry<String,String>> entries=labelMap.entrySet();
+    for (    Map.Entry<String,String> entry : entries) {
+      if (buffer.length() > 0) {
+        buffer.append(",");
+      }
+      buffer.append(entry.getKey());
+      buffer.append("=");
+      buffer.append(entry.getValue());
     }
-    buffer.append(entry.getKey());
-    buffer.append("=");
-    buffer.append(entry.getValue());
   }
   return buffer.toString();
 }

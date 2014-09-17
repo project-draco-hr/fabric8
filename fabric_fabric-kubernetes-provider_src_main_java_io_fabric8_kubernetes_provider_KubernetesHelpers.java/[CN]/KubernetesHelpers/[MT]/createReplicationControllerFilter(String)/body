@@ -1,0 +1,16 @@
+{
+  if (Strings.isNullOrBlank(textFilter)) {
+    return Filters.<ReplicationControllerSchema>trueFilter();
+  }
+ else {
+    return new Filter<ReplicationControllerSchema>(){
+      public String toString(){
+        return "ReplicationControllerFilter(" + textFilter + ")";
+      }
+      public boolean matches(      ReplicationControllerSchema entity){
+        return filterMatchesIdOrLabels(textFilter,entity.getId(),entity.getLabels());
+      }
+    }
+;
+  }
+}
