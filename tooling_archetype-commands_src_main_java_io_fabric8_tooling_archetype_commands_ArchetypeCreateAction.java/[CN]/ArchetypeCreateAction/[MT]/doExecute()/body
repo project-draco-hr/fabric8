@@ -94,10 +94,15 @@
   boolean mustChoose=false;
   if (!properties.isEmpty()) {
     for (    String value : properties.values()) {
-      if (value != null && value.contains("$")) {
+      if (isNullOrBlank(value) || value.contains("$")) {
         mustChoose=true;
         break;
       }
+    }
+    String profile=properties.get("fabric8.profile");
+    if (isNullOrBlank(profile)) {
+      properties.put("fabric8.profile",artifactId);
+      mustChoose=true;
     }
     if (!mustChoose) {
       System.out.println("----- Additional properties -----");
@@ -117,11 +122,11 @@
           System.out.println("----- Configure additional properties -----");
           for (          String key : properties.keySet()) {
             String value=properties.get(key);
-            if (value != null && value.contains("$")) {
+            if (isNullOrBlank(value) || value.contains("$")) {
               value="";
             }
             String p=ShellUtils.readLine(session,String.format("Define value for property '%s' (%s): ",key,value),false);
-            p=p == null || p.trim().equals("") ? properties.get(key) : p;
+            p=isNullOrBlank(p) ? value : p;
             properties.put(key,p);
           }
         }
