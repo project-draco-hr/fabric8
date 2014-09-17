@@ -1,10 +1,12 @@
 {
-  out.println(String.format(CONSOLE_FORMAT,"[version]","[default]","[# containers]","[description]"));
+  TablePrinter table=new TablePrinter();
+  table.columns("version","default","# containers","description");
   for (  String versionId : versions) {
     boolean isDefault=versionId.equals(defaultVersionId);
     Version version=profileService.getRequiredVersion(versionId);
     int active=countContainersByVersion(containers,version);
     String description=version.getAttributes().get(Version.DESCRIPTION);
-    out.println(String.format(CONSOLE_FORMAT,version.getId(),(isDefault ? "true" : "false"),active,(description != null ? description : "")));
+    table.row(version.getId(),(isDefault ? "true" : ""),activeContainerCountText(active),description);
   }
+  table.print();
 }

@@ -1,5 +1,6 @@
 {
-  out.println(String.format(FORMAT,(Object[])HEADERS));
+  TablePrinter table=new TablePrinter();
+  table.columns("id","image(s)","host","labels","status");
   List<PodSchema> items=pods.getItems();
   if (items == null) {
     items=Collections.EMPTY_LIST;
@@ -24,8 +25,7 @@
           List<ManifestContainer> containers=manifest.getContainers();
           for (          ManifestContainer container : containers) {
             String image=container.getImage();
-            String firstLine=String.format(FORMAT,id,image,host,labels,status);
-            out.println(firstLine);
+            table.row(id,image,host,labels,status);
             id="";
             host="";
             status="";
@@ -35,4 +35,5 @@
       }
     }
   }
+  table.print();
 }

@@ -1,8 +1,9 @@
 {
-  String format="%-40s %-14s %s";
-  out.println(String.format(format,"[auto scale profile]","[status]","[message]"));
+  TablePrinter table=new TablePrinter();
+  table.columns("auto scale profile","status","message");
   List<AutoScaleProfileStatus> profileStatuses=status.getProfileStatuses();
   for (  AutoScaleProfileStatus profile : profileStatuses) {
-    out.println(String.format(format,getStringOrBlank(profile.getProfile()),getStringOrBlank(profile.getStatus()),getStringOrBlank(profile.getMessage())));
+    table.row(getStringOrBlank(profile.getProfile()),getStringOrBlank(profile.getStatus()),getStringOrBlank(profile.getMessage()));
   }
+  table.print();
 }

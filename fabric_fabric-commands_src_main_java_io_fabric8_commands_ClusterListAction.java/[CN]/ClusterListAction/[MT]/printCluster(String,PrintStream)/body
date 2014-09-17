@@ -52,13 +52,15 @@
       }
     }
   }
-  out.println(String.format("%-30s %-30s %-30s %s","[cluster]","[masters]","[slaves]","[services]"));
+  TablePrinter table=new TablePrinter();
+  table.columns("cluster","masters","slaves","services");
   for (  String clusterName : clusters.keySet()) {
     Map<String,ClusterNode> nodes=clusters.get(clusterName);
-    out.println(String.format("%-30s %-30s %-30s %s",clusterName,"","","",""));
+    table.row(clusterName,"","","","");
     for (    String nodeName : nodes.keySet()) {
       ClusterNode node=nodes.get(nodeName);
-      out.println(String.format("%-30s %-30s %-30s %s","   " + nodeName,printList(node.masters),printList(node.slaves),printList(node.services)));
+      table.row("   " + nodeName,printList(node.masters),printList(node.slaves),printList(node.services));
     }
   }
+  table.print();
 }

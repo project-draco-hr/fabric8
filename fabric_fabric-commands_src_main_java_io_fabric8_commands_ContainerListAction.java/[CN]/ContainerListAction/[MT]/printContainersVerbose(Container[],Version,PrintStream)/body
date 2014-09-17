@@ -1,6 +1,6 @@
 {
-  String header=String.format(VERBOSE_FORMAT,(Object[])VERBOSE_HEADERS);
-  out.println(header);
+  TablePrinter table=new TablePrinter();
+  table.columns("id","version","type","connected","profiles","blueprint","spring","provision status");
   for (  Container container : containers) {
     if (CommandUtils.matchVersion(container,version)) {
       String indent="";
@@ -16,12 +16,11 @@
       blueprintStatus=blueprintStatus.toLowerCase(Locale.ENGLISH);
       springStatus=springStatus.toLowerCase(Locale.ENGLISH);
       List<String> assignedProfiles=dataStore.getContainerProfiles(container.getId());
-      String firstLine=String.format(VERBOSE_FORMAT,indent + container.getId() + marker,container.getVersion().getId(),container.getType(),container.isAlive(),assignedProfiles.get(0),blueprintStatus,springStatus,CommandUtils.status(container));
-      out.println(firstLine);
+      table.row(indent + container.getId() + marker,container.getVersion().getId(),container.getType(),aliveText(container),assignedProfiles.get(0),blueprintStatus,springStatus,CommandUtils.status(container));
       for (int i=1; i < assignedProfiles.size(); i++) {
-        String nextLine=String.format(VERBOSE_FORMAT,"","","","",assignedProfiles.get(i),"","","");
-        out.println(nextLine);
+        table.row("","","","",assignedProfiles.get(i),"","","");
       }
     }
   }
+  table.print();
 }

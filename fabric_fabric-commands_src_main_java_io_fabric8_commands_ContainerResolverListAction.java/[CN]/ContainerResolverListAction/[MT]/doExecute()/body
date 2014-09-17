@@ -5,7 +5,8 @@
       containerIds.add(container.getId());
     }
   }
-  System.out.println(String.format(FORMAT,(Object[])HEADERS));
+  TablePrinter table=new TablePrinter();
+  table.columns("id","resolver","local hostname","local ip","public hostname","public ip","manual ip");
   for (  String containerId : containerIds) {
     Container container=fabricService.getContainer(containerId);
     String localHostName=container.getLocalHostname();
@@ -19,7 +20,8 @@
     publicIp=publicIp != null ? publicIp : "";
     manualIp=manualIp != null ? manualIp : "";
     String resolver=container.getResolver();
-    System.out.println(String.format(FORMAT,containerId,resolver,localHostName,localIp,publicHostName,publicIp,manualIp));
+    table.row(containerId,resolver,localHostName,localIp,publicHostName,publicIp,manualIp);
   }
+  table.print();
   return null;
 }

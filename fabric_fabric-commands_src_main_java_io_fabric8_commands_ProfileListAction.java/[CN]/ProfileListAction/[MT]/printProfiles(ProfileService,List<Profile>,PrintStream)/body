@@ -1,12 +1,14 @@
 {
-  out.println(String.format("%-50s %-14s %s","[id]","[# containers]","[parents]"));
+  TablePrinter table=new TablePrinter();
+  table.columns("id","# containers","parents");
   for (  Profile profile : profiles) {
     String versionId=profile.getVersion();
     String profileId=profile.getId();
     if (profileService.hasProfile(versionId,profileId) && (hidden || !profile.isHidden())) {
       int active=fabricService.getAssociatedContainers(versionId,profileId).length;
       String parents=Strings.join(profile.getParentIds()," ");
-      out.println(String.format("%-50s %-14s %s",profileId,active,parents));
+      table.row(profileId,activeContainerCountText(active),parents);
     }
   }
+  table.print();
 }
