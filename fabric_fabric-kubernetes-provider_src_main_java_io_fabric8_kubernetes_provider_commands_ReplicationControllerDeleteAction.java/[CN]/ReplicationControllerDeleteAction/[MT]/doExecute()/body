@@ -1,0 +1,10 @@
+{
+  Kubernetes kubernetes=kubernetesService.getKubernetes();
+  Objects.notNull(kubernetes,"kubernetes");
+  Objects.notNull(replicationControllers,"replicationControllers");
+  for (  String replicationController : replicationControllers) {
+    deleteReplicationController(kubernetes,replicationController);
+  }
+  System.out.println("Deleted replicationControllers: " + replicationControllers);
+  return null;
+}

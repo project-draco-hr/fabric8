@@ -1,0 +1,22 @@
+{
+  StringsCompleter delegate=new StringsCompleter();
+  try {
+    Kubernetes kubernetes=kubernetesService.getKubernetes();
+    if (kubernetes != null) {
+      ServiceListSchema list=kubernetes.getServices();
+      if (list != null) {
+        List<ServiceSchema> items=list.getItems();
+        if (items != null) {
+          for (          ServiceSchema item : items) {
+            String id=item.getId();
+            delegate.getStrings().add(id);
+          }
+        }
+      }
+    }
+  }
+ catch (  Exception ex) {
+    LOG.warn("Caught: " + ex,ex);
+  }
+  return delegate.complete(buffer,cursor,candidates);
+}

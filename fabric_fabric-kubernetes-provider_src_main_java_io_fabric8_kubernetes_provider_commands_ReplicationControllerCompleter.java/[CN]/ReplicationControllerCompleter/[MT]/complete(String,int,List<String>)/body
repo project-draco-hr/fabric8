@@ -1,0 +1,22 @@
+{
+  StringsCompleter delegate=new StringsCompleter();
+  try {
+    Kubernetes kubernetes=kubernetesService.getKubernetes();
+    if (kubernetes != null) {
+      ReplicationControllerListSchema list=kubernetes.getReplicationControllers();
+      if (list != null) {
+        List<ReplicationControllerSchema> items=list.getItems();
+        if (items != null) {
+          for (          ReplicationControllerSchema item : items) {
+            String id=item.getId();
+            delegate.getStrings().add(id);
+          }
+        }
+      }
+    }
+  }
+ catch (  Exception ex) {
+    LOG.warn("Caught: " + ex,ex);
+  }
+  return delegate.complete(buffer,cursor,candidates);
+}
