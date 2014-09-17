@@ -1,5 +1,4 @@
 {
-  configurer.configure(props,this);
   Map<String,String> stringProps=new HashMap<String,String>();
   for (  Map.Entry<String,Object> entry : props.entrySet()) {
     stringProps.put(entry.getKey(),entry.getValue().toString());
@@ -8,7 +7,7 @@
   ImmutableSettings.Builder settings=ImmutableSettings.settingsBuilder();
   String configFilePath=stringProps.get("config");
   if (configFilePath != null) {
-    settings.loadFromUrl(new URL(config));
+    settings.loadFromUrl(new URL(configFilePath));
   }
   settings.put(stringProps).classLoader(Settings.class.getClassLoader());
   nodeDelegate=nodeBuilder().settings(settings).node();

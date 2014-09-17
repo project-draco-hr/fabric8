@@ -1,14 +1,17 @@
 {
   try {
-    MBeanServer mbs=mbeanServer.getService();
-    MetricsStorageService svc=storage.getService();
-    if (mbs == null || svc == null) {
+    MetricsStorageService svc=storage.get();
+    if (mbeanServer == null || svc == null) {
       return;
     }
     if (query.lock != null && !query.lock.isMaster()) {
       return;
     }
-    QueryResult qrs=JmxUtils.execute(query.server,query.query,mbs);
+    LocalJMXConnector jmxConnector=new LocalJMXConnector(mbeanServer);
+    Subject subject=new Subject();
+    subject.getPrincipals().add(new RolePrincipal("viewer"));
+    MBeanServerConnection mBeanServerConnection=jmxConnector.getMBeanServerConnection(subject);
+    QueryResult qrs=JmxUtils.execute(query.server,query.query,mBeanServerConnection);
     boolean forceSend=query.query.getMinPeriod() == query.query.getPeriod() || qrs.getTimestamp().getTime() - query.lastSent >= TimeUnit.SECONDS.toMillis(query.query.getMinPeriod());
     if (!forceSend && query.lastResult != null) {
       if (qrs.getResults().equals(query.lastResult.getResults())) {
@@ -26,6 +29,6 @@
     renderAndSend(svc,qrs);
   }
  catch (  Throwable e) {
-    LOG.debug("Error sending metrics",e);
+    LOG.error("Error sending metrics",e);
   }
 }

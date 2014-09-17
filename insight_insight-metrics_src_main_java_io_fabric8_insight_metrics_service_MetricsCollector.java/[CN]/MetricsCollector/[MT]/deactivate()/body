@@ -1,0 +1,18 @@
+{
+  JMXUtils.unregisterMBean(mbeanServer,new ObjectName("io.fabric8.insight:type=MetricsCollector"));
+  executor.shutdown();
+  try {
+    executor.awaitTermination(5,TimeUnit.SECONDS);
+  }
+ catch (  InterruptedException e) {
+  }
+  executor.shutdownNow();
+  try {
+    executor.awaitTermination(5,TimeUnit.SECONDS);
+  }
+ catch (  InterruptedException e) {
+  }
+  for (  QueryState q : queries.values()) {
+    q.close();
+  }
+}

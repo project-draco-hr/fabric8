@@ -1,6 +1,6 @@
 {
   try {
-    Container container=fabricService.getCurrentContainer();
+    Container container=MetricsCollector.this.fabricService.getCurrentContainer();
     if (container != null) {
       Set<Query> newQueries=new HashSet<Query>();
       Profile[] profiles=container.getProfiles();
@@ -25,7 +25,7 @@
           state.metadata=parseJson(loadFully(new URL(q.getMetadata())));
         }
         if (q.getLock() != null) {
-          state.lock=new TrackingZooKeeperGroup<QueryNodeState>(bundleContext,getGroupPath(q),QueryNodeState.class);
+          state.lock=new TrackingZooKeeperGroup<>(bundleContext,getGroupPath(q),QueryNodeState.class);
           state.lock.add(new GroupListener<QueryNodeState>(){
             @Override public void groupEvent(            Group<QueryNodeState> group,            GroupEvent event){
               try {
@@ -40,7 +40,7 @@
           state.lock.start();
         }
         long delay=q.getPeriod() > 0 ? q.getPeriod() : defaultDelay;
-        state.future=this.executor.scheduleAtFixedRate(new Task(state),Math.round(Math.random() * 1000) + 1,delay * 1000,TimeUnit.MILLISECONDS);
+        state.future=this.executor.scheduleAtFixedRate(new Task(state,storage),Math.round(Math.random() * 1000) + 1,delay * 1000,TimeUnit.MILLISECONDS);
         queries.put(q,state);
       }
     }
