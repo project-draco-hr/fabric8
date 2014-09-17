@@ -1,0 +1,26 @@
+{
+  final RuntimeType targetContainer=ArchiveBuilder.getTargetContainer();
+  final ArchiveBuilder archive=new ArchiveBuilder("http-service");
+  archive.addClasses(AnnotatedContextListener.class,WebAppContextListener.class);
+  archive.addClasses(HttpRequest.class);
+  archive.setManifest(new Asset(){
+    @Override public InputStream openStream(){
+      if (targetContainer == RuntimeType.KARAF) {
+        OSGiManifestBuilder builder=OSGiManifestBuilder.newInstance();
+        builder.addBundleManifestVersion(2);
+        builder.addBundleSymbolicName("http-service");
+        builder.addBundleVersion("1.0.0");
+        builder.addImportPackages(RuntimeLocator.class,Servlet.class,HttpServlet.class,HttpService.class);
+        builder.addBundleClasspath("WEB-INF/classes");
+        return builder.openStream();
+      }
+ else {
+        ManifestBuilder builder=new ManifestBuilder();
+        builder.addIdentityCapability("http-service","1.0.0");
+        return builder.openStream();
+      }
+    }
+  }
+);
+  return archive.getArchive();
+}

@@ -26,4 +26,7 @@
  catch (  ModuleException ex) {
     throw new IllegalStateException(ex);
   }
+  Module sysmodule=runtime.getModuleContext().getModule();
+  BundleContext bundleContext=sysmodule.adapt(Bundle.class).getBundleContext();
+  servletContext.setAttribute(BundleContext.class.getName(),bundleContext);
 }
