@@ -91,6 +91,13 @@
   ArchetypeHelper helper=new ArchetypeHelper(archetypeFile,childDir,groupId,artifactId,version);
   helper.setPackageName(packageName);
   Map<String,String> properties=helper.parseProperties();
+  String profile=null;
+  if (properties.containsKey("fabric8.profile")) {
+    profile=properties.remove("fabric8.profile");
+    String defaultProfile=isNullOrBlank(profile) ? artifactId : profile;
+    String p=ShellUtils.readLine(session,String.format("Define value for property 'fabric8.profile' (%s): ",defaultProfile),false);
+    profile=isNullOrBlank(p) ? defaultProfile : p;
+  }
   boolean mustChoose=false;
   if (!properties.isEmpty()) {
     for (    String value : properties.values()) {
@@ -98,11 +105,6 @@
         mustChoose=true;
         break;
       }
-    }
-    String profile=properties.get("fabric8.profile");
-    if (isNullOrBlank(profile)) {
-      properties.put("fabric8.profile",artifactId);
-      mustChoose=true;
     }
     if (!mustChoose) {
       System.out.println("----- Additional properties -----");
@@ -136,6 +138,11 @@
         choosing=false;
       }
     }
+  }
+  if (profile != null) {
+    properties.put("fabric8.profile",profile);
+  }
+  if (!properties.isEmpty()) {
     helper.setOverrideProperties(properties);
   }
   String confirm=ShellUtils.readLine(session,"Create project: (Y): ",false);
