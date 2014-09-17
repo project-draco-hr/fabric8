@@ -10,14 +10,17 @@
     if (filter.matches(item)) {
       String id=item.getId();
       String labels=KubernetesHelpers.toLabelsString(item.getLabels());
+      Integer replicas=null;
       ControllerDesiredState desiredState=item.getDesiredState();
+      ControllerCurrentState currentState=item.getCurrentState();
+      String selector=null;
       if (desiredState != null) {
-        String selector=KubernetesHelpers.toLabelsString(desiredState.getReplicaSelector());
-        table.row(id,labels,toPositiveNonZeroText(desiredState.getReplicas()),selector);
+        selector=KubernetesHelpers.toLabelsString(desiredState.getReplicaSelector());
       }
- else {
-        table.row(id,labels);
+      if (currentState != null) {
+        replicas=currentState.getReplicas();
       }
+      table.row(id,labels,toPositiveNonZeroText(replicas),selector);
     }
   }
   table.print();
