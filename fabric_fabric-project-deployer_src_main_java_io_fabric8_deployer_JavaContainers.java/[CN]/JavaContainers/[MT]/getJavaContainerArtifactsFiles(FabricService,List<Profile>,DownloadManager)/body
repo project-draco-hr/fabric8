@@ -1,0 +1,12 @@
+{
+  Map<String,File> answer=new HashMap<String,File>();
+  ProfileService profileService=fabricService.adapt(ProfileService.class);
+  for (  Profile profile : profileList) {
+    Profile overlay=profileService.getOverlayProfile(profile);
+    Map<String,Parser> profileArtifacts=AgentUtils.getProfileArtifacts(fabricService,downloadManager,overlay);
+    appendMavenDependencies(profileArtifacts,profile);
+    Set<String> rawUrls=profileArtifacts.keySet();
+    downloadArtifactUrls(downloadManager,rawUrls,answer);
+  }
+  return answer;
+}

@@ -1,0 +1,35 @@
+{
+  DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,downloadExecutor);
+  Map<String,Parser> artifacts=JavaContainers.getJavaContainerArtifacts(fabric,profileList,downloadManager);
+  libFileCount=0;
+  deployFileCount=0;
+  Set<Map.Entry<String,Parser>> entries=artifacts.entrySet();
+  Set<String> rawUrls=artifacts.keySet();
+  Map<String,File> files=new HashMap<>();
+  JavaContainers.downloadArtifactUrls(downloadManager,rawUrls,files);
+  for (  Map.Entry<String,Parser> entry : entries) {
+    String uri=entry.getKey();
+    Parser parser=entry.getValue();
+    File file=files.get(uri);
+    if (file == null) {
+      LOG.warn("Could not find file for " + uri + " in files map when has parser: "+ parser);
+      continue;
+    }
+    String fileName=parser.getArtifactPath();
+    File outputDir;
+    if (fileName.toLowerCase().endsWith(".jar")) {
+      outputDir=uploadLibDir;
+      libFileCount++;
+    }
+ else {
+      outputDir=uploadDeployDir;
+      deployFileCount++;
+    }
+    outputDir.mkdirs();
+    File outFile=new File(outputDir,fileName);
+    outFile.getParentFile().mkdirs();
+    Files.copy(file,outFile);
+  }
+  artifactKeys=artifacts.keySet();
+  return this;
+}

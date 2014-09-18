@@ -1,0 +1,11 @@
+{
+  List<String> cleanUrlsToDownload=new ArrayList<String>();
+  for (  String rawUrl : rawUrls) {
+    String mvnUrl=removeUriPrefixBeforeMaven(rawUrl);
+    cleanUrlsToDownload.add(mvnUrl);
+  }
+  Map<String,File> profileFiles=AgentUtils.downloadLocations(downloadManager,cleanUrlsToDownload);
+  if (profileFiles != null) {
+    answer.putAll(profileFiles);
+  }
+}

@@ -1,10 +1,4 @@
 {
   DownloadManager downloadManager=DownloadManagers.createDownloadManager(fabric,downloadExecutor);
-  Map<String,Parser> artifacts=new TreeMap<String,Parser>();
-  for (  Profile profile : profileList) {
-    Map<String,Parser> profileArtifacts=AgentUtils.getProfileArtifacts(fabric,downloadManager,profile);
-    artifacts.putAll(profileArtifacts);
-    appendMavenDependencies(artifacts,profile);
-  }
-  return artifacts;
+  return getJavaContainerArtifacts(fabric,profileList,downloadManager);
 }

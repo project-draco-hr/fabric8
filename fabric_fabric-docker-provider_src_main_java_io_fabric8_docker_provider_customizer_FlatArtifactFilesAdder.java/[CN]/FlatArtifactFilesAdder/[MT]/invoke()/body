@@ -1,0 +1,23 @@
+{
+  Map<String,File> artifacts=JavaContainers.getJavaContainerArtifactsFiles(fabric,profileList,downloadExecutor);
+  libFileCount=0;
+  deployFileCount=0;
+  Set<Map.Entry<String,File>> entries=artifacts.entrySet();
+  for (  Map.Entry<String,File> entry : entries) {
+    File file=entry.getValue();
+    String fileName=file.getName();
+    File outputDir;
+    if (fileName.toLowerCase().endsWith(".jar")) {
+      outputDir=uploadLibDir;
+      libFileCount++;
+    }
+ else {
+      outputDir=uploadDeployDir;
+      deployFileCount++;
+    }
+    outputDir.mkdirs();
+    Files.copy(file,new File(outputDir,fileName));
+  }
+  artifactKeys=artifacts.keySet();
+  return this;
+}
