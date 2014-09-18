@@ -158,12 +158,49 @@
     String entryPoint=configOverlayDockerProvider.getImageEntryPoint();
     List<String> names=new ArrayList<String>(profileIds);
     names.add(versionId);
-    String tag="fabric8-" + Strings.join(names,"-").replace('.','-');
+    String newImageName="fabric8-" + Strings.join(names,"-").replace('.','-');
+    String customImageUserName=configOverlayDockerProvider.getCustomImageUserName();
+    DockerProviderConfig currentContainerDockerProviderConfig=null;
+    Container currentContainer=service.getCurrentContainer();
+    if (currentContainer != null) {
+      Map<String,String> configuration=currentContainer.getOverlayProfile().getConfiguration(DockerConstants.DOCKER_PROVIDER_PID);
+      if (configuration != null && !configuration.isEmpty()) {
+        Map<String,Map<String,String>> configurations=new HashMap<>();
+        configurations.put(DockerConstants.DOCKER_PROVIDER_PID,configuration);
+        service.substituteConfigurations(configurations);
+        configuration=configurations.get(DockerConstants.DOCKER_PROVIDER_PID);
+        configuration=JolokiaAgentHelper.substituteEnvironmentVariableExpressionKeysAndValues(configuration,System.getenv());
+        currentContainerDockerProviderConfig=createDockerProviderConfig(configuration);
+      }
+    }
+    if (Strings.isNullOrBlank(customImageUserName) && currentContainerDockerProviderConfig != null) {
+      customImageUserName=currentContainerDockerProviderConfig.getCustomImageUserName();
+    }
+    Boolean customImagePushValue=configOverlayDockerProvider.getCustomImagePush();
+    if (customImagePushValue == null && currentContainerDockerProviderConfig != null) {
+      customImagePushValue=currentContainerDockerProviderConfig.getCustomImagePush();
+    }
+    boolean customImagePush=customImagePushValue != null && customImagePushValue.booleanValue();
+    if (Strings.isNotBlank(customImageUserName)) {
+      newImageName=customImageUserName + "/" + newImageName;
+    }
+ else {
+      customImagePush=false;
+    }
     CustomDockerContainerImageBuilder builder=new CustomDockerContainerImageBuilder();
-    CustomDockerContainerImageOptions customDockerContainerImageOptions=new CustomDockerContainerImageOptions(image,imageRepository,tag,libDir,deployDir,homeDir,entryPoint,configOverlayDockerProvider.getOverlayFolder());
+    CustomDockerContainerImageOptions customDockerContainerImageOptions=new CustomDockerContainerImageOptions(image,imageRepository,newImageName,libDir,deployDir,homeDir,entryPoint,configOverlayDockerProvider.getOverlayFolder());
     String actualImage=builder.generateContainerImage(service,container,profileOverlays,docker,customDockerContainerImageOptions,javaConfig,options,downloadExecutor,environmentVariables);
     if (actualImage != null) {
       containerConfig.setImage(actualImage);
+      if (customImagePush) {
+        LOG.info("Pushing image to repository " + newImageName + " actualImage: "+ actualImage);
+        Auth authConfig=new Auth();
+        authConfig.setEmail("person@fabric8.io");
+        authConfig.setUsername(service.getZooKeeperUser());
+        authConfig.setPassword(service.getZookeeperPassword());
+        docker.imagePush(newImageName,"latest",authConfig);
+        LOG.info("Image pushed to repository " + newImageName);
+      }
     }
   }
   JolokiaAgentHelper.substituteEnvironmentVariableExpressions(environmentVariables,environmentVariables,service,curatorOptional,false);

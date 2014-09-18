@@ -1,7 +1,5 @@
 {
   FabricService service=getFabricService();
   JolokiaAgentHelper.substituteEnvironmentVariableExpressions(dockerProviderConfig,environmentVariables,service,getCuratorFramework());
-  DockerProviderConfig dockerProviderConfigObject=new DockerProviderConfig();
-  getConfigurer().configure(dockerProviderConfig,dockerProviderConfigObject);
-  return dockerProviderConfigObject;
+  return createDockerProviderConfig(dockerProviderConfig);
 }
