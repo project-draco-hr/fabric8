@@ -7,11 +7,7 @@
     if (query.lock != null && !query.lock.isMaster()) {
       return;
     }
-    LocalJMXConnector jmxConnector=new LocalJMXConnector(mbeanServer);
-    Subject subject=new Subject();
-    subject.getPrincipals().add(new RolePrincipal("viewer"));
-    MBeanServerConnection mBeanServerConnection=jmxConnector.getMBeanServerConnection(subject);
-    QueryResult qrs=JmxUtils.execute(query.server,query.query,mBeanServerConnection);
+    QueryResult qrs=JmxUtils.execute(query.server,query.query,mbeanServer);
     boolean forceSend=query.query.getMinPeriod() == query.query.getPeriod() || qrs.getTimestamp().getTime() - query.lastSent >= TimeUnit.SECONDS.toMillis(query.query.getMinPeriod());
     if (!forceSend && query.lastResult != null) {
       if (qrs.getResults().equals(query.lastResult.getResults())) {

@@ -3,12 +3,12 @@
   for (  Map.Entry<String,Object> entry : props.entrySet()) {
     stringProps.put(entry.getKey(),entry.getValue().toString());
   }
-  Thread.currentThread().setContextClassLoader(Settings.class.getClassLoader());
+  Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
   ImmutableSettings.Builder settings=ImmutableSettings.settingsBuilder();
   String configFilePath=stringProps.get("config");
   if (configFilePath != null) {
     settings.loadFromUrl(new URL(configFilePath));
   }
-  settings.put(stringProps).classLoader(Settings.class.getClassLoader());
+  settings.put(stringProps).classLoader(getClass().getClassLoader());
   nodeDelegate=nodeBuilder().settings(settings).node();
 }
