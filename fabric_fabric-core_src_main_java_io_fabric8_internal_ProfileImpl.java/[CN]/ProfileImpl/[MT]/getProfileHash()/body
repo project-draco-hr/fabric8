@@ -1,3 +1,22 @@
 {
-  return lastModified;
+  StringBuilder answer=new StringBuilder();
+  if (lastModified != null) {
+    answer.append(lastModified);
+  }
+  for (  String bundle : getBundles()) {
+    if (bundle.startsWith("blueprint:profile:") || bundle.startsWith("spring:profile:")) {
+      String name=bundle.startsWith("blueprint:profile:") ? bundle.substring(18) : bundle.substring(15);
+      byte[] data=fileConfigurations.get(name);
+      if (data != null) {
+        InputStream is=new ByteArrayInputStream(data);
+        try {
+          long crc=ChecksumUtils.checksum(is);
+          answer.append(crc);
+        }
+ catch (        IOException e) {
+        }
+      }
+    }
+  }
+  return answer.toString();
 }
