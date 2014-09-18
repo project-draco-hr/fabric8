@@ -1,0 +1,12 @@
+{
+  Class<?> compType;
+  try {
+    compType=Class.forName(elementType.getClassName());
+  }
+ catch (  ClassNotFoundException ex) {
+    OpenDataException odex=new OpenDataException("Cannot load array type: " + elementType.getClassName());
+    odex.initCause(ex);
+    throw odex;
+  }
+  return (Object[])Array.newInstance(compType,dimension);
+}

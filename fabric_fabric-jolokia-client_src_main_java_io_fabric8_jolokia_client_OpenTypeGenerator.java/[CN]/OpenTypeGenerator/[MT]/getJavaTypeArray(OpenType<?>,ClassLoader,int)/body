@@ -1,0 +1,21 @@
+{
+  Class<?> compType;
+  try {
+    if (elementType instanceof CompositeType) {
+      CompositeType ctype=(CompositeType)elementType;
+      compType=classLoader.loadClass(ctype.getTypeName());
+    }
+ else     if (elementType instanceof SimpleType) {
+      compType=Class.forName(elementType.getClassName());
+    }
+ else {
+      throw new IllegalArgumentException("Element type not supported: " + elementType);
+    }
+  }
+ catch (  ClassNotFoundException ex) {
+    OpenDataException odex=new OpenDataException("Cannot load array type: " + elementType.getClassName());
+    odex.initCause(ex);
+    throw odex;
+  }
+  return (Object[])Array.newInstance(compType,dimension);
+}

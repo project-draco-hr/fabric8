@@ -1,0 +1,23 @@
+{
+  Object result;
+  if (value != null && !type.isValue(value)) {
+    if (type instanceof CompositeType) {
+      result=toCompositeData((CompositeType)type,value);
+    }
+ else     if (type instanceof TabularType) {
+      result=toTabularData((TabularType)type,(Map<?,?>)value);
+    }
+ else     if (type instanceof ArrayType) {
+      result=toArrayData((ArrayType<?>)type,value);
+    }
+ else {
+      throw new OpenDataException("Unsupported open type: " + type);
+    }
+  }
+ else {
+    result=value;
+  }
+  boolean isAssignable=result == null || type.isValue(result);
+  IllegalStateAssertion.assertTrue(isAssignable,"Value " + result + " is not a value of: "+ type);
+  return result;
+}

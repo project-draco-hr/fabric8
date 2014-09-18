@@ -1,0 +1,15 @@
+{
+  TabularDataSupport tdata=new TabularDataSupport(ttype);
+  CompositeType rowType=ttype.getRowType();
+  OpenType<?> keyType=rowType.getType("key");
+  OpenType<?> valueType=rowType.getType("value");
+  for (  Map.Entry<?,?> entry : value.entrySet()) {
+    Map<String,Object> rowData=new HashMap<>();
+    Object keyData=toOpenData(keyType,entry.getKey());
+    Object valData=toOpenData(valueType,entry.getValue());
+    rowData.put("key",keyData);
+    rowData.put("value",valData);
+    tdata.put(toCompositeData(rowType,rowData));
+  }
+  return tdata;
+}

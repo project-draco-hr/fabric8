@@ -1,0 +1,19 @@
+{
+  if (atype.isPrimitiveArray() && value.getClass().isArray()) {
+    return value;
+  }
+  List<?> items;
+  if (value instanceof Collection) {
+    items=new ArrayList<Object>((Collection<?>)value);
+  }
+ else {
+    items=Arrays.asList(value);
+  }
+  OpenType<?> elementType=atype.getElementOpenType();
+  Object[] array=getOpenTypeArray(elementType,items.size());
+  for (int i=0; i < items.size(); i++) {
+    Object openValue=toOpenData(elementType,items.get(i));
+    array[i]=openValue;
+  }
+  return array;
+}

@@ -1,0 +1,22 @@
+{
+  try {
+    Method method=null;
+    Class<? extends Object> beanClass=target.getClass();
+    String methodName="set" + itemName.substring(0,1).toUpperCase() + itemName.substring(1);
+    for (    Method aux : beanClass.getMethods()) {
+      if (methodName.equals(aux.getName()) && aux.getParameterTypes().length == 1) {
+        method=aux;
+        break;
+      }
+    }
+    IllegalStateAssertion.assertNotNull(method,"Cannot find setter: " + methodName);
+    Class<?> paramType=method.getParameterTypes()[0];
+    value=toTargetType(paramType,value);
+    method.invoke(target,value);
+  }
+ catch (  Exception ex) {
+    OpenDataException odex=new OpenDataException("Cannot invoke setter for: " + itemName);
+    odex.initCause(ex);
+    throw odex;
+  }
+}

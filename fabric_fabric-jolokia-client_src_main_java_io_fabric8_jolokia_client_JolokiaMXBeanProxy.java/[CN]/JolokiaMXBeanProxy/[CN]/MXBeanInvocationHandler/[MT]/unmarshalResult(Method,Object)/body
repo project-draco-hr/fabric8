@@ -1,0 +1,25 @@
+{
+  OpenType<?> openType;
+  if (isGetter(method)) {
+    String attname=getAttributeName(method);
+    OpenMBeanAttributeInfo attinfo=(OpenMBeanAttributeInfo)attributeMapping.get(attname);
+    openType=attinfo.getOpenType();
+  }
+ else {
+    OpenMBeanOperationInfo opinfo=(OpenMBeanOperationInfo)operationMapping.get(method.getName());
+    openType=opinfo.getReturnOpenType();
+  }
+  if (openType instanceof ArrayType && value instanceof JSONArray) {
+    JSONArray jsonArray=(JSONArray)value;
+    ArrayType<?> arrayType=(ArrayType<?>)openType;
+    OpenType<?> elementType=arrayType.getElementOpenType();
+    Object[] targetArray=OpenTypeGenerator.getJavaTypeArray(elementType,classLoader,jsonArray.size());
+    for (int i=0; i < jsonArray.size(); i++) {
+      Object element=jsonArray.get(i);
+      targetArray[i]=element;
+    }
+    value=targetArray;
+  }
+  Object result=OpenTypeGenerator.fromOpenData(openType,classLoader,value);
+  return OpenTypeGenerator.toTargetType(method.getReturnType(),result);
+}

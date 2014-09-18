@@ -1,0 +1,14 @@
+{
+  Profile prfA=ProfileBuilder.Factory.create("1.0","prfA").getProfile();
+  Profile prfB=ProfileBuilder.Factory.create("1.0","prfB").addParent("prfA").getProfile();
+  version10=VersionBuilder.Factory.create("1.0").addProfiles(Arrays.asList(prfA,prfB)).getVersion();
+  ProfileManagement impl=Mockito.mock(ProfileManagement.class);
+  Mockito.when(impl.getVersionIds()).thenReturn(Arrays.asList("1.0"));
+  Mockito.when(impl.getVersion("1.0")).thenReturn(new VersionState(version10));
+  Mockito.when(impl.getProfile("1.0","prfA")).thenReturn(new ProfileState(prfA));
+  Mockito.when(impl.getProfile("1.0","prfB")).thenReturn(new ProfileState(prfB));
+  server=ManagementFactory.getPlatformMBeanServer();
+  StandardMBean mxbean=new StandardMBean(impl,ProfileManagement.class,true);
+  server.registerMBean(mxbean,ProfileManagement.OBJECT_NAME);
+  proxy=JMX.newMXBeanProxy(server,ProfileManagement.OBJECT_NAME,ProfileManagement.class);
+}

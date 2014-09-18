@@ -1,0 +1,8 @@
+{
+  CompositeType ctype=getProfileStateType();
+  ProfileState prfB=new ProfileState(version10.getProfile("prfB"));
+  ClassLoader classLoader=prfB.getClass().getClassLoader();
+  CompositeData cdata=(CompositeData)OpenTypeGenerator.toOpenData(ctype,prfB);
+  ProfileState result=(ProfileState)OpenTypeGenerator.fromOpenData(ctype,classLoader,cdata);
+  Assert.assertEquals(prfB,result);
+}

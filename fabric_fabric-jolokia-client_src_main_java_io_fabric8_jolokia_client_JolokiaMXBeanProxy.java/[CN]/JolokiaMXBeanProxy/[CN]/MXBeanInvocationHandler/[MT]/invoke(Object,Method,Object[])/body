@@ -1,33 +1,29 @@
 {
-  if (isGetter(method)) {
-    String attname=method.getName().substring(3);
-    J4pReadRequest readReq=new J4pReadRequest(objectName,attname);
-    Object result=client.execute(readReq).getValue();
-    Class<?> returnType=method.getReturnType();
-    return unmarshalResult(returnType,result);
-  }
- else   if (isSetter(method)) {
-    Object param=marshalParameter(args[0]);
-    String attname=method.getName().substring(3);
-    J4pWriteRequest writeReq=new J4pWriteRequest(objectName,attname,param);
-    writeReq.setPreferredHttpMethod("POST");
-    client.execute(writeReq);
-    return null;
-  }
- else {
-    Object[] params=null;
-    if (args != null) {
-      List<Object> list=new ArrayList<>();
-      for (      Object arg : args) {
-        Object value=marshalParameter(arg);
-        list.add(value);
-      }
-      params=list.toArray(new Object[list.size()]);
+  try {
+    if (isGetter(method)) {
+      String attname=getAttributeName(method);
+      J4pReadRequest readReq=new J4pReadRequest(objectName,attname);
+      Object result=client.execute(readReq).getValue();
+      return unmarshalResult(method,result);
     }
-    J4pExecRequest execReq=new J4pExecRequest(objectName,method.getName(),params);
-    execReq.setPreferredHttpMethod("POST");
-    Object result=client.execute(execReq).getValue();
-    Class<?> returnType=method.getReturnType();
-    return unmarshalResult(returnType,result);
+ else     if (isSetter(method)) {
+      String attname=getAttributeName(method);
+      Object[] params=marshalParameters(method,args);
+      J4pWriteRequest writeReq=new J4pWriteRequest(objectName,attname,params);
+      writeReq.setPreferredHttpMethod("POST");
+      client.execute(writeReq);
+      return null;
+    }
+ else {
+      Object[] params=marshalParameters(method,args);
+      J4pExecRequest execReq=new J4pExecRequest(objectName,method.getName(),params);
+      execReq.setPreferredHttpMethod("POST");
+      Object result=client.execute(execReq).getValue();
+      return unmarshalResult(method,result);
+    }
+  }
+ catch (  Throwable th) {
+    LOGGER.error("Proxy invocation error on: " + method.getDeclaringClass().getName() + "."+ method.getName(),th);
+    throw th;
   }
 }

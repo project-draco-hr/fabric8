@@ -1,0 +1,28 @@
+{
+  JMXServiceURL serviceURL;
+  try {
+    serviceURL=new JMXServiceURL(jmxServiceURL);
+  }
+ catch (  MalformedURLException ex) {
+    throw new IllegalArgumentException(ex);
+  }
+  Exception lastException=null;
+  long now=System.currentTimeMillis();
+  long end=now + unit.toMillis(timeout);
+  while (now <= end) {
+    try {
+      return JMXConnectorFactory.connect(serviceURL,env);
+    }
+ catch (    Exception ex) {
+      lastException=ex;
+      try {
+        Thread.sleep(500);
+      }
+ catch (      InterruptedException ie) {
+        break;
+      }
+    }
+    now=System.currentTimeMillis();
+  }
+  throw new IllegalStateException("Cannot obtain JMXConnector for: " + jmxServiceURL,lastException);
+}
