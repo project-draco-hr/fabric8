@@ -1,6 +1,6 @@
 {
   try {
-    FabricDiscoveryAgent rc=null;
+    FabricDiscoveryAgent rc;
     boolean osgi=false;
     try {
       if (OsgiUtil.isOsgi()) {
@@ -8,7 +8,8 @@
         osgi=true;
       }
     }
- catch (    NoClassDefFoundError ignore) {
+ catch (    Throwable ignore) {
+      LOG.debug("OSGi not detected due " + ignore.getMessage() + ". This exception is ignored.",ignore);
     }
     if (osgi) {
       rc=OsgiUtil.createOsgiDiscoveryAgent();
