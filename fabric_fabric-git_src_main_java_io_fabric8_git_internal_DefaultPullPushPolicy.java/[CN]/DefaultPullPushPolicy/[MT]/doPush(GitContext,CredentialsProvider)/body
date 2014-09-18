@@ -2,7 +2,7 @@
   StoredConfig config=git.getRepository().getConfig();
   String remoteUrl=config.getString("remote",remoteRef,"url");
   if (remoteUrl == null) {
-    LOGGER.info("No remote repository defined, so not doing a push");
+    LOGGER.debug("No remote repository defined, so not doing a push");
     return new AbstractPushPolicyResult();
   }
   LOGGER.info("Pushing last change to: {}",remoteUrl);
