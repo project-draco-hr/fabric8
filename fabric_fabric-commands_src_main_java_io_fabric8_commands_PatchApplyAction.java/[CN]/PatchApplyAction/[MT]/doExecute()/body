@@ -16,6 +16,7 @@
   }
   username=username != null && !username.isEmpty() ? username : ShellUtils.retrieveFabricUser(session);
   password=password != null ? password : ShellUtils.retrieveFabricUserPassword(session);
+  promptForJmxCredentialsIfNeeded();
   for (  Version version : versions) {
     fabricService.getPatchService().applyPatch(version,patch,username,password);
   }
