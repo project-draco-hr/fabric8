@@ -1,7 +1,6 @@
 {
   boolean reschedule=true;
   try {
-    AdminClient adminClient=injector.getInstance(AdminClient.class);
     ClusterAdminClient clusterAdminClient=adminClient.cluster();
     ClusterStateResponse state=clusterAdminClient.state(clusterAdminClient.prepareState().request()).actionGet();
     if (!state.getState().nodes().getLocalNode().isMasterNode()) {
