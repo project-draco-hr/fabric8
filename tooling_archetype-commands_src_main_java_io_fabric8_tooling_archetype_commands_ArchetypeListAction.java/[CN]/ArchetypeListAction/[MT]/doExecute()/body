@@ -1,19 +1,19 @@
 {
+  TablePrinter table=new TablePrinter();
   if (verbose) {
-    System.out.println(String.format(VERBOSE_FORMAT,(Object[])VERBOSE_HEADERS));
+    table.columns("groupId","artifactId","version","description");
   }
  else {
-    System.out.println(String.format(FORMAT,(Object[])HEADERS));
+    table.columns("artifactId","description");
   }
   for (  Archetype archetype : archetypeService.listArchetypes()) {
-    String nextLine;
     if (verbose) {
-      nextLine=String.format(VERBOSE_FORMAT,archetype.groupId,archetype.artifactId,archetype.version,archetype.description);
+      table.row(archetype.groupId,archetype.artifactId,archetype.version,archetype.description);
     }
  else {
-      nextLine=String.format(FORMAT,archetype.artifactId,archetype.description);
+      table.row(archetype.artifactId,archetype.description);
     }
-    System.out.println(nextLine);
   }
+  table.print();
   return null;
 }
