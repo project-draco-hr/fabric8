@@ -19,7 +19,11 @@
  catch (    IOException e) {
     }
     if (zipFile != null) {
-      File localRepoPath=new File(System.getProperty("karaf.base"),"system");
+      String karafDefaultRrepository=System.getProperty("karaf.default.repository");
+      if (Strings.isNullOrBlank(karafDefaultRrepository)) {
+        karafDefaultRrepository="system";
+      }
+      File localRepoPath=new File(System.getProperty("karaf.home"),karafDefaultRrepository);
       Enumeration<? extends ZipEntry> entries=zipFile.entries();
       while (entries.hasMoreElements()) {
         ZipEntry entry=entries.nextElement();
