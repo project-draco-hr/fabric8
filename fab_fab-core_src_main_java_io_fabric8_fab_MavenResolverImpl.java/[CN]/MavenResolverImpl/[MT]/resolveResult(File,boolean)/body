@@ -5,8 +5,7 @@
   Map<String,String> props=Collections.singletonMap(ArtifactProperties.LOCAL_PATH,rootPom.toString());
   Artifact root=new DefaultArtifact("#groupId","#artifactId",null,"pom","#version",props,rootPom);
   ArtifactDescriptorResult artifactDescriptorResult=repo.readArtifactDescriptor(session,new ArtifactDescriptorRequest(root,repos,null));
-  CollectRequest cr=new CollectRequest(artifactDescriptorResult.getDependencies(),null,repos);
+  CollectRequest request=new CollectRequest(artifactDescriptorResult.getDependencies(),null,repos);
   DependencyFilter filter=new AndDependencyFilter();
-  DependencyRequest request=new DependencyRequest(cr,filter);
-  return repo.resolveDependencies(session,request).getArtifactResults();
+  return repo.resolveDependencies(session,request,filter);
 }

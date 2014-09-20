@@ -1,25 +1,26 @@
 {
   List<RemoteRepository> repositories=new LinkedList<RemoteRepository>();
   for (  Repository repository : getRepositories()) {
-    RemoteRepository.Builder builder=new RemoteRepository.Builder(repository.getId(),"default",repository.getUrl());
+    RemoteRepository remote=new RemoteRepository();
+    remote.setId(repository.getId());
+    remote.setUrl(repository.getUrl());
+    remote.setContentType("default");
     if (repository.getSnapshots().isEnabled()) {
+      RepositoryPolicy repositoryPolicy=new RepositoryPolicy();
       if (repository.getSnapshots() != null) {
-        builder.setPolicy(convertMavenRepositoryPolicy(repository.getSnapshots()));
+        remote.setPolicy(true,convertMavenRepositoryPolicy(repository.getSnapshots()));
       }
     }
     if (repository.getReleases() != null) {
-      builder.setReleasePolicy(convertMavenRepositoryPolicy(repository.getReleases()));
+      remote.setPolicy(false,convertMavenRepositoryPolicy(repository.getReleases()));
     }
     Server server=getSettings().getServer(repository.getId());
     if (server != null) {
       String decodedUsername=decode(server.getUsername());
-      AuthenticationBuilder authBuilder=new AuthenticationBuilder();
-      authBuilder.addUsername(decodedUsername);
-      authBuilder.addPassword(server.getPassword());
-      authBuilder.addPrivateKey(server.getPrivateKey(),server.getPassphrase());
-      builder.setAuthentication(authBuilder.build());
+      Authentication authentication=new Authentication(decodedUsername,server.getPassword(),server.getPrivateKey(),server.getPassphrase());
+      remote.setAuthentication(authentication);
     }
-    repositories.add(builder.build());
+    repositories.add(remote);
   }
   return repositories;
 }

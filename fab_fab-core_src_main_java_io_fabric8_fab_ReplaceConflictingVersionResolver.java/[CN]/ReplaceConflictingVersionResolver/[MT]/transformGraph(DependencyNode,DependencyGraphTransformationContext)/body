@@ -9,7 +9,7 @@
   if (conflictIds == null) {
     throw new RepositoryException("conflict groups have not been identified");
   }
-  Map<DependencyNode,Integer> depths=new TreeMap<DependencyNode,Integer>(DependencyNodeComparator.INSTANCE);
+  Map<DependencyNode,Integer> depths=new IdentityHashMap<DependencyNode,Integer>(conflictIds.size());
   for (  Object key : sortedConflictIds) {
     ConflictGroup group=new ConflictGroup(key);
     depths.clear();

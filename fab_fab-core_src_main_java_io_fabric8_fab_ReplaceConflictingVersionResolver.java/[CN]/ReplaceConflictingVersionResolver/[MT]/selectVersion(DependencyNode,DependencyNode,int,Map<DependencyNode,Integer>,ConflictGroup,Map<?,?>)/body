@@ -1,7 +1,7 @@
 {
   Integer smallestDepth=depths.get(node);
-  if (smallestDepth == null || smallestDepth > depth) {
-    depths.put(node,depth);
+  if (smallestDepth == null || smallestDepth.intValue() > depth) {
+    depths.put(node,Integer.valueOf(depth));
   }
  else {
     return;
@@ -17,7 +17,7 @@
     }
     group.candidates.put(node,pos);
     VersionConstraint versionConstraint=node.getVersionConstraint();
-    if (versionConstraint != null && versionConstraint.getRange() != null && isNotEmpty(versionConstraint.getRange())) {
+    if (versionConstraint != null && versionConstraint.getRanges() != null && !versionConstraint.getRanges().isEmpty()) {
       group.constraints.add(versionConstraint);
     }
     if (group.version == null || isNearer(pos,node.getVersion(),group.position,group.version)) {
@@ -46,11 +46,12 @@
         for (        VersionConstraint constraint : group.constraints) {
           versions.add(constraint.toString());
         }
-        throw new UnsolvableVersionConflictException(Collections.<List<DependencyNode>>emptyList());
+        throw new UnsolvableVersionConflictException(group.key,versions);
       }
     }
   }
+  depth++;
   for (  DependencyNode child : node.getChildren()) {
-    selectVersion(child,node,depth + 1,depths,group,conflictIds);
+    selectVersion(child,node,depth,depths,group,conflictIds);
   }
 }

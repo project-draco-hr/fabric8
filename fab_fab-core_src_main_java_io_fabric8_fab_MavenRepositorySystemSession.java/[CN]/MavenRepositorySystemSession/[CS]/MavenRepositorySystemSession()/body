@@ -1,14 +1,15 @@
 {
-  delegate=new DefaultRepositorySystemSession();
-  delegate.setMirrorSelector(new DefaultMirrorSelector());
-  delegate.setAuthenticationSelector(new DefaultAuthenticationSelector());
-  delegate.setProxySelector(MavenUtils.getProxySelector());
-  delegate.setDependencyTraverser(new FatArtifactTraverser());
-  delegate.setDependencyManager(new ClassicDependencyManager());
+  setMirrorSelector(new DefaultMirrorSelector());
+  setAuthenticationSelector(new DefaultAuthenticationSelector());
+  setProxySelector(MavenUtils.getProxySelector());
+  DependencyTraverser depTraverser=new FatArtifactTraverser();
+  setDependencyTraverser(depTraverser);
+  DependencyManager depManager=new ClassicDependencyManager();
+  setDependencyManager(depManager);
   DependencySelector depFilter=new AndDependencySelector(new ScopeDependencySelector("test","provided"),new OptionalDependencySelector(),new ExclusionDependencySelector());
-  delegate.setDependencySelector(depFilter);
-  DependencyGraphTransformer transformer=new ChainedDependencyGraphTransformer(new ConflictMarker(),new JavaDependencyContextRefiner());
-  delegate.setDependencyGraphTransformer(transformer);
+  setDependencySelector(depFilter);
+  DependencyGraphTransformer transformer=new ChainedDependencyGraphTransformer(new ConflictMarker(),new JavaEffectiveScopeCalculator(),new NearestVersionConflictResolver(),new JavaDependencyContextRefiner());
+  setDependencyGraphTransformer(transformer);
   DefaultArtifactTypeRegistry stereotypes=new DefaultArtifactTypeRegistry();
   stereotypes.add(new DefaultArtifactType("pom"));
   stereotypes.add(new DefaultArtifactType("maven-plugin","jar","","java"));
@@ -22,7 +23,9 @@
   stereotypes.add(new DefaultArtifactType("ear","ear","","java",false,true));
   stereotypes.add(new DefaultArtifactType("rar","rar","","java",false,true));
   stereotypes.add(new DefaultArtifactType("par","par","","java",false,true));
-  delegate.setArtifactTypeRegistry(stereotypes);
-  delegate.setConfigProperties(System.getProperties());
-  delegate.setSystemProperties(System.getProperties());
+  setArtifactTypeRegistry(stereotypes);
+  setIgnoreInvalidArtifactDescriptor(true);
+  setIgnoreMissingArtifactDescriptor(true);
+  setSystemProps(System.getProperties());
+  setConfigProps(System.getProperties());
 }

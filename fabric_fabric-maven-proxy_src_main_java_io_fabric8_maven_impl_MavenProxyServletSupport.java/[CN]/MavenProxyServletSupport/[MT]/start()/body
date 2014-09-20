@@ -11,28 +11,25 @@
   repositories=new LinkedHashMap<String,RemoteRepository>();
   if (remoteRepositories != null) {
     for (    String rep : remoteRepositories) {
-      RemoteRepository.Builder previous=createRemoteRepository(rep);
-      RemoteRepository remoteRepository=previous.build();
-      RemoteRepository.Builder builder=new RemoteRepository.Builder(remoteRepository);
-      builder.setPolicy(new RepositoryPolicy(true,updatePolicy,checksumPolicy));
-      builder.setProxy(session.getProxySelector().getProxy(remoteRepository));
-      repositories.put(remoteRepository.getId(),builder.build());
+      RemoteRepository remoteRepository=createRemoteRepository(rep);
+      remoteRepository.setPolicy(true,new RepositoryPolicy(true,updatePolicy,checksumPolicy));
+      remoteRepository.setProxy(session.getProxySelector().getProxy(remoteRepository));
+      repositories.put(remoteRepository.getId(),remoteRepository);
     }
   }
-  RemoteRepository.Builder local=new RemoteRepository.Builder("local",DEFAULT_REPO_ID,"file://" + localRepository);
-  local.setPolicy(new RepositoryPolicy(true,updatePolicy,checksumPolicy));
-  repositories.put("local",local.build());
-  RemoteRepository.Builder karaf=new RemoteRepository.Builder("karaf",DEFAULT_REPO_ID,"file://" + System.getProperty("karaf.home") + File.separator+ System.getProperty("karaf.default.repository"));
-  karaf.setPolicy(new RepositoryPolicy(true,updatePolicy,checksumPolicy));
-  repositories.put("karaf",karaf.build());
-  RemoteRepository.Builder user=new RemoteRepository.Builder("user",DEFAULT_REPO_ID,"file://" + System.getProperty("user.home") + File.separator+ ".m2"+ File.separator+ "repository");
-  user.setPolicy(new RepositoryPolicy(true,updatePolicy,checksumPolicy));
-  repositories.put("user",user.build());
+  RemoteRepository local=new RemoteRepository("local",DEFAULT_REPO_ID,"file://" + localRepository);
+  local.setPolicy(true,new RepositoryPolicy(true,updatePolicy,checksumPolicy));
+  repositories.put("local",local);
+  RemoteRepository karaf=new RemoteRepository("karaf",DEFAULT_REPO_ID,"file://" + System.getProperty("karaf.home") + File.separator+ System.getProperty("karaf.default.repository"));
+  karaf.setPolicy(true,new RepositoryPolicy(true,updatePolicy,checksumPolicy));
+  repositories.put("karaf",karaf);
+  RemoteRepository user=new RemoteRepository("user",DEFAULT_REPO_ID,"file://" + System.getProperty("user.home") + File.separator+ ".m2"+ File.separator+ "repository");
+  user.setPolicy(true,new RepositoryPolicy(true,updatePolicy,checksumPolicy));
+  repositories.put("user",user);
   if (appendSystemRepos) {
     for (    RemoteRepository sysRepo : MavenUtils.getRemoteRepositories()) {
-      RemoteRepository.Builder builder=new RemoteRepository.Builder(sysRepo);
-      builder.setProxy(session.getProxySelector().getProxy(sysRepo));
-      repositories.put(sysRepo.getId(),builder.build());
+      sysRepo.setProxy(session.getProxySelector().getProxy(sysRepo));
+      repositories.put(sysRepo.getId(),sysRepo);
     }
   }
 }

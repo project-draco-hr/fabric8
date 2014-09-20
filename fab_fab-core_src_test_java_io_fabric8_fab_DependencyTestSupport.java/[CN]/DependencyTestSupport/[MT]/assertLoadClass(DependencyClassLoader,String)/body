@@ -1,10 +1,10 @@
 {
-  LOG.fine("Loading class: " + name);
+  LOG.debug("Loading class: " + name);
   try {
     return classLoader.loadClass(name);
   }
  catch (  ClassNotFoundException e) {
-    LOG.log(Level.SEVERE,"Failed to load class: " + name + " in "+ classLoader+ ". "+ e,e);
+    LOG.error("Failed to load class: " + name + " in "+ classLoader+ ". "+ e,e);
     Assert.fail("Could not load: " + name + " in "+ classLoader+ ". "+ e);
     return null;
   }

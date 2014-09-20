@@ -1,3 +1,9 @@
 {
-  return new RepositoryPolicy(repositoryPolicy.isEnabled(),repositoryPolicy.getUpdatePolicy(),repositoryPolicy.getChecksumPolicy());
+  RepositoryPolicy policy=new RepositoryPolicy();
+  if (repositoryPolicy != null && repositoryPolicy.getChecksumPolicy() != null) {
+    policy.setChecksumPolicy(repositoryPolicy.getChecksumPolicy());
+  }
+  policy.setEnabled(repositoryPolicy.isEnabled());
+  policy.setUpdatePolicy(repositoryPolicy.getUpdatePolicy());
+  return policy;
 }

@@ -1,4 +1,17 @@
 {
-  String[] parts=getAuthenticationPair(repositoryUrl);
-  return getAuthentication(parts);
+  Authentication authentication=null;
+  try {
+    URL url=new URL(repositoryUrl);
+    String authority=url.getUserInfo();
+    if (!Strings.isNullOrEmpty(authority)) {
+      String[] parts=authority.split(":");
+      if (parts.length == 2) {
+        authentication=new Authentication(parts[0],parts[1]);
+      }
+    }
+  }
+ catch (  MalformedURLException e) {
+    LOGGER.warning("{} does not look like a valid repository URL");
+  }
+  return authentication;
 }

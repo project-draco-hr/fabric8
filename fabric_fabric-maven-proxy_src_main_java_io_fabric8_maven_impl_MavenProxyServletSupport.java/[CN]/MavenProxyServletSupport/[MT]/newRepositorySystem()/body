@@ -2,9 +2,6 @@
   DefaultServiceLocator locator=new DefaultServiceLocator();
   locator.setServices(WagonProvider.class,new ManualWagonProvider());
   locator.addService(RepositoryConnectorFactory.class,WagonRepositoryConnectorFactory.class);
-  locator.setService(org.eclipse.aether.spi.log.Logger.class,LogAdapter.class);
-  locator.setService(VersionResolver.class,DefaultVersionResolver.class);
-  locator.setService(VersionRangeResolver.class,DefaultVersionRangeResolver.class);
-  locator.setService(ArtifactDescriptorReader.class,DefaultArtifactDescriptorReader.class);
+  locator.setService(org.sonatype.aether.spi.log.Logger.class,LogAdapter.class);
   return locator.getService(RepositorySystem.class);
 }

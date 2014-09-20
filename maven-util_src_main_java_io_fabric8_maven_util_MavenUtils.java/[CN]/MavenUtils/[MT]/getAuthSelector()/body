@@ -3,11 +3,8 @@
   Settings settings=getSettings();
   for (  Server server : settings.getServers()) {
     String decodedUsername=decode(server.getUsername());
-    AuthenticationBuilder authBuilder=new AuthenticationBuilder();
-    authBuilder.addUsername(decodedUsername);
-    authBuilder.addPassword(server.getPassword());
-    authBuilder.addPrivateKey(server.getPrivateKey(),server.getPassphrase());
-    selector.add(server.getId(),authBuilder.build());
+    Authentication auth=new Authentication(decodedUsername,server.getPassword(),server.getPrivateKey(),server.getPassphrase());
+    selector.add(server.getId(),auth);
   }
   return new ConservativeAuthenticationSelector(selector);
 }

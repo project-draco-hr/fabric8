@@ -1,6 +1,5 @@
 {
-  MavenRepositorySystemSession original=new MavenRepositorySystemSession();
-  DefaultRepositorySystemSession session=original.getDelegate();
+  DefaultRepositorySystemSession session=new MavenRepositorySystemSession();
   session.setOffline(false);
   session.setProxySelector(MavenUtils.getProxySelector(proxyProtocol,proxyHost,proxyPort,proxyNonProxyHosts,proxyUsername,proxyPassword));
   session.setMirrorSelector(MavenUtils.getMirrorSelector());
@@ -9,6 +8,6 @@
   session.setUpdatePolicy(updatePolicy);
   session.setChecksumPolicy(checksumPolicy);
   LocalRepository localRepo=new LocalRepository(localRepository);
-  session.setLocalRepositoryManager(system.newLocalRepositoryManager(session,localRepo));
-  return original;
+  session.setLocalRepositoryManager(system.newLocalRepositoryManager(localRepo));
+  return session;
 }

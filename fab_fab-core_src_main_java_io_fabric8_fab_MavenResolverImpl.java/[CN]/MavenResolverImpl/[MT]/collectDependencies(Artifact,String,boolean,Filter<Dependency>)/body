@@ -18,7 +18,8 @@
     }
     @Override public boolean selectDependency(    Dependency dependency){
       try {
-        return !DependencyFilters.matches(dependency,shouldExclude);
+        boolean answer=DependencyFilters.matches(dependency,shouldExclude);
+        return !answer;
       }
  catch (      Exception e) {
         failedToMakeDependencyTree(dependency,e);
@@ -42,7 +43,7 @@
       pomNode=node;
     }
   }
-  final DependencyGraphTransformationContext tranformContext=new DependencyGraphTransformationContext(){
+  DependencyGraphTransformationContext tranformContext=new DependencyGraphTransformationContext(){
     Map map=new HashMap();
     public RepositorySystemSession getSession(){
       return session;
@@ -56,8 +57,6 @@
   }
 ;
   DependencyGraphTransformer transformer=new ReplaceConflictingVersionResolver();
-  pomNode=transformer.transformGraph(pomNode,tranformContext);
-  transformer=new DuplicateTransformer();
   pomNode=transformer.transformGraph(pomNode,tranformContext);
   DependencyTreeResult result=new DependencyTreeResult(pomNode,this,excludeDependencyFilter);
   List<DependencyTree.DuplicateDependency> duplicates=result.getTree().checkForDuplicateDependencies();

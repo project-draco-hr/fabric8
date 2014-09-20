@@ -2,7 +2,7 @@
   List<DependencyNode> childrenNodes=node.getChildren();
   List<DependencyTree> children=new ArrayList<DependencyTree>();
   for (  DependencyNode childNode : childrenNodes) {
-    if (!DependencyFilters.matches(childNode,excludeDependencyFilter) && DependencyNodeComparator.INSTANCE.compare(node,childNode) != 0) {
+    if (!DependencyFilters.matches(childNode,excludeDependencyFilter) && !node.getDependency().equals(childNode.getDependency())) {
       DependencyTree child=newInstance(childNode,resolver,excludeDependencyFilter);
       children.add(child);
     }
