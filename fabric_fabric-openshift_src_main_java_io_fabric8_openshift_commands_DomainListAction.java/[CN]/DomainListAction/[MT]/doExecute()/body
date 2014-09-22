@@ -1,8 +1,10 @@
 {
   IOpenShiftConnection connection=getOrCreateConnection();
-  System.out.println("[id]");
+  TablePrinter printer=new TablePrinter();
+  printer.column("id");
   for (  IDomain domain : connection.getDomains()) {
-    System.out.println(domain.getId());
+    printer.row(domain.getId());
   }
+  printer.print();
   return null;
 }

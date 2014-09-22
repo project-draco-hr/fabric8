@@ -1,15 +1,13 @@
 {
-{
-    ContainerInstallOptions options=ContainerInstallOptions.builder().container(getContainerObject()).user(jmxUser).password(jmxPassword).build();
-    ImmutableMap<String,Installation> map=getContainerProcessManager().listInstallationMap(options);
-    for (    String id : ids) {
-      Installation installation=map.get(id);
-      if (installation == null) {
-        System.out.println("No such process number: " + id);
-      }
+  ContainerInstallOptions options=ContainerInstallOptions.builder().container(getContainerObject()).user(jmxUser).password(jmxPassword).build();
+  ImmutableMap<String,Installation> map=getContainerProcessManager().listInstallationMap(options);
+  for (  String id : ids) {
+    Installation installation=map.get(id);
+    if (installation == null) {
+      System.out.println("No such process number: " + id);
+    }
  else {
-        doControlCommand(installation);
-      }
+      doControlCommand(installation);
     }
   }
 }

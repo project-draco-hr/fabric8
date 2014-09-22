@@ -29,8 +29,8 @@
     watcher.start();
   }
   if (list) {
-    String format="%-40s %-30s %-8s %-80s";
-    System.out.println(String.format(format,"URL","Profile","Version","Bundle"));
+    TablePrinter printer=new TablePrinter();
+    printer.columns("url","profile","version","bundle");
     for (    String url : watcher.getWatchURLs()) {
       Map<ProfileVersionKey,Map<String,Parser>> profileArtifacts=watcher.getProfileArtifacts();
       if (profileArtifacts.size() > 0) {
@@ -43,15 +43,16 @@
             String location=artifactMapEntry.getKey();
             Parser parser=artifactMapEntry.getValue();
             if (isSnapshot(parser) || watcher.wildCardMatch(location,url)) {
-              System.out.println(String.format(format,url,key.getProfileId(),key.getVersion(),location));
+              printer.row(url,key.getProfileId(),key.getVersion(),location);
             }
           }
         }
       }
  else {
-        System.out.println(String.format(format,url,"","",""));
+        printer.row(url,"","","");
       }
     }
+    printer.print();
   }
  else {
     List<String> urls=watcher.getWatchURLs();
