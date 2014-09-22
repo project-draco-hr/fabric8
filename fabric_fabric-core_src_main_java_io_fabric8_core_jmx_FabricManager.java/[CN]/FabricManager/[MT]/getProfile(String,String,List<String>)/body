@@ -1,4 +1,40 @@
 {
-  Profile profile=profileService.getVersion(versionId).getRequiredProfile(profileId);
-  return BeanUtils.convertProfileToMap(fabricService,profile,fields);
+  Version version=profileService.getVersion(versionId);
+  Profile profile=version.getRequiredProfile(profileId);
+  Map<String,Object> answer=BeanUtils.convertProfileToMap(fabricService,profile,fields);
+  String iconURLField="iconURL";
+  if (fields.contains(iconURLField) && !profile.isOverlay()) {
+    String restApi=restApiUrl();
+    if (restApi != null && restApi.length() > 0) {
+      try {
+        URL url=new URL(restApi);
+        restApi=url.getPath();
+      }
+ catch (      MalformedURLException e) {
+      }
+      String relativeIcon=profile.getIconRelativePath();
+      String iconProfileId=profileId;
+      if (relativeIcon == null || relativeIcon.isEmpty()) {
+        List<String> parentIds=profile.getParentIds();
+        if (parentIds != null && !parentIds.isEmpty()) {
+          for (          String parentId : parentIds) {
+            Profile parentProfile=version.getRequiredProfile(parentId);
+            relativeIcon=parentProfile.getIconRelativePath();
+            if (relativeIcon != null && relativeIcon.length() > 0) {
+              iconProfileId=parentId;
+              break;
+            }
+          }
+        }
+      }
+      if (relativeIcon == null || relativeIcon.isEmpty()) {
+        answer.remove(iconURLField);
+      }
+ else {
+        String icon=restApi + "/version/" + versionId+ "/profile/"+ iconProfileId+ "/overlay/file/"+ relativeIcon;
+        answer.put(iconURLField,icon);
+      }
+    }
+  }
+  return answer;
 }
