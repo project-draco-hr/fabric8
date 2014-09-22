@@ -1,0 +1,10 @@
+{
+  boolean answer=super.hasMatchingMediaType(mediaType);
+  String type=mediaType.getType();
+  String subtype=mediaType.getSubtype();
+  if (!answer && type.equals("text")) {
+    answer=super.hasMatchingMediaType(MediaType.APPLICATION_JSON_TYPE);
+  }
+  System.out.println("PlainTextJacksonProvider called with type " + type + " subtype"+ subtype+ " and answer: "+ answer);
+  return answer;
+}
