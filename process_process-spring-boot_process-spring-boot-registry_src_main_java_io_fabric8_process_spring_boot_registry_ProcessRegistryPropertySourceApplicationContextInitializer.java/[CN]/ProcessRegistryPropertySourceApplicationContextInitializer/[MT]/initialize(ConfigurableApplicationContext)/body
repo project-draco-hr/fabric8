@@ -1,7 +1,7 @@
 {
   List<ProcessRegistry> registries=newArrayList(new InMemoryProcessRegistry(),new ClassPathProcessRegistry());
   LOG.debug("Looking for ZooKeeperProcessRegistry...");
-  if (ClassUtils.isPresent("org.apache.curator.framework.CuratorFramework",getClass().getClassLoader())) {
+  if (isZooKeeperRegistryEnabled() && ClassUtils.isPresent("org.apache.curator.framework.CuratorFramework",getClass().getClassLoader())) {
     LOG.info("Apache Curator jar found. Creating ZooKeeperProcessRegistry.");
     registries.add(autodetectZooKeeperProcessRegistry());
   }
