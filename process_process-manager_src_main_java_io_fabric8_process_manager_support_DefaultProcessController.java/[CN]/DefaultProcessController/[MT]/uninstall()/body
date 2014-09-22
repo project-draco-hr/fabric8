@@ -1,11 +1,12 @@
 {
-  String name=baseDir.getName();
+  String name=rootDir.getName();
   if (name.startsWith(".")) {
+    LOG.debug("Uninstalling " + rootDir + " has already been done.");
   }
  else {
-    File newName=new File(baseDir.getParentFile(),"." + name);
+    File newName=new File(rootDir.getParentFile(),"." + name);
     Files.recursiveDelete(newName);
-    baseDir.renameTo(newName);
+    rootDir.renameTo(newName);
   }
   return 0;
 }
