@@ -79,6 +79,12 @@
     for (    Map.Entry<String,String> e : replaceProperties.entrySet()) {
       text=replaceVariable(text,e.getKey(),e.getValue());
     }
+    if (Strings.isNotBlank(name)) {
+      text=text.replaceFirst("<name>(.*)</name>","<name>" + name + "</name>");
+    }
+    if (Strings.isNotBlank(description)) {
+      text=text.replaceFirst("<description>(.*)</description>","<description>" + description + "</description>");
+    }
     FileWriter writer=new FileWriter(pom);
     IOUtils.write(text,writer);
     IOUtils.closeQuietly(writer);

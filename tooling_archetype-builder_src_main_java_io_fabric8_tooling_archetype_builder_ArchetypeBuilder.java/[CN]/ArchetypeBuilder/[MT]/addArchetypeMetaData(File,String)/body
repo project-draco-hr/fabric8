@@ -3,6 +3,7 @@
   Element root=doc.getDocumentElement();
   String groupId="io.fabric8.archetypes";
   String artifactId=archetypeUtils.firstElementText(root,"artifactId",outputName);
+  String name=archetypeUtils.firstElementText(root,"name","");
   String description=archetypeUtils.firstElementText(root,"description","");
   String version="";
   NodeList parents=root.getElementsByTagName("parent");
@@ -13,5 +14,5 @@
     version=archetypeUtils.firstElementText(root,"version","");
   }
   String repo="https://repo.fusesource.com/nexus/content/groups/public";
-  printWriter.println(String.format(indent + indent + "<archetype>\n"+ indent+ indent+ indent+ "<groupId>%s</groupId>\n"+ indent+ indent+ indent+ "<artifactId>%s</artifactId>\n"+ indent+ indent+ indent+ "<version>%s</version>\n"+ indent+ indent+ indent+ "<repository>%s</repository>\n"+ indent+ indent+ indent+ "<description>%s</description>\n"+ indent+ indent+ "</archetype>",groupId,artifactId,version,repo,description));
+  printWriter.println(String.format(indent + indent + "<archetype>\n"+ indent+ indent+ indent+ "<groupId>%s</groupId>\n"+ indent+ indent+ indent+ "<artifactId>%s</artifactId>\n"+ indent+ indent+ indent+ "<version>%s</version>\n"+ indent+ indent+ indent+ "<repository>%s</repository>\n"+ indent+ indent+ indent+ "<name>%s</name>\n"+ indent+ indent+ indent+ "<description>%s</description>\n"+ indent+ indent+ "</archetype>",groupId,artifactId,version,repo,name,description));
 }
