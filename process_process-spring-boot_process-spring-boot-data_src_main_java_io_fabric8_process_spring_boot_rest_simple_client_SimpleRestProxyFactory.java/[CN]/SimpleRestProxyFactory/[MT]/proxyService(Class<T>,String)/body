@@ -1,0 +1,10 @@
+{
+  return (RestProxy<T>)newProxyInstance(SimpleRestProxyFactory.class.getClassLoader(),new Class[]{RestProxy.class},new InvocationHandler(){
+    @Override public Object invoke(    Object proxy,    Method method,    Object[] args) throws Throwable {
+      String normalizedBaseServiceUrl=normalizeBaseServiceUrl(baseServiceUrl);
+      boolean isGet=method.getName().equals("get");
+      return newProxyInstance(SimpleRestProxyFactory.class.getClassLoader(),new Class[]{serviceClass},new HttpMethodHandler(isGet,serviceClass,normalizedBaseServiceUrl));
+    }
+  }
+);
+}
