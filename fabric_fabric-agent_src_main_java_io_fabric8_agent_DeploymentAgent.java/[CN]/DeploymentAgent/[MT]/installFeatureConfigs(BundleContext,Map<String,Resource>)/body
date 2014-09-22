@@ -3,11 +3,10 @@
   if (configAdminServiceReference != null) {
     ConfigurationAdmin configAdmin=(ConfigurationAdmin)bundleContext.getService(configAdminServiceReference);
     for (    FeatureResource resource : filterFeatureResources(resources)) {
-      Map<String,Map<String,String>> configs=resource.getFeature().getConfigurations();
-      for (      Map.Entry<String,Map<String,String>> entry : configs.entrySet()) {
-        String pid=entry.getKey();
+      for (      ConfigInfo ci : resource.getFeature().getConfigurations()) {
+        String pid=ci.getName();
         if (!isConfigurationManaged(configAdmin,pid)) {
-          applyConfiguration(configAdmin,pid,entry.getValue());
+          applyConfiguration(configAdmin,pid,ci.getProperties());
         }
       }
     }
