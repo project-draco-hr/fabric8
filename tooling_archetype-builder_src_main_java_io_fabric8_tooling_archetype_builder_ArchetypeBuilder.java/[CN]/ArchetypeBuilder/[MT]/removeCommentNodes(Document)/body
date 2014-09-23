@@ -1,0 +1,13 @@
+{
+  List<Node> toRemove=new ArrayList<>();
+  NodeList children=doc.getChildNodes();
+  for (int cn=0; cn < children.getLength(); cn++) {
+    Node child=children.item(cn);
+    if (Node.COMMENT_NODE == child.getNodeType()) {
+      toRemove.add(child);
+    }
+  }
+  for (  Node child : toRemove) {
+    doc.removeChild(child);
+  }
+}

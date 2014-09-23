@@ -83,6 +83,7 @@
     replaceOrAddElementText(doc,root,"groupId","${groupId}",beforeNames);
   }
   archetypePom.getParentFile().mkdirs();
+  removeCommentNodes(doc);
   archetypeUtils.writeXmlDocument(doc,archetypePom);
   String archetypeXmlText=defaultArchetypeXmlText();
   Document archDoc=archetypeUtils.parseXml(new InputSource(new StringReader(archetypeXmlText)));
