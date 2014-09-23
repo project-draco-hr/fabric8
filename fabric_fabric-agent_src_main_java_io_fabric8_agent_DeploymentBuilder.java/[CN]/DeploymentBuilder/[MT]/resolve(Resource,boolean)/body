@@ -5,7 +5,26 @@
   repos.addAll(resourceRepos);
   ResolverImpl resolver=new ResolverImpl(new Slf4jResolverLog(LOGGER));
   ResolveContext context=new ResolveContextImpl(Collections.<Resource>singleton(requirements),Collections.<Resource>emptySet(),new AggregateRepository(repos),resolveOptionalImports);
-  wiring=resolver.resolve(context);
+  try {
+    wiring=resolver.resolve(context);
+  }
+ catch (  ResolutionException e) {
+    List<String> missing=new ArrayList<>();
+    Collection<Requirement> reqs=e.getUnresolvedRequirements();
+    Iterator<Requirement> it=reqs.iterator();
+    while (it.hasNext()) {
+      Requirement req=it.next();
+      String type=(String)req.getAttributes().get(IdentityNamespace.CAPABILITY_TYPE_ATTRIBUTE);
+      boolean isFeature=type != null && FeatureNamespace.TYPE_FEATURE.equals(type);
+      String name=(String)req.getAttributes().get(IdentityNamespace.IDENTITY_NAMESPACE);
+      if (isFeature && name != null) {
+        missing.add(name);
+      }
+    }
+    if (!missing.isEmpty()) {
+      throw new ResolutionException("The following feature(s) may not exist or cannot be resolved: [" + Strings.join(missing,", ") + "]",e,reqs);
+    }
+  }
   Map<String,Resource> deploy=new TreeMap<String,Resource>();
   for (  Resource res : wiring.keySet()) {
     String uri=getUri(res);
