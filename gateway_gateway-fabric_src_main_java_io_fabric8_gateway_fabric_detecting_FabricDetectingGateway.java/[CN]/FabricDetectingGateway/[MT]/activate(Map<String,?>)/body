@@ -5,6 +5,9 @@
   activateComponent();
   detectingGateway=createDetectingGateway();
   if (detectingGateway != null) {
+    if (httpGateway != null) {
+      detectingGateway.setHttpGateway(httpGateway.getLocalAddress());
+    }
     cache=new GatewayServiceTreeCache(getCurator(),getZooKeeperPath(),serviceMap);
     cache.init();
     detectingGateway.init();

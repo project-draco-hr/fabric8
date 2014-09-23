@@ -10,7 +10,9 @@
         }
  catch (        Exception e) {
         }
-        activeServices.add(resolved);
+        if (resolved.startsWith("tcp:") || resolved.startsWith("ssl:") || resolved.startsWith("nio:")|| resolved.startsWith("nio+ssl:")) {
+          activeServices.add(resolved);
+        }
       }
     }
     if (members != null) {
