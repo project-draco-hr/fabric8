@@ -13,8 +13,7 @@
   if (container != null) {
     registerPorts(options,processConfig,container,environmentVariables);
   }
-  JolokiaAgentHelper.substituteEnvironmentVariableExpressions(environmentVariables,environmentVariables,fabricService,curator,true);
-  JolokiaAgentHelper.substituteEnvironmentVariableExpressions(environmentVariables,System.getenv(),null,null,true);
+  resolveEnvironmentVariables(environmentVariables);
   publishZooKeeperValues(options,processConfig,container,environmentVariables);
   if (container != null) {
     String type=processConfig.getProcessName();
