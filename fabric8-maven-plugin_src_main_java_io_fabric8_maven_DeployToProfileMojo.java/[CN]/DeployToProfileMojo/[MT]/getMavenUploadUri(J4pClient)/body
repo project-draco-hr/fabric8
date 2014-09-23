@@ -30,7 +30,15 @@
 catch (  J4pRemoteException e) {
     int status=e.getStatus();
     if (status == 401) {
-      String message="Unauthorized to access to: " + jolokiaUrl + " using user: "+ fabricServer.getUsername()+ ".\nHave you created a Fabric?\nHave you setup your ~/.m2/settings.xml with the correct user and password for server ID: "+ serverId+ " and do the user/password match the server "+ jolokiaUrl+ "?";
+      String message="Status 401: Unauthorized to access: " + jolokiaUrl + " using user: "+ fabricServer.getUsername();
+      if (!customUsernameAndPassword) {
+        message+=".\nHave you created a Fabric?\nHave you setup your ~/.m2/settings.xml with the correct user and password for server ID: " + serverId + " and do the user/password match the server "+ jolokiaUrl+ "?";
+      }
+      getLog().error(message);
+      throw new MojoExecutionException(message,e);
+    }
+ else     if (status == 404) {
+      String message="Status 404: Resource not found: " + jolokiaUrl + ".\nHave you created a Fabric?";
       getLog().error(message);
       throw new MojoExecutionException(message,e);
     }
@@ -38,8 +46,16 @@ catch (  J4pRemoteException e) {
       exception=e;
     }
   }
-catch (  Exception e) {
-    exception=e;
+catch (  J4pException e) {
+    boolean is404="Could not parse answer: Unexpected token END OF FILE at position 0.".equals(e.getMessage());
+    if (is404) {
+      String message="Status 404: Resource not found: " + jolokiaUrl + ".\nHave you created a Fabric?";
+      getLog().error(message);
+      throw new MojoExecutionException(message,e);
+    }
+ else {
+      exception=e;
+    }
   }
   if (exception != null) {
     getLog().error("Failed to get maven repository URI from " + jolokiaUrl + ". "+ exception,exception);

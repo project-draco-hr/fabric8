@@ -1,6 +1,6 @@
 {
+  if (isIgnoreProject())   return;
   try {
-    if (isIgnoreProject())     return;
     ProjectRequirements requirements=new ProjectRequirements();
     if (isIncludeArtifact()) {
       DependencyDTO rootDependency=loadRootDependency();
@@ -9,6 +9,29 @@
     configureRequirements(requirements);
     boolean newUserAdded=false;
     fabricServer=mavenSettings.getServer(serverId);
+    String jolokiaUsername=null;
+    String jolokiaPassword=null;
+    try {
+      URL url=new URL(jolokiaUrl);
+      String s=url.getUserInfo();
+      if (Strings.isNotBlank(s) && s.indexOf(':') > 0) {
+        int idx=s.indexOf(':');
+        jolokiaUsername=s.substring(0,idx);
+        jolokiaPassword=s.substring(idx + 1);
+        customUsernameAndPassword=true;
+      }
+    }
+ catch (    MalformedURLException e) {
+      throw new IllegalArgumentException("Option jolokiaUrl is invalid due " + e.getMessage());
+    }
+    if (jolokiaUsername != null) {
+      if (fabricServer == null) {
+        fabricServer=new Server();
+      }
+      getLog().info("Using username: " + jolokiaUsername + " and password from provided jolokiaUrl option");
+      fabricServer.setUsername(jolokiaUsername);
+      fabricServer.setPassword(jolokiaPassword);
+    }
     if (fabricServer == null) {
       boolean create=false;
       if (mavenSettings.isInteractiveMode() && mavenSettingsWriter != null) {
