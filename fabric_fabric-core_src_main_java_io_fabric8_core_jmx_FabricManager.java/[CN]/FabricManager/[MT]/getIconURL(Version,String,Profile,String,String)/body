@@ -1,0 +1,28 @@
+{
+  String relativeIcon=profile.getIconRelativePath();
+  String iconProfileId=profileId;
+  if (isNullOrEmpty(relativeIcon)) {
+    List<String> parentIds=profile.getParentIds();
+    if (parentIds != null && !parentIds.isEmpty()) {
+      for (      String parentId : parentIds) {
+        Profile parentProfile=version.getRequiredProfile(parentId);
+        relativeIcon=parentProfile.getIconRelativePath();
+        if (isNullOrEmpty(relativeIcon)) {
+          String answer=getIconURL(version,versionId,parentProfile,parentId,restApi);
+          if (!isNullOrEmpty(answer)) {
+            return answer;
+          }
+        }
+        if (!isNullOrEmpty(relativeIcon)) {
+          iconProfileId=parentId;
+          break;
+        }
+      }
+    }
+  }
+  String icon=null;
+  if (!isNullOrEmpty(relativeIcon)) {
+    icon=restApi + "/version/" + versionId+ "/profile/"+ iconProfileId+ "/overlay/file/"+ relativeIcon;
+  }
+  return icon;
+}
