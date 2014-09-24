@@ -1,0 +1,64 @@
+{
+  Kubernetes kubernetes=getKubernetes();
+  Objects.notNull(kubernetes,"kubernetes");
+  Map<String,PodSchema> podMap=null;
+  Map<String,ReplicationControllerSchema> replicationControllerMap=null;
+  Map<String,ServiceSchema> serviceMap=null;
+  Map<String,Object> kubelets=loadKubelets(service,options,config,metadata);
+  Set<Map.Entry<String,Object>> entries=kubelets.entrySet();
+  for (  Map.Entry<String,Object> entry : entries) {
+    String definition=entry.getKey();
+    Object kubelet=entry.getValue();
+    if (kubelet instanceof PodSchema) {
+      PodSchema podSchema=(PodSchema)kubelet;
+      if (podMap == null) {
+        podMap=getPodMap(kubernetes);
+      }
+      String id=podSchema.getId();
+      PodSchema old=podMap.get(id);
+      if (isRunning(old)) {
+        try {
+          deletePod(id);
+        }
+ catch (        Exception e) {
+          LOG.error("Failed to delete pod " + id + " from "+ definition+ ": "+ e+ ". ",e);
+        }
+      }
+    }
+ else     if (kubelet instanceof ReplicationControllerSchema) {
+      ReplicationControllerSchema replicationControllerSchema=(ReplicationControllerSchema)kubelet;
+      if (replicationControllerMap == null) {
+        replicationControllerMap=getReplicationControllerMap(kubernetes);
+      }
+      String id=replicationControllerSchema.getId();
+      ReplicationControllerSchema old=replicationControllerMap.get(id);
+      if (isRunning(old)) {
+        try {
+          deleteReplicationController(id);
+        }
+ catch (        Exception e) {
+          LOG.error("Failed to delete replicationController " + id + " from "+ definition+ ": "+ e+ ". ",e);
+        }
+      }
+    }
+ else     if (kubelet instanceof ServiceSchema) {
+      ServiceSchema serviceSchema=(ServiceSchema)kubelet;
+      if (serviceMap == null) {
+        serviceMap=getServiceMap(kubernetes);
+      }
+      String id=serviceSchema.getId();
+      ServiceSchema old=serviceMap.get(id);
+      if (isRunning(old)) {
+        try {
+          deleteService(id);
+        }
+ catch (        Exception e) {
+          LOG.error("Failed to delete service " + id + " from "+ definition+ ": "+ e+ ". ",e);
+        }
+      }
+    }
+ else {
+      LOG.warn("Unknown Kublelet from " + definition + ". Object: "+ kubelet);
+    }
+  }
+}

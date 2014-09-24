@@ -1,0 +1,14 @@
+{
+  KubernetesConfig config=null;
+  Set<String> profileIds=options.getProfiles();
+  String versionId=options.getVersion();
+  Map<String,String> configuration=null;
+  if (service != null) {
+    configuration=Profiles.getOverlayConfiguration(service,profileIds,versionId,KubernetesConstants.KUBERNETES_PID,"kubernetes");
+  }
+  if (configuration != null) {
+    config=new KubernetesConfig();
+    configurer.configure(configuration,config);
+  }
+  return config;
+}

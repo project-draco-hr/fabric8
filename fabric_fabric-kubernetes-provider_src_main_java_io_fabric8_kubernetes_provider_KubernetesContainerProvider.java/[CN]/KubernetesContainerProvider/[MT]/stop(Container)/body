@@ -1,15 +1,33 @@
 {
   assertValid();
-  String id=getPodId(container);
-  if (!Strings.isNullOrBlank(id)) {
+  CreateKubernetesContainerMetadata containerMetadata=getContainerMetadata(container);
+  CreateKubernetesContainerOptions options=containerMetadata.getCreateOptions();
+  if (containerMetadata != null && containerMetadata.isKubelet()) {
     try {
-      deletePod(id);
+      FabricService service=getFabricService();
+      KubernetesConfig config=getKubernetesConfig(service,options);
+      if (config != null) {
+        stopKubletPodsReplicationControllersServices(service,options,config,containerMetadata);
+      }
     }
  catch (    Exception e) {
-      String message="Could not remove pod: it probably no longer exists " + e + Dockers.dockerErrorMessage(e);
+      String message="Could not start kubelet for container: " + container.getId() + ": "+ e+ Dockers.dockerErrorMessage(e);
       LOG.warn(message,e);
       throw new RuntimeException(message,e);
     }
-    container.setProvisionResult(Container.PROVISION_STOPPED);
+  }
+ else {
+    String id=getPodId(container);
+    if (!Strings.isNullOrBlank(id)) {
+      try {
+        deletePod(id);
+      }
+ catch (      Exception e) {
+        String message="Could not remove pod: it probably no longer exists " + e + Dockers.dockerErrorMessage(e);
+        LOG.warn(message,e);
+        throw new RuntimeException(message,e);
+      }
+      container.setProvisionResult(Container.PROVISION_STOPPED);
+    }
   }
 }

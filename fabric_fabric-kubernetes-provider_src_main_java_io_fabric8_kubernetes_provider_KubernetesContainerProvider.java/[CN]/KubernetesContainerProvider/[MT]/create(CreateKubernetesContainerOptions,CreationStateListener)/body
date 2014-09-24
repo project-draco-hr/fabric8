@@ -1,14 +1,7 @@
 {
-  Set<String> profileIds=options.getProfiles();
-  String versionId=options.getVersion();
-  Map<String,String> configuration=null;
   FabricService service=getFabricService();
-  if (service != null) {
-    configuration=Profiles.getOverlayConfiguration(service,profileIds,versionId,KubernetesConstants.KUBERNETES_PID,"kubernetes");
-  }
-  if (configuration != null) {
-    KubernetesConfig config=new KubernetesConfig();
-    configurer.configure(configuration,config);
+  KubernetesConfig config=getKubernetesConfig(service,options);
+  if (config != null) {
     List<String> definitions=config.getDefinitions();
     if (definitions != null && definitions.size() > 0) {
       return doCreateKubernetesPodsControllersServices(service,options,config);
