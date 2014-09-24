@@ -3,8 +3,10 @@
   if (containers != null) {
     for (    Container container : containers) {
       String containerId=container.getId();
-      String podId=containerNameToPodId(containerId);
-      answer.put(podId,container);
+      if (!isKubeletContainer(container)) {
+        String podId=containerNameToPodId(containerId);
+        answer.put(podId,container);
+      }
     }
   }
   return answer;

@@ -1,9 +1,12 @@
 {
   List<String> definitions=config.getDefinitions();
-  String containerId="TODO";
+  String containerId=options.getName();
   byte[] json=null;
   Kubernetes kubernetes=getKubernetes();
   Objects.notNull(kubernetes,"kubernetes");
+  String status="TODO";
+  List<String> warnings=new ArrayList<>();
+  CreateKubernetesContainerMetadata metadata=createKubernetesContainerMetadata(options,containerId,"kubelet",status,warnings);
   for (  String definition : definitions) {
     definition=definition.trim();
     if (!definition.contains(":")) {
@@ -45,7 +48,7 @@
               String kind=kindNode.asText();
               if (Objects.equal("Pod",kind)) {
                 PodSchema podSchema=objectMapper.reader(PodSchema.class).readValue(json);
-                configurePod(podSchema,service,options,config);
+                configurePod(podSchema,service,options,config,metadata);
                 LOG.info("Creating a pod from " + definition);
                 try {
                   Object answer=kubernetes.createPod(podSchema);
@@ -57,7 +60,7 @@
               }
  else               if (Objects.equal("ReplicationController",kind)) {
                 ReplicationControllerSchema replicationControllerSchema=objectMapper.reader(ReplicationControllerSchema.class).readValue(json);
-                configureReplicationController(replicationControllerSchema,service,options,config);
+                configureReplicationController(replicationControllerSchema,service,options,config,metadata);
                 LOG.info("Creating a controller from " + definition);
                 try {
                   Object answer=kubernetes.createReplicationController(replicationControllerSchema);
@@ -69,7 +72,7 @@
               }
  else               if (Objects.equal("Service",kind)) {
                 ServiceSchema serviceSchema=objectMapper.reader(ServiceSchema.class).readValue(json);
-                configureService(serviceSchema,service,options,config);
+                configureService(serviceSchema,service,options,config,metadata);
                 LOG.info("Creating a service from " + definition);
                 try {
                   Object answer=kubernetes.createService(serviceSchema);
@@ -91,8 +94,5 @@
       }
     }
   }
-  String status="TODO";
-  List<String> warnings=new ArrayList<>();
-  CreateKubernetesContainerMetadata metadata=createKubernetesContainerMetadata(options,containerId,"kubelet",status,warnings);
   return metadata;
 }

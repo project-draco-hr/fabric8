@@ -1,8 +1,10 @@
 {
+  deactivateComponent();
+  if (group != null) {
+    group.remove(this);
+    Closeables.closeQuitely(group);
+  }
+  group=null;
   disableMasterZkCache();
   disableTimer();
-  deactivateComponent();
-  group.remove(this);
-  Closeables.closeQuitely(group);
-  group=null;
 }
