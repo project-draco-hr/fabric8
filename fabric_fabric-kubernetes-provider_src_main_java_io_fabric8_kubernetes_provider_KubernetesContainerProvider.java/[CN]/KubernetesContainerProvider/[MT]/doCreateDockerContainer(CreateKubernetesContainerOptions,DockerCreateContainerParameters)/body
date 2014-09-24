@@ -15,16 +15,7 @@
   FabricService service=getFabricService();
   PodSchema pod=new PodSchema();
   pod.setId(KubernetesHelpers.containerNameToPodId(name));
-  Map<String,String> labels=new HashMap<>();
-  labels.put(LABELS.FABRIC8,"true");
-  labels.put(LABELS.CONTAINER,name);
-  String profileString=Strings.join(profileIds,",");
-  labels.put(LABELS.PROFILE,profileString);
-  labels.put(LABELS.VERSION,versionId);
-  Map<String,String> labelConfiguration=Profiles.getOverlayConfiguration(service,profileIds,versionId,KubernetesConstants.LABELS_PID,"kubernetes");
-  if (labelConfiguration != null) {
-    labels.putAll(labelConfiguration);
-  }
+  Map<String,String> labels=updateLabels(null,service,name,profileIds,versionId);
   pod.setLabels(labels);
   DesiredState desiredState=new DesiredState();
   pod.setDesiredState(desiredState);

@@ -45,9 +45,11 @@
               String kind=kindNode.asText();
               if (Objects.equal("Pod",kind)) {
                 PodSchema podSchema=objectMapper.reader(PodSchema.class).readValue(json);
+                configurePod(podSchema,service,options,config);
                 LOG.info("Creating a pod from " + definition);
                 try {
-                  kubernetes.createPod(podSchema);
+                  Object answer=kubernetes.createPod(podSchema);
+                  LOG.info("Created pod result: " + answer);
                 }
  catch (                Exception e) {
                   LOG.error("Failed to create pod from " + definition + ". "+ e+ ". "+ podSchema,e);
@@ -55,9 +57,11 @@
               }
  else               if (Objects.equal("ReplicationController",kind)) {
                 ReplicationControllerSchema replicationControllerSchema=objectMapper.reader(ReplicationControllerSchema.class).readValue(json);
+                configureReplicationController(replicationControllerSchema,service,options,config);
                 LOG.info("Creating a controller from " + definition);
                 try {
-                  kubernetes.createReplicationController(replicationControllerSchema);
+                  Object answer=kubernetes.createReplicationController(replicationControllerSchema);
+                  LOG.info("Created replication controller: " + answer);
                 }
  catch (                Exception e) {
                   LOG.error("Failed to create controller from " + definition + ". "+ e+ ". "+ replicationControllerSchema,e);
@@ -65,9 +69,11 @@
               }
  else               if (Objects.equal("Service",kind)) {
                 ServiceSchema serviceSchema=objectMapper.reader(ServiceSchema.class).readValue(json);
+                configureService(serviceSchema,service,options,config);
                 LOG.info("Creating a service from " + definition);
                 try {
-                  kubernetes.createService(serviceSchema);
+                  Object answer=kubernetes.createService(serviceSchema);
+                  LOG.info("Created service: " + answer);
                 }
  catch (                Exception e) {
                   LOG.error("Failed to create controller from " + definition + ". "+ e+ ". "+ serviceSchema,e);
@@ -87,6 +93,6 @@
   }
   String status="TODO";
   List<String> warnings=new ArrayList<>();
-  CreateKubernetesContainerMetadata metadata=createKubernetesContainerMetadata(containerId,"kubelet",status,warnings);
+  CreateKubernetesContainerMetadata metadata=createKubernetesContainerMetadata(options,containerId,"kubelet",status,warnings);
   return metadata;
 }
