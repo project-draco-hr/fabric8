@@ -1,0 +1,11 @@
+{
+  Collection<Profile> profiles=Profiles.getProfiles(service,options.getProfiles(),options.getVersion());
+  Set<String> allConfigFiles=Profiles.getConfigurationFileNames(profiles);
+  List<String> answer=new ArrayList<>();
+  for (  String fileName : allConfigFiles) {
+    if (fileName.startsWith("kubelet/")) {
+      answer.add(fileName);
+    }
+  }
+  return answer;
+}

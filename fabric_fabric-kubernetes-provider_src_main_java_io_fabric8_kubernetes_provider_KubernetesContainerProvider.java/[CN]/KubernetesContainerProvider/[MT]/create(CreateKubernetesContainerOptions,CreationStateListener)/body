@@ -1,11 +1,8 @@
 {
   FabricService service=getFabricService();
-  KubernetesConfig config=getKubernetesConfig(service,options);
-  if (config != null) {
-    List<String> definitions=config.getDefinitions();
-    if (definitions != null && definitions.size() > 0) {
-      return doCreateKubernetesPodsControllersServices(service,options,config);
-    }
+  List<String> kubelets=getKubeletFileNames(service,options);
+  if (kubelets.size() > 0) {
+    return doCreateKubernetesPodsControllersServices(service,options,kubelets);
   }
   DockerCreateContainerParameters parameters=new DockerCreateContainerParameters(options).invoke();
   doCreateDockerContainer(options,parameters);

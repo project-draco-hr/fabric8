@@ -5,9 +5,9 @@
   if (containerMetadata != null && containerMetadata.isKubelet()) {
     try {
       FabricService service=getFabricService();
-      KubernetesConfig config=getKubernetesConfig(service,options);
-      if (config != null) {
-        stopKubletPodsReplicationControllersServices(service,options,config,containerMetadata);
+      List<String> kubelets=getKubeletFileNames(service,options);
+      if (kubelets.size() > 0) {
+        stopKubletPodsReplicationControllersServices(service,options,kubelets,containerMetadata);
       }
     }
  catch (    Exception e) {
