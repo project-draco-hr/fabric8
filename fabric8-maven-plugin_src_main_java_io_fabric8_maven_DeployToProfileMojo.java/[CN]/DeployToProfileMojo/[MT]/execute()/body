@@ -7,6 +7,9 @@
       requirements.setRootDependency(rootDependency);
     }
     configureRequirements(requirements);
+    if (requirements.getProfileId() != null) {
+      FabricValidations.validateProfileName(requirements.getProfileId());
+    }
     boolean newUserAdded=false;
     fabricServer=mavenSettings.getServer(serverId);
     String jolokiaUsername=null;

@@ -1,13 +1,17 @@
 {
-  FabricValidations.validateProfileName(name);
   ProfileService profileService=fabricService.adapt(ProfileService.class);
   Version version=versionId != null ? profileService.getRequiredVersion(versionId) : fabricService.getRequiredDefaultVersion();
+  boolean deleted=false;
   for (  Profile profile : version.getProfiles()) {
     String versionId=profile.getVersion();
     String profileId=profile.getId();
     if (name.equals(profileId)) {
       profileService.deleteProfile(fabricService,versionId,profileId,force);
+      deleted=true;
     }
+  }
+  if (!deleted) {
+    System.out.println("Profile " + name + " not found.");
   }
   return null;
 }

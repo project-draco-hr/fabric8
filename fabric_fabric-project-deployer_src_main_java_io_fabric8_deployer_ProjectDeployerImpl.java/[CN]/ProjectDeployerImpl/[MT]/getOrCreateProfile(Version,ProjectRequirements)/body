@@ -3,6 +3,7 @@
   if (Strings.isEmpty(profileId)) {
     throw new IllegalArgumentException("No profile ID could be deduced for requirements: " + requirements);
   }
+  FabricValidations.validateProfileName(profileId);
   Profile profile;
   if (!version.hasProfile(profileId)) {
     LOG.info("Creating new profile " + profileId + " version "+ version+ " for requirements: "+ requirements);
