@@ -1,8 +1,8 @@
 {
-  VersionState version=proxy.getVersion("1.0");
-  Map<String,String> attributes=version.getAttributes();
-  Assert.assertTrue(attributes.isEmpty());
-  List<String> profiles=new ArrayList<>(version.getProfileIds());
+  VersionState v10=proxy.getVersion("1.0");
+  Assert.assertEquals("1.0",v10.getId());
+  Assert.assertTrue("Expected empty, but was" + v10.getAttributes(),v10.getAttributes().isEmpty());
+  List<String> profiles=v10.getProfileIds();
   Assert.assertTrue(profiles.contains("default"));
   Assert.assertTrue(profiles.contains("fabric"));
 }

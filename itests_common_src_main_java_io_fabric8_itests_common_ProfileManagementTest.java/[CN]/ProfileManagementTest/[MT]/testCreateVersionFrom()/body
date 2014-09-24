@@ -1,0 +1,12 @@
+{
+  VersionState v12=proxy.createVersion("1.0","1.2",null);
+  try {
+    Assert.assertEquals("1.2",v12.getId());
+    List<String> profiles=v12.getProfileIds();
+    Assert.assertTrue(profiles.contains("default"));
+    Assert.assertTrue(profiles.contains("fabric"));
+  }
+  finally {
+    proxy.deleteVersion("1.2");
+  }
+}

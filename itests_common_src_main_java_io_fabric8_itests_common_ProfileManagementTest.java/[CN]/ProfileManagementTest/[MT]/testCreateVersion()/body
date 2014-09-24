@@ -1,0 +1,14 @@
+{
+  ProfileBuilder pbA11=ProfileBuilder.Factory.create("1.1","prfA");
+  Profile prfA=pbA11.addConfiguration("pidA",Collections.singletonMap("keyA","valA")).getProfile();
+  VersionBuilder vb11=VersionBuilder.Factory.create("1.1").addProfile(prfA);
+  VersionState v11=proxy.createVersion(new VersionState(vb11.getVersion()));
+  try {
+    Assert.assertEquals("1.1",v11.getId());
+    Assert.assertTrue(v11.getAttributes().isEmpty());
+    Assert.assertEquals("valA",v11.getProfileState("prfA").getConfiguration("pidA").get("keyA"));
+  }
+  finally {
+    proxy.deleteVersion("1.1");
+  }
+}
