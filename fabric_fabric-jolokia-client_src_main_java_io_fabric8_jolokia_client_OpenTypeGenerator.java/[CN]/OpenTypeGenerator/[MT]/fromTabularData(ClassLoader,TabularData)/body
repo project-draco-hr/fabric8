@@ -1,8 +1,10 @@
 {
   Map<Object,Object> result=new LinkedHashMap<>();
-  for (  CompositeData cdata : (Collection<CompositeData>)tdata.values()) {
-    Map<Object,Object> rowValue=(Map<Object,Object>)fromCompositeData(classLoader,cdata);
-    result.putAll(rowValue);
+  if (tdata != null) {
+    for (    CompositeData cdata : (Collection<CompositeData>)tdata.values()) {
+      Map<Object,Object> rowValue=(Map<Object,Object>)fromCompositeData(classLoader,cdata);
+      result.putAll(rowValue);
+    }
   }
   return result;
 }

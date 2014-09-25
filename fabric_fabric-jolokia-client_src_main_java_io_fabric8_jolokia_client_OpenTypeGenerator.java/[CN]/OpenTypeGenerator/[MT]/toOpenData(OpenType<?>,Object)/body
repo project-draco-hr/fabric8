@@ -1,23 +1,26 @@
 {
   Object result;
-  if (value != null && !type.isValue(value)) {
-    if (type instanceof CompositeType) {
-      result=toCompositeData((CompositeType)type,value);
+  if (value != null && !otype.isValue(value)) {
+    if (otype instanceof CompositeType) {
+      result=toCompositeData((CompositeType)otype,value);
     }
- else     if (type instanceof TabularType) {
-      result=toTabularData((TabularType)type,(Map<?,?>)value);
+ else     if (otype instanceof TabularType) {
+      result=toTabularData((TabularType)otype,(Map<?,?>)value);
     }
- else     if (type instanceof ArrayType) {
-      result=toArrayData((ArrayType<?>)type,value);
+ else     if (otype instanceof ArrayType) {
+      result=toArrayData((ArrayType<?>)otype,value);
+    }
+ else     if (otype == SimpleType.BYTE && value instanceof Number) {
+      result=Byte.parseByte(value.toString());
     }
  else {
-      throw new OpenDataException("Unsupported open type: " + type);
+      throw new OpenDataException("Unsupported open type: " + otype);
     }
   }
  else {
     result=value;
   }
-  boolean isAssignable=result == null || type.isValue(result);
-  IllegalStateAssertion.assertTrue(isAssignable,"Value " + result + " is not a value of: "+ type);
+  boolean isAssignable=result == null || otype.isValue(result);
+  IllegalStateAssertion.assertTrue(isAssignable,"Value " + result + " is not a value of: "+ otype);
   return result;
 }

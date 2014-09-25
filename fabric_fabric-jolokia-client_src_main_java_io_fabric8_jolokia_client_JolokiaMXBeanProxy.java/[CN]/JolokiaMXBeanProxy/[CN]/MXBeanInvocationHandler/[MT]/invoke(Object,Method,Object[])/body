@@ -16,7 +16,8 @@
     }
  else {
       Object[] params=marshalParameters(method,args);
-      J4pExecRequest execReq=new J4pExecRequest(objectName,method.getName(),params);
+      String operation=getOperationInfo(method).getName();
+      J4pExecRequest execReq=new J4pExecRequest(objectName,operation,params);
       execReq.setPreferredHttpMethod("POST");
       Object result=client.execute(execReq).getValue();
       return unmarshalResult(method,result);

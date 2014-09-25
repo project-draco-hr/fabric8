@@ -1,3 +1,7 @@
 {
-  return delegate.getFileConfigurations();
+  Map<String,Byte[]> result=new LinkedHashMap<>();
+  for (  Entry<String,byte[]> entry : delegate.getFileConfigurations().entrySet()) {
+    result.put(entry.getKey(),fromPrimitiveArray(entry.getValue()));
+  }
+  return result;
 }

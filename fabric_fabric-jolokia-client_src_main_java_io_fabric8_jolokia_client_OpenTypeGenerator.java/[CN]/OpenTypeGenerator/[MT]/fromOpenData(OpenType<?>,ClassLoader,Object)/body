@@ -1,19 +1,22 @@
 {
+  if (value == null) {
+    return null;
+  }
   Object result;
-  if (type instanceof CompositeType) {
+  if (otype instanceof CompositeType) {
     result=fromCompositeData(classLoader,(CompositeData)value);
   }
- else   if (type instanceof TabularType) {
+ else   if (otype instanceof TabularType) {
     result=fromTabularData(classLoader,(TabularData)value);
   }
- else   if (type instanceof ArrayType) {
-    result=fromArrayData((ArrayType<?>)type,classLoader,value);
+ else   if (otype instanceof ArrayType) {
+    result=fromArrayData((ArrayType<?>)otype,classLoader,value);
   }
- else   if (type instanceof SimpleType) {
+ else   if (otype instanceof SimpleType) {
     result=value;
   }
  else {
-    throw new OpenDataException("Unsupported open type: " + type);
+    throw new OpenDataException("Unsupported open type: " + otype);
   }
   return result;
 }

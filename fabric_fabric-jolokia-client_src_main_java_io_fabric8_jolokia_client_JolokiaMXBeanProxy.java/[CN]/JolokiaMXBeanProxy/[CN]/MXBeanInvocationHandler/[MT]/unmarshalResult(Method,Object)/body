@@ -1,25 +1,24 @@
 {
-  OpenType<?> openType;
+  if (value == null)   return null;
+  OpenType<?> openType=null;
   if (isGetter(method)) {
     String attname=getAttributeName(method);
-    OpenMBeanAttributeInfo attinfo=(OpenMBeanAttributeInfo)attributeMapping.get(attname);
-    openType=attinfo.getOpenType();
+    MBeanAttributeInfo attInfo=attributes.get(attname);
+    if (attInfo instanceof OpenMBeanAttributeInfo) {
+      openType=((OpenMBeanAttributeInfo)attInfo).getOpenType();
+    }
   }
  else {
-    OpenMBeanOperationInfo opinfo=(OpenMBeanOperationInfo)operationMapping.get(method.getName());
-    openType=opinfo.getReturnOpenType();
-  }
-  if (openType instanceof ArrayType && value instanceof JSONArray) {
-    JSONArray jsonArray=(JSONArray)value;
-    ArrayType<?> arrayType=(ArrayType<?>)openType;
-    OpenType<?> elementType=arrayType.getElementOpenType();
-    Object[] targetArray=OpenTypeGenerator.getJavaTypeArray(elementType,classLoader,jsonArray.size());
-    for (int i=0; i < jsonArray.size(); i++) {
-      Object element=jsonArray.get(i);
-      targetArray[i]=element;
+    MBeanOperationInfo opinfo=getOperationInfo(method);
+    if (opinfo instanceof OpenMBeanOperationInfo) {
+      openType=((OpenMBeanOperationInfo)opinfo).getReturnOpenType();
     }
-    value=targetArray;
   }
-  Object result=OpenTypeGenerator.fromOpenData(openType,classLoader,value);
-  return OpenTypeGenerator.toTargetType(method.getReturnType(),result);
+  if (value instanceof JSONAware) {
+    value=JSONTypeGenerator.toOpenData(openType,classLoader,(JSONAware)value);
+  }
+  if (openType != null) {
+    value=OpenTypeGenerator.fromOpenData(openType,classLoader,value);
+  }
+  return OpenTypeGenerator.toTargetType(method.getReturnType(),value);
 }

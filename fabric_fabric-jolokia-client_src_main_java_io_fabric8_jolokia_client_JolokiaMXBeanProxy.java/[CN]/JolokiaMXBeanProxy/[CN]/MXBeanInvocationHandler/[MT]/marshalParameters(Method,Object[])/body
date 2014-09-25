@@ -2,16 +2,33 @@
   Object[] result=new Object[params.length];
   if (isSetter(method)) {
     String attname=getAttributeName(method);
-    OpenMBeanAttributeInfo attinfo=(OpenMBeanAttributeInfo)attributeMapping.get(attname);
-    OpenType<?> openType=attinfo.getOpenType();
-    result[0]=OpenTypeGenerator.toOpenData(openType,params[0]);
+    MBeanAttributeInfo attInfo=attributes.get(attname);
+    if (attInfo instanceof OpenMBeanAttributeInfo) {
+      OpenType<?> openType=((OpenMBeanAttributeInfo)attInfo).getOpenType();
+      Object openData=OpenTypeGenerator.toOpenData(openType,params[0]);
+      Object jsonAware=JSONTypeGenerator.toJSON(openData);
+      result[0]=jsonAware;
+    }
+ else {
+      Object jsonAware=JSONTypeGenerator.toJSON(params[0]);
+      result[0]=jsonAware;
+    }
   }
  else {
-    OpenMBeanOperationInfo opinfo=(OpenMBeanOperationInfo)operationMapping.get(method.getName());
-    OpenMBeanParameterInfo[] signature=(OpenMBeanParameterInfo[])opinfo.getSignature();
+    MBeanOperationInfo opinfo=getOperationInfo(method);
+    MBeanParameterInfo[] signature=opinfo.getSignature();
     for (int i=0; i < params.length; i++) {
-      OpenType<?> openType=signature[i].getOpenType();
-      result[i]=OpenTypeGenerator.toOpenData(openType,params[i]);
+      MBeanParameterInfo paramInfo=signature[i];
+      if (paramInfo instanceof OpenMBeanParameterInfo) {
+        OpenType<?> openType=((OpenMBeanParameterInfo)paramInfo).getOpenType();
+        Object openData=OpenTypeGenerator.toOpenData(openType,params[i]);
+        Object jsonAware=JSONTypeGenerator.toJSON(openData);
+        result[i]=jsonAware;
+      }
+ else {
+        Object jsonAware=JSONTypeGenerator.toJSON(params[i]);
+        result[i]=jsonAware;
+      }
     }
   }
   return result;

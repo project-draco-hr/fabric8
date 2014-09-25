@@ -1,0 +1,12 @@
+{
+  MBeanOperationInfo result=null;
+  for (  MBeanOperationInfo opinfo : operations) {
+    MBeanParameterInfo[] signature=opinfo.getSignature();
+    if (opinfo.getName().equals(method.getName()) && signature.length == method.getParameterTypes().length) {
+      result=opinfo;
+      break;
+    }
+  }
+  IllegalStateAssertion.assertNotNull(result,"Cannot find MBeanOperationInfo for: " + method);
+  return result;
+}

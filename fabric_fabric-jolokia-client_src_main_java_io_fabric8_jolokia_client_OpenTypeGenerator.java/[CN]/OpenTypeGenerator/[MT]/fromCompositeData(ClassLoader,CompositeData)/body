@@ -1,4 +1,6 @@
 {
+  if (cdata == null)   return null;
+  Object result;
   CompositeType ctype=cdata.getCompositeType();
   String typeName=ctype.getTypeName();
   if (typeName.startsWith("java.util.Map")) {
@@ -8,66 +10,67 @@
     OpenType<?> valType=ctype.getType("value");
     Object key=fromOpenData(keyType,classLoader,openKey);
     Object value=fromOpenData(valType,classLoader,openVal);
-    return Collections.singletonMap(key,value);
+    result=Collections.singletonMap(key,value);
   }
-  Class<?> targetType;
-  try {
-    targetType=classLoader.loadClass(typeName);
-  }
- catch (  ClassNotFoundException ex) {
-    OpenDataException odex=new OpenDataException("Cannot load target type: " + typeName);
-    odex.initCause(ex);
-    throw odex;
-  }
-  Constructor<?> ctor=null;
-  boolean isDefaultCtor=false;
-  for (  Constructor<?> aux : targetType.getConstructors()) {
-    isDefaultCtor=aux.getParameterTypes().length == 0;
-    if (isDefaultCtor) {
-      ctor=aux;
-      break;
-    }
- else     if (aux.getAnnotation(ConstructorProperties.class) != null) {
-      ctor=aux;
-    }
-  }
-  IllegalStateAssertion.assertNotNull(ctor,"Cannot mxbean compliant constructor for: " + targetType.getName());
-  Object result;
-  try {
-    if (isDefaultCtor) {
-      result=ctor.newInstance((Object[])null);
-      for (      String key : ctype.keySet()) {
-        OpenType<?> itemType=ctype.getType(key);
-        Object itemValue=cdata.get(key);
-        Object javaValue=fromOpenData(itemType,classLoader,itemValue);
-        invokeSetter(result,key,javaValue);
-      }
-    }
  else {
-      List<Object> params=new ArrayList<>();
-      ConstructorProperties props=ctor.getAnnotation(ConstructorProperties.class);
-      for (      String key : props.value()) {
-        OpenType<?> itemType=ctype.getType(key);
-        Object itemValue=cdata.get(key);
-        Object javaValue=fromOpenData(itemType,classLoader,itemValue);
-        params.add(javaValue);
+    Class<?> targetType;
+    try {
+      targetType=classLoader.loadClass(typeName);
+    }
+ catch (    ClassNotFoundException ex) {
+      OpenDataException odex=new OpenDataException("Cannot load target type: " + typeName);
+      odex.initCause(ex);
+      throw odex;
+    }
+    Constructor<?> ctor=null;
+    boolean isDefaultCtor=false;
+    for (    Constructor<?> aux : targetType.getConstructors()) {
+      isDefaultCtor=aux.getParameterTypes().length == 0;
+      if (isDefaultCtor) {
+        ctor=aux;
+        break;
       }
-      Class<?>[] paramTypes=ctor.getParameterTypes();
-      for (      Object param : params) {
-        int index=params.indexOf(param);
-        Class<?> paramType=paramTypes[index];
-        param=toTargetType(paramType,param);
-        if (param != params.get(index)) {
-          params.set(index,param);
+ else       if (aux.getAnnotation(ConstructorProperties.class) != null) {
+        ctor=aux;
+      }
+    }
+    IllegalStateAssertion.assertNotNull(ctor,"Cannot mxbean compliant constructor for: " + targetType.getName());
+    try {
+      if (isDefaultCtor) {
+        result=ctor.newInstance((Object[])null);
+        for (        String key : ctype.keySet()) {
+          OpenType<?> itemType=ctype.getType(key);
+          Object itemValue=cdata.get(key);
+          Object javaValue=fromOpenData(itemType,classLoader,itemValue);
+          invokeSetter(result,key,javaValue);
         }
       }
-      result=ctor.newInstance(params.toArray());
+ else {
+        List<Object> params=new ArrayList<>();
+        ConstructorProperties props=ctor.getAnnotation(ConstructorProperties.class);
+        for (        String key : props.value()) {
+          OpenType<?> itemType=ctype.getType(key);
+          Object itemValue=cdata.get(key);
+          Object javaValue=fromOpenData(itemType,classLoader,itemValue);
+          params.add(javaValue);
+        }
+        Class<?>[] paramTypes=ctor.getParameterTypes();
+        for (        Object param : params) {
+          int index=params.indexOf(param);
+          Class<?> paramType=paramTypes[index];
+          param=toTargetType(paramType,param);
+          if (param != params.get(index)) {
+            params.set(index,param);
+          }
+        }
+        result=ctor.newInstance(params.toArray());
+      }
     }
-  }
- catch (  Exception ex) {
-    OpenDataException odex=new OpenDataException("Cannot construct object from: " + cdata);
-    odex.initCause(ex);
-    throw odex;
+ catch (    Exception ex) {
+      OpenDataException odex=new OpenDataException("Cannot construct object from: " + cdata);
+      odex.initCause(ex);
+      throw odex;
+    }
   }
   return result;
 }

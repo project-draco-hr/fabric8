@@ -5,4 +5,8 @@
   CompositeData cdata=(CompositeData)OpenTypeGenerator.toOpenData(ctype,prfB);
   ProfileState result=(ProfileState)OpenTypeGenerator.fromOpenData(ctype,classLoader,cdata);
   Assert.assertEquals(prfB,result);
+  Object json=JSONTypeGenerator.toJSON(cdata);
+  cdata=(CompositeData)JSONTypeGenerator.toOpenData(ctype,classLoader,json);
+  result=(ProfileState)OpenTypeGenerator.fromOpenData(ctype,classLoader,cdata);
+  Assert.assertEquals(prfB,result);
 }

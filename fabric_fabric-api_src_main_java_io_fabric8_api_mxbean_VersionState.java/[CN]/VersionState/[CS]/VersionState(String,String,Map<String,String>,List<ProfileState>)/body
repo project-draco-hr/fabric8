@@ -1,8 +1,13 @@
 {
   VersionBuilder builder=VersionBuilder.Factory.create(versionId);
-  builder.setRevision(revision).setAttributes(attributes);
-  for (  ProfileState ps : profileStates) {
-    builder.addProfile(ps.toProfile());
+  builder.setRevision(revision);
+  if (attributes != null) {
+    builder.setAttributes(attributes);
+  }
+  if (profileStates != null) {
+    for (    ProfileState ps : profileStates) {
+      builder.addProfile(ps.toProfile());
+    }
   }
   delegate=builder.getVersion();
 }
