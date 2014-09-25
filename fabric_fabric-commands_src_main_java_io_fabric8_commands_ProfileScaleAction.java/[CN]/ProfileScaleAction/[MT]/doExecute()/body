@@ -1,5 +1,11 @@
 {
-  FabricValidations.validateProfileName(name);
+  try {
+    FabricValidations.validateProfileName(name);
+  }
+ catch (  IllegalArgumentException e) {
+    System.out.println(e.getMessage());
+    return null;
+  }
   fabricService.scaleProfile(name,count);
   ProfileRequirements profileRequirements=fabricService.getRequirements().getOrCreateProfileRequirement(name);
   Integer minimumInstances=profileRequirements.getMinimumInstances();

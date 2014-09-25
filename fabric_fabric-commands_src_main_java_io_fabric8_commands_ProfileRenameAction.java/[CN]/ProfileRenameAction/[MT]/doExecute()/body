@@ -1,5 +1,11 @@
 {
-  FabricValidations.validateProfileName(newName);
+  try {
+    FabricValidations.validateProfileName(newName);
+  }
+ catch (  IllegalArgumentException e) {
+    System.out.println(e.getMessage());
+    return null;
+  }
   Version version;
   if (versionId != null) {
     version=profileService.getRequiredVersion(versionId);
