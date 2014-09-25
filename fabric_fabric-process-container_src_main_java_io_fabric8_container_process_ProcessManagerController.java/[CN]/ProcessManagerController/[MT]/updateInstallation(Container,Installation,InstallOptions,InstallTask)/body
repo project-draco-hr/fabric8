@@ -13,8 +13,8 @@
     resolveEnvironmentVariables(processConfig.getEnvironment());
     JsonHelper.saveProcessConfig(processConfig,installDir);
     installation.getController().getConfig().setEnvironment(processConfig.getEnvironment());
-    if (!processConfig.getDeployPath().equals(oldConfig.getDeployPath())) {
-      installContext.addRedeployReason("Container Changed");
+    if (installation.getUrl() != parameters.getUrl()) {
+      installContext.addRedeployReason("Process URL Changed to " + parameters.getUrl());
     }
   }
   if (postInstall != null) {
