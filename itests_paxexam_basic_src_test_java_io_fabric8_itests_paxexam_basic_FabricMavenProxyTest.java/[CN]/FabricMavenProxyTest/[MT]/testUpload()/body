@@ -27,9 +27,10 @@
       DefaultHttpClient client=new DefaultHttpClient();
       HttpPut put=new HttpPut(uploadUrl);
       client.getCredentialsProvider().setCredentials(AuthScope.ANY,new UsernamePasswordCredentials("admin","admin"));
-      FileNIOEntity entity=new FileNIOEntity(new File(featureLocation),"text/xml");
+      NFileEntity entity=new NFileEntity(new File(featureLocation),"text/xml");
       put.setEntity(entity);
-      HttpResponse response=client.execute(put);
+      HttpClient c=client;
+      HttpResponse response=c.execute(put);
       System.out.println("Response:" + response.getStatusLine());
       Assert.assertTrue(response.getStatusLine().getStatusCode() == 200 || response.getStatusLine().getStatusCode() == 202);
       System.out.println(executeCommand("fabric:profile-edit --repositories mvn:itest/itest/1.0/xml/features default"));
