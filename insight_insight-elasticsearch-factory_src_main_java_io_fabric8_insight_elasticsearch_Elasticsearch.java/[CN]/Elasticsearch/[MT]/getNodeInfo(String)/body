@@ -4,7 +4,7 @@
     for (    Node node : nodeSet) {
       ClusterAdminClient client=node.client().admin().cluster();
       NodesInfoResponse response=client.prepareNodesInfo().all().execute().actionGet();
-      return response;
+      return response.getNodes();
     }
   }
   return null;
