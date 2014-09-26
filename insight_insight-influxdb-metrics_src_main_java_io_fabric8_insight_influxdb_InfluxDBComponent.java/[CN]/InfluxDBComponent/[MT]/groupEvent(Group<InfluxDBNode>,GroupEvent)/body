@@ -1,0 +1,21 @@
+{
+switch (event) {
+case CONNECTED:
+    InfluxDBNode master=group.master();
+  if (master != null) {
+    try {
+      String url=getSubstitutedData(curator.get(),master.getUrl());
+      influxDB=InfluxDBFactory.connect(url,"root","root");
+      unregister();
+      registration=bundleContext.registerService(InfluxDB.class,influxDB,null);
+    }
+ catch (    URISyntaxException e) {
+      throw FabricException.launderThrowable(e);
+    }
+  }
+case CHANGED:
+break;
+case DISCONNECTED:
+unregister();
+}
+}

@@ -1,0 +1,61 @@
+{
+  assertValid();
+  if (influxDB == null) {
+    throw new IllegalStateException("No influxDB available!");
+  }
+  List<Serie> series=new LinkedList<>();
+  Map<String,Result<?>> results=queryResult.getResults();
+  if (results != null) {
+    Map<String,Object> data=new HashMap<>();
+    Set<Map.Entry<String,Result<?>>> entries=results.entrySet();
+    for (    Map.Entry<String,Result<?>> entry : entries) {
+      String key=entry.getKey();
+      Result<?> result=entry.getValue();
+      if (result instanceof MBeanOpersResult) {
+        MBeanOpersResult opersResult=(MBeanOpersResult)result;
+        List<MBeanOperResult> operResults=opersResult.getResults();
+        if (operResults != null) {
+          for (          MBeanOperResult operResult : operResults) {
+            Object value=operResult.getValue();
+            Double doubleValue=toDouble(value);
+            if (doubleValue != null) {
+              String id=Metrics.metricId(type,opersResult.getRequest());
+              data.put(id,doubleValue);
+            }
+          }
+        }
+      }
+ else       if (result instanceof MBeanAttrsResult) {
+        MBeanAttrsResult attrsResult=(MBeanAttrsResult)result;
+        List<MBeanAttrResult> attrResults=attrsResult.getResults();
+        if (attrResults != null) {
+          for (          MBeanAttrResult attrResult : attrResults) {
+            Map<String,Object> attrs=attrResult.getAttrs();
+            if (attrs != null) {
+              Set<Map.Entry<String,Object>> attrEntries=attrs.entrySet();
+              for (              Map.Entry<String,Object> attrEntry : attrEntries) {
+                String attributeName=attrEntry.getKey();
+                Object value=attrEntry.getValue();
+                Double doubleValue=toDouble(value);
+                if (doubleValue != null) {
+                  String id=Metrics.metricId(type,attrsResult.getRequest(),attributeName);
+                  data.put(id,doubleValue);
+                }
+              }
+            }
+          }
+        }
+      }
+      if (!data.isEmpty()) {
+        data.put("time",timestamp);
+        series.add(new Serie.Builder("insight").columns(data.keySet().toArray(new String[data.size()])).values(data.values().toArray(new Object[data.size()])).build());
+      }
+    }
+    if (!series.isEmpty()) {
+      influxDB.get().write("fabric",TimeUnit.MILLISECONDS,series.toArray(new Serie[series.size()]));
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("added " + series.size() + " metrics");
+      }
+    }
+  }
+}
