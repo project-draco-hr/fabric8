@@ -1,9 +1,14 @@
 {
-  Set<String> profileIds=options.getProfiles();
-  String versionId=options.getVersion();
-  Map<String,String> configuration=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,Constants.PROCESS_CONTAINER_PID);
-  JolokiaAgentHelper.substituteEnvironmentVariableExpressions(configuration,environmentVariables,fabricService,curator,true);
-  ProcessContainerConfig configObject=new ProcessContainerConfig();
-  configurer.configure(configuration,configObject);
-  return configObject;
+  Map<String,String> environmentVariables=ChildContainers.getEnvironmentVariables(fabricService,options);
+  Set<Map.Entry<String,String>> initialEntries=initialEnvironmentVariables.entrySet();
+  for (  Map.Entry<String,String> entry : initialEntries) {
+    String key=entry.getKey();
+    String value=entry.getValue();
+    if (!environmentVariables.containsKey(key)) {
+      environmentVariables.put(key,value);
+    }
+  }
+  ProcessContainerConfig processConfig=doCreateProcessContainerConfig(options,environmentVariables);
+  resolveEnvironmentVariables(environmentVariables);
+  return processConfig;
 }

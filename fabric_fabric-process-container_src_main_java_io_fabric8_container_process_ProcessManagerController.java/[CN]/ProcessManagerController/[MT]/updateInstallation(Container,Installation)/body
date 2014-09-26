@@ -6,37 +6,51 @@
     CreateContainerOptions createOptions=metadata.getCreateOptions();
     if (createOptions instanceof CreateChildContainerOptions) {
       CreateChildContainerOptions options=(CreateChildContainerOptions)createOptions;
-      ProcessManager procManager=new ProcessManager(){
-        @Override public Installation install(        InstallOptions parameters,        InstallTask postInstall) throws Exception {
-          updateInstallation(container,installation,parameters,postInstall);
-          return null;
+      ProcessContainerConfig config=createProcessContainerConfig(options,initialEnvironmentVariables);
+      if (!installation.getUrl().toString().equals(config.getUrl())) {
+        LOG.info("Re-installing " + container.getId() + " due container distribution url changed to: "+ config.getUrl());
+        destroy(container);
+        Installation newInstallation=createInstallation(processManager,container,options,metadata,initialEnvironmentVariables);
+        try {
+          newInstallation.getController().install();
+          start(container);
         }
-        @Override public Installation installJar(        InstallOptions parameters,        InstallTask postInstall) throws Exception {
-          updateInstallation(container,installation,parameters,null);
-          return null;
-        }
-        @Override public void uninstall(        Installation installation){
-          processManager.uninstall(installation);
-        }
-        @Override public Executor getExecutor(){
-          return processManager.getExecutor();
-        }
-        @Override public List<Installation> listInstallations(){
-          return processManager.listInstallations();
-        }
-        @Override public ImmutableMap<String,Installation> listInstallationMap(){
-          return processManager.listInstallationMap();
-        }
-        @Override public Installation getInstallation(        String id){
-          return processManager.getInstallation(id);
-        }
-        @Override public ProcessConfig loadProcessConfig(        InstallOptions options) throws IOException {
-          return processManager.loadProcessConfig(options);
+ catch (        Exception e) {
+          handleException("Error installing container " + container.getId(),e);
         }
       }
+ else {
+        LOG.info("Updating container " + container.getId());
+        ProcessManager procManager=new ProcessManager(){
+          @Override public Installation install(          InstallOptions parameters,          InstallTask postInstall) throws Exception {
+            updateInstallation(container,installation,parameters,postInstall);
+            return null;
+          }
+          @Override public Installation installJar(          InstallOptions parameters,          InstallTask postInstall) throws Exception {
+            updateInstallation(container,installation,parameters,null);
+            return null;
+          }
+          @Override public void uninstall(          Installation installation){
+            processManager.uninstall(installation);
+          }
+          @Override public Executor getExecutor(){
+            return processManager.getExecutor();
+          }
+          @Override public List<Installation> listInstallations(){
+            return processManager.listInstallations();
+          }
+          @Override public ImmutableMap<String,Installation> listInstallationMap(){
+            return processManager.listInstallationMap();
+          }
+          @Override public Installation getInstallation(          String id){
+            return processManager.getInstallation(id);
+          }
+          @Override public ProcessConfig loadProcessConfig(          InstallOptions options) throws IOException {
+            return processManager.loadProcessConfig(options);
+          }
+        }
 ;
-      Installation newInstallation=createInstallation(procManager,container,options,metadata,initialEnvironmentVariables);
-      if (newInstallation != null) {
+        createInstallation(procManager,container,options,metadata,initialEnvironmentVariables);
       }
     }
   }

@@ -13,9 +13,6 @@
     resolveEnvironmentVariables(processConfig.getEnvironment());
     JsonHelper.saveProcessConfig(processConfig,installDir);
     installation.getController().getConfig().setEnvironment(processConfig.getEnvironment());
-    if (installation.getUrl() != parameters.getUrl()) {
-      installContext.addRedeployReason("Process URL Changed to " + parameters.getUrl());
-    }
   }
   if (postInstall != null) {
     postInstall.install(installContext,processConfig,id,installDir);
@@ -25,25 +22,7 @@
     installer.install(installContext,processConfig,id,installDir);
   }
   installContext.updateContainerChecksums();
-  if (installContext.isRedeployRequired()) {
-    LOG.info("Redeploying " + container.getId() + " due to profile changes: "+ installContext.getRedeployReasons());
-    ProcessController controller=installation.getController();
-    if (controller != null && container != null && container.isAlive()) {
-      controller.stop();
-      if (container.isAlive()) {
-        controller.kill();
-      }
-    }
-    if (controller != null && container != null) {
-      LOG.info("Unininstalling " + container.getId());
-      controller.uninstall();
-      LOG.info("Ininstalling " + container.getId());
-      controller.install();
-      LOG.info("Starting " + container.getId());
-      controller.start();
-    }
-  }
- else   if (installContext.isRestartRequired()) {
+  if (installContext.isRestartRequired()) {
     LOG.info("Restarting " + container.getId() + " due to profile changes: "+ installContext.getRestartReasons());
     ProcessController controller=installation.getController();
     if (controller != null && container != null && container.isAlive()) {
