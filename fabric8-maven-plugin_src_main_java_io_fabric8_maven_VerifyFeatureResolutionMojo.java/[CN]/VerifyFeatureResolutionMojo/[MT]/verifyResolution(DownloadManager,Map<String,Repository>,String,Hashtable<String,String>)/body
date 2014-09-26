@@ -12,7 +12,7 @@
       Collection<Resource> resources=builder.resolve(systemBundle,resolveOptionalImports);
     }
  catch (    Exception e) {
-      throw new MojoExecutionException("Feature resolution failed for " + feature + "\nMessage: "+ e.getMessage()+ "\nRepositories: "+ toString(new TreeSet<>(repositories.keySet()))+ "\nResources: "+ toString(new TreeSet<>(downloadedResources.keySet())),e);
+      throw new MojoExecutionException("Feature resolution failed for " + feature + "\nMessage: "+ e.getMessage()+ (e.getCause() != null ? "\n" + e.getCause().getMessage() : "")+ "\nRepositories: "+ toString(new TreeSet<>(repositories.keySet()))+ "\nResources: "+ toString(new TreeSet<>(downloadedResources.keySet())),e);
     }
   }
  catch (  MojoExecutionException e) {
