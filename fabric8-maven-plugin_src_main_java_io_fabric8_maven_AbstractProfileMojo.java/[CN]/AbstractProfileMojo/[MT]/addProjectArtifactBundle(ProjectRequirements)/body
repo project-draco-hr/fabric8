@@ -4,8 +4,11 @@
     StringBuilder urlBuffer=new StringBuilder(rootDependency.toBundleUrl());
     String apparentType=rootDependency.getType();
     String apparentClassifier=rootDependency.getClassifier();
-    if (OMMITTED_BUNDLE_TYPES.contains(apparentType)) {
-      apparentType=null;
+    for (    String omit : OMMITTED_BUNDLE_TYPES) {
+      if (omit.equals(apparentType)) {
+        apparentType=null;
+        break;
+      }
     }
     handleArtifactBundleType(urlBuffer,apparentType);
     handleArtifactBundleClassifier(urlBuffer,apparentClassifier);
