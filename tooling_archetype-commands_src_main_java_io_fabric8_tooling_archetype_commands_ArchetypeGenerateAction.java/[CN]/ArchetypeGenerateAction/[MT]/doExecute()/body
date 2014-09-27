@@ -98,8 +98,8 @@
   helper.setPackageName(packageName);
   Map<String,String> properties=helper.parseProperties();
   String profile=null;
-  if (properties.containsKey("fabric8.profile")) {
-    profile=properties.remove("fabric8.profile");
+  if (properties.containsKey("fabric8-profile")) {
+    profile=properties.remove("fabric8-profile");
     String defaultProfile=isNullOrBlank(profile) ? artifactId : profile;
     String p=ShellUtils.readLine(session,String.format("Define value for property 'fabric8.profile' (%s): ",defaultProfile),false);
     profile=isNullOrBlank(p) ? defaultProfile : p;
@@ -146,7 +146,7 @@
     }
   }
   if (profile != null) {
-    properties.put("fabric8.profile",profile);
+    properties.put("fabric8-profile",profile);
   }
   if (!properties.isEmpty()) {
     helper.setOverrideProperties(properties);
