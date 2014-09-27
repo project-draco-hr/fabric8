@@ -1,7 +1,9 @@
 {
-  out.println(String.format(FORMAT,HEADERS));
+  TablePrinter printer=new TablePrinter();
+  printer.columns("variable","value");
   for (  String variable : installation.getEnvironment().keySet()) {
     String value=installation.getEnvironment().get(variable);
-    out.println(String.format(FORMAT,variable,value));
+    printer.row(variable,value);
   }
+  printer.print(out);
 }
