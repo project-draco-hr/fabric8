@@ -1,0 +1,9 @@
+{
+  CuratorFramework curator=this.curator.get();
+  enableMasterZkCache(curator);
+  group=new ZooKeeperGroup<ProfileReplicationControllerNode>(curator,ZkPath.AUTO_SCALE_CLUSTER.getPath(),ProfileReplicationControllerNode.class);
+  group.add(this);
+  group.update(createState());
+  group.start();
+  activateComponent();
+}
