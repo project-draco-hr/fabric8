@@ -1,0 +1,29 @@
+{
+  Version version=profileService.getVersion(versionId);
+  Profile profile;
+  if (mandatory) {
+    profile=version.getRequiredProfile(profileId);
+  }
+ else {
+    profile=version.getProfile(profileId);
+  }
+  if (profile == null) {
+    return null;
+  }
+  Map<String,Object> answer=BeanUtils.convertProfileToMap(fabricService,profile,fields);
+  String iconURLField="iconURL";
+  if (fields.contains(iconURLField) && !profile.isOverlay()) {
+    String restApi=restApiUrl();
+    if (restApi != null && restApi.length() > 0) {
+      try {
+        URL url=new URL(restApi);
+        restApi=url.getPath();
+      }
+ catch (      MalformedURLException e) {
+      }
+      String icon=getIconURL(version,versionId,profile,profileId,restApi);
+      answer.put(iconURLField,icon);
+    }
+  }
+  return answer;
+}
