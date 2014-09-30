@@ -178,6 +178,7 @@
     LOGGER.info("  " + bundle.getSymbolicName() + " / "+ bundle.getVersion());
   }
   if (!toRefresh.isEmpty()) {
+    updateStatus("finalizing (refreshing)",null);
     refreshPackages(toRefresh);
   }
   LOGGER.info("Resolving bundles");
@@ -191,6 +192,9 @@
         toResolve.add(bundle);
       }
     }
+  }
+  if (!toResolve.isEmpty()) {
+    updateStatus("finalizing (resolving)",null);
   }
   systemBundleContext.getBundle().adapt(FrameworkWiring.class).resolveBundles(toResolve);
   List<Resource> resourcesWithUrlHandlers=new ArrayList<Resource>();
@@ -218,6 +222,9 @@
   }
   List<Throwable> exceptions=new ArrayList<Throwable>();
   LOGGER.info("Starting bundles:");
+  if (!firstSetToStart.isEmpty()) {
+    updateStatus("finalizing (starting)",null);
+  }
   for (  Resource resource : firstSetToStart) {
     Bundle bundle=resToBnd.get(resource);
     if (bundle == null) {
