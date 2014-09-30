@@ -9,7 +9,7 @@
     int localPort=server.getConnectors()[0].getLocalPort();
     List<String> remoteRepos=Arrays.asList("http://relevant.not/maven2@id=central");
     RuntimeProperties props=new MockRuntimeProperties();
-    MavenDownloadProxyServlet servlet=new MavenDownloadProxyServlet(props,"target/tmp",remoteRepos,false,"always","warn","http","localhost",localPort,"fuse","fuse",null,projectDeployer);
+    MavenDownloadProxyServlet servlet=new MavenDownloadProxyServlet(props,"target/tmp",remoteRepos,false,"always","warn","http","localhost",localPort,"fuse","fuse",null,projectDeployer,5);
     HttpServletRequest request=EasyMock.createMock(HttpServletRequest.class);
     EasyMock.expect(request.getPathInfo()).andReturn("org.apache.camel/camel-core/2.13.0/camel-core-2.13.0-sources.jar");
     HttpServletResponse response=EasyMock.createMock(HttpServletResponse.class);

@@ -1,6 +1,5 @@
 {
   InputStream is=null;
-  BufferedInputStream bis=null;
   File artifactFile=null;
   ArtifactDownloadFuture masterFuture=null;
   try {
@@ -39,7 +38,11 @@
       }
       resp.getOutputStream().flush();
     }
- catch (    Exception ex) {
+ catch (    RejectedExecutionException ex) {
+      resp.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+      LOGGER.warning("DownloadProxyServlet cannot process request as we are overloaded, returning HTTP Status: 503");
+    }
+catch (    Exception ex) {
       LOGGER.warning("Error while downloading artifact:" + ex.getMessage());
     }
  finally {
