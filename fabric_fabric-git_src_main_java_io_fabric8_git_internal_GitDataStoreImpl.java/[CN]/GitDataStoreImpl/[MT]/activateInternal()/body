@@ -15,9 +15,9 @@
   ProxySelector fabricProxySelector=new FabricGitLocalHostProxySelector(defaultProxySelector,proxyService);
   ProxySelector.setDefault(fabricProxySelector);
   LOGGER.debug("Setting up FabricProxySelector: {}",fabricProxySelector);
-  if (configuredUrl != null) {
-    gitListener.runRemoteUrlChanged(configuredUrl);
-    remoteUrl=configuredUrl;
+  if (gitRemoteUrl != null) {
+    gitListener.runRemoteUrlChanged(gitRemoteUrl);
+    remoteUrl=gitRemoteUrl;
   }
  else {
     gitService.get().addGitListener(gitListener);
@@ -27,6 +27,30 @@
     }
   }
   getInitialVersions();
+  if (gitRemoteUrl != null) {
+    LOGGER.info("Starting to pull from remote git repository every {} millis",gitRemotePollInterval);
+    threadPool.scheduleWithFixedDelay(new Runnable(){
+      @Override public void run(){
+        LockHandle writeLock=aquireWriteLock();
+        try {
+          LOGGER.trace("Performing timed pull");
+          doPullInternal();
+          LOGGER.debug("Performed timed pull from external git repo");
+        }
+ catch (        Throwable e) {
+          LOGGER.debug("Error during performed timed pull/push due " + e.getMessage(),e);
+          LOGGER.warn("Error during performed timed pull/push due " + e.getMessage() + ". This exception is ignored.");
+        }
+ finally {
+          writeLock.unlock();
+        }
+      }
+      @Override public String toString(){
+        return "TimedPushTask";
+      }
+    }
+,1000,gitRemotePollInterval,TimeUnit.MILLISECONDS);
+  }
   LOGGER.info("Using ZooKeeper SharedCount to react when master git repo is changed, so we can do a git pull to the local git repo.");
   counter=new SharedCount(curator.get(),ZkPath.GIT_TRIGGER.getPath(),0);
   counter.addListener(new SharedCountListener(){
