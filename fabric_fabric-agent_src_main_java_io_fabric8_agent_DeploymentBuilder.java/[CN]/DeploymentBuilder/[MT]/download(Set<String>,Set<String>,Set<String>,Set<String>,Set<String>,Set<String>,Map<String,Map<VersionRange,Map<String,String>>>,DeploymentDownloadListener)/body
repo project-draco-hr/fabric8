@@ -8,19 +8,19 @@
     registerMatchingFeatures(feature);
   }
   for (  String bundle : bundles) {
-    downloadAndBuildResource(bundle);
+    downloadAndBuildResource(bundle,listener);
   }
   for (  String fab : fabs) {
-    downloadAndBuildResource(FAB_PROTOCOL + fab);
+    downloadAndBuildResource(FAB_PROTOCOL + fab,listener);
   }
   for (  String req : reqs) {
-    downloadAndBuildResource(REQ_PROTOCOL + req);
+    downloadAndBuildResource(REQ_PROTOCOL + req,listener);
   }
   for (  String override : overrides) {
-    downloadAndBuildResource(extractUrl(override));
+    downloadAndBuildResource(extractUrl(override),listener);
   }
   for (  String optional : optionals) {
-    downloadAndBuildResource(optional);
+    downloadAndBuildResource(optional,listener);
   }
   downloader.await();
   for (  String override : overrides) {

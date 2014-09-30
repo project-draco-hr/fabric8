@@ -2,7 +2,10 @@
   if (location.startsWith(FAB_PROTOCOL)) {
     String url=location.substring(FAB_PROTOCOL.length());
     downloader.download(url,new AgentUtils.DownloadCallback(){
-      @Override public void downloaded(      File file) throws Exception {
+      @Override public void downloaded(      File file,      int pendings) throws Exception {
+        if (listener != null) {
+          listener.onDownload(file,pendings);
+        }
         FabResolver resolver=fabResolverFactory.getResolver(file.toURI().toURL());
         FabBundleInfo fabInfo=resolver.getInfo();
         ResourceImpl resource=(ResourceImpl)manageResource(location,fabInfo.getManifest(),new StreamProvider.Fab(fabInfo));
@@ -80,7 +83,10 @@
       }
     }
     downloader.download(location,new AgentUtils.DownloadCallback(){
-      @Override public void downloaded(      File file) throws Exception {
+      @Override public void downloaded(      File file,      int pendings) throws Exception {
+        if (listener != null) {
+          listener.onDownload(file,pendings);
+        }
         manageResource(location,file);
       }
     }

@@ -172,7 +172,7 @@
 );
   DeploymentBuilder builder=new DeploymentBuilder(manager,fabResolverFactory,repositories.values(),urlHandlersTimeout);
   updateStatus("downloading",null);
-  Map<String,Resource> downloadedResources=builder.download(getPrefixedProperties(properties,"feature."),getPrefixedProperties(properties,"bundle."),getPrefixedProperties(properties,"fab."),getPrefixedProperties(properties,"req."),getPrefixedProperties(properties,"override."),getPrefixedProperties(properties,"optional."),getMetadata(properties,"metadata#"));
+  Map<String,Resource> downloadedResources=builder.download(getPrefixedProperties(properties,"feature."),getPrefixedProperties(properties,"bundle."),getPrefixedProperties(properties,"fab."),getPrefixedProperties(properties,"req."),getPrefixedProperties(properties,"override."),getPrefixedProperties(properties,"optional."),getMetadata(properties,"metadata#"),new DownloadProgressListener());
   for (  String uri : getPrefixedProperties(properties,"resources.")) {
     builder.addResourceRepository(new MetadataRepository(new HttpMetadataProvider(uri)));
   }
