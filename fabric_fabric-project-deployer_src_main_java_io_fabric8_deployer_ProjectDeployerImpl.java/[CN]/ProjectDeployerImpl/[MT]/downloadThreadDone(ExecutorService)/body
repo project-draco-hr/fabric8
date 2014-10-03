@@ -1,5 +1,6 @@
 {
   if (--downloadThreads == 0) {
+    executor.shutdown();
     File file=bundleContext.getDataFile("servicemix-bundles.properties");
     Properties props=new Properties();
     props.putAll(servicemixBundles);
