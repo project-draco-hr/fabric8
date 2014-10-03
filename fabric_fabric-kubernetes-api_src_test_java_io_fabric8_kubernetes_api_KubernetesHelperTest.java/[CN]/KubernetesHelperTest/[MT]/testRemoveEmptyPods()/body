@@ -1,0 +1,11 @@
+{
+  PodSchema pod1=new PodSchema();
+  pod1.setId("test1");
+  PodSchema pod2=new PodSchema();
+  PodListSchema podSchema=new PodListSchema();
+  podSchema.getItems().add(pod1);
+  podSchema.getItems().add(pod2);
+  KubernetesHelper.removeEmptyPods(podSchema);
+  assertNotNull(podSchema);
+  assertEquals(1,podSchema.getItems().size());
+}
