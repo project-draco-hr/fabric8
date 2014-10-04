@@ -7,7 +7,7 @@
     if (createOptions instanceof CreateChildContainerOptions) {
       CreateChildContainerOptions options=(CreateChildContainerOptions)createOptions;
       ProcessContainerConfig config=createProcessContainerConfig(options,initialEnvironmentVariables);
-      if (!installation.getUrl().toString().equals(config.getUrl())) {
+      if (installation.getUrl() != null && !installation.getUrl().toString().equals(config.getUrl())) {
         LOG.info("Re-installing " + container.getId() + " due container distribution url changed to: "+ config.getUrl());
         destroy(container);
         Installation newInstallation=createInstallation(processManager,container,options,metadata,initialEnvironmentVariables);
