@@ -1,0 +1,21 @@
+{
+  SpringBusFactory bf=new SpringBusFactory();
+  Bus bus=bf.createBus("/io/fabric8/cxf/endpoint/jaxws/jmx-enable.xml");
+  BusFactory.setDefaultBus(bus);
+  String json="";
+  try {
+    connectToMBserver();
+    json=invokeEndpoint("getJSONSchema",null);
+    parseJson(json);
+    json=invokeEndpoint("getJSONSchemaForClass","SayHi");
+    parseJson(json);
+    json=invokeEndpoint("getJSONSchemaForOperation","greetMe");
+    parseJson(json);
+  }
+ catch (  Throwable e) {
+    e.printStackTrace();
+    fail("invalid json for " + json);
+  }
+ finally {
+  }
+}

@@ -1,0 +1,9 @@
+{
+  if (done == null) {
+    String uri=sameuri.equals(Boolean.TRUE) ? ui.getAbsolutePathBuilder().queryParam("redirect","true").build().toString() : "http://otherhost/redirect";
+    return Response.status(303).header("Location",uri).build();
+  }
+ else {
+    return Response.ok(new Book("CXF",123L),"application/xml").build();
+  }
+}
