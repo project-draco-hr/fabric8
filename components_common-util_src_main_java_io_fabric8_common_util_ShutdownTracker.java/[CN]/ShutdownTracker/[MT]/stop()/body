@@ -1,0 +1,10 @@
+{
+  final CountDownLatch latch=new CountDownLatch(1);
+  shutdown(new Runnable(){
+    @Override public void run(){
+      latch.countDown();
+    }
+  }
+);
+  latch.await();
+}

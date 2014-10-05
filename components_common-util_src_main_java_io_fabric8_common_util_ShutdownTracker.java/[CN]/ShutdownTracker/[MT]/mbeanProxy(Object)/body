@@ -1,0 +1,10 @@
+{
+  Class<?> targetClass=target.getClass();
+  String targetClassName=targetClass.getSimpleName();
+  for (  Class clazz : targetClass.getInterfaces()) {
+    if (clazz.getSimpleName().equals(targetClassName + "MBean") || clazz.getSimpleName().equals(targetClassName + "MXBean")) {
+      return new StandardMBean(proxy(target),clazz);
+    }
+  }
+  throw new NotCompliantMBeanException();
+}

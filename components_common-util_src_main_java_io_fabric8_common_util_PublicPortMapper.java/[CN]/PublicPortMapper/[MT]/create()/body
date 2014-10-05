@@ -1,0 +1,25 @@
+{
+  Class mapperClass=DefaultSPI.class;
+  String mapperClassName=System.getProperty(PublicPortMapper.class.getName());
+  try {
+    if (mapperClassName != null) {
+      mapperClassName=mapperClassName.trim();
+      if (mapperClassName.equals("default")) {
+        mapperClassName=DefaultSPI.class.getName();
+      }
+      if (mapperClassName.equals("openshift")) {
+        mapperClassName=OpenShiftSPI.class.getName();
+      }
+      try {
+        mapperClass=PublicPortMapper.class.getClassLoader().loadClass(mapperClassName);
+      }
+ catch (      ClassNotFoundException e) {
+        mapperClass=Thread.currentThread().getContextClassLoader().loadClass(mapperClassName);
+      }
+    }
+    return (SPI)mapperClass.newInstance();
+  }
+ catch (  Exception e) {
+    throw new RuntimeException(e);
+  }
+}

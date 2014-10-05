@@ -1,0 +1,10 @@
+{
+  ClassLoader oldClassLoader=Thread.currentThread().getContextClassLoader();
+  try {
+    Thread.currentThread().setContextClassLoader(classLoader);
+    return callable.call();
+  }
+  finally {
+    Thread.currentThread().setContextClassLoader(oldClassLoader);
+  }
+}

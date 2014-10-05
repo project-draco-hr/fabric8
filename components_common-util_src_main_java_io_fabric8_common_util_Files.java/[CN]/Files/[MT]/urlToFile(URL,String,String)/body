@@ -1,0 +1,32 @@
+{
+  LinkedHashSet<URL> original=ACTIVE_DOWNLOADS.get();
+  LinkedHashSet<URL> downloads=original;
+  if (downloads == null) {
+    downloads=new LinkedHashSet<URL>();
+    ACTIVE_DOWNLOADS.set(downloads);
+  }
+  try {
+    if (downloads.contains(url)) {
+      throw new DownloadCycleException("Download cycle detected: " + downloads);
+    }
+    downloads.add(url);
+    try {
+      String fileName=url.getFile();
+      File file=new File(fileName);
+      if (!file.exists()) {
+        file=File.createTempFile(tempFilePrefix,tempFilePostfix);
+        InputStream in=url.openStream();
+        IOHelpers.writeTo(file,in);
+      }
+      return file;
+    }
+  finally {
+      downloads.remove(url);
+    }
+  }
+  finally {
+    if (original == null) {
+      ACTIVE_DOWNLOADS.remove();
+    }
+  }
+}

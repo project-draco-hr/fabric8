@@ -1,0 +1,16 @@
+{
+  writer.append('{');
+  boolean first=true;
+  for (  Map.Entry entry : value.entrySet()) {
+    if (!first) {
+      writer.append(',');
+    }
+ else {
+      first=false;
+    }
+    writeString(writer,(String)entry.getKey());
+    writer.append(':');
+    write(writer,entry.getValue());
+  }
+  writer.append('}');
+}

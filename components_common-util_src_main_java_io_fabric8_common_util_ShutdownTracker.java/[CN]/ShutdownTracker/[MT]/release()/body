@@ -1,0 +1,13 @@
+{
+  if (retained.decrementAndGet() == 0) {
+    if (!stopping.get()) {
+      throw new IllegalStateException("Unbalanced calls to release detected.");
+    }
+ else {
+      if (onStopCallback != null) {
+        onStopCallback.run();
+        onStopCallback=null;
+      }
+    }
+  }
+}

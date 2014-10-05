@@ -1,0 +1,24 @@
+{
+  if (pid == null || !isProcessAlive(pid)) {
+    return 0;
+  }
+  String commands="kill " + (params != null ? params + " " : "") + pid;
+  Process process=null;
+  Runtime runtime=Runtime.getRuntime();
+  LOG.debug("Executing commands: " + commands);
+  try {
+    process=runtime.exec(commands);
+    processInput(process.getInputStream(),commands);
+    processErrors(process.getErrorStream(),commands);
+  }
+ catch (  Exception e) {
+    LOG.error("Failed to execute process " + "stdin" + " for " + commands + ": "+ e,e);
+  }
+  try {
+    return process != null ? process.waitFor() : 1;
+  }
+ catch (  InterruptedException e) {
+    String message=format("Interrupted while waiting for 'kill %d ' command to finish",pid);
+    throw new RuntimeException(message,e);
+  }
+}

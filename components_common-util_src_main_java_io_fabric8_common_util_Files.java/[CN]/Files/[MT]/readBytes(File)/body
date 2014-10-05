@@ -1,0 +1,21 @@
+{
+  FileInputStream fis=null;
+  ByteArrayOutputStream bos=null;
+  if (file == null) {
+    throw new FileNotFoundException("No file specified");
+  }
+  try {
+    fis=new FileInputStream(file);
+    bos=new ByteArrayOutputStream();
+    byte[] buffer=new byte[BUFFER_SIZE];
+    int remaining;
+    while ((remaining=fis.read(buffer)) > 0) {
+      bos.write(buffer,0,remaining);
+    }
+    return bos.toByteArray();
+  }
+  finally {
+    Closeables.closeQuitely(fis);
+    Closeables.closeQuitely(bos);
+  }
+}

@@ -1,0 +1,15 @@
+{
+  int answer=0;
+  if (file.isDirectory()) {
+    File[] files=file.listFiles();
+    if (files != null) {
+      for (      File child : files) {
+        answer+=recursiveDelete(child);
+      }
+    }
+  }
+  if (file.delete()) {
+    answer+=1;
+  }
+  return answer;
+}

@@ -1,0 +1,37 @@
+{
+  NullArgumentException.validateNotNull(element,"Element");
+  NullArgumentException.validateNotNull("Element path",path);
+  StringTokenizer st=new StringTokenizer(path,"/",false);
+  Element currentElement=element;
+  while (st.hasMoreTokens()) {
+    final String childName=st.nextToken();
+    if (childName.endsWith("]")) {
+      int startPos=childName.indexOf("[");
+      int endPos=childName.indexOf("]");
+      NodeList children=currentElement.getElementsByTagName(childName.substring(0,startPos));
+      int numChildren=children.getLength();
+      int index;
+      String numbers=childName.substring(startPos + 1,endPos);
+      if ("last".equals(numbers)) {
+        index=numChildren - 1;
+      }
+ else {
+        index=Integer.parseInt(numbers);
+      }
+      if (index > numChildren) {
+        throw new IllegalArgumentException("index of " + index + " is larger than the number of child nodes ("+ numChildren+ ")");
+      }
+      currentElement=(Element)children.item(index);
+    }
+ else {
+      final NodeList parent=currentElement.getElementsByTagName(childName);
+      if (parent != null) {
+        currentElement=(Element)parent.item(0);
+      }
+    }
+    if (null == currentElement) {
+      return null;
+    }
+  }
+  return getTextContent(currentElement);
+}

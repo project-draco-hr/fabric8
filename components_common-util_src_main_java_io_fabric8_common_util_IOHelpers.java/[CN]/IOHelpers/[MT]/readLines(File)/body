@@ -1,0 +1,17 @@
+{
+  List<String> overrides=new ArrayList<String>();
+  if (file.exists()) {
+    InputStream is=new FileInputStream(file);
+    try {
+      BufferedReader reader=new BufferedReader(new InputStreamReader(is));
+      String line=null;
+      while ((line=reader.readLine()) != null) {
+        overrides.add(line);
+      }
+    }
+  finally {
+      is.close();
+    }
+  }
+  return overrides;
+}

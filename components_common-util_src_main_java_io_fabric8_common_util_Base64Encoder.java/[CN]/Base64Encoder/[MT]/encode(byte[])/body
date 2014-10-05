@@ -1,0 +1,39 @@
+{
+  if (dData == null) {
+    throw new IllegalArgumentException("Cannot encode null");
+  }
+  byte[] eData=new byte[((dData.length + 2) / 3) * 4];
+  int eIndex=0;
+  for (int i=0; i < dData.length; i+=3) {
+    int d1;
+    int d2=0;
+    int d3=0;
+    int e1;
+    int e2;
+    int e3;
+    int e4;
+    int pad=0;
+    d1=dData[i];
+    if ((i + 1) < dData.length) {
+      d2=dData[i + 1];
+      if ((i + 2) < dData.length) {
+        d3=dData[i + 2];
+      }
+ else {
+        pad=1;
+      }
+    }
+ else {
+      pad=2;
+    }
+    e1=ALPHASET[(d1 & I6O2) >> 2];
+    e2=ALPHASET[(d1 & O6I2) << 4 | (d2 & I4O4) >> 4];
+    e3=ALPHASET[(d2 & O4I4) << 2 | (d3 & I2O6) >> 6];
+    e4=ALPHASET[(d3 & O2I6)];
+    eData[eIndex++]=(byte)e1;
+    eData[eIndex++]=(byte)e2;
+    eData[eIndex++]=(pad < 2) ? (byte)e3 : (byte)'=';
+    eData[eIndex++]=(pad < 1) ? (byte)e4 : (byte)'=';
+  }
+  return eData;
+}

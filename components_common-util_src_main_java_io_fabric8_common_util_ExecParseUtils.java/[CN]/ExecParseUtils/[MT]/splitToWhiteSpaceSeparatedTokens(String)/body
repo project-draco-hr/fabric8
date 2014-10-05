@@ -1,0 +1,36 @@
+{
+  if (input == null) {
+    return new ArrayList<String>();
+  }
+  StringTokenizer tokenizer=new StringTokenizer(input.trim(),QUOTE_CHAR + WHITESPACE,true);
+  List<String> tokens=new ArrayList<String>();
+  StringBuilder quotedText=new StringBuilder();
+  while (tokenizer.hasMoreTokens()) {
+    String token=tokenizer.nextToken();
+    if (QUOTE_CHAR.equals(token)) {
+      quotedText.append(QUOTE_CHAR);
+      String buffer=quotedText.toString();
+      if (isSingleQuoted(buffer) || isDoubleQuoted(buffer)) {
+        tokens.add(buffer.substring(1,buffer.length() - 1));
+        quotedText=new StringBuilder();
+      }
+    }
+ else     if (WHITESPACE.equals(token)) {
+      if (quotedText.length() > 0) {
+        quotedText.append(WHITESPACE);
+      }
+    }
+ else {
+      if (quotedText.length() > 0) {
+        quotedText.append(token);
+      }
+ else {
+        tokens.add(token);
+      }
+    }
+  }
+  if (quotedText.length() > 0) {
+    throw new IllegalArgumentException("Invalid quoting found in args " + quotedText);
+  }
+  return tokens;
+}
