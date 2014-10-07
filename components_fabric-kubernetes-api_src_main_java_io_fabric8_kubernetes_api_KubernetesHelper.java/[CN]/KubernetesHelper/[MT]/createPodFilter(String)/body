@@ -1,0 +1,16 @@
+{
+  if (Strings.isNullOrBlank(textFilter)) {
+    return Filters.<PodSchema>trueFilter();
+  }
+ else {
+    return new Filter<PodSchema>(){
+      public String toString(){
+        return "PodFilter(" + textFilter + ")";
+      }
+      public boolean matches(      PodSchema entity){
+        return filterMatchesIdOrLabels(textFilter,entity.getId(),entity.getLabels());
+      }
+    }
+;
+  }
+}
