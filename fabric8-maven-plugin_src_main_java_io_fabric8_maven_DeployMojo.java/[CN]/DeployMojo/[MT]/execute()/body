@@ -1,0 +1,19 @@
+{
+  File json=getKubernetesJson();
+  if (!Files.isFile(json)) {
+    throw new MojoFailureException("No such kubernetes json file: " + json);
+  }
+  Kubernetes api=getKubernetes();
+  getLog().info("Deploying " + json + " to "+ factory.getAddress());
+  try {
+    Object dto=KubernetesHelper.loadJson(json);
+    if (dto == null) {
+      throw new MojoFailureException("Could not load kubernetes json: " + json);
+    }
+    Controller controller=new Controller(kubernetes);
+    controller.apply(dto,json.getName());
+  }
+ catch (  IOException e) {
+    throw new MojoExecutionException(e.getMessage(),e);
+  }
+}

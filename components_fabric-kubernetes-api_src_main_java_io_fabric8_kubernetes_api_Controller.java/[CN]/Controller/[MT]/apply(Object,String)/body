@@ -1,0 +1,14 @@
+{
+  if (dto instanceof PodSchema) {
+    applyPod((PodSchema)dto,sourceName);
+  }
+ else   if (dto instanceof ReplicationControllerSchema) {
+    applyReplicationController((ReplicationControllerSchema)dto,sourceName);
+  }
+ else   if (dto instanceof ServiceSchema) {
+    applyService((ServiceSchema)dto,sourceName);
+  }
+ else {
+    LOG.warn("Unknown Kublelet from " + sourceName + ". Object: "+ dto);
+  }
+}

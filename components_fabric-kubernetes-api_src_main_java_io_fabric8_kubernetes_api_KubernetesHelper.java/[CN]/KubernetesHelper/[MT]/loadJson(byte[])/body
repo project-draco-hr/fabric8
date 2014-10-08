@@ -1,0 +1,29 @@
+{
+  if (json != null && json.length > 0) {
+    ObjectReader reader=objectMapper.reader();
+    JsonNode tree=reader.readTree(new ByteArrayInputStream(json));
+    if (tree != null) {
+      JsonNode kindNode=tree.get("kind");
+      if (kindNode != null) {
+        String kind=kindNode.asText();
+        if (Objects.equal("Pod",kind)) {
+          return objectMapper.reader(PodSchema.class).readValue(json);
+        }
+ else         if (Objects.equal("ReplicationController",kind)) {
+          return objectMapper.reader(ReplicationControllerSchema.class).readValue(json);
+        }
+ else         if (Objects.equal("Service",kind)) {
+          return objectMapper.reader(ServiceSchema.class).readValue(json);
+        }
+ else {
+          LOG.warn("Unknown JSON type " + kindNode + ". JSON: "+ tree);
+        }
+      }
+ else {
+        LOG.warn("No JSON type for: " + tree);
+      }
+      return tree;
+    }
+  }
+  return null;
+}
