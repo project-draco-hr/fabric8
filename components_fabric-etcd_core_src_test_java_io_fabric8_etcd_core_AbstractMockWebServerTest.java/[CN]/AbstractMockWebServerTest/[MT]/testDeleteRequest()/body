@@ -1,0 +1,14 @@
+{
+  server.enqueue(new MockResponse().setBody(Resources.toString(getClass().getClassLoader().getResource("delete-response-1.json"),Charsets.UTF_8)));
+  Response response=client.delete().forKey("message");
+  assertNotNull(response);
+  assertEquals("delete",response.getAction());
+  assertNotNull(response.getNode());
+  assertNull(response.getNode().getValue());
+  assertNotNull(response.getPrevNode());
+  assertEquals("Hello etcd",response.getPrevNode().getValue());
+  RecordedRequest request=server.takeRequest();
+  assertEquals("DELETE",request.getMethod());
+  assertTrue(request.getPath().startsWith(Keys.makeKey("message")));
+  server.shutdown();
+}

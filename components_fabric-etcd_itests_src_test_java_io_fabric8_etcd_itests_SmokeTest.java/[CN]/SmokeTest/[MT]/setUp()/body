@@ -1,0 +1,10 @@
+{
+  String url=System.getProperty("etcd.url");
+  client=new EtcdClientImpl.Builder().baseUri(new URI(url)).responseReader(new GsonResponseReader()).build();
+  client.start();
+  try {
+    client.delete().dir().recursive().forKey("key");
+  }
+ catch (  EtcdException e) {
+  }
+}

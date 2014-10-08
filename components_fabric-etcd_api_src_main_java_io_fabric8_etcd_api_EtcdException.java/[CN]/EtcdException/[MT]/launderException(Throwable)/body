@@ -1,0 +1,12 @@
+{
+  if (t instanceof EtcdException) {
+    return (EtcdException)t;
+  }
+ else   if (t instanceof ExecutionException) {
+    return launderException(t.getCause());
+  }
+ else   if (t instanceof RuntimeException) {
+    return (RuntimeException)t;
+  }
+  return new RuntimeException(t);
+}

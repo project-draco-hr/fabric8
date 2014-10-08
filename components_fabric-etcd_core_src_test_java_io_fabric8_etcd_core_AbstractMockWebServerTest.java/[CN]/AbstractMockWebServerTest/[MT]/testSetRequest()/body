@@ -1,0 +1,12 @@
+{
+  server.enqueue(new MockResponse().setBody(Resources.toString(getClass().getClassLoader().getResource("set-response-1.json"),Charsets.UTF_8)));
+  Response response=client.setData().value("Hello world").forKey("message");
+  assertNotNull(response);
+  assertEquals("set",response.getAction());
+  assertEquals("Hello world",response.getNode().getValue());
+  RecordedRequest request=server.takeRequest();
+  assertEquals("PUT",request.getMethod());
+  assertTrue(request.getPath().startsWith(Keys.makeKey("message")));
+  assertTrue(request.getPath().contains("value=Hello+world"));
+  server.shutdown();
+}

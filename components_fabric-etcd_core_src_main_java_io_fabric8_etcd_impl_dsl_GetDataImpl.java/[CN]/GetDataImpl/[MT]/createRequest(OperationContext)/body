@@ -1,0 +1,15 @@
+{
+  try {
+    URIBuilder builder=new URIBuilder(context.getBaseUri()).setPath(Keys.makeKey(key)).addParameter("recursive",String.valueOf(recursive)).addParameter("sorted",String.valueOf(sorted));
+    if (shouldWait) {
+      builder=builder.addParameter("wait","true");
+      if (waitIndex > 0) {
+        builder=builder.addParameter("waitIndex",String.valueOf(waitIndex));
+      }
+    }
+    return new HttpGet(builder.build());
+  }
+ catch (  Exception e) {
+    throw new RuntimeException(e);
+  }
+}

@@ -1,0 +1,10 @@
+{
+  Response response=getResponseReader().read(getClass().getClassLoader().getResourceAsStream("delete-response-1.json"));
+  assertNotNull(response);
+  assertEquals("delete",response.getAction());
+  assertEquals("/message",response.getNode().getKey());
+  assertNotNull(response.getNode());
+  assertNull(response.getNode().getValue());
+  assertNotNull(response.getPrevNode());
+  assertEquals("Hello etcd",response.getPrevNode().getValue());
+}

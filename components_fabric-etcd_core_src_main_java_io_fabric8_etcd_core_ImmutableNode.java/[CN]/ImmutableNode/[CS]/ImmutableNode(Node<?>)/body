@@ -1,0 +1,16 @@
+{
+  this.key=node.getKey();
+  this.createdIndex=node.getCreatedIndex();
+  this.modifiedIndex=node.getModifiedIndex();
+  this.value=node.getValue();
+  this.expiration=node.getExpiration();
+  this.ttl=node.getTtl();
+  Set<ImmutableNode> transformedNodes=new LinkedHashSet<>();
+  if (node.getNodes() != null) {
+    for (    Node n : node.getNodes()) {
+      transformedNodes.add(new ImmutableNode(n));
+    }
+  }
+  this.nodes=Collections.unmodifiableSet(transformedNodes);
+  this.dir=node.isDir();
+}

@@ -1,0 +1,11 @@
+{
+  Response response=getResponseReader().read(getClass().getClassLoader().getResourceAsStream("compare-and-swap-response-2.json"));
+  assertNotNull(response);
+  assertEquals("compareAndSwap",response.getAction());
+  assertNotNull(response.getNode());
+  assertEquals("/message",response.getNode().getKey());
+  assertEquals("Hello etcd",response.getNode().getValue());
+  assertNotNull(response.getPrevNode());
+  assertEquals("/message",response.getPrevNode().getKey());
+  assertEquals("Hello world",response.getPrevNode().getValue());
+}

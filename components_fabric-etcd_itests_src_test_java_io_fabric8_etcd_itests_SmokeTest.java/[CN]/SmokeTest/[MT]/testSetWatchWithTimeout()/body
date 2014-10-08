@@ -1,0 +1,9 @@
+{
+  Response response=client.setData().value("smoke").forKey("key");
+  assertNotNull(response);
+  assertEquals("smoke",response.getNode().getValue());
+  response=client.getData().forKey("key");
+  assertValue("smoke",response);
+  Future<Response> responseFuture=client.getData().watch().forKey("key");
+  responseFuture.get(3,TimeUnit.SECONDS);
+}
