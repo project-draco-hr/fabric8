@@ -44,24 +44,16 @@
     if (interval <= 0) {
       interval=50;
     }
-    ActiveMQConnectionFactory connectionFactory=new ActiveMQConnectionFactory("tcp://localhost:" + port);
-    Connection connection=connectionFactory.createConnection();
-    connection.start();
-    Session session=connection.createSession(false,Session.AUTO_ACKNOWLEDGE);
-    Destination destination=session.createQueue(queueName);
-    MessageProducer producer=session.createProducer(destination);
-    producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
-    Message sentMessage=session.createMessage();
-    try {
-      while (true) {
-        producer.send(sentMessage);
-        LOG.info("Sending a message to Fabric8 MQ at " + new Date());
-        Thread.sleep(interval);
+    org.apache.camel.main.Main main=new org.apache.camel.main.Main();
+    main.bind("activemq",ActiveMQComponent.activeMQComponent("tcp://localhost:" + port));
+    main.enableHangupSupport();
+    main.addRouteBuilder(new RouteBuilder(){
+      public void configure(){
+        from("timer://mytimer?period=" + interval).log("Sending message at ${date:now:HH:mm:SS:sss}").to("activemq:" + queueName);
       }
     }
- catch (    InterruptedException e) {
-      e.printStackTrace();
-    }
+);
+    main.run(args);
   }
  catch (  Throwable e) {
     LOG.error("Failed to connect to Fabric8MQ",e);
