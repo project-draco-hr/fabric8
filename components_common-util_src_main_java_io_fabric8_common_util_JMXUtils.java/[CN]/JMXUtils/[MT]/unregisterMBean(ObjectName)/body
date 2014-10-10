@@ -1,0 +1,11 @@
+{
+  MBeanServer mBeanServer=ManagementFactory.getPlatformMBeanServer();
+  if (mBeanServer != null) {
+    try {
+      unregisterMBean(mBeanServer,objectName);
+    }
+ catch (    Exception e) {
+      LOG.error("Failed to unregister " + objectName + ". "+ e,e);
+    }
+  }
+}

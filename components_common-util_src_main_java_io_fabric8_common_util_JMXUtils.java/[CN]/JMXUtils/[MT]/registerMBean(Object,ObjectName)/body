@@ -1,0 +1,11 @@
+{
+  MBeanServer mBeanServer=ManagementFactory.getPlatformMBeanServer();
+  if (mBeanServer != null) {
+    try {
+      registerMBean(bean,mBeanServer,objectName);
+    }
+ catch (    Exception e) {
+      LOG.error("Failed to register in JMX bean " + bean + " at "+ objectName+ ". "+ e,e);
+    }
+  }
+}
