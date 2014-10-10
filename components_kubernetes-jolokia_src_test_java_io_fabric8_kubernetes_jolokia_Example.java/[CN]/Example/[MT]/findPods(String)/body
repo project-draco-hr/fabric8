@@ -1,0 +1,24 @@
+{
+  Map<String,PodSchema> podMap=KubernetesHelper.getPodMap(kubernetes,selector);
+  Collection<PodSchema> pods=podMap.values();
+  for (  PodSchema pod : pods) {
+    String host=KubernetesHelper.getHost(pod);
+    List<ManifestContainer> containers=KubernetesHelper.getContainers(pod);
+    for (    ManifestContainer container : containers) {
+      System.out.println("pod " + pod.getId() + " container: "+ container.getName()+ " image: "+ container.getImage());
+      J4pClient jolokia=clients.jolokiaClient(host,container);
+      if (jolokia != null) {
+        System.out.println("   has jolokia client: " + jolokia);
+        try {
+          ObjectName objectName=new ObjectName("java.lang:type=OperatingSystem");
+          J4pResponse<J4pReadRequest> results=jolokia.execute(new J4pReadRequest(objectName,"SystemCpuLoad"));
+          Object value=results.getValue();
+          System.out.println("  System CPU Load: " + value);
+        }
+ catch (        Exception e) {
+          LOG.error("Failed to look up attribute. " + e,e);
+        }
+      }
+    }
+  }
+}

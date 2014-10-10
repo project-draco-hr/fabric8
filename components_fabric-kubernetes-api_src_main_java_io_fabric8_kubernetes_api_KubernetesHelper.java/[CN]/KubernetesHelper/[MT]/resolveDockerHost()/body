@@ -1,0 +1,12 @@
+{
+  String dockerHost=System.getenv("DOCKER_HOST");
+  if (isNullOrBlank(dockerHost)) {
+    dockerHost=System.getProperty("docker.host");
+  }
+  if (isNullOrBlank(dockerHost)) {
+    return DEFAULT_DOCKER_HOST;
+  }
+ else {
+    return dockerHost;
+  }
+}

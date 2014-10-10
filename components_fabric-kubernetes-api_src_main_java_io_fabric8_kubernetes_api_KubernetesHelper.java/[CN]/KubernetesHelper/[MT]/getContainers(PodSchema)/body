@@ -1,0 +1,15 @@
+{
+  if (pod != null) {
+    DesiredState desiredState=pod.getDesiredState();
+    if (desiredState != null) {
+      ManifestSchema manifest=desiredState.getManifest();
+      if (manifest != null) {
+        List<ManifestContainer> containers=manifest.getContainers();
+        if (containers != null) {
+          return containers;
+        }
+      }
+    }
+  }
+  return Collections.EMPTY_LIST;
+}
