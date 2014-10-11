@@ -80,30 +80,21 @@
     if (messageCount <= 0) {
       messageCount=10000;
     }
-    char[] chars=new char[messageSize];
-    Arrays.fill(chars,'a');
-    messageBody=new String(chars);
     org.apache.camel.main.Main main=new org.apache.camel.main.Main();
     String brokerURL="tcp://" + host + ":"+ port;
     System.out.println("Connecting to brokerURL: " + brokerURL);
     main.bind("activemq",ActiveMQComponent.activeMQComponent(brokerURL));
     main.bind("myDataSet",createDataSet());
-    main.bind("messageBody",getMessageBody());
     main.enableHangupSupport();
     main.addRouteBuilder(new RouteBuilder(){
       public void configure(){
-        from("dataset:myDataSet?produceDelay=" + interval).process(new Processor(){
-          public void process(          Exchange exchange) throws Exception {
-            exchange.getIn().setBody(getMessageBody());
-          }
-        }
-).log("Sending message at ${date:now:HH:mm:SS:sss}").to("activemq:" + queueName);
+        from("dataset:myDataSet?produceDelay=" + interval).to("activemq:" + queueName);
       }
     }
 );
     main.run(args);
   }
  catch (  Throwable e) {
-    LOG.error("Failed to connect to Fabric8MQ",e);
+    LOG.error("Failed to connect to Fabric8 MQ",e);
   }
 }

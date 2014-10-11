@@ -70,15 +70,11 @@
     String brokerURL="tcp://" + host + ":"+ port+ "?jms.prefetchPolicy.all="+ prefetch;
     System.out.println("Connecting to brokerURL " + brokerURL);
     main.bind("activemq",ActiveMQComponent.activeMQComponent(brokerURL));
+    main.bind("myDataSet",new SimpleDataSet());
     main.enableHangupSupport();
     main.addRouteBuilder(new RouteBuilder(){
       public void configure(){
-        from("activemq:" + queueName).process(new Processor(){
-          public void process(          Exchange exchange) throws Exception {
-            Thread.sleep(slowConsumerMillis);
-          }
-        }
-).log("Received message at ${date:now:HH:mm:SS:sss}");
+        from("activemq:" + queueName).to("dataset:myDataSet");
       }
     }
 );
