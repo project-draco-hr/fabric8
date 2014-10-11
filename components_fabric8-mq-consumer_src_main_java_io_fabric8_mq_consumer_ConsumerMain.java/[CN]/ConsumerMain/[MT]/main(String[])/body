@@ -12,6 +12,17 @@
       if (portStr != null && portStr.length() > 0) {
         port=Integer.parseInt(portStr);
       }
+      String prefetchStr=AccessController.doPrivileged(new PrivilegedAction<String>(){
+        @Override public String run(){
+          String result=System.getenv("AMQ_PREFETCH");
+          result=(result == null || result.isEmpty()) ? System.getProperty("org.apache.activemq.AMQ_PREFETCH","1000") : result;
+          return result;
+        }
+      }
+);
+      if (prefetchStr != null && prefetchStr.length() > 0) {
+        prefetch=Integer.parseInt(prefetchStr);
+      }
       queueName=AccessController.doPrivileged(new PrivilegedAction<String>(){
         @Override public String run(){
           String result=System.getenv("AMQ_QUEUENAME");
@@ -20,16 +31,16 @@
         }
       }
 );
-      String intervalStr=AccessController.doPrivileged(new PrivilegedAction<String>(){
+      String slowConsumerMillisStr=AccessController.doPrivileged(new PrivilegedAction<String>(){
         @Override public String run(){
-          String result=System.getenv("AMQ_INTERVAL");
-          result=(result == null || result.isEmpty()) ? System.getProperty("org.apache.activemq.AMQ_INTERVAL","50") : result;
+          String result=System.getenv("AMQ_SLOW_CONSUMER_MILLIS");
+          result=(result == null || result.isEmpty()) ? System.getProperty("org.apache.activemq.AMQ_SLOW_CONSUMER_MILLIS","0") : result;
           return result;
         }
       }
 );
-      if (intervalStr != null && intervalStr.length() > 0) {
-        interval=Integer.parseInt(intervalStr);
+      if (slowConsumerMillisStr != null && slowConsumerMillisStr.length() > 0) {
+        slowConsumerMillis=Integer.parseInt(slowConsumerMillisStr);
       }
     }
  catch (    Throwable e) {
@@ -38,18 +49,23 @@
     if (port <= 0) {
       port=61616;
     }
+    if (prefetch <= 0) {
+      prefetch=1000;
+    }
     if (queueName == null) {
       queueName="TEST.FOO";
     }
-    if (interval <= 0) {
-      interval=50;
-    }
     org.apache.camel.main.Main main=new org.apache.camel.main.Main();
-    main.bind("activemq",ActiveMQComponent.activeMQComponent("tcp://localhost:" + port));
+    main.bind("activemq",ActiveMQComponent.activeMQComponent("tcp://localhost:" + port + "?jms.prefetchPolicy.all="+ prefetch));
     main.enableHangupSupport();
     main.addRouteBuilder(new RouteBuilder(){
       public void configure(){
-        from("timer://mytimer?period=" + interval).log("Sending message at ${date:now:HH:mm:SS:sss}").to("activemq:" + queueName);
+        from("activemq:" + queueName).process(new Processor(){
+          public void process(          Exchange exchange) throws Exception {
+            Thread.sleep(slowConsumerMillis);
+          }
+        }
+).log("Received message at ${date:now:HH:mm:SS:sss}");
       }
     }
 );
