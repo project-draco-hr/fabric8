@@ -3,8 +3,8 @@
   if (!Files.isFile(json)) {
     throw new MojoFailureException("No such kubernetes json file: " + json);
   }
-  Kubernetes api=getKubernetes();
-  getLog().info("Deploying " + json + " to "+ factory.getAddress());
+  KubernetesClient api=getKubernetes();
+  getLog().info("Deploying " + json + " to "+ api.getAddress());
   try {
     Object dto=KubernetesHelper.loadJson(json);
     if (dto == null) {

@@ -8,6 +8,25 @@
  else   if (dto instanceof ServiceSchema) {
     applyService((ServiceSchema)dto,sourceName);
   }
+ else   if (dto instanceof JsonNode) {
+    JsonNode tree=(JsonNode)dto;
+    JsonNode kindNode=tree.get("kind");
+    if (kindNode != null) {
+      String kind=kindNode.asText();
+      if (Objects.equal("Config",kind)) {
+        applyConfig(tree,sourceName);
+      }
+ else       if (Objects.equal("Template",kind)) {
+        applyTemplateConfig(tree,sourceName);
+      }
+ else {
+        LOG.warn("Unknown JSON type " + kindNode + ". JSON: "+ tree);
+      }
+    }
+ else {
+      LOG.warn("No JSON kind for: " + tree);
+    }
+  }
  else {
     LOG.warn("Unknown Kublelet from " + sourceName + ". Object: "+ dto);
   }

@@ -1,0 +1,19 @@
+{
+  JsonNode items=entity.get("items");
+  if (items != null) {
+    for (    JsonNode item : items) {
+      String json=item.toString();
+      System.out.println("Got item: " + json);
+      Object dto=null;
+      try {
+        dto=loadJson(json);
+      }
+ catch (      IOException e) {
+        LOG.error("Failed to process " + json + ". "+ e,e);
+      }
+      if (dto != null) {
+        apply(dto,sourceName);
+      }
+    }
+  }
+}
