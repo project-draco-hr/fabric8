@@ -39,17 +39,6 @@
         }
       }
 );
-      String slowConsumerMillisStr=AccessController.doPrivileged(new PrivilegedAction<String>(){
-        @Override public String run(){
-          String result=System.getenv("AMQ_SLOW_CONSUMER_MILLIS");
-          result=(result == null || result.isEmpty()) ? System.getProperty("org.apache.activemq.AMQ_SLOW_CONSUMER_MILLIS","0") : result;
-          return result;
-        }
-      }
-);
-      if (slowConsumerMillisStr != null && slowConsumerMillisStr.length() > 0) {
-        slowConsumerMillis=Integer.parseInt(slowConsumerMillisStr);
-      }
     }
  catch (    Throwable e) {
       LOG.warn("Failed to look up System properties for host and port",e);
