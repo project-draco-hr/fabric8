@@ -1,0 +1,13 @@
+{
+  String camelComponentsListLocation="https://raw.githubusercontent.com/fusesource/fuseide/master/core/plugins/org.fusesource.ide.camel.model/components/components-2.13.2.xml";
+  Set<String> result=new LinkedHashSet<String>();
+  String xmlString=null;
+  client=factory.createClient();
+  xmlString=client.target(camelComponentsListLocation).request(MediaType.WILDCARD_TYPE).get(String.class);
+  XML xml=new XMLDocument(xmlString);
+  List<String> connectors=xml.xpath("/connectors/connector/@id");
+  for (  String id : connectors) {
+    result.add(id);
+  }
+  return result;
+}

@@ -1,0 +1,12 @@
+{
+  super.initializeUI(builder);
+  named.setCompleter(new UICompleter<String>(){
+    @Override public Iterable<String> getCompletionProposals(    UIContext context,    InputComponent<?,String> input,    String value){
+      Set<String> camelComponents=getAvailableCamelComponents();
+      camelComponents.removeAll(camelDepsInUse);
+      return camelComponents;
+    }
+  }
+);
+  builder.add(named).add(version);
+}

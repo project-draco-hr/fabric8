@@ -1,0 +1,9 @@
+{
+  Project selectedProject=getSelectedProject(builder);
+  List<Dependency> dependencies=selectedProject.getFacet(DependencyFacet.class).getEffectiveDependencies();
+  for (  Dependency d : dependencies) {
+    if (MVN_CAMEL_GROUPID.equals(d.getCoordinate().getGroupId())) {
+      camelDepsInUse.add(d.getCoordinate().getArtifactId());
+    }
+  }
+}
