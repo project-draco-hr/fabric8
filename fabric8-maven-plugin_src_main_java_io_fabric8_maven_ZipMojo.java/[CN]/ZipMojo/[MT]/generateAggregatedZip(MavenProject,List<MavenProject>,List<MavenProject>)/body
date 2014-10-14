@@ -1,0 +1,49 @@
+{
+  File projectBaseDir=rootProject.getBasedir();
+  File projectOutputFile=new File(projectBaseDir,"target/app.zip");
+  getLog().info("Generating " + projectOutputFile.getAbsolutePath() + " from root project "+ rootProject.getArtifactId());
+  File projectBuildDir=new File(projectBaseDir,reactorProjectOutputPath);
+  createAggregatedZip(reactorProjects,projectBaseDir,projectBuildDir,reactorProjectOutputPath,projectOutputFile,includeReadMe,pomZipProjects);
+  if (rootProject.getAttachedArtifacts() != null) {
+    Artifact found=null;
+    for (    Artifact artifact : rootProject.getAttachedArtifacts()) {
+      if (artifactClassifier != null && artifact.hasClassifier() && artifact.getClassifier().equals(artifactClassifier)) {
+        found=artifact;
+        break;
+      }
+    }
+    if (found != null) {
+      rootProject.getAttachedArtifacts().remove(found);
+    }
+  }
+  getLog().info("Attaching aggregated zip " + projectOutputFile + " to root project "+ rootProject.getArtifactId());
+  projectHelper.attachArtifact(rootProject,artifactType,artifactClassifier,projectOutputFile);
+  if (rootProject.hasLifecyclePhase("install")) {
+    getLog().info("Installing aggregated zip " + projectOutputFile);
+    InvocationRequest request=new DefaultInvocationRequest();
+    request.setBaseDirectory(rootProject.getBasedir());
+    request.setPomFile(new File("./pom.xml"));
+    request.setGoals(Collections.singletonList("install:install-file"));
+    request.setRecursive(false);
+    request.setInteractive(false);
+    Properties props=new Properties();
+    props.setProperty("file","target/app.zip");
+    props.setProperty("groupId",rootProject.getGroupId());
+    props.setProperty("artifactId",rootProject.getArtifactId());
+    props.setProperty("version",rootProject.getVersion());
+    props.setProperty("classifier","app");
+    props.setProperty("packaging","zip");
+    request.setProperties(props);
+    getLog().info("Installing aggregated zip using: mvn install:install-file" + serializeMvnProperties(props));
+    Invoker invoker=new DefaultInvoker();
+    try {
+      InvocationResult result=invoker.execute(request);
+      if (result.getExitCode() != 0) {
+        throw new IllegalStateException("Error invoking Maven goal install:install-file");
+      }
+    }
+ catch (    MavenInvocationException e) {
+      throw new MojoExecutionException("Error invoking Maven goal install:install-file",e);
+    }
+  }
+}

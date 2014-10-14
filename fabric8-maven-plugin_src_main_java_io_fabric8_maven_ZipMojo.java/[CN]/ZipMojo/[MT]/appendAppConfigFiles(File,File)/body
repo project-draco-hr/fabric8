@@ -1,0 +1,24 @@
+{
+  if (appSourceDir.exists() && appSourceDir.isDirectory()) {
+    File[] files=appSourceDir.listFiles();
+    if (files != null) {
+      outputDir.mkdirs();
+      for (      File file : files) {
+        File outFile=new File(outputDir,file.getName());
+        if (file.isDirectory()) {
+          appendAppConfigFiles(file,outFile);
+        }
+ else {
+          if (outFile.exists() && file.getName().endsWith(".properties")) {
+            System.out.println("Combining properties: file " + file.getAbsolutePath());
+            combinePropertiesFiles(file,outFile);
+          }
+ else {
+            System.out.println("Copying file " + file.getAbsolutePath());
+            Files.copy(file,outFile);
+          }
+        }
+      }
+    }
+  }
+}

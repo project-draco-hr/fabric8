@@ -1,0 +1,66 @@
+{
+  File appBuildDir=buildDir;
+  if (Strings.isNotBlank(pathInZip)) {
+    appBuildDir=new File(buildDir,pathInZip);
+  }
+  appBuildDir.mkdirs();
+  boolean hasConfigDir=appConfigDir.isDirectory();
+  if (hasConfigDir) {
+    copyAppConfigFiles(appBuildDir,appConfigDir);
+  }
+ else {
+    getLog().info("The app configuration files directory " + appConfigDir + " doesn't exist, so not copying any additional project documentation or configuration files");
+  }
+  MavenProject project=getProject();
+  if (!ignoreProject) {
+    File kubernetesJson=getKubernetesJson();
+    if (kubernetesJson != null && kubernetesJson.isFile() && kubernetesJson.exists()) {
+      File jsonFile=new File(appBuildDir,"kubernetes.json");
+      jsonFile.getParentFile().mkdirs();
+      Files.copy(kubernetesJson,jsonFile);
+    }
+    if (Strings.isNotBlank(iconRef)) {
+      File[] icons=appBuildDir.listFiles(new FilenameFilter(){
+        @Override public boolean accept(        File dir,        String name){
+          if (name == null) {
+            return false;
+          }
+          String lower=name.toLowerCase();
+          return lower.startsWith("icon.") && (lower.endsWith(".svg") || lower.endsWith(".png") || lower.endsWith(".gif")|| lower.endsWith(".jpg")|| lower.endsWith(".jpeg"));
+        }
+      }
+);
+      if (icons == null || icons.length == 0) {
+        InputStream in=loadPluginResource(iconRef);
+        if (in == null) {
+          getLog().warn("Could not find icon: " + iconRef + " on the ClassPath!");
+        }
+ else {
+          String fileName="icon." + Files.getFileExtension(iconRef);
+          File outFile=new File(appBuildDir,fileName);
+          Files.copy(in,new FileOutputStream(outFile));
+          getLog().info("Generated icon file " + outFile + " from icon reference: "+ iconRef);
+        }
+      }
+    }
+  }
+  if (hasConfigDir || !ignoreProject) {
+    if (includeReadMe) {
+      copyReadMe(project.getFile().getParentFile(),appBuildDir);
+    }
+    if (generateSummaryFile) {
+      String description=project.getDescription();
+      if (Strings.isNotBlank(description)) {
+        File summaryMd=new File(appBuildDir,"Summary.md");
+        summaryMd.getParentFile().mkdirs();
+        if (!summaryMd.exists()) {
+          byte[] bytes=description.getBytes();
+          Files.copy(new ByteArrayInputStream(bytes),new FileOutputStream(summaryMd));
+        }
+      }
+    }
+    Zips.createZipFile(getLog(),buildDir,outputFile);
+    projectHelper.attachArtifact(project,artifactType,artifactClassifier,outputFile);
+    getLog().info("Created app zip file: " + outputFile);
+  }
+}

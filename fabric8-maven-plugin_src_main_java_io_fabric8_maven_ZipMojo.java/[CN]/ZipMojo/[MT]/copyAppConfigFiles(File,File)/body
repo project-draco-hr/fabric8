@@ -1,0 +1,17 @@
+{
+  File[] files=appConfigDir.listFiles();
+  if (files != null) {
+    appBuildDir.mkdirs();
+    for (    File file : files) {
+      if (!toBeExclude(file.getName())) {
+        File outFile=new File(appBuildDir,file.getName());
+        if (file.isDirectory()) {
+          copyAppConfigFiles(outFile,file);
+        }
+ else {
+          Files.copy(file,outFile);
+        }
+      }
+    }
+  }
+}

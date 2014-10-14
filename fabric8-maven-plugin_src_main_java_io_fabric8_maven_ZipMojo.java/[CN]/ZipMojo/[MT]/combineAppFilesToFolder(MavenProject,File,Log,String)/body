@@ -1,0 +1,14 @@
+{
+  File basedir=reactorProject.getBasedir();
+  if (!basedir.exists()) {
+    log.warn("No basedir " + basedir.getAbsolutePath() + " for project + "+ reactorProject);
+    return;
+  }
+  File outDir=new File(basedir,reactorProjectOutputPath);
+  if (!outDir.exists()) {
+    log.warn("No app output dir at: " + outDir.getAbsolutePath() + " for project + "+ reactorProject+ " so ignoring this project.");
+    return;
+  }
+  log.info("Copying apps from " + outDir.getAbsolutePath() + " into the output directory: "+ buildDir);
+  appendAppConfigFiles(outDir,buildDir);
+}

@@ -1,0 +1,36 @@
+{
+  boolean changed=false;
+  Pattern pattern=Pattern.compile("\\[(.*?)\\]\\((.*?)\\)");
+  Matcher matcher=pattern.matcher(line);
+  StringBuffer sb=new StringBuffer();
+  while (matcher.find()) {
+    String s2=matcher.group(2);
+    if (s2.startsWith("http:") || s2.startsWith("https:")) {
+      matcher.appendReplacement(sb,"[$1]($2)");
+    }
+ else {
+      if (names.contains(s2) || names.contains(relativePath + s2) || names.contains(relativePath + "/" + s2)) {
+        s2=s2;
+        if (relativePath != null && !"<root>".equals(relativePath)) {
+          s2=addToPath(relativePath,s2);
+        }
+        matcher.appendReplacement(sb,"[$1](" + replaceReadmeLinksPrefix + s2+ ")");
+      }
+ else {
+        s2=s2;
+        if (relativePath != null && !"<root>".equals(relativePath)) {
+          s2=addToPath(relativePath,s2);
+        }
+        matcher.appendReplacement(sb,"[$1](" + replaceReadmeLinksPrefix + s2+ ".app)");
+      }
+      changed=true;
+    }
+  }
+  matcher.appendTail(sb);
+  if (changed) {
+    return sb.toString();
+  }
+ else {
+    return null;
+  }
+}
