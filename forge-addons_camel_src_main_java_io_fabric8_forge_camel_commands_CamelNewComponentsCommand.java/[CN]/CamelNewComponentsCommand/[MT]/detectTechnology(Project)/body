@@ -1,0 +1,14 @@
+{
+  if (probeForCDI(project)) {
+    return CamelSupportedTechnologyEnum.JAVA;
+  }
+ else   if (probeForBlueprint(project)) {
+    return CamelSupportedTechnologyEnum.BLUEPRINT;
+  }
+ else   if (probeForSpring(project)) {
+    return CamelSupportedTechnologyEnum.SPRING;
+  }
+ else {
+    throw new IllegalStateException("We couldn't identify Camel Project technology");
+  }
+}

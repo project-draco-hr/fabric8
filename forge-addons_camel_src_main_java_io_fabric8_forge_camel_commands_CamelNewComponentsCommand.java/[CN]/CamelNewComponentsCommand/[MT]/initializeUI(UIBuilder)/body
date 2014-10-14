@@ -2,9 +2,25 @@
   super.initializeUI(builder);
   named.setCompleter(new UICompleter<String>(){
     @Override public Iterable<String> getCompletionProposals(    UIContext context,    InputComponent<?,String> input,    String value){
-      Set<String> camelComponents=getAvailableCamelComponents();
-      camelComponents.removeAll(camelDepsInUse);
-      return camelComponents;
+      availableComponents=getAvailableCamelComponents();
+      List<String> componentsList=new ArrayList<>(availableComponents.size());
+      for (      String s : availableComponents) {
+        if (s.startsWith(value))         componentsList.add(s);
+      }
+      componentsList.removeAll(camelDepsInUse);
+      Collections.sort(componentsList);
+      return componentsList;
+    }
+  }
+);
+  named.addValidator(new UIValidator(){
+    @Override public void validate(    UIValidationContext context){
+      if (availableComponents == null) {
+        availableComponents=getAvailableCamelComponents();
+      }
+      if (!availableComponents.contains(context.getCurrentInputComponent().getValue())) {
+        context.addValidationError(context.getCurrentInputComponent(),"Selected Camel component is not available.");
+      }
     }
   }
 );

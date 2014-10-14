@@ -3,5 +3,27 @@
   String selectedVersion=version.getValue();
   Project project=getSelectedProject(context);
   installMavenDependency(component,selectedVersion,project);
-  return Results.success(component + " component successfully installed!");
+  CamelSupportedTechnologyEnum tech=detectTechnology(project);
+switch (tech) {
+case BLUEPRINT:
+    ResourcesFacet facet=getSelectedProject(context).getFacet(ResourcesFacet.class);
+  FileResource<?> fileResource=facet.getResource("OSGI-INF" + File.separator + "blueprint"+ File.separator+ "components.xml");
+Resource<URL> blueprintXML=resourceFactory.create(getClass().getResource("/templates/my_blueprint.ftl")).reify(URLResource.class);
+Template template=templateFactory.create(blueprintXML,FreemarkerTemplate.class);
+Map<String,Object> templateContext=new HashMap<>();
+String componentId=component.split("-")[1];
+String componentClass="";
+templateContext.put("componentId",componentId);
+List<String> foundComponentClasses=findComponentClasses(project);
+System.out.println(foundComponentClasses);
+templateContext.put("componentClass",componentClass);
+fileResource.createNewFile();
+fileResource.setContents(template.process(templateContext));
+break;
+case SPRING:
+break;
+case JAVA:
+break;
+}
+return Results.success(component + " component successfully installed!");
 }

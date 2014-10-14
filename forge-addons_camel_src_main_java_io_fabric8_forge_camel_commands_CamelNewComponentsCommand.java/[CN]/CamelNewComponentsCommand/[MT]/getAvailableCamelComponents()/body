@@ -3,11 +3,16 @@
   Set<String> result=new LinkedHashSet<String>();
   String xmlString=null;
   client=factory.createClient();
-  xmlString=client.target(camelComponentsListLocation).request(MediaType.WILDCARD_TYPE).get(String.class);
+  try {
+    xmlString=client.target(camelComponentsListLocation).request(MediaType.WILDCARD_TYPE).get(String.class);
+  }
+ catch (  Exception e) {
+    throw new RuntimeException("Unable to fetch list of Camel components from: " + camelComponentsListLocation,e);
+  }
   XML xml=new XMLDocument(xmlString);
   List<String> connectors=xml.xpath("/connectors/connector/@id");
   for (  String id : connectors) {
-    result.add(id);
+    result.add("camel-" + id);
   }
-  return result;
+  return Collections.unmodifiableSet(result);
 }

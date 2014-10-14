@@ -1,0 +1,22 @@
+{
+  final boolean matched[]=new boolean[1];
+  matched[0]=false;
+  project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor(){
+    @Override public void visit(    VisitContext context,    JavaResource javaResource){
+      try {
+        JavaSource<?> javaType=javaResource.getJavaType();
+        if (javaType.isClass()) {
+          JavaClassSource source=(JavaClassSource)javaType;
+          if (source.hasAnnotation(org.apache.camel.cdi.ContextName.class) || source.hasAnnotation(org.apache.camel.cdi.Uri.class)) {
+            matched[0]=true;
+          }
+        }
+      }
+ catch (      FileNotFoundException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+);
+  return matched[0];
+}
