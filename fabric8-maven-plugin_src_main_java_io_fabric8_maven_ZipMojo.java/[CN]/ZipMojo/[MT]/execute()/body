@@ -6,7 +6,7 @@
       List<MavenProject> pomZipProjects=new ArrayList<>();
       List<MavenProject> fabricZipGoalProjects=new ArrayList<>();
       for (      MavenProject reactorProject : reactorProjects) {
-        if ("pom".equals(reactorProject.getPackaging())) {
+        if (isPom(reactorProject)) {
           pomZipProjects.add(reactorProject);
         }
         List<Plugin> buildPlugins=reactorProject.getBuildPlugins();

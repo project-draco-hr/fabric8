@@ -1,0 +1,17 @@
+{
+  Map<String,String> answer=new HashMap<>();
+  Properties properties=getProject().getProperties();
+  Set<Map.Entry<Object,Object>> entries=properties.entrySet();
+  for (  Map.Entry<Object,Object> entry : entries) {
+    Object value=entry.getValue();
+    Object key=entry.getKey();
+    if (key instanceof String && value != null) {
+      String keyText=key.toString();
+      if (keyText.startsWith(prefix)) {
+        String newKey=keyText.substring(prefix.length());
+        answer.put(newKey,value.toString());
+      }
+    }
+  }
+  return answer;
+}
