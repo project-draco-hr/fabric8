@@ -1,24 +1,6 @@
 {
   if (Strings.isNullOrBlank(kubernetesName)) {
-    String groupPrefix=null;
-    MavenProject project=getProject();
-    String imageName=project.getProperties().getProperty("docker.dataImage");
-    if (Strings.isNotBlank(imageName)) {
-      String[] paths=imageName.split("/");
-      if (paths != null) {
-        if (paths.length == 2) {
-          groupPrefix=paths[0];
-        }
- else         if (paths.length == 3) {
-          groupPrefix=paths[1];
-        }
-      }
-    }
-    if (Strings.isNullOrBlank(groupPrefix)) {
-      groupPrefix=project.getGroupId();
-    }
-    String name=groupPrefix + "-" + project.getArtifactId();
-    kubernetesName=Strings.convertToCamelCase(name,"-");
+    kubernetesName=Strings.convertToCamelCase(getKubernetesContainerName(),"-");
   }
   return kubernetesName;
 }
