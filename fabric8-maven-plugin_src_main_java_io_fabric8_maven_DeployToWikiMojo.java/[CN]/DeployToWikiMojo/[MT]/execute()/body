@@ -1,0 +1,108 @@
+{
+  if (isIgnoreProject())   return;
+  try {
+    boolean newUserAdded=false;
+    fabricServer=mavenSettings.getServer(serverId);
+    if (Strings.isNullOrBlank(consoleUrl)) {
+      consoleUrl=DEFAULT_CONSOLE_URL;
+    }
+    String jolokiaUsername=null;
+    String jolokiaPassword=null;
+    try {
+      URL url=new URL(consoleUrl);
+      String s=url.getUserInfo();
+      if (Strings.isNotBlank(s) && s.indexOf(':') > 0) {
+        int idx=s.indexOf(':');
+        jolokiaUsername=s.substring(0,idx);
+        jolokiaPassword=s.substring(idx + 1);
+        customUsernameAndPassword=true;
+      }
+    }
+ catch (    MalformedURLException e) {
+      throw new IllegalArgumentException("Option consoleUrl is invalid due " + e.getMessage());
+    }
+    if (jolokiaUsername != null) {
+      if (fabricServer == null) {
+        fabricServer=new Server();
+      }
+      getLog().info("Using username: " + jolokiaUsername + " and password from provided consoleUrl option");
+      fabricServer.setUsername(jolokiaUsername);
+      fabricServer.setPassword(jolokiaPassword);
+    }
+    if (fabricServer == null) {
+      boolean create=false;
+      if (mavenSettings.isInteractiveMode() && mavenSettingsWriter != null) {
+        System.out.println("Maven settings file: " + mavenSettingsFile.getAbsolutePath());
+        System.out.println();
+        System.out.println();
+        System.out.println("There is no <server> section in your ~/.m2/settings.xml file for the server id: " + serverId);
+        System.out.println();
+        System.out.println("You can enter the username/password now and have the settings.xml updated or you can do this by hand if you prefer.");
+        System.out.println();
+        while (true) {
+          String value=readInput("Would you like to update the settings.xml file now? (y/n): ").toLowerCase();
+          if (value.startsWith("n")) {
+            System.out.println();
+            System.out.println();
+            break;
+          }
+ else           if (value.startsWith("y")) {
+            create=true;
+            break;
+          }
+        }
+        if (create) {
+          System.out.println("Please let us know the login details for this server: " + serverId);
+          System.out.println();
+          String userName=readInput("Username: ");
+          String password=readPassword("Password: ");
+          String password2=readPassword("Repeat Password: ");
+          while (!password.equals(password2)) {
+            System.out.println("Passwords do not match, please try again.");
+            password=readPassword("Password: ");
+            password2=readPassword("Repeat Password: ");
+          }
+          System.out.println();
+          fabricServer=new Server();
+          fabricServer.setId(serverId);
+          fabricServer.setUsername(userName);
+          fabricServer.setPassword(password);
+          mavenSettings.addServer(fabricServer);
+          if (mavenSettingsFile.exists()) {
+            int counter=1;
+            while (true) {
+              File backupFile=new File(mavenSettingsFile.getAbsolutePath() + ".backup-" + counter+++ ".xml");
+              if (!backupFile.exists()) {
+                System.out.println("Copied original: " + mavenSettingsFile.getAbsolutePath() + " to: "+ backupFile.getAbsolutePath());
+                Files.copy(mavenSettingsFile,backupFile);
+                break;
+              }
+            }
+          }
+          Map<String,Object> config=new HashMap<String,Object>();
+          mavenSettingsWriter.write(mavenSettingsFile,config,mavenSettings);
+          System.out.println("Updated settings file: " + mavenSettingsFile.getAbsolutePath());
+          System.out.println();
+          newUserAdded=true;
+        }
+      }
+    }
+    if (fabricServer == null) {
+      String message="No <server> element can be found in ~/.m2/settings.xml for the server <id>" + serverId + "</id> so we cannot connect to fabric8!\n\n"+ "Please add the following to your ~/.m2/settings.xml file (using the correct user/password values):\n\n"+ "<servers>\n"+ "  <server>\n"+ "    <id>"+ serverId+ "</id>\n"+ "    <username>admin</username>\n"+ "    <password>admin</password>\n"+ "  </server>\n"+ "</servers>\n";
+      getLog().error(message);
+      throw new MojoExecutionException(message);
+    }
+    if (!isIgnoreProject()) {
+      uploadAppZip(newUserAdded);
+    }
+ else {
+      getLog().info("Ignoring this project so not uploading the App Zip");
+    }
+  }
+ catch (  MojoExecutionException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new MojoExecutionException("Error executing",e);
+  }
+}

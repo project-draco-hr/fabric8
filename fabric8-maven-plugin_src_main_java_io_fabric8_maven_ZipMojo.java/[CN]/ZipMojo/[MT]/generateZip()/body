@@ -59,8 +59,9 @@
         }
       }
     }
-    Zips.createZipFile(getLog(),buildDir,outputFile);
-    projectHelper.attachArtifact(project,artifactType,artifactClassifier,outputFile);
-    getLog().info("Created app zip file: " + outputFile);
+    File outputZipFile=getZipFile();
+    Zips.createZipFile(getLog(),buildDir,outputZipFile);
+    projectHelper.attachArtifact(project,artifactType,artifactClassifier,outputZipFile);
+    getLog().info("Created app zip file: " + outputZipFile);
   }
 }
