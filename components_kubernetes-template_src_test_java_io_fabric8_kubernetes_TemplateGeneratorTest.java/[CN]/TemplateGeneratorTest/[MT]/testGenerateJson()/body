@@ -5,7 +5,8 @@
   CreateAppDTO dto=new CreateAppDTO();
   dto.setName("MyApp");
   dto.setDockerImage("fabric8/hawtio");
-  dto.setReplicaCount(3);
+  int replicaCount=3;
+  dto.setReplicaCount(replicaCount);
   List<Port> ports=new ArrayList<>();
   Port jolokiaPort=new Port();
   jolokiaPort.setHostPort(10001);
@@ -23,5 +24,9 @@
   Object loadedDTO=KubernetesHelper.loadJson(json);
   System.out.println("Loaded json DTO: " + loadedDTO);
   assertTrue("Loaded DTO should be a ReplicationControllerSchema but was " + loadedDTO,loadedDTO instanceof ReplicationControllerSchema);
-  ReplicationControllerSchema replicationController=(ReplicationControllerSchema)loadedDTO;
+  ReplicationControllerSchema rc=(ReplicationControllerSchema)loadedDTO;
+  assertThat(rc.getLabels()).isEqualTo(labels);
+  ControllerDesiredState desiredState=rc.getDesiredState();
+  assertThat(desiredState.getReplicas()).isEqualTo(replicaCount);
+  assertThat(desiredState.getReplicaSelector()).isEqualTo(labels);
 }
