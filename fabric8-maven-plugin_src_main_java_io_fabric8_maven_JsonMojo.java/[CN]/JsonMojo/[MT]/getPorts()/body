@@ -1,9 +1,36 @@
 {
   if (ports == null) {
-    ports=new HashMap<>();
+    ports=new ArrayList<>();
   }
   if (ports.isEmpty()) {
-    ports=findPropertiesWithPrefix("fabric8.port.");
+    Map<String,Port> portMap=new HashMap<>();
+    Map<String,String> hostPorts=findPropertiesWithPrefix(FABRIC8_PORT_HOST_PREFIX);
+    Map<String,String> containerPorts=findPropertiesWithPrefix(FABRIC8_PORT_CONTAINER_PREFIX);
+    for (    Map.Entry<String,String> entry : containerPorts.entrySet()) {
+      String name=entry.getKey();
+      String portText=entry.getValue();
+      Integer portNumber=parsePort(portText,FABRIC8_PORT_CONTAINER_PREFIX + name);
+      if (portNumber != null) {
+        Port port=getOrCreatePort(portMap,name);
+        port.setContainerPort(portNumber);
+      }
+    }
+    for (    Map.Entry<String,String> entry : hostPorts.entrySet()) {
+      String name=entry.getKey();
+      String portText=entry.getValue();
+      Integer portNumber=parsePort(portText,FABRIC8_PORT_HOST_PREFIX + name);
+      if (portNumber != null) {
+        Port port=getOrCreatePort(portMap,name);
+        port.setHostPort(portNumber);
+        if (port.getContainerPort() == null) {
+          port.setContainerPort(getDefaultContainerPortMap().get(name));
+        }
+      }
+    }
+    getLog().info("Generated port mappings: " + portMap);
+    getLog().debug("from host ports: " + hostPorts);
+    getLog().debug("from containerPorts ports: " + containerPorts);
+    ports.addAll(portMap.values());
   }
   return ports;
 }

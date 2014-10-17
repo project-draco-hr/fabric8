@@ -1,0 +1,29 @@
+{
+  MBeanServer beanServer=getMBeanServer();
+  Objects.notNull(beanServer,"MBeanServer");
+  if (!beanServer.isRegistered(GIT_FACADE_OBJECT_NAME)) {
+    throw new InstanceNotFoundException("No MBeab is available for: " + GIT_FACADE_OBJECT_NAME);
+  }
+  TemplateGenerator generator=new TemplateGenerator(dto);
+  File tmpDir=File.createTempFile("createApp-",".folder");
+  tmpDir.delete();
+  tmpDir.mkdirs();
+  File jsonFile=new File(tmpDir,"kubernetes.json");
+  generator.generate(jsonFile);
+  String summary=dto.getSummaryMarkdown();
+  String readMe=dto.getReadMeMarkdown();
+  Files.writeToFile(new File(tmpDir,"Summary.md"),summary.getBytes());
+  Files.writeToFile(new File(tmpDir,"ReadMe.md"),readMe.getBytes());
+  File zip=File.createTempFile("createApp-",".zip");
+  Zips.createZipFile(LOG,tmpDir,zip);
+  String fileName=zip.getAbsolutePath();
+  String outputName=dto.getName() + ".zip";
+  Object[] params={dto.getBranch(),dto.getPath(),true,fileName,outputName};
+  String[] signature={String.class.getName(),String.class.getName(),"boolean",String.class.getName(),String.class.getName()};
+  System.out.println("About to invoke " + GIT_FACADE_OBJECT_NAME + " uploadFile"+ Arrays.asList(params)+ " signature"+ Arrays.asList(signature));
+  Object answer=beanServer.invoke(GIT_FACADE_OBJECT_NAME,"uploadFile",params,signature);
+  if (answer != null) {
+    return answer.toString();
+  }
+  return "";
+}

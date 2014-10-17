@@ -1,0 +1,27 @@
+{
+  String basedir=System.getProperty("basedir",".");
+  File jsonFile=new File(basedir + "/target/templateGenerator/sample.json").getCanonicalFile();
+  recursiveDelete(jsonFile);
+  CreateAppDTO dto=new CreateAppDTO();
+  dto.setName("MyApp");
+  dto.setDockerImage("fabric8/hawtio");
+  dto.setReplicaCount(3);
+  List<Port> ports=new ArrayList<>();
+  Port jolokiaPort=new Port();
+  jolokiaPort.setHostPort(10001);
+  jolokiaPort.setContainerPort(8778);
+  ports.add(jolokiaPort);
+  dto.setPorts(ports);
+  Map<String,String> labels=new HashMap<>();
+  labels.put("foo","bar");
+  labels.put("drink","beer");
+  dto.setLabels(labels);
+  TemplateGenerator generator=new TemplateGenerator(dto);
+  generator.generate(jsonFile);
+  String json=IOHelpers.readFully(jsonFile);
+  System.out.println("Generated: " + json);
+  Object loadedDTO=KubernetesHelper.loadJson(json);
+  System.out.println("Loaded json DTO: " + loadedDTO);
+  assertTrue("Loaded DTO should be a ReplicationControllerSchema but was " + loadedDTO,loadedDTO instanceof ReplicationControllerSchema);
+  ReplicationControllerSchema replicationController=(ReplicationControllerSchema)loadedDTO;
+}

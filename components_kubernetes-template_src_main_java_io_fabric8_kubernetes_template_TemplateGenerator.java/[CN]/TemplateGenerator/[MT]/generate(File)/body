@@ -1,0 +1,34 @@
+{
+  String template=config.getTemplate();
+  String dockerImage=config.getDockerImage();
+  if (Strings.isNullOrBlank(template)) {
+    throw new IllegalArgumentException("No fabric8.template specified so cannot generate the Kubernetes JSON file!");
+  }
+ else {
+    InputStream in=loadTemplate(template);
+    if (in == null) {
+      throw new IllegalArgumentException("Could not find template: " + template + " on the ClassPath when trying to generate the Kubernetes JSON!");
+    }
+    ParserContext parserContext=new ParserContext();
+    Map<String,Object> variables=new HashMap<>();
+    variables.putAll(config.getVariables());
+    if (Strings.isNotBlank(dockerImage)) {
+      addIfNotDefined(variables,DOCKER_DATA_IMAGE,dockerImage);
+    }
+    Objects.notNull(variables.get(DOCKER_DATA_IMAGE),"no docker.dataImage property specified!");
+    addIfNotDefined(variables,"name",config.getName());
+    addIfNotDefined(variables,"containerName",config.getContainerName());
+    variables.put("labels",config.getLabels());
+    variables.put("ports",config.getPorts());
+    variables.put("replicaCount",config.getReplicaCount());
+    try {
+      CompiledTemplate compiledTemplate=TemplateCompiler.compileTemplate(in,parserContext);
+      String answer=TemplateRuntime.execute(compiledTemplate,parserContext,variables).toString();
+      String generated=answer;
+      Files.writeToFile(kubernetesJson,generated,Charset.defaultCharset());
+    }
+ catch (    IOException e) {
+      throw new IllegalArgumentException("Failed to generate Kubernetes JSON from template " + template + ". "+ e,e);
+    }
+  }
+}

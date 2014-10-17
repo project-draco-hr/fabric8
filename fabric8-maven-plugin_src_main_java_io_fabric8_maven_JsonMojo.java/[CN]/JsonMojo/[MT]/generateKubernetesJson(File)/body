@@ -1,16 +1,13 @@
 {
-  if (Strings.isNullOrBlank(zipTemplate)) {
-    throw new MojoExecutionException("No fabric8.zipTemplate specified so cannot generate the Kubernetes JSON file!");
+  if (Strings.isNullOrBlank(jsonTemplate)) {
+    throw new MojoExecutionException("No fabric8.jsonTemplate specified so cannot generate the Kubernetes JSON file!");
   }
  else {
-    InputStream in=loadPluginResource(zipTemplate);
-    if (in == null) {
-      throw new MojoExecutionException("Could not find template: " + zipTemplate + " on the ClassPath when trying to generate the Kubernetes JSON!");
-    }
-    ParserContext parserContext=new ParserContext();
-    Map<String,Object> variables=new HashMap<>();
+    GenerateTemplateDTO config=new GenerateTemplateDTO();
+    config.setTemplate(jsonTemplate);
     MavenProject project=getProject();
     Properties properties=project.getProperties();
+    Map<String,Object> variables=new HashMap<>();
     Set<Map.Entry<Object,Object>> entries=properties.entrySet();
     for (    Map.Entry<Object,Object> entry : entries) {
       Object key=entry.getKey();
@@ -21,21 +18,13 @@
         variables.put(keyText,value);
       }
     }
-    addIfNotDefined(variables,"fabric8_kubernetes_id",kubernetesId);
-    addIfNotDefined(variables,"fabric8_kubernetes_name",getKubernetesName());
-    addIfNotDefined(variables,"fabric8_kubernetes_container_name",getKubernetesContainerName());
-    Map<String,String> labels=getLabels();
-    Map<String,String> ports=getPorts();
-    variables.put("project",project);
-    variables.put("labels",labels);
-    variables.put("ports",ports);
-    try {
-      CompiledTemplate compiledTemplate=TemplateCompiler.compileTemplate(in,parserContext);
-      String answer=TemplateRuntime.execute(compiledTemplate,parserContext,variables).toString();
-      Files.writeToFile(kubernetesJson,answer,Charset.defaultCharset());
-    }
- catch (    IOException e) {
-      throw new MojoExecutionException("Failed to generate Kubernetes JSON from template " + zipTemplate + ". "+ e,e);
-    }
+    config.setLabels(getLabels());
+    config.setVariables(variables);
+    config.setPorts(getPorts());
+    config.setName(getKubernetesName());
+    config.setContainerName(getKubernetesContainerName());
+    List<ClassLoader> classLoaders=Lists.newArrayList(Thread.currentThread().getContextClassLoader(),getTestClassLoader(),getClass().getClassLoader(),TemplateGenerator.class.getClassLoader());
+    TemplateGenerator generator=new TemplateGenerator(config,classLoaders);
+    generator.generate(kubernetesJson);
   }
 }

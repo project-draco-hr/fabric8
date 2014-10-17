@@ -1,0 +1,39 @@
+{
+  HttpClientBuilder builder=HttpClients.custom();
+  if (Strings.isNotBlank(user) && Strings.isNotBlank(password)) {
+    CredentialsProvider credsProvider=new BasicCredentialsProvider();
+    credsProvider.setCredentials(new AuthScope("localhost",443),new UsernamePasswordCredentials(user,password));
+    builder=builder.setDefaultCredentialsProvider(credsProvider);
+  }
+  CloseableHttpClient client=builder.build();
+  try {
+    String url=consoleUrl;
+    if (!url.endsWith("/")) {
+      url+="/";
+    }
+    url+="git/";
+    url+=branch;
+    if (!path.startsWith("/")) {
+      url+="/";
+    }
+    url+=path;
+    logger.info("Posting App Zip " + file.getName() + " to "+ url);
+    URI buildUrl=new URI(url);
+    HttpPost post=new HttpPost(buildUrl);
+    FileBody zip=new FileBody(file);
+    HttpEntity entity=MultipartEntityBuilder.create().addPart(file.getName(),zip).build();
+    post.setEntity(entity);
+    HttpResponse response=client.execute(URIUtils.extractHost(buildUrl),post);
+    logger.info("Response: " + response);
+    if (response != null) {
+      int statusCode=response.getStatusLine().getStatusCode();
+      if (statusCode < 200 || statusCode >= 300) {
+        throw new IllegalStateException("Failed to post App Zip to: " + url + " "+ response);
+      }
+    }
+    return response;
+  }
+  finally {
+    Closeables.closeQuitely(client);
+  }
+}
