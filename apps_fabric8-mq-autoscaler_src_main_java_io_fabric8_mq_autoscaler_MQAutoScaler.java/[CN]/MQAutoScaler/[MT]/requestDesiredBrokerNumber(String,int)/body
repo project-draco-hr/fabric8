@@ -1,0 +1,10 @@
+{
+  Map<String,ReplicationControllerSchema> replicationControllerMap=KubernetesHelper.getReplicationControllerMap(kubernetes,selector);
+  Collection<ReplicationControllerSchema> replicationControllers=replicationControllerMap.values();
+  for (  ReplicationControllerSchema replicationController : replicationControllers) {
+    ControllerDesiredState desiredState=replicationController.getDesiredState();
+    desiredState.setReplicas(number);
+    replicationController.setDesiredState(desiredState);
+    kubernetes.updateReplicationController(replicationController.getId(),replicationController);
+  }
+}

@@ -1,0 +1,13 @@
+{
+  int totalConnections=getTotalConnections();
+  boolean connectionsExceeded=totalConnections > brokerLimits.getConnectionsLimit();
+  if (connectionsExceeded) {
+    LOG.info("Broker " + getBrokerName() + " exceeded connection limits("+ brokerLimits.getConnectionsLimit()+ ") with "+ totalConnections+ " connections");
+  }
+  int totalDestinations=getTotalDestinations();
+  boolean destinationsExceeded=totalDestinations > brokerLimits.getDestinationsLimit();
+  if (destinationsExceeded) {
+    LOG.info("Broker " + getBrokerName() + " exceeded destination limits("+ brokerLimits.getDestinationsLimit()+ ") with "+ totalDestinations+ " destinations");
+  }
+  return connectionsExceeded || destinationsExceeded;
+}

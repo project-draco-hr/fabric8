@@ -1,0 +1,44 @@
+{
+  if (!brokers.isEmpty() && brokers.size() < getMaximumGroupSize()) {
+    boolean scaleBrokers=false;
+    for (    BrokerVitalSigns brokerVitalSigns : brokers) {
+      scaleBrokers|=brokerVitalSigns.areLimitsExceeded(brokerLimits);
+      scaleBrokers|=brokerVitalSigns.areLimitsExceeded(destinationLimits);
+    }
+    if (scaleBrokers) {
+      try {
+        requestDesiredBrokerNumber(getBrokerName(),brokers.size() + 1);
+      }
+ catch (      Exception e) {
+        LOG.error("Failed to request more brokers ",e);
+      }
+      for (      BrokerVitalSigns broker : brokers) {
+        try {
+          bounceBroker(broker);
+        }
+ catch (        Exception e) {
+          LOG.error("Failed to bounce broker connectors for " + broker.getBrokerName(),e);
+        }
+      }
+    }
+ else {
+      int totalConnections=0;
+      int totalDestinations=0;
+      for (      BrokerVitalSigns brokerVitalSigns : brokers) {
+        totalConnections+=brokerVitalSigns.getTotalConnections();
+        totalDestinations+=brokerVitalSigns.getTotalDestinations();
+      }
+      boolean connectionDensity=((totalConnections / brokers.size()) + 1) < brokerLimits.getConnectionsLimit();
+      boolean destinationDensity=((totalDestinations / brokers.size()) + 1) < brokerLimits.getDestinationsLimit();
+      if (connectionDensity && destinationDensity) {
+        LOG.info("Scaling down brokers ");
+        try {
+          requestDesiredBrokerNumber(getBrokerName(),brokers.size() + 1);
+        }
+ catch (        Exception e) {
+          LOG.error("Failed to request more brokers ",e);
+        }
+      }
+    }
+  }
+}

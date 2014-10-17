@@ -1,0 +1,13 @@
+{
+  String url="failover:(" + getBrokerURL() + ")";
+  for (int i=0; i < getNumberOfDestinations(); i++) {
+    String destinationName=getDestinationName() + "." + i;
+    destinations.add(new ActiveMQQueue(destinationName));
+  }
+  ActiveMQConnectionFactory factory=new ActiveMQConnectionFactory(url);
+  for (  ActiveMQDestination destination : destinations) {
+    createConsumers(factory,destination);
+    createProducers(factory,destination);
+  }
+  executorService=Executors.newFixedThreadPool(destinations.size() * producerConnections.size());
+}

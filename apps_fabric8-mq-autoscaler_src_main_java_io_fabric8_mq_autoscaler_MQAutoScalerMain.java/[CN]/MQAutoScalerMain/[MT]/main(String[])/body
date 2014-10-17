@@ -1,0 +1,24 @@
+{
+  try {
+    MQAutoScaler mqAutoScaler=new MQAutoScaler();
+    String brokerName=getEnv("BROKER_NAME",mqAutoScaler.getBrokerName());
+    mqAutoScaler.setBrokerName(brokerName);
+    String groupName=getEnv("GROUP_NAME",mqAutoScaler.getGroupName());
+    mqAutoScaler.setGroupName(groupName);
+    String consumerLimit=getEnv("CONSUMER_LIMIT",mqAutoScaler.getConsumerLimit());
+    mqAutoScaler.setConsumerLimit(Integer.valueOf(consumerLimit));
+    String producerLimit=getEnv("PRODUCER_LIMIT",mqAutoScaler.getProducerLimit());
+    mqAutoScaler.setProducerLimit(Integer.valueOf(producerLimit));
+    String pollTime=getEnv("POLLTIME",mqAutoScaler.getPollTime());
+    mqAutoScaler.setPollTime(Integer.valueOf(pollTime));
+    String maximumGroupSize=getEnv("MAX_GROUP_SIZE",mqAutoScaler.getMaximumGroupSize());
+    mqAutoScaler.setMaximumGroupSize(Integer.valueOf(maximumGroupSize));
+    String minimumGroupSize=getEnv("MIN_GROUP_SIZE",mqAutoScaler.getMinimumGroupSize());
+    mqAutoScaler.setMinimumGroupSize(Integer.parseInt(minimumGroupSize));
+    mqAutoScaler.start();
+    waiting();
+  }
+ catch (  Throwable e) {
+    LOG.error("Failed to start MQAutoScaler",e);
+  }
+}

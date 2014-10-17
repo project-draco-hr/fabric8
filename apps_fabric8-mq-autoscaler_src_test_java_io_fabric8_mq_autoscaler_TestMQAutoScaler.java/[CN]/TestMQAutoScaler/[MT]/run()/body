@@ -1,0 +1,36 @@
+{
+  try {
+    long currentTime=System.currentTimeMillis();
+    long totalTime=System.currentTimeMillis() + (getRumTimeMinutes() * 60 * 1000);
+    final AtomicInteger batch=new AtomicInteger(1);
+    while (currentTime < totalTime) {
+      for (      final Connection producer : producerConnections.values()) {
+        final CountDownLatch latch=new CountDownLatch(producerConnections.size());
+        Runnable worker=new Runnable(){
+          @Override public void run(){
+            try {
+              for (              ActiveMQDestination destination : destinations) {
+                runBatch(producer,destination,batch.get(),numberOfMessagesInABatch);
+              }
+            }
+ catch (            Exception e) {
+              e.printStackTrace();
+            }
+ finally {
+              latch.countDown();
+            }
+          }
+        }
+;
+        executorService.submit(worker);
+      }
+      batch.incrementAndGet();
+      Thread.sleep(5000);
+      System.err.println("Total sent = " + producerMessageCount + " Total received = "+ consumerMessageCount);
+      currentTime=System.currentTimeMillis();
+    }
+  }
+ catch (  Throwable e) {
+    e.printStackTrace();
+  }
+}

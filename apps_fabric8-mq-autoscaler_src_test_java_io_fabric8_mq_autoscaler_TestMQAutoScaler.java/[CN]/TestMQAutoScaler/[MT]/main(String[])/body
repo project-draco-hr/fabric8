@@ -1,0 +1,22 @@
+{
+  try {
+    String AMQ_PORT=getEnv("AMQ_PORT",6161).trim();
+    String AMQ_HOST="localhost";
+    String DESTINATIONS=getEnv("DESTINATIONS",10).trim();
+    String RUNNING_TIME=getEnv("RUNNING_TIME",1).trim();
+    TestMQAutoScaler testMQAutoScaler=new TestMQAutoScaler();
+    testMQAutoScaler.setBrokerURL("tcp://" + AMQ_HOST + ":"+ AMQ_PORT);
+    testMQAutoScaler.setNumberOfDestinations(Integer.valueOf(DESTINATIONS));
+    testMQAutoScaler.setRumTimeMinutes(Integer.valueOf(RUNNING_TIME));
+    testMQAutoScaler.init();
+    testMQAutoScaler.start();
+    testMQAutoScaler.join();
+    testMQAutoScaler.shutDown();
+    System.err.println("");
+    System.err.println("");
+    System.err.println("Finished.");
+  }
+ catch (  Throwable e) {
+    e.printStackTrace();
+  }
+}

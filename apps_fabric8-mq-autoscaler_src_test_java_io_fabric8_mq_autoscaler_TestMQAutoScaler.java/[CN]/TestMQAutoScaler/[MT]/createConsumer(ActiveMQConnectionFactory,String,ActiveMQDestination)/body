@@ -1,0 +1,15 @@
+{
+  ActiveMQConnection connection=(ActiveMQConnection)connectionFactory.createConnection();
+  connection.addTransportListener(new TestTransportListener(name));
+  connection.setClientID(name);
+  connection.start();
+  Session session=connection.createSession(false,Session.AUTO_ACKNOWLEDGE);
+  MessageConsumer consumer=session.createConsumer(destination);
+  consumer.setMessageListener(new MessageListener(){
+    @Override public void onMessage(    Message message){
+      consumerMessageCount.incrementAndGet();
+    }
+  }
+);
+  return connection;
+}

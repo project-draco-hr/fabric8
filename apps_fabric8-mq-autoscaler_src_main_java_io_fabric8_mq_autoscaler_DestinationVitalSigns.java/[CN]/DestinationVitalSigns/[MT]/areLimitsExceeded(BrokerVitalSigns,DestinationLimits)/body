@@ -1,0 +1,18 @@
+{
+  int depth=getQueueDepth();
+  boolean depthExceeded=depth > destinationLimits.getDepthLimit();
+  if (depthExceeded) {
+    LOG.info(getDestination() + " exceeded depth limit(" + destinationLimits.getDepthLimit()+ ") with "+ depth+ " on broker"+ brokerVitalSigns.getBrokerName());
+  }
+  int consumers=getNumberOfConsumers();
+  boolean consumersExceeded=consumers > destinationLimits.getConsumersLimit();
+  if (consumersExceeded) {
+    LOG.info(getDestination() + " exceeded consumer limit(" + destinationLimits.getConsumersLimit()+ ") with "+ consumers+ " on broker"+ brokerVitalSigns.getBrokerName());
+  }
+  int producers=getNumberOfProducers();
+  boolean producersExceeded=producers > destinationLimits.getProducersLimit();
+  if (producersExceeded) {
+    LOG.info(getDestination() + " exceeded producer limit(" + destinationLimits.getProducersLimit()+ ") with "+ producers+ " on broker"+ brokerVitalSigns.getBrokerName());
+  }
+  return producersExceeded || consumersExceeded || depthExceeded;
+}

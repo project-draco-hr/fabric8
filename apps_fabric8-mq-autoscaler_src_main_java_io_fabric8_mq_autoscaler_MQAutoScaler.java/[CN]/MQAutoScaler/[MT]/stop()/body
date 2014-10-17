@@ -1,0 +1,10 @@
+{
+  if (started.compareAndSet(true,false)) {
+    if (MQAutoScalerObjectName != null) {
+      JMXUtils.unregisterMBean(MQAutoScalerObjectName);
+    }
+    if (timer != null) {
+      timer.cancel();
+    }
+  }
+}

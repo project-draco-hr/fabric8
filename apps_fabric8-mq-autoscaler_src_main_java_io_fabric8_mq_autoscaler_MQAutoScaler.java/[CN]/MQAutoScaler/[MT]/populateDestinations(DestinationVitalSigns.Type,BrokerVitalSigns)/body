@@ -1,0 +1,25 @@
+{
+  ObjectName root=brokerVitalSigns.getRoot();
+  Hashtable<String,String> props=root.getKeyPropertyList();
+  props.put("destinationType",type == DestinationVitalSigns.Type.QUEUE ? "Queue" : "Topic");
+  props.put("destinationName","*");
+  String objectName=root.getDomain() + ":" + getOrderedProperties(props);
+  J4pResponse<J4pReadRequest> response=brokerVitalSigns.getClient().execute(new J4pReadRequest(objectName,"Name","QueueSize","ConsumerCount","ProducerCount"));
+  JSONObject value=response.getValue();
+  for (  Object key : value.keySet()) {
+    JSONObject jsonObject=(JSONObject)value.get(key);
+    String name=jsonObject.get("Name").toString();
+    String producerCount=jsonObject.get("ProducerCount").toString().trim();
+    String consumerCount=jsonObject.get("ConsumerCount").toString().trim();
+    String queueSize=jsonObject.get("QueueSize").toString().trim();
+    if (!name.contains("Advisory") && !name.contains(ActiveMQDestination.TEMP_DESTINATION_NAME_PREFIX)) {
+      ActiveMQDestination destination=type == DestinationVitalSigns.Type.QUEUE ? new ActiveMQQueue(name) : new ActiveMQTopic(name);
+      DestinationVitalSigns destinationVitalSigns=new DestinationVitalSigns(destination);
+      destinationVitalSigns.setNumberOfConsumers(Integer.parseInt(consumerCount));
+      destinationVitalSigns.setNumberOfProducers(Integer.parseInt(producerCount));
+      destinationVitalSigns.setQueueDepth(Integer.parseInt(queueSize));
+      brokerVitalSigns.addDestinationVitalSigns(destinationVitalSigns);
+    }
+  }
+  return brokerVitalSigns;
+}

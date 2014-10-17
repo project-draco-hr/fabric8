@@ -1,0 +1,10 @@
+{
+  try {
+    String selector="container=java,name=" + getBrokerName() + ",region="+ getGroupName();
+    List<BrokerVitalSigns> result=pollBrokers(selector);
+    distributeLoad(result);
+  }
+ catch (  Throwable e) {
+    LOG.error("Failed to validate MQ load: ",e);
+  }
+}

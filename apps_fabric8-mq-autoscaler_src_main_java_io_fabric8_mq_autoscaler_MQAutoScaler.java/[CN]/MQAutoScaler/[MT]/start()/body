@@ -1,0 +1,19 @@
+{
+  if (started.compareAndSet(false,true)) {
+    MQAutoScalerObjectName=new ObjectName(DEFAULT_DOMAIN,"type","mq-autoscaler");
+    JMXUtils.registerMBean(this,MQAutoScalerObjectName);
+    brokerLimits=new BrokerLimits();
+    destinationLimits=new DestinationLimits();
+    clients=new JolokiaClients();
+    kubernetes=clients.getKubernetes();
+    timer=new Timer("MQAutoScaler timer");
+    long pollTime=getPollTime() * 1000;
+    timer.schedule(new TimerTask(){
+      @Override public void run(){
+        LOG.info("Checking Load across Fabric8MQ group: " + getGroupName());
+        validateMQLoad();
+      }
+    }
+,0,pollTime);
+  }
+}

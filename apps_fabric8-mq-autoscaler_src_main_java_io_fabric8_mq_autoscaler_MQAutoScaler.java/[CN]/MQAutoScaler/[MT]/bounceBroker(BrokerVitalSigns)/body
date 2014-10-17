@@ -1,0 +1,20 @@
+{
+  ObjectName root=broker.getRoot();
+  Hashtable<String,String> props=root.getKeyPropertyList();
+  props.put("connector","clientConnectors");
+  props.put("connectorName","*");
+  String objectName=root.getDomain() + ":" + getOrderedProperties(props);
+  List<String> roots=new ArrayList<>();
+  J4pResponse<J4pReadRequest> response=broker.getClient().execute(new J4pReadRequest(objectName,"StatisticsEnabled"));
+  JSONObject value=response.getValue();
+  for (  Object key : value.keySet()) {
+    roots.add(key.toString());
+  }
+  for (  String key : roots) {
+    J4pResponse<J4pExecRequest> result=broker.getClient().execute(new J4pExecRequest(key,"stop"));
+  }
+  Thread.sleep(1000);
+  for (  String key : roots) {
+    J4pResponse<J4pExecRequest> result=broker.getClient().execute(new J4pExecRequest(key,"start"));
+  }
+}

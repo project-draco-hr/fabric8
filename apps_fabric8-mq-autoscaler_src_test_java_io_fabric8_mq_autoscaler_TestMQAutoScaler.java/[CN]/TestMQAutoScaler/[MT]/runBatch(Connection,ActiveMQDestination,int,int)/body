@@ -1,0 +1,11 @@
+{
+  Session session=connection.createSession(false,Session.AUTO_ACKNOWLEDGE);
+  MessageProducer producer=session.createProducer(destination);
+  producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+  for (int i=0; i < total; i++) {
+    TextMessage textMessage=session.createTextMessage(connection.getClientID() + "batch:" + batch+ " test message "+ i);
+    producer.send(textMessage);
+    producerMessageCount.incrementAndGet();
+  }
+  session.close();
+}
