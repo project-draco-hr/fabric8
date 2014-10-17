@@ -23,6 +23,8 @@
     config.setPorts(getPorts());
     config.setName(getKubernetesName());
     config.setContainerName(getKubernetesContainerName());
+    config.setReplicaCount(replicaCount);
+    config.setEnvironmentVariables(getEnvironmentVariables());
     List<ClassLoader> classLoaders=Lists.newArrayList(Thread.currentThread().getContextClassLoader(),getTestClassLoader(),getClass().getClassLoader(),TemplateGenerator.class.getClassLoader());
     TemplateGenerator generator=new TemplateGenerator(config,classLoaders);
     generator.generate(kubernetesJson);
