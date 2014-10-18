@@ -1,39 +1,54 @@
 {
-  if (!brokers.isEmpty() && brokers.size() < getMaximumGroupSize()) {
-    boolean scaleBrokers=false;
+  int totalConnections=0;
+  int totalDestinations=0;
+  if (!brokers.isEmpty()) {
+    boolean brokerLimitsExceeded=false;
+    boolean destinationLimitsExceeded=false;
     for (    BrokerVitalSigns brokerVitalSigns : brokers) {
-      scaleBrokers|=brokerVitalSigns.areLimitsExceeded(brokerLimits);
-      scaleBrokers|=brokerVitalSigns.areLimitsExceeded(destinationLimits);
+      brokerLimitsExceeded=brokerVitalSigns.areLimitsExceeded(brokerLimits);
+      destinationLimitsExceeded=brokerVitalSigns.areLimitsExceeded(destinationLimits);
+      totalConnections+=brokerVitalSigns.getTotalConnections();
+      totalDestinations+=brokerVitalSigns.getTotalDestinations();
     }
-    if (scaleBrokers) {
+    if (brokerLimitsExceeded || destinationLimitsExceeded) {
       try {
         requestDesiredBrokerNumber(getBrokerName(),brokers.size() + 1);
       }
  catch (      Exception e) {
         LOG.error("Failed to request more brokers ",e);
       }
-      for (      BrokerVitalSigns broker : brokers) {
-        try {
-          bounceBroker(broker);
+      if (brokers.size() < getMaximumGroupSize()) {
+        if (destinationLimitsExceeded) {
+          for (          BrokerVitalSigns broker : brokers) {
+            try {
+              bounceBroker(broker);
+            }
+ catch (            Exception e) {
+              LOG.error("Failed to bounce broker connectors for " + broker.getBrokerName(),e);
+            }
+          }
         }
- catch (        Exception e) {
-          LOG.error("Failed to bounce broker connectors for " + broker.getBrokerName(),e);
+ else {
+          int newSize=brokers.size() + 1;
+          int averageSize=(totalConnections / newSize) + 1;
+          for (          BrokerVitalSigns brokerVitalSigns : brokers) {
+            try {
+              bounceConnections(brokerVitalSigns,(brokerVitalSigns.getTotalConnections() - averageSize));
+            }
+ catch (            Exception e) {
+              LOG.error("Failed to stop client connections",e);
+            }
+          }
         }
       }
     }
- else {
-      int totalConnections=0;
-      int totalDestinations=0;
-      for (      BrokerVitalSigns brokerVitalSigns : brokers) {
-        totalConnections+=brokerVitalSigns.getTotalConnections();
-        totalDestinations+=brokerVitalSigns.getTotalDestinations();
-      }
-      boolean connectionDensity=((totalConnections / brokers.size()) + 1) < brokerLimits.getConnectionsLimit();
-      boolean destinationDensity=((totalDestinations / brokers.size()) + 1) < brokerLimits.getDestinationsLimit();
-      if (connectionDensity && destinationDensity) {
+ else     if (brokers.size() > getMinimumGroupSize()) {
+      boolean spareConnectionCapacity=((totalConnections / brokers.size()) + 1) < brokerLimits.getConnectionsLimit();
+      boolean spareDestinationCapacity=((totalDestinations / brokers.size()) + 1) < brokerLimits.getDestinationsLimit();
+      if (spareConnectionCapacity && spareDestinationCapacity) {
         LOG.info("Scaling down brokers ");
         try {
-          requestDesiredBrokerNumber(getBrokerName(),brokers.size() + 1);
+          requestDesiredBrokerNumber(getBrokerName(),brokers.size() - 1);
         }
  catch (        Exception e) {
           LOG.error("Failed to request more brokers ",e);

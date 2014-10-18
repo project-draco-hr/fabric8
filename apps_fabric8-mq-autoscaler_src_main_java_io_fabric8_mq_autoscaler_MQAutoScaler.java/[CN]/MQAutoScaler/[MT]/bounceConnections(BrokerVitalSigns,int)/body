@@ -1,0 +1,34 @@
+{
+  ObjectName root=broker.getRoot();
+  Hashtable<String,String> props=root.getKeyPropertyList();
+  props.put("connector","clientConnectors");
+  props.put("connectorName","*");
+  String objectName=root.getDomain() + ":" + getOrderedProperties(props);
+  List<String> connectors=new ArrayList<>();
+  J4pResponse<J4pReadRequest> response=broker.getClient().execute(new J4pReadRequest(objectName,"StatisticsEnabled"));
+  JSONObject value=response.getValue();
+  for (  Object key : value.keySet()) {
+    connectors.add(key.toString());
+  }
+  List<String> targets=new ArrayList<>();
+  for (  String key : connectors) {
+    ObjectName on=new ObjectName(key);
+    Hashtable<String,String> p=on.getKeyPropertyList();
+    p.put("connectionName","*");
+    p.put("connectionViewType","clientId");
+    String clientObjectName=root.getDomain() + ":" + getOrderedProperties(p);
+    ObjectName on1=new ObjectName(clientObjectName);
+    J4pResponse<J4pReadRequest> response1=broker.getClient().execute(new J4pReadRequest(on1,"Slow"));
+    JSONObject value1=response1.getValue();
+    for (    Object k : value1.keySet()) {
+      targets.add(k.toString());
+    }
+  }
+  int count=0;
+  for (  String key : targets) {
+    broker.getClient().execute(new J4pExecRequest(key,"stop"));
+    if (++count >= number) {
+      break;
+    }
+  }
+}
