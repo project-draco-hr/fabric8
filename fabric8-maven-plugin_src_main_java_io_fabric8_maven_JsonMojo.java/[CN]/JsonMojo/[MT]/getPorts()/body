@@ -4,8 +4,10 @@
   }
   if (ports.isEmpty()) {
     Map<String,Port> portMap=new HashMap<>();
-    Map<String,String> hostPorts=findPropertiesWithPrefix(FABRIC8_PORT_HOST_PREFIX);
-    Map<String,String> containerPorts=findPropertiesWithPrefix(FABRIC8_PORT_CONTAINER_PREFIX);
+    Properties properties1=getProject().getProperties();
+    Map<String,String> hostPorts=PropertiesHelper.findPropertiesWithPrefix(properties1,FABRIC8_PORT_HOST_PREFIX);
+    Properties properties=getProject().getProperties();
+    Map<String,String> containerPorts=PropertiesHelper.findPropertiesWithPrefix(properties,FABRIC8_PORT_CONTAINER_PREFIX);
     for (    Map.Entry<String,String> entry : containerPorts.entrySet()) {
       String name=entry.getKey();
       String portText=entry.getValue();

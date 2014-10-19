@@ -3,7 +3,8 @@
     labels=new HashMap<>();
   }
   if (labels.isEmpty()) {
-    labels=findPropertiesWithPrefix("fabric8.label.");
+    Properties properties=getProject().getProperties();
+    labels=PropertiesHelper.findPropertiesWithPrefix(properties,"fabric8.label.");
   }
   return labels;
 }
