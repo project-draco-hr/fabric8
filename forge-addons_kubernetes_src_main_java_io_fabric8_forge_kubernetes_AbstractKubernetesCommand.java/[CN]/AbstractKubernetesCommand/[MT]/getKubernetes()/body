@@ -1,10 +1,12 @@
 {
   if (kubernetes == null) {
-    KubernetesFactory factory=new KubernetesFactory();
-    if (kubernetesAddress != null) {
-      factory.setAddress(kubernetesAddress);
+    String kubernetesAddress=kubernetesUrl.getValue();
+    if (Strings.isNotBlank(kubernetesAddress)) {
+      kubernetes=new KubernetesClient(new KubernetesFactory(kubernetesAddress));
     }
-    kubernetes=factory.createKubernetes();
+ else {
+      kubernetes=new KubernetesClient();
+    }
   }
   Objects.notNull(kubernetes,"kubernetes");
   return kubernetes;

@@ -1,0 +1,26 @@
+{
+  super.initializeUI(builder);
+  file.addValidator(new UIValidator(){
+    @Override public void validate(    UIValidationContext validationContext){
+      InputComponent<?,?> inputComponent=validationContext.getCurrentInputComponent();
+      Object value=inputComponent.getValue();
+      if (value instanceof File) {
+        File aFile=(File)value;
+        if (!aFile.exists()) {
+          validationContext.addValidationError(inputComponent,"File does not exist!");
+        }
+ else         if (!aFile.isFile()) {
+          validationContext.addValidationError(inputComponent,"File is a directory!");
+        }
+ else {
+          String extension=Files.getFileExtension(aFile);
+          if (extension == null || !extension.toLowerCase().equals("json")) {
+            validationContext.addValidationWarning(inputComponent,"File does not use the .json extension");
+          }
+        }
+      }
+    }
+  }
+);
+  builder.add(file);
+}

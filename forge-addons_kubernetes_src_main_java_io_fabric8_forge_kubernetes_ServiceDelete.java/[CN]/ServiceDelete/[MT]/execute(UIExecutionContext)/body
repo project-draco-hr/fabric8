@@ -1,0 +1,12 @@
+{
+  Kubernetes kubernetes=getKubernetes();
+  String idText=serviceId.getValue();
+  ServiceSchema service=kubernetes.getService(idText);
+  if (service == null) {
+    System.out.println("No service for id: " + idText);
+  }
+ else {
+    executeService(service);
+  }
+  return null;
+}

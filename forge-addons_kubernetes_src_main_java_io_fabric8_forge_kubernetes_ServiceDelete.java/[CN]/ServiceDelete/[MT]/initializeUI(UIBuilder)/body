@@ -1,0 +1,22 @@
+{
+  super.initializeUI(builder);
+  serviceId.setCompleter(new UICompleter<String>(){
+    @Override public Iterable<String> getCompletionProposals(    UIContext context,    InputComponent<?,String> input,    String value){
+      List<String> list=new ArrayList<String>();
+      ServiceListSchema services=getKubernetes().getServices();
+      if (services != null) {
+        List<ServiceSchema> items=services.getItems();
+        if (items != null) {
+          for (          ServiceSchema item : items) {
+            String id=item.getId();
+            list.add(id);
+          }
+        }
+      }
+      Collections.sort(list);
+      return list;
+    }
+  }
+);
+  builder.add(serviceId);
+}
