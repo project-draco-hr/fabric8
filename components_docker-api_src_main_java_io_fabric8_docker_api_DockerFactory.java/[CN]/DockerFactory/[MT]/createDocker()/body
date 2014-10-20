@@ -1,16 +1,5 @@
 {
-  ResteasyProviderFactory providerFactory=ResteasyProviderFactory.getInstance();
-  providerFactory.register(ResteasyJackson2Provider.class);
-  providerFactory.register(Jackson2JsonpInterceptor.class);
-  providerFactory.register(ProgressBodyReader.class);
-  providerFactory.register(StringTextStar.class);
-  providerFactory.register(DefaultTextPlain.class);
-  providerFactory.register(FileProvider.class);
-  providerFactory.register(InputStreamProvider.class);
-  ResteasyClientBuilder builder=new ResteasyClientBuilder();
-  builder.providerFactory(providerFactory);
-  builder.connectionPoolSize(Integer.parseInt(System.getProperty("docker.connection.pool","3")));
-  Client client=builder.build();
-  ResteasyWebTarget target=(ResteasyWebTarget)client.target(address);
-  return target.proxy(Docker.class);
+  List<Object> providers=new ArrayList<Object>();
+  providers.add(new JacksonJaxbJsonProvider());
+  return JAXRSClientFactory.create(address,Docker.class,providers);
 }
