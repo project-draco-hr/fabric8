@@ -1,0 +1,16 @@
+{
+  if (labelSelector == null || labelSelector.isEmpty()) {
+    return Filters.<ReplicationControllerSchema>trueFilter();
+  }
+ else {
+    return new Filter<ReplicationControllerSchema>(){
+      public String toString(){
+        return "ReplicationControllerFilter(" + labelSelector + ")";
+      }
+      public boolean matches(      ReplicationControllerSchema entity){
+        return filterLabels(labelSelector,entity.getLabels());
+      }
+    }
+;
+  }
+}

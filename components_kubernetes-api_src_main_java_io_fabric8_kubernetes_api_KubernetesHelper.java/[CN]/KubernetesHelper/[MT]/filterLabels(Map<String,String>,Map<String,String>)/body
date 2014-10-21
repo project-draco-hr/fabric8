@@ -1,0 +1,15 @@
+{
+  if (labels == null) {
+    return false;
+  }
+  Set<Map.Entry<String,String>> entries=filterLabels.entrySet();
+  for (  Map.Entry<String,String> entry : entries) {
+    String key=entry.getKey();
+    String expectedValue=entry.getValue();
+    String actualValue=labels.get(key);
+    if (!Objects.equal(expectedValue,actualValue)) {
+      return false;
+    }
+  }
+  return true;
+}

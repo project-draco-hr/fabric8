@@ -1,0 +1,16 @@
+{
+  if (labelSelector == null || labelSelector.isEmpty()) {
+    return Filters.<ServiceSchema>trueFilter();
+  }
+ else {
+    return new Filter<ServiceSchema>(){
+      public String toString(){
+        return "ServiceFilter(" + labelSelector + ")";
+      }
+      public boolean matches(      ServiceSchema entity){
+        return filterLabels(labelSelector,entity.getLabels());
+      }
+    }
+;
+  }
+}
