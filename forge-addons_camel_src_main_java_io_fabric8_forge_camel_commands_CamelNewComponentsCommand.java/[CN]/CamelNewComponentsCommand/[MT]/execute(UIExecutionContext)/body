@@ -12,10 +12,8 @@ Resource<URL> blueprintXML=resourceFactory.create(getClass().getResource("/templ
 Template template=templateFactory.create(blueprintXML,FreemarkerTemplate.class);
 Map<String,Object> templateContext=new HashMap<>();
 String componentId=component.split("-")[1];
-String componentClass="";
 templateContext.put("componentId",componentId);
-List<String> foundComponentClasses=findComponentClasses(project);
-System.out.println(foundComponentClasses);
+String componentClass=findComponentFQCN(component,selectedVersion);
 templateContext.put("componentClass",componentClass);
 fileResource.createNewFile();
 fileResource.setContents(template.process(templateContext));
