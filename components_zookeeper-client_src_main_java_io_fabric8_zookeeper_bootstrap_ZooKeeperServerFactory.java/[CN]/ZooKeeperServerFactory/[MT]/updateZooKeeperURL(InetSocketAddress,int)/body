@@ -1,0 +1,18 @@
+{
+  System.out.println("localAddress: " + localAddress + " localPort "+ localPort);
+  if (localAddress != null) {
+    InetAddress address=localAddress.getAddress();
+    String hostName;
+    if (address != null) {
+      hostName=address.getHostName();
+    }
+ else {
+      hostName=localAddress.getHostName();
+    }
+    zooKeeperUrl=hostName + ":" + localPort;
+    System.out.println("ZK URL: " + zooKeeperUrl);
+  }
+ else {
+    System.out.println("NO ZK ADDRESSS!");
+  }
+}

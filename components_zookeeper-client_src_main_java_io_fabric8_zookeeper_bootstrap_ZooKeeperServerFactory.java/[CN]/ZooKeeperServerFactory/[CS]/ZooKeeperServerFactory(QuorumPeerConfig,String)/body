@@ -30,6 +30,7 @@
       quorumPeer.shutdown();
       throw e;
     }
+    updateZooKeeperURL(cnxnFactory.getLocalAddress(),cnxnFactory.getLocalPort());
     this.clusteredServer=new ClusteredServer(quorumPeer);
   }
  else {
@@ -45,7 +46,9 @@
       }
     }
 ;
-    cnxnFactory.configure(serverConfig.getClientPortAddress(),serverConfig.getMaxClientCnxns());
+    InetSocketAddress clientPortAddress=serverConfig.getClientPortAddress();
+    cnxnFactory.configure(clientPortAddress,serverConfig.getMaxClientCnxns());
+    updateZooKeeperURL(cnxnFactory.getLocalAddress(),cnxnFactory.getLocalPort());
     try {
       LOGGER.debug("Starting ZooKeeper server on address %s",peerConfig.getClientPortAddress());
       cnxnFactory.startup(zkServer);
