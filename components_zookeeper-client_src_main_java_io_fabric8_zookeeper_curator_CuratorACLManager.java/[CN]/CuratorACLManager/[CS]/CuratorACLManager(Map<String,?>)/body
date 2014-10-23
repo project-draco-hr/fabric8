@@ -1,0 +1,11 @@
+{
+  acls.put("/","world:anyone:acdrw");
+  acls.put("/fabric","auth::acdrw,world:anyone:");
+  for (  Map.Entry<String,?> entry : configuration.entrySet()) {
+    String key=entry.getKey();
+    if (key.startsWith("acls.")) {
+      String value=String.valueOf(entry.getValue());
+      acls.put(key.substring("acls.".length()),value);
+    }
+  }
+}

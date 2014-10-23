@@ -1,0 +1,13 @@
+{
+  CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().canBeReadOnly(true).ensembleProvider(new FixedEnsembleProvider(curatorConfig.getZookeeperUrl())).connectionTimeoutMs(curatorConfig.getZookeeperConnectionTimeOut()).sessionTimeoutMs(curatorConfig.getZookeeperSessionTimeout()).retryPolicy(new RetryNTimes(curatorConfig.getZookeeperRetryMax(),curatorConfig.getZookeeperRetryInterval()));
+  if (!Strings.isNullOrEmpty(curatorConfig.getZookeeperPassword())) {
+    String scheme="digest";
+    byte[] auth=("fabric:" + PasswordEncoder.decode(curatorConfig.getZookeeperPassword())).getBytes();
+    builder=builder.authorization(scheme,auth).aclProvider(aclProvider);
+  }
+  CuratorFramework framework=builder.build();
+  for (  ConnectionStateListener listener : connectionStateListeners) {
+    framework.getConnectionStateListenable().addListener(listener);
+  }
+  return framework;
+}
