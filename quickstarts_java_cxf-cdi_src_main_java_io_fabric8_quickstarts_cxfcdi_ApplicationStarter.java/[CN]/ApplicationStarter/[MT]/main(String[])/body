@@ -1,21 +1,3 @@
 {
-  String port=System.getProperty("server.port");
-  if (port == null) {
-    port=System.getenv("FABRIC8_HTTP_PORT");
-  }
-  if (port == null) {
-    port="8585";
-  }
-  Integer num=Integer.parseInt(port);
-  System.out.println("Starting REST server on port: " + port);
-  final Server server=new Server(num);
-  final ServletHolder servletHolder=new ServletHolder(new CXFCdiServlet());
-  final ServletContextHandler context=new ServletContextHandler();
-  context.setContextPath("/");
-  context.addEventListener(new Listener());
-  context.addEventListener(new BeanManagerResourceBindingListener());
-  context.addServlet(servletHolder,"/cxfcdi/*");
-  server.setHandler(context);
-  server.start();
-  server.join();
+  startServer().join();
 }
