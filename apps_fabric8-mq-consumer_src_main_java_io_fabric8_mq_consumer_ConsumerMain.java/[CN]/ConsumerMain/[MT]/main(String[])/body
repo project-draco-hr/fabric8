@@ -1,22 +1,14 @@
 {
   try {
+    String serviceName=Systems.getEnvVarOrSystemProperty("AMQ_SERVICE_ID","AMQ_SERVICE_ID","FABRIC8MQ").toUpperCase() + "_SERVICE";
+    String hostEnvVar=serviceName + "_HOST";
+    String portEnvVar=serviceName + "_PORT";
     try {
-      host=AccessController.doPrivileged(new PrivilegedAction<String>(){
-        @Override public String run(){
-          String result=System.getenv("AMQ_HOST");
-          result=(result == null || result.isEmpty()) ? System.getProperty("org.apache.activemq.AMQ_HOST",DEFAULT_HOST) : result;
-          return result;
-        }
+      host=Systems.getEnvVarOrSystemProperty(hostEnvVar,hostEnvVar,DEFAULT_HOST);
+      String portStr=Systems.getEnvVarOrSystemProperty(portEnvVar,hostEnvVar,DEFAULT_PORT);
+      if (portStr != null && portStr.length() > 0) {
+        port=Integer.parseInt(portStr);
       }
-);
-      String portStr=AccessController.doPrivileged(new PrivilegedAction<String>(){
-        @Override public String run(){
-          String result=System.getenv("AMQ_PORT");
-          result=(result == null || result.isEmpty()) ? System.getProperty("org.apache.activemq.AMQ_PORT","61616") : result;
-          return result;
-        }
-      }
-);
       if (portStr != null && portStr.length() > 0) {
         port=Integer.parseInt(portStr);
       }
@@ -55,6 +47,7 @@
     if (queueName == null) {
       queueName="TEST.FOO";
     }
+    System.out.println("Using broker host " + host + " from $"+ hostEnvVar+ " and port "+ port+ " from $"+ portEnvVar);
     org.apache.camel.main.Main main=new org.apache.camel.main.Main();
     String brokerURL="tcp://" + host + ":"+ port+ "?jms.prefetchPolicy.all="+ prefetch;
     System.out.println("Connecting to brokerURL " + brokerURL);
