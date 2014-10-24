@@ -1,0 +1,12 @@
+{
+  String baseDirPath=System.getProperty("basedir",".");
+  File baseDir=new File(baseDirPath);
+  File json=new File(baseDirPath,"target/test-classes/" + relativePath);
+  assertFileExists(json);
+  Object answer=KubernetesHelper.loadJson(json);
+  assertNotNull("Null returned while unmarshalling " + json,answer);
+  System.out.println("Parsed: " + json + " as: "+ answer);
+  System.out.println();
+  assertTrue("Result " + answer + " is not an instance of "+ clazz.getName()+ " but was "+ (answer == null ? "null" : answer.getClass().getName()),clazz.isInstance(answer));
+  return clazz.cast(answer);
+}

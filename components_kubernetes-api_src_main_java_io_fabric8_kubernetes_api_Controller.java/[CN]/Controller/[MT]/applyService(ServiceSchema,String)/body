@@ -5,7 +5,14 @@
   String id=serviceSchema.getId();
   ServiceSchema old=serviceMap.get(id);
   if (isRunning(old)) {
-    LOG.info("Not creating service for " + id + " from "+ sourceName+ " as its already running");
+    LOG.info("Updating a service from " + sourceName);
+    try {
+      Object answer=kubernetes.updateService(id,serviceSchema);
+      LOG.info("Updated service: " + answer);
+    }
+ catch (    Exception e) {
+      LOG.error("Failed to update controller from " + sourceName + ". "+ e+ ". "+ serviceSchema,e);
+    }
   }
  else {
     LOG.info("Creating a service from " + sourceName);

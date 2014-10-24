@@ -5,7 +5,14 @@
   String id=podSchema.getId();
   PodSchema old=podMap.get(id);
   if (isRunning(old)) {
-    LOG.info("Not creating pod for " + id + " from "+ sourceName+ " as its already running");
+    LOG.info("Updating a pod from " + sourceName);
+    try {
+      Object answer=kubernetes.updatePod(id,podSchema);
+      LOG.info("Updated pod result: " + answer);
+    }
+ catch (    Exception e) {
+      LOG.error("Failed to update pod from " + sourceName + ". "+ e+ ". "+ podSchema,e);
+    }
   }
  else {
     LOG.info("Creating a pod from " + sourceName);

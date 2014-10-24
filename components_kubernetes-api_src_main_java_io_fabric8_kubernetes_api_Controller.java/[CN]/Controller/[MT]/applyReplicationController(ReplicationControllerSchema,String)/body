@@ -5,7 +5,14 @@
   String id=replicationControllerSchema.getId();
   ReplicationControllerSchema old=replicationControllerMap.get(id);
   if (isRunning(old)) {
-    LOG.info("Not creating replicationController for " + id + " from "+ sourceName+ " as its already running");
+    LOG.info("Updating replicationController from " + sourceName);
+    try {
+      Object answer=kubernetes.updateReplicationController(id,replicationControllerSchema);
+      LOG.info("Updated replicationController: " + answer);
+    }
+ catch (    Exception e) {
+      LOG.error("Failed to update replicationController from " + sourceName + ". "+ e+ ". "+ replicationControllerSchema,e);
+    }
   }
  else {
     LOG.info("Creating a replicationController from " + sourceName);

@@ -1,7 +1,8 @@
 {
   List<Object> providers=new ArrayList<Object>();
-  providers.add(new JacksonJaxbJsonProvider());
-  providers.add(new PlainTextJacksonProvider());
-  providers.add(new JacksonIntOrStringConfig());
+  Annotations[] annotationsToUse=JacksonJaxbJsonProvider.DEFAULT_ANNOTATIONS;
+  ObjectMapper objectMapper=createObjectMapper();
+  providers.add(new JacksonJaxbJsonProvider(objectMapper,annotationsToUse));
+  providers.add(new PlainTextJacksonProvider(objectMapper,annotationsToUse));
   return providers;
 }
