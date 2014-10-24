@@ -1,0 +1,51 @@
+{
+  ServletContext servletContext=event.getServletContext();
+  String location=servletContext.getInitParameter(LOCATION);
+  if (location == null) {
+    location=DEFAULT_LOCATION;
+  }
+  List<URL> resourcePaths=new ArrayList<URL>();
+  ClassLoader classLoader=Thread.currentThread().getContextClassLoader();
+  try {
+    Enumeration<URL> resources=classLoader.getResources(location);
+    while (resources.hasMoreElements()) {
+      resourcePaths.add(resources.nextElement());
+    }
+    Collections.sort(resourcePaths,new Comparator<URL>(){
+      @Override public int compare(      URL o1,      URL o2){
+        return o1.toString().compareTo(o2.toString());
+      }
+    }
+);
+    servletContext.log("Loading Blueprint contexts " + resourcePaths);
+    Map<String,String> properties=new HashMap<String,String>();
+    String propLocations=servletContext.getInitParameter(PROPERTIES);
+    if (propLocations != null) {
+      for (      String propLoc : propLocations.split(",")) {
+        Enumeration<URL> propUrl=classLoader.getResources(propLoc);
+        while (propUrl.hasMoreElements()) {
+          URL url=propUrl.nextElement();
+          InputStream is=url.openStream();
+          try {
+            Properties props=new Properties();
+            props.load(is);
+            Enumeration names=props.propertyNames();
+            while (names.hasMoreElements()) {
+              String key=names.nextElement().toString();
+              properties.put(key,props.getProperty(key));
+            }
+          }
+  finally {
+            is.close();
+          }
+        }
+      }
+    }
+    appendEnvironmentVariables(servletContext,properties);
+    BlueprintContainerImpl container=new BlueprintContainerImpl(classLoader,resourcePaths,properties,true);
+    servletContext.setAttribute(CONTAINER_ATTRIBUTE,container);
+  }
+ catch (  Exception e) {
+    servletContext.log("Failed to startup blueprint container. " + e,e);
+  }
+}

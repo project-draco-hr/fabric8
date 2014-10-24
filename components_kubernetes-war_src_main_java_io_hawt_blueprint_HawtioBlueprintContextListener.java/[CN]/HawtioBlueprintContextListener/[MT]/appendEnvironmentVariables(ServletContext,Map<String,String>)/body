@@ -1,0 +1,16 @@
+{
+  try {
+    Map<String,String> env=System.getenv();
+    if (env != null) {
+      Set<Map.Entry<String,String>> entries=env.entrySet();
+      for (      Map.Entry<String,String> entry : entries) {
+        String name=entry.getKey();
+        String propertyName=convertEnvironmentVariableToSystemProperty(name);
+        properties.put(propertyName,entry.getValue());
+      }
+    }
+  }
+ catch (  Exception e) {
+    servletContext.log("Failed to load environment variables: " + e,e);
+  }
+}
