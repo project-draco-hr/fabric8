@@ -2,12 +2,5 @@
   if (curator != null) {
     return new StaticManagedGroupFactory(curator,false);
   }
-  try {
-    return new OsgiManagedGroupFactory(loader);
-  }
- catch (  NoClassDefFoundError e) {
-  }
-catch (  IllegalStateException e) {
-  }
   return new StaticManagedGroupFactory(factory.call(),true);
 }
