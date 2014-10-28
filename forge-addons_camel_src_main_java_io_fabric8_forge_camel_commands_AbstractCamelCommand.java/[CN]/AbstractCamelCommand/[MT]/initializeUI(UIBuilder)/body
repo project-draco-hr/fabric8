@@ -5,6 +5,9 @@
   for (  Dependency d : dependencies) {
     if (MVN_CAMEL_GROUPID.equals(d.getCoordinate().getGroupId())) {
       currentCamelDeps.add(d.getCoordinate().getArtifactId());
+      if (MVN_CAMEL_CORE.equals(d.getCoordinate().getArtifactId())) {
+        camelCoreVersion=d.getCoordinate().getVersion();
+      }
     }
   }
   Collections.sort(currentCamelDeps);

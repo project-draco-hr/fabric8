@@ -1,24 +1,34 @@
 {
   super.initializeUI(builder);
+  initializeAvailableCamelComponents();
   named.setCompleter(new UICompleter<String>(){
     @Override public Iterable<String> getCompletionProposals(    UIContext context,    InputComponent<?,String> input,    String value){
-      availableComponents=getAvailableCamelComponents();
-      List<String> componentsList=new ArrayList<>(availableComponents.size());
+      List<String> filteredList=new ArrayList<String>(availableComponents.size());
       for (      String s : availableComponents) {
+        if (!camelDepsInUse.contains(s)) {
+          filteredList.add(s);
+        }
+      }
+      List<String> noPrefixList=new ArrayList<String>(filteredList.size());
+      for (      String s : filteredList) {
+        noPrefixList.add(s.split("-")[1]);
+      }
+      List<String> componentsList=new ArrayList<>(noPrefixList.size());
+      for (      String s : noPrefixList) {
         if (s.startsWith(value))         componentsList.add(s);
       }
-      componentsList.removeAll(camelDepsInUse);
       Collections.sort(componentsList);
       return componentsList;
     }
   }
 );
+  version.setCompleter(new UIVersionCompleter(this));
   named.addValidator(new UIValidator(){
     @Override public void validate(    UIValidationContext context){
       if (availableComponents == null) {
-        availableComponents=getAvailableCamelComponents();
+        availableComponents=initializeAvailableCamelComponents();
       }
-      if (!availableComponents.contains(context.getCurrentInputComponent().getValue())) {
+      if (!availableComponents.contains("camel-" + context.getCurrentInputComponent().getValue())) {
         context.addValidationError(context.getCurrentInputComponent(),"Selected Camel component is not available.");
       }
     }

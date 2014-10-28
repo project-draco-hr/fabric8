@@ -1,25 +1,57 @@
 {
   String component=named.getValue();
+  component="camel-" + component;
   String selectedVersion=version.getValue();
   Project project=getSelectedProject(context);
   installMavenDependency(component,selectedVersion,project);
-  CamelSupportedTechnologyEnum tech=detectTechnology(project);
+  CamelSupportedTechnologyEnum tech=null;
+  try {
+    tech=detectTechnology(project);
+  }
+ catch (  IllegalStateException e) {
+    return Results.fail("Unable to identify project type.");
+  }
 switch (tech) {
 case BLUEPRINT:
-    ResourcesFacet facet=getSelectedProject(context).getFacet(ResourcesFacet.class);
-  FileResource<?> fileResource=facet.getResource("OSGI-INF" + File.separator + "blueprint"+ File.separator+ "components.xml");
-Resource<URL> blueprintXML=resourceFactory.create(getClass().getResource("/templates/my_blueprint.ftl")).reify(URLResource.class);
-Template template=templateFactory.create(blueprintXML,FreemarkerTemplate.class);
-Map<String,Object> templateContext=new HashMap<>();
-String componentId=component.split("-")[1];
-templateContext.put("componentId",componentId);
-String componentClass=findComponentFQCN(component,selectedVersion);
-templateContext.put("componentClass",componentClass);
-fileResource.createNewFile();
-fileResource.setContents(template.process(templateContext));
-break;
+{
+      ResourcesFacet facet=getSelectedProject(context).getFacet(ResourcesFacet.class);
+      String outputFilePath="OSGI-INF" + File.separator + "blueprint"+ File.separator+ "components.xml";
+      FileResource<?> fileResource=facet.getResource(outputFilePath);
+      Resource<URL> xml=resourceFactory.create(getClass().getResource("/templates/my_blueprint.ftl")).reify(URLResource.class);
+      Template template=templateFactory.create(xml,FreemarkerTemplate.class);
+      Map<String,Object> templateContext=new HashMap<>();
+      String componentId=component.split("-")[1];
+      templateContext.put("componentId",componentId);
+      String componentClass=findComponentFQCN(component,selectedVersion);
+      templateContext.put("componentClass",componentClass);
+      UIPrompt prompt=context.getPrompt();
+      if (!prompt.promptBoolean("File '" + outputFilePath + "' already exists. Do you want to overwrite it?")) {
+        return Results.fail("File '" + outputFilePath + "' already exists.");
+      }
+      fileResource.createNewFile();
+      fileResource.setContents(template.process(templateContext));
+      break;
+    }
 case SPRING:
-break;
+{
+    ResourcesFacet facet=getSelectedProject(context).getFacet(ResourcesFacet.class);
+    String outputFilePath="META-INF" + File.separator + "spring"+ File.separator+ "components.xml";
+    FileResource<?> fileResource=facet.getResource(outputFilePath);
+    Resource<URL> xml=resourceFactory.create(getClass().getResource("/templates/my_spring.ftl")).reify(URLResource.class);
+    Template template=templateFactory.create(xml,FreemarkerTemplate.class);
+    Map<String,Object> templateContext=new HashMap<>();
+    String componentId=component.split("-")[1];
+    templateContext.put("componentId",componentId);
+    String componentClass=findComponentFQCN(component,selectedVersion);
+    templateContext.put("componentClass",componentClass);
+    UIPrompt prompt=context.getPrompt();
+    if (!prompt.promptBoolean("File '" + outputFilePath + "' already exists. Do you want to overwrite it?")) {
+      return Results.fail("File '" + outputFilePath + "' already exists.");
+    }
+    fileResource.createNewFile();
+    fileResource.setContents(template.process(templateContext));
+    break;
+  }
 case JAVA:
 break;
 }
