@@ -1,0 +1,10 @@
+{
+  NullArgumentException.validateNotNull(connection,"url connection cannot be null");
+  if (connection.getURL().getUserInfo() != null) {
+    String decodedUserInfo=decode(connection.getURL().getUserInfo());
+    String base64Encoded=io.fabric8.utils.Base64Encoder.encode(decodedUserInfo);
+    base64Encoded=base64Encoded.replaceAll("\n","");
+    connection.setRequestProperty("Authorization","Basic " + base64Encoded);
+  }
+  return connection;
+}
