@@ -1,0 +1,13 @@
+{
+  getLog().info("Combining generated json " + json + " with extra json "+ kubernetesExtraJson);
+  Object extra=loadJsonFile(kubernetesExtraJson);
+  Object generated=loadJsonFile(json);
+  try {
+    JsonNode comnbined=KubernetesHelper.combineJson(generated,extra);
+    KubernetesHelper.saveJson(json,comnbined);
+    getLog().info("Saved as :" + json.getAbsolutePath());
+  }
+ catch (  IOException e) {
+    throw new MojoExecutionException("Failed to save combined JSON files " + json + " and "+ kubernetesExtraJson+ " as "+ json+ ". "+ e,e);
+  }
+}

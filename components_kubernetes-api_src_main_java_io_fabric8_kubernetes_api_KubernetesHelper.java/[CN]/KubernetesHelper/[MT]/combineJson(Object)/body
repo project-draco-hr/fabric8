@@ -1,0 +1,25 @@
+{
+  JsonNode config=findOrCreateConfig(objects);
+  JsonNode items=config.get("items");
+  ArrayNode itemArray=null;
+  if (items instanceof ArrayNode) {
+    itemArray=(ArrayNode)items;
+  }
+ else {
+    itemArray=new ArrayNode(createNodeFactory());
+    if (config instanceof ObjectNode) {
+      ObjectNode objectNode=(ObjectNode)config;
+      objectNode.set("items",itemArray);
+    }
+ else {
+      throw new IllegalArgumentException("config " + config + " is not a ObjectNode");
+    }
+  }
+  for (  Object object : objects) {
+    if (object != config) {
+      JsonNode node=toJsonNode(object);
+      itemArray.add(node);
+    }
+  }
+  return config;
+}

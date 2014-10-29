@@ -1,0 +1,12 @@
+{
+  if (object instanceof JsonNode) {
+    return (JsonNode)object;
+  }
+ else   if (object == null) {
+    return null;
+  }
+ else {
+    String json=toJson(object);
+    return objectMapper.reader().readTree(json);
+  }
+}

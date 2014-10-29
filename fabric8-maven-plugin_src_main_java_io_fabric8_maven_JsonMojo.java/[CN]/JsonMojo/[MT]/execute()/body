@@ -4,13 +4,11 @@
   if (json == null) {
     throw new MojoExecutionException("No kubernetes json file is specified!");
   }
-  if (!json.exists()) {
-    if (!isPom(getProject()) && !isIgnoreProject() && generateJson) {
-      generateKubernetesJson(json);
+  if (!isPom(getProject()) && !isIgnoreProject() && generateJson) {
+    generateKubernetesJson(json);
+    if (kubernetesExtraJson != null && kubernetesExtraJson.exists()) {
+      combineJsonFiles(json,kubernetesExtraJson);
     }
-  }
- else {
-    getLog().warn("No kubernetes JSON file specified");
   }
   if (Files.isFile(json)) {
     getLog().info("Attaching kubernetes json file: " + json + " to the build");
