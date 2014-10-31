@@ -2,6 +2,7 @@
   List<BrokerVitalSigns> result=new ArrayList<>();
   Map<String,PodSchema> podMap=KubernetesHelper.getPodMap(kubernetes,selector);
   Collection<PodSchema> pods=podMap.values();
+  LOG.info("Checking " + selector + ": groupSize = "+ pods.size());
   for (  PodSchema pod : pods) {
     String host=KubernetesHelper.getHost(pod);
     List<ManifestContainer> containers=KubernetesHelper.getContainers(pod);

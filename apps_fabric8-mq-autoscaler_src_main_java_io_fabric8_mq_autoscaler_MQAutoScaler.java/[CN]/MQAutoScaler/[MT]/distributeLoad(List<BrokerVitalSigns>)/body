@@ -43,8 +43,8 @@
       }
     }
  else     if (brokers.size() > getMinimumGroupSize()) {
-      boolean spareConnectionCapacity=((totalConnections / brokers.size()) + 1) < brokerLimits.getConnectionsLimit();
-      boolean spareDestinationCapacity=((totalDestinations / brokers.size()) + 1) < brokerLimits.getDestinationsLimit();
+      boolean spareConnectionCapacity=((totalConnections / brokers.size()) + 1) < brokerLimits.getMaxConnectionsPerBroker();
+      boolean spareDestinationCapacity=((totalDestinations / brokers.size()) + 1) < brokerLimits.getMaxDestinationsPerBroker();
       if (spareConnectionCapacity && spareDestinationCapacity) {
         LOG.info("Scaling down brokers ");
         try {

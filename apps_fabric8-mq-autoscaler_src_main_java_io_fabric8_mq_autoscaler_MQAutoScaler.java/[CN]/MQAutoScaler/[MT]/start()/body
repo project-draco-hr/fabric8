@@ -2,10 +2,9 @@
   if (started.compareAndSet(false,true)) {
     MQAutoScalerObjectName=new ObjectName(DEFAULT_DOMAIN,"type","mq-autoscaler");
     JMXUtils.registerMBean(this,MQAutoScalerObjectName);
-    brokerLimits=new BrokerLimits();
-    destinationLimits=new DestinationLimits();
-    clients=new JolokiaClients();
-    kubernetes=clients.getKubernetes();
+    KubernetesFactory kubernetesFactory=new KubernetesFactory(getKubernetesMaster());
+    kubernetes=kubernetesFactory.createKubernetes();
+    clients=new JolokiaClients(kubernetes);
     timer=new Timer("MQAutoScaler timer");
     long pollTime=getPollTime() * 1000;
     timer.schedule(new TimerTask(){
@@ -15,5 +14,6 @@
       }
     }
 ,0,pollTime);
+    LOG.info("MQAutoScaler started, using Kubernetes master " + getKubernetesMaster());
   }
 }
