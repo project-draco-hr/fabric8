@@ -1,19 +1,13 @@
 {
   if (started.compareAndSet(false,true)) {
+    setSelector("container=java,name=" + getBrokerName() + ",group="+ getGroupName());
     MQAutoScalerObjectName=new ObjectName(DEFAULT_DOMAIN,"type","mq-autoscaler");
     JMXUtils.registerMBean(this,MQAutoScalerObjectName);
     KubernetesFactory kubernetesFactory=new KubernetesFactory(getKubernetesMaster());
     kubernetes=kubernetesFactory.createKubernetes();
     clients=new JolokiaClients(kubernetes);
     timer=new Timer("MQAutoScaler timer");
-    long pollTime=getPollTime() * 1000;
-    timer.schedule(new TimerTask(){
-      @Override public void run(){
-        LOG.info("Checking Load across Fabric8MQ group: " + getGroupName());
-        validateMQLoad();
-      }
-    }
-,0,pollTime);
+    startTimerTask();
     LOG.info("MQAutoScaler started, using Kubernetes master " + getKubernetesMaster());
   }
 }

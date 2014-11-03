@@ -71,7 +71,7 @@
     }
     System.out.println("Using broker host " + host + " from $"+ hostEnvVar+ " and port "+ port+ " from $"+ portEnvVar);
     org.apache.camel.main.Main main=new org.apache.camel.main.Main();
-    String brokerURL="tcp://" + host + ":"+ port;
+    String brokerURL="failover://(tcp://" + host + ":"+ port+ ")";
     System.out.println("Connecting to brokerURL: " + brokerURL);
     main.bind("activemq",ActiveMQComponent.activeMQComponent(brokerURL));
     main.bind("myDataSet",createDataSet());
