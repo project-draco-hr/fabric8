@@ -7,7 +7,6 @@
     port="8586";
   }
   Integer num=Integer.parseInt(port);
-  System.out.println("Starting REST server on port: " + port);
   String service=System.getProperty("SERVICE");
   if (service == null) {
     service=System.getenv("SERVICE");
@@ -15,6 +14,7 @@
   if (service == null) {
     service="java-cxf-cdi";
   }
+  System.out.println("Starting REST server at http://localhost:" + port + "/"+ service+ "/");
   Map<String,String> env=System.getenv();
   for (  String envName : env.keySet()) {
     System.out.format("%s=%s%n",envName,env.get(envName));
