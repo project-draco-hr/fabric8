@@ -59,6 +59,26 @@
         }
       }
     }
+    if (generateAppPropertiesFile) {
+      String name=project.getName();
+      if (Strings.isNullOrBlank(name)) {
+        name=project.getArtifactId();
+      }
+      String description=project.getDescription();
+      Properties appProperties=new Properties();
+      appProperties.put("name",name);
+      if (Strings.isNotBlank(description)) {
+        appProperties.put("description",description);
+      }
+      appProperties.put("groupId",project.getGroupId());
+      appProperties.put("artifactId",project.getArtifactId());
+      appProperties.put("version",project.getVersion());
+      File appPropertiesFile=new File(appBuildDir,"fabric8.properties");
+      appPropertiesFile.getParentFile().mkdirs();
+      if (!appPropertiesFile.exists()) {
+        appProperties.store(new FileWriter(appPropertiesFile),"Fabric8 Properties");
+      }
+    }
     File outputZipFile=getZipFile();
     Zips.createZipFile(getLog(),buildDir,outputZipFile);
     projectHelper.attachArtifact(project,artifactType,artifactClassifier,outputZipFile);
