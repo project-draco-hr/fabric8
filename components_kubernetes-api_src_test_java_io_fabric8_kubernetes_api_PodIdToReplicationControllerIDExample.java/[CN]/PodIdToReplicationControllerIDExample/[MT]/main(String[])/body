@@ -1,0 +1,18 @@
+{
+  if (args.length < 2) {
+    System.out.println("Arguments: kuberneteMasterUrl podID");
+    return;
+  }
+  String kuberneteMasterUrl=args[0];
+  String podID=args[1];
+  System.out.println("Looking up ReplicationController for pod ID: " + podID);
+  KubernetesClient client=new KubernetesClient(kuberneteMasterUrl);
+  ReplicationControllerSchema replicationController=client.getReplicationControllerForPod(podID);
+  if (replicationController != null) {
+    String id=replicationController.getId();
+    System.out.println("Found replication controller: " + id);
+  }
+ else {
+    System.out.println("Could not find replication controller!");
+  }
+}
