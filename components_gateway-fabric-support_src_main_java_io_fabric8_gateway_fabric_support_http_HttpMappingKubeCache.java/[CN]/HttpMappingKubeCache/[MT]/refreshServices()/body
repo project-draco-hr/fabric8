@@ -1,0 +1,36 @@
+{
+  List<String> currentCache=new ArrayList<String>();
+  currentCache.addAll(contextPathsCache);
+  try {
+    ServiceListSchema serviceListSchema=client.getServices();
+    for (    ServiceSchema schema : serviceListSchema.getItems()) {
+      if (selectorMatch(schema.getSelector())) {
+        String contextPath=schema.getId();
+        ServiceDTO dto=new ServiceDTO();
+        dto.setId(schema.getId());
+        dto.setContainer(schema.getSelector().get("container"));
+        dto.setVersion(schema.getSelector().get("version"));
+        Map<String,String> params=new HashMap<String,String>();
+        params.put("id",paramValue(dto.getId()));
+        params.put("container",paramValue(dto.getContainer()));
+        params.put("version",paramValue(dto.getVersion()));
+        String service="http://localhost:" + schema.getPort() + "/"+ schema.getId();
+        List<String> services=Arrays.asList(service);
+        if (!contextPathsCache.contains(contextPath)) {
+          LOG.info("Adding " + service);
+          contextPathsCache.add(contextPath);
+        }
+        mappingRuleConfiguration.updateMappingRules(false,contextPath,services,params,dto);
+        currentCache.remove(contextPath);
+      }
+    }
+    for (    String contextPath : currentCache) {
+      mappingRuleConfiguration.updateMappingRules(true,contextPath,null,null,null);
+      LOG.info("Removing " + contextPath);
+      contextPathsCache.remove(contextPath);
+    }
+  }
+ catch (  Throwable e) {
+    e.printStackTrace();
+  }
+}

@@ -8,7 +8,6 @@
   if (LOG.isDebugEnabled()) {
     LOG.debug("Proxying request: " + uri);
   }
-  HttpClient client=null;
   String remaining=null;
   String prefix=null;
   String proxyServiceUrl=null;
@@ -33,7 +32,7 @@
         if (uri.startsWith(pathPrefix) || (uri2 != null && uri2.startsWith(pathPrefix))) {
           int pathPrefixLength=pathPrefix.length();
           if (pathPrefixLength < uri.length()) {
-            remaining=uri.substring(pathPrefixLength);
+            remaining=uri.substring(pathPrefixLength + 1);
           }
  else {
             remaining=null;
@@ -42,7 +41,9 @@
           if (proxyServiceUrl != null) {
             try {
               clientURL=new URL(proxyServiceUrl);
-              client=createClient(clientURL);
+              if (client == null) {
+                client=createClient(clientURL);
+              }
               prefix=clientURL.getPath();
               reverseServiceUrl=request.absoluteURI().resolve(pathPrefix).toString();
               if (reverseServiceUrl.endsWith("/")) {
@@ -77,7 +78,7 @@
             clientResponse.dataHandler(new Handler<Buffer>(){
               public void handle(              Buffer data){
                 if (LOG.isDebugEnabled()) {
-                  LOG.debug("Proxying response body:" + data);
+                  LOG.debug("3. Proxying response body:" + data);
                 }
                 request.response().write(data);
               }
@@ -86,7 +87,9 @@
             clientResponse.endHandler(new VoidHandler(){
               public void handle(){
                 request.response().end();
-                finalClient.close();
+                if (LOG.isDebugEnabled()) {
+                  LOG.debug("4. Response end");
+                }
               }
             }
 );
@@ -103,7 +106,7 @@
         request.dataHandler(new Handler<Buffer>(){
           public void handle(          Buffer data){
             if (LOG.isDebugEnabled()) {
-              LOG.debug("Proxying request body:" + data);
+              LOG.debug("1. Proxying request body:" + data);
             }
             clientRequest.write(data);
           }
@@ -112,7 +115,7 @@
         request.endHandler(new VoidHandler(){
           public void handle(){
             if (LOG.isDebugEnabled()) {
-              LOG.debug("end of the request");
+              LOG.debug("2. end of the request");
             }
             clientRequest.end();
           }
@@ -122,7 +125,7 @@
  else {
         LOG.info("Could not find matching proxy path for " + uri + " from paths: "+ mappingRules.keySet());
         request.response().setStatusCode(404);
-        request.response().close();
+        request.response().end();
       }
     }
     CallDetailRecord cdr=new CallDetailRecord(System.nanoTime() - callStart,null);
