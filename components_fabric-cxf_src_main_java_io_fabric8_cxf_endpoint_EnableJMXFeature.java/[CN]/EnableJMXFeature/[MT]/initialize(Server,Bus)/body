@@ -1,5 +1,6 @@
 {
   ManagedApi mApi=new ManagedApi(bus,server.getEndpoint(),server);
+  ManagedEndpoint mEndpoint=new ManagedEndpoint(bus,server.getEndpoint(),server);
   InstrumentationManager iMgr=bus.getExtension(InstrumentationManager.class);
   if (iMgr == null) {
     iMgr=new InstrumentationManagerImpl(bus);
@@ -11,10 +12,13 @@
   if (iMgr != null) {
     try {
       iMgr.register(mApi);
+      iMgr.register(mEndpoint);
       ServerLifeCycleManager slcMgr=bus.getExtension(ServerLifeCycleManager.class);
       if (slcMgr != null) {
         slcMgr.registerListener(mApi);
-        slcMgr.startServer(server);
+        slcMgr.registerListener(mEndpoint);
+        mApi.startServer(server);
+        mEndpoint.startServer(server);
       }
     }
  catch (    JMException jmex) {

@@ -5,6 +5,7 @@
   for (Iterator<Server> iter=servers.iterator(); iter.hasNext(); ) {
     Server server=(Server)iter.next();
     ManagedApi mApi=new ManagedApi(bus,server.getEndpoint(),server);
+    ManagedEndpoint mEndpoint=new ManagedEndpoint(bus,server.getEndpoint(),server);
     InstrumentationManager iMgr=bus.getExtension(InstrumentationManager.class);
     if (iMgr == null) {
       iMgr=new InstrumentationManagerImpl(bus);
@@ -16,6 +17,7 @@
     if (iMgr != null) {
       try {
         iMgr.register(mApi);
+        iMgr.register(mEndpoint);
       }
  catch (      JMException jmex) {
         jmex.printStackTrace();
