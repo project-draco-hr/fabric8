@@ -1,10 +1,16 @@
 {
-  String dockerHost=System.getenv("KUBERNETES_MASTER");
-  if (isEmpty(dockerHost)) {
-    dockerHost=System.getProperty("kubernetes.master");
+  String kubernetesMaster=System.getenv("KUBERNETES_SERVICE_HOST");
+  if (Strings.isNotBlank(kubernetesMaster)) {
+    kubernetesMaster="http://" + kubernetesMaster + ":"+ System.getenv("KUBERNETES_SERVICE_PORT");
   }
-  if (!isEmpty(dockerHost)) {
-    return dockerHost;
+ else {
+    kubernetesMaster=System.getenv("KUBERNETES_MASTER");
+  }
+  if (Strings.isNullOrBlank(kubernetesMaster)) {
+    kubernetesMaster=System.getProperty("kubernetes.master");
+  }
+  if (Strings.isNotBlank(kubernetesMaster)) {
+    return kubernetesMaster;
   }
   return DEFAULT_KUBERNETES_MASTER;
 }

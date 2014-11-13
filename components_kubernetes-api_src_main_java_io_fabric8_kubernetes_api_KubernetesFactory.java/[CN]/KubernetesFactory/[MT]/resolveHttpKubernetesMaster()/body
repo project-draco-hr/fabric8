@@ -1,7 +1,7 @@
 {
-  String dockerHost=resolveKubernetesMaster();
-  if (dockerHost.startsWith("tcp:")) {
-    return "http:" + dockerHost.substring(4);
+  String kubernetesMaster=resolveKubernetesMaster();
+  if (kubernetesMaster.startsWith("tcp:")) {
+    return "http:" + kubernetesMaster.substring(4);
   }
-  return dockerHost;
+  return kubernetesMaster;
 }
