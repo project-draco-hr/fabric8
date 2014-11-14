@@ -1,0 +1,12 @@
+{
+  if (singletonCxfServletContext == null) {
+    singletonCxfServletContext=System.getenv("CXF_SERVLET_CONTEXT");
+    if (singletonCxfServletContext == null) {
+      singletonCxfServletContext=System.getProperty("CXF_SERVLET_CONTEXT");
+      if (singletonCxfServletContext == null) {
+        singletonCxfServletContext="/cxf";
+      }
+    }
+  }
+  return singletonCxfServletContext;
+}
