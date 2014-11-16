@@ -1,0 +1,15 @@
+{
+  restApplication=vertx.createHttpServer();
+  restApplication.requestHandler(new Handler<HttpServerRequest>(){
+    @Override public void handle(    HttpServerRequest request){
+      request.response().putHeader("content-type","text/plain");
+      request.response().end("Hello World!");
+    }
+  }
+);
+  FutureHandler<AsyncResult<HttpServer>> future=new FutureHandler<>();
+  restApplication.listen(18181,"localhost",future);
+  future.await();
+  System.out.println("Rest Application is up and listening at http://localhost:18181");
+  return restApplication;
+}

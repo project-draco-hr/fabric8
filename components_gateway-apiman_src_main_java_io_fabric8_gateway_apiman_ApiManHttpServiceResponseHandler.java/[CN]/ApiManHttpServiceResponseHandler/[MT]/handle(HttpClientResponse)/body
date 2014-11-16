@@ -1,0 +1,13 @@
+{
+  ServiceResponse serviceResponse=new ServiceResponse();
+  serviceResponse.setCode(clientResponse.statusCode());
+  serviceResponse.setMessage(clientResponse.statusMessage());
+  serviceResponse.setAttribute(ApiManService.ATTR_CLIENT_RESPONSE,clientResponse);
+  serviceResponse.setAttribute(ApiManService.ATTR_HTTP_CLIENT,httpClient);
+  Map<String,String> headerMap=new HashMap<String,String>();
+  for (  String key : clientResponse.headers().names()) {
+    headerMap.put(key,clientResponse.headers().get(key));
+  }
+  serviceResponse.setHeaders(headerMap);
+  apiManServiceResponseHandler.handle(AsyncResultImpl.create(serviceResponse));
+}

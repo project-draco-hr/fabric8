@@ -1,11 +1,13 @@
 {
-  if (restEndpointServer != null) {
+  System.out.println("Starting HttpGateway with a mapping of /hello/world to the Rest Application");
+  if (restApplication != null) {
     LoadBalancer loadBalancer=new RoundRobinLoadBalancer();
     ServiceDTO serviceDetails=new ServiceDTO();
     serviceDetails.setContainer("local");
     serviceDetails.setVersion("1");
-    mappedServices.put("/hello/world",new MappedServices("http://localhost:8181",serviceDetails,loadBalancer,false));
+    mappedServices.put("/hello/world",new MappedServices("http://localhost:18181",serviceDetails,loadBalancer,false));
   }
+  final ApiManager apiManager=new ApiManager();
   DetectingGatewayWebSocketHandler websocketHandler=new DetectingGatewayWebSocketHandler();
   final HttpGateway httpGateway=new HttpGateway(){
     @Override public void addMappingRuleConfiguration(    HttpMappingRule mappingRule){
@@ -19,25 +21,36 @@
       return true;
     }
     @Override public InetSocketAddress getLocalAddress(){
-      return new InetSocketAddress("0.0.0.0",8080);
+      return new InetSocketAddress("0.0.0.0",18080);
     }
     @Override public void addCallDetailRecord(    CallDetailRecord cdr){
     }
     @Override public ApiManager getApiManager(){
+      if (apiManager.getService() == null) {
+        ApiManagerService apiManagerService=new ApiManService();
+        Map<String,Object> config=new HashMap<String,Object>();
+        config.put("vertx",vertx);
+        config.put("httpGateway",this);
+        config.put("port",String.valueOf(this.getLocalAddress().getPort()));
+        apiManagerService.init(config);
+        apiManager.setService(apiManagerService);
+      }
       return apiManager;
     }
   }
 ;
   websocketHandler.setPathPrefix("");
   Handler<HttpServerRequest> requestHandler=null;
-  if (apiManager.isApiManagerEnabled()) {
-    requestHandler=((ApiManagerService)apiManager.getService()).createApiManagerHttpGatewayHandler();
+  if (httpGateway.getApiManager().isApiManagerEnabled()) {
+    requestHandler=apiManager.getService().createApiManagerHttpGatewayHandler();
   }
  else {
     requestHandler=new HttpGatewayHandler(vertx,httpGateway);
   }
-  httpGatewayServer=new HttpGatewayServer(vertx,websocketHandler,8080,requestHandler);
-  httpGatewayServer.setHost("localhost");
+  httpGatewayServer=new HttpGatewayServer(vertx,websocketHandler,18080,requestHandler);
+  httpGatewayServer.setHost("0.0.0.0");
   httpGatewayServer.init();
+  System.out.println("HttpGateway started");
+  configureEngine();
   return httpGatewayServer;
 }

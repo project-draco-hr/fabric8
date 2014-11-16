@@ -1,0 +1,8 @@
+{
+  String serviceKey=getServiceKey(service);
+  if (services.containsKey(serviceKey)) {
+    throw new PublishingException(Messages.i18n.format("InMemoryRegistry.ServiceAlreadyPublished"));
+  }
+  services.put(serviceKey,service);
+  save();
+}

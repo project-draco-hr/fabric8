@@ -1,0 +1,11 @@
+{
+  Map<String,Collection<String>> data=new HashMap<String,Collection<String>>();
+  Set<Map.Entry<String,IMappedServices>> entries=rules.entrySet();
+  for (  Map.Entry<String,IMappedServices> entry : entries) {
+    String key=entry.getKey();
+    IMappedServices value=entry.getValue();
+    Collection<String> serviceUrls=value.getServiceUrls();
+    data.put(key,serviceUrls);
+  }
+  return mapper.writeValueAsString(data);
+}

@@ -1,0 +1,27 @@
+{
+  String json=null;
+  if (getRegistryFile().exists()) {
+    json=IOUtils.toString(getRegistryFile().toURI(),"UTF-8");
+  }
+  if (json == null || json.length() == 0) {
+    getRegistryFile().createNewFile();
+    InputStream is=getClass().getResourceAsStream("RegistryInfo.json");
+    json=IOUtils.toString(is);
+    if (port != null)     json=json.replaceAll("\\$\\{port\\}",port);
+  }
+  RegistryInfo registryInfo=RegistryInfo.fromJSON(json);
+  for (  Service service : registryInfo.getServices()) {
+    services.put(getServiceKey(service),service);
+  }
+  for (  Application application : registryInfo.getApplications()) {
+    applications.put(getApplicationKey(application),application);
+    for (    Contract contract : application.getContracts()) {
+      for (      Policy policy : contract.getPolicies()) {
+        policy.setPolicyConfig(null);
+      }
+      String svcKey=getServiceKey(contract.getServiceOrgId(),contract.getServiceId(),contract.getServiceVersion());
+      ServiceContract sc=new ServiceContract(contract.getApiKey(),services.get(svcKey),application,contract.getPolicies());
+      contracts.put(contract.getApiKey(),sc);
+    }
+  }
+}

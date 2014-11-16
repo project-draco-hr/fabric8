@@ -1,0 +1,18 @@
+{
+  return new IServiceConnector(){
+    /** 
+ * @see org.overlord.apiman.rt.engine.IServiceConnector#invoke(org.overlord.apiman.rt.engine.beans.ServiceRequest,org.overlord.apiman.rt.engine.async.IAsyncHandler)
+ */
+    @Override public void invoke(    ServiceRequest serviceRequest,    IAsyncHandler<ServiceResponse> handler) throws ConnectorException {
+      try {
+        HttpServerRequest httpRequest=(HttpServerRequest)serviceRequest.getRawRequest();
+        httpRequest.headers().set(serviceRequest.getHeaders());
+        httpGatewayClient.execute(httpRequest,handler);
+      }
+ catch (      Throwable e) {
+        handler.handle(AsyncResultImpl.<ServiceResponse>create(e));
+      }
+    }
+  }
+;
+}

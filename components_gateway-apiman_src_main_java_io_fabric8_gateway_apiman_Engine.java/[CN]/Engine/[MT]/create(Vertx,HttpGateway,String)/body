@@ -1,0 +1,21 @@
+{
+  IEngineFactory factory=new DefaultEngineFactory(){
+    @Override protected IConnectorFactory createConnectorFactory(){
+      HttpGatewayClient httpGatewayClient=new HttpGatewayClient(vertx,httpGateway);
+      return new Fabric8ConnectorFactory(vertx,httpGatewayClient);
+    }
+    @Override protected IRegistry createRegistry(){
+      try {
+        FileBackedRegistry registry=new FileBackedRegistry();
+        registry.load(port);
+        return registry;
+      }
+ catch (      Exception e) {
+        throw new RuntimeException(e.getMessage(),e);
+      }
+    }
+  }
+;
+  IEngine apimanEngine=factory.createEngine();
+  return apimanEngine;
+}

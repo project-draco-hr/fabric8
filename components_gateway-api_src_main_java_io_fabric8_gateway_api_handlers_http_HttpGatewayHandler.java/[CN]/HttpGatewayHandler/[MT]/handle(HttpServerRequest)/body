@@ -1,0 +1,6 @@
+{
+  final long callStart=System.nanoTime();
+  httpGatewayClient.execute(request,null);
+  CallDetailRecord cdr=new CallDetailRecord(System.nanoTime() - callStart,request.response().getStatusMessage());
+  httpGateway.addCallDetailRecord(cdr);
+}
