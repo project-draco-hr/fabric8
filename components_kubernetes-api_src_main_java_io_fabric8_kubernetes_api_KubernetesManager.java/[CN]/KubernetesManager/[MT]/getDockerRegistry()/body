@@ -5,5 +5,12 @@
       answer="http://" + answer;
     }
   }
+  if (Strings.isNullOrBlank(answer)) {
+    String registryHost=System.getenv("REGISTRY_SERVICE_HOST");
+    String registryPort=System.getenv("REGISTRY_SERVICE_PORT");
+    if (Strings.isNotBlank(registryHost) && Strings.isNotBlank(registryPort)) {
+      return registryHost + ":" + registryPort;
+    }
+  }
   return answer;
 }
