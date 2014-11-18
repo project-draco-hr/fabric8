@@ -1,0 +1,17 @@
+{
+  serviceSelectors=httpGatewayConfig.getServiceSelectors();
+  LOG.info("activating http mapping rule " + httpGatewayConfig.get(HTTPGatewayConfig.SELECTOR) + " on "+ httpGatewayConfig.get(HTTPGatewayConfig.HTTP_PORT));
+  loadBalancerType=httpGatewayConfig.getLoadBalancerType();
+  uriTemplate=httpGatewayConfig.getUriTemplate();
+  enabledVersion=httpGatewayConfig.getEnabledVersiond();
+  reverseHeaders=httpGatewayConfig.isReverseHeaders();
+  LoadBalancer loadBalancer=LoadBalancers.createLoadBalancer(loadBalancerType,stickyLoadBalancerCacheSize);
+  LOG.info("activating http mapping selector: " + serviceSelectors + " with URI template: "+ uriTemplate+ " enabledVersion: "+ enabledVersion+ " with load balancer: "+ loadBalancer);
+  if (httpMappingRuleBase != null) {
+    gateway.removeMappingRuleConfiguration(httpMappingRuleBase);
+  }
+  httpMappingRuleBase=new HttpMappingRuleBase(new SimplePathTemplate(uriTemplate),gateway.getGatewayVersion(),enabledVersion,loadBalancer,reverseHeaders);
+  mappingTree=new HttpMappingKubeCache(httpMappingRuleBase,serviceSelectors);
+  mappingTree.init(httpGatewayConfig);
+  gateway.addMappingRuleConfiguration(httpMappingRuleBase);
+}
