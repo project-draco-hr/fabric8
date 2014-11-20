@@ -1,0 +1,21 @@
+{
+  Map<String,PodSchema> podMap=KubernetesHelper.getPodMap(kubernetes);
+  PodSchema pod=podMap.get(name);
+  if (pod != null) {
+    CurrentState currentState=pod.getCurrentState();
+    if (currentState != null) {
+      String protocol="http://";
+      Port port=KubernetesHelper.findContainerPortByNumberOrName(pod,portNumberOrName);
+      Integer containerPort=port != null ? port.getContainerPort() : null;
+      String podIP=currentState.getPodIP();
+      if (Strings.isNotBlank(podIP)) {
+        return addPortToIP(protocol + podIP,containerPort);
+      }
+      String host=currentState.getHost();
+      if (Strings.isNotBlank(host) && port != null) {
+        return addPortToIP(protocol + host,port.getHostPort());
+      }
+    }
+  }
+  return null;
+}

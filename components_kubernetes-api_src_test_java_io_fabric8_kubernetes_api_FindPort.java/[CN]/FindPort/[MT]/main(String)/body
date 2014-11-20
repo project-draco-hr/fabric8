@@ -1,0 +1,25 @@
+{
+  KubernetesFactory kubeFactory=new KubernetesFactory();
+  System.out.println("Connecting to kubernetes on: " + kubeFactory.getAddress());
+  try {
+    Kubernetes kube=kubeFactory.createKubernetes();
+    if (args.length < 2) {
+      System.out.println("Arguments: podId portNumberOrName");
+      return;
+    }
+    String podName=args[0];
+    String portNumberOrName=args[1];
+    KubernetesManager manager=new KubernetesManager();
+    String url=manager.getPodUrl(podName,portNumberOrName);
+    if (url == null) {
+      System.out.println("Could not find URL for pod: " + podName + " and port: "+ portNumberOrName);
+    }
+ else {
+      System.out.println("Found: " + url + " for pod: "+ podName+ " port: "+ portNumberOrName);
+    }
+  }
+ catch (  Exception e) {
+    System.out.println("FAILED: " + e);
+    e.printStackTrace();
+  }
+}
