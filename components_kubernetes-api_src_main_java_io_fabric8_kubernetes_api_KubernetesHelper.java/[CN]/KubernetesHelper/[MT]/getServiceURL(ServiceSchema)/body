@@ -1,0 +1,14 @@
+{
+  if (service != null) {
+    String portalIP=service.getPortalIP();
+    if (portalIP != null) {
+      Integer port=service.getPort();
+      if (port != null && port.intValue() > 0) {
+        portalIP+=":" + port;
+      }
+    }
+    String protocol="http://";
+    return protocol + portalIP;
+  }
+  return null;
+}
