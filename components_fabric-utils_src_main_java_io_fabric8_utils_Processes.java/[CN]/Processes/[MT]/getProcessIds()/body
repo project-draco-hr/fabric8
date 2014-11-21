@@ -1,15 +1,8 @@
 {
-  String commands="ps -e";
-  String message=commands;
-  LOG.debug("Executing commands: " + message);
-  List<Long> answer=new ArrayList<Long>();
-  try {
-    Process process=Runtime.getRuntime().exec(commands);
-    parseProcesses(process.getInputStream(),answer,message,Filters.<String>trueFilter());
-    processErrors(process.getErrorStream(),message);
+  if (isWindows) {
+    return getProcessIdsWindows();
   }
- catch (  Exception e) {
-    LOG.error("Failed to execute process " + "stdin" + " for " + message + ": "+ e,e);
+ else {
+    return getProcessIdsUnix();
   }
-  return answer;
 }

@@ -4,13 +4,18 @@
     while (true) {
       String line=reader.readLine();
       if (line == null)       break;
+      if (preFunction != null) {
+        line=preFunction.apply(line);
+      }
       if (lineFilter.matches(line)) {
         StringTokenizer tokenizer=new StringTokenizer(line);
-        if (tokenizer.hasMoreTokens()) {
+        boolean found=false;
+        while (tokenizer.hasMoreTokens() && !found) {
           String pidText=tokenizer.nextToken();
           try {
             long pid=Long.parseLong(pidText);
             answer.add(pid);
+            found=true;
           }
  catch (          NumberFormatException e) {
             LOG.debug("Could not parse pid " + pidText + " from command: "+ message);
