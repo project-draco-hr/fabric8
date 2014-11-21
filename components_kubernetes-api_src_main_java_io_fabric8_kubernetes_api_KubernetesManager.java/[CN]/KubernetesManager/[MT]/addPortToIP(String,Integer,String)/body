@@ -4,5 +4,10 @@
       return podIP + ":" + containerPort;
     }
   }
-  return podIP;
+  if (Strings.isNotBlank(portNumberOrName)) {
+    return podIP + ":" + portNumberOrName;
+  }
+ else {
+    return podIP;
+  }
 }

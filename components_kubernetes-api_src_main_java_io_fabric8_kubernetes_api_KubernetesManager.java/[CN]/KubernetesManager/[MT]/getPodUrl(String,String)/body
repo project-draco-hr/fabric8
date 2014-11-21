@@ -9,11 +9,11 @@
       Integer containerPort=port != null ? port.getContainerPort() : null;
       String podIP=currentState.getPodIP();
       if (Strings.isNotBlank(podIP)) {
-        return addPortToIP(protocol + podIP,containerPort);
+        return addPortToIP(protocol + podIP,containerPort,portNumberOrName);
       }
       String host=currentState.getHost();
-      if (Strings.isNotBlank(host) && port != null) {
-        return addPortToIP(protocol + host,port.getHostPort());
+      if (Strings.isNotBlank(host)) {
+        return addPortToIP(protocol + host,port != null ? port.getHostPort() : null,portNumberOrName);
       }
     }
   }
