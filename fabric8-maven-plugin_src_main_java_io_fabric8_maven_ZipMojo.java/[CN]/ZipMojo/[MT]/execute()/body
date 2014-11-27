@@ -65,6 +65,20 @@
       getLog().info("Choosing root project " + rootProject.getArtifactId() + " for generation of aggregated zip");
       generateAggregatedZip(rootProject,fabricZipGoalProjects,projectsWithSameParent);
     }
+    boolean isLastProject=getProject() == reactorProjects.get(reactorProjects.size() - 1);
+    getLog().info("Is last project? " + isLastProject + " -> "+ getProject().getName());
+    if (isLastProject) {
+      MavenProject zipRoot=reactorProjects.get(0);
+      projectsWithSameParent.clear();
+      for (      MavenProject zipGoalProject : fabricZipGoalProjects) {
+        MavenProject zipGoalProjectParent=zipGoalProject.getParent();
+        if (Objects.equal(zipRoot,zipGoalProjectParent)) {
+          projectsWithSameParent.add(zipGoalProject);
+        }
+      }
+      getLog().info("Re-Choosing root project " + zipRoot.getArtifactId() + " for generation of aggregated zip");
+      generateAggregatedZip(zipRoot,fabricZipGoalProjects,projectsWithSameParent);
+    }
   }
  catch (  MojoFailureException e) {
     throw e;
