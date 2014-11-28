@@ -22,13 +22,13 @@
     if (!dryRun) {
       if (data != null) {
         if (verbose) {
-          System.out.println("importing: " + key);
+          LOG.info("Importing: {}",key);
         }
         ZooKeeperUtils.setData(curator,key,data);
       }
     }
  else {
-      System.out.printf("Creating path \"%s\" with value \"%s\"\n",key,data);
+      LOG.debug("Creating path: {} with value: {}",key,data);
     }
   }
   if (delete) {

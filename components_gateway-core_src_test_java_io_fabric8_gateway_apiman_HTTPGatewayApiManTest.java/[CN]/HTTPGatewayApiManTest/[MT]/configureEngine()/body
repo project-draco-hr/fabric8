@@ -8,7 +8,7 @@
   service.setVersion("1.0");
   service.setOrganizationId("Kurt");
   String serviceJson=mapper.writeValueAsString(service);
-  System.out.println("Publishing HelloWorld Service");
+  LOG.info("Publishing HelloWorld Service");
   PutMethod method=new PutMethod("http://127.0.0.1:" + httpPort + "/rest/apimanager/api/services/?apikey=apiman-config-key");
   RequestEntity requestEntity=new StringRequestEntity(serviceJson,"application/json","UTF-8");
   method.setRequestEntity(requestEntity);
@@ -34,7 +34,7 @@
   goldContract.setServiceVersion(service.getVersion());
   clientApp.addContract(goldContract);
   String clientAppJson=mapper.writeValueAsString(clientApp);
-  System.out.println("Register clientApp Application");
+  LOG.info("Register clientApp Application");
   method=new PutMethod("http://127.0.0.1:" + httpPort + "/rest/apimanager/api/applications/?apikey=apiman-config-key");
   requestEntity=new StringRequestEntity(clientAppJson,"application/json","UTF-8");
   method.setRequestEntity(requestEntity);

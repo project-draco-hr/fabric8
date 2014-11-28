@@ -1,5 +1,5 @@
 {
-  System.out.println("Starting HttpGateway with a mapping of /hello/world to the Rest Application");
+  LOG.info("Starting HttpGateway with a mapping of /hello/world to the Rest Application");
   if (restApplication != null) {
     LoadBalancer loadBalancer=new RoundRobinLoadBalancer();
     ServiceDTO serviceDetails=new ServiceDTO();
@@ -50,7 +50,7 @@
   httpGatewayServer=new HttpGatewayServer(vertx,websocketHandler,18080,requestHandler);
   httpGatewayServer.setHost("0.0.0.0");
   httpGatewayServer.init();
-  System.out.println("HttpGateway started");
+  LOG.info("HttpGateway started");
   configureEngine();
   return httpGatewayServer;
 }

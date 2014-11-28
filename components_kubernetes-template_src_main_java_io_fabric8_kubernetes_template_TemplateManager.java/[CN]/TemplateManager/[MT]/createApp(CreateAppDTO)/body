@@ -20,7 +20,9 @@
   String outputName=dto.getName() + ".zip";
   Object[] params={dto.getBranch(),dto.getPath(),true,fileName,outputName};
   String[] signature={String.class.getName(),String.class.getName(),"boolean",String.class.getName(),String.class.getName()};
-  System.out.println("About to invoke " + GIT_FACADE_OBJECT_NAME + " uploadFile"+ Arrays.asList(params)+ " signature"+ Arrays.asList(signature));
+  if (LOG.isDebugEnabled()) {
+    LOG.debug("About to invoke " + GIT_FACADE_OBJECT_NAME + " uploadFile"+ Arrays.asList(params)+ " signature"+ Arrays.asList(signature));
+  }
   Object answer=beanServer.invoke(GIT_FACADE_OBJECT_NAME,"uploadFile",params,signature);
   if (answer != null) {
     return answer.toString();

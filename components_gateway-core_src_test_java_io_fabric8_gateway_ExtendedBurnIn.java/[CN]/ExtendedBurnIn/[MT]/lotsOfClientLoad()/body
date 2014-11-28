@@ -66,7 +66,7 @@
     Runtime.getRuntime().gc();
     Thread.sleep(100);
     long usedMB=((Long)((CompositeData)mBeanServer.getAttribute(new ObjectName("java.lang:type=Memory"),"HeapMemoryUsage")).get("used")).longValue() / (1024 * 1024);
-    System.out.println("Using " + usedMB + " MB of heap.");
+    LOG.info("Using {} MB of heap.",usedMB);
   }
   tracker.stop();
 }
