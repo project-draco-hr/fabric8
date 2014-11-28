@@ -1,0 +1,19 @@
+{
+  Map<String,String> map=new HashMap<>();
+  if (labels != null && !labels.isEmpty()) {
+    String[] elements=labels.split(",");
+    if (elements.length > 0) {
+      for (      String str : elements) {
+        String[] keyValue=str.split("=");
+        if (keyValue.length == 2) {
+          String key=keyValue[0];
+          String value=keyValue[1];
+          if (key != null && value != null) {
+            map.put(key.trim(),value.trim());
+          }
+        }
+      }
+    }
+  }
+  return map;
+}
