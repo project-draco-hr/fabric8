@@ -1,0 +1,31 @@
+{
+  List<MavenProject> answer=new ArrayList<>();
+  if (reactorProjects != null) {
+    List<MavenProject> pomZipProjects=new ArrayList<>();
+    for (    MavenProject reactorProject : reactorProjects) {
+      if (isPom(reactorProject)) {
+        pomZipProjects.add(reactorProject);
+      }
+      List<Plugin> buildPlugins=reactorProject.getBuildPlugins();
+      for (      Plugin buildPlugin : buildPlugins) {
+        String artifactId=buildPlugin.getArtifactId();
+        if ("fabric8-maven-plugin".equals(artifactId)) {
+          Object goals=buildPlugin.getGoals();
+          boolean hasZipGoal=goals != null && goals.toString().contains("zip");
+          List<PluginExecution> executions=buildPlugin.getExecutions();
+          for (          PluginExecution execution : executions) {
+            List<String> execGoals=execution.getGoals();
+            if (execGoals.contains("zip")) {
+              hasZipGoal=true;
+            }
+          }
+          getLog().debug("Project " + reactorProject.getArtifactId() + " has zip goal: "+ hasZipGoal);
+          if (hasZipGoal) {
+            answer.add(reactorProject);
+          }
+        }
+      }
+    }
+  }
+  return answer;
+}

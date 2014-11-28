@@ -1,0 +1,16 @@
+{
+  List<MavenProject> zipGoalProjects=fabricZipGoalProjects();
+  Collections.reverse(zipGoalProjects);
+  Set<MavenProject> doneParents=new HashSet<>();
+  for (  MavenProject zipProject : zipGoalProjects) {
+    MavenProject parent=zipProject.getParent();
+    if (parent == null) {
+      continue;
+    }
+    List<MavenProject> group=sameParent(parent,zipGoalProjects);
+    if (group.size() >= 2 && !doneParents.contains(parent)) {
+      doneParents.add(parent);
+      generateAggregatedZip(parent,reactorProjects,group);
+    }
+  }
+}
