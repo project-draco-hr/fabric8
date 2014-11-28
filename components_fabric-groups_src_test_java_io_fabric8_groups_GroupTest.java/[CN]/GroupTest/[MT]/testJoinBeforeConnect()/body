@@ -1,5 +1,5 @@
 {
-  int port=findFreePort();
+  int port=AvailablePortFinder.getNextAvailable(3010);
   CuratorFramework curator=CuratorFrameworkFactory.builder().connectString("localhost:" + port).retryPolicy(new RetryNTimes(10,100)).build();
   curator.start();
   Group<NodeState> group=new ZooKeeperGroup<NodeState>(curator,"/singletons/test" + System.currentTimeMillis(),NodeState.class);

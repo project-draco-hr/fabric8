@@ -1,5 +1,5 @@
 {
-  int port=findFreePort();
+  int port=AvailablePortFinder.getNextAvailable(3030);
   NIOServerCnxnFactory cnxnFactory=startZooKeeper(port);
   CuratorFramework curator=CuratorFrameworkFactory.builder().connectString("localhost:" + port).retryPolicy(new RetryNTimes(10,100)).build();
   curator.start();
