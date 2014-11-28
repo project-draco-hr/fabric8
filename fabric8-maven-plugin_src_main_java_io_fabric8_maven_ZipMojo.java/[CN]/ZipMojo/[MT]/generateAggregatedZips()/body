@@ -7,9 +7,13 @@
     if (parent == null) {
       continue;
     }
-    List<MavenProject> group=sameParent(parent,zipGoalProjects);
+    Set<MavenProject> group=sameParent(parent,zipGoalProjects);
     if (group.size() >= 2 && !doneParents.contains(parent)) {
       doneParents.add(parent);
+      Set<MavenProject> nested=sameParentTransitive(parent,zipGoalProjects);
+      if (!nested.isEmpty()) {
+        group.addAll(nested);
+      }
       generateAggregatedZip(parent,reactorProjects,group);
     }
   }
