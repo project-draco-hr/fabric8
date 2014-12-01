@@ -6,18 +6,7 @@
       JsonNode kindNode=tree.get("kind");
       if (kindNode != null) {
         String kind=kindNode.asText();
-        if (Objects.equal("Pod",kind)) {
-          return objectMapper.reader(PodSchema.class).readValue(json);
-        }
- else         if (Objects.equal("ReplicationController",kind)) {
-          return objectMapper.reader(ReplicationControllerSchema.class).readValue(json);
-        }
- else         if (Objects.equal("Service",kind)) {
-          return objectMapper.reader(ServiceSchema.class).readValue(json);
-        }
- else {
-          return tree;
-        }
+        return loadEntity(json,kind,tree);
       }
  else {
         LOG.warn("No JSON type for: " + tree);

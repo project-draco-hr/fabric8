@@ -1,0 +1,8 @@
+{
+  CreateAppDTO dto=createAppDto(3);
+  File jsonFile=generateJsonFile("controllerOnly",dto);
+  List<Entity> entities=generateTemplateAndLoadEntities(jsonFile);
+  assertEquals("Entities size",1,entities.size());
+  Entity entity=entities.get(0);
+  assertGeneratedReplicationController(entity,dto);
+}

@@ -1,0 +1,20 @@
+{
+  if (Objects.equal("Pod",kind)) {
+    return objectMapper.reader(PodSchema.class).readValue(json);
+  }
+ else   if (Objects.equal("ReplicationController",kind)) {
+    return objectMapper.reader(ReplicationControllerSchema.class).readValue(json);
+  }
+ else   if (Objects.equal("Service",kind)) {
+    return objectMapper.reader(ServiceSchema.class).readValue(json);
+  }
+ else   if (Objects.equal("Config",kind)) {
+    return objectMapper.reader(Config.class).readValue(json);
+  }
+ else   if (Objects.equal("Template",kind)) {
+    return objectMapper.reader(Template.class).readValue(json);
+  }
+ else {
+    return defaultValue;
+  }
+}

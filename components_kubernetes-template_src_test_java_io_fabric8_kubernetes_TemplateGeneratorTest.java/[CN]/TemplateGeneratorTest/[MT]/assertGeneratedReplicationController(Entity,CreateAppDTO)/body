@@ -1,0 +1,8 @@
+{
+  assertTrue("First entity should be a ReplicationControllerSchema but was " + entity,entity instanceof ReplicationControllerSchema);
+  ReplicationControllerSchema rc=(ReplicationControllerSchema)entity;
+  assertThat(rc.getLabels()).isEqualTo(dto.getLabels());
+  ControllerDesiredState desiredState=rc.getDesiredState();
+  assertThat(desiredState.getReplicas()).isEqualTo(dto.getReplicaCount());
+  assertThat(desiredState.getReplicaSelector()).isEqualTo(dto.getLabels());
+}

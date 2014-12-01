@@ -1,0 +1,23 @@
+{
+  String serviceName="my-service";
+  Integer servicePort=80;
+  Integer serviceContainerPort=8080;
+  CreateAppDTO dto=createAppDto(4);
+  dto.setServiceName(serviceName);
+  dto.setServicePort(servicePort);
+  dto.setServiceContainerPort(serviceContainerPort);
+  File jsonFile=generateJsonFile("controllerAnd",dto);
+  List<Entity> entities=generateTemplateAndLoadEntities(jsonFile);
+  assertEquals("Entities size",2,entities.size());
+  Entity serviceEntity=entities.get(0);
+  assertThat(serviceEntity).isInstanceOf(ServiceSchema.class);
+  ServiceSchema service=(ServiceSchema)serviceEntity;
+  assertEquals("serviceName",serviceName,service.getId());
+  assertEquals("servicePort",servicePort,service.getPort());
+  IntOrString containerPortNameOrNumber=service.getContainerPort();
+  assertNotNull("containerPortNameOrNumber",containerPortNameOrNumber);
+  assertEquals("serviceContainerPort",serviceContainerPort,containerPortNameOrNumber.getIntValue());
+  assertEquals("selector",dto.getLabels(),service.getSelector());
+  Entity entity=entities.get(1);
+  assertGeneratedReplicationController(entity,dto);
+}
