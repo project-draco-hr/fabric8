@@ -1,0 +1,13 @@
+{
+  MavenProject project=getProject();
+  String pullPolicy=imagePullPolicy;
+  if (project != null) {
+    String version=project.getVersion();
+    if (Strings.isNullOrBlank(pullPolicy)) {
+      if (version != null && version.endsWith("SNAPSHOT")) {
+        pullPolicy="PullAlways";
+      }
+    }
+  }
+  return pullPolicy;
+}
