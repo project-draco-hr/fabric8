@@ -4,6 +4,7 @@
     json=IOUtils.toString(getRegistryFile().toURI(),"UTF-8");
   }
   if (json == null || json.length() == 0) {
+    LOG.info(registryFile.getAbsolutePath() + " has no content which can happen on first use." + " Running ApiMan bootstrap process");
     getRegistryFile().createNewFile();
     InputStream is=getClass().getResourceAsStream("RegistryInfo.json");
     json=IOUtils.toString(is);
