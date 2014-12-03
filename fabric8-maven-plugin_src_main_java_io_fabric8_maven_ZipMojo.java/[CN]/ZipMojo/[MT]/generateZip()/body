@@ -4,8 +4,7 @@
     appBuildDir=new File(buildDir,pathInZip);
   }
   appBuildDir.mkdirs();
-  boolean hasConfigDir=appConfigDir.isDirectory();
-  if (hasConfigDir) {
+  if (hasConfigDir()) {
     copyAppConfigFiles(appBuildDir,appConfigDir);
   }
  else {
@@ -44,7 +43,7 @@
       }
     }
   }
-  if (hasConfigDir || !ignoreProject) {
+  if (hasConfigDir() || !ignoreProject) {
     if (includeReadMe) {
       copyReadMe(project.getFile().getParentFile(),appBuildDir);
     }

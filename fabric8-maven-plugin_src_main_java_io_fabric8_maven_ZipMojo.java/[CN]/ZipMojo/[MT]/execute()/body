@@ -3,8 +3,7 @@
     if (isIgnoreProject()) {
       return;
     }
-    boolean isPomProject=isPom(getProject());
-    if (!isPomProject) {
+    if (shouldGenerateForThisProject()) {
       generateZip();
     }
     boolean isLastProject=getProject() == reactorProjects.get(reactorProjects.size() - 1);
