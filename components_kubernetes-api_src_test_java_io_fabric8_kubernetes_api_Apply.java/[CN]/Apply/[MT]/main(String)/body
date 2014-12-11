@@ -1,0 +1,23 @@
+{
+  if (args.length < 1) {
+    System.out.println("Usage jsonFileToApply");
+    return;
+  }
+  try {
+    KubernetesClient kube=new KubernetesClient();
+    System.out.println("Connecting to kubernetes on: " + kube.getAddress());
+    File file=new File(args[0]);
+    System.out.println("Applying file: " + file);
+    if (!file.exists() || !file.isFile()) {
+      System.out.println("File does not exist! " + file.getAbsolutePath());
+      return;
+    }
+    Controller controller=new Controller(kube);
+    controller.applyJson(file);
+    System.out.println("Applied!");
+  }
+ catch (  Exception e) {
+    System.out.println("FAILED: " + e);
+    e.printStackTrace();
+  }
+}
