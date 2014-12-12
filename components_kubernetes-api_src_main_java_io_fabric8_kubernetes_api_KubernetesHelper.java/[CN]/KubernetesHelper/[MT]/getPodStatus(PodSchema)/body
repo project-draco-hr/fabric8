@@ -1,0 +1,16 @@
+{
+  String text=getPodStatusText(pod);
+  if (Strings.isNotBlank(text)) {
+    text=text.toLowerCase();
+    if (text.startsWith("run")) {
+      return PodStatus.OK;
+    }
+ else     if (text.startsWith("wait")) {
+      return PodStatus.WAIT;
+    }
+ else {
+      return PodStatus.ERROR;
+    }
+  }
+  return PodStatus.WAIT;
+}

@@ -1,0 +1,14 @@
+{
+  List<AppSummaryDTO> answer=new ArrayList<>();
+  AppViewSnapshot snapshot=getSnapshot();
+  if (snapshot != null) {
+    Collection<AppViewDetails> apps=snapshot.getApps().values();
+    for (    AppViewDetails app : apps) {
+      AppSummaryDTO summary=app.getSummary();
+      if (summary != null) {
+        answer.add(summary);
+      }
+    }
+  }
+  return answer;
+}

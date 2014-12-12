@@ -1,0 +1,21 @@
+{
+  Map<String,ServiceSchema> servicesMap=KubernetesHelper.getServiceMap(kubernetes);
+  Map<String,ReplicationControllerSchema> controllerMap=KubernetesHelper.getReplicationControllerMap(kubernetes);
+  Map<String,PodSchema> podMap=KubernetesHelper.getPodMap(kubernetes);
+  AppViewSnapshot snapshot=new AppViewSnapshot(servicesMap,controllerMap,podMap);
+  for (  ServiceSchema service : servicesMap.values()) {
+    String appPath=getAppPath(service.getId());
+    if (appPath != null) {
+      AppViewDetails dto=snapshot.getOrCreateAppView(appPath);
+      dto.addService(service);
+    }
+  }
+  for (  ReplicationControllerSchema controller : controllerMap.values()) {
+    String appPath=getAppPath(controller.getId());
+    if (appPath != null) {
+      AppViewDetails dto=snapshot.getOrCreateAppView(appPath);
+      dto.addController(controller);
+    }
+  }
+  return snapshot;
+}

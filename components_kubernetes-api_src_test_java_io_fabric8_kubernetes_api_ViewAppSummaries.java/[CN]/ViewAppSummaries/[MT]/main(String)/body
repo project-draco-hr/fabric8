@@ -1,0 +1,75 @@
+{
+  KubernetesService kubeService=new KubernetesService();
+  AppView appView=new AppView();
+  GitFacade git=new GitFacade();
+  try {
+    boolean testTimer=true;
+    String fabric8Version=getFabric8Version();
+    kubeService.init();
+    git.setInitialImportURLs("mvn:io.fabric8.quickstarts/fabric8-quickstarts-parent/" + fabric8Version + "/zip/app,mvn:io.fabric8.jube.images.fabric8/apps/"+ fabric8Version+ "/zip/app");
+    git.setCloneRemoteRepoOnStartup(false);
+    File configDir=new File(getBasedir() + "/target/hawtioConfig");
+    configDir.mkdirs();
+    git.setConfigDirectory(configDir);
+    git.init();
+    System.out.println("Created testing hawtio wiki at: " + configDir.getAbsolutePath());
+    appView.init();
+    Thread.sleep(5000);
+    AppViewSnapshot snapshot=null;
+    if (testTimer) {
+      for (int i=0; i < 20; i++) {
+        snapshot=appView.getSnapshot();
+        if (snapshot != null) {
+          break;
+        }
+ else {
+          try {
+            Thread.sleep(1000);
+          }
+ catch (          InterruptedException e) {
+          }
+        }
+      }
+    }
+ else {
+      snapshot=appView.createSnapshot();
+    }
+    System.out.println("Snapshot: " + snapshot);
+    if (snapshot == null) {
+      return;
+    }
+    Map<String,AppViewDetails> apps=snapshot.getApps();
+    System.out.println("Has running apps: " + apps.keySet());
+    List<AppSummaryDTO> appSummaries=appView.getAppSummaries();
+    for (    AppSummaryDTO appSummary : appSummaries) {
+      System.out.println("app: " + appSummary);
+    }
+  }
+ catch (  Exception e) {
+    System.out.println("FAILED: " + e);
+    e.printStackTrace();
+  }
+ finally {
+    try {
+      appView.destroy();
+    }
+ catch (    Exception e) {
+      System.out.println("FAILED: " + e);
+      e.printStackTrace();
+    }
+    try {
+      git.destroy();
+    }
+ catch (    Exception e) {
+      System.out.println("FAILED: " + e);
+      e.printStackTrace();
+    }
+    try {
+      kubeService.destroy();
+    }
+ catch (    Exception e) {
+      System.out.println("FAILED: " + e);
+      e.printStackTrace();
+    }
+  }
+}

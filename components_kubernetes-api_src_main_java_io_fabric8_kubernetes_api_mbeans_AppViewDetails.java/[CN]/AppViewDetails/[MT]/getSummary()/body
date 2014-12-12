@@ -1,0 +1,13 @@
+{
+  AppSummaryDTO answer=new AppSummaryDTO(appPath);
+  for (  ServiceSchema service : getServices().values()) {
+    answer.addServiceSummary(new AppServiceSummaryDTO(service));
+  }
+  for (  ReplicationControllerSchema controller : getControllers().values()) {
+    answer.addReplicationControllerSummary(new AppReplicationControllerSummaryDTO(controller));
+  }
+  for (  PodSchema pod : getPods().values()) {
+    answer.addPodSummary(new AppPodSummaryDTO(pod));
+  }
+  return answer;
+}

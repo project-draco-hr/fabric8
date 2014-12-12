@@ -1,0 +1,27 @@
+{
+  if (Strings.isNullOrBlank(serviceId)) {
+    return null;
+  }
+  MBeanServer beanServer=getMBeanServer();
+  Objects.notNull(beanServer,"MBeanServer");
+  if (!beanServer.isRegistered(KUBERNETES_OBJECT_NAME)) {
+    LOG.warn("No MBean is available for: " + KUBERNETES_OBJECT_NAME);
+    return null;
+  }
+  String branch="master";
+  Object[] params={branch,serviceId};
+  String[] signature={String.class.getName(),String.class.getName()};
+  if (LOG.isDebugEnabled()) {
+    LOG.debug("About to invoke " + KUBERNETES_OBJECT_NAME + " appPath"+ Arrays.asList(params)+ " signature"+ Arrays.asList(signature));
+  }
+  try {
+    Object answer=beanServer.invoke(KUBERNETES_OBJECT_NAME,"appPath",params,signature);
+    if (answer != null) {
+      return answer.toString();
+    }
+  }
+ catch (  Exception e) {
+    LOG.warn("Failed to invoke " + KUBERNETES_OBJECT_NAME + " appPath"+ Arrays.asList(params)+ ". "+ e,e);
+  }
+  return null;
+}

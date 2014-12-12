@@ -1,0 +1,15 @@
+{
+  PodTemplateDesiredState podTemplateDesiredState=getPodTemplateDesiredState(replicationController);
+  if (podTemplateDesiredState == null) {
+    LOG.warn("Cannot instantiate replication controller: " + replicationController.getId() + " due to missing PodTemplate.DesiredState!");
+  }
+ else {
+    ControllerDesiredState desiredState=replicationController.getDesiredState();
+    if (desiredState != null) {
+      Map<String,String> replicaSelector=desiredState.getReplicaSelector();
+      Filter<PodSchema> podFilter=KubernetesHelper.createPodFilter(replicaSelector);
+      return Filters.filter(pods,podFilter);
+    }
+  }
+  return Collections.EMPTY_LIST;
+}
