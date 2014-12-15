@@ -1,4 +1,12 @@
 {
   configuration.setProperty("CamelJolokiaUrl",url.getValue());
-  return Results.success("Connected to " + url.getValue());
+  JolokiaCamelController controller=new DefaultJolokiaCamelController();
+  controller.connect(url.getValue(),null,null);
+  boolean ok=controller.ping();
+  if (ok) {
+    return Results.success("Connected to " + url.getValue());
+  }
+ else {
+    return Results.fail("Error connecting to " + url.getValue());
+  }
 }

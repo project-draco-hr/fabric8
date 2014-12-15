@@ -3,7 +3,9 @@
   if (url == null) {
     return Results.fail("Not connected to remote jolokia agent. Use camel-connect command first");
   }
-  org.apache.camel.commands.ContextListCommand command=new org.apache.camel.commands.ContextListCommand();
+  boolean val="true".equals(verbose.getValue());
+  org.apache.camel.commands.ContextInfoCommand command=new org.apache.camel.commands.ContextInfoCommand(name.getValue(),val);
+  command.setStringEscape(new NoopStringEscape());
   command.execute(getController(),getOut(),getOut());
   return Results.success();
 }
