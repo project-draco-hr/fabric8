@@ -1,4 +1,10 @@
 {
   this.id=controller.getId();
   this.namespace=controller.getNamespace();
+  this.labels=controller.getLabels();
+  ControllerDesiredState desiredState=controller.getDesiredState();
+  if (desiredState != null) {
+    this.replicas=desiredState.getReplicas();
+    this.replicaSelector=desiredState.getReplicaSelector();
+  }
 }
