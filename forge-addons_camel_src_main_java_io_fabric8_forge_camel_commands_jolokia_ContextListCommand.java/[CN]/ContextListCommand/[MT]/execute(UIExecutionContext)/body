@@ -1,0 +1,11 @@
+{
+  String url=getJolokiaUrl();
+  if (url == null) {
+    return Results.fail("Not connected to remote jolokia agent. Use camel-connect command first");
+  }
+  RemoteCamelController controller=new JolokiaCamelController();
+  controller.connect(url,null,null);
+  org.apache.camel.commands.ContextListCommand command=new org.apache.camel.commands.ContextListCommand();
+  command.execute(controller,getOut(),getOut());
+  return Results.success();
+}
