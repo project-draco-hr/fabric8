@@ -1,10 +1,12 @@
 {
   List<String> answer=new ArrayList<>();
   try {
-    List<Map<String,String>> contexts=controller.getRoutes(null);
+    List<Map<String,String>> contexts=controller.getRoutes(name.getValue());
     for (    Map<String,String> row : contexts) {
       final String name=row.get("routeId");
-      answer.add(name);
+      if (value == null || name.startsWith(value)) {
+        answer.add(name);
+      }
     }
   }
  catch (  Exception e) {
