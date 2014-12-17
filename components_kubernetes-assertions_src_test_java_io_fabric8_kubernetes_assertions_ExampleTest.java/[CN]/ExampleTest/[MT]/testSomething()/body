@@ -1,0 +1,29 @@
+{
+  String expectedId="abc";
+  Map<String,String> expectedLabels=new HashMap<>();
+  expectedLabels.put("foo","bar");
+  PodSchema pod=new PodSchema();
+  pod.setId(expectedId);
+  pod.setLabels(expectedLabels);
+  assertThat(pod).hasId(expectedId).hasLabels(expectedLabels);
+  AssertionError error=null;
+  try {
+    assertThat(pod).hasId("cheese");
+  }
+ catch (  AssertionError e) {
+    error=e;
+  }
+  assertThat(error).isNotNull();
+  System.out.println("Caught expected " + error.getMessage());
+  error=null;
+  try {
+    Map<String,String> wrongLabels=new HashMap<>();
+    wrongLabels.put("bar","whatnot");
+    assertThat(pod).hasLabels(wrongLabels);
+  }
+ catch (  AssertionError e) {
+    error=e;
+  }
+  assertThat(error).isNotNull();
+  System.out.println("Caught expected " + error.getMessage());
+}
