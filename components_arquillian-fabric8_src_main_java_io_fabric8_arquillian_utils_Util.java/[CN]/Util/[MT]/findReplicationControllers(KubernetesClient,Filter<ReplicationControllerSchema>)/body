@@ -1,0 +1,9 @@
+{
+  List<ReplicationControllerSchema> replicationControllers=new ArrayList<>();
+  for (  ReplicationControllerSchema replicationController : client.getReplicationControllers().getItems()) {
+    if (filter.matches(replicationController)) {
+      replicationControllers.add(replicationController);
+    }
+  }
+  return replicationControllers;
+}

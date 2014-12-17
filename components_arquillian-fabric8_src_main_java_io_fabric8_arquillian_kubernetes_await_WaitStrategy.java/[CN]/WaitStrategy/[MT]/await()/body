@@ -1,0 +1,17 @@
+{
+  long start=System.currentTimeMillis();
+  while (!Thread.interrupted() && System.currentTimeMillis() - start <= timeout) {
+    try {
+      if (condition.call()) {
+        return true;
+      }
+ else {
+        Thread.sleep(pollInterval);
+      }
+    }
+ catch (    InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
+  }
+  return false;
+}

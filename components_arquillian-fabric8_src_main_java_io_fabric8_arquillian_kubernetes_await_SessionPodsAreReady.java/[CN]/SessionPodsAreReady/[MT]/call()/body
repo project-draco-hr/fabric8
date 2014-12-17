@@ -1,0 +1,10 @@
+{
+  boolean result=true;
+  Map<String,String> labels=Collections.singletonMap(Constants.ARQ_KEY,session.getId());
+  Filter<PodSchema> podFilter=KubernetesHelper.createPodFilter(labels);
+  List<PodSchema> pods=Util.findPods(kubernetesClient,podFilter);
+  for (  PodSchema pod : pods) {
+    result=result && Constants.POD_STATUS_RUNNING.equalsIgnoreCase(pod.getCurrentState().getStatus());
+  }
+  return result;
+}

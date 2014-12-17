@@ -1,4 +1,5 @@
 {
+  LOGGER.info("Starting......");
   try {
     Object dto=loadJson(readAsString(configuration.getConfigUrl()));
     if (dto instanceof Config) {
@@ -27,6 +28,11 @@
           controller.applyReplicationController(replicationController,event.getSession().getId());
         }
       }
+    }
+    Callable<Boolean> sessionPodsReady=new SessionPodsAreReady(event.getSession(),client);
+    WaitStrategy waitStrategy=new WaitStrategy(sessionPodsReady,configuration.getTimeout(),configuration.getPollInterval());
+    if (!waitStrategy.await()) {
+      throw new TimeoutException("Timed out waiting for pods to become ready");
     }
   }
  catch (  Exception e) {

@@ -13,6 +13,12 @@
  else {
       configuration.configUrl=Configuration.class.getResource("/" + Constants.DEFAULT_CONFIG_FILE_NAME);
     }
+    if (map.containsKey(Constants.TIMEOUT)) {
+      configuration.timeout=Long.parseLong(map.get(Constants.TIMEOUT));
+    }
+    if (map.containsKey(Constants.POLL_INTERVAL)) {
+      configuration.timeout=Long.parseLong(map.get(Constants.POLL_INTERVAL));
+    }
   }
  catch (  Throwable t) {
     throw new RuntimeException(t);
