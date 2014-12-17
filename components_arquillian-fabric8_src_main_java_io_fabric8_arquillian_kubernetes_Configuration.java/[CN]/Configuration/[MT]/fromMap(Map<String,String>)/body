@@ -1,0 +1,15 @@
+{
+  Configuration configuration=new Configuration();
+  try {
+    if (map.containsKey(Constants.MASTER_URL)) {
+      configuration.masterUrl=map.get(Constants.MASTER_URL);
+    }
+    if (map.containsKey(Constants.CONFIG_URL)) {
+      configuration.configUrl=new URL(map.get(Constants.CONFIG_URL));
+    }
+  }
+ catch (  Throwable t) {
+    throw new RuntimeException(t);
+  }
+  return configuration;
+}

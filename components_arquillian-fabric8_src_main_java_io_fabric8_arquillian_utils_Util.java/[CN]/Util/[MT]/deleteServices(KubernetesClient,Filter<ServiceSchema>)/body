@@ -1,0 +1,16 @@
+{
+  List<Throwable> errors=new ArrayList<>();
+  for (  ServiceSchema service : client.getServices().getItems()) {
+    if (filter.matches(service)) {
+      try {
+        client.deleteService(service.getId());
+      }
+ catch (      Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+  if (!errors.isEmpty()) {
+    throw new MultiException("Error while deleting services",errors);
+  }
+}

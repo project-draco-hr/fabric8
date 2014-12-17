@@ -1,0 +1,28 @@
+{
+  Map<String,String> labels=Collections.singletonMap(Constants.ARQ_KEY,session.getId());
+  Filter<PodSchema> podFilter=KubernetesHelper.createPodFilter(labels);
+  Filter<ServiceSchema> serviceFilter=KubernetesHelper.createServiceFilter(labels);
+  Filter<ReplicationControllerSchema> replicationControllerFilter=KubernetesHelper.createReplicationControllerFilter(labels);
+  List<Throwable> errors=new ArrayList<>();
+  try {
+    deleteReplicationControllers(client,replicationControllerFilter);
+  }
+ catch (  MultiException e) {
+    errors.addAll(Arrays.asList(e.getCauses()));
+  }
+  try {
+    deletePods(client,podFilter);
+  }
+ catch (  MultiException e) {
+    errors.addAll(Arrays.asList(e.getCauses()));
+  }
+  try {
+    deleteServices(client,serviceFilter);
+  }
+ catch (  MultiException e) {
+    errors.addAll(Arrays.asList(e.getCauses()));
+  }
+  if (!errors.isEmpty()) {
+    throw new MultiException("Error while cleaning up session.",errors);
+  }
+}
