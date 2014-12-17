@@ -3,11 +3,11 @@
   if (url == null) {
     return Results.fail("Not connected to remote jolokia agent. Use camel-connect command first");
   }
-  JolokiaCamelController controller=new DefaultJolokiaCamelController();
-  controller.connect(url,null,null);
+  String username=configuration.getString("CamelJolokiaUsername");
+  JolokiaCamelController controller=getController();
   boolean ok=controller.ping();
   if (ok) {
-    return Results.success("Connected to " + url);
+    return Results.success("Connected to " + url + (username != null ? " using " + username : ""));
   }
  else {
     return Results.fail("Error connecting to " + url);
