@@ -1,0 +1,16 @@
+{
+  AssertionError answer=null;
+  try {
+    block.invoke();
+  }
+ catch (  AssertionError e) {
+    answer=e;
+    System.out.println("Caught expected assertion failure: " + e);
+  }
+catch (  Exception e) {
+    throw e;
+  }
+  assertThat(answer).isNotNull();
+  System.out.println("Caught expected assertion failure: " + answer);
+  return answer;
+}
