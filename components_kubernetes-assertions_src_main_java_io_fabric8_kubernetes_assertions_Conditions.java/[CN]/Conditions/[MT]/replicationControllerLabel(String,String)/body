@@ -1,0 +1,11 @@
+{
+  return new Condition<ReplicationControllerSchema>(){
+    @Override public String toString(){
+      return "replicationControllerLabel(" + key + " = "+ value+ ")";
+    }
+    @Override public boolean matches(    ReplicationControllerSchema replicationControllerSchema){
+      return matchesLabel(replicationControllerSchema.getLabels(),key,value);
+    }
+  }
+;
+}

@@ -1,0 +1,11 @@
+{
+  return new Condition<PodSchema>(){
+    @Override public String toString(){
+      return "podLabel(" + key + " = "+ value+ ")";
+    }
+    @Override public boolean matches(    PodSchema pod){
+      return matchesLabel(pod.getLabels(),key,value);
+    }
+  }
+;
+}
