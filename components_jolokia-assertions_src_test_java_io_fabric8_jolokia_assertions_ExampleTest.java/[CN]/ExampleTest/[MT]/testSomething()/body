@@ -1,0 +1,9 @@
+{
+  assertThat(client).doubleAttribute("java.lang:type=OperatingSystem","SystemCpuLoad").isGreaterThanOrEqualTo(0.0);
+  assertAssertionError(new Block(){
+    @Override public void invoke() throws Exception {
+      assertThat(client).doubleAttribute("java.lang:type=OperatingSystem","SystemCpuLoad").isLessThan(-2000.0);
+    }
+  }
+);
+}
