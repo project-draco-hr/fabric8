@@ -10,7 +10,9 @@
 catch (  Exception e) {
     throw e;
   }
-  assertThat(answer).isNotNull();
-  System.out.println("Caught expected assertion failure: " + answer);
+  if (answer == null) {
+    throw new AssertionError("Expected an assertion error from block: " + block);
+  }
+  LOG.info("Caught expected assertion failure: " + answer);
   return answer;
 }

@@ -1,0 +1,22 @@
+{
+  try {
+    final KubernetesClient client=new KubernetesClient();
+    System.out.println("About to run test on: " + client.getAddress());
+    Map<String,String> consoleLabels=new HashMap<>();
+    consoleLabels.put("component","fabric8Console");
+    assertThat(client).pods().extracting("labels").contains(consoleLabels);
+    assertAssertionError(new Block(){
+      @Override public void invoke() throws Exception {
+        Map<String,String> badLabels=new HashMap<>();
+        badLabels.put("component","doesNotExist");
+        assertThat(client).pods().extracting("labels").contains(badLabels);
+      }
+    }
+);
+    System.out.println("Done!");
+  }
+ catch (  Throwable e) {
+    System.out.println("Caught: " + e);
+    e.printStackTrace();
+  }
+}
