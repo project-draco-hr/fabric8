@@ -1,0 +1,11 @@
+{
+  return new Condition<PodSchema>(){
+    @Override public String toString(){
+      return "podStatus(" + status + ")";
+    }
+    @Override public boolean matches(    PodSchema pod){
+      return Objects.equals(status,KubernetesHelper.getPodStatus(pod));
+    }
+  }
+;
+}

@@ -1,0 +1,12 @@
+{
+  assertThat(podId).isNotNull();
+  PodSchema pod=null;
+  try {
+    pod=client.getPod(podId);
+  }
+ catch (  NotFoundException e) {
+    fail("Could not find pod for '" + podId + "'");
+  }
+  assertThat(pod).isNotNull();
+  return pod;
+}

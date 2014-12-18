@@ -1,0 +1,12 @@
+{
+  assertThat(replicationControllerId).isNotNull();
+  ReplicationControllerSchema replicationController=null;
+  try {
+    replicationController=client.getReplicationController(replicationControllerId);
+  }
+ catch (  NotFoundException e) {
+    fail("Could not find replicationController for '" + replicationControllerId + "'");
+  }
+  assertThat(replicationController).isNotNull();
+  return replicationController;
+}
