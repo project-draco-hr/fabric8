@@ -1,5 +1,5 @@
 {
-  int httpPort=httpGatewayServer.getPort();
+  int restPort=httpGatewayServer.getPort() - 1;
   HttpClient httpClient=new HttpClient();
   ObjectMapper mapper=new ObjectMapper();
   Service service=new Service();
@@ -9,7 +9,7 @@
   service.setOrganizationId("Kurt");
   String serviceJson=mapper.writeValueAsString(service);
   LOG.info("Publishing HelloWorld Service");
-  PutMethod method=new PutMethod("http://127.0.0.1:" + httpPort + "/rest/apimanager/api/services/?apikey=apiman-config-key");
+  PutMethod method=new PutMethod("http://127.0.0.1:" + restPort + "/rest/apimanager/api/services/?apikey=apiman-config-key");
   RequestEntity requestEntity=new StringRequestEntity(serviceJson,"application/json","UTF-8");
   method.setRequestEntity(requestEntity);
   httpClient.executeMethod(method);
@@ -35,7 +35,7 @@
   clientApp.addContract(goldContract);
   String clientAppJson=mapper.writeValueAsString(clientApp);
   LOG.info("Register clientApp Application");
-  method=new PutMethod("http://127.0.0.1:" + httpPort + "/rest/apimanager/api/applications/?apikey=apiman-config-key");
+  method=new PutMethod("http://127.0.0.1:" + restPort + "/rest/apimanager/api/applications/?apikey=apiman-config-key");
   requestEntity=new StringRequestEntity(clientAppJson,"application/json","UTF-8");
   method.setRequestEntity(requestEntity);
   httpClient.executeMethod(method);

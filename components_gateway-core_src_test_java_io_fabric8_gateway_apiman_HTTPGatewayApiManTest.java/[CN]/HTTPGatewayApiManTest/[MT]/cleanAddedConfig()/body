@@ -1,10 +1,10 @@
 {
-  int httpPort=httpGatewayServer.getPort();
+  int restPort=httpGatewayServer.getPort() - 1;
   HttpClient httpClient=new HttpClient();
   LOG.info("Unregister clientApp Application");
-  DeleteMethod method=new DeleteMethod("http://127.0.0.1:" + httpPort + "/rest/apimanager/api/applications/?apikey=apiman-config-key&organizationId=ClientOrg&applicationId=clientApp&version=1.0");
+  DeleteMethod method=new DeleteMethod("http://127.0.0.1:" + restPort + "/rest/apimanager/api/applications/?apikey=apiman-config-key&organizationId=ClientOrg&applicationId=clientApp&version=1.0");
   httpClient.executeMethod(method);
   LOG.info("Retire Hello World Service");
-  method=new DeleteMethod("http://127.0.0.1:" + httpPort + "/rest/apimanager/api/services/?apikey=apiman-config-key&organizationId=Kurt&serviceId=HelloWorld&version=1.0");
+  method=new DeleteMethod("http://127.0.0.1:" + restPort + "/rest/apimanager/api/services/?apikey=apiman-config-key&organizationId=Kurt&serviceId=HelloWorld&version=1.0");
   httpClient.executeMethod(method);
 }

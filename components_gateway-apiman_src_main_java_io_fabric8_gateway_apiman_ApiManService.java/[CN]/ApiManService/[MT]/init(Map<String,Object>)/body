@@ -3,5 +3,9 @@
   httpGateway=(HttpGateway)config.get(ApiManagerService.HTTP_GATEWAY);
   String port=(String)config.get(ApiManagerService.PORT);
   engine=Engine.create(vertx,httpGateway,port);
-  dispatcher=new RestDispatcher();
+  engineRestServer=vertx.createHttpServer();
+  int portRest=Integer.valueOf(port) - 1;
+  if (config.containsKey(ApiManagerService.PORT_REST))   portRest=(Integer)config.get(ApiManagerService.PORT_REST);
+  engineRestServer.requestHandler(new ApiManRestRequestHandler(engine));
+  engineRestServer.listen(portRest,"localhost");
 }

@@ -1,18 +1,40 @@
 {
-  return new IServiceConnector(){
-    /** 
- * @see org.overlord.apiman.rt.engine.IServiceConnector#invoke(org.overlord.apiman.rt.engine.beans.ServiceRequest,org.overlord.apiman.rt.engine.async.IAsyncHandler)
- */
-    @Override public void invoke(    ServiceRequest serviceRequest,    IAsyncHandler<ServiceResponse> handler) throws ConnectorException {
-      try {
-        HttpServerRequest httpRequest=(HttpServerRequest)serviceRequest.getRawRequest();
-        httpRequest.headers().set(serviceRequest.getHeaders());
-        httpGatewayClient.execute(httpRequest,handler);
+  IServiceConnector connector=new IServiceConnector(){
+    @Override public IServiceConnection connect(    ServiceRequest serviceRequest,    IAsyncResultHandler<IServiceConnectionResponse> handler) throws ConnectorException {
+      final HttpServerRequest httpRequest=(HttpServerRequest)serviceRequest.getRawRequest();
+      httpRequest.headers().set(serviceRequest.getHeaders());
+      final HttpClientRequest vxServiceClientRequest=httpGatewayClient.execute(httpRequest,handler);
+      return new IServiceConnection(){
+        private boolean streamFinished=false;
+        @Override public void abort(){
+          LOG.warn("Abort called for request " + httpRequest.path());
+          end();
+        }
+        @Override public void write(        IApimanBuffer chunk){
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("Writing chuck for " + httpRequest.path() + ": "+ chunk);
+          }
+          if (streamFinished) {
+            throw new IllegalStateException("Attempted write to connector after #end() was called.");
+          }
+          if (chunk.getNativeBuffer() instanceof Buffer) {
+            vxServiceClientRequest.write((Buffer)chunk.getNativeBuffer());
+          }
+ else {
+            throw new IllegalArgumentException("Chunk not of expected Vert.x Buffer type.");
+          }
+        }
+        @Override public void end(){
+          vxServiceClientRequest.end();
+          streamFinished=true;
+        }
+        @Override public boolean isFinished(){
+          return streamFinished;
+        }
       }
- catch (      Throwable e) {
-        handler.handle(AsyncResultImpl.<ServiceResponse>create(e));
-      }
+;
     }
   }
 ;
+  return connector;
 }

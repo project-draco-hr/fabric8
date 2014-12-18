@@ -1,6 +1,28 @@
 {
+  if (HttpMapping.isMappingIndexRequest(request,httpGateway)) {
+    HttpMapping.respond(request,httpGateway);
+    return;
+  }
   final long callStart=System.nanoTime();
-  httpGatewayClient.execute(request,null);
+  final HttpClientRequest serviceRequest=httpGatewayClient.execute(request,null);
+  request.dataHandler(new Handler<Buffer>(){
+    public void handle(    Buffer data){
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Proxying request body:" + data);
+      }
+      serviceRequest.write(data);
+    }
+  }
+);
+  request.endHandler(new VoidHandler(){
+    public void handle(){
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("end of the request");
+      }
+      serviceRequest.end();
+    }
+  }
+);
   CallDetailRecord cdr=new CallDetailRecord(System.nanoTime() - callStart,request.response().getStatusMessage());
   httpGateway.addCallDetailRecord(cdr);
 }
