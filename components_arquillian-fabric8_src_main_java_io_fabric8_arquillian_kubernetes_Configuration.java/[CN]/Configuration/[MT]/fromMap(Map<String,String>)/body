@@ -25,6 +25,12 @@
     if (map.containsKey(POLL_INTERVAL)) {
       configuration.pollInterval=Long.parseLong(map.get(POLL_INTERVAL));
     }
+    if (map.containsKey(ANSI_LOGGER_ENABLED)) {
+      configuration.ansiLoggerEnabled=Boolean.parseBoolean(map.get(ANSI_LOGGER_ENABLED));
+    }
+ else {
+      configuration.ansiLoggerEnabled=Systems.getEnvVarOrSystemProperty(ANSI_LOGGER_ENABLED,true);
+    }
   }
  catch (  Throwable t) {
     throw new RuntimeException(t);

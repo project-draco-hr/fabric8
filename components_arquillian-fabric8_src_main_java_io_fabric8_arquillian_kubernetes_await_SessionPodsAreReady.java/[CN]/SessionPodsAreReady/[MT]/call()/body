@@ -5,9 +5,13 @@
   List<PodSchema> pods=Util.findPods(kubernetesClient,podFilter);
   if (pods.isEmpty()) {
     result=false;
+    session.getLogger().warn("No pods are available yet, waiting...");
   }
   for (  PodSchema pod : pods) {
     result=result && Objects.equal(PodStatus.OK,KubernetesHelper.getPodStatus(pod));
+    if (!result) {
+      session.getLogger().warn("Waiting for pods to reach 'running' state...");
+    }
   }
   return result;
 }

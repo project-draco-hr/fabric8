@@ -1,6 +1,8 @@
 {
   boolean shouldWait=false;
+  Logger log=event.getSession().getLogger();
   try {
+    log.info("Applying kubernetes configuration from: " + configuration.getConfigUrl());
     Object dto=loadJson(readAsString(configuration.getConfigUrl()));
     if (dto instanceof Config) {
       for (      Entity entity : getEntities((Config)dto)) {
@@ -34,12 +36,19 @@
       }
     }
     if (shouldWait) {
-      Callable<Boolean> sessionPodsReady=new SessionPodsAreReady(event.getSession(),client);
+      Callable<Boolean> sessionPodsReady=new SessionPodsAreReady(client,event.getSession());
       WaitStrategy waitStrategy=new WaitStrategy(sessionPodsReady,configuration.getTimeout(),configuration.getPollInterval());
       if (!waitStrategy.await()) {
-        throw new TimeoutException("Timed out waiting for pods to become ready");
+        log.error("Timed out waiting for pods!");
+      }
+ else {
+        log.status("All pods are currently 'running'!");
       }
     }
+ else {
+      log.warn("No pods/replication controllers defined in the configuration!");
+    }
+    displaySessionStatus(client,event.getSession());
   }
  catch (  Exception e) {
     throw new RuntimeException(e);

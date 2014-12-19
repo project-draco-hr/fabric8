@@ -5,19 +5,19 @@
   Filter<ReplicationControllerSchema> replicationControllerFilter=KubernetesHelper.createReplicationControllerFilter(labels);
   List<Throwable> errors=new ArrayList<>();
   try {
-    deleteReplicationControllers(client,replicationControllerFilter);
+    deleteReplicationControllers(client,session.getLogger(),replicationControllerFilter);
   }
  catch (  MultiException e) {
     errors.addAll(Arrays.asList(e.getCauses()));
   }
   try {
-    deletePods(client,podFilter);
+    deletePods(client,session.getLogger(),podFilter);
   }
  catch (  MultiException e) {
     errors.addAll(Arrays.asList(e.getCauses()));
   }
   try {
-    deleteServices(client,serviceFilter);
+    deleteServices(client,session.getLogger(),serviceFilter);
   }
  catch (  MultiException e) {
     errors.addAll(Arrays.asList(e.getCauses()));

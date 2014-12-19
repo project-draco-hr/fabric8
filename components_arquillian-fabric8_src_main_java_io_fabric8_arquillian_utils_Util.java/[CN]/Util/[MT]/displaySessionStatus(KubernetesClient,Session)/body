@@ -1,0 +1,21 @@
+{
+  Map<String,String> labels=Collections.singletonMap(Constants.ARQ_KEY,session.getId());
+  Filter<PodSchema> podFilter=KubernetesHelper.createPodFilter(labels);
+  Filter<ServiceSchema> serviceFilter=KubernetesHelper.createServiceFilter(labels);
+  Filter<ReplicationControllerSchema> replicationControllerFilter=KubernetesHelper.createReplicationControllerFilter(labels);
+  for (  ReplicationControllerSchema replicationController : client.getReplicationControllers().getItems()) {
+    if (replicationControllerFilter.matches(replicationController)) {
+      session.getLogger().info("Replication controller:" + replicationController.getId());
+    }
+  }
+  for (  PodSchema pod : client.getPods().getItems()) {
+    if (podFilter.matches(pod)) {
+      session.getLogger().info("Pod:" + pod.getId() + " Status:"+ pod.getCurrentState().getStatus());
+    }
+  }
+  for (  ServiceSchema service : client.getServices().getItems()) {
+    if (serviceFilter.matches(service)) {
+      session.getLogger().info("Service:" + service.getId() + " IP:"+ service.getPortalIP()+ " Port:"+ service.getPort());
+    }
+  }
+}
