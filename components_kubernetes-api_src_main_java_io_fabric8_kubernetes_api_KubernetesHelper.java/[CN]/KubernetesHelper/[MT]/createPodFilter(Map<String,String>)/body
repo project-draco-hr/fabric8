@@ -1,13 +1,13 @@
 {
   if (labelSelector == null || labelSelector.isEmpty()) {
-    return Filters.<PodSchema>trueFilter();
+    return Filters.<Pod>trueFilter();
   }
  else {
-    return new Filter<PodSchema>(){
+    return new Filter<Pod>(){
       public String toString(){
         return "PodFilter(" + labelSelector + ")";
       }
-      public boolean matches(      PodSchema entity){
+      public boolean matches(      Pod entity){
         return filterLabels(labelSelector,entity.getLabels());
       }
     }

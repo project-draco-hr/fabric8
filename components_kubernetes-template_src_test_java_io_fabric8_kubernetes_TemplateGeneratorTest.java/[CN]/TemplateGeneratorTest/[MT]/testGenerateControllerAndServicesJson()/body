@@ -7,17 +7,18 @@
   dto.setServicePort(servicePort);
   dto.setServiceContainerPort(serviceContainerPort);
   File jsonFile=generateJsonFile("controllerAnd",dto);
-  List<Entity> entities=generateTemplateAndLoadEntities(jsonFile);
+  List<Object> entities=generateTemplateAndLoadEntities(jsonFile);
   assertEquals("Entities size",2,entities.size());
-  Entity serviceEntity=entities.get(0);
-  assertThat(serviceEntity).isInstanceOf(ServiceSchema.class);
-  ServiceSchema service=(ServiceSchema)serviceEntity;
-  assertEquals("serviceName",serviceName,service.getId());
-  assertEquals("servicePort",servicePort,service.getPort());
-  IntOrString containerPortNameOrNumber=service.getContainerPort();
+  Object serviceEntity=entities.get(0);
+  assertThat(serviceEntity).isInstanceOf(Service.class);
+  Service service=(Service)serviceEntity;
+  assertEquals("serviceName",serviceName,getId(service));
+  ServiceSpec spec=service.getSpec();
+  assertEquals("servicePort",servicePort,spec.getPort());
+  IntOrString containerPortNameOrNumber=spec.getContainerPort();
   assertNotNull("containerPortNameOrNumber",containerPortNameOrNumber);
-  assertEquals("serviceContainerPort",serviceContainerPort,containerPortNameOrNumber.getIntValue());
-  assertEquals("selector",dto.getLabels(),service.getSelector());
-  Entity entity=entities.get(1);
+  assertEquals("serviceContainerPort",serviceContainerPort,containerPortNameOrNumber.getIntVal());
+  assertEquals("selector",dto.getLabels(),spec.getSelector());
+  Object entity=entities.get(1);
   assertGeneratedReplicationController(entity,dto);
 }

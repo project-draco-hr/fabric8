@@ -1,0 +1,71 @@
+{
+  System.out.println("Created: " + podInfo.getCreationTimestamp());
+  System.out.println("Labels: ");
+  Map<String,String> labels=podInfo.getLabels();
+  for (  Map.Entry<String,String> entry : labels.entrySet()) {
+    System.out.println(indent + entry.getKey() + " = "+ entry.getValue());
+  }
+  PodState currentState=podInfo.getPodState();
+  if (currentState != null) {
+    printValue("Host",currentState.getHost());
+    printValue("IP",currentState.getPodIP());
+    printValue("Status",currentState.getStatus());
+    PodContainerManifest manifest=currentState.getContainerManifest();
+  }
+  PodState desiredState=podInfo.getPodState();
+  if (desiredState != null) {
+    ContainerManifestSchema manifest=desiredState.getContainerManifest();
+    if (manifest != null) {
+      List<Container> containers=manifest.getContainers();
+      if (notEmpty(containers)) {
+        System.out.println("Containers:");
+        indentCount++;
+        for (        Container container : containers) {
+          printValue("Name",container.getName());
+          printValue("Image",container.getImage());
+          printValue("Working Dir",container.getWorkingDir());
+          printValue("Command",container.getCommand());
+          List<Port> ports=container.getPorts();
+          if (notEmpty(ports)) {
+            println("Ports:");
+            indentCount++;
+            for (            Port port : ports) {
+              printValue("Name",port.getName());
+              printValue("Protocol",port.getProtocol());
+              printValue("Host Port",port.getHostPort());
+              printValue("Container Port",port.getContainerPort());
+            }
+            indentCount--;
+          }
+          List<Env> envList=container.getEnv();
+          if (notEmpty(envList)) {
+            println("Environment:");
+            indentCount++;
+            for (            Env env : envList) {
+              printValue(env.getName(),env.getValue());
+            }
+            indentCount--;
+          }
+          List<VolumeMount> volumeMounts=container.getVolumeMounts();
+          if (notEmpty(volumeMounts)) {
+            println("Volume Mounts:");
+            indentCount++;
+            for (            VolumeMount volumeMount : volumeMounts) {
+              printValue("Name",volumeMount.getName());
+              printValue("Mount Path",volumeMount.getMountPath());
+              printValue("Read Only",volumeMount.getReadOnly());
+            }
+            indentCount--;
+          }
+        }
+      }
+      Set<Volume> volumes=manifest.getVolumes();
+      if (volumes != null) {
+        System.out.println("Volumes: ");
+        for (        Volume volume : volumes) {
+          System.out.println(indent + volume.getName());
+        }
+      }
+    }
+  }
+}

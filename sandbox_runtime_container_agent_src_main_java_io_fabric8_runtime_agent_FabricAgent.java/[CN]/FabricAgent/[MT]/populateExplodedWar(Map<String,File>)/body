@@ -10,7 +10,7 @@
       File f=entry.getValue();
       if (!isWar(name,f)) {
         archive.addAsLibrary(f);
-        Manifest mf=readManifest(f);
+        ContainerManifest mf=readContainerManifest(f);
         if (mf.getMainAttributes().containsKey(new Attributes.Name(SERVICE_COMPONENT))) {
           String serviceComponents=mf.getMainAttributes().getValue(SERVICE_COMPONENT);
           for (          String component : Strings.splitAndTrimAsList(serviceComponents,",")) {
@@ -25,9 +25,9 @@
     archive.addClass(WebAppContextListener.class);
     archive.addAsWebInfResource("web.xml");
     archive.addAsWebResource("context.xml","META-INF/context.xml");
-    archive.setManifest(new Asset(){
+    archive.setContainerManifest(new Asset(){
       @Override public InputStream openStream(){
-        return new ManifestBuilder().addIdentityCapability(GENRATED_RESOURCE_IDENTITY,"1.0.0").addManifestHeader(SERVICE_COMPONENT,Strings.join(components,",")).openStream();
+        return new ContainerManifestBuilder().addIdentityCapability(GENRATED_RESOURCE_IDENTITY,"1.0.0").addContainerManifestHeader(SERVICE_COMPONENT,Strings.join(components,",")).openStream();
       }
     }
 );

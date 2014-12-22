@@ -1,0 +1,10 @@
+{
+  this.id=KubernetesHelper.getId(controller);
+  this.namespace=controller.getNamespace();
+  this.labels=controller.getLabels();
+  ReplicationControllerState desiredState=controller.getDesiredState();
+  if (desiredState != null) {
+    this.replicas=desiredState.getReplicas();
+    this.replicaSelector=desiredState.getReplicaSelector();
+  }
+}

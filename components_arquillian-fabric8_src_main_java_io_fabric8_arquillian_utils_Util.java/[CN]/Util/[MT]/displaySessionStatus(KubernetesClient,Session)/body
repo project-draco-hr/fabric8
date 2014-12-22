@@ -1,21 +1,22 @@
 {
   Map<String,String> labels=Collections.singletonMap(Constants.ARQ_KEY,session.getId());
-  Filter<PodSchema> podFilter=KubernetesHelper.createPodFilter(labels);
-  Filter<ServiceSchema> serviceFilter=KubernetesHelper.createServiceFilter(labels);
-  Filter<ReplicationControllerSchema> replicationControllerFilter=KubernetesHelper.createReplicationControllerFilter(labels);
-  for (  ReplicationControllerSchema replicationController : client.getReplicationControllers().getItems()) {
+  Filter<Pod> podFilter=KubernetesHelper.createPodFilter(labels);
+  Filter<Service> serviceFilter=KubernetesHelper.createServiceFilter(labels);
+  Filter<ReplicationController> replicationControllerFilter=KubernetesHelper.createReplicationControllerFilter(labels);
+  for (  ReplicationController replicationController : client.getReplicationControllers().getItems()) {
     if (replicationControllerFilter.matches(replicationController)) {
-      session.getLogger().info("Replication controller:" + replicationController.getId());
+      session.getLogger().info("Replication controller:" + getId(replicationController));
     }
   }
-  for (  PodSchema pod : client.getPods().getItems()) {
+  for (  Pod pod : client.getPods().getItems()) {
     if (podFilter.matches(pod)) {
-      session.getLogger().info("Pod:" + pod.getId() + " Status:"+ pod.getCurrentState().getStatus());
+      session.getLogger().info("Pod:" + getId(pod) + " Status:"+ pod.getCurrentState().getStatus());
     }
   }
-  for (  ServiceSchema service : client.getServices().getItems()) {
-    if (serviceFilter.matches(service)) {
-      session.getLogger().info("Service:" + service.getId() + " IP:"+ service.getPortalIP()+ " Port:"+ service.getPort());
+  for (  Service service : client.getServices().getItems()) {
+    ServiceSpec spec=service.getSpec();
+    if (spec != null && serviceFilter.matches(service)) {
+      session.getLogger().info("Service:" + getId(service) + " IP:"+ spec.getPortalIP()+ " Port:"+ spec.getPort());
     }
   }
 }

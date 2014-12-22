@@ -1,0 +1,16 @@
+{
+  PodState currentState=pod.getCurrentState();
+  if (currentState != null) {
+    ContainerManifest manifest=currentState.getManifest();
+    if (manifest != null) {
+      List<Container> containers=manifest.getContainers();
+      for (      Container container : containers) {
+        Integer memory=container.getMemory();
+        if (memory != null && memory.intValue() > 0) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}

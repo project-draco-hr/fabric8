@@ -1,8 +1,8 @@
 {
   Map<String,String> labels=Collections.singletonMap(Constants.ARQ_KEY,session.getId());
-  Filter<PodSchema> podFilter=KubernetesHelper.createPodFilter(labels);
-  Filter<ServiceSchema> serviceFilter=KubernetesHelper.createServiceFilter(labels);
-  Filter<ReplicationControllerSchema> replicationControllerFilter=KubernetesHelper.createReplicationControllerFilter(labels);
+  Filter<Pod> podFilter=KubernetesHelper.createPodFilter(labels);
+  Filter<Service> serviceFilter=KubernetesHelper.createServiceFilter(labels);
+  Filter<ReplicationController> replicationControllerFilter=KubernetesHelper.createReplicationControllerFilter(labels);
   List<Throwable> errors=new ArrayList<>();
   try {
     deleteReplicationControllers(client,session.getLogger(),replicationControllerFilter);

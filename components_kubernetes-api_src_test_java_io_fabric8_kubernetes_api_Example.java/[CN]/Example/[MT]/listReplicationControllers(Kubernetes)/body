@@ -1,14 +1,14 @@
 {
   System.out.println("Looking up replicationControllers");
-  ReplicationControllerListSchema replicationControllers=kube.getReplicationControllers();
-  List<ReplicationControllerSchema> items=replicationControllers.getItems();
-  for (  ReplicationControllerSchema item : items) {
-    ControllerDesiredState desiredState=item.getDesiredState();
+  ReplicationControllerList replicationControllers=kube.getReplicationControllers();
+  List<ReplicationController> items=replicationControllers.getItems();
+  for (  ReplicationController item : items) {
+    ReplicationControllerState desiredState=item.getDesiredState();
     if (desiredState != null) {
-      System.out.println("ReplicationController " + item.getId() + " labels: "+ item.getLabels()+ " replicas: "+ desiredState.getReplicas()+ " replicatorSelector: "+ desiredState.getReplicaSelector()+ " podTemplate: "+ desiredState.getPodTemplate());
+      System.out.println("ReplicationController " + getId(item) + " labels: "+ item.getLabels()+ " replicas: "+ desiredState.getReplicas()+ " replicatorSelector: "+ desiredState.getReplicaSelector()+ " podTemplate: "+ desiredState.getPodTemplate());
     }
  else {
-      System.out.println("ReplicationController " + item.getId() + " labels: "+ item.getLabels()+ " no desiredState");
+      System.out.println("ReplicationController " + getId(item) + " labels: "+ item.getLabels()+ " no desiredState");
     }
   }
   System.out.println();

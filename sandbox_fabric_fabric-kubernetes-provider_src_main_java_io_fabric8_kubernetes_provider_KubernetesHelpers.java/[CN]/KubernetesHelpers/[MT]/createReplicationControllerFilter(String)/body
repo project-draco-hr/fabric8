@@ -1,13 +1,13 @@
 {
   if (Strings.isNullOrBlank(textFilter)) {
-    return Filters.<ReplicationControllerSchema>trueFilter();
+    return Filters.<ReplicationController>trueFilter();
   }
  else {
-    return new Filter<ReplicationControllerSchema>(){
+    return new Filter<ReplicationController>(){
       public String toString(){
         return "ReplicationControllerFilter(" + textFilter + ")";
       }
-      public boolean matches(      ReplicationControllerSchema entity){
+      public boolean matches(      ReplicationController entity){
         return filterMatchesIdOrLabels(textFilter,entity.getId(),entity.getLabels());
       }
     }

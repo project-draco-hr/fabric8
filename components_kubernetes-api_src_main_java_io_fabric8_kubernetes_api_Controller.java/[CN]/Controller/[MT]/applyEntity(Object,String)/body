@@ -1,0 +1,14 @@
+{
+  if (dto instanceof Pod) {
+    applyPod((Pod)dto,sourceName);
+  }
+ else   if (dto instanceof ReplicationController) {
+    applyReplicationController((ReplicationController)dto,sourceName);
+  }
+ else   if (dto instanceof Service) {
+    applyService((Service)dto,sourceName);
+  }
+ else {
+    throw new IllegalArgumentException("Unknown entity type " + dto);
+  }
+}

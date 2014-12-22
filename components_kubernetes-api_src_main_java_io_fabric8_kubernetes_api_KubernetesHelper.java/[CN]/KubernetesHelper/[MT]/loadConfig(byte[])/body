@@ -1,0 +1,22 @@
+{
+  Config config=new Config();
+  List<Object> itemList=new ArrayList<>();
+  config.setItems(itemList);
+  JsonNode jsonNode=objectMapper.readTree(data);
+  JsonNode items=jsonNode.get("items");
+  for (  JsonNode item : items) {
+    if (item != null) {
+      JsonNode kindObject=item.get("kind");
+      if (kindObject != null && kindObject.isTextual()) {
+        String kind=kindObject.asText();
+        String json=toJson(item);
+        byte[] bytes=json.getBytes();
+        Object entity=loadEntity(bytes,kind,null);
+        if (entity != null) {
+          itemList.add(entity);
+        }
+      }
+    }
+  }
+  return config;
+}

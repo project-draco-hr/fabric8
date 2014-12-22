@@ -1,6 +1,6 @@
 {
   if (dependency.isBundle()) {
-    String exportPackages=dependency.getManifestEntry("Export-Package");
+    String exportPackages=dependency.getContainerManifestEntry("Export-Package");
     if (notEmpty(exportPackages)) {
       Parameters values=new Analyzer().parseHeader(exportPackages);
       Map<String,String> map=values.get(packageName);

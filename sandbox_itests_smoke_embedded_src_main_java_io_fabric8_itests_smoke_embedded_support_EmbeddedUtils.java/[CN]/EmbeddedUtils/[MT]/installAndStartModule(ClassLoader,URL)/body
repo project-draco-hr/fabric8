@@ -1,8 +1,8 @@
 {
   JarInputStream input=new JarInputStream(location.openStream());
   try {
-    Manifest manifest=input.getManifest();
-    Dictionary<String,String> headers=new ManifestHeadersProvider(manifest).getHeaders();
+    ContainerManifest manifest=input.getContainerManifest();
+    Dictionary<String,String> headers=new ContainerManifestHeadersProvider(manifest).getHeaders();
     return installAndStartModule(classLoader,null,headers);
   }
   finally {

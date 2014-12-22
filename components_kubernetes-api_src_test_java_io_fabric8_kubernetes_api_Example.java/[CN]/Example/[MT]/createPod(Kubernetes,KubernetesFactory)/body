@@ -1,21 +1,21 @@
 {
   String name="cheese";
   String image="fabric8/fabric8";
-  PodSchema pod=new PodSchema();
-  pod.setId(name);
+  Pod pod=new Pod();
+  pod.setUid(name);
   Map<String,String> labels=new HashMap<>();
   labels.put("fabric8","true");
   labels.put("container",name);
   pod.setLabels(labels);
-  DesiredState desiredState=new DesiredState();
+  PodState desiredState=new PodState();
   pod.setDesiredState(desiredState);
-  Manifest manifest=new Manifest();
-  manifest.setVersion(Manifest.Version.V_1_BETA_1);
+  ContainerManifest manifest=new ContainerManifest();
+  manifest.setVersion("v1beta1");
   desiredState.setManifest(manifest);
-  ManifestContainer manifestContainer=new ManifestContainer();
+  Container manifestContainer=new Container();
   manifestContainer.setName(name);
   manifestContainer.setImage(image);
-  List<ManifestContainer> containers=new ArrayList<>();
+  List<Container> containers=new ArrayList<>();
   containers.add(manifestContainer);
   manifest.setContainers(containers);
   System.out.println("About to create pod on " + kubernetesFactory.getAddress() + " with "+ pod);

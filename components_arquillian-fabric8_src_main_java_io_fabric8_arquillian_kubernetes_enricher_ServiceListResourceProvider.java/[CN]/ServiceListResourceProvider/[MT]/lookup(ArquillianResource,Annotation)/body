@@ -2,10 +2,10 @@
   KubernetesClient client=this.clientInstance.get();
   Session session=sessionInstance.get();
   Map<String,String> labels=Collections.singletonMap(Constants.ARQ_KEY,session.getId());
-  Filter<ServiceSchema> serviceFilter=KubernetesHelper.createServiceFilter(labels);
-  ServiceListSchema services=client.getServices();
-  List<ServiceSchema> sessionServices=new ArrayList<>();
-  for (  ServiceSchema service : client.getServices().getItems()) {
+  Filter<Service> serviceFilter=KubernetesHelper.createServiceFilter(labels);
+  ServiceList services=client.getServices();
+  List<Service> sessionServices=new ArrayList<>();
+  for (  Service service : client.getServices().getItems()) {
     if (serviceFilter.matches(service)) {
       sessionServices.add(service);
     }

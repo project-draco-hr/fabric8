@@ -13,16 +13,16 @@
   Set<String> profileIds=options.getProfiles();
   String versionId=options.getVersion();
   FabricService service=getFabricService();
-  PodSchema pod=new PodSchema();
+  Pod pod=new Pod();
   pod.setId(KubernetesHelpers.containerNameToPodId(name));
   Map<String,String> labels=updateLabels(null,service,name,profileIds,versionId);
   pod.setLabels(labels);
-  DesiredState desiredState=new DesiredState();
-  pod.setDesiredState(desiredState);
-  ManifestSchema manifest=new ManifestSchema();
-  manifest.setVersion(ManifestSchema.Version.V_1_BETA_1);
-  desiredState.setManifest(manifest);
-  ManifestContainer manifestContainer=new ManifestContainer();
+  PodState desiredState=new PodState();
+  pod.setPodState(desiredState);
+  ContainerManifestSchema manifest=new ContainerManifestSchema();
+  manifest.setVersion(ContainerManifestSchema.Version.V_1_BETA_1);
+  desiredState.setContainerManifest(manifest);
+  Container manifestContainer=new Container();
   manifestContainer.setName(name);
   manifestContainer.setImage(image);
   List<String> cmd=options.getCmd();
@@ -66,7 +66,7 @@
     }
     manifestContainer.setPorts(ports);
   }
-  List<ManifestContainer> containers=new ArrayList<>();
+  List<Container> containers=new ArrayList<>();
   containers.add(manifestContainer);
   manifest.setContainers(containers);
   try {

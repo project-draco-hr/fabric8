@@ -3,11 +3,11 @@
   final ArchiveBuilder archive=new ArchiveBuilder("http-service");
   archive.addClasses(AnnotatedContextListener.class,WebAppContextListener.class);
   archive.addClasses(HttpRequest.class);
-  archive.setManifest(new Asset(){
+  archive.setContainerManifest(new Asset(){
     @Override public InputStream openStream(){
       if (targetContainer == RuntimeType.KARAF) {
-        OSGiManifestBuilder builder=OSGiManifestBuilder.newInstance();
-        builder.addBundleManifestVersion(2);
+        OSGiContainerManifestBuilder builder=OSGiContainerManifestBuilder.newInstance();
+        builder.addBundleContainerManifestVersion(2);
         builder.addBundleSymbolicName("http-service");
         builder.addBundleVersion("1.0.0");
         builder.addImportPackages(RuntimeLocator.class,Servlet.class,HttpServlet.class,HttpService.class);
@@ -15,7 +15,7 @@
         return builder.openStream();
       }
  else {
-        ManifestBuilder builder=new ManifestBuilder();
+        ContainerManifestBuilder builder=new ContainerManifestBuilder();
         builder.addIdentityCapability("http-service","1.0.0");
         return builder.openStream();
       }

@@ -1,8 +1,7 @@
 {
-  ServiceSchema service=assertParseExampleFile("service.json",ServiceSchema.class);
+  Service service=assertParseExampleFile("service.json",Service.class);
   assertEquals("Service",service.getKind());
   Integer expectedPort=80;
-  assertEquals(expectedPort,service.getContainerPort().getIntValue());
+  assertEquals(expectedPort,service.getSpec().getContainerPort().getIntVal());
   ObjectMapper mapper=KubernetesFactory.createObjectMapper();
-  mapper.writer().writeValue(System.out,service);
 }

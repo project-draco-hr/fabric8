@@ -1,0 +1,47 @@
+{
+  if (pod != null) {
+    Map<String,String> labels=pod.getLabels();
+    if (labels != null && labels.size() > 0) {
+      ReplicationControllerList replicationControllers=getReplicationControllers();
+      List<ReplicationController> items=replicationControllers.getItems();
+      if (items != null) {
+        List<ReplicationController> matched=new ArrayList<>();
+        for (        ReplicationController item : items) {
+          if (filterLabels(labels,item.getLabels())) {
+            matched.add(item);
+          }
+        }
+        int matchedSize=matched.size();
+        if (matchedSize > 1) {
+          List<ReplicationController> nonZeroReplicas=Filters.filter(matched,new Filter<ReplicationController>(){
+            @Override public boolean matches(            ReplicationController replicationController){
+              ReplicationControllerState desiredState=replicationController.getDesiredState();
+              if (desiredState != null) {
+                Integer desiredReplicas=desiredState.getReplicas();
+                if (desiredReplicas != null && desiredReplicas.intValue() > 0) {
+                  ReplicationControllerState currentState=replicationController.getCurrentState();
+                  if (currentState != null) {
+                    Integer replicas=currentState.getReplicas();
+                    if (replicas != null && replicas.intValue() > 0) {
+                      return true;
+                    }
+                  }
+                }
+              }
+              return false;
+            }
+          }
+);
+          int size=nonZeroReplicas.size();
+          if (size > 0) {
+            return nonZeroReplicas.get(0);
+          }
+        }
+        if (matchedSize >= 1) {
+          return matched.get(0);
+        }
+      }
+    }
+  }
+  return null;
+}

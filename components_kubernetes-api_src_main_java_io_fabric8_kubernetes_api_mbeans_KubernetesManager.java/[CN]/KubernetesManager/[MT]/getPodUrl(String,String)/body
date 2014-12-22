@@ -1,8 +1,8 @@
 {
-  Map<String,PodSchema> podMap=KubernetesHelper.getPodMap(kubernetes);
-  PodSchema pod=podMap.get(name);
+  Map<String,Pod> podMap=KubernetesHelper.getPodMap(kubernetes);
+  Pod pod=podMap.get(name);
   if (pod != null) {
-    CurrentState currentState=pod.getCurrentState();
+    PodState currentState=pod.getCurrentState();
     if (currentState != null) {
       String protocol="http://";
       Port port=KubernetesHelper.findContainerPortByNumberOrName(pod,portNumberOrName);

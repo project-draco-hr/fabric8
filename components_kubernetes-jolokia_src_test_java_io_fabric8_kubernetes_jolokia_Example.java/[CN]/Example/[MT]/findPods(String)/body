@@ -1,11 +1,11 @@
 {
-  Map<String,PodSchema> podMap=KubernetesHelper.getPodMap(kubernetes,selector);
-  Collection<PodSchema> pods=podMap.values();
-  for (  PodSchema pod : pods) {
+  Map<String,Pod> podMap=KubernetesHelper.getPodMap(kubernetes,selector);
+  Collection<Pod> pods=podMap.values();
+  for (  Pod pod : pods) {
     String host=KubernetesHelper.getHost(pod);
-    List<ManifestContainer> containers=KubernetesHelper.getContainers(pod);
-    for (    ManifestContainer container : containers) {
-      System.out.println("pod " + pod.getId() + " container: "+ container.getName()+ " image: "+ container.getImage());
+    List<Container> containers=KubernetesHelper.getContainers(pod);
+    for (    Container container : containers) {
+      System.out.println("pod " + getId(pod) + " container: "+ container.getName()+ " image: "+ container.getImage());
       J4pClient jolokia=clients.jolokiaClient(host,container,pod);
       if (jolokia != null) {
         System.out.println("   has jolokia client: " + jolokia + " from host: "+ host+ " URL: "+ jolokia.getUri());

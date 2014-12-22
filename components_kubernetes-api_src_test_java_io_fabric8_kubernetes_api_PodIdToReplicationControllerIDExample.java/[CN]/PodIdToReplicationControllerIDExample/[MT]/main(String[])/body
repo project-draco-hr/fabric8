@@ -7,9 +7,9 @@
   String podID=args[1];
   System.out.println("Looking up ReplicationController for pod ID: " + podID);
   KubernetesClient client=new KubernetesClient(kuberneteMasterUrl);
-  ReplicationControllerSchema replicationController=client.getReplicationControllerForPod(podID);
+  ReplicationController replicationController=client.getReplicationControllerForPod(podID);
   if (replicationController != null) {
-    String id=replicationController.getId();
+    String id=getId(replicationController);
     System.out.println("Found replication controller: " + id);
   }
  else {

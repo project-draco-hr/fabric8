@@ -1,7 +1,7 @@
 {
-  String manifestVersion=getManifestVersion(headerMap);
+  String manifestVersion=getContainerManifestVersion(headerMap);
   if (manifestVersion == null || !manifestVersion.equals("2")) {
-    throw new BundleException("Unsupported 'Bundle-ManifestVersion' value: " + manifestVersion);
+    throw new BundleException("Unsupported 'Bundle-ContainerManifestVersion' value: " + manifestVersion);
   }
   Version bundleVersion=Version.emptyVersion;
   if (headerMap.get(Constants.BUNDLE_VERSION) != null) {

@@ -1,25 +1,25 @@
 {
   System.out.println("Looking up pods");
-  PodListSchema pods=kube.getPods();
-  List<PodSchema> items=pods.getItems();
-  for (  PodSchema item : items) {
-    System.out.println("PodSchema " + item.getId() + " created: "+ item.getCreationTimestamp());
-    DesiredState desiredState=item.getDesiredState();
+  PodList pods=kube.getPods();
+  List<Pod> items=pods.getItems();
+  for (  Pod item : items) {
+    System.out.println("Pod " + getId(item) + " created: "+ item.getCreationTimestamp());
+    PodState desiredState=item.getDesiredState();
     if (desiredState != null) {
-      Manifest manifest=desiredState.getManifest();
+      ContainerManifest manifest=desiredState.getManifest();
       if (manifest != null) {
-        List<ManifestContainer> containers=manifest.getContainers();
-        for (        ManifestContainer container : containers) {
+        List<Container> containers=manifest.getContainers();
+        for (        Container container : containers) {
           System.out.println("Container " + container.getImage() + " "+ container.getCommand()+ " ports: "+ container.getPorts());
         }
       }
     }
-    Map<String,PodCurrentContainerInfo> currentContainers=KubernetesHelper.getCurrentContainers(item);
+    Map<String,ContainerStatus> currentContainers=KubernetesHelper.getCurrentContainers(item);
     System.out.println("Has " + currentContainers.size() + " container(s)");
-    Set<Map.Entry<String,PodCurrentContainerInfo>> entries=currentContainers.entrySet();
-    for (    Map.Entry<String,PodCurrentContainerInfo> entry : entries) {
+    Set<Map.Entry<String,ContainerStatus>> entries=currentContainers.entrySet();
+    for (    Map.Entry<String,ContainerStatus> entry : entries) {
       String id=entry.getKey();
-      PodCurrentContainerInfo info=entry.getValue();
+      ContainerStatus info=entry.getValue();
       System.out.println("Current container: " + id + " info: "+ info);
     }
   }

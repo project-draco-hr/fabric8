@@ -1,14 +1,14 @@
 {
   if (isNullOrBlank(textFilter)) {
-    return Filters.<PodSchema>trueFilter();
+    return Filters.<Pod>trueFilter();
   }
  else {
-    return new Filter<PodSchema>(){
+    return new Filter<Pod>(){
       public String toString(){
         return "PodFilter(" + textFilter + ")";
       }
-      public boolean matches(      PodSchema entity){
-        return filterMatchesIdOrLabels(textFilter,entity.getId(),entity.getLabels());
+      public boolean matches(      Pod entity){
+        return filterMatchesIdOrLabels(textFilter,getId(entity),entity.getLabels());
       }
     }
 ;

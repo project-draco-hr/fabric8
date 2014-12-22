@@ -1,0 +1,39 @@
+{
+  TablePrinter table=new TablePrinter();
+  table.columns("id","image(s)","host","labels","status");
+  List<Pod> items=pods.getItems();
+  if (items == null) {
+    items=Collections.EMPTY_LIST;
+  }
+  Filter<Pod> filter=KubernetesHelpers.createPodFilter(filterText);
+  for (  Pod item : items) {
+    if (filter.matches(item)) {
+      String id=item.getId();
+      PodState currentState=item.getPodState();
+      String status="";
+      String host="";
+      if (currentState != null) {
+        status=currentState.getStatus();
+        host=currentState.getHost();
+      }
+      Map<String,String> labelMap=item.getLabels();
+      String labels=KubernetesHelpers.toLabelsString(labelMap);
+      PodState desiredState=item.getPodState();
+      if (desiredState != null) {
+        ContainerManifestSchema manifest=desiredState.getContainerManifest();
+        if (manifest != null) {
+          List<Container> containers=manifest.getContainers();
+          for (          Container container : containers) {
+            String image=container.getImage();
+            table.row(id,image,host,labels,status);
+            id="";
+            host="";
+            status="";
+            labels="";
+          }
+        }
+      }
+    }
+  }
+  table.print();
+}

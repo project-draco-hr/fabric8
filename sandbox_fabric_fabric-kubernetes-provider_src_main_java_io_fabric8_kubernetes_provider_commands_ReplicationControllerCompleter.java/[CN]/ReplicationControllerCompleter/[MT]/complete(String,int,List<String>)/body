@@ -3,11 +3,11 @@
   try {
     Kubernetes kubernetes=kubernetesService.getKubernetes();
     if (kubernetes != null) {
-      ReplicationControllerListSchema list=kubernetes.getReplicationControllers();
+      ReplicationControllerList list=kubernetes.getReplicationControllers();
       if (list != null) {
-        List<ReplicationControllerSchema> items=list.getItems();
+        List<ReplicationController> items=list.getItems();
         if (items != null) {
-          for (          ReplicationControllerSchema item : items) {
+          for (          ReplicationController item : items) {
             String id=item.getId();
             delegate.getStrings().add(id);
           }

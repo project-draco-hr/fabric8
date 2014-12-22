@@ -1,0 +1,17 @@
+{
+  if (service != null) {
+    ServiceSpec spec=service.getSpec();
+    if (spec != null) {
+      String portalIP=spec.getPortalIP();
+      if (portalIP != null) {
+        Integer port=spec.getPort();
+        if (port != null && port > 0) {
+          portalIP+=":" + port;
+        }
+      }
+      String protocol="http://";
+      return protocol + portalIP;
+    }
+  }
+  return null;
+}

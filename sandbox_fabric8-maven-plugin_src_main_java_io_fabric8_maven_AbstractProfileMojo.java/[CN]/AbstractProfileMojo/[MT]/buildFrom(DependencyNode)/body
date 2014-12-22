@@ -21,7 +21,7 @@
           request.setLocalRepository(localRepository);
           resolver.resolve(request);
           JarInputStream jis=new JarInputStream(new FileInputStream(artifact.getFile()));
-          Manifest man=jis.getManifest();
+          ContainerManifest man=jis.getContainerManifest();
           String bsn=man.getMainAttributes().getValue(Constants.BUNDLE_SYMBOLICNAME);
           if (bsn != null) {
             answer.setType("bundle");

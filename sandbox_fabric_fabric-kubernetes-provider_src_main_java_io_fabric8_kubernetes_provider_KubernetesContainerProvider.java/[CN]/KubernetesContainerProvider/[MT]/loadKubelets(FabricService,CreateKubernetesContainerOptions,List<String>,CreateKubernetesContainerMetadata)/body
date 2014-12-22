@@ -44,17 +44,17 @@
             if (kindNode != null) {
               String kind=kindNode.asText();
               if (Objects.equal("Pod",kind)) {
-                PodSchema podSchema=objectMapper.reader(PodSchema.class).readValue(json);
+                Pod podSchema=objectMapper.reader(Pod.class).readValue(json);
                 configurePod(podSchema,service,options,metadata);
                 answer.put(definition,podSchema);
               }
  else               if (Objects.equal("ReplicationController",kind)) {
-                ReplicationControllerSchema replicationControllerSchema=objectMapper.reader(ReplicationControllerSchema.class).readValue(json);
+                ReplicationController replicationControllerSchema=objectMapper.reader(ReplicationController.class).readValue(json);
                 configureReplicationController(replicationControllerSchema,service,options,metadata);
                 answer.put(definition,replicationControllerSchema);
               }
  else               if (Objects.equal("Service",kind)) {
-                ServiceSchema serviceSchema=objectMapper.reader(ServiceSchema.class).readValue(json);
+                Service serviceSchema=objectMapper.reader(Service.class).readValue(json);
                 configureService(serviceSchema,service,options,metadata);
                 answer.put(definition,serviceSchema);
               }

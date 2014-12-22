@@ -1,0 +1,31 @@
+{
+  if (container != null) {
+    List<Port> ports=container.getPorts();
+    for (    Port port : ports) {
+      Integer containerPort=port.getContainerPort();
+      if (containerPort != null) {
+        String name=port.getName();
+        if (containerPort == 8778 || (Objects.equals("jolokia",name) && containerPort.intValue() > 0)) {
+          PodState currentState=pod.getCurrentState();
+          String podIP=currentState.getPodIP();
+          if (Strings.isNotBlank(podIP)) {
+            return createJolokiaClientFromHostAndPort(container,podIP,containerPort);
+          }
+          Integer hostPort=port.getHostPort();
+          if (hostPort != null && hasDocker(pod)) {
+            if (host.equals("localhost") || host.equals("127.0.0.1")) {
+              String dockerIp=getDockerIp();
+              if (Strings.isNotBlank(dockerIp)) {
+                host=dockerIp;
+              }
+            }
+          }
+          if (Strings.isNotBlank(host)) {
+            return createJolokiaClientFromHostAndPort(container,host,hostPort);
+          }
+        }
+      }
+    }
+  }
+  return null;
+}

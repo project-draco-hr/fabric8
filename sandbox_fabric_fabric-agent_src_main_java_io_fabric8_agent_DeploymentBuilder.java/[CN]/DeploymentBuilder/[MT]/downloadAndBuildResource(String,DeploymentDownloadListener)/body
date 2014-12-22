@@ -8,7 +8,7 @@
         }
         FabResolver resolver=fabResolverFactory.getResolver(file.toURI().toURL());
         FabBundleInfo fabInfo=resolver.getInfo();
-        ResourceImpl resource=(ResourceImpl)manageResource(location,fabInfo.getManifest(),new StreamProvider.Fab(fabInfo));
+        ResourceImpl resource=(ResourceImpl)manageResource(location,fabInfo.getContainerManifest(),new StreamProvider.Fab(fabInfo));
         for (        String name : fabInfo.getFeatures()) {
           registerMatchingFeatures(name);
           requireFeature(name,resource);

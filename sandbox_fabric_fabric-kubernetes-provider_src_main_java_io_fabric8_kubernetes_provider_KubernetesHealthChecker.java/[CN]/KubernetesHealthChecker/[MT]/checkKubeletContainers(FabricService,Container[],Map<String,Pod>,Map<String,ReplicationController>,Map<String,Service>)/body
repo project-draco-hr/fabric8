@@ -1,0 +1,54 @@
+{
+  if (containerArray != null) {
+    for (    Container container : containerArray) {
+      CreateContainerMetadata<?> metadata=container.getMetadata();
+      if (metadata instanceof CreateKubernetesContainerMetadata) {
+        CreateKubernetesContainerMetadata kubernetesContainerMetadata=(CreateKubernetesContainerMetadata)metadata;
+        String status=Container.PROVISION_SUCCESS;
+        List<String> podIds=notNullList(kubernetesContainerMetadata.getPodIds());
+        List<String> errors=new ArrayList<>();
+        for (        String id : podIds) {
+          Pod pod=podMap.get(id);
+          String kubeletStatus=checkStatus(id,pod,errors);
+          if (!isProvisionSuccess(kubeletStatus)) {
+            status=kubeletStatus;
+          }
+        }
+        if (isProvisionSuccess(status)) {
+          List<String> ids=notNullList(kubernetesContainerMetadata.getReplicationControllerIds());
+          for (          String id : ids) {
+            ReplicationController replicationController=replicationControllerMap.get(id);
+            status=checkStatus(id,replicationController,errors);
+            if (!isProvisionSuccess(status)) {
+              break;
+            }
+          }
+        }
+        if (isProvisionSuccess(status)) {
+          List<String> ids=notNullList(kubernetesContainerMetadata.getServiceIds());
+          for (          String id : ids) {
+            Service service=serviceMap.get(id);
+            status=checkStatus(id,service,errors);
+            if (!isProvisionSuccess(status)) {
+              break;
+            }
+          }
+        }
+        if (!status.equals(container.getProvisionResult())) {
+          container.setProvisionResult(status);
+        }
+        String exception=null;
+        if (!errors.isEmpty()) {
+          exception=Strings.join(errors,"\n");
+        }
+        if (!Objects.equal(exception,container.getProvisionException())) {
+          container.setProvisionException(exception);
+        }
+        boolean alive=isProvisionSuccess(status);
+        if (alive != container.isAlive()) {
+          container.setAlive(alive);
+        }
+      }
+    }
+  }
+}

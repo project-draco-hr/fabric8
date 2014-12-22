@@ -1,0 +1,14 @@
+{
+  assertTrue("First entity should be a ReplicationController but was " + entity,entity instanceof ReplicationController);
+  ReplicationController rc=(ReplicationController)entity;
+  assertThat(rc.getLabels()).isEqualTo(dto.getLabels());
+  ReplicationControllerState desiredState=rc.getDesiredState();
+  assertThat(desiredState.getReplicas()).isEqualTo(dto.getReplicaCount());
+  assertThat(desiredState.getReplicaSelector()).isEqualTo(dto.getLabels());
+  List<Container> containers=KubernetesHelper.getContainers(rc);
+  assertEquals("PodTemplate desired containers",1,containers.size());
+  Container manifestContainer=containers.get(0);
+  String pullPolicy=manifestContainer.getImagePullPolicy();
+  assertNotNull(pullPolicy);
+  assertEquals("pullPolicy",dto.getImagePullPolicy(),pullPolicy);
+}

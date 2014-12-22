@@ -1,13 +1,13 @@
 {
   if (annotationSelector == null || annotationSelector.isEmpty()) {
-    return Filters.<PodSchema>trueFilter();
+    return Filters.<Pod>trueFilter();
   }
  else {
-    return new Filter<PodSchema>(){
+    return new Filter<Pod>(){
       public String toString(){
         return "PodAnnotationFilter(" + annotationSelector + ")";
       }
-      public boolean matches(      PodSchema entity){
+      public boolean matches(      Pod entity){
         return filterLabels(annotationSelector,entity.getAnnotations());
       }
     }

@@ -3,26 +3,26 @@
   Kubernetes kubernetes=getKubernetes();
   if (kubernetes != null && service != null) {
     try {
-      Map<String,PodSchema> podMap=KubernetesHelper.getPodMap(kubernetes);
+      Map<String,Pod> podMap=KubernetesHelper.getPodMap(kubernetes);
       Container[] containerArray=service.getContainers();
-      Collection<PodSchema> pods=podMap.values();
+      Collection<Pod> pods=podMap.values();
       if (!pods.isEmpty()) {
         Map<String,Container> containerMap=createPodIdToContainerMap(containerArray);
-        for (        PodSchema item : pods) {
+        for (        Pod item : pods) {
           String podId=item.getId();
-          CurrentState currentState=item.getCurrentState();
+          PodState currentState=item.getPodState();
           if (currentState != null) {
             String host=currentState.getHost();
             String hostIp=currentState.getHost();
             String status=currentState.getStatus();
             Container container=containerMap.remove(podId);
             if (container != null) {
-              DesiredState desiredState=item.getDesiredState();
+              PodState desiredState=item.getPodState();
               if (desiredState != null) {
-                ManifestSchema manifest=desiredState.getManifest();
+                ContainerManifestSchema manifest=desiredState.getContainerManifest();
                 if (manifest != null) {
-                  List<ManifestContainer> containers=manifest.getContainers();
-                  for (                  ManifestContainer manifestContainer : containers) {
+                  List<Container> containers=manifest.getContainers();
+                  for (                  Container manifestContainer : containers) {
                   }
                 }
               }
@@ -65,8 +65,8 @@
           }
         }
       }
-      Map<String,ReplicationControllerSchema> replicationMap=KubernetesHelper.getReplicationControllerMap(kubernetes);
-      Map<String,ServiceSchema> serviceMap=KubernetesHelper.getServiceMap(kubernetes);
+      Map<String,ReplicationController> replicationMap=KubernetesHelper.getReplicationControllerMap(kubernetes);
+      Map<String,Service> serviceMap=KubernetesHelper.getServiceMap(kubernetes);
       checkKubeletContainers(service,containerArray,podMap,replicationMap,serviceMap);
     }
  catch (    Exception e) {

@@ -6,7 +6,7 @@
   LOG.debug("Overwrite mode: " + overwriteMode);
   LOG.trace("Using instructions " + instructions);
   final Jar jar=new Jar("dot",jarInputStream);
-  final Manifest manifest=jar.getManifest();
+  final ContainerManifest manifest=jar.getContainerManifest();
   if (manifest == null || OverwriteMode.KEEP != overwriteMode || (manifest.getMainAttributes().getValue(Analyzer.EXPORT_PACKAGE) == null && manifest.getMainAttributes().getValue(Analyzer.IMPORT_PACKAGE) == null)) {
     final Properties properties=new Properties();
     properties.putAll(instructions);
@@ -31,12 +31,12 @@
       }
     }
     if (manifest != null && OverwriteMode.MERGE == overwriteMode) {
-      analyzer.mergeManifest(manifest);
+      analyzer.mergeContainerManifest(manifest);
     }
     checkMandatoryProperties(analyzer,jar,jarInfo);
-    Manifest newManifest=analyzer.calcManifest();
-    jar.setManifest(newManifest);
-    Attributes main=jar.getManifest().getMainAttributes();
+    ContainerManifest newContainerManifest=analyzer.calcContainerManifest();
+    jar.setContainerManifest(newContainerManifest);
+    Attributes main=jar.getContainerManifest().getMainAttributes();
     String importPackage=main.getValue(Analyzer.IMPORT_PACKAGE);
     for (    Descriptors.PackageRef key : analyzer.getReferred().keySet()) {
       if (key.getFQN().startsWith("META-INF.")) {

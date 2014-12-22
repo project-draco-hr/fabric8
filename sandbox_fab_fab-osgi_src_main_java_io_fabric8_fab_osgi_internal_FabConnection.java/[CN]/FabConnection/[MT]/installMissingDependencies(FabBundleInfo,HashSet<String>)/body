@@ -6,7 +6,7 @@
  else {
     for (    DependencyTree dependency : info.getBundles()) {
       if (dependency.isBundle()) {
-        String importPackages=dependency.getManifestEntry(Analyzer.IMPORT_PACKAGE);
+        String importPackages=dependency.getContainerManifestEntry(Analyzer.IMPORT_PACKAGE);
         if (notEmpty(importPackages)) {
           Parameters values=new Analyzer().parseHeader(importPackages);
           for (          Map.Entry<String,Attrs> entry : values.entrySet()) {
@@ -30,7 +30,7 @@
         Set<String> missing=Bundles.filterInstalled(bundleContext,p,(VersionResolver)info);
         boolean hasNoPendingPackagesOrServices=false;
         if (missing.isEmpty()) {
-          Set<Service> services=Services.parseHeader(dependency.getManifestEntry("Export-Service"));
+          Set<Service> services=Services.parseHeader(dependency.getContainerManifestEntry("Export-Service"));
           if (services.isEmpty() || Services.isAvailable(bundleContext,services)) {
             hasNoPendingPackagesOrServices=true;
           }

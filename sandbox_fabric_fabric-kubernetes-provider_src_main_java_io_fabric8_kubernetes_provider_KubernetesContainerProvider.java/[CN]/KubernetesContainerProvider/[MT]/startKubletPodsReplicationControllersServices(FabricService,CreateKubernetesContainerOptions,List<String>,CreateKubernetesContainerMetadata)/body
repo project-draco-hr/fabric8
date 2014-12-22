@@ -1,21 +1,21 @@
 {
   Kubernetes kubernetes=getKubernetes();
   Objects.notNull(kubernetes,"kubernetes");
-  Map<String,PodSchema> podMap=null;
-  Map<String,ReplicationControllerSchema> replicationControllerMap=null;
-  Map<String,ServiceSchema> serviceMap=null;
+  Map<String,Pod> podMap=null;
+  Map<String,ReplicationController> replicationControllerMap=null;
+  Map<String,Service> serviceMap=null;
   Map<String,Object> kubelets=loadKubelets(service,options,kubeletFileNames,metadata);
   Set<Map.Entry<String,Object>> entries=kubelets.entrySet();
   for (  Map.Entry<String,Object> entry : entries) {
     String definition=entry.getKey();
     Object kubelet=entry.getValue();
-    if (kubelet instanceof PodSchema) {
-      PodSchema podSchema=(PodSchema)kubelet;
+    if (kubelet instanceof Pod) {
+      Pod podSchema=(Pod)kubelet;
       if (podMap == null) {
         podMap=getPodMap(kubernetes);
       }
       String id=podSchema.getId();
-      PodSchema old=podMap.get(id);
+      Pod old=podMap.get(id);
       if (isRunning(old)) {
         LOG.info("Not creating pod for " + id + " from definition "+ definition+ " as its already running");
       }
@@ -30,13 +30,13 @@
         }
       }
     }
- else     if (kubelet instanceof ReplicationControllerSchema) {
-      ReplicationControllerSchema replicationControllerSchema=(ReplicationControllerSchema)kubelet;
+ else     if (kubelet instanceof ReplicationController) {
+      ReplicationController replicationControllerSchema=(ReplicationController)kubelet;
       if (replicationControllerMap == null) {
         replicationControllerMap=getReplicationControllerMap(kubernetes);
       }
       String id=replicationControllerSchema.getId();
-      ReplicationControllerSchema old=replicationControllerMap.get(id);
+      ReplicationController old=replicationControllerMap.get(id);
       if (isRunning(old)) {
         LOG.info("Not creating replicationController for " + id + " from definition "+ definition+ " as its already running");
       }
@@ -51,13 +51,13 @@
         }
       }
     }
- else     if (kubelet instanceof ServiceSchema) {
-      ServiceSchema serviceSchema=(ServiceSchema)kubelet;
+ else     if (kubelet instanceof Service) {
+      Service serviceSchema=(Service)kubelet;
       if (serviceMap == null) {
         serviceMap=getServiceMap(kubernetes);
       }
       String id=serviceSchema.getId();
-      ServiceSchema old=serviceMap.get(id);
+      Service old=serviceMap.get(id);
       if (isRunning(old)) {
         LOG.info("Not creating pod for " + id + " from defintion "+ definition+ " as its already running");
       }

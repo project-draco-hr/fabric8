@@ -3,12 +3,12 @@
   podId.setCompleter(new UICompleter<String>(){
     @Override public Iterable<String> getCompletionProposals(    UIContext context,    InputComponent<?,String> input,    String value){
       List<String> list=new ArrayList<String>();
-      PodListSchema pods=getKubernetes().getPods();
+      PodList pods=getKubernetes().getPods();
       if (pods != null) {
-        List<PodSchema> items=pods.getItems();
+        List<Pod> items=pods.getItems();
         if (items != null) {
-          for (          PodSchema item : items) {
-            String id=item.getId();
+          for (          Pod item : items) {
+            String id=getId(item);
             list.add(id);
           }
         }

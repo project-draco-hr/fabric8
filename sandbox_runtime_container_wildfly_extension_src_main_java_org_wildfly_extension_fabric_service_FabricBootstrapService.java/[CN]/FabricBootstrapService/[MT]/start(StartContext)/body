@@ -19,8 +19,8 @@
   ModuleClassLoader classLoader=(ModuleClassLoader)getClass().getClassLoader();
   try {
     URL url=classLoader.getResource(JarFile.MANIFEST_NAME);
-    Manifest manifest=new Manifest(url.openStream());
-    Dictionary<String,String> headers=new ManifestHeadersProvider(manifest).getHeaders();
+    ContainerManifest manifest=new ContainerManifest(url.openStream());
+    Dictionary<String,String> headers=new ContainerManifestHeadersProvider(manifest).getHeaders();
     module=runtime.installModule(classLoader,headers);
     ModuleEntriesProvider entriesProvider=new ClassLoaderEntriesProvider(module);
     Attachable attachable=AbstractModule.assertAbstractModule(module);
