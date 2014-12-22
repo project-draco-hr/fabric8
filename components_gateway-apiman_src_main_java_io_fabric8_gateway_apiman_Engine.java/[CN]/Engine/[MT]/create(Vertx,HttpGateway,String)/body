@@ -6,7 +6,7 @@
     }
     @Override protected IRegistry createRegistry(){
       try {
-        FileBackedRegistry registry=new FileBackedRegistry();
+        registry=new FileBackedRegistry();
         registry.load(port);
         return registry;
       }
@@ -16,6 +16,43 @@
     }
   }
 ;
-  IEngine apimanEngine=factory.createEngine();
+  final IEngine engine=factory.createEngine();
+  ApiManEngine apimanEngine=new ApiManEngine(){
+    @Override public void unregisterApplication(    String organizationId,    String applicationId,    String version) throws RegistrationException {
+      engine.unregisterApplication(organizationId,applicationId,version);
+    }
+    @Override public void retireService(    String organizationId,    String serviceId,    String version) throws PublishingException {
+      engine.retireService(organizationId,serviceId,version);
+    }
+    @Override public void registerApplication(    Application application) throws RegistrationException {
+      engine.registerApplication(application);
+    }
+    @Override public void publishService(    Service service) throws PublishingException {
+      engine.publishService(service);
+    }
+    @Override public String getVersion(){
+      return engine.getVersion();
+    }
+    @Override public IServiceRequestExecutor executor(    ServiceRequest request,    IAsyncResultHandler<IEngineResult> resultHandler){
+      return engine.executor(request,resultHandler);
+    }
+    @Override public String serviceMapping(    String orgId,    String serviceId,    String version) throws NotAuthorizedException {
+      Service service=registry.serviceLookup(orgId,serviceId,version);
+      String serviceUrl=service.getEndpoint();
+      Map<String,IMappedServices> mappedServices=httpGateway.getMappedServices();
+      Iterator<String> keys=mappedServices.keySet().iterator();
+      while (keys.hasNext()) {
+        String key=keys.next();
+        IMappedServices services=mappedServices.get(key);
+        String servicePath=services.getProxyMappingDetails().getProxyServiceUrl();
+        if (servicePath.equals(serviceUrl)) {
+          String gatewayUrl=httpGateway.getGatewayUrl() + key;
+          return gatewayUrl;
+        }
+      }
+      throw new NotAuthorizedException("Service not found");
+    }
+  }
+;
   return apimanEngine;
 }

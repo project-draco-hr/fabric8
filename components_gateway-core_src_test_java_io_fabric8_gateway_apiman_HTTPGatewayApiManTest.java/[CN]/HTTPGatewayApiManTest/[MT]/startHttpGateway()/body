@@ -5,7 +5,7 @@
     ServiceDTO serviceDetails=new ServiceDTO();
     serviceDetails.setContainer("local");
     serviceDetails.setVersion("1");
-    mappedServices.put("/hello/world",new MappedServices("http://localhost:18181",serviceDetails,loadBalancer,false));
+    mappedServices.put("/hello/world",new MappedServices("http://localhost:18181/root/",serviceDetails,loadBalancer,false));
   }
   final ApiManager apiManager=new ApiManager();
   DetectingGatewayWebSocketHandler websocketHandler=new DetectingGatewayWebSocketHandler();
@@ -36,6 +36,9 @@
         apiManager.setService(apiManagerService);
       }
       return apiManager;
+    }
+    @Override public String getGatewayUrl(){
+      return "http:/" + getLocalAddress();
     }
   }
 ;

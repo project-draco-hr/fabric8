@@ -1,0 +1,9 @@
+{
+  int restPort=httpGatewayServer.getPort() - 1;
+  HttpClient httpClient=new HttpClient();
+  GetMethod method=new GetMethod("http://127.0.0.1:" + restPort + "/rest/apimanager/api/services/Kurt/HelloWorld/1.0/endpoint?apikey=apiman-config-key");
+  httpClient.executeMethod(method);
+  assertEquals(200,httpClient.executeMethod(method));
+  String gatewayUrlOfService=method.getResponseBodyAsString();
+  assertEquals("{\"endpoint\":\"http://0.0.0.0:18080/hello/world\"}",gatewayUrlOfService);
+}

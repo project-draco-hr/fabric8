@@ -2,7 +2,7 @@
   vertx=(Vertx)config.get(ApiManagerService.VERTX);
   httpGateway=(HttpGateway)config.get(ApiManagerService.HTTP_GATEWAY);
   String port=(String)config.get(ApiManagerService.PORT);
-  engine=Engine.create(vertx,httpGateway,port);
+  engine=new Engine().create(vertx,httpGateway,port);
   engineRestServer=vertx.createHttpServer();
   int portRest=Integer.valueOf(port) - 1;
   if (config.containsKey(ApiManagerService.PORT_REST))   portRest=(Integer)config.get(ApiManagerService.PORT_REST);
