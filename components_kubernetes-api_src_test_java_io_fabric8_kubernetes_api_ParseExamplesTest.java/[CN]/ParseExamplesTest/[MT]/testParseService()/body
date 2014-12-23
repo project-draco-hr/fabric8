@@ -1,7 +1,7 @@
 {
   Service service=assertParseExampleFile("service.json",Service.class);
   assertEquals("Service",service.getKind());
-  Integer expectedPort=80;
-  assertEquals(expectedPort,service.getSpec().getContainerPort().getIntVal());
+  int expectedPort=80;
+  assertEquals(expectedPort,getContainerPort(service));
   ObjectMapper mapper=KubernetesFactory.createObjectMapper();
 }

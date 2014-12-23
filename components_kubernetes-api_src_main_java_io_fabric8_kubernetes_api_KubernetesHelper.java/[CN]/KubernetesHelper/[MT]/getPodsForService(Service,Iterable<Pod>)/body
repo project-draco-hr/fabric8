@@ -1,9 +1,5 @@
 {
-  ServiceSpec spec=service.getSpec();
-  if (spec == null) {
-    return Collections.EMPTY_LIST;
-  }
-  Map<String,String> selector=spec.getSelector();
+  Map<String,String> selector=getSelector(service);
   Filter<Pod> podFilter=KubernetesHelper.createPodFilter(selector);
   return Filters.filter(pods,podFilter);
 }

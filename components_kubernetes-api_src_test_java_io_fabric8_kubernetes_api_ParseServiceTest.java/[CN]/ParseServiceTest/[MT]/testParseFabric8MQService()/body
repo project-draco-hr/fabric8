@@ -1,11 +1,9 @@
 {
   Service service=assertParseTestFile("fmq-service.json",Service.class);
-  ServiceSpec spec=service.getSpec();
-  assertNotNull("spec",spec);
-  Integer port=spec.getPort();
+  Integer port=getPort(service);
   assertNotNull("port",port);
-  IntOrString containerPort=spec.getContainerPort();
-  assertNotNull("containerPort",containerPort);
+  int containerPort=getContainerPort(service);
+  assertTrue("containerPort " + containerPort,containerPort > 0);
   String json=KubernetesHelper.toJson(service);
   LOG.info("Got JSON: " + json);
 }

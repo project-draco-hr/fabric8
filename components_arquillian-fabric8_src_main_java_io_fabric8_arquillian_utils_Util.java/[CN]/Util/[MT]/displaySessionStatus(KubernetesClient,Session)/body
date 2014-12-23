@@ -14,9 +14,8 @@
     }
   }
   for (  Service service : client.getServices().getItems()) {
-    ServiceSpec spec=service.getSpec();
-    if (spec != null && serviceFilter.matches(service)) {
-      session.getLogger().info("Service:" + getId(service) + " IP:"+ spec.getPortalIP()+ " Port:"+ spec.getPort());
+    if (serviceFilter.matches(service)) {
+      session.getLogger().info("Service:" + getId(service) + " IP:"+ getPortalIP(service)+ " Port:"+ getPort(service));
     }
   }
 }
