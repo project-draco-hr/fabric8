@@ -1,4 +1,5 @@
 {
+  LOG.info("Initializing the ApiMan Engine..");
   vertx=(Vertx)config.get(ApiManagerService.VERTX);
   httpGateway=(HttpGateway)config.get(ApiManagerService.HTTP_GATEWAY);
   String port=(String)config.get(ApiManagerService.PORT);
@@ -8,4 +9,5 @@
   if (config.containsKey(ApiManagerService.PORT_REST))   portRest=(Integer)config.get(ApiManagerService.PORT_REST);
   engineRestServer.requestHandler(new ApiManRestRequestHandler(engine));
   engineRestServer.listen(portRest,"localhost");
+  LOG.info("The ApiMan REST Service is listening at on port " + portRest);
 }
