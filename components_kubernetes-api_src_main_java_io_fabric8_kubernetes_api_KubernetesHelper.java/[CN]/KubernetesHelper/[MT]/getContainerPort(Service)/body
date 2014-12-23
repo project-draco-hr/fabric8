@@ -1,9 +1,9 @@
 {
   int answer=-1;
   String id=getId(service);
-  ServiceSpec spec=service.getSpec();
+  Service spec=service;
   if (spec != null) {
-    io.fabric8.kubernetes.api.model.util.IntOrString containerPort=spec.getContainerPort();
+    IntOrString containerPort=spec.getContainerPort();
     Objects.notNull(containerPort,"containerPort for service " + id);
     Integer intValue=containerPort.getIntVal();
     if (intValue != null) {
