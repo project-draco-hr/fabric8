@@ -3,4 +3,26 @@
   this.namespace=pod.getNamespace();
   this.status=KubernetesHelper.getPodStatus(pod);
   this.labels=pod.getLabels();
+  PodState currentState=pod.getCurrentState();
+  if (currentState != null) {
+    this.podIP=currentState.getPodIP();
+    this.host=currentState.getHost();
+    ContainerManifest manifest=currentState.getManifest();
+    if (manifest != null) {
+      List<Container> containers=manifest.getContainers();
+      if (containers != null) {
+        for (        Container container : containers) {
+          List<Port> ports=container.getPorts();
+          if (ports != null) {
+            for (            Port port : ports) {
+              Integer containerPort=port.getContainerPort();
+              if (containerPort != null) {
+                containerPorts.add(containerPort);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
