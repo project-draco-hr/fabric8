@@ -25,6 +25,10 @@
         }
  else         if (entity instanceof ReplicationController) {
           ReplicationController replicationController=(ReplicationController)entity;
+          PodTemplate podTemplate=replicationController.getDesiredState().getPodTemplate();
+          if (podTemplate.getLabels() == null) {
+            podTemplate.setLabels(new HashMap<String,String>());
+          }
           replicationController.getDesiredState().getPodTemplate().getLabels().put(Constants.ARQ_KEY,event.getSession().getId());
           if (replicationController.getLabels() == null) {
             replicationController.setLabels(new HashMap<String,String>());
