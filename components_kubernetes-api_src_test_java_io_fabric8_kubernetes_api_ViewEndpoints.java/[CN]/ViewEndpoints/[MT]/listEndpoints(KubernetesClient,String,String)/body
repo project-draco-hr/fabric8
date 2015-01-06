@@ -1,0 +1,15 @@
+{
+  if (service != null) {
+    Endpoints endpoints=client.endpointsForService(service,namespace);
+    display(endpoints);
+  }
+ else {
+    EndpointsList endpointsList=client.getEndpoints();
+    if (endpointsList != null) {
+      List<Endpoints> items=notNullList(endpointsList.getItems());
+      for (      Endpoints item : items) {
+        display(item);
+      }
+    }
+  }
+}

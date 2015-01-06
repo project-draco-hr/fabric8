@@ -1,0 +1,20 @@
+{
+  System.out.println("Usage: [serviceId] [namespace]");
+  KubernetesClient client=new KubernetesClient();
+  System.out.println("Connecting to kubernetes on: " + client.getAddress());
+  try {
+    String service=null;
+    String namespace=null;
+    if (args.length > 0) {
+      service=args[0];
+    }
+    if (args.length > 1) {
+      namespace=args[1];
+    }
+    listEndpoints(client,service,namespace);
+  }
+ catch (  Exception e) {
+    System.out.println("FAILED: " + e);
+    e.printStackTrace();
+  }
+}
