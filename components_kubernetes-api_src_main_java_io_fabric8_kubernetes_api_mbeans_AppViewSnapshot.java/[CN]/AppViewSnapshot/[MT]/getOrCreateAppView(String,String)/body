@@ -1,9 +1,10 @@
 {
   NamespaceAndAppPath key=new NamespaceAndAppPath(namespace,appPath);
-  AppViewDetails answer=apps.get(key);
+  AppViewDetails answer=appMap.get(key);
   if (answer == null) {
     answer=new AppViewDetails(this,appPath,namespace);
-    apps.put(key,answer);
+    appMap.put(key,answer);
+    apps.add(answer);
   }
   return answer;
 }
