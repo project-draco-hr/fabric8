@@ -1,0 +1,24 @@
+{
+  URL url=new URL(address);
+switch (url.getProtocol()) {
+case "http":
+    URLConnection connection=url.openConnection();
+  connection.connect();
+break;
+case "https":
+SSLSocketFactory sslsocketfactory=(SSLSocketFactory)SSLSocketFactory.getDefault();
+SSLSocket sslsocket=(SSLSocket)sslsocketfactory.createSocket(url.getHost(),url.getPort());
+try {
+InputStream in=sslsocket.getInputStream();
+OutputStream out=sslsocket.getOutputStream();
+out.write(1);
+while (in.available() > 0) {
+System.out.print(in.read());
+}
+}
+  finally {
+sslsocket.close();
+}
+break;
+}
+}

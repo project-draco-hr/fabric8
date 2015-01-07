@@ -1,0 +1,24 @@
+{
+  String hostEnvVar=KUBERNETES_RO_SERVICE_HOST_ENV_VAR;
+  String portEnvVar=KUBERNETES_RO_SERVICE_PORT_ENV_VAR;
+  String proto="http";
+  if (writeable) {
+    hostEnvVar=KUBERNETES_SERVICE_HOST_ENV_VAR;
+    portEnvVar=KUBERNETES_SERVICE_PORT_ENV_VAR;
+    proto="https";
+  }
+  String kubernetesMaster=System.getenv(hostEnvVar);
+  if (Strings.isNotBlank(kubernetesMaster)) {
+    kubernetesMaster=proto + "://" + kubernetesMaster+ ":"+ System.getenv(portEnvVar);
+  }
+ else {
+    kubernetesMaster=System.getenv(KUBERNETES_MASTER_ENV_VAR);
+  }
+  if (Strings.isNullOrBlank(kubernetesMaster)) {
+    kubernetesMaster=System.getProperty(KUBERNETES_MASTER_SYSTEM_PROPERTY);
+  }
+  if (Strings.isNotBlank(kubernetesMaster)) {
+    return kubernetesMaster;
+  }
+  return DEFAULT_KUBERNETES_MASTER;
+}

@@ -1,0 +1,14 @@
+{
+  if (writeable) {
+    if (kubernetesWriteable == null) {
+      kubernetesWriteable=getFactory(true).createKubernetes();
+    }
+    return kubernetesWriteable;
+  }
+ else {
+    if (kubernetes == null) {
+      kubernetes=getFactory(false).createKubernetes();
+    }
+    return kubernetes;
+  }
+}
