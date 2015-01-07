@@ -1,0 +1,11 @@
+{
+  for (  Pod pod : pods) {
+    if (KubernetesHelper.isPodRunning(pod) && filterPod(pod)) {
+      J4pClient client=clientForPod(pod);
+      if (client != null) {
+        return client;
+      }
+    }
+  }
+  return null;
+}

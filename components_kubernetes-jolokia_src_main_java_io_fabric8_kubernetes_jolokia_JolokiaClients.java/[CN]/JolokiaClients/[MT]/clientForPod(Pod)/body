@@ -1,0 +1,11 @@
+{
+  String host=KubernetesHelper.getHost(pod);
+  List<Container> containers=KubernetesHelper.getContainers(pod);
+  for (  Container container : containers) {
+    J4pClient jolokia=clientForContainer(host,container,pod);
+    if (jolokia != null) {
+      return jolokia;
+    }
+  }
+  return null;
+}

@@ -1,0 +1,16 @@
+{
+  return new Filter<Pod>(){
+    @Override public String toString(){
+      return "ArqPodFilter(" + Constants.ARQ_KEY + " = "+ getId()+ ")";
+    }
+    @Override public boolean matches(    Pod pod){
+      Map<String,String> labels=pod.getLabels();
+      if (labels != null) {
+        String value=labels.get(Constants.ARQ_KEY);
+        return Objects.equals(value,getId());
+      }
+      return false;
+    }
+  }
+;
+}

@@ -1,0 +1,17 @@
+{
+  String brokerReplicationControllerId="fabric8MQ";
+  String consumerReplicationControllerId="fabric8MQConsumer";
+  assertThat(client).replicationController(consumerReplicationControllerId).isNotNull();
+  assertThat(client).pods().runningStatus().filterLabel(Constants.ARQ_KEY,session.getId()).haveAtLeast(1,new Condition<Pod>(){
+    @Override public boolean matches(    Pod podSchema){
+      return true;
+    }
+  }
+);
+  J4pClient brokerClient=jolokiaClients.clientForReplicationController(brokerReplicationControllerId);
+  J4pClient consumerClient=jolokiaClients.clientForReplicationController(consumerReplicationControllerId);
+  assertThat(brokerClient).isNotNull();
+  assertThat(consumerClient).isNotNull();
+  assertThat(brokerClient).longAttribute("org.apache.activemq:type=Broker,brokerName=default,destinationType=Queue,destinationName=TEST.FOO","EnqueueCount").isGreaterThan(1000);
+  assertThat(consumerClient).stringAttribute("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"","Status").isEqualTo("Started");
+}
