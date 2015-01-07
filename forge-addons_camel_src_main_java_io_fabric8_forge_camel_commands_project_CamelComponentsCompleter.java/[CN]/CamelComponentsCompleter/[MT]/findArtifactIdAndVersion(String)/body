@@ -1,0 +1,14 @@
+{
+  String artifactId=null;
+  String version=null;
+  List<Map<String,String>> data=JSonSchemaHelper.parseJsonSchema("component",json,false);
+  for (  Map<String,String> row : data) {
+    if (row.get("artifactId") != null) {
+      artifactId=row.get("artifactId");
+    }
+    if (row.get("version") != null) {
+      version=row.get("version");
+    }
+  }
+  return new String[]{artifactId,version};
+}

@@ -1,0 +1,14 @@
+{
+  Project project=getSelectedProject(context);
+  Dependency core=findCamelCoreDependency(project);
+  if (core == null) {
+    return Results.fail("The project does not include camel-core");
+  }
+  String artifactId=name.getValue();
+  if (!artifactId.startsWith("camel-")) {
+    artifactId="camel-" + artifactId;
+  }
+  DependencyBuilder component=DependencyBuilder.create().setGroupId("org.apache.camel").setArtifactId(artifactId).setVersion(core.getCoordinate().getVersion());
+  dependencyInstaller.install(project,component);
+  return Results.success("Added Camel component " + name.getValue() + " to the project");
+}

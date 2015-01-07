@@ -1,0 +1,9 @@
+{
+  List<Dependency> dependencies=project.getFacet(DependencyFacet.class).getEffectiveDependencies();
+  for (  Dependency d : dependencies) {
+    if ("org.apache.camel".equals(d.getCoordinate().getGroupId()) && "camel-core".equals(d.getCoordinate().getArtifactId())) {
+      return d;
+    }
+  }
+  return null;
+}
