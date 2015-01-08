@@ -2,8 +2,9 @@
   Logger log=event.getSession().getLogger();
   try {
     boolean dependenciesOk=true;
-    if (!configuration.getDependencies().isEmpty()) {
-      for (      String dependency : configuration.getDependencies()) {
+    List<String> dependencies=!configuration.getDependencies().isEmpty() ? configuration.getDependencies() : Util.getMavenDependencies(event.getSession());
+    if (!dependencies.isEmpty()) {
+      for (      String dependency : dependencies) {
         log.info("Applying kubernetes dependency from: " + dependency);
         Object dep=loadJson(readAsString(new URL(dependency)));
         dependenciesOk=dependenciesOk && applyConfiguration(client,controller,configuration,event.getSession(),Constants.ARQ_DEP_KEY,dep);
