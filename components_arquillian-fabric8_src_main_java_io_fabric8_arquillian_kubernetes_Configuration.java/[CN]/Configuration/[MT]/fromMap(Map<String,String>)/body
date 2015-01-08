@@ -1,36 +1,13 @@
 {
   Configuration configuration=new Configuration();
   try {
-    if (map.containsKey(MASTER_URL)) {
-      configuration.masterUrl=map.get(MASTER_URL);
-    }
- else {
-      configuration.masterUrl=Systems.getEnvVarOrSystemProperty(KUBERNETES_MASTER,"");
-    }
-    if (Strings.isNullOrBlank(configuration.getMasterUrl())) {
-      throw new IllegalStateException("Could not find a valid kubernetes URL.");
-    }
-    if (map.containsKey(CONFIG_URL)) {
-      configuration.configUrl=new URL(map.get(CONFIG_URL));
-    }
- else     if (map.containsKey(CONFIG_FILE_NAME)) {
-      configuration.configUrl=Configuration.class.getResource("/" + map.get(CONFIG_FILE_NAME));
-    }
- else {
-      configuration.configUrl=Configuration.class.getResource("/" + DEFAULT_CONFIG_FILE_NAME);
-    }
-    if (map.containsKey(TIMEOUT)) {
-      configuration.timeout=Long.parseLong(map.get(TIMEOUT));
-    }
-    if (map.containsKey(POLL_INTERVAL)) {
-      configuration.pollInterval=Long.parseLong(map.get(POLL_INTERVAL));
-    }
-    if (map.containsKey(ANSI_LOGGER_ENABLED)) {
-      configuration.ansiLoggerEnabled=Boolean.parseBoolean(map.get(ANSI_LOGGER_ENABLED));
-    }
- else {
-      configuration.ansiLoggerEnabled=Systems.getEnvVarOrSystemProperty(ANSI_LOGGER_ENABLED,true);
-    }
+    applyMasterUrl(configuration,map);
+    applyConfigurationURL(configuration,map);
+    applyDependencies(configuration,map);
+    configuration.timeout=getLongProperty(TIMEOUT,map,DEFAULT_TIMEOUT);
+    configuration.pollInterval=getLongProperty(POLL_INTERVAL,map,DEFAULT_POLL_INTERVAL);
+    configuration.ansiLoggerEnabled=getBooleanProperty(ANSI_LOGGER_ENABLED,map,true);
+    configuration.waitForConenction=getBooleanProperty(WAIT_FOR_SERVICE_CONNECTION,map,false);
   }
  catch (  Throwable t) {
     throw new RuntimeException(t);

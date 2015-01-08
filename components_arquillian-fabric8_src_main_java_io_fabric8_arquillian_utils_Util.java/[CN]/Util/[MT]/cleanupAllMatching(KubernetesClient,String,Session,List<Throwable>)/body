@@ -1,0 +1,24 @@
+{
+  Map<String,String> labels=Collections.singletonMap(key,session.getId());
+  Filter<Pod> podFilter=KubernetesHelper.createPodFilter(labels);
+  Filter<Service> serviceFilter=KubernetesHelper.createServiceFilter(labels);
+  Filter<ReplicationController> replicationControllerFilter=KubernetesHelper.createReplicationControllerFilter(labels);
+  try {
+    deleteReplicationControllers(client,session.getLogger(),replicationControllerFilter);
+  }
+ catch (  MultiException e) {
+    errors.addAll(Arrays.asList(e.getCauses()));
+  }
+  try {
+    deletePods(client,session.getLogger(),podFilter);
+  }
+ catch (  MultiException e) {
+    errors.addAll(Arrays.asList(e.getCauses()));
+  }
+  try {
+    deleteServices(client,session.getLogger(),serviceFilter);
+  }
+ catch (  MultiException e) {
+    errors.addAll(Arrays.asList(e.getCauses()));
+  }
+}

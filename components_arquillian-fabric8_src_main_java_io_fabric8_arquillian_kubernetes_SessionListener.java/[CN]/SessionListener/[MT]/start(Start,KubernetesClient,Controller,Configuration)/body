@@ -1,60 +1,30 @@
 {
-  boolean shouldWait=false;
   Logger log=event.getSession().getLogger();
   try {
+    boolean dependenciesOk=true;
+    if (!configuration.getDependencies().isEmpty()) {
+      for (      String dependency : configuration.getDependencies()) {
+        log.info("Applying kubernetes dependency from: " + dependency);
+        Object dep=loadJson(readAsString(new URL(dependency)));
+        dependenciesOk=dependenciesOk && applyConfiguration(client,controller,configuration,event.getSession(),Constants.ARQ_DEP_KEY,dep);
+        if (!dependenciesOk) {
+          log.error("Failed to apply kubernetes dependency: " + dependency);
+          throw new IllegalStateException("Dependency failure.");
+        }
+      }
+    }
     log.info("Applying kubernetes configuration from: " + configuration.getConfigUrl());
     Object dto=loadJson(readAsString(configuration.getConfigUrl()));
-    if (dto instanceof Config) {
-      for (      Object entity : getEntities((Config)dto)) {
-        if (entity instanceof Pod) {
-          Pod pod=(Pod)entity;
-          if (pod.getLabels() == null) {
-            pod.setLabels(new HashMap<String,String>());
-          }
-          pod.getLabels().put(Constants.ARQ_KEY,event.getSession().getId());
-          controller.applyPod(pod,event.getSession().getId());
-          shouldWait=true;
-        }
- else         if (entity instanceof Service) {
-          Service service=(Service)entity;
-          if (service.getLabels() == null) {
-            service.setLabels(new HashMap<String,String>());
-          }
-          service.getLabels().put(Constants.ARQ_KEY,event.getSession().getId());
-          controller.applyService(service,event.getSession().getId());
-        }
- else         if (entity instanceof ReplicationController) {
-          ReplicationController replicationController=(ReplicationController)entity;
-          PodTemplate podTemplate=replicationController.getDesiredState().getPodTemplate();
-          if (podTemplate.getLabels() == null) {
-            podTemplate.setLabels(new HashMap<String,String>());
-          }
-          replicationController.getDesiredState().getPodTemplate().getLabels().put(Constants.ARQ_KEY,event.getSession().getId());
-          if (replicationController.getLabels() == null) {
-            replicationController.setLabels(new HashMap<String,String>());
-          }
-          replicationController.getLabels().put(Constants.ARQ_KEY,event.getSession().getId());
-          controller.applyReplicationController(replicationController,event.getSession().getId());
-          shouldWait=true;
-        }
-      }
-    }
-    if (shouldWait) {
-      Callable<Boolean> sessionPodsReady=new SessionPodsAreReady(client,event.getSession());
-      WaitStrategy waitStrategy=new WaitStrategy(sessionPodsReady,configuration.getTimeout(),configuration.getPollInterval());
-      if (!waitStrategy.await()) {
-        log.error("Timed out waiting for pods!");
-      }
- else {
-        log.status("All pods are currently 'running'!");
-      }
-    }
- else {
-      log.warn("No pods/replication controllers defined in the configuration!");
-    }
+    applyConfiguration(client,controller,configuration,event.getSession(),Constants.ARQ_KEY,dto);
     displaySessionStatus(client,event.getSession());
   }
  catch (  Exception e) {
+    try {
+      cleanupSession(client,event.getSession());
+    }
+ catch (    MultiException me) {
+      throw e;
+    }
     throw new RuntimeException(e);
   }
 }

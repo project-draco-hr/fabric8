@@ -1,0 +1,30 @@
+{
+  boolean result=true;
+  Map<String,String> labels=Collections.singletonMap(key,session.getId());
+  Filter<Service> serviceFilter=KubernetesHelper.createServiceFilter(labels);
+  List<Service> services=Util.findServices(kubernetesClient,serviceFilter);
+  if (services.isEmpty()) {
+    result=false;
+    session.getLogger().warn("No services are available yet, waiting...");
+  }
+ else   if (waitForConnection) {
+    for (    Service s : services) {
+      String serviceURL=KubernetesHelper.getServiceURL(s);
+      String serviceStatus=null;
+      try {
+        URL url=new URL(serviceURL);
+        URLConnection connection=url.openConnection();
+        connection.connect();
+        serviceStatus="Service: " + serviceURL + " is ready";
+      }
+ catch (      Exception e) {
+        result=false;
+        serviceStatus="Service: " + serviceURL + " is not ready! Error: "+ e.getMessage();
+      }
+ finally {
+        session.getLogger().warn(serviceStatus);
+      }
+    }
+  }
+  return result;
+}
