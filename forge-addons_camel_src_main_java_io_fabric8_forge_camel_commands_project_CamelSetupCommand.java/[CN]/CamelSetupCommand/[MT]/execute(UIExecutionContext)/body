@@ -4,11 +4,8 @@
   if (core != null) {
     return Results.success("Apache Camel is already setup");
   }
-  DependencyBuilder builder=DependencyBuilder.create().setGroupId("org.apache.camel").setArtifactId("camel-core");
-  if (version.getValue() != null) {
-    builder.setVersion(version.getValue());
-  }
-  core=builder;
+  core=DependencyBuilder.create().setCoordinate(createCamelCoordinate("camel-core",version.getValue()));
   dependencyInstaller.install(project,core);
+  MavenPluginBuilder plugin=MavenPluginBuilder.create().setCoordinate(createCamelCoordinate("camel-maven-plugin",version.getValue()));
   return Results.success("Added Apache Camel to the project");
 }
