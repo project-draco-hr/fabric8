@@ -6,6 +6,12 @@
   }
   core=DependencyBuilder.create().setCoordinate(createCamelCoordinate("camel-core",version.getValue()));
   dependencyInstaller.install(project,core);
-  MavenPluginBuilder plugin=MavenPluginBuilder.create().setCoordinate(createCamelCoordinate("camel-maven-plugin",version.getValue()));
+  core=findCamelCoreDependency(project);
+  String camelVersion=core.getCoordinate().getVersion();
+  MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
+  MavenPluginBuilder plugin=MavenPluginBuilder.create().setCoordinate(createCamelCoordinate("camel-maven-plugin",camelVersion));
+  pluginFacet.addPlugin(plugin);
+  plugin=MavenPluginBuilder.create().setCoordinate(createCoordinate("io.hawt","hawtio-maven-plugin",null));
+  pluginFacet.addPlugin(plugin);
   return Results.success("Added Apache Camel to the project");
 }
