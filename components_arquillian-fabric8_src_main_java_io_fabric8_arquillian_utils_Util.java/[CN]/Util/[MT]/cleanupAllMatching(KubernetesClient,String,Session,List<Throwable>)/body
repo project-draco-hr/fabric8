@@ -3,22 +3,37 @@
   Filter<Pod> podFilter=KubernetesHelper.createPodFilter(labels);
   Filter<Service> serviceFilter=KubernetesHelper.createServiceFilter(labels);
   Filter<ReplicationController> replicationControllerFilter=KubernetesHelper.createReplicationControllerFilter(labels);
-  try {
-    deleteReplicationControllers(client,session.getLogger(),replicationControllerFilter);
-  }
- catch (  MultiException e) {
-    errors.addAll(Arrays.asList(e.getCauses()));
-  }
-  try {
-    deletePods(client,session.getLogger(),podFilter);
-  }
- catch (  MultiException e) {
-    errors.addAll(Arrays.asList(e.getCauses()));
-  }
-  try {
-    deleteServices(client,session.getLogger(),serviceFilter);
-  }
- catch (  MultiException e) {
-    errors.addAll(Arrays.asList(e.getCauses()));
+  for (int i=0; i < 10; i++) {
+    try {
+      deleteReplicationControllers(client,session.getLogger(),replicationControllerFilter);
+    }
+ catch (    MultiException e) {
+      errors.addAll(Arrays.asList(e.getCauses()));
+    }
+    try {
+      deletePods(client,session.getLogger(),podFilter);
+    }
+ catch (    MultiException e) {
+      errors.addAll(Arrays.asList(e.getCauses()));
+    }
+    try {
+      deleteServices(client,session.getLogger(),serviceFilter);
+    }
+ catch (    MultiException e) {
+      errors.addAll(Arrays.asList(e.getCauses()));
+    }
+    PodList podList=client.getPods();
+    List<Pod> filteredPods=Filters.filter(notNullList(podList.getItems()),podFilter);
+    if (filteredPods.isEmpty()) {
+      return;
+    }
+ else {
+      try {
+        Thread.sleep(1000);
+      }
+ catch (      InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
   }
 }
