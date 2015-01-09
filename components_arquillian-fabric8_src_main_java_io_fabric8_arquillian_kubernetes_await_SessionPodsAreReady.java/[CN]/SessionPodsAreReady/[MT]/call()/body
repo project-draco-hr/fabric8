@@ -10,7 +10,15 @@
   for (  Pod pod : pods) {
     result=result && Objects.equal(PodStatus.OK,KubernetesHelper.getPodStatus(pod));
     if (!result) {
-      session.getLogger().warn("Waiting for pods to reach 'running' state...");
+      if (pod.getCurrentState().getInfo() != null) {
+        for (        Map.Entry<String,ContainerStatus> entry : pod.getCurrentState().getInfo().entrySet()) {
+          String containerId=entry.getKey();
+          ContainerStatus status=entry.getValue();
+          if (status.getState().getWaiting() != null) {
+            session.getLogger().warn("Waiting for container:" + containerId + ". Reason:"+ status.getState().getWaiting().getReason());
+          }
+        }
+      }
     }
   }
   return result;
