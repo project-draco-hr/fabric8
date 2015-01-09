@@ -3,6 +3,17 @@
   if (services.containsKey(serviceKey)) {
     throw new PublishingException(Messages.i18n.format("InMemoryRegistry.ServiceAlreadyPublished"));
   }
+  try {
+    String path=getServiceBindPath(service);
+    String[] serviceInfo=new String[3];
+    serviceInfo[0]=service.getOrganizationId();
+    serviceInfo[1]=service.getServiceId();
+    serviceInfo[2]=service.getVersion();
+    serviceBindPaths.put(path,serviceInfo);
+  }
+ catch (  Exception e) {
+    throw new PublishingException(e.getMessage(),e);
+  }
   services.put(serviceKey,service);
   save();
 }

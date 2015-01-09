@@ -11,7 +11,7 @@
     gateway.removeMappingRuleConfiguration(httpMappingRuleBase);
   }
   httpMappingRuleBase=new HttpMappingRuleBase(new SimplePathTemplate(uriTemplate),gateway.getGatewayVersion(),enabledVersion,loadBalancer,reverseHeaders);
-  mappingTree=new HttpMappingKubeCache(httpMappingRuleBase,serviceSelectors);
+  mappingTree=new HttpMappingKubeCache(httpMappingRuleBase,serviceSelectors,gateway.getApiManager());
   mappingTree.init(httpGatewayConfig);
   gateway.addMappingRuleConfiguration(httpMappingRuleBase);
   gateway.configure(httpGatewayConfig);

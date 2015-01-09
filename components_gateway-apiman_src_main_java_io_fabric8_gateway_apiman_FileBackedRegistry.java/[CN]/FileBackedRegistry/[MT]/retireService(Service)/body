@@ -1,6 +1,14 @@
 {
   String serviceKey=getServiceKey(service);
   if (services.containsKey(serviceKey)) {
+    try {
+      Service service1=services.get(serviceKey);
+      String path=getServiceBindPath(service1);
+      serviceBindPaths.remove(path);
+    }
+ catch (    Exception e) {
+    }
+    ;
     services.remove(serviceKey);
   }
  else {
