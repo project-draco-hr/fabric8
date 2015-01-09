@@ -27,7 +27,7 @@
     }
     throw new RuntimeException(e);
   }
-  Runtime.getRuntime().addShutdownHook(new Thread("Cleanup session"){
+  Thread shutdownHook=new Thread("Cleanup session"){
     @Override public void run(){
       log.warn("shutdown hook cleaning up the integration test!");
       try {
@@ -38,5 +38,6 @@
       }
     }
   }
-);
+;
+  Runtime.getRuntime().addShutdownHook(shutdownHook);
 }
