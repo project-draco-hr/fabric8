@@ -1,0 +1,27 @@
+{
+  long end=System.currentTimeMillis() + timeoutMs;
+  AssertionError failure=null;
+  while (true) {
+    if (System.currentTimeMillis() > end) {
+      if (failure != null) {
+        throw failure;
+      }
+ else {
+        return;
+      }
+    }
+    try {
+      block.invoke();
+      return;
+    }
+ catch (    AssertionError e) {
+      failure=e;
+    }
+catch (    Exception e) {
+      failure=new AssertionError(e);
+    }
+    LOG.debug("Waiting for " + failure);
+    System.out.println("Waiting for: " + failure);
+    Thread.sleep(1000);
+  }
+}
