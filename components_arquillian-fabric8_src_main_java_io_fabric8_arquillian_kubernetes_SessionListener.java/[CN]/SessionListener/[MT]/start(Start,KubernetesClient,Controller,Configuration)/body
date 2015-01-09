@@ -1,5 +1,7 @@
 {
   final Logger log=event.getSession().getLogger();
+  shutdownHook=new ShutdownHook(client,event.getSession());
+  Runtime.getRuntime().addShutdownHook(shutdownHook);
   try {
     URL configUrl=configuration.getConfigUrl();
     List<String> dependencies=!configuration.getDependencies().isEmpty() ? configuration.getDependencies() : Util.getMavenDependencies(event.getSession());
@@ -25,19 +27,11 @@
  catch (    MultiException me) {
       throw e;
     }
-    throw new RuntimeException(e);
-  }
-  shutdownHook=new Thread("Cleanup session"){
-    @Override public void run(){
-      log.warn("shutdown hook cleaning up the integration test!");
-      try {
-        cleanupSession(client,event.getSession());
-      }
- catch (      MultiException e) {
-        log.warn(e.getMessage());
+ finally {
+      if (shutdownHook != null) {
+        Runtime.getRuntime().removeShutdownHook(shutdownHook);
       }
     }
+    throw new RuntimeException(e);
   }
-;
-  Runtime.getRuntime().addShutdownHook(shutdownHook);
 }

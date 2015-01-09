@@ -1,6 +1,10 @@
 {
-  cleanupSession(client,event.getSession());
-  if (shutdownHook != null) {
-    Runtime.getRuntime().removeShutdownHook(shutdownHook);
+  try {
+    cleanupSession(client,event.getSession());
+  }
+  finally {
+    if (shutdownHook != null) {
+      Runtime.getRuntime().removeShutdownHook(shutdownHook);
+    }
   }
 }

@@ -1,0 +1,9 @@
+{
+  session.getLogger().warn("Shutdown hook cleaning up the integration test!");
+  try {
+    cleanupSession(client,session);
+  }
+ catch (  MultiException e) {
+    session.getLogger().warn(e.getMessage());
+  }
+}
