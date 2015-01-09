@@ -1,16 +1,16 @@
 {
   Logger log=session.getLogger();
   Set<Callable<Boolean>> conditions=new HashSet<>();
-  Callable<Boolean> sessionPodsReady=new SessionPodsAreReady(client,session,key);
-  Callable<Boolean> servicesReady=new SessionServicesAreReady(client,session,key,configuration.isWaitForConenction());
-  if (dto instanceof Config) {
-    for (    Object entity : getEntities((Config)dto)) {
+  Callable<Boolean> sessionPodsReady=new SessionPodsAreReady(client,session);
+  Callable<Boolean> servicesReady=new SessionServicesAreReady(client,session,configuration.isWaitForConenction());
+  for (  Config c : kubeConfigs) {
+    for (    Object entity : getEntities(c)) {
       if (entity instanceof Pod) {
         Pod pod=(Pod)entity;
         if (pod.getLabels() == null) {
           pod.setLabels(new HashMap<String,String>());
         }
-        pod.getLabels().put(key,session.getId());
+        pod.getLabels().put(ARQ_KEY,session.getId());
         controller.applyPod(pod,session.getId());
         conditions.add(sessionPodsReady);
       }
@@ -19,7 +19,7 @@
         if (service.getLabels() == null) {
           service.setLabels(new HashMap<String,String>());
         }
-        service.getLabels().put(key,session.getId());
+        service.getLabels().put(ARQ_KEY,session.getId());
         controller.applyService(service,session.getId());
         conditions.add(servicesReady);
       }
@@ -29,11 +29,11 @@
         if (podTemplate.getLabels() == null) {
           podTemplate.setLabels(new HashMap<String,String>());
         }
-        replicationController.getDesiredState().getPodTemplate().getLabels().put(key,session.getId());
+        replicationController.getDesiredState().getPodTemplate().getLabels().put(ARQ_KEY,session.getId());
         if (replicationController.getLabels() == null) {
           replicationController.setLabels(new HashMap<String,String>());
         }
-        replicationController.getLabels().put(key,session.getId());
+        replicationController.getLabels().put(ARQ_KEY,session.getId());
         controller.applyReplicationController(replicationController,session.getId());
         conditions.add(sessionPodsReady);
       }

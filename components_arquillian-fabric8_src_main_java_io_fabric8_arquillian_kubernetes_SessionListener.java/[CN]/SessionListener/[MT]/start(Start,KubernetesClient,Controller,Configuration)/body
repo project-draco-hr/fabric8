@@ -1,22 +1,21 @@
 {
   Logger log=event.getSession().getLogger();
   try {
-    boolean dependenciesOk=true;
+    URL configUrl=configuration.getConfigUrl();
     List<String> dependencies=!configuration.getDependencies().isEmpty() ? configuration.getDependencies() : Util.getMavenDependencies(event.getSession());
-    if (!dependencies.isEmpty()) {
-      for (      String dependency : dependencies) {
-        log.info("Applying kubernetes dependency from: " + dependency);
-        Object dep=loadJson(readAsString(new URL(dependency)));
-        dependenciesOk=dependenciesOk && applyConfiguration(client,controller,configuration,event.getSession(),Constants.ARQ_DEP_KEY,dep);
-        if (!dependenciesOk) {
-          log.error("Failed to apply kubernetes dependency: " + dependency);
-          throw new IllegalStateException("Dependency failure.");
-        }
+    List<Config> kubeConfigs=new LinkedList<>();
+    for (    String dependency : dependencies) {
+      log.info("Found dependency: " + dependency);
+      Object kubeCfg=loadJson(readAsString(new URL(dependency)));
+      if (kubeCfg instanceof Config) {
+        kubeConfigs.add((Config)kubeCfg);
       }
     }
-    log.info("Applying kubernetes configuration from: " + configuration.getConfigUrl());
-    Object dto=loadJson(readAsString(configuration.getConfigUrl()));
-    applyConfiguration(client,controller,configuration,event.getSession(),Constants.ARQ_KEY,dto);
+    if (configUrl != null) {
+      log.status("Applying kubernetes configuration from: " + configuration.getConfigUrl());
+      kubeConfigs.add((Config)loadJson(readAsString(configuration.getConfigUrl())));
+    }
+    applyConfiguration(client,controller,configuration,event.getSession(),kubeConfigs);
     displaySessionStatus(client,event.getSession());
   }
  catch (  Exception e) {
