@@ -1,6 +1,6 @@
 {
-  String url=System.getProperty("etcd.url");
-  client=new EtcdClientImpl.Builder().baseUri(new URI(url)).responseReader(new GsonResponseReader()).build();
+  String url="http://127.0.0.1:4001/v2/";
+  client=new EtcdClientImpl.Builder().baseUri(new URI(url)).responseReader(new JacksonResponseReader()).build();
   client.start();
   try {
     client.delete().dir().recursive().forKey("key");
