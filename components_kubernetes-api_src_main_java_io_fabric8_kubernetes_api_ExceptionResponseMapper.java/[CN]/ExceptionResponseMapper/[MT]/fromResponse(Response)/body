@@ -1,7 +1,7 @@
 {
   try {
     ObjectMapper mapper=new ObjectMapper();
-    ErrorSchema error=mapper.readValue((InputStream)response.getEntity(),ErrorSchema.class);
+    Status error=mapper.readValue((InputStream)response.getEntity(),Status.class);
     return new KubernetesApiException(error.getMessage());
   }
  catch (  Exception ex) {
