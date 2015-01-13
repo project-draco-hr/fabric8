@@ -1,0 +1,12 @@
+{
+  URL readme=getClass().getClassLoader().getResource("profiles/ReadMe.md");
+  Path fsRoot=new File(readme.toURI()).getParentFile().toPath();
+  Path profileRoot=FileSystems.newFileSystem(fsRoot,null).getPath("/");
+  Map<String,Profile> profiles=Profiles.loadProfiles(profileRoot);
+  for (  Profile profile : profiles.values()) {
+    System.out.println("Profile: " + profile.getId());
+    for (    String name : profile.getConfigurationFileNames()) {
+      System.out.println("\t" + name);
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  if (this.offsets == null) {
+    int count=0;
+    int index=0;
+    while (index < path.length) {
+      byte c=path[index++];
+      if (c != '/') {
+        count++;
+        while (index < path.length && path[index] != '/') {
+          index++;
+        }
+      }
+    }
+    int[] result=new int[count];
+    count=0;
+    index=0;
+    while (index < path.length) {
+      int m=path[index];
+      if (m == '/') {
+        index++;
+      }
+ else {
+        result[count++]=index++;
+        while (index < path.length && path[index] != '/') {
+          index++;
+        }
+      }
+    }
+synchronized (this) {
+      if (offsets == null) {
+        offsets=result;
+      }
+    }
+  }
+}

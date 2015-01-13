@@ -1,0 +1,14 @@
+{
+  FabricProfilePath p1=this;
+  FabricProfilePath p2=checkPath(other);
+  if (p1.isAbsolute() != p2.isAbsolute() || p1.path.length < p2.path.length) {
+    return false;
+  }
+  int length=p2.path.length;
+  for (int idx=0; idx < length; idx++) {
+    if (p1.path[idx] != p2.path[idx]) {
+      return false;
+    }
+  }
+  return p1.path.length == p2.path.length || p2.path[length - 1] == '/' || p1.path[length] == '/';
+}

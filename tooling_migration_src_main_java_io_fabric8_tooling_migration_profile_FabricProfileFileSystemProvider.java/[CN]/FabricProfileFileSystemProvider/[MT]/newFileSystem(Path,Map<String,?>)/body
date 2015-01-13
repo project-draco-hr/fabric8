@@ -1,0 +1,14 @@
+{
+  if (!Files.isDirectory(path)) {
+    throw new UnsupportedOperationException();
+  }
+synchronized (fileSystems) {
+    Path localPath=path.toRealPath();
+    if (this.fileSystems.containsKey(localPath)) {
+      throw new FileSystemAlreadyExistsException();
+    }
+    FabricProfileFileSystem fileSystem=buildFileSystem(path);
+    fileSystems.put(localPath,fileSystem);
+    return fileSystem;
+  }
+}

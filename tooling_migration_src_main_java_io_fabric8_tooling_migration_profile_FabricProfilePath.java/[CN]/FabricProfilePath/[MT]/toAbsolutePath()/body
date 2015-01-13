@@ -1,0 +1,9 @@
+{
+  if (isAbsolute()) {
+    return this;
+  }
+  byte[] result=new byte[path.length + 1];
+  result[0]='/';
+  System.arraycopy(path,0,result,1,path.length);
+  return new FabricProfilePath(fileSystem,result,true);
+}

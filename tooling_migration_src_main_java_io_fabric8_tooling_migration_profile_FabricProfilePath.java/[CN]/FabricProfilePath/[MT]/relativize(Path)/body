@@ -1,0 +1,35 @@
+{
+  FabricProfilePath p1=this;
+  FabricProfilePath p2=checkPath(other);
+  if (p2.equals(p1)) {
+    return new FabricProfilePath(fileSystem,new byte[0],true);
+  }
+  if (p1.isAbsolute() != p2.isAbsolute()) {
+    throw new IllegalArgumentException();
+  }
+  int nbNames1=p1.getNameCount();
+  int nbNames2=p2.getNameCount();
+  int l=Math.min(nbNames1,nbNames2);
+  int nbCommon=0;
+  while (nbCommon < l && equalsNameAt(p1,p2,nbCommon)) {
+    nbCommon++;
+  }
+  int nbUp=nbNames1 - nbCommon;
+  int length=nbUp * 3 - 1;
+  if (nbCommon < nbNames2) {
+    length+=p2.path.length - p2.offsets[nbCommon] + 1;
+  }
+  byte[] result=new byte[length];
+  int idx=0;
+  while (nbUp-- > 0) {
+    result[idx++]='.';
+    result[idx++]='.';
+    if (idx < length) {
+      result[idx++]='/';
+    }
+  }
+  if (nbCommon < nbNames2) {
+    System.arraycopy(p2.path,p2.offsets[nbCommon],result,idx,p2.path.length - p2.offsets[nbCommon]);
+  }
+  return new FabricProfilePath(fileSystem,result);
+}

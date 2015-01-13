@@ -1,0 +1,26 @@
+{
+  int colonIndex=syntaxAndPattern.indexOf(':');
+  if (colonIndex <= 0 || colonIndex == syntaxAndPattern.length() - 1) {
+    throw new IllegalArgumentException("syntaxAndPattern must have form \"syntax:pattern\" but was \"" + syntaxAndPattern + "\"");
+  }
+  String syntax=syntaxAndPattern.substring(0,colonIndex);
+  String pattern=syntaxAndPattern.substring(colonIndex + 1);
+  String expr;
+switch (syntax) {
+case "glob":
+    expr=globToRegex(pattern);
+  break;
+case "regex":
+expr=pattern;
+break;
+default :
+throw new UnsupportedOperationException("Unsupported syntax \'" + syntax + "\'");
+}
+final Pattern regex=Pattern.compile(expr);
+return new PathMatcher(){
+@Override public boolean matches(Path path){
+return regex.matcher(path.toString()).matches();
+}
+}
+;
+}

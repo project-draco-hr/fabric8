@@ -1,0 +1,24 @@
+{
+  if (clazz != BasicFileAttributes.class) {
+    throw new UnsupportedOperationException();
+  }
+  Path absolute=path.toAbsolutePath();
+  Object desc=contents.get(absolute.toString());
+  if (desc == null) {
+    throw new FileNotFoundException(path.toString());
+  }
+  String type;
+  long size;
+  if (desc instanceof List) {
+    type="directory";
+    size=0;
+  }
+ else   if (desc instanceof byte[]) {
+    type="file";
+    size=((byte[])desc).length;
+  }
+ else {
+    throw new IllegalStateException();
+  }
+  return (A)new FabricGitProfileFileAttributes(type,size);
+}

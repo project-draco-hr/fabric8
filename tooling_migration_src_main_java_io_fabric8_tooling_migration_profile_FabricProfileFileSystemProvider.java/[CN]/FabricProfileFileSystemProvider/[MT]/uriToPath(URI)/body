@@ -1,0 +1,30 @@
+{
+  String scheme=uri.getScheme();
+  if ((scheme == null) || (!scheme.equalsIgnoreCase(getScheme()))) {
+    throw new IllegalArgumentException("URI scheme is not '" + getScheme() + "'");
+  }
+  try {
+    String root=uri.getRawSchemeSpecificPart();
+    int i=root.lastIndexOf("!/");
+    if (i != -1) {
+      root=root.substring(0,i);
+    }
+    URI rootUri=new URI(root);
+    try {
+      return Paths.get(rootUri).toAbsolutePath();
+    }
+ catch (    FileSystemNotFoundException e) {
+      try {
+        FileSystem fs=FileSystems.newFileSystem(rootUri,new HashMap<String,Object>(),FabricProfileFileSystemProvider.class.getClassLoader());
+        return fs.provider().getPath(rootUri).toAbsolutePath();
+      }
+ catch (      IOException e2) {
+        e.addSuppressed(e2);
+        throw e;
+      }
+    }
+  }
+ catch (  URISyntaxException e) {
+    throw new IllegalArgumentException(e.getMessage(),e);
+  }
+}

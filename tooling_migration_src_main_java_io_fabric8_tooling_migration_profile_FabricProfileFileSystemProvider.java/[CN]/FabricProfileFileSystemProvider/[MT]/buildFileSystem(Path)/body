@@ -1,0 +1,55 @@
+{
+  final Map<String,Object> contents=new HashMap<>();
+  Files.walkFileTree(path,new SimpleFileVisitor<Path>(){
+    @Override public FileVisitResult preVisitDirectory(    Path dir,    BasicFileAttributes attrs) throws IOException {
+      addChild(dir,new ArrayList<String>());
+      return FileVisitResult.CONTINUE;
+    }
+    @Override public FileVisitResult visitFile(    Path file,    BasicFileAttributes attrs) throws IOException {
+      byte[] content=Files.readAllBytes(file);
+      if (file.getFileName().toString().equals("io.fabric8.agent.properties")) {
+        file=file.resolveSibling("profile.cfg");
+      }
+ else       if (file.getFileName().toString().contains(".properties")) {
+        file=file.resolveSibling(file.getFileName().toString().replace(".properties",".cfg"));
+      }
+      if (file.getFileName().toString().contains(".cfg")) {
+        Properties props=new Properties(false);
+        props.load(new ByteArrayInputStream(content));
+        for (        Map.Entry<String,String> entry : props.entrySet()) {
+          String val=entry.getValue();
+          val=val.replace("${profile:io.fabric8.agent/","${profile:profile/");
+          val=val.replace("${version:","${profile:io.fabric8.version/");
+          val=val.replace("${runtime.","${karaf.");
+          Matcher matcher=Pattern.compile(".*\\$\\{(.*?):.*?\\}.*").matcher(val);
+          if (matcher.matches()) {
+            String scheme=matcher.group(1);
+            if (!"profile".equals(scheme)) {
+              System.out.println("Unsupported scheme: " + entry.getKey() + " = "+ val+ " in "+ path.relativize(file));
+            }
+          }
+          entry.setValue(val);
+        }
+        ByteArrayOutputStream baos=new ByteArrayOutputStream();
+        props.save(baos);
+        baos.flush();
+        content=baos.toByteArray();
+      }
+      addChild(file,content);
+      return FileVisitResult.CONTINUE;
+    }
+    private void addChild(    Path child,    Object content){
+      String par="/" + path.relativize(child.getParent()).toString();
+      String str="/" + path.relativize(child).toString();
+      if (!"/".equals(str)) {
+        if (str.endsWith("/")) {
+          str=str.substring(0,str.length() - 1);
+        }
+        ((List<String>)contents.get(par)).add(str);
+      }
+      contents.put(str,content);
+    }
+  }
+);
+  return new FabricProfileFileSystem(this,contents);
+}

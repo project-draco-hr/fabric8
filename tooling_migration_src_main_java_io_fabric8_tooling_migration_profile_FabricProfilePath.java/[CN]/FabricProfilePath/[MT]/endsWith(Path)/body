@@ -1,0 +1,25 @@
+{
+  FabricProfilePath p1=this;
+  FabricProfilePath p2=checkPath(other);
+  int i1=p1.path.length - 1;
+  if (i1 > 0 && p1.path[i1] == '/') {
+    i1--;
+  }
+  int i2=p2.path.length - 1;
+  if (i2 > 0 && p2.path[i2] == '/') {
+    i2--;
+  }
+  if (i2 == -1) {
+    return i1 == -1;
+  }
+  if ((p2.isAbsolute() && (!isAbsolute() || i2 != i1)) || (i1 < i2)) {
+    return false;
+  }
+  for (; i2 >= 0; i1--) {
+    if (p2.path[i2] != p1.path[i1]) {
+      return false;
+    }
+    i2--;
+  }
+  return (p2.path[i2 + 1] == '/') || (i1 == -1) || (p1.path[i1] == '/');
+}

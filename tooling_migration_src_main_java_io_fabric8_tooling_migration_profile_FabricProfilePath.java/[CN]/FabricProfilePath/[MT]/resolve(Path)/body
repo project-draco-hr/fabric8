@@ -1,0 +1,20 @@
+{
+  FabricProfilePath p1=this;
+  FabricProfilePath p2=checkPath(other);
+  if (p2.isAbsolute()) {
+    return p2;
+  }
+  byte[] result;
+  if (p1.path[p1.path.length - 1] == '/') {
+    result=new byte[p1.path.length + p2.path.length];
+    System.arraycopy(p1.path,0,result,0,p1.path.length);
+    System.arraycopy(p2.path,0,result,p1.path.length,p2.path.length);
+  }
+ else {
+    result=new byte[p1.path.length + 1 + p2.path.length];
+    System.arraycopy(p1.path,0,result,0,p1.path.length);
+    result[p1.path.length]='/';
+    System.arraycopy(p2.path,0,result,p1.path.length + 1,p2.path.length);
+  }
+  return new FabricProfilePath(fileSystem,result);
+}

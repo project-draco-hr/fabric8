@@ -1,0 +1,14 @@
+{
+  initOffsets();
+  int nbOffsets=offsets.length;
+  if (nbOffsets == 0) {
+    return null;
+  }
+  int length=offsets[nbOffsets - 1] - 1;
+  if (length <= 0) {
+    return getRoot();
+  }
+  byte[] path=new byte[length];
+  System.arraycopy(this.path,0,path,0,length);
+  return new FabricProfilePath(fileSystem,path);
+}

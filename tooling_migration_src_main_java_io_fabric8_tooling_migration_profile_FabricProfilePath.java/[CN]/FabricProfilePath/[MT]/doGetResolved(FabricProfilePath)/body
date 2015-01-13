@@ -1,0 +1,38 @@
+{
+  int nc=p.getNameCount();
+  byte[] path=p.path;
+  int[] offsets=p.offsets;
+  byte[] to=new byte[path.length];
+  int[] lastM=new int[nc];
+  int lastMOff=-1;
+  int m=0;
+  for (int i=0; i < nc; i++) {
+    int n=offsets[i];
+    int len=(i == offsets.length - 1) ? (path.length - n) : (offsets[i + 1] - n - 1);
+    if (len == 1 && path[n] == (byte)'.') {
+      if (m == 0 && path[0] == '/')       to[m++]='/';
+      continue;
+    }
+    if (len == 2 && path[n] == '.' && path[n + 1] == '.') {
+      if (lastMOff >= 0) {
+        m=lastM[lastMOff--];
+        continue;
+      }
+      if (path[0] == '/') {
+        if (m == 0)         to[m++]='/';
+      }
+ else {
+        if (m != 0 && to[m - 1] != '/')         to[m++]='/';
+        while (len-- > 0)         to[m++]=path[n++];
+      }
+      continue;
+    }
+    if (m == 0 && path[0] == '/' || m != 0 && to[m - 1] != '/') {
+      to[m++]='/';
+    }
+    lastM[++lastMOff]=m;
+    while (len-- > 0)     to[m++]=path[n++];
+  }
+  if (m > 1 && to[m - 1] == '/')   m--;
+  return (m == to.length) ? to : Arrays.copyOf(to,m);
+}

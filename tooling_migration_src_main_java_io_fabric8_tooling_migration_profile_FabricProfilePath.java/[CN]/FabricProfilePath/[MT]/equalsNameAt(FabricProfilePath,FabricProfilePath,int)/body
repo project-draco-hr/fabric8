@@ -1,0 +1,27 @@
+{
+  int beg1=p1.offsets[index];
+  int len1;
+  if (index == p1.offsets.length - 1) {
+    len1=p1.path.length - beg1;
+  }
+ else {
+    len1=p1.offsets[index + 1] - beg1 - 1;
+  }
+  int beg2=p2.offsets[index];
+  int len2;
+  if (index == p2.offsets.length - 1) {
+    len2=p2.path.length - beg2;
+  }
+ else {
+    len2=p2.offsets[index + 1] - beg2 - 1;
+  }
+  if (len1 != len2) {
+    return false;
+  }
+  for (int n=0; n < len1; n++) {
+    if (p1.path[beg1 + n] != p2.path[beg2 + n]) {
+      return false;
+    }
+  }
+  return true;
+}

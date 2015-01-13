@@ -1,0 +1,20 @@
+{
+  if (path.length == 0) {
+    return path;
+  }
+  int i=0;
+  for (int j=0; j < path.length; j++) {
+    int k=path[j];
+    if (k == '\\') {
+      return normalize(path,j);
+    }
+    if ((k == '/') && (i == '/')) {
+      return normalize(path,j - 1);
+    }
+    if (k == 0) {
+      throw new InvalidPathException(new String(path,StandardCharsets.UTF_8),"Path: nul character not allowed");
+    }
+    i=k;
+  }
+  return path;
+}

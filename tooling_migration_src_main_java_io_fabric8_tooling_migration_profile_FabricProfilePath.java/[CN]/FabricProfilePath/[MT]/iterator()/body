@@ -1,0 +1,20 @@
+{
+  return new Iterator<Path>(){
+    private int index=0;
+    public boolean hasNext(){
+      return index < getNameCount();
+    }
+    public Path next(){
+      if (index < getNameCount()) {
+        FabricProfilePath name=getName(index);
+        index++;
+        return name;
+      }
+      throw new NoSuchElementException();
+    }
+    public void remove(){
+      throw new UnsupportedOperationException();
+    }
+  }
+;
+}

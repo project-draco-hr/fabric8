@@ -1,0 +1,8 @@
+{
+  String str=uri.getSchemeSpecificPart();
+  int i=str.lastIndexOf("!/");
+  if (i == -1) {
+    throw new IllegalArgumentException("URI: " + uri + " does not contain path info ex. github:apache/karaf#master!/");
+  }
+  return getFileSystem(uri).getPath(str.substring(i + 1));
+}

@@ -1,0 +1,17 @@
+{
+  initOffsets();
+  if (index < 0 || index >= offsets.length) {
+    throw new IllegalArgumentException();
+  }
+  int offset=this.offsets[index];
+  int length;
+  if (index == offsets.length - 1) {
+    length=path.length - offset;
+  }
+ else {
+    length=offsets[index + 1] - offset - 1;
+  }
+  byte[] path=new byte[length];
+  System.arraycopy(this.path,offset,path,0,length);
+  return new FabricProfilePath(fileSystem,path);
+}

@@ -1,0 +1,14 @@
+{
+synchronized (fileSystems) {
+    FabricProfileFileSystem fileSystem=null;
+    try {
+      fileSystem=fileSystems.get(uriToPath(uri).toRealPath());
+    }
+ catch (    IOException ignore) {
+    }
+    if (fileSystem == null) {
+      throw new FileSystemNotFoundException();
+    }
+    return fileSystem;
+  }
+}

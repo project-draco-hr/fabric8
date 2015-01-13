@@ -1,0 +1,27 @@
+{
+  byte[] arrayOfByte=new byte[path.length];
+  int i=0;
+  while (i < index) {
+    arrayOfByte[i]=path[i];
+    i++;
+  }
+  int j=i;
+  int k=0;
+  while (i < path.length) {
+    int m=path[i++];
+    if (m == '\\') {
+      m='/';
+    }
+    if ((m != '/') || (k != '/')) {
+      if (m == 0) {
+        throw new InvalidPathException(new String(path,StandardCharsets.UTF_8),"Path: nul character not allowed");
+      }
+      arrayOfByte[j++]=(byte)m;
+      k=m;
+    }
+  }
+  if ((j > 1) && (arrayOfByte[j - 1] == '/')) {
+    j--;
+  }
+  return j == arrayOfByte.length ? arrayOfByte : Arrays.copyOf(arrayOfByte,j);
+}
