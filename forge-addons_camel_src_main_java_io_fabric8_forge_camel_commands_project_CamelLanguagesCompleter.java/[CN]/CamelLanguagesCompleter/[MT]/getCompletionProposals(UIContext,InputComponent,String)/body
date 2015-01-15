@@ -15,7 +15,10 @@
   for (  String name : filtered) {
     String json=catalog.languageJSonSchema(name);
     String[] artifactAndVersion=findArtifactIdAndVersion(json);
-    boolean already=CamelProjectHelper.hasDependency(project,"org.apache.camel",artifactAndVersion[0],artifactAndVersion[1]);
+    boolean already=false;
+    if (artifactAndVersion != null) {
+      already=CamelProjectHelper.hasDependency(project,"org.apache.camel",artifactAndVersion[0],artifactAndVersion[1]);
+    }
     if (!already) {
       answer.add(name);
     }
