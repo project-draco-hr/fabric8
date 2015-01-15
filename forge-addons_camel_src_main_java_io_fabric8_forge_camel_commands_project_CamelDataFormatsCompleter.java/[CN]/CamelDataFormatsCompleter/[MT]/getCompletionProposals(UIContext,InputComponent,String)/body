@@ -14,10 +14,10 @@
   }
   for (  String name : filtered) {
     String json=catalog.dataFormatJSonSchema(name);
-    String[] artifactAndVersion=findArtifactIdAndVersion(json);
+    String artifactId=findArtifactId(json);
     boolean already=false;
-    if (artifactAndVersion != null) {
-      already=CamelProjectHelper.hasDependency(project,"org.apache.camel",artifactAndVersion[0],artifactAndVersion[1]);
+    if (artifactId != null) {
+      already=CamelProjectHelper.hasDependency(project,"org.apache.camel",artifactId);
     }
     if (!already) {
       answer.add(name);
