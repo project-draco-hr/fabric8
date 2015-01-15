@@ -1,0 +1,24 @@
+{
+  List<String> answer=new ArrayList<String>();
+  Dependency core=CamelProjectHelper.findCamelCoreDependency(project);
+  if (core == null) {
+    return null;
+  }
+  CamelComponentCatalog catalog=new DefaultCamelComponentCatalog();
+  List<String> names=catalog.findDataFormatNames();
+  List<String> filtered=new ArrayList<String>();
+  for (  String name : names) {
+    if (value == null || name.startsWith(value)) {
+      filtered.add(name);
+    }
+  }
+  for (  String name : filtered) {
+    String json=catalog.componentJSonSchema(name);
+    String[] artifactAndVersion=findArtifactIdAndVersion(json);
+    boolean already=CamelProjectHelper.hasDependency(project,"org.apache.camel",artifactAndVersion[0],artifactAndVersion[1]);
+    if (!already) {
+      answer.add(name);
+    }
+  }
+  return answer;
+}
