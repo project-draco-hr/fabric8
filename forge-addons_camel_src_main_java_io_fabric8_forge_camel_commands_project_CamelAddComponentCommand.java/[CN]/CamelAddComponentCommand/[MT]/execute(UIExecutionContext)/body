@@ -4,9 +4,9 @@
   if (core == null) {
     return Results.fail("The project does not include camel-core");
   }
-  String artifactId=name.getValue();
-  if (!artifactId.startsWith("camel-")) {
-    artifactId="camel-" + artifactId;
+  String artifactId=findComponentArchetype(name.getValue());
+  if (artifactId == null) {
+    return Results.fail("Camel component " + name.getValue() + " is unknown.");
   }
   DependencyBuilder component=DependencyBuilder.create().setGroupId("org.apache.camel").setArtifactId(artifactId).setVersion(core.getCoordinate().getVersion());
   dependencyInstaller.install(project,component);
