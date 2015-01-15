@@ -1,0 +1,24 @@
+{
+  Set<String> answer=new TreeSet<String>();
+  CamelComponentCatalog catalog=new DefaultCamelComponentCatalog();
+  for (  String name : catalog.findLanguageNames()) {
+    String json=catalog.languageJSonSchema(name);
+    if (json != null) {
+      List<Map<String,String>> data=JSonSchemaHelper.parseJsonSchema("language",json,false);
+      String lan=null;
+      String artifact=null;
+      for (      Map<String,String> row : data) {
+        if (row.get("artifactId") != null) {
+          artifact=row.get("artifactId");
+        }
+        if (row.get("name") != null) {
+          lan=row.get("name");
+        }
+      }
+      if (artifactId.equals(artifact) && lan != null) {
+        answer.add(lan);
+      }
+    }
+  }
+  return answer;
+}

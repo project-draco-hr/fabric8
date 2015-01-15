@@ -1,0 +1,24 @@
+{
+  Set<String> answer=new TreeSet<String>();
+  CamelComponentCatalog catalog=new DefaultCamelComponentCatalog();
+  for (  String name : catalog.findDataFormatNames()) {
+    String json=catalog.dataFormatJSonSchema(name);
+    if (json != null) {
+      List<Map<String,String>> data=JSonSchemaHelper.parseJsonSchema("dataformat",json,false);
+      String df=null;
+      String artifact=null;
+      for (      Map<String,String> row : data) {
+        if (row.get("artifactId") != null) {
+          artifact=row.get("artifactId");
+        }
+        if (row.get("name") != null) {
+          df=row.get("name");
+        }
+      }
+      if (artifactId.equals(artifact) && df != null) {
+        answer.add(df);
+      }
+    }
+  }
+  return answer;
+}

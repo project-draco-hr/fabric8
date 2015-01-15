@@ -1,0 +1,10 @@
+{
+  Set<Dependency> answer=new LinkedHashSet<Dependency>();
+  List<Dependency> dependencies=project.getFacet(DependencyFacet.class).getEffectiveDependencies();
+  for (  Dependency d : dependencies) {
+    if ("org.apache.camel".equals(d.getCoordinate().getGroupId())) {
+      answer.add(d);
+    }
+  }
+  return answer;
+}
