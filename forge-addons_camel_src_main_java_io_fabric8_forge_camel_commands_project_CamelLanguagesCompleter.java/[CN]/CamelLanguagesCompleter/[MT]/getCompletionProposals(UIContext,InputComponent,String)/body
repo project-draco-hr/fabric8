@@ -5,7 +5,7 @@
     return null;
   }
   CamelComponentCatalog catalog=new DefaultCamelComponentCatalog();
-  List<String> names=catalog.findDataFormatNames();
+  List<String> names=catalog.findLanguageNames();
   List<String> filtered=new ArrayList<String>();
   for (  String name : names) {
     if (value == null || name.startsWith(value)) {
@@ -13,7 +13,7 @@
     }
   }
   for (  String name : filtered) {
-    String json=catalog.dataFormatJSonSchema(name);
+    String json=catalog.languageJSonSchema(name);
     String[] artifactAndVersion=findArtifactIdAndVersion(json);
     boolean already=CamelProjectHelper.hasDependency(project,"org.apache.camel",artifactAndVersion[0],artifactAndVersion[1]);
     if (!already) {
