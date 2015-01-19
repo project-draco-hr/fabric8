@@ -7,13 +7,14 @@
     result=false;
     session.getLogger().warn("No services are available yet, waiting...");
   }
- else   if (waitForConnection) {
-    for (    Service s : services) {
+ else   if (configuration.isWaitForServiceConnection()) {
+    for (    Service s : filterServices(services,configuration.getWaitForServices())) {
       String serviceURL=KubernetesHelper.getServiceURL(s);
       String serviceStatus=null;
       try {
         URL url=new URL(serviceURL);
         URLConnection connection=url.openConnection();
+        connection.setConnectTimeout(configuration.getServiceConnectionTimeout());
         connection.connect();
         serviceStatus="Service: " + serviceURL + " is ready";
       }
