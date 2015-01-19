@@ -1,6 +1,6 @@
 {
   Logger log=session.getLogger();
-  Set<Callable<Boolean>> conditions=new HashSet<>();
+  Map<Integer,Callable<Boolean>> conditions=new TreeMap<>();
   Callable<Boolean> sessionPodsReady=new SessionPodsAreReady(client,session);
   Callable<Boolean> servicesReady=new SessionServicesAreReady(client,session,configuration);
   List<Object> entities=new ArrayList<>();
@@ -30,7 +30,7 @@
       pod.getLabels().put(ARQ_KEY,session.getId());
       log.status("Applying pod:" + pod.getId());
       controller.applyPod(pod,session.getId());
-      conditions.add(sessionPodsReady);
+      conditions.put(1,sessionPodsReady);
     }
  else     if (entity instanceof Service) {
       Service service=(Service)entity;
@@ -40,7 +40,7 @@
       service.getLabels().put(ARQ_KEY,session.getId());
       log.status("Applying service:" + service.getId());
       controller.applyService(service,session.getId());
-      conditions.add(servicesReady);
+      conditions.put(2,servicesReady);
     }
  else     if (entity instanceof ReplicationController) {
       ReplicationController replicationController=(ReplicationController)entity;
@@ -55,11 +55,11 @@
       replicationController.getLabels().put(ARQ_KEY,session.getId());
       log.status("Applying replication controller:" + replicationController.getId());
       controller.applyReplicationController(replicationController,session.getId());
-      conditions.add(sessionPodsReady);
+      conditions.put(1,sessionPodsReady);
     }
   }
   if (!conditions.isEmpty()) {
-    Callable<Boolean> compositeCondition=new CompositeCondition(conditions);
+    Callable<Boolean> compositeCondition=new CompositeCondition(conditions.values());
     WaitStrategy waitStrategy=new WaitStrategy(compositeCondition,configuration.getTimeout(),configuration.getPollInterval());
     if (!waitStrategy.await()) {
       log.error("Timed out waiting for pods/services!");

@@ -9,18 +9,14 @@
   }
  else   if (configuration.isWaitForServiceConnection()) {
     for (    Service s : filterServices(services,configuration.getWaitForServices())) {
-      String serviceURL=KubernetesHelper.getServiceURL(s);
       String serviceStatus=null;
-      try {
-        URL url=new URL(serviceURL);
-        URLConnection connection=url.openConnection();
-        connection.setConnectTimeout(configuration.getServiceConnectionTimeout());
-        connection.connect();
-        serviceStatus="Service: " + serviceURL + " is ready";
+      try (Socket socket=new Socket()){
+        socket.connect(new InetSocketAddress(s.getPortalIP(),s.getPort()),configuration.getServiceConnectionTimeout());
+        serviceStatus="Service: " + s.getId() + " is ready";
       }
  catch (      Exception e) {
         result=false;
-        serviceStatus="Service: " + serviceURL + " is not ready! Error: "+ e.getMessage();
+        serviceStatus="Service: " + s.getId() + " is not ready! Error: "+ e.getMessage();
       }
  finally {
         session.getLogger().warn(serviceStatus);
