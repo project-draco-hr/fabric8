@@ -1,0 +1,15 @@
+{
+  Exception answer=null;
+  try {
+    block.invoke();
+  }
+ catch (  Exception e) {
+    answer=e;
+    System.out.println("Caught expected assertion failure: " + e);
+  }
+  if (answer == null) {
+    throw new AssertionError("Expected an Exception from block: " + block);
+  }
+  Asserts.LOG.info("Caught expected assertion failure: " + answer);
+  return answer;
+}
