@@ -1,7 +1,6 @@
 {
   boolean result=true;
-  Map<String,String> labels=Collections.singletonMap(ARQ_KEY,session.getId());
-  Filter<Service> serviceFilter=KubernetesHelper.createServiceFilter(labels);
+  Filter<Service> serviceFilter=session.createServiceFilter();
   List<Service> services=Util.findServices(kubernetesClient,serviceFilter);
   if (services.isEmpty()) {
     result=false;

@@ -1,8 +1,7 @@
 {
-  Map<String,String> labels=Collections.singletonMap(key,session.getId());
-  Filter<Pod> podFilter=KubernetesHelper.createPodFilter(labels);
-  Filter<Service> serviceFilter=KubernetesHelper.createServiceFilter(labels);
-  Filter<ReplicationController> replicationControllerFilter=KubernetesHelper.createReplicationControllerFilter(labels);
+  Filter<Pod> podFilter=session.createPodFilter();
+  Filter<Service> serviceFilter=session.createServiceFilter();
+  Filter<ReplicationController> replicationControllerFilter=session.createReplicationControllerFilter();
   for (int i=0; i < 10; i++) {
     try {
       deleteReplicationControllers(client,session.getLogger(),replicationControllerFilter);

@@ -1,8 +1,7 @@
 {
-  Map<String,String> labels=Collections.singletonMap(Constants.ARQ_KEY,session.getId());
-  Filter<Pod> podFilter=KubernetesHelper.createPodFilter(labels);
-  Filter<Service> serviceFilter=KubernetesHelper.createServiceFilter(labels);
-  Filter<ReplicationController> replicationControllerFilter=KubernetesHelper.createReplicationControllerFilter(labels);
+  Filter<Pod> podFilter=session.createPodFilter();
+  Filter<Service> serviceFilter=session.createServiceFilter();
+  Filter<ReplicationController> replicationControllerFilter=session.createReplicationControllerFilter();
   for (  ReplicationController replicationController : client.getReplicationControllers().getItems()) {
     if (replicationControllerFilter.matches(replicationController)) {
       session.getLogger().info("Replication controller:" + getId(replicationController));

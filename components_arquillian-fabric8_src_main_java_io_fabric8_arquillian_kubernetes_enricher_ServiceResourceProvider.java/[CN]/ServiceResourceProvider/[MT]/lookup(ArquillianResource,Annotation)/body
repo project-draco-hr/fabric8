@@ -1,8 +1,7 @@
 {
   KubernetesClient client=this.clientInstance.get();
   Session session=sessionInstance.get();
-  Map<String,String> labels=Collections.singletonMap(Constants.ARQ_KEY,session.getId());
-  Filter<Service> serviceFilter=KubernetesHelper.createServiceFilter(labels);
+  Filter<Service> serviceFilter=session.createServiceFilter();
   for (  Service service : client.getServices().getItems()) {
     if (serviceFilter.matches(service) && qualifies(service,qualifiers)) {
       return service;

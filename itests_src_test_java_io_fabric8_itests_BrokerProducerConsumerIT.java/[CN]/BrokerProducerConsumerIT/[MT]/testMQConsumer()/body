@@ -1,7 +1,7 @@
 {
   assertThat(client).replicationController(brokerReplicationControllerId).isNotNull();
   assertThat(client).replicationController(consumerReplicationControllerId).isNotNull();
-  assertThat(client).pods().runningStatus().filterLabel(Constants.ARQ_KEY,session.getId()).haveAtLeast(1,new Condition<Pod>(){
+  assertThat(client).pods().runningStatus().filterNamespace(session.getNamespace()).haveAtLeast(1,new Condition<Pod>(){
     @Override public boolean matches(    Pod podSchema){
       return true;
     }

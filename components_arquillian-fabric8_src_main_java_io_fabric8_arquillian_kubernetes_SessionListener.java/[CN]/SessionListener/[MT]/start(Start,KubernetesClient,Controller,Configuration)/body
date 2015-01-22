@@ -1,10 +1,16 @@
 {
-  final Logger log=event.getSession().getLogger();
-  shutdownHook=new ShutdownHook(client,event.getSession());
+  Session session=event.getSession();
+  Logger log=session.getLogger();
+  String namespace=session.getNamespace();
+  log.status("Creating kubernetes resources inside namespace: " + namespace);
+  log.info("if you use a kubernetes CLI type this to switch namespaces: kube ns " + namespace);
+  controller.setNamespace(namespace);
+  final Logger log=session.getLogger();
+  shutdownHook=new ShutdownHook(client,session);
   Runtime.getRuntime().addShutdownHook(shutdownHook);
   try {
     URL configUrl=configuration.getConfigUrl();
-    List<String> dependencies=!configuration.getDependencies().isEmpty() ? configuration.getDependencies() : Util.getMavenDependencies(event.getSession());
+    List<String> dependencies=!configuration.getDependencies().isEmpty() ? configuration.getDependencies() : Util.getMavenDependencies(session);
     List<Config> kubeConfigs=new LinkedList<>();
     for (    String dependency : dependencies) {
       log.info("Found dependency: " + dependency);
@@ -17,8 +23,8 @@
       log.status("Applying kubernetes configuration from: " + configuration.getConfigUrl());
       kubeConfigs.add((Config)loadJson(readAsString(configuration.getConfigUrl())));
     }
-    if (applyConfiguration(client,controller,configuration,event.getSession(),kubeConfigs)) {
-      displaySessionStatus(client,event.getSession());
+    if (applyConfiguration(client,controller,configuration,session,kubeConfigs)) {
+      displaySessionStatus(client,session);
     }
  else {
       throw new IllegalStateException("Failed to apply kubernetes configuration.");
@@ -26,7 +32,7 @@
   }
  catch (  Exception e) {
     try {
-      cleanupSession(client,event.getSession());
+      cleanupSession(client,session);
     }
  catch (    MultiException me) {
       throw e;

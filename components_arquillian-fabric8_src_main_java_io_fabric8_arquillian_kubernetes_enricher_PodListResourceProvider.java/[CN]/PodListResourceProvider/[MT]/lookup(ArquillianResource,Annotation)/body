@@ -1,8 +1,7 @@
 {
   KubernetesClient client=this.clientInstance.get();
   Session session=sessionInstance.get();
-  Map<String,String> labels=Collections.singletonMap(Constants.ARQ_KEY,session.getId());
-  Filter<Pod> podFilter=KubernetesHelper.createPodFilter(labels);
+  Filter<Pod> podFilter=session.createPodFilter();
   PodList pods=client.getPods();
   List<Pod> sessionPods=new ArrayList<>();
   for (  Pod pod : client.getPods().getItems()) {

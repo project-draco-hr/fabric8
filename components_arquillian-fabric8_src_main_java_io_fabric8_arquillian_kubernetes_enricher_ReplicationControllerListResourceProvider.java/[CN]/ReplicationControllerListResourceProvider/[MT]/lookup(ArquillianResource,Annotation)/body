@@ -1,8 +1,7 @@
 {
   KubernetesClient client=this.clientInstance.get();
   Session session=sessionInstance.get();
-  Map<String,String> labels=Collections.singletonMap(Constants.ARQ_KEY,session.getId());
-  Filter<ReplicationController> replicationControllerFilter=KubernetesHelper.createReplicationControllerFilter(labels);
+  Filter<ReplicationController> replicationControllerFilter=session.createReplicationControllerFilter();
   ReplicationControllerList controllers=client.getReplicationControllers();
   List<ReplicationController> sessionControllers=new ArrayList<>();
   for (  ReplicationController replicationController : client.getReplicationControllers().getItems()) {
