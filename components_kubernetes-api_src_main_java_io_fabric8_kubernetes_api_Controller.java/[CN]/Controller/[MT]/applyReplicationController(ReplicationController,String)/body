@@ -1,6 +1,6 @@
 {
   if (replicationControllerMap == null) {
-    replicationControllerMap=getReplicationControllerMap(kubernetes);
+    replicationControllerMap=getNamespaceReplicationControllerMap(kubernetes,namespace);
   }
   String id=getId(replicationControllerSchema);
   ReplicationController old=replicationControllerMap.get(id);
@@ -17,7 +17,13 @@
  else {
     LOG.info("Creating a replicationController from " + sourceName);
     try {
-      Object answer=kubernetes.createReplicationController(replicationControllerSchema);
+      Object answer;
+      if (Strings.isNotBlank(namespace)) {
+        answer=kubernetes.createReplicationController(replicationControllerSchema,namespace);
+      }
+ else {
+        answer=kubernetes.createReplicationController(replicationControllerSchema);
+      }
       LOG.info("Created replicationController: " + answer);
     }
  catch (    Exception e) {

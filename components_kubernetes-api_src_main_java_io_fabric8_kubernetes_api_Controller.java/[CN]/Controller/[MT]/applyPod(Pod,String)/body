@@ -1,6 +1,6 @@
 {
   if (podMap == null) {
-    podMap=getPodMap(kubernetes);
+    podMap=getNamespacePodMap(kubernetes,namespace);
   }
   String id=getId(podSchema);
   Pod old=podMap.get(id);
@@ -17,7 +17,13 @@
  else {
     LOG.info("Creating a pod from " + sourceName);
     try {
-      Object answer=kubernetes.createPod(podSchema);
+      Object answer;
+      if (Strings.isNotBlank(namespace)) {
+        answer=kubernetes.createPod(podSchema,namespace);
+      }
+ else {
+        answer=kubernetes.createPod(podSchema);
+      }
       LOG.info("Created pod result: " + answer);
     }
  catch (    Exception e) {

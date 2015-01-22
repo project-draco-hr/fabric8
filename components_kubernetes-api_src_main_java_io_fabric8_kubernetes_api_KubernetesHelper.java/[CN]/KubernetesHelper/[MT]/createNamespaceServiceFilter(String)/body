@@ -1,0 +1,16 @@
+{
+  if (isNullOrBlank(namespace)) {
+    return Filters.<Service>trueFilter();
+  }
+ else {
+    return new Filter<Service>(){
+      public String toString(){
+        return "NamespaceServiceFilter(" + namespace + ")";
+      }
+      public boolean matches(      Service entity){
+        return Objects.equal(namespace,entity.getNamespace());
+      }
+    }
+;
+  }
+}

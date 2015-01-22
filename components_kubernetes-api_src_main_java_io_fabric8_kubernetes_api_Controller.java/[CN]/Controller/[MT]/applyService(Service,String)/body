@@ -1,6 +1,6 @@
 {
   if (serviceMap == null) {
-    serviceMap=getServiceMap(kubernetes);
+    serviceMap=getNamespaceServiceMap(kubernetes,namespace);
   }
   String id=getId(serviceSchema);
   Service old=serviceMap.get(id);
@@ -17,7 +17,13 @@
  else {
     LOG.info("Creating a service from " + sourceName);
     try {
-      Object answer=kubernetes.createService(serviceSchema);
+      Object answer;
+      if (Strings.isNotBlank(namespace)) {
+        answer=kubernetes.createService(serviceSchema,namespace);
+      }
+ else {
+        answer=kubernetes.createService(serviceSchema);
+      }
       LOG.info("Created service: " + answer);
     }
  catch (    Exception e) {
