@@ -1,35 +1,20 @@
 {
   this.address=address;
   if (Strings.isNullOrBlank(address)) {
-    findKubernetesMaster();
+    this.address=findKubernetesMaster();
   }
   if (verifyAddress) {
     try {
-      validateKubernetesMaster();
+      URL url=new URL(this.address);
+      if (KubernetesHelper.isServiceSsl(url.getHost(),url.getPort(),trustAllCerts)) {
+        this.address="https://" + url.getHost() + ":"+ url.getPort();
+      }
+ else {
+        this.address="http://" + url.getHost() + ":"+ url.getPort();
+      }
     }
- catch (    SSLHandshakeException e) {
-      log.error("SSL handshake failed - this probably means that you need to trust the kubernetes SSL certificate or set the environment variable " + KUBERNETES_TRUST_ALL_CERIFICATES,e);
-      throw new IllegalArgumentException("Invalid kubernetes master address: " + address,e);
-    }
-catch (    SSLProtocolException e) {
-      log.error("SSL protocol error",e);
-      throw new IllegalArgumentException("Invalid kubernetes master address: " + address,e);
-    }
-catch (    SSLKeyException e) {
-      log.error("Bad SSL key",e);
-      throw new IllegalArgumentException("Invalid kubernetes master address: " + address,e);
-    }
-catch (    SSLPeerUnverifiedException e) {
-      log.error("Could not verify server",e);
-      throw new IllegalArgumentException("Invalid kubernetes master address: " + address,e);
-    }
-catch (    SSLException e) {
-      log.warn("Address does not appear to be SSL-enabled - falling back to http",e);
-      setAddress(address.replaceFirst("https","http"));
-    }
-catch (    IOException e) {
-      log.warn("Failed to validate kubernetes master address",e);
-      throw new IllegalArgumentException("Invalid kubernetes master address: " + address,e);
+ catch (    MalformedURLException e) {
+      throw new IllegalArgumentException("Invalid kubernetes master address",e);
     }
   }
 }

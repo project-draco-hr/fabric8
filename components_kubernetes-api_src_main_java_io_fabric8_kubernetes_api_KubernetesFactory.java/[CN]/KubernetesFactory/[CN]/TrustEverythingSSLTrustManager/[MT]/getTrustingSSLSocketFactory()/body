@@ -1,0 +1,14 @@
+{
+  if (socketFactory != null)   return socketFactory;
+  TrustManager[] trustManagers=new TrustManager[]{new TrustEverythingSSLTrustManager()};
+  SSLContext sc;
+  try {
+    sc=SSLContext.getInstance("SSL");
+    sc.init(null,trustManagers,null);
+  }
+ catch (  GeneralSecurityException e) {
+    throw new RuntimeException("This is a BUG",e);
+  }
+  socketFactory=sc.getSocketFactory();
+  return socketFactory;
+}

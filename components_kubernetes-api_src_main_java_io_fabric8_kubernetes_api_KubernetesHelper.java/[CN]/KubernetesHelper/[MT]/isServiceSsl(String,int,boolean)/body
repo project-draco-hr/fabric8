@@ -1,0 +1,44 @@
+{
+  try {
+    SSLSocketFactory sslsocketfactory=null;
+    if (trustAllCerts) {
+      sslsocketfactory=KubernetesFactory.TrustEverythingSSLTrustManager.getTrustingSSLSocketFactory();
+    }
+ else {
+      sslsocketfactory=(SSLSocketFactory)SSLSocketFactory.getDefault();
+    }
+    Socket socket=sslsocketfactory.createSocket();
+    socket.connect(new InetSocketAddress(host,port),1 * 1000);
+    try {
+      InputStream in=socket.getInputStream();
+      OutputStream out=socket.getOutputStream();
+      out.write(1);
+      while (in.available() > 0) {
+        System.out.print(in.read());
+      }
+      return true;
+    }
+  finally {
+      socket.close();
+    }
+  }
+ catch (  SSLHandshakeException e) {
+    LOG.error("SSL handshake failed - this probably means that you need to trust the kubernetes root SSL certificate or set the environment variable " + KubernetesFactory.KUBERNETES_TRUST_ALL_CERIFICATES,e);
+  }
+catch (  SSLProtocolException e) {
+    LOG.error("SSL protocol error",e);
+  }
+catch (  SSLKeyException e) {
+    LOG.error("Bad SSL key",e);
+  }
+catch (  SSLPeerUnverifiedException e) {
+    LOG.error("Could not verify server",e);
+  }
+catch (  SSLException e) {
+    LOG.warn("Address does not appear to be SSL-enabled - falling back to http",e);
+  }
+catch (  IOException e) {
+    LOG.warn("Failed to validate service",e);
+  }
+  return false;
+}

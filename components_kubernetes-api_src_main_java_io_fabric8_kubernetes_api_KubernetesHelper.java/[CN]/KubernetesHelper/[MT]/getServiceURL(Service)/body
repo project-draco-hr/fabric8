@@ -8,9 +8,12 @@
         if (port != null && port > 0) {
           portalIP+=":" + port;
         }
+        String protocol="http://";
+        if (KubernetesHelper.isServiceSsl(spec.getPortalIP(),port,Boolean.valueOf(System.getenv(KubernetesFactory.KUBERNETES_TRUST_ALL_CERIFICATES)))) {
+          protocol="https://";
+        }
+        return protocol + portalIP;
       }
-      String protocol="http://";
-      return protocol + portalIP;
     }
   }
   return null;
