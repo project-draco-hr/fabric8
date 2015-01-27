@@ -1,0 +1,18 @@
+{
+  kubernetesHosts=findKubernetesHosts();
+  PhysicalAddress physical_addr=(PhysicalAddress)down(new Event(Event.GET_PHYSICAL_ADDRESS,local_addr));
+  PingData data=new PingData(local_addr,false,org.jgroups.util.UUID.get(local_addr),physical_addr);
+  PingHeader hdr=new PingHeader(PingHeader.GET_MBRS_REQ).clusterName(cluster_name);
+  Set<PhysicalAddress> cluster_members=new HashSet<>(kubernetesHosts);
+  cluster_members.addAll(dynamic_hosts);
+  if (use_disk_cache) {
+    Collection<PhysicalAddress> list=(Collection<PhysicalAddress>)down_prot.down(new Event(Event.GET_PHYSICAL_ADDRESSES));
+    if (list != null)     for (    PhysicalAddress phys_addr : list)     if (!cluster_members.contains(phys_addr))     cluster_members.add(phys_addr);
+  }
+  for (  final PhysicalAddress addr : cluster_members) {
+    if (physical_addr != null && addr.equals(physical_addr))     continue;
+    final Message msg=new Message(addr).setFlag(Message.Flag.INTERNAL,Message.Flag.DONT_BUNDLE,Message.Flag.OOB).putHeader(this.id,hdr).setBuffer(marshal(data));
+    log.trace("%s: sending discovery request to %s",local_addr,msg.getDest());
+    down_prot.down(new Event(Event.MSG,msg));
+  }
+}

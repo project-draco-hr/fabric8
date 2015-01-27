@@ -1,0 +1,19 @@
+{
+  Object retval=super.down(evt);
+switch (evt.getType()) {
+case Event.VIEW_CHANGE:
+    for (    Address logical_addr : members) {
+      PhysicalAddress physical_addr=(PhysicalAddress)down_prot.down(new Event(Event.GET_PHYSICAL_ADDRESS,logical_addr));
+      if (physical_addr != null && !kubernetesHosts.contains(physical_addr)) {
+        dynamic_hosts.addIfAbsent(physical_addr);
+      }
+    }
+  break;
+case Event.SET_PHYSICAL_ADDRESS:
+Tuple<Address,PhysicalAddress> tuple=(Tuple<Address,PhysicalAddress>)evt.getArg();
+PhysicalAddress physical_addr=tuple.getVal2();
+if (physical_addr != null && !kubernetesHosts.contains(physical_addr)) dynamic_hosts.addIfAbsent(physical_addr);
+break;
+}
+return retval;
+}
