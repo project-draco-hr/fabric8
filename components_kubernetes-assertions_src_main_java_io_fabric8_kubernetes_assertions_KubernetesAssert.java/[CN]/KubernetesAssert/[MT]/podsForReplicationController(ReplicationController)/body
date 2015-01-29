@@ -1,5 +1,5 @@
 {
-  List<Pod> allPods=getPods();
+  List<Pod> allPods=getPods(replicationController.getNamespace());
   List<Pod> pods=KubernetesHelper.getPodsForReplicationController(replicationController,allPods);
   return Assertions.assertThat(pods);
 }
