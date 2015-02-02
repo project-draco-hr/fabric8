@@ -1,14 +1,14 @@
 {
   if (!instrumentation.isModifiableClass(c)) {
-    LOG.trace("NO INSTRUMENT: Class " + c.getName() + " is not modifiable");
+    LOG.trace("NO INSTRUMENT: Class {} is not modifiable",c.getName());
     return false;
   }
   if (!configuration.isAudit(c.getName())) {
-    LOG.trace("NO INSTRUMENT: Class " + c.getName() + " is blacklisted");
+    LOG.trace("NO INSTRUMENT: Class {} is blacklisted",c.getName());
     return false;
   }
   if (c.isArray() || c.isAnnotation() || c.isInterface()|| c.isPrimitive()|| c.isSynthetic()|| c.isEnum()) {
-    LOG.trace("NO INSTRUMENT: Class " + c.getName() + " is an array, primitive, annotation or enum etc");
+    LOG.trace("NO INSTRUMENT: Class {} is an array, primitive, annotation or enum etc.",c.getName());
     return false;
   }
   return true;
