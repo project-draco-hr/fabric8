@@ -1,11 +1,13 @@
 {
-  for (int i=0; i < MAX_ITERATIONS && started.get(); i++) {
+  for (int i=0; i < MAX_ITERATIONS; i++) {
     for (    TestValues value : TestValues.values()) {
+      System.out.println("TestLoad " + name + " running #"+ i);
       load(value);
       if (i % 2 == 0) {
         doSomethingElse();
       }
     }
   }
-  System.err.println("TestLoad(" + name + ") stopping");
+  System.out.println("TestLoad " + name + " done");
+  done.set(true);
 }
