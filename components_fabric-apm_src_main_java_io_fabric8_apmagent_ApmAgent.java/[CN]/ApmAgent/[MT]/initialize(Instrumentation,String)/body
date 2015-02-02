@@ -9,11 +9,11 @@
 switch (theStrategy) {
 case TRACE:
       this.strategy=new TraceStrategy(apmAgentContext,instrumentation);
-    LOG.info("Using Trace strategy");
+    LOG.debug("Using Trace strategy");
   break;
 default :
 this.strategy=new SamplingStrategy(apmAgentContext);
-LOG.info("Using Sampling strategy");
+LOG.debug("Using Sampling strategy");
 }
 this.strategy.initialize();
 Thread cleanup=new Thread(){
@@ -23,7 +23,7 @@ ApmAgent apmAgent=ApmAgent.INSTANCE;
 apmAgent.shutDown();
 }
  catch (Exception e) {
-LOG.error("Failed to run shutdown hook",e);
+LOG.warn("Failed to run shutdown hook due " + e.getMessage(),e);
 }
 }
 }
