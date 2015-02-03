@@ -1,0 +1,10 @@
+{
+  String serviceEnvVarPrefix=getServiceEnvVarPrefix(serviceName);
+  String hostEnvVar=serviceEnvVarPrefix + "_HOST";
+  String portEnvVar=serviceEnvVarPrefix + "_PORT";
+  String host=Systems.getEnvVarOrSystemProperty(hostEnvVar,hostEnvVar,defaultHost);
+  String port=Systems.getEnvVarOrSystemProperty(portEnvVar,portEnvVar,defaultPort);
+  String answer=host + ":" + port;
+  LOG.info("Connecting to service " + serviceName + " on "+ answer+ " from $"+ hostEnvVar+ " and $"+ portEnvVar);
+  return answer;
+}
