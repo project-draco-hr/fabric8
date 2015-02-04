@@ -4,6 +4,7 @@
   String namespace=session.getNamespace();
   log.status("Creating kubernetes resources inside namespace: " + namespace);
   log.info("if you use a kubernetes CLI type this to switch namespaces: kube namespace " + namespace);
+  client.setNamespace(namespace);
   controller.setNamespace(namespace);
   shutdownHook=new ShutdownHook(client,session);
   Runtime.getRuntime().addShutdownHook(shutdownHook);
@@ -13,7 +14,7 @@
     List<Config> kubeConfigs=new LinkedList<>();
     for (    String dependency : dependencies) {
       log.info("Found dependency: " + dependency);
-      loadDependency(kubeConfigs,dependency);
+      loadDependency(log,kubeConfigs,dependency);
     }
     if (configUrl != null) {
       log.status("Applying kubernetes configuration from: " + configuration.getConfigUrl());

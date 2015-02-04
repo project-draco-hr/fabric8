@@ -20,8 +20,11 @@
 catch (    Exception e) {
       failure=new AssertionError(e);
     }
-    LOG.debug("Waiting for " + failure);
+    LOG.debug("Waiting for " + failure,failure);
     System.out.println("Waiting for: " + failure);
+    if (isVerboseWaitMessage()) {
+      failure.printStackTrace();
+    }
     Thread.sleep(1000);
   }
 }
