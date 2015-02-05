@@ -1,0 +1,17 @@
+{
+  JsonSchema answer=null;
+  Enumeration<URL> resources=classLoader.getResources(ENVIRONMENT_SCHEMA_FILE);
+  while (resources.hasMoreElements()) {
+    URL url=resources.nextElement();
+    JsonSchema schema=loadSchema(url);
+    answer=combineSchemas(answer,schema);
+  }
+  for (  String folderPath : folderPaths) {
+    File file=new File(folderPath,ENVIRONMENT_SCHEMA_FILE);
+    if (file.isFile()) {
+      JsonSchema schema=loadSchema(file);
+      answer=combineSchemas(answer,schema);
+    }
+  }
+  return answer;
+}

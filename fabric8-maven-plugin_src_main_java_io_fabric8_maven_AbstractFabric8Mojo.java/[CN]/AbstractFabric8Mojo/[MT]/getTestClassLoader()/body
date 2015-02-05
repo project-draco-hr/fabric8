@@ -1,17 +1,9 @@
 {
-  List<URL> urls=new ArrayList<>();
   try {
-    for (    Object object : getProject().getTestClasspathElements()) {
-      if (object != null) {
-        String path=object.toString();
-        File file=new File(path);
-        URL url=file.toURI().toURL();
-        urls.add(url);
-      }
-    }
+    List<String> classpathElements=getProject().getTestClasspathElements();
+    return createClassLoader(classpathElements,getProject().getBuild().getTestOutputDirectory());
   }
  catch (  Exception e) {
     throw new MojoExecutionException("Failed to resolve classpath: " + e,e);
   }
-  return createURLClassLoader(urls);
 }

@@ -1,0 +1,9 @@
+{
+  try {
+    List<String> classpathElements=getProject().getCompileClasspathElements();
+    return createClassLoader(classpathElements,getProject().getBuild().getOutputDirectory());
+  }
+ catch (  Exception e) {
+    throw new MojoExecutionException("Failed to resolve classpath: " + e,e);
+  }
+}

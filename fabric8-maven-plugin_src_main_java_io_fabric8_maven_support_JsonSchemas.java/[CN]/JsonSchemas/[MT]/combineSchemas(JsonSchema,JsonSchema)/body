@@ -1,0 +1,18 @@
+{
+  if (schema1 == null) {
+    return schema2;
+  }
+  if (schema2 != null) {
+    Map<String,JsonSchemaProperty> properties2=schema2.getProperties();
+    Map<String,JsonSchemaProperty> properties1=schema1.getProperties();
+    if (properties2 != null) {
+      if (properties1 == null) {
+        return schema2;
+      }
+ else {
+        properties1.putAll(properties2);
+      }
+    }
+  }
+  return schema1;
+}

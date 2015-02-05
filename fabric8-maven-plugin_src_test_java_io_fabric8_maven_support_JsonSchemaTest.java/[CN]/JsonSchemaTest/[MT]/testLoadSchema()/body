@@ -1,0 +1,11 @@
+{
+  String basedir=System.getProperty("basedir",".");
+  String path=basedir + "/src/test/resources/sample-schema.json";
+  File file=new File(path);
+  assertThat(file).isFile().exists();
+  JsonSchema schema=JsonSchemas.loadSchema(file);
+  assertThat(schema).isNotNull();
+  Map<String,JsonSchemaProperty> properties=schema.getProperties();
+  assertThat(properties).isNotNull();
+  System.out.println("Properties: " + properties);
+}

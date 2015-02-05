@@ -1,35 +1,14 @@
 {
-  boolean first=true;
-  for (  Column column : columns) {
-    if (first) {
-      first=false;
+  print(new TableWriter(){
+    @Override public String toString(){
+      return "PrintStreamTableWriter()";
     }
- else {
-      out.print(columnSeparator);
+    @Override public void print(    String text){
+      out.print(text);
     }
-    column.printHeader(out);
+    @Override public void println(){
+      out.println();
+    }
   }
-  out.println();
-  for (  String[] row : rows) {
-    first=true;
-    int i=0;
-    for (    Column column : columns) {
-      if (first) {
-        first=false;
-      }
- else {
-        out.print(columnSeparator);
-      }
-      String value=null;
-      if (i < row.length) {
-        value=row[i];
-      }
-      if (value == null) {
-        value="";
-      }
-      i++;
-      column.printValue(out,value);
-    }
-    out.println();
-  }
+);
 }

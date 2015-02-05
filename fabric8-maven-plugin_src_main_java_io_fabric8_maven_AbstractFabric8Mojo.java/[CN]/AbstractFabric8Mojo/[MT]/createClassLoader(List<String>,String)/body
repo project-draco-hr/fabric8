@@ -1,0 +1,16 @@
+{
+  List<URL> urls=new ArrayList<>();
+  for (  String path : paths) {
+    URL url=pathToUrl(path);
+    urls.add(url);
+  }
+  for (  Object object : classpathElements) {
+    if (object != null) {
+      String path=object.toString();
+      URL url=pathToUrl(path);
+      urls.add(url);
+    }
+  }
+  getLog().debug("Creating class loader from: " + urls);
+  return createURLClassLoader(urls);
+}

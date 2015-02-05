@@ -1,0 +1,23 @@
+{
+  TablePrinter table=new TablePrinter();
+  table.columns("Name","Default","Type","Description");
+  Map<String,JsonSchemaProperty> properties=schema.getProperties();
+  SortedMap<String,JsonSchemaProperty> sortedProperties=new TreeMap<>();
+  if (properties != null) {
+    sortedProperties.putAll(properties);
+  }
+  Set<Map.Entry<String,JsonSchemaProperty>> entries=sortedProperties.entrySet();
+  for (  Map.Entry<String,JsonSchemaProperty> entry : entries) {
+    String name=entry.getKey();
+    JsonSchemaProperty property=entry.getValue();
+    table.row(name,property.getDefaultValue(),property.getType(),property.getDescription());
+  }
+  getLog().info("");
+  getLog().info("Environment variables which can be injected:");
+  getLog().info("--------------------------------------------");
+  List<String> lines=table.asTextLines();
+  for (  String line : lines) {
+    getLog().info(line);
+  }
+  getLog().info("");
+}
