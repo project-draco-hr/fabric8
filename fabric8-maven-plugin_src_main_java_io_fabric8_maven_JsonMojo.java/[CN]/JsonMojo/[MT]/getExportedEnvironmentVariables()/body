@@ -1,0 +1,25 @@
+{
+  if (includeAllEnvironmentVariables) {
+    try {
+      JsonSchema schema=getEnvironmentVariableJsonSchema();
+      Map<String,String> answer=new TreeMap<>();
+      Map<String,JsonSchemaProperty> properties=schema.getProperties();
+      Set<Map.Entry<String,JsonSchemaProperty>> entries=properties.entrySet();
+      for (      Map.Entry<String,JsonSchemaProperty> entry : entries) {
+        String name=entry.getKey();
+        String value=entry.getValue().getDefaultValue();
+        if (value == null) {
+          value="";
+        }
+        answer.put(name,value);
+      }
+      return answer;
+    }
+ catch (    IOException e) {
+      throw new MojoExecutionException("Failed to load environment variable json schema files: " + e,e);
+    }
+  }
+ else {
+    return getEnvironmentVariableProperties();
+  }
+}
