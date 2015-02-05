@@ -1,0 +1,23 @@
+{
+  if (roundEnv.processingOver()) {
+    return true;
+  }
+  Set<? extends Element> elements=roundEnv.getElementsAnnotatedWith(ConfigProperty.class);
+  if (!elements.isEmpty()) {
+    StringBuilder buffer=new StringBuilder("{");
+    buffer.append("\n  \"type\": \"object\",");
+    log("options: " + processingEnv.getOptions());
+    buffer.append("\n  \"properties\": {");
+    boolean first=true;
+    for (    Element element : elements) {
+      processEndpointClass(roundEnv,element,buffer,first);
+      first=false;
+    }
+    buffer.append("\n  }");
+    buffer.append("\n}");
+    buffer.append("\n");
+    String text=buffer.toString();
+    writeFile("io.fabric8.environment","schema.json",text);
+  }
+  return true;
+}

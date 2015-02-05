@@ -1,0 +1,19 @@
+{
+  Pattern regex=Pattern.compile(".*\\s+@param\\s+" + parameterName + "\\s+(.*)");
+  Matcher matcher=regex.matcher(javadoc);
+  if (matcher.find()) {
+    String prefix=matcher.group(1);
+    if (!Strings.isNullOrEmpty(prefix)) {
+      Pattern nextTag=Pattern.compile("\\s+(@param|@return|@exception|@throws|@serialData|@see|@since|@deprecated)");
+      Matcher endMatcher=nextTag.matcher(prefix);
+      if (endMatcher.find()) {
+        int start=endMatcher.start();
+        return prefix.substring(0,start).trim();
+      }
+ else {
+        return prefix;
+      }
+    }
+  }
+  return null;
+}

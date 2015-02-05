@@ -1,0 +1,13 @@
+{
+  if (elementUtils != null) {
+    String description=elementUtils.getDocComment(element);
+    if (Strings.isNullOrEmpty(description) && element.getKind() == ElementKind.PARAMETER) {
+      String parentDoc=getJavaDoc(elementUtils,element.getEnclosingElement());
+      if (!Strings.isNullOrEmpty(parentDoc)) {
+        return findParameterJavaDoc(parentDoc,element.getSimpleName().toString());
+      }
+    }
+    return description;
+  }
+  return null;
+}

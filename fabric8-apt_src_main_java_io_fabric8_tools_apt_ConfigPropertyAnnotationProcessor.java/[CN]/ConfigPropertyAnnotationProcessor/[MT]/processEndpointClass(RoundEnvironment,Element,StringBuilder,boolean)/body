@@ -1,0 +1,29 @@
+{
+  final ConfigProperty property=element.getAnnotation(ConfigProperty.class);
+  if (property != null) {
+    String defaultValue=property.defaultValue();
+    if ("org.apache.deltaspike.NullValueMarker".equals(defaultValue)) {
+      defaultValue=null;
+    }
+    String name=property.name();
+    String description=JavaDocs.getJavaDoc(getElements(),element);
+    String javaTypeName=javaTypeName(element);
+    String jsonType=JsonSchemaTypes.getJsonSchemaTypeName(javaTypeName);
+    if (!first) {
+      buffer.append(",");
+    }
+    buffer.append("\n    \"").append(name).append("\": {");
+    buffer.append("\n      \"type\": \"").append(jsonType).append("\",");
+    if (defaultValue != null) {
+      buffer.append("\n      \"default\": \"").append(defaultValue).append("\",");
+    }
+    if (description != null) {
+      description=description.trim();
+      if (description.length() > 0) {
+        buffer.append("\n      \"description\": \"").append(description).append("\",");
+      }
+    }
+    buffer.append("\n      \"javaType\": \"").append(javaTypeName).append("\"");
+    buffer.append("\n    }");
+  }
+}
