@@ -1,5 +1,7 @@
 {
   Project project=getSelectedProject(builder);
-  name.setCompleter(new CamelComponentsCompleter(project));
+  filter.setCompleter(new CamelComponentsLabelCompleter(project));
+  name.setCompleter(new CamelComponentsCompleter(project,filter));
+  builder.add(filter);
   builder.add(name);
 }

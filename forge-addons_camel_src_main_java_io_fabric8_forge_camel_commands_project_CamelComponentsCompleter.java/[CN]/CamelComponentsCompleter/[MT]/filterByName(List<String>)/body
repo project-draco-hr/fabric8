@@ -1,0 +1,16 @@
+{
+  List<String> answer=new ArrayList<String>();
+  CamelComponentCatalog catalog=new DefaultCamelComponentCatalog();
+  for (  String name : choices) {
+    String json=catalog.componentJSonSchema(name);
+    String artifactId=findArtifactId(json);
+    boolean already=false;
+    if (artifactId != null) {
+      already=CamelProjectHelper.hasDependency(project,"org.apache.camel",artifactId);
+    }
+    if (!already) {
+      answer.add(name);
+    }
+  }
+  return answer;
+}

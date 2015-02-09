@@ -4,14 +4,12 @@
     return null;
   }
   CamelComponentCatalog catalog=new DefaultCamelComponentCatalog();
-  List<String> names=catalog.findComponentNames();
+  Set<String> names=catalog.findComponentLabels();
   List<String> filtered=new ArrayList<String>();
   for (  String name : names) {
     if (value == null || name.startsWith(value)) {
       filtered.add(name);
     }
   }
-  filtered=filterByName(filtered);
-  filtered=filterByLabel(filtered,filter.getValue());
   return filtered;
 }
