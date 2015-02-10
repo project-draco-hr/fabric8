@@ -1,0 +1,6 @@
+{
+  Annotated annotated=injectionPoint.getAnnotated();
+  Service service=annotated.getAnnotation(Service.class);
+  io.fabric8.kubernetes.api.model.Service srv=KUBERNETES.getService(service.value());
+  return (srv.getProtocol() + "://" + srv.getPortalIP()+ ":"+ srv.getPort()).toLowerCase();
+}

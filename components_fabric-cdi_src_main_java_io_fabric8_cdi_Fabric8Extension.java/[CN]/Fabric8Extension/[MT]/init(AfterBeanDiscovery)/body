@@ -1,0 +1,7 @@
+{
+  discovery.addBean(new KubernetesFactoryBean());
+  discovery.addBean(new KubernetesClientBean());
+  for (  Map.Entry<String,Service> entry : servicesById.entrySet()) {
+    discovery.addBean(new ServiceBean(entry.getValue()));
+  }
+}
