@@ -1,0 +1,22 @@
+{
+  ArchetypeCatalog catalog=new ArchetypeCatalog();
+  try {
+    Set<Dependency> deps=resolver.resolveDependencies(DependencyQueryBuilder.create("org.apache.camel.archetypes::[2.4.1]"));
+    for (    Dependency dep : deps) {
+      Archetype arc=new Archetype();
+      arc.setGroupId(dep.getCoordinate().getGroupId());
+      arc.setArtifactId(dep.getCoordinate().getArtifactId());
+      arc.setVersion(dep.getCoordinate().getVersion());
+      arc.setRepository("http://repo2.maven.org/maven2/");
+      catalog.addArchetype(arc);
+    }
+  }
+ catch (  Throwable e) {
+    e.printStackTrace();
+    StringWriter sw=new StringWriter();
+    e.printStackTrace(new PrintWriter(sw));
+    String s=sw.toString();
+    System.out.println(s);
+  }
+  return catalog;
+}
