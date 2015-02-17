@@ -1,4 +1,7 @@
 {
+  Project project=getSelectedProject(builder.getUIContext());
+  JavaSourceFacet facet=project.getFacet(JavaSourceFacet.class);
+  targetPackage.setCompleter(new PackageNameCompleter(facet));
   targetPackage.addValidator(new PackageNameValidator());
   name.addValidator(new ClassNameValidator());
   builder.add(targetPackage).add(name);

@@ -1,6 +1,6 @@
 {
   Project project=getSelectedProject(context);
-  facet=project.getFacet(JavaSourceFacet.class);
+  JavaSourceFacet facet=project.getFacet(JavaSourceFacet.class);
   Dependency core=findCamelCoreDependency(project);
   if (core == null) {
     return Results.fail("The project does not include camel-core");
@@ -17,7 +17,7 @@
   }
   javaClass.setSuperType("RouteBuilder");
   javaClass.addImport("org.apache.camel.builder.RouteBuilder");
-  javaClass.addMethod().setPublic().setReturnTypeVoid().setName("configure").setBody("from(\"timer:foo\").to(\"log:foo\");").addThrows(Exception.class);
+  javaClass.addMethod().setPublic().setReturnTypeVoid().setName("configure").setBody("// add routes here").addThrows(Exception.class);
   facet.saveJavaSource(javaClass);
   return Results.success("Added RouteBuilder " + name.getValue() + " to the project");
 }

@@ -1,0 +1,16 @@
+{
+  facet.visitJavaSources(new JavaResourceVisitor(){
+    @Override public void visit(    VisitContext context,    JavaResource javaResource){
+      try {
+        JavaClass clazz=javaResource.getJavaType();
+        String packageName=clazz.getPackage();
+        if (packageName != null) {
+          packageNames.add(packageName);
+        }
+      }
+ catch (      FileNotFoundException e) {
+      }
+    }
+  }
+);
+}
