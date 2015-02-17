@@ -1,0 +1,28 @@
+{
+  Project project=getSelectedProject(context);
+  facet=project.getFacet(JavaSourceFacet.class);
+  Dependency core=findCamelCoreDependency(project);
+  if (core == null) {
+    return Results.fail("The project does not include camel-core");
+  }
+  char[] chars=name.getValue().toCharArray();
+  for (int i=0; i < chars.length; i++) {
+    char ch=chars[i];
+    if (!Character.isJavaIdentifierPart(ch)) {
+      return Results.fail("The class name [" + name.getValue() + "] is invalid at position "+ (i + 1));
+    }
+    if (i == 0 && !Character.isUpperCase(ch)) {
+      return Results.fail("The class name [" + name.getValue() + "] must start with an upper case alphabetic character");
+    }
+  }
+  final JavaClassSource javaClass=Roaster.create(JavaClassSource.class);
+  javaClass.setName(name.getValue());
+  if (targetPackage.getValue() != null) {
+    javaClass.setPackage(targetPackage.getValue());
+  }
+  javaClass.setSuperType("RouteBuilder");
+  javaClass.addImport("org.apache.camel.builder.RouteBuilder");
+  javaClass.addMethod().setPublic().setReturnTypeVoid().setName("configure").setBody("from(\"timer:foo\").to(\"log:foo\");").addThrows(Exception.class);
+  facet.saveJavaSource(javaClass);
+  return Results.success("Added RouteBuilder " + name.getValue() + " to the project");
+}
