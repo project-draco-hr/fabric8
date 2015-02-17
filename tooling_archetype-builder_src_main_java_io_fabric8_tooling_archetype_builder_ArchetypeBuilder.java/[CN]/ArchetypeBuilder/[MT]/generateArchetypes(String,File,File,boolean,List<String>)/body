@@ -6,18 +6,27 @@
       if (file.isDirectory()) {
         File projectDir=file;
         File projectPom=new File(projectDir,"pom.xml");
-        if (projectPom.exists() && !skipImport(projectDir) && archetypeUtils.isValidProjectPom(projectPom)) {
-          String fileName=file.getName();
-          String archetypeDirName=fileName.replace("example","archetype");
-          if (fileName.equals(archetypeDirName)) {
-            archetypeDirName+="-archetype";
+        if (projectPom.exists() && !skipImport(projectDir)) {
+          if (archetypeUtils.isValidProjectPom(projectPom)) {
+            String fileName=file.getName();
+            String archetypeDirName=fileName.replace("example","archetype");
+            if (fileName.equals(archetypeDirName)) {
+              archetypeDirName+="-archetype";
+            }
+            archetypeDirName=containerType + "-" + archetypeDirName;
+            File archetypeDir=new File(outputDir,archetypeDirName);
+            generateArchetype(projectDir,projectPom,archetypeDir,clean,dirs);
+            File archetypePom=new File(archetypeDir,"pom.xml");
+            if (archetypePom.exists()) {
+              addArchetypeMetaData(archetypePom,archetypeDirName);
+            }
           }
-          archetypeDirName=containerType + "-" + archetypeDirName;
-          File archetypeDir=new File(outputDir,archetypeDirName);
-          generateArchetype(projectDir,projectPom,archetypeDir,clean,dirs);
-          File archetypePom=new File(archetypeDir,"pom.xml");
-          if (archetypePom.exists()) {
-            addArchetypeMetaData(archetypePom,archetypeDirName);
+ else {
+            String childContainerType=file.getName();
+            if (Strings.isNotBlank(containerType)) {
+              childContainerType=containerType + "-" + childContainerType;
+            }
+            generateArchetypes(childContainerType,file,outputDir,clean,dirs);
           }
         }
       }
