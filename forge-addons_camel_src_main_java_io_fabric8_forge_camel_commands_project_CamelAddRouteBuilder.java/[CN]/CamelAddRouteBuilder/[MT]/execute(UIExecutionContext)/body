@@ -15,6 +15,11 @@
       return Results.fail("The class name [" + name.getValue() + "] must start with an upper case alphabetic character");
     }
   }
+  String fqn=targetPackage.getValue() != null ? targetPackage.getValue() + "." + name.getValue() : name.getName();
+  JavaResource existing=facet.getJavaResource(fqn);
+  if (existing != null && existing.exists()) {
+    return Results.fail("A class with name " + fqn + " already exists");
+  }
   final JavaClassSource javaClass=Roaster.create(JavaClassSource.class);
   javaClass.setName(name.getValue());
   if (targetPackage.getValue() != null) {
