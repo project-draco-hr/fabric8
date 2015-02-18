@@ -1,7 +1,14 @@
 {
-  Project project=getSelectedProject(builder);
-  filter.setCompleter(new CamelComponentsLabelCompleter(project));
-  name.setCompleter(new CamelComponentsCompleter(project,filter));
+  final Project project=getSelectedProject(builder);
+  filter.setValueChoices(new CamelComponentsLabelCompleter(project).getValueChoices());
+  filter.setDefaultValue("<all>");
+  name.setValueChoices(new Callable<Iterable<String>>(){
+    @Override public Iterable<String> call() throws Exception {
+      String label=filter.getValue();
+      return new CamelComponentsCompleter(project,null).getValueChoices(label);
+    }
+  }
+);
   builder.add(filter);
   builder.add(name);
 }

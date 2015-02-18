@@ -1,0 +1,12 @@
+{
+  Dependency core=CamelProjectHelper.findCamelCoreDependency(project);
+  if (core == null) {
+    return null;
+  }
+  CamelComponentCatalog catalog=new DefaultCamelComponentCatalog();
+  List<String> names=catalog.findComponentNames();
+  if (label == null || "<all>".equals(label)) {
+    return names;
+  }
+  return filterByLabel(names,label);
+}
