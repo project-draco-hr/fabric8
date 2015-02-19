@@ -1,0 +1,18 @@
+{
+  if (cachedArchetypes == null) {
+    Coordinate coordinate=CoordinateBuilder.create().setGroupId("io.fabric8.archetypes").setArtifactId("archetypes-catalog").setVersion("2.2-SNAPSHOT").setClassifier("archetype-catalog").setPackaging("xml");
+    Dependency dependency=resolver.get().resolveArtifact(DependencyQueryBuilder.create(coordinate));
+    if (dependency != null) {
+      XMLResource xml=(XMLResource)dependency.getArtifact();
+      if (xml != null) {
+        try (InputStream is=xml.getResourceInputStream()){
+          cachedArchetypes=new ArchetypeCatalogXpp3Reader().read(is);
+        }
+ catch (        Exception e) {
+          logger.log(Level.SEVERE,"Error while retrieving archetypes",e);
+        }
+      }
+    }
+  }
+  return cachedArchetypes;
+}
