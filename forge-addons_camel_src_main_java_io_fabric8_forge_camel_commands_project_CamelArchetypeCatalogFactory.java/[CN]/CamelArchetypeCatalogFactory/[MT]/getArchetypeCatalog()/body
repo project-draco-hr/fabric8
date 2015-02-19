@@ -1,25 +1,9 @@
 {
   if (cachedArchetypes == null) {
-    URL url=null;
-    try {
-      url=new URL("http://repo2.maven.org/maven2/archetype-catalog.xml");
-    }
- catch (    MalformedURLException e) {
-      logger.log(Level.SEVERE,"URL should be valid",e);
-    }
-    String defaultRepository="http://repo2.maven.org/maven2";
-    if (url != null) {
-      try (InputStream urlStream=url.openStream()){
-        cachedArchetypes=new ArchetypeCatalog();
-        ArchetypeCatalog catalog=new ArchetypeCatalogXpp3Reader().read(urlStream);
-        for (        Archetype archetype : catalog.getArchetypes()) {
-          if ("org.apache.camel.archetypes".equals(archetype.getArtifactId())) {
-            if (Strings.isNullOrEmpty(archetype.getRepository())) {
-              archetype.setRepository(defaultRepository);
-            }
-            cachedArchetypes.addArchetype(archetype);
-          }
-        }
+    String xml=new DefaultCamelComponentCatalog().archetypeCatalogAsXml();
+    if (xml != null) {
+      try {
+        cachedArchetypes=new ArchetypeCatalogXpp3Reader().read(new StringReader(xml));
       }
  catch (      Exception e) {
         logger.log(Level.SEVERE,"Error while retrieving archetypes",e);
