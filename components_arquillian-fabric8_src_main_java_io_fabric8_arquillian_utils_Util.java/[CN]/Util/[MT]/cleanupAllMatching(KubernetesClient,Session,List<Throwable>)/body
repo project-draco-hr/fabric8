@@ -1,28 +1,24 @@
 {
-  Filter<Pod> podFilter=session.createPodFilter();
-  Filter<Service> serviceFilter=session.createServiceFilter();
-  Filter<ReplicationController> replicationControllerFilter=session.createReplicationControllerFilter();
   for (int i=0; i < 10; i++) {
     try {
-      deleteReplicationControllers(client,session.getLogger(),replicationControllerFilter);
+      deleteReplicationControllers(client,session);
     }
  catch (    MultiException e) {
       errors.addAll(Arrays.asList(e.getCauses()));
     }
     try {
-      deletePods(client,session.getLogger(),podFilter);
+      deletePods(client,session);
     }
  catch (    MultiException e) {
       errors.addAll(Arrays.asList(e.getCauses()));
     }
     try {
-      deleteServices(client,session.getLogger(),serviceFilter);
+      deleteServices(client,session);
     }
  catch (    MultiException e) {
       errors.addAll(Arrays.asList(e.getCauses()));
     }
-    PodList podList=client.getPods();
-    List<Pod> filteredPods=Filters.filter(notNullList(podList.getItems()),podFilter);
+    List<Pod> filteredPods=client.getPods(session.getNamespace()).getItems();
     if (filteredPods.isEmpty()) {
       return;
     }

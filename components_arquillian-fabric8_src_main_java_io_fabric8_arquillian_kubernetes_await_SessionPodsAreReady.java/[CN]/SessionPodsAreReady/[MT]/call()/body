@@ -1,7 +1,6 @@
 {
   boolean result=true;
-  Filter<Pod> podFilter=session.createPodFilter();
-  List<Pod> pods=Util.findPods(kubernetesClient,podFilter);
+  List<Pod> pods=kubernetesClient.getPods(session.getNamespace()).getItems();
   if (pods.isEmpty()) {
     result=false;
     session.getLogger().warn("No pods are available yet, waiting...");

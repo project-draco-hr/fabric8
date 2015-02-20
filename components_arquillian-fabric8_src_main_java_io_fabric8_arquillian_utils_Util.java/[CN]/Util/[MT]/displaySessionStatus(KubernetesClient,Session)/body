@@ -1,20 +1,11 @@
 {
-  Filter<Pod> podFilter=session.createPodFilter();
-  Filter<Service> serviceFilter=session.createServiceFilter();
-  Filter<ReplicationController> replicationControllerFilter=session.createReplicationControllerFilter();
-  for (  ReplicationController replicationController : client.getReplicationControllers().getItems()) {
-    if (replicationControllerFilter.matches(replicationController)) {
-      session.getLogger().info("Replication controller:" + getId(replicationController));
-    }
+  for (  ReplicationController replicationController : client.getReplicationControllers(session.getNamespace()).getItems()) {
+    session.getLogger().info("Replication controller:" + getId(replicationController));
   }
-  for (  Pod pod : client.getPods().getItems()) {
-    if (podFilter.matches(pod)) {
-      session.getLogger().info("Pod:" + getId(pod) + " Status:"+ pod.getCurrentState().getStatus());
-    }
+  for (  Pod pod : client.getPods(session.getNamespace()).getItems()) {
+    session.getLogger().info("Pod:" + getId(pod) + " Status:"+ pod.getCurrentState().getStatus());
   }
-  for (  Service service : client.getServices().getItems()) {
-    if (serviceFilter.matches(service)) {
-      session.getLogger().info("Service:" + getId(service) + " IP:"+ getPortalIP(service)+ " Port:"+ getPort(service));
-    }
+  for (  Service service : client.getServices(session.getNamespace()).getItems()) {
+    session.getLogger().info("Service:" + getId(service) + " IP:"+ getPortalIP(service)+ " Port:"+ getPort(service));
   }
 }
