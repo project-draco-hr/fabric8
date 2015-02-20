@@ -1,6 +1,6 @@
 {
   System.out.println("Looking up replicationControllers");
-  ReplicationControllerList replicationControllers=kube.getReplicationControllers();
+  ReplicationControllerList replicationControllers=kube.getReplicationControllers(Kubernetes.NAMESPACE_ALL);
   List<ReplicationController> items=replicationControllers.getItems();
   for (  ReplicationController item : items) {
     ReplicationControllerState desiredState=item.getDesiredState();
