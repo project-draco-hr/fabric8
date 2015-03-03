@@ -1,6 +1,7 @@
 {
   if (cachedArchetypes == null) {
-    Coordinate coordinate=CoordinateBuilder.create().setGroupId("io.fabric8.archetypes").setArtifactId("archetypes-catalog").setVersion("2.2-SNAPSHOT").setClassifier("archetype-catalog").setPackaging("xml");
+    String version=VersionHelper.fabric8Version();
+    Coordinate coordinate=CoordinateBuilder.create().setGroupId("io.fabric8.archetypes").setArtifactId("archetypes-catalog").setVersion(version).setClassifier("archetype-catalog").setPackaging("xml");
     Dependency dependency=resolver.get().resolveArtifact(DependencyQueryBuilder.create(coordinate));
     if (dependency != null) {
       XMLResource xml=(XMLResource)dependency.getArtifact();
