@@ -8,6 +8,15 @@
   if (fileResource.exists()) {
     return Results.fail("Spring XML file " + fullName + " already exists");
   }
+  Dependency core=findCamelCoreDependency(project);
+  if (core == null) {
+    return Results.fail("The project does not include camel-core");
+  }
+  String artifactId=findComponentArchetype("spring");
+  DependencyBuilder component=DependencyBuilder.create().setGroupId("org.apache.camel").setArtifactId(artifactId).setVersion(core.getCoordinate().getVersion());
+  if (!dependencyInstaller.isManaged(project,component)) {
+    dependencyInstaller.install(project,component);
+  }
   Resource<URL> xml=resourceFactory.create(getClass().getResource("/templates/camel-spring.ftl")).reify(URLResource.class);
   Template template=factory.create(xml,FreemarkerTemplate.class);
   Map<String,Object> params=new HashMap<String,Object>();
