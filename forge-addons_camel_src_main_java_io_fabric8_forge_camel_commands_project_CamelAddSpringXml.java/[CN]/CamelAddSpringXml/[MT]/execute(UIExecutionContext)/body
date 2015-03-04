@@ -12,10 +12,9 @@
   if (core == null) {
     return Results.fail("The project does not include camel-core");
   }
-  String artifactId=findComponentArchetype("spring");
-  DependencyBuilder component=DependencyBuilder.create().setGroupId("org.apache.camel").setArtifactId(artifactId).setVersion(core.getCoordinate().getVersion());
-  if (!dependencyInstaller.isManaged(project,component)) {
-    dependencyInstaller.install(project,component);
+  DependencyBuilder spring=DependencyBuilder.create().setGroupId("org.apache.camel").setArtifactId("camel-spring").setVersion(core.getCoordinate().getVersion());
+  if (!dependencyInstaller.isManaged(project,spring)) {
+    dependencyInstaller.install(project,spring);
   }
   Resource<URL> xml=resourceFactory.create(getClass().getResource("/templates/camel-spring.ftl")).reify(URLResource.class);
   Template template=factory.create(xml,FreemarkerTemplate.class);
