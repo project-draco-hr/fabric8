@@ -1,0 +1,19 @@
+{
+  Project project=getSelectedProject(context);
+  String projectName=project.getRoot().getName();
+  String fileName=directory.getValue() != null ? directory.getValue() + File.separator + name.getValue() : name.getValue();
+  String fullName="src" + File.separator + "main"+ File.separator+ "resources"+ File.separator+ fileName;
+  ResourcesFacet facet=project.getFacet(ResourcesFacet.class);
+  FileResource<?> fileResource=facet.getResource(fileName);
+  if (fileResource.exists()) {
+    return Results.fail("Spring XML file " + fullName + " already exists");
+  }
+  Resource<URL> xml=resourceFactory.create(getClass().getResource("/templates/camel-spring.ftl")).reify(URLResource.class);
+  Template template=factory.create(xml,FreemarkerTemplate.class);
+  Map<String,Object> params=new HashMap<String,Object>();
+  params.put("projectName",projectName);
+  String output=template.process(params);
+  fileResource.createNewFile();
+  fileResource.setContents(output);
+  return Results.success("Added Spring XML file " + fullName + " to the project");
+}
