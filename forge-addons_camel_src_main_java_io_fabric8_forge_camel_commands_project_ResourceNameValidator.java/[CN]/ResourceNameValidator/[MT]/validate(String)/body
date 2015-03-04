@@ -1,0 +1,13 @@
+{
+  if (s == null) {
+    return new ValidationResult(ResultType.INFO);
+  }
+  if (extension != null && !s.endsWith("." + extension)) {
+    return new ValidationResult(ResultType.ERROR,"The file name [" + s + "] must be a "+ extension+ " file");
+  }
+  int min=extension != null ? extension.length() + 2 : 1;
+  if (s.length() < min) {
+    return new ValidationResult(ResultType.ERROR,"The file name [" + s + "] must be at least "+ min+ " characters");
+  }
+  return new ValidationResult(ResultType.INFO);
+}
