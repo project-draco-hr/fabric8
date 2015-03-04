@@ -1,17 +1,20 @@
 {
   if (cachedArchetypes == null) {
     String version=VersionHelper.fabric8Version();
-    Coordinate coordinate=CoordinateBuilder.create().setGroupId("io.fabric8.archetypes").setArtifactId("archetypes-catalog").setVersion(version).setClassifier("archetype-catalog").setPackaging("xml");
+    Coordinate coordinate=CoordinateBuilder.create().setGroupId("io.fabric8.archetypes").setArtifactId("archetypes-catalog").setVersion(version).setPackaging("jar");
     Dependency dependency=resolver.get().resolveArtifact(DependencyQueryBuilder.create(coordinate));
     if (dependency != null) {
-      XMLResource xml=(XMLResource)dependency.getArtifact();
-      if (xml != null) {
-        try (InputStream is=xml.getResourceInputStream()){
+      try {
+        String name=dependency.getArtifact().getFullyQualifiedName();
+        URL url=new URL("file",null,name);
+        URLClassLoader loader=new URLClassLoader(new URL[]{url});
+        InputStream is=loader.getResourceAsStream("archetype-catalog.xml");
+        if (is != null) {
           cachedArchetypes=new ArchetypeCatalogXpp3Reader().read(is);
         }
- catch (        Exception e) {
-          logger.log(Level.SEVERE,"Error while retrieving archetypes",e);
-        }
+      }
+ catch (      Exception e) {
+        logger.log(Level.SEVERE,"Error while retrieving archetypes",e);
       }
     }
   }
