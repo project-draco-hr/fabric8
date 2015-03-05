@@ -18,17 +18,8 @@
 ;
   final IEngine engine=factory.createEngine();
   ApiManEngine apimanEngine=new ApiManEngine(){
-    @Override public void unregisterApplication(    String organizationId,    String applicationId,    String version) throws RegistrationException {
-      engine.unregisterApplication(organizationId,applicationId,version);
-    }
-    @Override public void retireService(    String organizationId,    String serviceId,    String version) throws PublishingException {
-      engine.retireService(organizationId,serviceId,version);
-    }
-    @Override public void registerApplication(    Application application) throws RegistrationException {
-      engine.registerApplication(application);
-    }
-    @Override public void publishService(    Service service) throws PublishingException {
-      engine.publishService(service);
+    @Override public IRegistry getRegistry(){
+      return engine.getRegistry();
     }
     @Override public String getVersion(){
       return engine.getVersion();
@@ -36,8 +27,10 @@
     @Override public IServiceRequestExecutor executor(    ServiceRequest request,    IAsyncResultHandler<IEngineResult> resultHandler){
       return engine.executor(request,resultHandler);
     }
-    @Override public String serviceMapping(    String orgId,    String serviceId,    String version) throws NotAuthorizedException {
-      Service service=registry.getService(orgId,serviceId,version);
+    /** 
+ * @see io.fabric8.gateway.apiman.ApiManEngine#serviceMapping(io.apiman.gateway.engine.beans.Service)
+ */
+    @Override public String serviceMapping(    Service service) throws NotAuthorizedException {
       String serviceUrl=service.getEndpoint();
       Map<String,IMappedServices> mappedServices=httpGateway.getMappedServices();
       Iterator<String> keys=mappedServices.keySet().iterator();

@@ -1,0 +1,28 @@
+{
+  Exception error=null;
+  String serviceKey=getServiceKey(service);
+  if (services.containsKey(serviceKey)) {
+    error=new PublishingException(Messages.i18n.format("InMemoryRegistry.ServiceAlreadyPublished"));
+  }
+ else {
+    try {
+      String path=getServiceBindPath(service);
+      String[] serviceInfo=new String[3];
+      serviceInfo[0]=service.getOrganizationId();
+      serviceInfo[1]=service.getServiceId();
+      serviceInfo[2]=service.getVersion();
+      serviceBindPaths.put(path,serviceInfo);
+      services.put(serviceKey,service);
+    }
+ catch (    Exception e) {
+      error=new PublishingException(e.getMessage(),e);
+    }
+  }
+  save();
+  if (error == null) {
+    handler.handle(AsyncResultImpl.create((Void)null));
+  }
+ else {
+    handler.handle(AsyncResultImpl.create(error,Void.class));
+  }
+}
