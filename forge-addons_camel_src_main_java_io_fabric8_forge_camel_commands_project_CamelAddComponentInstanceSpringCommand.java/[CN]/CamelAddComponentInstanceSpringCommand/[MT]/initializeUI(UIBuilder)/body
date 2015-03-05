@@ -1,0 +1,25 @@
+{
+  Project project=getSelectedProject(builder.getUIContext());
+  JavaSourceFacet facet=project.getFacet(JavaSourceFacet.class);
+  componentNameFilter.setValueChoices(CamelCommands.createComponentNameValues(project));
+  componentNameFilter.setDefaultValue("<all>");
+  componentName.setValueChoices(CamelCommands.createComponentNameValues(project,componentNameFilter,false));
+  instanceName.setDefaultValue(new Callable<String>(){
+    @Override public String call() throws Exception {
+      String value=componentName.getValue();
+      return value;
+    }
+  }
+);
+  targetPackage.setCompleter(new PackageNameCompleter(facet));
+  targetPackage.addValidator(new PackageNameValidator());
+  targetPackage.setDefaultValue("org.apache.camel.spring.components");
+  className.addValidator(new ClassNameValidator());
+  className.setDefaultValue(new Callable<String>(){
+    @Override public String call() throws Exception {
+      return getDefaultProducerClassName();
+    }
+  }
+);
+  builder.add(componentNameFilter).add(componentName).add(instanceName).add(targetPackage).add(className);
+}
