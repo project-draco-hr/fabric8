@@ -1,0 +1,16 @@
+{
+  javaClass.addAnnotation("Component");
+  javaClass.addImport("org.springframework.beans.factory.config.BeanDefinition");
+  javaClass.addImport("org.springframework.beans.factory.annotation.Qualifier");
+  javaClass.addImport("org.springframework.context.annotation.Bean");
+  javaClass.addImport("org.springframework.context.annotation.Scope");
+  javaClass.addImport("org.springframework.stereotype.Component");
+  javaClass.addImport(details.getComponentClassQName());
+  String componentClassName=details.getComponentClassName();
+  String methodName="create" + Strings.capitalize(componentInstanceName) + "Component";
+  String body=componentClassName + " component = new " + componentClassName+ "();"+ configurationCode+ "\nreturn component;";
+  MethodSource<JavaClassSource> method=javaClass.addMethod().setPublic().setReturnType(componentClassName).setName(methodName).setBody(body).addThrows(Exception.class);
+  method.addAnnotation("Qualifier").setStringValue(camelComponentName);
+  method.addAnnotation("Bean");
+  method.addAnnotation("Scope").setLiteralValue("BeanDefinition.SCOPE_SINGLETON");
+}

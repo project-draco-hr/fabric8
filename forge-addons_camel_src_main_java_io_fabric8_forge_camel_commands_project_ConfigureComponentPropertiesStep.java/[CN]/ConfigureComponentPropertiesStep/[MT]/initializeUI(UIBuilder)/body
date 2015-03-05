@@ -1,0 +1,37 @@
+{
+  Map<Object,Object> attributeMap=builder.getUIContext().getAttributeMap();
+  String camelComponentName=mandatoryAttributeValue(attributeMap,"componentName");
+  CamelCatalog catalog=new DefaultCamelCatalog();
+  String json=catalog.componentJSonSchema(camelComponentName);
+  if (json == null) {
+    throw new IllegalArgumentException("Could not find catalog entry for component name: " + camelComponentName);
+  }
+  List<Map<String,String>> data=JSonSchemaHelper.parseJsonSchema("componentProperties",json,true);
+  if (data != null) {
+    Set<String> namesAdded=new HashSet<>();
+    for (    Map<String,String> propertyMap : data) {
+      String name=propertyMap.get("name");
+      String kind=propertyMap.get("kind");
+      String type=propertyMap.get("type");
+      String javaType=propertyMap.get("javaType");
+      String deprecated=propertyMap.get("deprecated");
+      String required=propertyMap.get("required");
+      if (!Strings.isNullOrEmpty(name)) {
+        Class<?> inputClazz=CamelCommands.loadValidInputTypes(javaType,type);
+        if (inputClazz != null) {
+          if (namesAdded.add(name)) {
+            UIInput<?> input=componentFactory.createInput(name,inputClazz);
+            if (input != null) {
+              if (Objects.equals("true",required)) {
+                input.setRequired(true);
+              }
+              System.out.println("Adding input for name: " + name);
+              builder.add(input);
+              inputs.add(input);
+            }
+          }
+        }
+      }
+    }
+  }
+}
