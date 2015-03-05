@@ -1,0 +1,23 @@
+{
+  CamelCatalog catalog=new DefaultCamelCatalog();
+  String json=catalog.componentJSonSchema(camelComponentName);
+  if (json == null) {
+    return Results.fail("Could not find catalog entry for component name: " + camelComponentName);
+  }
+  List<Map<String,String>> data=JSonSchemaHelper.parseJsonSchema("component",json,false);
+  for (  Map<String,String> row : data) {
+    System.out.println("Row: " + row);
+    String javaType=row.get("javaType");
+    if (!Strings.isNullOrEmpty(javaType)) {
+      details.setComponentClassQName(javaType);
+    }
+    String artifactId=row.get("artifactId");
+    if (!Strings.isNullOrEmpty(artifactId)) {
+      details.setArtifactId(artifactId);
+    }
+  }
+  if (Strings.isNullOrEmpty(details.getComponentClassQName())) {
+    return Results.fail("Could not find fully qualified class name in catalog for component name: " + camelComponentName);
+  }
+  return null;
+}

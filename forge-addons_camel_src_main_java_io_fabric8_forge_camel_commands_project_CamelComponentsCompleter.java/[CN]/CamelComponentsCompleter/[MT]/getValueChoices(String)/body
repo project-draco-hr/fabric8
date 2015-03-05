@@ -5,10 +5,12 @@
   }
   CamelCatalog catalog=new DefaultCamelCatalog();
   List<String> names=catalog.findComponentNames();
-  Set<Dependency> artifacts=findCamelArtifacts(project);
-  for (  Dependency dep : artifacts) {
-    Set<String> components=componentsFromArtifact(dep.getCoordinate().getArtifactId());
-    names.removeAll(components);
+  if (excludeComponentsOnClasspath) {
+    Set<Dependency> artifacts=findCamelArtifacts(project);
+    for (    Dependency dep : artifacts) {
+      Set<String> components=componentsFromArtifact(dep.getCoordinate().getArtifactId());
+      names.removeAll(components);
+    }
   }
   if (label == null || "<all>".equals(label)) {
     return names;

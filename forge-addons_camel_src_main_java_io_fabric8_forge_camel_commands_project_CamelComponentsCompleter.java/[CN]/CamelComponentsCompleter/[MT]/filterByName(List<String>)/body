@@ -2,11 +2,13 @@
   List<String> answer=new ArrayList<String>();
   CamelCatalog catalog=new DefaultCamelCatalog();
   for (  String name : choices) {
-    String json=catalog.componentJSonSchema(name);
-    String artifactId=findArtifactId(json);
     boolean already=false;
-    if (artifactId != null) {
-      already=CamelProjectHelper.hasDependency(project,"org.apache.camel",artifactId);
+    if (excludeComponentsOnClasspath) {
+      String json=catalog.componentJSonSchema(name);
+      String artifactId=findArtifactId(json);
+      if (artifactId != null) {
+        already=CamelProjectHelper.hasDependency(project,"org.apache.camel",artifactId);
+      }
     }
     if (!already) {
       answer.add(name);

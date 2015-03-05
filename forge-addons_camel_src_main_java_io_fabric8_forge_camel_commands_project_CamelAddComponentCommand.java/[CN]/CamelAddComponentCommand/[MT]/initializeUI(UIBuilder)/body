@@ -1,14 +1,8 @@
 {
   final Project project=getSelectedProject(builder);
-  filter.setValueChoices(new CamelComponentsLabelCompleter(project).getValueChoices());
+  filter.setValueChoices(CamelCommands.createComponentNameValues(project));
   filter.setDefaultValue("<all>");
-  name.setValueChoices(new Callable<Iterable<String>>(){
-    @Override public Iterable<String> call() throws Exception {
-      String label=filter.getValue();
-      return new CamelComponentsCompleter(project,null).getValueChoices(label);
-    }
-  }
-);
+  name.setValueChoices(CamelCommands.createComponentNameValues(project,filter,true));
   builder.add(filter);
   builder.add(name);
 }
