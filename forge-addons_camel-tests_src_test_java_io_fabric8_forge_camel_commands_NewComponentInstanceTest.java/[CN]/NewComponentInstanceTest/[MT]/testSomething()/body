@@ -1,9 +1,15 @@
 {
   File tempDir=OperatingSystemUtils.createTempDir();
   try {
-    CommandController command=testHarness.createCommandController(CamelListComponentCommand.class);
+    Project project=projectFactory.createTempProject();
+    Assert.assertNotNull("Should have created a project",project);
+    CommandController command=testHarness.createCommandController(CamelSetupCommand.class);
     command.initialize();
     Result result=command.execute();
+    Assert.assertFalse("Should setup Camel in the project",result instanceof Failed);
+    command=testHarness.createCommandController(CamelListComponentCommand.class);
+    command.initialize();
+    result=command.execute();
     System.out.println("Got result: " + result);
   }
   finally {
