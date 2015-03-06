@@ -3,14 +3,14 @@
   try {
     Project project=projectFactory.createTempProject();
     Assert.assertNotNull("Should have created a project",project);
-    CommandController command=testHarness.createCommandController(CamelSetupCommand.class);
+    CommandController command=testHarness.createCommandController(CamelSetupCommand.class,project.getRoot());
     command.initialize();
     Result result=command.execute();
     Assert.assertFalse("Should setup Camel in the project",result instanceof Failed);
-    command=testHarness.createCommandController(CamelListComponentCommand.class);
+    command=testHarness.createCommandController(CamelListComponentCommand.class,project.getRoot());
     command.initialize();
     result=command.execute();
-    System.out.println("Got result: " + result);
+    Assert.assertFalse("Should not fail",result instanceof Failed);
   }
   finally {
     tempDir.delete();
