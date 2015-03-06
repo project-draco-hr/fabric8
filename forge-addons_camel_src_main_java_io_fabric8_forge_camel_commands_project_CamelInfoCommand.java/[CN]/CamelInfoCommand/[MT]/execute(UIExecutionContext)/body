@@ -5,6 +5,7 @@
     return Results.fail("The project does not include camel-core");
   }
   PrintStream out=getOutput(context);
+  out.println("");
   out.println("Camel Project Information");
   out.println("=========================");
   Set<Dependency> artifacts=findCamelArtifacts(project);
@@ -21,7 +22,7 @@
     }
     Set<String> dataFormats=dataFormatsFromArtifact(d.getCoordinate().getArtifactId());
     if (!dataFormats.isEmpty()) {
-      out.print("   dataformat: ");
+      out.print("    dataformat: ");
       for (      String df : dataFormats) {
         out.print(df);
         out.print(" ");
