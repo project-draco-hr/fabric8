@@ -1,5 +1,5 @@
 {
-  Project project=getSelectedProject(context);
-  boolean noCamel=findCamelCoreDependency(project) == null;
+  Project project=getSelectedProjectOrNull(context);
+  boolean noCamel=project == null || findCamelCoreDependency(project) == null;
   return super.isEnabled(context) && noCamel;
 }
