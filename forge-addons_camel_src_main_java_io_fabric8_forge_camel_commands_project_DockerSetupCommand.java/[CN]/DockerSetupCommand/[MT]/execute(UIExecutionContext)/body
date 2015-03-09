@@ -1,0 +1,17 @@
+{
+  Project project=getSelectedProject(context);
+  MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
+  MavenPluginBuilder plugin=MavenPluginBuilder.create().setCoordinate(createCoordinate("org.jolokia","docker-maven-plugin",VersionHelper.dockerVersion()));
+  if (pluginFacet.hasPlugin(plugin.getCoordinate())) {
+    return Results.success("Docker is already setup");
+  }
+  ConfigurationElement assembly=ConfigurationElementBuilder.create().setName("assembly").addChild("descriptorRef").setText("artifact-with-dependencies");
+  ConfigurationElement from=ConfigurationElementBuilder.create().setName("from").setText("fabric8/tomcat-8.0");
+  ConfigurationElement image=ConfigurationElementBuilder.create().setName("image").addChild("name").setText("${docker.registryPrefix}fabric8/${project.artifactId}:${project.version}");
+  image.getChildren().add(from);
+  image.getChildren().add(assembly);
+  ConfigurationElement images=ConfigurationElementBuilder.create().setName("images").addChild(image);
+  plugin.createConfiguration().addConfigurationElement(images);
+  pluginFacet.addPlugin(plugin);
+  return Results.success("Added Docker to the project");
+}
