@@ -1,3 +1,35 @@
 {
   builder.add(from);
+  from.setValueChoices(new Iterable<String>(){
+    @Override public Iterator<String> iterator(){
+      Set<String> choices=new LinkedHashSet<String>();
+      choices.add(jarImages[0]);
+      choices.add(bundleImages[0]);
+      choices.add(warImages[0]);
+      choices.add(warImages[1]);
+      return choices.iterator();
+    }
+  }
+);
+  from.setDefaultValue(new Callable<String>(){
+    @Override public String call() throws Exception {
+      String answer=null;
+      Project project=getSelectedProject(builder);
+      if (project != null) {
+        MavenFacet maven=project.getFacet(MavenFacet.class);
+        String packaging=maven.getModel().getPackaging();
+        if ("jar".equals(packaging)) {
+          answer=jarImages[0];
+        }
+ else         if ("bundle".equals(packaging)) {
+          answer=bundleImages[0];
+        }
+ else         if ("war".equals(packaging)) {
+          answer=warImages[0];
+        }
+      }
+      return answer;
+    }
+  }
+);
 }

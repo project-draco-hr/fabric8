@@ -5,8 +5,9 @@
   if (pluginFacet.hasPlugin(plugin.getCoordinate())) {
     return Results.success("Docker is already setup");
   }
+  String fromImage=from != null ? from.getValue() : "fabric8/java";
   ConfigurationElement assembly=ConfigurationElementBuilder.create().setName("assembly").addChild("descriptorRef").setText("artifact-with-dependencies");
-  ConfigurationElement from=ConfigurationElementBuilder.create().setName("from").setText("fabric8/tomcat-8.0");
+  ConfigurationElement from=ConfigurationElementBuilder.create().setName("from").setText(fromImage);
   ConfigurationElement image=ConfigurationElementBuilder.create().setName("image").addChild("name").setText("${docker.registryPrefix}fabric8/${project.artifactId}:${project.version}");
   image.getChildren().add(from);
   image.getChildren().add(assembly);
