@@ -1,0 +1,20 @@
+{
+  String serviceStatus=null;
+  boolean result=false;
+  for (  String endpoit : kubernetesClient.endpointsForService(s.getId(),s.getNamespace()).getEndpoints()) {
+    String addr=endpoit.substring(0,endpoit.indexOf(":"));
+    Integer port=Integer.parseInt(endpoit.substring(endpoit.indexOf(":") + 1));
+    try (Socket socket=new Socket()){
+      socket.connect(new InetSocketAddress(addr,port),configuration.getServiceConnectionTimeout());
+      serviceStatus="Service: " + s.getId() + " is ready. Provider:"+ addr+ ".";
+      return true;
+    }
+ catch (    Exception e) {
+      serviceStatus="Service: " + s.getId() + " is not ready! Error: "+ e.getMessage();
+    }
+ finally {
+      session.getLogger().warn(serviceStatus);
+    }
+  }
+  return result;
+}

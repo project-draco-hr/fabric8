@@ -7,17 +7,9 @@
   }
  else   if (configuration.isWaitForServiceConnection()) {
     for (    Service s : filterServices(services,configuration.getWaitForServices())) {
-      String serviceStatus=null;
-      try (Socket socket=new Socket()){
-        socket.connect(new InetSocketAddress(s.getPortalIP(),s.getPort()),configuration.getServiceConnectionTimeout());
-        serviceStatus="Service: " + s.getId() + " is ready";
-      }
- catch (      Exception e) {
+      if (!isEndpointAvailable(s)) {
         result=false;
-        serviceStatus="Service: " + s.getId() + " is not ready! Error: "+ e.getMessage();
-      }
- finally {
-        session.getLogger().warn(serviceStatus);
+        break;
       }
     }
   }
