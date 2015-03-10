@@ -5,5 +5,31 @@
   MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
   MavenPlugin plugin=MavenPluginBuilder.create().setCoordinate(createCoordinate("io.fabric8","fabric8-maven-plugin",VersionHelper.fabric8Version())).addExecution(ExecutionBuilder.create().setId("json").addGoal("json"));
   pluginFacet.addPlugin(plugin);
+  String container=null;
+  String packaging=getProjectPackaging(project);
+  if ("jar".equals(packaging)) {
+    container="java";
+  }
+ else   if ("bundle".equals(packaging)) {
+    container="karaf";
+  }
+ else   if ("war".equals(packaging)) {
+    container="tomcat";
+  }
+  MavenFacet maven=project.getFacet(MavenFacet.class);
+  Model pom=maven.getModel();
+  Properties properties=pom.getProperties();
+  boolean updated=false;
+  if (container != null) {
+    properties.put("fabric8.label.container",container);
+    updated=true;
+  }
+  if (group.getValue() != null) {
+    properties.put("fabric8.label.group",group.getValue());
+    updated=true;
+  }
+  if (updated) {
+    maven.setModel(pom);
+  }
   return Results.success("Added Fabric8 to the project");
 }
