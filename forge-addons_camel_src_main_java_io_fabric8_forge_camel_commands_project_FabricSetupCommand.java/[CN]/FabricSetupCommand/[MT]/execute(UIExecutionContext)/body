@@ -1,5 +1,15 @@
 {
   Project project=getSelectedProject(context);
+  boolean docker=false;
+  boolean jube=false;
+  if ("Docker".equals(platform.getValue()) || "Both".equals(platform.getValue())) {
+    String fromImage=DockerSetupHelper.defaultDockerImage(project);
+    if (fromImage == null) {
+      fromImage="fabric8/java";
+    }
+    docker=true;
+    DockerSetupHelper.setupDocker(project,fromImage);
+  }
   Dependency bom=DependencyBuilder.create().setCoordinate(createCoordinate("io.fabric8","fabric8-project",VersionHelper.fabric8Version(),"pom")).setScopeType("import");
   dependencyInstaller.installManaged(project,bom);
   MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
@@ -39,5 +49,13 @@
   if (updated) {
     maven.setModel(pom);
   }
-  return Results.success("Added Fabric8 to the project");
+  if (docker && jube) {
+    return Results.success("Added Fabric8 wtih Docker and Jube to the project");
+  }
+ else   if (docker) {
+    return Results.success("Added Fabric8 wtih Docker to the project");
+  }
+ else {
+    return Results.success("Added Fabric8 wtih Jube to the project");
+  }
 }
