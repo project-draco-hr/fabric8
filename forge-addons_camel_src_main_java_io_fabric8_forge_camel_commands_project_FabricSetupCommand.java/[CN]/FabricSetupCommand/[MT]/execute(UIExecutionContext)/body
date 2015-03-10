@@ -1,6 +1,9 @@
 {
   Project project=getSelectedProject(context);
-  Dependency bom=DependencyBuilder.create().setCoordinate(createCoordinate("io.fabric8","fabric8-project",VersionHelper.fabric8Version(),"bom")).setScopeType("import");
+  Dependency bom=DependencyBuilder.create().setCoordinate(createCoordinate("io.fabric8","fabric8-project",VersionHelper.fabric8Version(),"pom")).setScopeType("import");
   dependencyInstaller.installManaged(project,bom);
+  MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
+  MavenPlugin plugin=MavenPluginBuilder.create().setCoordinate(createCoordinate("io.fabric8","fabric8-maven-plugin",VersionHelper.fabric8Version())).addExecution(ExecutionBuilder.create().setId("json").addGoal("json"));
+  pluginFacet.addPlugin(plugin);
   return Results.success("Added Fabric8 to the project");
 }
