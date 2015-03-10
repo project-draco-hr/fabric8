@@ -6,15 +6,19 @@
   MavenPlugin plugin=MavenPluginBuilder.create().setCoordinate(createCoordinate("io.fabric8","fabric8-maven-plugin",VersionHelper.fabric8Version())).addExecution(ExecutionBuilder.create().setId("json").addGoal("json"));
   pluginFacet.addPlugin(plugin);
   String container=null;
+  String icon=null;
   String packaging=getProjectPackaging(project);
   if ("jar".equals(packaging)) {
     container="java";
+    icon="icons/java.svg";
   }
  else   if ("bundle".equals(packaging)) {
     container="karaf";
+    icon="icons/karaf.svg";
   }
  else   if ("war".equals(packaging)) {
     container="tomcat";
+    icon="icons/tomcat.svg";
   }
   MavenFacet maven=project.getFacet(MavenFacet.class);
   Model pom=maven.getModel();
@@ -22,6 +26,10 @@
   boolean updated=false;
   if (container != null) {
     properties.put("fabric8.label.container",container);
+    updated=true;
+  }
+  if (icon != null) {
+    properties.put("fabric8.iconRef",icon);
     updated=true;
   }
   if (group.getValue() != null) {
