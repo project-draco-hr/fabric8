@@ -1,0 +1,6 @@
+{
+  Project project=getSelectedProject(context);
+  Dependency bom=DependencyBuilder.create().setCoordinate(createCoordinate("io.fabric8","fabric8-project",VersionHelper.fabric8Version(),"bom")).setScopeType("import");
+  dependencyInstaller.installManaged(project,bom);
+  return Results.success("Added Fabric8 to the project");
+}
