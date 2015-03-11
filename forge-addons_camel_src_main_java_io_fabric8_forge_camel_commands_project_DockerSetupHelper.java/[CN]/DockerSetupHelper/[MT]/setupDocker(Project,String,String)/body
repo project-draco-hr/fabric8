@@ -8,6 +8,12 @@
   ConfigurationElement cfgBuild=ConfigurationElementBuilder.create().setName("build");
   cfgBuild.getChildren().add(cfgFrom);
   cfgBuild.getChildren().add(cfgAssembly);
+  if (main != null) {
+    ConfigurationElement cfgMain=ConfigurationElementBuilder.create().setName("MAIN").setText("${docker.env.MAIN}");
+    ConfigurationElement cfgEnv=ConfigurationElementBuilder.create().setName("env");
+    cfgEnv.getChildren().add(cfgMain);
+    cfgBuild.getChildren().add(cfgMain);
+  }
   ConfigurationElement cfgImage=ConfigurationElementBuilder.create().setName("image");
   cfgImage.getChildren().add(cfgName);
   cfgImage.getChildren().add(cfgBuild);

@@ -1,6 +1,7 @@
 {
   Project project=getSelectedProject(context);
   String fromImage=from != null ? from.getValue() : "fabric8/java";
-  DockerSetupHelper.setupDocker(project,fromImage);
+  String mainClass=main.getValue() != null ? main.getValue() : null;
+  DockerSetupHelper.setupDocker(project,fromImage,mainClass);
   return Results.success("Added Docker to the project");
 }

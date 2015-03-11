@@ -8,7 +8,8 @@
       fromImage="fabric8/java";
     }
     docker=true;
-    DockerSetupHelper.setupDocker(project,fromImage);
+    String mainClass=main.getValue() != null ? main.getValue() : null;
+    DockerSetupHelper.setupDocker(project,fromImage,mainClass);
   }
   Dependency bom=DependencyBuilder.create().setCoordinate(createCoordinate("io.fabric8","fabric8-project",VersionHelper.fabric8Version(),"pom")).setScopeType("import");
   dependencyInstaller.installManaged(project,bom);
@@ -44,6 +45,10 @@
   }
   if (group.getValue() != null) {
     properties.put("fabric8.label.group",group.getValue());
+    updated=true;
+  }
+  if (main.getValue() != null) {
+    properties.put("docker.env.MAIN",main.getValue());
     updated=true;
   }
   if (updated) {
