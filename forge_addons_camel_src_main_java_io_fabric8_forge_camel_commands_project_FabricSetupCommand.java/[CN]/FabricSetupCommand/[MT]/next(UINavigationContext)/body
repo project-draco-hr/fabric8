@@ -1,11 +1,12 @@
 {
+  context.getUIContext().getAttributeMap().put("platform",platform.getValue());
   if ("Both".equals(platform.getValue())) {
-    return Results.navigateTo(DockerStepCommand.class,JubeStepCommand.class,FabricStepCommand.class);
+    return Results.navigateTo(DockerStepCommand.class);
   }
  else   if ("Docker".equals(platform.getValue())) {
-    return Results.navigateTo(DockerStepCommand.class,FabricStepCommand.class);
+    return Results.navigateTo(DockerStepCommand.class);
   }
  else {
-    return Results.navigateTo(JubeStepCommand.class,FabricSetupCommand.class);
+    return Results.navigateTo(JubeStepCommand.class);
   }
 }

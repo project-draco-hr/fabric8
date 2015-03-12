@@ -13,6 +13,11 @@
   }
   from.setValueChoices(choices);
   String existing=(String)builder.getUIContext().getAttributeMap().get("docker.from");
+  if (existing == null) {
+    if (choices.size() == 1) {
+      from.setDefaultValue(choices.get(0));
+    }
+  }
   from.setDefaultValue(existing);
   main.setRequired(new Callable<Boolean>(){
     @Override public Boolean call() throws Exception {
@@ -25,6 +30,7 @@
     }
   }
 );
+  main.setEnabled(main.isRequired());
   existing=(String)builder.getUIContext().getAttributeMap().get("docker.main");
   main.setDefaultValue(existing);
   main.addValidator(new ClassNameValidator(true));

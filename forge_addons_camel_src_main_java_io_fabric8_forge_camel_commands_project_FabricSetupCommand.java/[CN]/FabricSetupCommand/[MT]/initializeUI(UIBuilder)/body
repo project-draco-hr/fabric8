@@ -1,15 +1,10 @@
 {
   builder.add(platform);
   platform.setValueChoices(Arrays.asList(platforms));
-  platform.setDefaultValue(new Callable<String>(){
-    @Override public String call() throws Exception {
-      if (isPlatform("windows")) {
-        return "Jube";
-      }
- else {
-        return "Docker";
-      }
-    }
+  if (isPlatform("windows")) {
+    platform.setDefaultValue("Jube");
   }
-);
+ else {
+    platform.setDefaultValue("Docker");
+  }
 }
