@@ -1,0 +1,39 @@
+{
+  builder.add(from).add(main);
+  from.setValueChoices(new Iterable<String>(){
+    @Override public Iterator<String> iterator(){
+      Set<String> choices=new LinkedHashSet<String>();
+      choices.add(jarImages[0]);
+      choices.add(bundleImages[0]);
+      choices.add(warImages[0]);
+      choices.add(warImages[1]);
+      return choices.iterator();
+    }
+  }
+);
+  from.setDefaultValue(new Callable<String>(){
+    @Override public String call() throws Exception {
+      return DockerSetupHelper.defaultDockerImage(getSelectedProject(builder));
+    }
+  }
+);
+  from.addValueChangeListener(new ValueChangeListener(){
+    @Override public void valueChanged(    ValueChangeEvent event){
+      builder.getUIContext().getAttributeMap().put("docker.from",event.getNewValue());
+    }
+  }
+);
+  main.setRequired(new Callable<Boolean>(){
+    @Override public Boolean call() throws Exception {
+      return ("fabric8/java".equals(from.getValue()));
+    }
+  }
+);
+  main.addValidator(new ClassNameValidator(true));
+  main.addValueChangeListener(new ValueChangeListener(){
+    @Override public void valueChanged(    ValueChangeEvent event){
+      builder.getUIContext().getAttributeMap().put("docker.main",event.getNewValue());
+    }
+  }
+);
+}

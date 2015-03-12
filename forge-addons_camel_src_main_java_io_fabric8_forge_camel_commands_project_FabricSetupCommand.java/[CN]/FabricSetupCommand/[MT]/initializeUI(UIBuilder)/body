@@ -12,20 +12,5 @@
     }
   }
 );
-  builder.add(main);
-  main.addValidator(new ClassNameValidator(true));
-  main.setRequired(new Callable<Boolean>(){
-    @Override public Boolean call() throws Exception {
-      if ("Docker".equals(platform.getValue()) || "Both".equals(platform.getValue())) {
-        Project project=getSelectedProjectOrNull(builder.getUIContext());
-        if (project != null) {
-          String packaging=getProjectPackaging(project);
-          return "jar".equals(packaging);
-        }
-      }
-      return false;
-    }
-  }
-);
   builder.add(group);
 }
