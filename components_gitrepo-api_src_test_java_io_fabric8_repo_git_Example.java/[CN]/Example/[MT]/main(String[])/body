@@ -1,0 +1,18 @@
+{
+  if (args.length < 3) {
+    System.out.println("Usage: address userName password");
+    return;
+  }
+  String address=args[0];
+  String userName=args[1];
+  String password=args[2];
+  try {
+    GitRepoClient client=new GitRepoClient(address,userName,password);
+    List<RepositoryDTO> repositoryDTOs=client.listRepositories();
+    System.out.println("Got repositories: " + toJson(repositoryDTOs));
+  }
+ catch (  Exception e) {
+    System.out.println("Caught: " + e);
+    e.printStackTrace();
+  }
+}

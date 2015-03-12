@@ -1,0 +1,10 @@
+{
+  List<Object> providers=createProviders();
+  WebClient webClient=WebClient.create(address,providers);
+  if (Strings.isNotBlank(username) && Strings.isNotBlank(password)) {
+    HTTPConduit conduit=WebClient.getConfig(webClient).getHttpConduit();
+    conduit.getAuthorization().setUserName(username);
+    conduit.getAuthorization().setPassword(password);
+  }
+  return JAXRSClientFactory.fromClient(webClient,clientType);
+}
