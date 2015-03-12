@@ -1,0 +1,33 @@
+{
+  Project project=getSelectedProject(context);
+  Dependency bom=DependencyBuilder.create().setCoordinate(createCoordinate("io.fabric8","fabric8-project",VersionHelper.fabric8Version(),"pom")).setScopeType("import");
+  dependencyInstaller.installManaged(project,bom);
+  MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
+  MavenPlugin plugin=MavenPluginBuilder.create().setCoordinate(createCoordinate("io.fabric8","fabric8-maven-plugin",VersionHelper.fabric8Version())).addExecution(ExecutionBuilder.create().setId("json").addGoal("json"));
+  pluginFacet.addPlugin(plugin);
+  MavenFacet maven=project.getFacet(MavenFacet.class);
+  Model pom=maven.getModel();
+  Properties properties=pom.getProperties();
+  boolean updated=false;
+  if (container != null) {
+    properties.put("fabric8.label.container",container);
+    updated=true;
+  }
+  if (icon != null) {
+    properties.put("fabric8.iconRef",icon);
+    updated=true;
+  }
+  if (group.getValue() != null) {
+    properties.put("fabric8.label.group",group.getValue());
+    updated=true;
+  }
+  String main=(String)context.getUIContext().getAttributeMap().get("docker.main");
+  if (main != null) {
+    properties.put("docker.env.MAIN",main);
+    updated=true;
+  }
+  if (updated) {
+    maven.setModel(pom);
+  }
+  return Results.success("Adding Fabric");
+}

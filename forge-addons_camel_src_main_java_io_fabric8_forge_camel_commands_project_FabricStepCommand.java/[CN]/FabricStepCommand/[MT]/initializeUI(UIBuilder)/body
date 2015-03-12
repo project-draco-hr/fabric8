@@ -1,0 +1,49 @@
+{
+  builder.add(container).add(group).add(icon);
+  container.setDefaultValue(new Callable<String>(){
+    @Override public String call() throws Exception {
+      String from=(String)builder.getUIContext().getAttributeMap().get("docker.from");
+      if (from != null) {
+        return asContainer(from);
+      }
+      return null;
+    }
+  }
+);
+  icon.setValueChoices(new Iterable<String>(){
+    @Override public Iterator<String> iterator(){
+      Set<String> choices=new LinkedHashSet<String>();
+      choices.add("activemq");
+      choices.add("camel");
+      choices.add("java");
+      choices.add("jetty");
+      choices.add("karaf");
+      choices.add("mule");
+      choices.add("tomcat");
+      choices.add("tomee");
+      choices.add("weld");
+      choices.add("wildfly");
+      return choices.iterator();
+    }
+  }
+);
+  icon.setDefaultValue(new Callable<String>(){
+    @Override public String call() throws Exception {
+      if (container.getValue() != null) {
+        for (        String choice : icon.getValueChoices()) {
+          if (choice.equals(container.getValue())) {
+            return choice;
+          }
+        }
+      }
+      return null;
+    }
+  }
+);
+  group.setDefaultValue(new Callable<String>(){
+    @Override public String call() throws Exception {
+      return null;
+    }
+  }
+);
+}
