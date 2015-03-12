@@ -12,27 +12,31 @@
     choices.add(warImages[1]);
   }
   from.setValueChoices(choices);
+  from.addValueChangeListener(new ValueChangeListener(){
+    @Override public void valueChanged(    ValueChangeEvent event){
+      builder.getUIContext().getAttributeMap().put("docker.from",event.getNewValue());
+      main.setRequired(isMainRequired((String)event.getNewValue()));
+    }
+  }
+);
   String existing=(String)builder.getUIContext().getAttributeMap().get("docker.from");
   if (existing == null) {
     if (choices.size() == 1) {
       from.setDefaultValue(choices.get(0));
     }
   }
-  from.setDefaultValue(existing);
-  main.setRequired(new Callable<Boolean>(){
-    @Override public Boolean call() throws Exception {
-      for (      String jar : jarImages) {
-        if (jar.equals(from.getValue())) {
-          return true;
-        }
-      }
-      return false;
+ else {
+    from.setDefaultValue(existing);
+  }
+  existing=(String)builder.getUIContext().getAttributeMap().get("docker.main");
+  main.setDefaultValue(existing);
+  main.setRequired(isMainRequired(from.getValue()));
+  main.addValidator(new ClassNameValidator(true));
+  main.addValueChangeListener(new ValueChangeListener(){
+    @Override public void valueChanged(    ValueChangeEvent event){
+      builder.getUIContext().getAttributeMap().put("docker.main",event.getNewValue());
     }
   }
 );
-  main.setEnabled(main.isRequired());
-  existing=(String)builder.getUIContext().getAttributeMap().get("docker.main");
-  main.setDefaultValue(existing);
-  main.addValidator(new ClassNameValidator(true));
   builder.add(from).add(main);
 }

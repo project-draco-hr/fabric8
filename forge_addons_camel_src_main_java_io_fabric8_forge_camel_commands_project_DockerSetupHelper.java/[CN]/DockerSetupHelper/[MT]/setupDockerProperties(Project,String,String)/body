@@ -1,0 +1,28 @@
+{
+  String packaging=getProjectPackaging(project);
+  boolean war=packaging != null && packaging.equals("war");
+  boolean bundle=packaging != null && packaging.equals("bundle");
+  boolean jar=packaging != null && packaging.equals("jar");
+  MavenFacet maven=project.getFacet(MavenFacet.class);
+  Model pom=maven.getModel();
+  Properties properties=pom.getProperties();
+  properties.put("docker.registryPrefix","${env.DOCKER_REGISTRY}/");
+  properties.put("docker.from",fromImage);
+  properties.put("docker.image","${docker.registryPrefix}fabric8/${project.artifactId}:${project.version}");
+  properties.put("docker.port.container.jolokia","8778");
+  if (war) {
+    properties.put("docker.assemblyDescriptorRef","rootWar");
+    properties.put("docker.port.container.http","8080");
+  }
+ else   if (bundle) {
+    properties.put("docker.assemblyDescriptorRef","artifact-with-dependencies");
+    properties.put("docker.port.container.http","8181");
+  }
+ else {
+    properties.put("docker.assemblyDescriptorRef","artifact-with-dependencies");
+  }
+  if (main != null) {
+    properties.put("docker.env.MAIN",main);
+  }
+  maven.setModel(pom);
+}
