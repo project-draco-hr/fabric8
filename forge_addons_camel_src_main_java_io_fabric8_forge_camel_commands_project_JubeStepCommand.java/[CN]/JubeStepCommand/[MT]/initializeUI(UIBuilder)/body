@@ -1,25 +1,19 @@
 {
-  from.setValueChoices(new Iterable<String>(){
-    @Override public Iterator<String> iterator(){
-      Set<String> choices=new LinkedHashSet<String>();
-      choices.add(jarImages[0]);
-      choices.add(bundleImages[0]);
-      choices.add(warImages[0]);
-      choices.add(warImages[1]);
-      return choices.iterator();
-    }
+  String packaging=getProjectPackaging(getSelectedProject(builder));
+  List<String> choices=new ArrayList<String>();
+  if (packaging == null || "jar".equals(packaging)) {
+    choices.add(jarImages[0]);
   }
-);
-  from.setDefaultValue(new Callable<String>(){
-    @Override public String call() throws Exception {
-      String existing=(String)builder.getUIContext().getAttributeMap().get("docker.from");
-      if (existing != null) {
-        return existing;
-      }
-      return DockerSetupHelper.defaultDockerImage(getSelectedProject(builder));
-    }
+  if (packaging == null || "bundle".equals(packaging)) {
+    choices.add(bundleImages[0]);
   }
-);
+  if (packaging == null || "war".equals(packaging)) {
+    choices.add(warImages[0]);
+    choices.add(warImages[1]);
+  }
+  from.setValueChoices(choices);
+  String existing=(String)builder.getUIContext().getAttributeMap().get("docker.from");
+  from.setDefaultValue(existing);
   main.setRequired(new Callable<Boolean>(){
     @Override public Boolean call() throws Exception {
       for (      String jar : jarImages) {
@@ -31,16 +25,8 @@
     }
   }
 );
-  main.setDefaultValue(new Callable<String>(){
-    @Override public String call() throws Exception {
-      String existing=(String)builder.getUIContext().getAttributeMap().get("docker.main");
-      if (existing != null) {
-        return existing;
-      }
-      return null;
-    }
-  }
-);
+  existing=(String)builder.getUIContext().getAttributeMap().get("docker.main");
+  main.setDefaultValue(existing);
   main.addValidator(new ClassNameValidator(true));
   builder.add(from).add(main);
 }
