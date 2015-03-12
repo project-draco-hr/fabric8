@@ -1,8 +1,7 @@
 {
   final Project project=getSelectedProject(builder);
-  filter.setValueChoices(CamelCommands.createComponentNameValues(project));
-  filter.setDefaultValue("<all>");
-  name.setValueChoices(CamelCommands.createComponentNameValues(project,filter,true));
-  builder.add(filter);
-  builder.add(name);
+  componentNameFilter.setValueChoices(CamelCommands.createComponentNameValues(project));
+  componentNameFilter.setDefaultValue("<all>");
+  componentName.setValueChoices(CamelCommands.createComponentNameValues(project,componentNameFilter,false));
+  builder.add(componentNameFilter).add(componentName);
 }
