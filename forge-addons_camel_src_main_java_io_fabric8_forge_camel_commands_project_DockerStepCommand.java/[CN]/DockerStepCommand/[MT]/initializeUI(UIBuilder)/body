@@ -1,12 +1,18 @@
 {
-  builder.add(from).add(main);
   from.setValueChoices(new Iterable<String>(){
     @Override public Iterator<String> iterator(){
+      String packaging=getProjectPackaging(getSelectedProject(builder));
       Set<String> choices=new LinkedHashSet<String>();
-      choices.add(jarImages[0]);
-      choices.add(bundleImages[0]);
-      choices.add(warImages[0]);
-      choices.add(warImages[1]);
+      if (packaging == null || "jar".equals(packaging)) {
+        choices.add(jarImages[0]);
+      }
+      if (packaging == null || "bundle".equals(packaging)) {
+        choices.add(bundleImages[0]);
+      }
+      if (packaging == null || "war".equals(packaging)) {
+        choices.add(warImages[0]);
+        choices.add(warImages[1]);
+      }
       return choices.iterator();
     }
   }
@@ -34,6 +40,7 @@
     }
   }
 );
+  main.setEnabled(main.isRequired());
   main.addValidator(new ClassNameValidator(true));
   main.addValueChangeListener(new ValueChangeListener(){
     @Override public void valueChanged(    ValueChangeEvent event){
@@ -41,4 +48,5 @@
     }
   }
 );
+  builder.add(from).add(main);
 }
