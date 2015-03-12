@@ -1,0 +1,12 @@
+{
+  if (clazz == null) {
+    return null;
+  }
+  if (ProjectProvider.class.isAssignableFrom(clazz) || ProjectType.class.isAssignableFrom(clazz)) {
+    return "string";
+  }
+  if (Resource.class.isAssignableFrom(clazz)) {
+    return "string";
+  }
+  return getJsonSchemaTypeName(clazz.getName());
+}

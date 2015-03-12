@@ -1,0 +1,10 @@
+{
+  List<T> answer=new ArrayList<>();
+  if (json.exists() && json.isFile()) {
+    MappingIterator<T> iter=objectMapper.reader(clazz).readValues(json);
+    while (iter.hasNext()) {
+      answer.add(iter.next());
+    }
+  }
+  return answer;
+}

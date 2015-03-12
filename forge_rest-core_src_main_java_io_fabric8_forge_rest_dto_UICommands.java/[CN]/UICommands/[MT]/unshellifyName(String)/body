@@ -1,0 +1,21 @@
+{
+  if (Strings.isNotBlank(name)) {
+    if (name.indexOf('-') >= 0 && name.toLowerCase().equals(name)) {
+      String[] split=name.split("-");
+      StringBuffer buffer=new StringBuffer();
+      int idx=0;
+      for (      String part : split) {
+        if (idx == 1) {
+          buffer.append(": ");
+        }
+ else         if (idx > 1) {
+          buffer.append(" ");
+        }
+        buffer.append(capitalize(part));
+        idx++;
+      }
+      return buffer.toString();
+    }
+  }
+  return name;
+}

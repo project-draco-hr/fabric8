@@ -1,0 +1,15 @@
+{
+  CommandInfoDTO info=createCommandInfoDTO(context,command);
+  CommandInputDTO inputInfo=new CommandInputDTO(info);
+  Map<String,InputComponent<?,?>> inputs=controller.getInputs();
+  if (inputs != null) {
+    Set<Map.Entry<String,InputComponent<?,?>>> entries=inputs.entrySet();
+    for (    Map.Entry<String,InputComponent<?,?>> entry : entries) {
+      String key=entry.getKey();
+      InputComponent<?,?> input=entry.getValue();
+      PropertyDTO dto=UICommands.createInputDTO(input);
+      inputInfo.addProperty(key,dto);
+    }
+  }
+  return inputInfo;
+}

@@ -1,0 +1,31 @@
+{
+  String name=input.getName();
+  String description=input.getDescription();
+  String label=input.getLabel();
+  String requiredMessage=input.getRequiredMessage();
+  char shortNameChar=input.getShortName();
+  String shortName=Character.toString(shortNameChar);
+  Object value=convertValueToSafeJson(input.getValueConverter(),InputComponents.getValueFor(input));
+  Class<?> valueType=input.getValueType();
+  String javaType=null;
+  if (valueType != null) {
+    javaType=valueType.getCanonicalName();
+  }
+  String type=JsonSchemaTypes.getJsonSchemaTypeName(valueType);
+  boolean enabled=input.isEnabled();
+  boolean required=input.isRequired();
+  List<Object> enumValues=new ArrayList<>();
+  if (input instanceof SelectComponent) {
+    SelectComponent selectComponent=(SelectComponent)input;
+    Iterable valueChoices=selectComponent.getValueChoices();
+    Converter converter=selectComponent.getItemLabelConverter();
+    for (    Object valueChoice : valueChoices) {
+      Object jsonValue=convertValueToSafeJson(converter,valueChoice);
+      enumValues.add(jsonValue);
+    }
+  }
+  if (enumValues.isEmpty()) {
+    enumValues=null;
+  }
+  return new PropertyDTO(name,description,label,requiredMessage,value,javaType,type,enabled,required,enumValues);
+}

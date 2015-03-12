@@ -1,0 +1,37 @@
+{
+  String port=Systems.getEnvVarOrSystemProperty("HTTP_PORT","HTTP_PORT",defaultPort);
+  Integer num=Integer.parseInt(port);
+  String service=Systems.getEnvVarOrSystemProperty("WEB_CONTEXT_PATH","WEB_CONTEXT_PATH","");
+  String servicesPath="cxf/servicesList";
+  String servletContextPath="/" + service;
+  ManagedApi.setSingletonCxfServletContext(servletContextPath);
+  String url="http://localhost:" + port + servletContextPath;
+  if (!url.endsWith("/")) {
+    url+="/";
+  }
+  System.out.println();
+  System.out.println("-------------------------------------------------------------");
+  System.out.println(appName + " is now running at: " + url);
+  System.out.println("-------------------------------------------------------------");
+  System.out.println();
+  final Server server=new Server(num);
+  final ServletHolder servletHolder=new ServletHolder(new CXFCdiServlet());
+  servletHolder.setInitParameter("service-list-path","/" + servicesPath);
+  final ServletContextHandler context=new ServletContextHandler();
+  context.setContextPath("/");
+  context.addEventListener(new Listener());
+  context.addEventListener(new BeanManagerResourceBindingListener());
+  String servletPath="/*";
+  if (Strings.isNotBlank(service)) {
+    servletPath=servletContextPath + "/*";
+  }
+  context.addServlet(servletHolder,servletPath);
+  server.setHandler(context);
+  EnumSet<DispatcherType> dispatches=EnumSet.allOf(DispatcherType.class);
+  context.addFilter(RestCorsFilter.class,"/*",dispatches);
+  if (contextCallback != null) {
+    contextCallback.apply(context);
+  }
+  server.start();
+  return server;
+}

@@ -1,0 +1,20 @@
+{
+  AddonRegistry addonRegistry=furnace.getAddonRegistry();
+  Imported<ResourceFactory> resourceFactoryImport=addonRegistry.getServices(ResourceFactory.class);
+  ResourceFactory resourceFactory=resourceFactoryImport.get();
+  Resource<?> selection=null;
+  if (Strings.isNotBlank(resourcePath) && resourceFactory != null) {
+    File file=new File(resourcePath);
+    if (!file.exists() && !resourcePath.startsWith("/")) {
+      resourcePath="/" + resourcePath;
+      file=new File(resourcePath);
+    }
+    if (file.exists()) {
+      selection=resourceFactory.create(file);
+    }
+ else {
+      selection=resourceFactory.create(resourcePath);
+    }
+  }
+  return new RestUIContext(selection);
+}

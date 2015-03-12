@@ -1,0 +1,16 @@
+{
+  String path=element.getPath();
+  ProjectDTO deleteElement=findByPath(path);
+  if (deleteElement != null) {
+    if (projects.remove(deleteElement)) {
+      save(projects);
+      LOG.info("Removed project " + deleteElement);
+    }
+ else {
+      LOG.warn("Could not find project: " + element);
+    }
+  }
+ else {
+    LOG.warn("No project for path: " + path);
+  }
+}

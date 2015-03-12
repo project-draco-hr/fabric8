@@ -1,0 +1,10 @@
+{
+  if (response instanceof HttpServletResponse) {
+    HttpServletResponse httpResponse=(HttpServletResponse)response;
+    httpResponse.setHeader("Access-Control-Allow-Origin","*");
+    httpResponse.setHeader("Access-Control-Allow-Methods","GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH");
+    httpResponse.setHeader("Access-Control-Max-Age","3600");
+    httpResponse.setHeader("Access-Control-Allow-Headers","Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+  }
+  chain.doFilter(request,response);
+}

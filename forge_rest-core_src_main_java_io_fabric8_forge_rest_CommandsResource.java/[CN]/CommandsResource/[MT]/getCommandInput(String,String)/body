@@ -1,0 +1,22 @@
+{
+  try {
+    CommandInputDTO answer=null;
+    try (RestUIContext context=createUIContext(resourcePath)){
+      UICommand command=getCommandByName(context,name);
+      if (command != null) {
+        CommandController controller=createController(context,command);
+        answer=UICommands.createCommandInputDTO(context,command,controller);
+      }
+      if (answer != null) {
+        return Response.ok(answer).build();
+      }
+ else {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+    }
+   }
+ catch (  Throwable e) {
+    LOG.warn("Failed to find input for command " + name + ". "+ e,e);
+    throw e;
+  }
+}
