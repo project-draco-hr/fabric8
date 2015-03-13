@@ -2,9 +2,6 @@
   if (dto instanceof Config) {
     applyConfig((Config)dto,sourceName);
   }
- else   if (dto instanceof Entity) {
-    applyEntity((Entity)dto,sourceName);
-  }
  else   if (dto instanceof JsonNode) {
     JsonNode tree=(JsonNode)dto;
     JsonNode kindNode=tree.get("kind");
@@ -24,7 +21,7 @@
       LOG.warn("No JSON kind for: " + tree);
     }
   }
- else {
-    LOG.warn("Unknown Kublelet from " + sourceName + ". Object: "+ dto);
+ else   if (dto instanceof Entity) {
+    applyEntity(dto,sourceName);
   }
 }

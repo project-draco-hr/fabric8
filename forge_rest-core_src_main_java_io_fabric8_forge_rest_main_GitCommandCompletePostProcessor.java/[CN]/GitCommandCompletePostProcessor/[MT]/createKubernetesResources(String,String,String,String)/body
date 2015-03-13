@@ -1,0 +1,34 @@
+{
+  String imageTag="test";
+  String secret="secret101";
+  String builderImage="fabric8/java-main";
+  String osapiVersion="v1beta1";
+  String namespace="default";
+  String gitServiceName="gogs-http-service";
+  io.fabric8.kubernetes.api.model.Service service=kubernetes.getService(gitServiceName,namespace);
+  String gitAddress=null;
+  if (service != null) {
+    String portalIP=service.getPortalIP();
+    if (!Strings.isNullOrEmpty(portalIP)) {
+      Integer port=service.getPort();
+      String prefix="http://";
+      String postfix="";
+      if (port != null) {
+        if (port == 443) {
+          prefix="https://";
+        }
+ else         if (port != 80) {
+          postfix=":" + port;
+        }
+      }
+      gitAddress=prefix + portalIP + postfix;
+    }
+  }
+  if (gitAddress == null) {
+    LOG.warn("Could not find service " + gitServiceName + " for namespace "+ namespace);
+    gitAddress=address;
+  }
+  String json="\n" + "{\n" + "   \"annotations\":{\n"+ "      \"description\":\"This is an end to end example of a Continuous Delivery pipeline running on OpenShift v3\"\n"+ "   },\n"+ "   \"apiVersion\":\"" + osapiVersion + "\",\n"+ "   \"kind\":\"List\",\n"+ "   \"items\":[\n"+ "      {\n"+ "         \"apiVersion\":\""+ osapiVersion+ "\",\n"+ "         \"kind\":\"ImageRepository\",\n"+ "         \"metadata\":{\n"+ "            \"labels\":{\n"+ "               \"name\":\""+ buildName+ "\",\n"+ "               \"user\":\""+ user+ "\"\n"+ "            },\n"+ "            \"name\":\""+ buildName+ "\"\n"+ "         }\n"+ "      },\n"+ "      {\n"+ "         \"apiVersion\":\""+ osapiVersion+ "\",\n"+ "         \"kind\":\"BuildConfig\",\n"+ "         \"metadata\":{\n"+ "            \"labels\":{\n"+ "               \"name\":\""+ buildName+ "\",\n"+ "               \"user\":\""+ user+ "\"\n"+ "            },\n"+ "            \"name\":\""+ buildName+ "\"\n"+ "         },\n"+ "         \"parameters\":{\n"+ "            \"output\":{\n"+ "               \"to\":{\n"+ "                  \"name\":\""+ buildName+ "\"\n"+ "               },\n"+ "               \"tag\":\"test\"\n"+ "            },\n"+ "            \"source\":{\n"+ "               \"git\":{\n"+ "                  \"uri\":\""+ gitAddress+ "/"+ user+ "/"+ buildName+ ".git\"\n"+ "               },\n"+ "               \"type\":\"Git\"\n"+ "            },\n"+ "            \"strategy\":{\n"+ "               \"stiStrategy\":{\n"+ "                  \"builderImage\":\""+ builderImage+ "\",\n"+ "                  \"image\":\""+ builderImage+ "\"\n"+ "               },\n"+ "               \"type\":\"STI\"\n"+ "            }\n"+ "         },\n"+ "         \"triggers\":[\n"+ "            {\n"+ "               \"github\":{\n"+ "                  \"secret\":\""+ secret+ "\"\n"+ "               },\n"+ "               \"type\":\"github\"\n"+ "            },\n"+ "            {\n"+ "               \"generic\":{\n"+ "                  \"secret\":\""+ secret+ "\"\n"+ "               },\n"+ "               \"type\":\"generic\"\n"+ "            }\n"+ "         ]\n"+ "      },\n"+ "      {\n"+ "         \"apiVersion\":\""+ osapiVersion+ "\",\n"+ "         \"kind\":\"DeploymentConfig\",\n"+ "         \"metadata\":{\n"+ "            \"name\":\""+ buildName+ "-deploy\"\n"+ "         },\n"+ "         \"template\":{\n"+ "            \"controllerTemplate\":{\n"+ "               \"podTemplate\":{\n"+ "                  \"desiredState\":{\n"+ "                     \"manifest\":{\n"+ "                        \"containers\":[\n"+ "                           {\n"+ "                              \"image\":\""+ buildName+ "\",\n"+ "                              \"name\":\""+ buildName+ "\",\n"+ "                              \"ports\":[\n"+ "                                 {\n"+ "                                    \"containerPort\":8778\n"+ "                                 }\n"+ "                              ]\n"+ "                           }\n"+ "                        ],\n"+ "                        \"version\":\""+ imageTag+ "\"\n"+ "                     }\n"+ "                  },\n"+ "                  \"labels\":{\n"+ "                     \"name\":\""+ buildName+ "\",\n"+ "                     \"user\":\""+ user+ "\"\n"+ "                  }\n"+ "               },\n"+ "               \"replicaSelector\":{\n"+ "                  \"name\":\""+ buildName+ "\",\n"+ "                  \"user\":\""+ user+ "\"\n"+ "               },\n"+ "               \"replicas\":1\n"+ "            },\n"+ "            \"strategy\":{\n"+ "               \"type\":\"Recreate\"\n"+ "            }\n"+ "         },\n"+ "         \"triggers\":[\n"+ "            {\n"+ "               \"type\":\"ImageChange\",\n"+ "               \"imageChangeParams\":{\n"+ "                  \"automatic\":true,\n"+ "                  \"containerNames\":[\n"+ "                     \""+ buildName+ "\"\n"+ "                  ],\n"+ "                  \"from\":{\n"+ "                     \"name\":\""+ buildName+ "\"\n"+ "                  },\n"+ "                  \"tag\":\""+ imageTag+ "\"\n"+ "               }\n"+ "            }\n"+ "         ]\n"+ "      }"+ "   ]\n"+ "}";
+  Controller controller=new Controller(kubernetes);
+  controller.applyJson(json);
+}
