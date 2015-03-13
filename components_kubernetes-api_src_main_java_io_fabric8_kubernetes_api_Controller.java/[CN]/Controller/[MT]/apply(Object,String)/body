@@ -10,8 +10,8 @@
     JsonNode kindNode=tree.get("kind");
     if (kindNode != null) {
       String kind=kindNode.asText();
-      if (Objects.equal("Config",kind)) {
-        applyConfig(tree,sourceName);
+      if (Objects.equal("Config",kind) || Objects.equal("List",kind)) {
+        applyList(tree,sourceName);
       }
  else       if (Objects.equal("Template",kind)) {
         applyTemplateConfig(tree,sourceName);
