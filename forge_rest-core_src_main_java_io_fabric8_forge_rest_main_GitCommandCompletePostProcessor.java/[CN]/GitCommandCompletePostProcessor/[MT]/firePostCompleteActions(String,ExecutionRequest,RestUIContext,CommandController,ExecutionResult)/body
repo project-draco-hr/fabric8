@@ -41,7 +41,7 @@
           String fullName=null;
           RepositoryDTO repository=repoClient.createRepository(createRepository);
           if (repository != null) {
-            System.out.println("Got repository: " + JsonHelper.toJson(repository));
+            System.out.println("Got repository: " + toJson(repository));
             fullName=repository.getFullName();
           }
           if (Strings.isNullOrEmpty(fullName)) {
@@ -55,7 +55,7 @@
           LOG.info("Using remote: " + remote);
           configureBranch(git,branch,remote);
           doAddCommitAndPushFiles(git,credentials,personIdent,remote,branch);
-          createKubernetesResources(user,named,remote,branch);
+          createKubernetesResources(user,named,remote,branch,repoClient);
         }
       }
     }

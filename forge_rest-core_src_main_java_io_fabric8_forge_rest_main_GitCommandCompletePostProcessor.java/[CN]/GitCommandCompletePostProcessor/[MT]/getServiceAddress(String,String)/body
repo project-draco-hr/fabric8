@@ -1,0 +1,22 @@
+{
+  io.fabric8.kubernetes.api.model.Service service=kubernetes.getService(serviceName,namespace);
+  String gitAddress=null;
+  if (service != null) {
+    String portalIP=service.getPortalIP();
+    if (!Strings.isNullOrEmpty(portalIP)) {
+      Integer port=service.getPort();
+      String prefix="http://";
+      String postfix="";
+      if (port != null) {
+        if (port == 443) {
+          prefix="https://";
+        }
+        if (port != 80) {
+          postfix=":" + port;
+        }
+      }
+      gitAddress=prefix + portalIP + postfix;
+    }
+  }
+  return gitAddress;
+}
