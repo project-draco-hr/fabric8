@@ -6,7 +6,8 @@
       ServiceBean.doWith(returnType,new ServiceBean.Callback(){
         @Override public ServiceBean apply(        ServiceBean bean){
           String serviceId=bean.getServiceId();
-          return bean.withProducer(new FactoryMethodProducer(event.getBean(),method,serviceId));
+          String serviceProtocol=bean.getServiceProtocol();
+          return bean.withProducer(new FactoryMethodProducer(event.getBean(),method,serviceId,serviceProtocol));
         }
       }
 );
