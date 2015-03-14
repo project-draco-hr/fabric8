@@ -1,0 +1,22 @@
+{
+  final InjectionPoint injectionPoint=event.getInjectionPoint();
+  if (isServiceInjectionPoint(injectionPoint)) {
+    Annotated annotated=injectionPoint.getAnnotated();
+    Service service=annotated.getAnnotation(Service.class);
+    String serviceId=service.value();
+    Type type=annotated.getBaseType();
+    if (type.equals(String.class)) {
+      ServiceUrlBean.getBean(serviceId);
+    }
+ else {
+      ServiceBean.getBean(serviceId,(Class)type);
+    }
+  }
+ else   if (isConfigurationInjectionPoint(injectionPoint)) {
+    Annotated annotated=injectionPoint.getAnnotated();
+    Configuration configuration=annotated.getAnnotation(Configuration.class);
+    Type type=injectionPoint.getType();
+    String configurationId=configuration.value();
+    ConfigurationBean.getBean(configurationId,(Class)type);
+  }
+}

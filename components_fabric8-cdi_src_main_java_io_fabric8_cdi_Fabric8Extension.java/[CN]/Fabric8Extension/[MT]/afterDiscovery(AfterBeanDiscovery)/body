@@ -1,0 +1,15 @@
+{
+  event.addBean(new KubernetesFactoryBean());
+  event.addBean(new KubernetesClientBean());
+  for (  ServiceUrlBean bean : ServiceUrlBean.getBeans()) {
+    event.addBean(bean);
+  }
+  for (  ServiceBean bean : ServiceBean.getBeans()) {
+    if (bean.getProducer() != null) {
+      event.addBean(bean);
+    }
+  }
+  for (  ConfigurationBean b : ConfigurationBean.getBeans()) {
+    event.addBean(b);
+  }
+}

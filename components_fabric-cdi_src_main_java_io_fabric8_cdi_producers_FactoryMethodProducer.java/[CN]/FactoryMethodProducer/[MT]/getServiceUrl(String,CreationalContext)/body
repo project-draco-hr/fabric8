@@ -1,0 +1,8 @@
+{
+  try {
+    return (String)BeanProvider.getContextualReference((Class)String.class,new ServiceQualifier(serviceId));
+  }
+ catch (  IllegalStateException e) {
+    return ServiceUrlBean.getBean(serviceId).getProducer().produce(context);
+  }
+}

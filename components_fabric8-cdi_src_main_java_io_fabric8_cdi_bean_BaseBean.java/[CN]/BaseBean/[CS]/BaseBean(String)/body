@@ -4,7 +4,7 @@
   this.beanType=(Class<T>)genericSuperclass.getActualTypeArguments()[0];
   List<Type> allTypes=new ArrayList<>();
   allTypes.add(beanType);
-  for (Type t=((Class)beanType).getSuperclass(); !allTypes.contains(Object.class); t=((Class)t).getSuperclass()) {
+  for (Class t=beanType.getSuperclass(); !allTypes.contains(Object.class) && t != null; t=t.getSuperclass()) {
     allTypes.add(t);
   }
   types=Collections.unmodifiableSet(new HashSet<>(allTypes));

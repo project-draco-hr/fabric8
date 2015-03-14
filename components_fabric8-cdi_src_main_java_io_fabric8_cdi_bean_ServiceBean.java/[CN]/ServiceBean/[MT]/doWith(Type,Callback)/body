@@ -1,0 +1,10 @@
+{
+  for (  Map.Entry<Key,ServiceBean> entry : BEANS.entrySet()) {
+    Key key=entry.getKey();
+    if (type.equals(key.type)) {
+      ServiceBean newBean=callback.apply(BEANS.remove(key));
+      Key newKey=new Key(newBean.getId(),newBean.getBeanClass(),newBean.getProducer());
+      BEANS.put(newKey,newBean);
+    }
+  }
+}

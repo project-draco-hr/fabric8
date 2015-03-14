@@ -1,0 +1,26 @@
+{
+  List<Object> arguments=new ArrayList<>();
+  for (  AnnotatedParameter<X> parameter : factoryMethod.getParameters()) {
+    Type type=parameter.getBaseType();
+    Service service=parameter.getAnnotation(Service.class);
+    Configuration configuration=parameter.getAnnotation(Configuration.class);
+    if (service != null) {
+      String serviceUrl=getServiceUrl(serviceId,ctx);
+      arguments.add(serviceUrl);
+    }
+ else     if (configuration != null) {
+      Object config=getConfiguration(serviceId,(Class<Object>)type,ctx);
+      arguments.add(config);
+    }
+ else {
+      Object other=BeanProvider.getContextualReferences((Class)type,false);
+      arguments.add(other);
+    }
+  }
+  try {
+    return (T)factoryMethod.getJavaMember().invoke(bean.create(ctx),arguments.toArray());
+  }
+ catch (  Throwable t) {
+    throw new RuntimeException(t);
+  }
+}
