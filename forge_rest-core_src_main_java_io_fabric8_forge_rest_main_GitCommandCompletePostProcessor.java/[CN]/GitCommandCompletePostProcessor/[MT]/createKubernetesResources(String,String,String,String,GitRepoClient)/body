@@ -14,16 +14,22 @@
   Controller controller=new Controller(kubernetes);
   controller.applyJson(json);
   String type="generic";
-  String kubeAddress=getServiceAddress("kubernetes",namespace);
-  if (kubeAddress == null) {
-    kubeAddress=kubernetes.getAddress();
+  String kubeAddress=getServiceAddress("fabric8-console-service",namespace);
+  String webhookUrl;
+  if (kubeAddress != null) {
+    webhookUrl=URLUtils.pathJoin(kubeAddress,"kubernetes","osapi",KubernetesHelper.defaultOsApiVersion,"buildConfigHooks",buildName,secret,type);
   }
-  String webhookUrl=URLUtils.pathJoin(kubeAddress,"osapi",KubernetesHelper.defaultOsApiVersion,"buildConfigHooks",buildName,secret,type);
+ else {
+    kubeAddress=kubernetes.getAddress();
+    webhookUrl=URLUtils.pathJoin(kubeAddress,"osapi",KubernetesHelper.defaultOsApiVersion,"buildConfigHooks",buildName,secret,type);
+  }
   System.out.println("creating a web hook at: " + webhookUrl);
   try {
     CreateWebhookDTO createWebhook=new CreateWebhookDTO();
     createWebhook.setType("gogs");
-    createWebhook.getConfig().setUrl(webhookUrl);
+    WebhookConfig config=createWebhook.getConfig();
+    config.setUrl(webhookUrl);
+    config.setSecret(secret);
     WebHookDTO webhook=repoClient.createWebhook(user,buildName,createWebhook);
     System.out.println("Got web hook: " + toJson(webhook));
   }
