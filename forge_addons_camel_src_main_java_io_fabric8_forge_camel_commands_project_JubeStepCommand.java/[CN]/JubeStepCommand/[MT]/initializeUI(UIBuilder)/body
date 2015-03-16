@@ -29,6 +29,9 @@
     from.setDefaultValue(existing);
   }
   existing=(String)builder.getUIContext().getAttributeMap().get("docker.main");
+  if (existing == null) {
+    existing=DockerSetupHelper.defaultMainClass(getSelectedProject(builder));
+  }
   main.setDefaultValue(existing);
   main.setRequired(isMainRequired(from.getValue()));
   main.addValidator(new ClassNameValidator(true));
