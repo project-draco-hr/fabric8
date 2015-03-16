@@ -1,0 +1,21 @@
+{
+  if (args.length > 0) {
+    try {
+      System.err.println("Attaching Fabric8 Agent to process: " + args[0]);
+      String options="";
+      for (int i=1; i < args.length; i++) {
+        options+=args[i];
+        if (i < (args.length - 1)) {
+          options+=",";
+        }
+      }
+      loadAgent(args[0],options);
+    }
+ catch (    Throwable e) {
+      e.printStackTrace();
+    }
+  }
+ else {
+    System.err.println("Usage is " + AgentLauncher.class.getName() + " pid");
+  }
+}
