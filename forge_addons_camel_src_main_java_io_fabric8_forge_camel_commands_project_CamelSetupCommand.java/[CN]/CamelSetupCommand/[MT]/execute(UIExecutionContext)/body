@@ -8,6 +8,30 @@
   dependencyInstaller.install(project,core);
   core=findCamelCoreDependency(project);
   String camelVersion=core.getCoordinate().getVersion();
+  boolean found=false;
+  Set<Dependency> existing=findCamelArtifacts(project);
+  for (  Dependency dependency : existing) {
+    if (dependency.getCoordinate().getArtifactId().equals(kind.getValue())) {
+      found=true;
+      break;
+    }
+  }
+  if (!found) {
+    DependencyBuilder component=DependencyBuilder.create().setGroupId("org.apache.camel").setArtifactId(kind.getValue()).setVersion(core.getCoordinate().getVersion());
+    dependencyInstaller.install(project,component);
+    if ("camel-core".equals(kind.getValue())) {
+      DependencyBuilder testComponent=DependencyBuilder.create().setGroupId("org.apache.camel").setArtifactId("camel-test").setVersion(core.getCoordinate().getVersion()).setScopeType("test");
+      dependencyInstaller.install(project,testComponent);
+    }
+ else     if ("camel-spring".equals(kind.getValue()) || "camel-spring-boot".equals(kind.getValue())) {
+      DependencyBuilder testComponent=DependencyBuilder.create().setGroupId("org.apache.camel").setArtifactId("camel-test-spring").setVersion(core.getCoordinate().getVersion()).setScopeType("test");
+      dependencyInstaller.install(project,testComponent);
+    }
+ else     if ("camel-blueprint".equals(kind.getValue())) {
+      DependencyBuilder testComponent=DependencyBuilder.create().setGroupId("org.apache.camel").setArtifactId("camel-test-blueprint").setVersion(core.getCoordinate().getVersion()).setScopeType("test");
+      dependencyInstaller.install(project,testComponent);
+    }
+  }
   MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
   MavenPluginBuilder plugin=MavenPluginBuilder.create().setCoordinate(createCamelCoordinate("camel-maven-plugin",camelVersion));
   pluginFacet.addPlugin(plugin);
