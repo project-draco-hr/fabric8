@@ -21,5 +21,11 @@
   if (srv == null) {
     throw new IllegalArgumentException("No kubernetes service could be found for name: " + serviceId + " in namespace: "+ namespace);
   }
+  RouteList routeList=KUBERNETES.getRoutes(namespace);
+  for (  Route route : routeList.getItems()) {
+    if (route.getServiceName().equals(serviceId)) {
+      return (serviceProto + "://" + route.getHost()+ ":"+ srv.getPort()).toLowerCase();
+    }
+  }
   return (serviceProto + "://" + srv.getPortalIP()+ ":"+ srv.getPort()).toLowerCase();
 }
