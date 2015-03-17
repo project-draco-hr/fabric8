@@ -1,5 +1,8 @@
 {
   try {
+    if (commandCompletePostProcessor != null) {
+      commandCompletePostProcessor.preprocessRequest(name,executionRequest);
+    }
     String resourcePath=executionRequest.getResource();
     try (RestUIContext context=createUIContext(resourcePath)){
       UICommand command=getCommandByName(context,name);
