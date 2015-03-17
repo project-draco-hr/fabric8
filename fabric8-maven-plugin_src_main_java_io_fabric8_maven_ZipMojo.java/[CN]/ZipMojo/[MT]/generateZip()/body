@@ -25,12 +25,27 @@
             return false;
           }
           String lower=name.toLowerCase();
-          return lower.startsWith("icon.") && (lower.endsWith(".svg") || lower.endsWith(".png") || lower.endsWith(".gif")|| lower.endsWith(".jpg")|| lower.endsWith(".jpeg"));
+          if (lower.startsWith("icon.")) {
+            for (            String ext : ICON_EXTENSIONS) {
+              if (lower.endsWith(ext)) {
+                return true;
+              }
+            }
+          }
+          return false;
         }
       }
 );
       if (icons == null || icons.length == 0) {
         InputStream in=loadPluginResource(iconRef);
+        for (        String ext : ICON_EXTENSIONS) {
+          String name=iconRef + ext;
+          in=loadPluginResource(name);
+          if (in != null) {
+            iconRef=name;
+            break;
+          }
+        }
         if (in == null) {
           getLog().warn("Could not find icon: " + iconRef + " on the ClassPath!");
         }
