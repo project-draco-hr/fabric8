@@ -9,7 +9,7 @@
     dependencyInstaller.installManaged(project,dependency);
   }
   MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
-  MavenPlugin plugin=MavenPluginBuilder.create().setCoordinate(createCoordinate("io.fabric8","fabric8-maven-plugin",VersionHelper.fabric8Version())).addExecution(ExecutionBuilder.create().setId("json").addGoal("json"));
+  MavenPlugin plugin=MavenPluginBuilder.create().setCoordinate(createCoordinate("io.fabric8","fabric8-maven-plugin",VersionHelper.fabric8Version())).addExecution(ExecutionBuilder.create().setId("json").addGoal("json")).addExecution(ExecutionBuilder.create().setId("zip").addGoal("zip"));
   pluginFacet.addPlugin(plugin);
   MavenFacet maven=project.getFacet(MavenFacet.class);
   Model pom=maven.getModel();
