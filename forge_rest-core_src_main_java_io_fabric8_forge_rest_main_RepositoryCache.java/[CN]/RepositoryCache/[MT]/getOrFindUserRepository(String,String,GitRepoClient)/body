@@ -1,0 +1,9 @@
+{
+  RepositoryDTO repository=getUserRepository(user,repositoryName);
+  if (repository == null) {
+    List<RepositoryDTO> repositoryDTOs=repoClient.listRepositories();
+    updateUserRepositories(repositoryDTOs);
+    repository=getUserRepository(user,repositoryName);
+  }
+  return repository;
+}

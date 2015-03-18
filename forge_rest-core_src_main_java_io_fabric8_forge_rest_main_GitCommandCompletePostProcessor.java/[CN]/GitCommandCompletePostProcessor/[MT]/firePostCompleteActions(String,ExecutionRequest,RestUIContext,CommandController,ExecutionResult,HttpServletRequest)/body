@@ -3,10 +3,10 @@
   String user=userDetails.getUser();
   String password=userDetails.getPassword();
   String authorEmail=userDetails.getEmail();
+  String address=userDetails.getAddress();
   String branch="master";
-  System.out.println("execute has request " + request);
   try {
-    CredentialsProvider credentials=new UsernamePasswordCredentialsProvider(user,password);
+    CredentialsProvider credentials=userDetails.createCredentialsProfivder();
     PersonIdent personIdent=new PersonIdent(user,authorEmail);
     if (name.equals(PROJECT_NEW_COMMAND)) {
       String targetLocation=null;
@@ -32,18 +32,19 @@
           LOG.warn("Generated project folder does not exist: " + basedir.getAbsolutePath());
         }
  else {
-          System.out.println("About to git init folder " + basedir.getAbsolutePath());
           InitCommand initCommand=Git.init();
           initCommand.setDirectory(basedir);
           Git git=initCommand.call();
           LOG.info("Initialised an empty git configuration repo at {}",basedir.getAbsolutePath());
-          GitRepoClient repoClient=new GitRepoClient(address,user,password);
+          GitRepoClient repoClient=userDetails.createRepoClient();
           CreateRepositoryDTO createRepository=new CreateRepositoryDTO();
           createRepository.setName(named);
           String fullName=null;
           RepositoryDTO repository=repoClient.createRepository(createRepository);
           if (repository != null) {
-            System.out.println("Got repository: " + toJson(repository));
+            if (LOG.isDebugEnabled()) {
+              LOG.debug("Got repository: " + toJson(repository));
+            }
             fullName=repository.getFullName();
           }
           if (Strings.isNullOrEmpty(fullName)) {
@@ -56,7 +57,7 @@
           results.setOutputProperty("htmlUrl",htmlUrl);
           LOG.info("Using remote: " + remote);
           configureBranch(git,branch,remote);
-          createKubernetesResources(user,named,remote,branch,repoClient);
+          createKubernetesResources(user,named,remote,branch,repoClient,address);
           doAddCommitAndPushFiles(git,credentials,personIdent,remote,branch);
         }
       }
@@ -64,11 +65,9 @@
  else {
       File basedir=context.getInitialSelectionFile();
       String absolutePath=basedir != null ? basedir.getAbsolutePath() : null;
-      System.out.println("===== added or mutated files in folder: " + absolutePath);
       if (basedir != null) {
         File gitFolder=new File(basedir,".git");
         if (gitFolder.exists() && gitFolder.isDirectory()) {
-          System.out.println("======== has .git folder so lets add/commit files then push!");
           FileRepositoryBuilder builder=new FileRepositoryBuilder();
           Repository repository=builder.setGitDir(gitFolder).readEnvironment().findGitDir().build();
           Git git=new Git(repository);

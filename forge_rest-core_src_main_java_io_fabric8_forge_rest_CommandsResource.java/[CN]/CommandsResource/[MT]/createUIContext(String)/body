@@ -4,16 +4,24 @@
   ResourceFactory resourceFactory=resourceFactoryImport.get();
   Resource<?> selection=null;
   if (Strings.isNotBlank(resourcePath) && resourceFactory != null) {
-    File file=new File(resourcePath);
-    if (!file.exists() && !resourcePath.startsWith("/")) {
-      resourcePath="/" + resourcePath;
-      file=new File(resourcePath);
-    }
-    if (file.exists()) {
-      selection=resourceFactory.create(file);
+    String path=Strings.stripPrefix(resourcePath,"/");
+    String userFolder="user/";
+    if (path.startsWith(userFolder)) {
+      path=Strings.stripPrefix(path,userFolder);
+      String[] userAndPath=path.split("/",2);
+      if (userAndPath.length < 2) {
+        LOG.warn("Could not extract user name and path from resource: " + resourcePath);
+      }
+ else {
+        String userId=userAndPath[0];
+        String repositoryName=userAndPath[1];
+        UserDetails userDetails=gitUserHelper.createUserDetails(request);
+        File file=projectFileSystem.getOrCloneUserProjectFolder(userId,repositoryName,userDetails);
+        selection=resourceFactory.create(file);
+      }
     }
  else {
-      selection=resourceFactory.create(resourcePath);
+      LOG.warn("Unknown path of the form user/{userId}/{repositoryName}");
     }
   }
   return new RestUIContext(selection);
