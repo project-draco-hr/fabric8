@@ -1,5 +1,14 @@
 {
   ProjectDTO project=new ProjectDTO();
-  project.setPath("user/" + repositoryDTO.getFullName());
+  String fullName=repositoryDTO.getFullName();
+  if (Strings.isNotBlank(fullName)) {
+    String[] split=fullName.split("/",2);
+    if (split != null && split.length > 1) {
+      String user=split[0];
+      String name=split[1];
+      project.setUser(user);
+      project.setName(name);
+    }
+  }
   return project;
 }
