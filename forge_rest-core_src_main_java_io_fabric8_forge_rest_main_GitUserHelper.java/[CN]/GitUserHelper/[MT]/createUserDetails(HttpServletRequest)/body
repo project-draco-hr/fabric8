@@ -1,0 +1,19 @@
+{
+  String user=gitUser;
+  String password=gitPassword;
+  String authorization=request.getHeader("Authorization");
+  if (!Strings.isNullOrEmpty(authorization)) {
+    String basicPrefix="basic";
+    String lower=authorization.toLowerCase();
+    if (lower.startsWith(basicPrefix)) {
+      String base64Credentials=authorization.substring(basicPrefix.length()).trim();
+      String credentials=new String(Base64.decode(base64Credentials),Charset.forName("UTF-8"));
+      String[] values=credentials.split(":",2);
+      if (values != null && values.length > 1) {
+        user=values[0];
+        password=values[1];
+      }
+    }
+  }
+  return new UserDetails(user,password);
+}

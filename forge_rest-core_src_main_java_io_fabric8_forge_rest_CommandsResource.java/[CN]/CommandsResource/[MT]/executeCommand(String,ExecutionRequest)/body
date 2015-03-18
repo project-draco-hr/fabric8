@@ -1,7 +1,7 @@
 {
   try {
     if (commandCompletePostProcessor != null) {
-      commandCompletePostProcessor.preprocessRequest(name,executionRequest);
+      commandCompletePostProcessor.preprocessRequest(name,executionRequest,request);
     }
     String resourcePath=executionRequest.getResource();
     try (RestUIContext context=createUIContext(resourcePath)){
@@ -82,7 +82,7 @@
         answer=UICommands.createExecutionResult(context,result,false);
       }
       if (answer.isCommandCompleted() && commandCompletePostProcessor != null) {
-        commandCompletePostProcessor.firePostCompleteActions(name,executionRequest,context,controller,answer);
+        commandCompletePostProcessor.firePostCompleteActions(name,executionRequest,context,controller,answer,request);
       }
       return Response.ok(answer).build();
     }

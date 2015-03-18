@@ -1,13 +1,15 @@
 {
+  UserDetails userDetails=gitUserHelper.createUserDetails(request);
   if (Objects.equals(name,PROJECT_NEW_COMMAND)) {
     List<Map<String,String>> inputList=executionRequest.getInputList();
     if (inputList != null) {
       Map<String,String> page1=inputList.get(0);
       if (page1 != null) {
         if (page1.containsKey(TARGET_LOCATION_PROPERTY)) {
-          page1.put(TARGET_LOCATION_PROPERTY,getProjectFolderLocation());
+          page1.put(TARGET_LOCATION_PROPERTY,getProjectFolderLocation(userDetails));
         }
       }
     }
   }
+  System.out.println("preprocess has request " + request);
 }

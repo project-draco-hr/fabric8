@@ -1,8 +1,10 @@
 {
-  String user=gitUser;
-  String password=gitPassword;
-  String authorEmail="dummy@gmail.com";
+  UserDetails userDetails=gitUserHelper.createUserDetails(request);
+  String user=userDetails.getUser();
+  String password=userDetails.getPassword();
+  String authorEmail=userDetails.getEmail();
   String branch="master";
+  System.out.println("execute has request " + request);
   try {
     CredentialsProvider credentials=new UsernamePasswordCredentialsProvider(user,password);
     PersonIdent personIdent=new PersonIdent(user,authorEmail);
