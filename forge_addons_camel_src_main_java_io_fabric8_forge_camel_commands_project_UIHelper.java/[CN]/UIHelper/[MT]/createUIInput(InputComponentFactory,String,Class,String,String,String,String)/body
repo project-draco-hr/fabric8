@@ -1,0 +1,27 @@
+{
+  InputComponent input;
+  if (enums != null) {
+    UISelectOne ui=factory.createSelectOne(name,inputClazz);
+    if (defaultValue != null) {
+      ui.setDefaultValue(defaultValue);
+    }
+    String[] values=enums.split(",");
+    ui.setValueChoices(Arrays.asList(values));
+    input=ui;
+  }
+ else {
+    UIInput ui=factory.createInput(name,inputClazz);
+    if (defaultValue != null) {
+      ui.setDefaultValue(defaultValue);
+    }
+    input=ui;
+  }
+  if (input != null) {
+    if (Objects.equals("true",required)) {
+      input.setRequired(true);
+    }
+    input.setLabel(name);
+    input.setDescription(description != null ? description : "");
+  }
+  return input;
+}
