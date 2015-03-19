@@ -1,0 +1,16 @@
+{
+  Project project=getSelectedProject(builder.getUIContext());
+  JavaSourceFacet facet=project.getFacet(JavaSourceFacet.class);
+  componentNameFilter.setValueChoices(CamelCommands.createComponentNameValues(project));
+  componentNameFilter.setDefaultValue("<all>");
+  componentName.setValueChoices(CamelCommands.createComponentNameValues(project,componentNameFilter,false));
+  instanceName.setDefaultValue(new Callable<String>(){
+    @Override public String call() throws Exception {
+      String value=componentName.getValue();
+      return value;
+    }
+  }
+);
+  routeBuilder.setCompleter(null);
+  builder.add(componentNameFilter).add(componentName).add(instanceName).add(routeBuilder);
+}

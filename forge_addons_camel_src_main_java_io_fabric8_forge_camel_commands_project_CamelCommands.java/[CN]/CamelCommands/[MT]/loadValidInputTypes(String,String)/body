@@ -1,6 +1,9 @@
 {
   try {
-    Class<?> clazz=Class.forName(javaType);
+    Class<Object> clazz=loadPrimitiveType(javaType);
+    if (clazz == null) {
+      clazz=(Class<Object>)Class.forName(javaType);
+    }
     if (clazz.equals(String.class) || clazz.equals(Date.class) || clazz.isPrimitive()|| Number.class.isAssignableFrom(clazz)) {
       return clazz;
     }

@@ -1,0 +1,39 @@
+{
+  Map<Object,Object> attributeMap=context.getUIContext().getAttributeMap();
+  try {
+    String camelComponentName=mandatoryAttributeValue(attributeMap,"componentName");
+    String endpointInstanceName=mandatoryAttributeValue(attributeMap,"instanceName");
+    String routeBuilder=mandatoryAttributeValue(attributeMap,"routeBuilder");
+    String kind=mandatoryAttributeValue(attributeMap,"kind");
+    Project project=getSelectedProject(context);
+    JavaSourceFacet facet=project.getFacet(JavaSourceFacet.class);
+    Dependency core=CamelProjectHelper.findCamelCoreDependency(project);
+    if (core == null) {
+      return Results.fail("The project does not include camel-core");
+    }
+    Map<String,String> options=new HashMap<String,String>();
+    for (    UIInput input : inputs) {
+      String key=input.getName();
+      if (input.hasValue()) {
+        String value=input.getValue().toString();
+        if (value != null) {
+          options.put(key,value);
+        }
+      }
+    }
+    CamelCatalog catalog=new DefaultCamelCatalog();
+    String uri=catalog.asEndpointUri(camelComponentName,options);
+    if (uri != null) {
+      return Results.success("Endpoint uri: " + uri);
+    }
+    String fqn=routeBuilder;
+    JavaResource existing=facet.getJavaResource(fqn);
+    if (existing != null && existing.exists()) {
+      return Results.fail("A class with name " + fqn + " already exists");
+    }
+    return Results.success("Added endpoint " + endpointInstanceName + " to "+ routeBuilder);
+  }
+ catch (  IllegalArgumentException e) {
+    return Results.fail(e.getMessage());
+  }
+}
