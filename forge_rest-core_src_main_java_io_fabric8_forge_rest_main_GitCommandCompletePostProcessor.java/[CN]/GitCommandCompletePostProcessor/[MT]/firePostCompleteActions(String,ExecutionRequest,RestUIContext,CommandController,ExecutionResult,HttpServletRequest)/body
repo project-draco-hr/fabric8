@@ -58,7 +58,8 @@
           LOG.info("Using remote: " + remote);
           configureBranch(git,branch,remote);
           createKubernetesResources(user,named,remote,branch,repoClient,address);
-          doAddCommitAndPushFiles(git,credentials,personIdent,remote,branch);
+          String message=createCommitMessage(name,executionRequest);
+          doAddCommitAndPushFiles(git,credentials,personIdent,remote,branch,message);
         }
       }
     }
@@ -73,10 +74,11 @@
           Git git=new Git(repository);
           String remote=getRemote(git,branch);
           if (remote == null) {
-            LOG.warn("Could not find remote git URL for folder " + basedir.getAbsolutePath());
+            LOG.warn("Could not find remote git URL for folder " + absolutePath);
           }
  else {
-            doAddCommitAndPushFiles(git,credentials,personIdent,remote,branch);
+            String message=createCommitMessage(name,executionRequest);
+            doAddCommitAndPushFiles(git,credentials,personIdent,remote,branch,message);
           }
         }
       }

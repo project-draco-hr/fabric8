@@ -1,0 +1,18 @@
+{
+  StringBuilder builder=new StringBuilder(name);
+  List<Map<String,String>> inputList=executionRequest.getInputList();
+  for (  Map<String,String> map : inputList) {
+    Set<Map.Entry<String,String>> entries=map.entrySet();
+    for (    Map.Entry<String,String> entry : entries) {
+      String key=entry.getKey();
+      String value=entry.getValue();
+      if (!Strings.isNullOrEmpty(value) && !value.equals("0") && !value.toLowerCase().equals("false")) {
+        builder.append(" --");
+        builder.append(key);
+        builder.append("=");
+        builder.append(value);
+      }
+    }
+  }
+  return builder.toString();
+}
