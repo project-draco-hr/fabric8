@@ -33,26 +33,28 @@
     }
     StringBuilder buffer=new StringBuilder();
     for (    UIInput input : inputs) {
-      String valueExpression=null;
-      Object value=input.getValue();
-      if (value != null) {
-        if (value instanceof String) {
-          String text=value.toString();
-          if (!Strings.isBlank(text)) {
-            valueExpression="\"" + text + "\"";
+      if (input.hasValue()) {
+        String valueExpression=null;
+        Object value=input.getValue();
+        if (value != null) {
+          if (value instanceof String) {
+            String text=value.toString();
+            if (!Strings.isBlank(text)) {
+              valueExpression="\"" + text + "\"";
+            }
+          }
+          if (value instanceof Number) {
+            valueExpression=value.toString();
           }
         }
-        if (value instanceof Number) {
-          valueExpression=value.toString();
+        if (valueExpression != null) {
+          buffer.append("\n");
+          buffer.append("component.set");
+          buffer.append(Strings.capitalize(input.getName()));
+          buffer.append("(");
+          buffer.append(valueExpression);
+          buffer.append(");");
         }
-      }
-      if (valueExpression != null) {
-        buffer.append("\n");
-        buffer.append("component.set");
-        buffer.append(Strings.capitalize(input.getName()));
-        buffer.append("(");
-        buffer.append(valueExpression);
-        buffer.append(");");
       }
     }
     String configurationCode=buffer.toString();
