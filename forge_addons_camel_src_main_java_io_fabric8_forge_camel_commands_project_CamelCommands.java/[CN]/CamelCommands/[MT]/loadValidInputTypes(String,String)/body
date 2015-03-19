@@ -1,6 +1,9 @@
 {
   try {
-    Class<Object> clazz=loadPrimitiveType(javaType);
+    Class<Object> clazz=getPrimitiveClassType(type);
+    if (clazz == null) {
+      clazz=loadPrimitiveType(javaType);
+    }
     if (clazz == null) {
       clazz=(Class<Object>)Class.forName(javaType);
     }
