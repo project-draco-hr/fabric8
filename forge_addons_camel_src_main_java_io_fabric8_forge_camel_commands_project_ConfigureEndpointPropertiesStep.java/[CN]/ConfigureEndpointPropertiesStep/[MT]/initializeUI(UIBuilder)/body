@@ -18,20 +18,34 @@
       String required=propertyMap.get("required");
       String defaultValue=propertyMap.get("defaultValue");
       String description=propertyMap.get("description");
+      String enums=propertyMap.get("enum");
       if (!Strings.isNullOrEmpty(name)) {
         Class<Object> inputClazz=CamelCommands.loadValidInputTypes(javaType,type);
         if (inputClazz != null) {
           if (namesAdded.add(name)) {
-            UIInput<Object> input=componentFactory.createInput(name,inputClazz);
+            InputComponent input;
+            if (enums != null) {
+              UISelectOne ui=componentFactory.createSelectOne(name,inputClazz);
+              if (defaultValue != null) {
+                ui.setDefaultValue(defaultValue);
+              }
+              String[] values=enums.split(",");
+              ui.setValueChoices(Arrays.asList(values));
+              input=ui;
+            }
+ else {
+              UIInput ui=componentFactory.createInput(name,inputClazz);
+              if (defaultValue != null) {
+                ui.setDefaultValue(defaultValue);
+              }
+              input=ui;
+            }
             if (input != null) {
               if (Objects.equals("true",required)) {
                 input.setRequired(true);
               }
               input.setLabel(name);
               input.setDescription(description != null ? description : "");
-              if (defaultValue != null) {
-                input.setDefaultValue(defaultValue);
-              }
               builder.add(input);
               inputs.add(input);
             }
