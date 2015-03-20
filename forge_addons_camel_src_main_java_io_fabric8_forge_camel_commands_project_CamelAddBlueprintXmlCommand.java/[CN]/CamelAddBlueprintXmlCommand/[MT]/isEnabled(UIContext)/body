@@ -1,0 +1,10 @@
+{
+  boolean enabled=super.isEnabled(context);
+  if (enabled) {
+    Project project=getSelectedProject(context);
+    boolean cdi=CamelCommandsHelper.isCdiProject(project);
+    boolean spring=CamelCommandsHelper.isSpringProject(project);
+    return !cdi && !spring;
+  }
+  return false;
+}

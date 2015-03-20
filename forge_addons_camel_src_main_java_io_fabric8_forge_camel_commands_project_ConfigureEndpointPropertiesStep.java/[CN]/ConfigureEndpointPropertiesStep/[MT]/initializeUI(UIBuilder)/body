@@ -20,7 +20,7 @@
       String description=propertyMap.get("description");
       String enums=propertyMap.get("enum");
       if (!Strings.isNullOrEmpty(name)) {
-        Class<Object> inputClazz=CamelCommands.loadValidInputTypes(javaType,type);
+        Class<Object> inputClazz=CamelCommandsHelper.loadValidInputTypes(javaType,type);
         if (inputClazz != null) {
           if (namesAdded.add(name)) {
             InputComponent input=createUIInput(componentFactory,name,inputClazz,required,defaultValue,enums,description);

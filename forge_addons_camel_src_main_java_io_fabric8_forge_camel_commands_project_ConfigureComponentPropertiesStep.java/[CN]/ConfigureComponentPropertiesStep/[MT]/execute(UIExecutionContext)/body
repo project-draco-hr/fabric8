@@ -59,10 +59,10 @@
     }
     String configurationCode=buffer.toString();
     if (kind.equals("cdi")) {
-      CamelCommands.createCdiComponentProducerClass(javaClass,details,camelComponentName,componentInstanceName,configurationCode);
+      CamelCommandsHelper.createCdiComponentProducerClass(javaClass,details,camelComponentName,componentInstanceName,configurationCode);
     }
  else {
-      CamelCommands.createSpringComponentFactoryClass(javaClass,details,camelComponentName,componentInstanceName,configurationCode);
+      CamelCommandsHelper.createSpringComponentFactoryClass(javaClass,details,camelComponentName,componentInstanceName,configurationCode);
     }
     facet.saveJavaSource(javaClass);
     return Results.success("Added class " + generateClassName + " to the project");
