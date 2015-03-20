@@ -7,6 +7,9 @@
   instanceName.setDefaultValue(new Callable<String>(){
     @Override public String call() throws Exception {
       String value=componentName.getValue();
+      if (value != null) {
+        value=value.replaceAll("-","");
+      }
       return value;
     }
   }
