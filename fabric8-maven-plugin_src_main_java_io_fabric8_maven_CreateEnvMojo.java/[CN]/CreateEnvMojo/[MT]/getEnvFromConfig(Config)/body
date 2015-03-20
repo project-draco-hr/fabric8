@@ -1,0 +1,22 @@
+{
+  Map<String,String> result=new HashMap<>();
+  for (  Object entity : KubernetesHelper.getEntities(config)) {
+    if (entity instanceof Pod) {
+      Pod pod=(Pod)entity;
+      for (      Container container : pod.getDesiredState().getManifest().getContainers()) {
+        if (container.getImage().equals(name)) {
+          result.putAll(mapFromEnv(container.getEnv()));
+        }
+      }
+    }
+ else     if (entity instanceof ReplicationController) {
+      ReplicationController replicationController=(ReplicationController)entity;
+      for (      Container container : replicationController.getDesiredState().getPodTemplate().getDesiredState().getManifest().getContainers()) {
+        if (container.getImage().equals(name)) {
+          result.putAll(mapFromEnv(container.getEnv()));
+        }
+      }
+    }
+  }
+  return result;
+}

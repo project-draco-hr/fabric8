@@ -1,0 +1,12 @@
+{
+  File json=getKubernetesJson();
+  if (!Files.isFile(json)) {
+    if (Files.isFile(kubernetesSourceJson)) {
+      json=kubernetesSourceJson;
+    }
+ else {
+      throw new MojoFailureException("No such generated kubernetes json file: " + json + " or source json file "+ kubernetesSourceJson);
+    }
+  }
+  return KubernetesHelper.loadJson(json);
+}

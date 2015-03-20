@@ -1,0 +1,20 @@
+{
+  try {
+    String basedir=System.getProperty("basedir",".");
+    File propertiesFile=new File(basedir + "/target/" + envFileName).getCanonicalFile();
+    Config config=(Config)loadKubernetesJson();
+    Map<String,String> env=getEnvFromConfig(config);
+    env.putAll(getNamespaceServiceEnv(namespace));
+    displayEnv(env);
+    for (    Map.Entry<String,String> entry : env.entrySet()) {
+      getProject().getProperties().setProperty(DOCKE_ENV_PREFIX + entry.getKey(),entry.getValue());
+    }
+    getProject().getProperties().setProperty(DOCKE_NAME,name);
+    Properties envProperties=new Properties();
+    envProperties.putAll(env);
+    saveProperties(envProperties,propertiesFile);
+  }
+ catch (  IOException e) {
+    throw new MojoExecutionException("Failed to load environment schemas: " + e,e);
+  }
+}
