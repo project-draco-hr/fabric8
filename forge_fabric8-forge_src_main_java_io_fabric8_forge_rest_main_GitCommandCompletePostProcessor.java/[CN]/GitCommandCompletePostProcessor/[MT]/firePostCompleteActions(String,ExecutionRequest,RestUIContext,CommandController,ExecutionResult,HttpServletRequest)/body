@@ -4,9 +4,10 @@
   String password=userDetails.getPassword();
   String authorEmail=userDetails.getEmail();
   String address=userDetails.getAddress();
-  String branch="master";
+  String branch=userDetails.getBranch();
+  String origin=projectFileSystem.getRemote();
   try {
-    CredentialsProvider credentials=userDetails.createCredentialsProfivder();
+    CredentialsProvider credentials=userDetails.createCredentialsProvider();
     PersonIdent personIdent=new PersonIdent(user,authorEmail);
     if (name.equals(PROJECT_NEW_COMMAND)) {
       String targetLocation=null;
@@ -51,15 +52,15 @@
             fullName=user + "/" + named;
           }
           String htmlUrl=address + user + "/"+ named;
-          String remote=address + user + "/"+ named+ ".git";
+          String remoteUrl=address + user + "/"+ named+ ".git";
           results.setOutputProperty("fullName",fullName);
-          results.setOutputProperty("cloneUrl",remote);
+          results.setOutputProperty("cloneUrl",remoteUrl);
           results.setOutputProperty("htmlUrl",htmlUrl);
-          LOG.info("Using remote: " + remote);
-          configureBranch(git,branch,remote);
-          createKubernetesResources(user,named,remote,branch,repoClient,address);
+          LOG.info("Using remoteUrl: " + remoteUrl + " and remote name "+ origin);
+          configureBranch(git,branch,origin,remoteUrl);
+          createKubernetesResources(user,named,remoteUrl,branch,repoClient,address);
           String message=createCommitMessage(name,executionRequest);
-          doAddCommitAndPushFiles(git,credentials,personIdent,remote,branch,message);
+          doAddCommitAndPushFiles(git,credentials,personIdent,remoteUrl,branch,origin,message);
         }
       }
     }
@@ -72,13 +73,13 @@
           FileRepositoryBuilder builder=new FileRepositoryBuilder();
           Repository repository=builder.setGitDir(gitFolder).readEnvironment().findGitDir().build();
           Git git=new Git(repository);
-          String remote=getRemote(git,branch);
-          if (remote == null) {
+          String remoteUrl=getRemoteURL(git,branch);
+          if (origin == null) {
             LOG.warn("Could not find remote git URL for folder " + absolutePath);
           }
  else {
             String message=createCommitMessage(name,executionRequest);
-            doAddCommitAndPushFiles(git,credentials,personIdent,remote,branch,message);
+            doAddCommitAndPushFiles(git,credentials,personIdent,remoteUrl,branch,origin,message);
           }
         }
       }

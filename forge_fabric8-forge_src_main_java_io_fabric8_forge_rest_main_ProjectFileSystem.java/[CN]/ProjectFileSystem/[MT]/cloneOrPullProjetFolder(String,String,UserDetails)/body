@@ -1,6 +1,7 @@
 {
   File projectFolder=getUserProjectFolder(user,repositoryName);
   File gitFolder=new File(projectFolder,".git");
+  CredentialsProvider credentialsProvider=userDetails.createCredentialsProvider();
   if (!Files.isDirectory(gitFolder) || !Files.isDirectory(projectFolder)) {
     GitRepoClient repoClient=userDetails.createRepoClient();
     RepositoryDTO dto=repositoryCache.getOrFindUserRepository(user,repositoryName,repoClient);
@@ -13,8 +14,7 @@
     }
     boolean cloneAll=true;
     LOG.info("Cloning git repo " + cloneUrl + " into directory "+ projectFolder.getAbsolutePath()+ " cloneAllBranches: "+ cloneAll);
-    CredentialsProvider credentialsProfivder=userDetails.createCredentialsProfivder();
-    CloneCommand command=Git.cloneRepository().setCredentialsProvider(credentialsProfivder).setCloneAllBranches(cloneAll).setURI(cloneUrl).setDirectory(projectFolder).setRemote(remote);
+    CloneCommand command=Git.cloneRepository().setCredentialsProvider(credentialsProvider).setCloneAllBranches(cloneAll).setURI(cloneUrl).setDirectory(projectFolder).setRemote(remote);
     try {
       Git git=command.call();
     }
@@ -22,6 +22,9 @@
       LOG.error("Failed to command remote repo " + cloneUrl + " due: "+ e.getMessage(),e);
       throw new RuntimeException("Failed to command remote repo " + cloneUrl + " due: "+ e.getMessage());
     }
+  }
+ else {
+    doPull(gitFolder,credentialsProvider,userDetails.getBranch());
   }
   return projectFolder;
 }

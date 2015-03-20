@@ -16,12 +16,13 @@
         String userId=userAndPath[0];
         String repositoryName=userAndPath[1];
         UserDetails userDetails=gitUserHelper.createUserDetails(request);
-        File file=projectFileSystem.getOrCloneUserProjectFolder(userId,repositoryName,userDetails);
+        File file=projectFileSystem.cloneOrPullProjetFolder(userId,repositoryName,userDetails);
         selection=resourceFactory.create(file);
       }
     }
  else {
       LOG.warn("Unknown path of the form user/{userId}/{repositoryName}");
+      throw new RuntimeException("Expected path of the form user/{userId}/{repositoryName} but got: " + path);
     }
   }
   return new RestUIContext(selection);

@@ -1,5 +1,8 @@
 {
   UserDetails userDetails=gitUserHelper.createUserDetails(request);
+  if (Strings.isNullOrEmpty(userDetails.getUser()) || Strings.isNullOrEmpty(userDetails.getUser())) {
+    throw new NotAuthorizedException("You must authenticate to be able to perform this command");
+  }
   if (Objects.equals(name,PROJECT_NEW_COMMAND)) {
     List<Map<String,String>> inputList=executionRequest.getInputList();
     if (inputList != null) {

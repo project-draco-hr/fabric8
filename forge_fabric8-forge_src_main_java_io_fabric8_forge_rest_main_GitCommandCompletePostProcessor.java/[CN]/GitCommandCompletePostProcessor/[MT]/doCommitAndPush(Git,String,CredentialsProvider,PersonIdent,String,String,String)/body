@@ -8,7 +8,7 @@
     LOG.debug("Committed " + answer.getId() + " "+ answer.getFullMessage());
   }
   if (isPushOnCommit()) {
-    Iterable<PushResult> results=git.push().setCredentialsProvider(credentials).setRemote(remote).call();
+    Iterable<PushResult> results=git.push().setCredentialsProvider(credentials).setRemote(origin).call();
     for (    PushResult result : results) {
       if (LOG.isDebugEnabled()) {
         LOG.debug("Pushed " + result.getMessages() + " "+ result.getURI()+ " branch: "+ branch+ " updates: "+ GitHelpers.toString(result.getRemoteUpdates()));
