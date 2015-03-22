@@ -1,0 +1,31 @@
+{
+  try {
+    FileInputStream pemFileStream=new FileInputStream(caCertFile);
+    CertificateFactory certFactory=CertificateFactory.getInstance("X509");
+    X509Certificate cert=(X509Certificate)certFactory.generateCertificate(pemFileStream);
+    KeyStore trustStore=KeyStore.getInstance("JKS");
+    trustStore.load(null);
+    String alias=cert.getSubjectX500Principal().getName();
+    trustStore.setCertificateEntry(alias,cert);
+    TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+    trustManagerFactory.init(trustStore);
+    HTTPConduit conduit=WebClient.getConfig(webClient).getHttpConduit();
+    TLSClientParameters params=conduit.getTlsClientParameters();
+    if (params == null) {
+      params=new TLSClientParameters();
+      conduit.setTlsClientParameters(params);
+    }
+    TrustManager[] existingTrustManagers=params.getTrustManagers();
+    TrustManager[] trustManagers;
+    if (existingTrustManagers == null || ArrayUtils.isEmpty(existingTrustManagers)) {
+      trustManagers=trustManagerFactory.getTrustManagers();
+    }
+ else {
+      trustManagers=(TrustManager[])ArrayUtils.addAll(existingTrustManagers,trustManagerFactory.getTrustManagers());
+    }
+    params.setTrustManagers(trustManagers);
+  }
+ catch (  Exception e) {
+    log.error("Could not create trust manager for " + caCertFile,e);
+  }
+}
