@@ -3,5 +3,60 @@
   String endpointInstanceName=mandatoryAttributeValue(attributeMap,"instanceName");
   String xml=mandatoryAttributeValue(attributeMap,"xml");
   Project project=getSelectedProject(context);
-  return Results.success("Added endpoint " + endpointInstanceName + " to "+ xml);
+  ResourcesFacet facet=project.getFacet(ResourcesFacet.class);
+  Dependency core=CamelProjectHelper.findCamelCoreDependency(project);
+  if (core == null) {
+    return Results.fail("The project does not include camel-core");
+  }
+  CamelComponentDetails details=new CamelComponentDetails();
+  Result result=loadCamelComponentDetails(camelComponentName,details);
+  if (result != null) {
+    return result;
+  }
+  result=ensureCamelArtifactIdAdded(project,details,dependencyInstaller);
+  if (result != null) {
+    return result;
+  }
+  Map<String,String> options=new HashMap<String,String>();
+  for (  InputComponent input : inputs) {
+    String key=input.getName();
+    if (input.hasValue()) {
+      String value=input.getValue().toString();
+      if (value != null) {
+        options.put(key,value);
+      }
+    }
+  }
+  String uri="We need Camel 2.15.1";
+  FileResource file=facet.getResource(xml);
+  if (!file.exists()) {
+    return Results.fail("Cannot find XML file " + xml);
+  }
+  Node root=XMLParser.parse(file.getResourceInputStream());
+  if (root != null) {
+    Node camel=root.getSingle("camelContext");
+    if (camel != null) {
+      Node found=null;
+      for (      Node endpoint : camel.get("endpoint")) {
+        if (endpointInstanceName.equals(endpoint.getAttribute("id"))) {
+          found=endpoint;
+          break;
+        }
+      }
+      if (found == null) {
+        found=camel.createChild("endpoint");
+      }
+      found.attribute("id",endpointInstanceName);
+      found.attribute("uri",uri);
+    }
+    InputStream is=XMLParser.toXMLInputStream(root);
+    if (is != null) {
+      file.setContents(is);
+      is.close();
+    }
+    return Results.success("Added endpoint " + endpointInstanceName + " to xml file "+ xml);
+  }
+ else {
+    return Results.fail("Cannot parse XML file " + xml);
+  }
 }
