@@ -1,0 +1,27 @@
+{
+  Project project=getSelectedProject(context);
+  String projectName=project.getRoot().getName();
+  String fileName=directory.getValue() != null ? directory.getValue() + File.separator + name.getValue() : name.getValue();
+  String fullName="src" + File.separator + "main"+ File.separator+ "resources"+ File.separator+ fileName;
+  ResourcesFacet facet=project.getFacet(ResourcesFacet.class);
+  FileResource<?> fileResource=facet.getResource(fileName);
+  if (fileResource.exists()) {
+    return Results.fail("Blueprint XML file " + fullName + " already exists");
+  }
+  Dependency core=findCamelCoreDependency(project);
+  if (core == null) {
+    return Results.fail("The project does not include camel-core");
+  }
+  DependencyBuilder spring=DependencyBuilder.create().setGroupId("org.apache.camel").setArtifactId("camel-blueprint").setVersion(core.getCoordinate().getVersion());
+  if (!dependencyInstaller.isManaged(project,spring)) {
+    dependencyInstaller.install(project,spring);
+  }
+  Resource<URL> xml=resourceFactory.create(getClass().getResource("/templates/camel-blueprint.ftl")).reify(URLResource.class);
+  Template template=factory.create(xml,FreemarkerTemplate.class);
+  Map<String,Object> params=new HashMap<String,Object>();
+  params.put("projectName",projectName);
+  String output=template.process(params);
+  fileResource.createNewFile();
+  fileResource.setContents(output);
+  return Results.success("Created new Blueprint XML file " + fullName);
+}
