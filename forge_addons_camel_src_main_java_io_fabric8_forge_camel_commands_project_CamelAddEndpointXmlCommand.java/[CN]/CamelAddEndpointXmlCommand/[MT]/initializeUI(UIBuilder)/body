@@ -1,6 +1,6 @@
 {
   Project project=getSelectedProject(builder.getUIContext());
-  JavaSourceFacet facet=project.getFacet(JavaSourceFacet.class);
+  ResourcesFacet resourcesFacet=project.getFacet(ResourcesFacet.class);
   componentNameFilter.setValueChoices(CamelCommandsHelper.createComponentNameValues(project));
   componentNameFilter.setDefaultValue("<all>");
   componentName.setValueChoices(CamelCommandsHelper.createComponentNameValues(project,componentNameFilter,false));
@@ -14,6 +14,6 @@
     }
   }
 );
-  xml.setCompleter(new RouteBuilderCompleter(facet));
+  xml.setCompleter(new XmlFileCompleter(resourcesFacet));
   builder.add(componentNameFilter).add(componentName).add(instanceName).add(xml);
 }

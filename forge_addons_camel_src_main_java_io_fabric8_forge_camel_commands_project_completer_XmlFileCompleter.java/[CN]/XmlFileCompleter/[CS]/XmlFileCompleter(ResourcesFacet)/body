@@ -1,0 +1,14 @@
+{
+  facet.visitResources(new ResourceVisitor(){
+    @Override public void visit(    VisitContext context,    Resource<?> resource){
+      String name=resource.getName();
+      if (name.endsWith(".xml")) {
+        boolean camel=resource.getContents().contains("<camelContext");
+        if (camel) {
+          files.add(resource.getFullyQualifiedName());
+        }
+      }
+    }
+  }
+);
+}
