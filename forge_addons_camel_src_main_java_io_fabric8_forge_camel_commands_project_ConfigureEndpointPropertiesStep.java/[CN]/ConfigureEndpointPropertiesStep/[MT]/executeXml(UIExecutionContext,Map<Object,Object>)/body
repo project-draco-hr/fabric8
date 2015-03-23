@@ -32,24 +32,44 @@
   if (!file.exists()) {
     return Results.fail("Cannot find XML file " + xml);
   }
-  Node root=XMLParser.parse(file.getResourceInputStream());
+  Document root=DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file.getResourceInputStream());
   if (root != null) {
-    Node camel=root.getSingle("camelContext");
-    if (camel != null) {
+    NodeList camels=root.getElementsByTagName("camelContext");
+    if (camels != null && camels.getLength() == 1) {
+      Node camel=camels.item(0);
+      boolean created=false;
       Node found=null;
-      for (      Node endpoint : camel.get("endpoint")) {
-        if (endpointInstanceName.equals(endpoint.getAttribute("id"))) {
-          found=endpoint;
-          break;
+      for (int i=0; i < camel.getChildNodes().getLength(); i++) {
+        Node child=camel.getChildNodes().item(i);
+        if ("endpoint".equals(child.getNodeName())) {
+          String id=child.getAttributes().getNamedItem("id").getNodeValue();
+          if (endpointInstanceName.equals(id)) {
+            found=child;
+            break;
+          }
         }
       }
       if (found == null) {
-        found=camel.createChild("endpoint");
+        created=true;
+        found=root.createElement("endpoint");
       }
-      found.attribute("id",endpointInstanceName);
-      found.attribute("uri",uri);
+      Attr attrId=root.createAttribute("id");
+      attrId.setValue(endpointInstanceName);
+      Attr attrUri=root.createAttribute("uri");
+      attrUri.setValue(uri);
+      found.getAttributes().setNamedItem(attrId);
+      found.getAttributes().setNamedItem(attrUri);
+      if (created) {
+        Node cutoff=insertEndpointBefore(camel);
+        if (cutoff != null) {
+          cutoff.getParentNode().insertBefore(found,cutoff);
+        }
+ else {
+          camel.appendChild(found);
+        }
+      }
     }
-    InputStream is=XMLParser.toXMLInputStream(root);
+    InputStream is=XmlHelper.documentToPrettyInputStream(root);
     if (is != null) {
       file.setContents(is);
       is.close();
