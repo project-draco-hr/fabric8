@@ -1,7 +1,8 @@
 {
   try {
     String basedir=System.getProperty("basedir",".");
-    File propertiesFile=new File(basedir + "/target/" + envFileName).getCanonicalFile();
+    File propertiesFile=new File(basedir + "/target/" + envPropertiesFileName).getCanonicalFile();
+    File scriptFile=new File(basedir + "/target/" + envScriptFileName).getCanonicalFile();
     Config config=(Config)loadKubernetesJson();
     Map<String,String> env=getEnvFromConfig(config);
     env.putAll(getNamespaceServiceEnv(namespace));
@@ -10,8 +11,10 @@
       getProject().getProperties().setProperty(DOCKE_ENV_PREFIX + entry.getKey(),entry.getValue());
     }
     getProject().getProperties().setProperty(DOCKER_NAME,name);
+    getProject().getProperties().setProperty(EXEC_ENV_SCRIPT,scriptFile.getAbsolutePath());
     Properties envProperties=new Properties();
     envProperties.putAll(env);
+    saveScript(env,scriptFile);
     saveProperties(envProperties,propertiesFile);
   }
  catch (  IOException e) {
