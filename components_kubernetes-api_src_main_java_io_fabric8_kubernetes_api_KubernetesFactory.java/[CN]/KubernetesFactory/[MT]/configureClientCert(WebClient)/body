@@ -1,0 +1,36 @@
+{
+  try {
+    InputStream certInputStream=getInputStreamFromDataOrFile(clientCertData,clientCertFile);
+    CertificateFactory certFactory=CertificateFactory.getInstance("X509");
+    X509Certificate cert=(X509Certificate)certFactory.generateCertificate(certInputStream);
+    InputStream keyInputStream=getInputStreamFromDataOrFile(clientKeyData,clientKeyFile);
+    PEMReader reader=new PEMReader(keyInputStream);
+    RSAPrivateCrtKeySpec keySpec=new PKCS1EncodedKeySpec(reader.getDerBytes()).getKeySpec();
+    KeyFactory kf=KeyFactory.getInstance(clientKeyAlgo);
+    RSAPrivateKey privKey=(RSAPrivateKey)kf.generatePrivate(keySpec);
+    KeyStore keyStore=KeyStore.getInstance("JKS");
+    keyStore.load(null);
+    String alias=cert.getSubjectX500Principal().getName();
+    keyStore.setKeyEntry(alias,privKey,clientKeyPassword,new Certificate[]{cert});
+    KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+    keyManagerFactory.init(keyStore,clientKeyPassword);
+    HTTPConduit conduit=WebClient.getConfig(webClient).getHttpConduit();
+    TLSClientParameters params=conduit.getTlsClientParameters();
+    if (params == null) {
+      params=new TLSClientParameters();
+      conduit.setTlsClientParameters(params);
+    }
+    KeyManager[] existingKeyManagers=params.getKeyManagers();
+    KeyManager[] keyManagers;
+    if (existingKeyManagers == null || ArrayUtils.isEmpty(existingKeyManagers)) {
+      keyManagers=keyManagerFactory.getKeyManagers();
+    }
+ else {
+      keyManagers=(KeyManager[])ArrayUtils.addAll(existingKeyManagers,keyManagerFactory.getKeyManagers());
+    }
+    params.setKeyManagers(keyManagers);
+  }
+ catch (  Exception e) {
+    log.error("Could not create key manager for " + clientCertFile + " ("+ clientKeyFile+ ")",e);
+  }
+}

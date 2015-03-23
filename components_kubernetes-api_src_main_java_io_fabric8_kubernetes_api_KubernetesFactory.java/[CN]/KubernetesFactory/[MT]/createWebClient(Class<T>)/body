@@ -5,8 +5,11 @@
   if (trustAllCerts) {
     disableSslChecks(webClient);
   }
- else   if (caCertFile != null) {
+ else   if (caCertFile != null || caCertData != null) {
     configureCaCert(webClient);
+  }
+  if ((clientCertFile != null || clientCertData != null) && (clientKeyFile != null || clientKeyData != null)) {
+    configureClientCert(webClient);
   }
   return JAXRSClientFactory.fromClient(webClient,clientType);
 }

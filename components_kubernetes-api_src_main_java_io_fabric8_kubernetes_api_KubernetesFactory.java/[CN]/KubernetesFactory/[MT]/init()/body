@@ -2,19 +2,52 @@
   if (System.getenv(KUBERNETES_TRUST_ALL_CERIFICATES) != null) {
     this.trustAllCerts=Boolean.valueOf(System.getenv(KUBERNETES_TRUST_ALL_CERIFICATES));
   }
- else   if (System.getenv(KUBERNETES_CA_CERTIFICATE_ENV_VAR) != null) {
-    File possibleCaCertFile=new File(System.getenv(KUBERNETES_CA_CERTIFICATE_ENV_VAR));
-    if (possibleCaCertFile.exists() && possibleCaCertFile.canRead()) {
-      this.caCertFile=possibleCaCertFile;
+ else   if (System.getenv(KUBERNETES_CA_CERTIFICATE_FILE_ENV_VAR) != null) {
+    File candidateCaCertFile=new File(System.getenv(KUBERNETES_CA_CERTIFICATE_FILE_ENV_VAR));
+    if (candidateCaCertFile.exists() && candidateCaCertFile.canRead()) {
+      this.caCertFile=candidateCaCertFile;
     }
  else {
-      log.error("Specified CA certificate file {} does not exist or is not readable",possibleCaCertFile);
+      log.error("Specified CA certificate file {} does not exist or is not readable",candidateCaCertFile);
     }
   }
-  if (System.getenv(KUBERNETES_USERNAME) != null) {
-    this.username=System.getenv(KUBERNETES_USERNAME);
+  if (System.getenv(KUBERNETES_CA_CERTIFICATE_DATA_ENV_VAR) != null) {
+    this.caCertData=System.getenv(KUBERNETES_CA_CERTIFICATE_DATA_ENV_VAR);
   }
-  if (System.getenv(KUBERNETES_PASSWORD) != null) {
-    this.password=System.getenv(KUBERNETES_PASSWORD);
+  if (System.getenv(KUBERNETES_CLIENT_CERTIFICATE_FILE_ENV_VAR) != null) {
+    File candidateClientCertFile=new File(System.getenv(KUBERNETES_CLIENT_CERTIFICATE_FILE_ENV_VAR));
+    if (candidateClientCertFile.exists() && candidateClientCertFile.canRead()) {
+      this.clientCertFile=candidateClientCertFile;
+    }
+ else {
+      log.error("Specified client certificate file {} does not exist or is not readable",candidateClientCertFile);
+    }
+  }
+  if (System.getenv(KUBERNETES_CLIENT_CERTIFICATE_DATA_ENV_VAR) != null) {
+    this.clientCertData=System.getenv(KUBERNETES_CLIENT_CERTIFICATE_DATA_ENV_VAR);
+  }
+  if (System.getenv(KUBERNETES_CLIENT_KEY_FILE_ENV_VAR) != null) {
+    File candidateClientKeyFile=new File(System.getenv(KUBERNETES_CLIENT_KEY_FILE_ENV_VAR));
+    if (candidateClientKeyFile.exists() && candidateClientKeyFile.canRead()) {
+      this.clientKeyFile=candidateClientKeyFile;
+    }
+ else {
+      log.error("Specified client key file {} does not exist or is not readable",candidateClientKeyFile);
+    }
+  }
+  if (System.getenv(KUBERNETES_CLIENT_KEY_DATA_ENV_VAR) != null) {
+    this.clientKeyData=System.getenv(KUBERNETES_CLIENT_KEY_DATA_ENV_VAR);
+  }
+  if (System.getenv(KUBERNETES_CLIENT_KEY_ALGO_ENV_VAR) != null) {
+    this.clientKeyAlgo=System.getenv(KUBERNETES_CLIENT_KEY_ALGO_ENV_VAR);
+  }
+  if (System.getenv(KUBERNETES_CLIENT_KEY_PASSWORD_ENV_VAR) != null) {
+    this.clientKeyPassword=System.getenv(KUBERNETES_CLIENT_KEY_PASSWORD_ENV_VAR).toCharArray();
+  }
+  if (System.getenv(KUBERNETES_USERNAME_ENV_VAR) != null) {
+    this.username=System.getenv(KUBERNETES_USERNAME_ENV_VAR);
+  }
+  if (System.getenv(KUBERNETES_PASSWORD_ENV_VAR) != null) {
+    this.password=System.getenv(KUBERNETES_PASSWORD_ENV_VAR);
   }
 }
