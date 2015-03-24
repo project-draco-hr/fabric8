@@ -58,17 +58,17 @@
           found=camel.getLastChild();
         }
         if (found == null) {
-          found=camel;
+          found=root.getElementById("camelContext");
         }
       }
       lineNumber=(String)found.getUserData(XmlLineNumberParser.LINE_NUMBER);
       if (created) {
         List<String> lines=LineNumberHelper.readLines(file.getResourceInputStream());
         String line=String.format("<endpoint id=\"%s\" uri=\"%s\"/>",endpointInstanceName,uri);
-        int idx=Integer.valueOf(lineNumber) - 1;
+        int idx=lineNumber != null ? Integer.valueOf(lineNumber) - 1 : 0;
         int spaces=LineNumberHelper.leadingSpaces(lines,idx);
         line=LineNumberHelper.padString(line,spaces);
-        lines.add(idx,line);
+        lines.add(idx + 1,line);
         String content=LineNumberHelper.linesToString(lines);
         file.setContents(content);
         return Results.success("Added endpoint: " + endpointInstanceName + " with uri: "+ uri);
@@ -76,8 +76,8 @@
  else {
         List<String> lines=LineNumberHelper.readLines(file.getResourceInputStream());
         String line=String.format("<endpoint id=\"%s\" uri=\"%s\"/>",endpointInstanceName,uri);
-        int idx=Integer.valueOf(lineNumber) - 1;
-        int spaces=LineNumberHelper.leadingSpaces(lines,idx - 1);
+        int idx=lineNumber != null ? Integer.valueOf(lineNumber) - 1 : 0;
+        int spaces=LineNumberHelper.leadingSpaces(lines,idx);
         line=LineNumberHelper.padString(line,spaces);
         lines.set(idx,line);
         String content=LineNumberHelper.linesToString(lines);
