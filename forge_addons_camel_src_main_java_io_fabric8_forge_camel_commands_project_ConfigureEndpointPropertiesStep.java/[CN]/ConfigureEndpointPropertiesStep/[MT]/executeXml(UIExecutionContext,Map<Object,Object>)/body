@@ -39,10 +39,17 @@
     NodeList camels=root.getElementsByTagName("camelContext");
     if (camels != null && camels.getLength() == 1) {
       Node camel=camels.item(0);
+      Node camelContext=null;
       boolean created=false;
       Node found=null;
       for (int i=0; i < camel.getChildNodes().getLength(); i++) {
+        if ("camelContext".equals(camel.getNodeName())) {
+          camelContext=camel;
+        }
         Node child=camel.getChildNodes().item(i);
+        if ("camelContext".equals(child.getNodeName())) {
+          camelContext=child;
+        }
         if ("endpoint".equals(child.getNodeName())) {
           String id=child.getAttributes().getNamedItem("id").getNodeValue();
           if (endpointInstanceName.equals(id)) {
@@ -51,22 +58,24 @@
           }
         }
       }
+      int extraSpaces=0;
       if (found == null) {
         created=true;
         found=insertEndpointBefore(camel);
         if (found == null) {
-          found=camel.getLastChild();
+          found=camelContext;
+          extraSpaces=2;
         }
-        if (found == null) {
-          found=root.getElementById("camelContext");
-        }
+      }
+      if (found == null) {
+        return Results.fail("Cannot find <camelContext> in XML file " + xml);
       }
       lineNumber=(String)found.getUserData(XmlLineNumberParser.LINE_NUMBER);
       if (created) {
         List<String> lines=LineNumberHelper.readLines(file.getResourceInputStream());
         String line=String.format("<endpoint id=\"%s\" uri=\"%s\"/>",endpointInstanceName,uri);
         int idx=lineNumber != null ? Integer.valueOf(lineNumber) - 1 : 0;
-        int spaces=LineNumberHelper.leadingSpaces(lines,idx);
+        int spaces=LineNumberHelper.leadingSpaces(lines,idx) + extraSpaces;
         line=LineNumberHelper.padString(line,spaces);
         lines.add(idx + 1,line);
         String content=LineNumberHelper.linesToString(lines);
@@ -77,7 +86,7 @@
         List<String> lines=LineNumberHelper.readLines(file.getResourceInputStream());
         String line=String.format("<endpoint id=\"%s\" uri=\"%s\"/>",endpointInstanceName,uri);
         int idx=lineNumber != null ? Integer.valueOf(lineNumber) - 1 : 0;
-        int spaces=LineNumberHelper.leadingSpaces(lines,idx);
+        int spaces=LineNumberHelper.leadingSpaces(lines,idx) + extraSpaces;
         line=LineNumberHelper.padString(line,spaces);
         lines.set(idx,line);
         String content=LineNumberHelper.linesToString(lines);
