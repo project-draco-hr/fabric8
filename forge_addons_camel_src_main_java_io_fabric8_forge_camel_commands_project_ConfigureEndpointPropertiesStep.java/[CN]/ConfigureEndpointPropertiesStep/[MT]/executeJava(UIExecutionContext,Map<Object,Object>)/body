@@ -27,7 +27,11 @@
       }
     }
   }
-  String uri="We need Camel 2.15.1";
+  CamelCatalog catalog=new DefaultCamelCatalog();
+  String uri=catalog.asEndpointUri(camelComponentName,options);
+  if (uri == null) {
+    return Results.fail("Cannot create endpoint uri");
+  }
   JavaResource existing=facet.getJavaResource(routeBuilder);
   if (existing == null || !existing.exists()) {
     return Results.fail("RouteBuilder " + routeBuilder + " does not exist");
@@ -36,11 +40,33 @@
   MethodSource configure=clazz.getMethod("configure");
   String body=configure.getBody();
   clazz.addImport("org.apache.camel.Endpoint");
-  StringBuilder sb=new StringBuilder(body);
+  if (body == null) {
+    body="";
+  }
+  String match=String.format("Endpoint %s=",endpointInstanceName);
+  List<String> lines=LineNumberHelper.readLines(new StringReader(body));
+  int index=-1;
+  for (int i=0; i < lines.size(); i++) {
+    String line=lines.get(i);
+    if (line.trim().startsWith(match)) {
+      index=i;
+      break;
+    }
+  }
   String line=String.format("Endpoint %s = endpoint(\"%s\");\n\n",endpointInstanceName,uri);
-  sb.insert(0,line);
-  body=sb.toString();
-  configure.setBody(body);
+  if (index == -1) {
+    lines.add(0,line);
+  }
+ else {
+    lines.set(index,line);
+  }
+  String content=LineNumberHelper.linesToString(lines);
+  configure.setBody(content);
   facet.saveJavaSource(clazz);
-  return Results.success("Added endpoint " + endpointInstanceName + " to "+ routeBuilder);
+  if (index == -1) {
+    return Results.success("Updated endpoint " + endpointInstanceName + " in "+ routeBuilder);
+  }
+ else {
+    return Results.success("Added endpoint " + endpointInstanceName + " in "+ routeBuilder);
+  }
 }

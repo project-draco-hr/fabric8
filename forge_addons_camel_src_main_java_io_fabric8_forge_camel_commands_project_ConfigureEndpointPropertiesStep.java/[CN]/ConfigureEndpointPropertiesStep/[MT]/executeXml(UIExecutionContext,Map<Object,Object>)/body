@@ -27,14 +27,17 @@
       }
     }
   }
-  String uri="We need Camel 2.15.1";
+  CamelCatalog catalog=new DefaultCamelCatalog();
+  String uri=catalog.asEndpointUri(camelComponentName,options);
+  if (uri == null) {
+    return Results.fail("Cannot create endpoint uri");
+  }
   FileResource file=facet.getResource(xml);
   if (!file.exists()) {
     return Results.fail("Cannot find XML file " + xml);
   }
   Document root=XmlLineNumberParser.parseXml(file.getResourceInputStream());
   String lineNumber;
-  String columnNumber;
   if (root != null) {
     NodeList camels=root.getElementsByTagName("camelContext");
     if (camels != null && camels.getLength() == 1) {
