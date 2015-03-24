@@ -5,7 +5,12 @@
       if (name.endsWith(".xml")) {
         boolean camel=resource.getContents().contains("<camelContext");
         if (camel) {
-          files.add(resource.getName());
+          String baseDir=facet.getResourceDirectory().getFullyQualifiedName();
+          String fqn=resource.getFullyQualifiedName();
+          if (fqn.startsWith(baseDir)) {
+            fqn=fqn.substring(baseDir.length() + 1);
+          }
+          files.add(fqn);
         }
       }
     }
