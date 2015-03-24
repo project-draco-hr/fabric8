@@ -32,7 +32,7 @@
   if (!file.exists()) {
     return Results.fail("Cannot find XML file " + xml);
   }
-  Document root=DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file.getResourceInputStream());
+  Document root=XmlHelper.inputStreamToDocument(file.getResourceInputStream());
   if (root != null) {
     NodeList camels=root.getElementsByTagName("camelContext");
     if (camels != null && camels.getLength() == 1) {
