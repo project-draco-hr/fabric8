@@ -1,0 +1,13 @@
+{
+  File repoDir=new File(addOnDir);
+  repoDir.mkdirs();
+  LOG.info("initialising furnace with folder: " + repoDir.getAbsolutePath());
+  File[] files=repoDir.listFiles();
+  if (files == null || files.length == 0) {
+    LOG.warn("No files found in the addon directory: " + repoDir.getAbsolutePath());
+  }
+ else {
+    LOG.warn("Found " + files.length + " addon files in directory: "+ repoDir.getAbsolutePath());
+  }
+  furnaceProducer.setup(repoDir);
+}
