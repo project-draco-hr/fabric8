@@ -32,7 +32,9 @@
   if (!file.exists()) {
     return Results.fail("Cannot find XML file " + xml);
   }
-  Document root=XmlHelper.inputStreamToDocument(file.getResourceInputStream());
+  Document root=XmlLineNumberParser.parseXml(file.getResourceInputStream());
+  String lineNumber;
+  String columnNumber;
   if (root != null) {
     NodeList camels=root.getElementsByTagName("camelContext");
     if (camels != null && camels.getLength() == 1) {
@@ -51,30 +53,39 @@
       }
       if (found == null) {
         created=true;
-        found=root.createElement("endpoint");
+        found=insertEndpointBefore(camel);
+        if (found == null) {
+          found=camel.getLastChild();
+        }
+        if (found == null) {
+          found=camel;
+        }
       }
-      Attr attrId=root.createAttribute("id");
-      attrId.setValue(endpointInstanceName);
-      Attr attrUri=root.createAttribute("uri");
-      attrUri.setValue(uri);
-      found.getAttributes().setNamedItem(attrId);
-      found.getAttributes().setNamedItem(attrUri);
+      lineNumber=(String)found.getUserData(XmlLineNumberParser.LINE_NUMBER);
       if (created) {
-        Node cutoff=insertEndpointBefore(camel);
-        if (cutoff != null) {
-          cutoff.getParentNode().insertBefore(found,cutoff);
-        }
+        List<String> lines=LineNumberHelper.readLines(file.getResourceInputStream());
+        String line=String.format("<endpoint id=\"%s\" uri=\"%s\"/>",endpointInstanceName,uri);
+        int idx=Integer.valueOf(lineNumber) - 1;
+        int spaces=LineNumberHelper.leadingSpaces(lines,idx);
+        line=LineNumberHelper.padString(line,spaces);
+        lines.add(idx,line);
+        String content=LineNumberHelper.linesToString(lines);
+        file.setContents(content);
+        return Results.success("Added endpoint: " + endpointInstanceName + " with uri: "+ uri);
+      }
  else {
-          camel.appendChild(found);
-        }
+        List<String> lines=LineNumberHelper.readLines(file.getResourceInputStream());
+        String line=String.format("<endpoint id=\"%s\" uri=\"%s\"/>",endpointInstanceName,uri);
+        int idx=Integer.valueOf(lineNumber) - 1;
+        int spaces=LineNumberHelper.leadingSpaces(lines,idx - 1);
+        line=LineNumberHelper.padString(line,spaces);
+        lines.set(idx,line);
+        String content=LineNumberHelper.linesToString(lines);
+        file.setContents(content);
+        return Results.success("Update endpoint: " + endpointInstanceName + " with uri: "+ uri);
       }
     }
-    InputStream is=XmlHelper.documentToPrettyInputStream(root);
-    if (is != null) {
-      file.setContents(is);
-      is.close();
-    }
-    return Results.success("Added endpoint " + endpointInstanceName + " to xml file "+ xml);
+    return Results.fail("Cannot find <camelContext> in XML file " + xml);
   }
  else {
     return Results.fail("Cannot parse XML file " + xml);
