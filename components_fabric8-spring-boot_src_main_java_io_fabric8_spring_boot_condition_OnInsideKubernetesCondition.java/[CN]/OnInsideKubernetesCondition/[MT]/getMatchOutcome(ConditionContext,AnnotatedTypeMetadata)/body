@@ -1,0 +1,8 @@
+{
+  for (  String variable : REQUIRED_ENV_VARIABLES) {
+    if (!System.getenv().containsKey(variable)) {
+      return ConditionOutcome.noMatch("Environment variable " + variable + " not found.");
+    }
+  }
+  return ConditionOutcome.match();
+}

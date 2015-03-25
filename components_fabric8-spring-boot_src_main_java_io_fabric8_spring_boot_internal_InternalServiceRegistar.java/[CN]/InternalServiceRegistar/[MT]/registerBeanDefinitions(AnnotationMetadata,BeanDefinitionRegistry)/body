@@ -1,0 +1,22 @@
+{
+  Map<String,String> env=System.getenv();
+  for (  Map.Entry<String,String> entry : env.entrySet()) {
+    String key=entry.getKey();
+    Matcher matcher=SERVICE_HOST_PATTERN.matcher(key);
+    if (matcher.matches()) {
+      String service=matcher.group(SERVICE);
+      if (areEnvVariablesAvailable(service,env)) {
+        RootBeanDefinition beanDefinition=new RootBeanDefinition(Service.class);
+        String serviceHost=env.get(service + HOST_SUFFIX);
+        String port=env.get(service + PORT_SUFFIX);
+        String protocol=env.get(service + PORT_SUFFIX + "_"+ port+ PROTO_SUFFIX);
+        beanDefinition.addQualifier(new AutowireCandidateQualifier(io.fabric8.annotations.Service.class,service));
+        beanDefinition.getPropertyValues().addPropertyValue("id",service);
+        beanDefinition.getPropertyValues().addPropertyValue("port",port);
+        beanDefinition.getPropertyValues().addPropertyValue("portalIP",serviceHost);
+        beanDefinition.getPropertyValues().addPropertyValue("protocol",protocol);
+        registry.registerBeanDefinition(service + "-service-bean",beanDefinition);
+      }
+    }
+  }
+}
