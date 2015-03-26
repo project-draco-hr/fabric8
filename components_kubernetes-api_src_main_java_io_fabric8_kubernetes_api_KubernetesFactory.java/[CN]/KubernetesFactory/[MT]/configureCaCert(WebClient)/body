@@ -1,6 +1,5 @@
 {
-  try {
-    InputStream pemInputStream=getInputStreamFromDataOrFile(caCertData,caCertFile);
+  try (InputStream pemInputStream=getInputStreamFromDataOrFile(caCertData,caCertFile)){
     CertificateFactory certFactory=CertificateFactory.getInstance("X509");
     X509Certificate cert=(X509Certificate)certFactory.generateCertificate(pemInputStream);
     KeyStore trustStore=KeyStore.getInstance("JKS");

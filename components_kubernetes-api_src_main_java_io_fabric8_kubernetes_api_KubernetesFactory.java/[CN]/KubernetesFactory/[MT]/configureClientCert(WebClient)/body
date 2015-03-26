@@ -1,6 +1,5 @@
 {
-  try {
-    InputStream certInputStream=getInputStreamFromDataOrFile(clientCertData,clientCertFile);
+  try (InputStream certInputStream=getInputStreamFromDataOrFile(clientCertData,clientCertFile)){
     CertificateFactory certFactory=CertificateFactory.getInstance("X509");
     X509Certificate cert=(X509Certificate)certFactory.generateCertificate(certInputStream);
     InputStream keyInputStream=getInputStreamFromDataOrFile(clientKeyData,clientKeyFile);
