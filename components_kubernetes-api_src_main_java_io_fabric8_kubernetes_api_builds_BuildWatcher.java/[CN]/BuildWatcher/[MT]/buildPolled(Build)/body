@@ -1,0 +1,18 @@
+{
+  String status=build.getStatus();
+  if (status != null) {
+    if (Builds.isFinished(status)) {
+      String uid=Builds.getUid(build);
+      if (Strings.isNullOrBlank(uid)) {
+        LOG.warn("Ignoring bad build which has no UID: " + build);
+      }
+ else {
+        if (seenBuildIds.add(uid)) {
+          String buildLink=URLUtils.pathJoin(fabric8ConsoleLink,"kubernetes/builds",uid);
+          BuildFinishedEvent event=new BuildFinishedEvent(uid,build,loading,buildLink);
+          buildListener.onBuildFinished(event);
+        }
+      }
+    }
+  }
+}

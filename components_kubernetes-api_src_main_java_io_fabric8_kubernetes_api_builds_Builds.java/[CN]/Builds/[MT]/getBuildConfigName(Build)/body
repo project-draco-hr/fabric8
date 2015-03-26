@@ -1,0 +1,11 @@
+{
+  if (build != null) {
+    Map<String,Object> metadata=getMetadata(build);
+    Object labels=metadata.get("labels");
+    if (labels instanceof Map) {
+      Map<String,Object> labelMap=(Map<String,Object>)labels;
+      return getString(labelMap,"buildconfig");
+    }
+  }
+  return null;
+}

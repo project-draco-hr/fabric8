@@ -1,0 +1,20 @@
+{
+  String answer=null;
+  if (build != null) {
+    answer=build.getUid();
+    if (Strings.isNullOrBlank(answer)) {
+      Map<String,Object> metadata=getMetadata(build);
+      answer=getString(metadata,"uid");
+      if (Strings.isNullOrBlank(answer)) {
+        answer=getString(metadata,"id");
+      }
+      if (Strings.isNullOrBlank(answer)) {
+        answer=getString(metadata,"name");
+      }
+    }
+    if (Strings.isNullOrBlank(answer)) {
+      answer=build.getName();
+    }
+  }
+  return answer;
+}

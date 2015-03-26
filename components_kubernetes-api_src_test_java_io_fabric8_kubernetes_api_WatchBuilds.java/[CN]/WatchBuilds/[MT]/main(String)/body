@@ -1,0 +1,27 @@
+{
+  String namespace=null;
+  if (args.length > 0) {
+    namespace=args[0];
+  }
+  String consoleLink=Links.getFabric8ConsoleLink();
+  KubernetesClient client=new KubernetesClient();
+  BuildListener buildListener=new BuildListener(){
+    @Override public void onBuildFinished(    BuildFinishedEvent event){
+      System.out.println("Build: " + event.getUid() + " for config: "+ event.getConfigName()+ " finished. Status: "+ event.getStatus()+ " link: "+ event.getBuildLink());
+    }
+  }
+;
+  BuildWatcher watcher=new BuildWatcher(client,buildListener,namespace,consoleLink);
+  long pollTime=3000;
+  watcher.schedule(pollTime);
+  Object lock=new Object();
+  while (true) {
+synchronized (lock) {
+      try {
+        lock.wait();
+      }
+ catch (      InterruptedException e) {
+      }
+    }
+  }
+}

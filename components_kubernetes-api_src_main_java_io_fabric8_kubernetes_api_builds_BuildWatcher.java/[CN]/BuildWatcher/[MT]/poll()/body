@@ -1,0 +1,16 @@
+{
+  boolean foundBuild=false;
+  BuildList buildList=kubernetes.getBuilds(namespace);
+  if (buildList != null) {
+    List<Build> items=buildList.getItems();
+    if (items != null) {
+      for (      Build build : items) {
+        buildPolled(build);
+        foundBuild=true;
+      }
+    }
+  }
+  if (foundBuild) {
+    loading=false;
+  }
+}
