@@ -71,26 +71,23 @@
         return Results.fail("Cannot find <camelContext> in XML file " + xml);
       }
       lineNumber=(String)found.getUserData(XmlLineNumberParser.LINE_NUMBER);
+      List<String> lines=LineNumberHelper.readLines(file.getResourceInputStream());
+      String line=String.format("<endpoint id=\"%s\" uri=\"%s\"/>",endpointInstanceName,uri);
+      int idx=lineNumber != null ? Integer.valueOf(lineNumber) - 1 : 0;
+      int spaces=LineNumberHelper.leadingSpaces(lines,idx) + extraSpaces;
+      line=LineNumberHelper.padString(line,spaces);
       if (created) {
-        List<String> lines=LineNumberHelper.readLines(file.getResourceInputStream());
-        String line=String.format("<endpoint id=\"%s\" uri=\"%s\"/>",endpointInstanceName,uri);
-        int idx=lineNumber != null ? Integer.valueOf(lineNumber) - 1 : 0;
-        int spaces=LineNumberHelper.leadingSpaces(lines,idx) + extraSpaces;
-        line=LineNumberHelper.padString(line,spaces);
-        lines.add(idx + 1,line);
-        String content=LineNumberHelper.linesToString(lines);
-        file.setContents(content);
+        lines.add(idx,line);
+      }
+ else {
+        lines.set(idx,line);
+      }
+      String content=LineNumberHelper.linesToString(lines);
+      file.setContents(content);
+      if (created) {
         return Results.success("Added endpoint: " + endpointInstanceName + " with uri: "+ uri);
       }
  else {
-        List<String> lines=LineNumberHelper.readLines(file.getResourceInputStream());
-        String line=String.format("<endpoint id=\"%s\" uri=\"%s\"/>",endpointInstanceName,uri);
-        int idx=lineNumber != null ? Integer.valueOf(lineNumber) - 1 : 0;
-        int spaces=LineNumberHelper.leadingSpaces(lines,idx) + extraSpaces;
-        line=LineNumberHelper.padString(line,spaces);
-        lines.set(idx,line);
-        String content=LineNumberHelper.linesToString(lines);
-        file.setContents(content);
         return Results.success("Update endpoint: " + endpointInstanceName + " with uri: "+ uri);
       }
     }
