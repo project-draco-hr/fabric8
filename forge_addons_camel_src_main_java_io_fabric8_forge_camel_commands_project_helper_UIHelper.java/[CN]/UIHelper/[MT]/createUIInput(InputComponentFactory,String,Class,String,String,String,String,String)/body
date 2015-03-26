@@ -1,9 +1,10 @@
 {
+  String usedValue=currentValue != null ? currentValue : defaultValue;
   InputComponent input;
   if (enums != null) {
     UISelectOne ui=factory.createSelectOne(name,inputClazz);
-    if (defaultValue != null) {
-      ui.setDefaultValue(defaultValue);
+    if (usedValue != null) {
+      ui.setDefaultValue(usedValue);
     }
     String[] values=enums.split(",");
     ui.setValueChoices(Arrays.asList(values));
@@ -11,8 +12,8 @@
   }
  else {
     UIInput ui=factory.createInput(name,inputClazz);
-    if (defaultValue != null) {
-      ui.setDefaultValue(defaultValue);
+    if (usedValue != null) {
+      ui.setDefaultValue(usedValue);
     }
     input=ui;
   }
