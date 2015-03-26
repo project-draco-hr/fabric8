@@ -6,15 +6,16 @@
         boolean camel=resource.getContents().contains("<camelContext");
         if (camel) {
           try {
-            List<String> lines=LineNumberHelper.readLines(resource.getResourceInputStream());
-            for (            String line : lines) {
-              line=line.trim();
-              Matcher matcher=pattern.matcher(line);
-              if (matcher.matches() && matcher.groupCount() == 2) {
-                String id=matcher.group(1);
-                String uri=matcher.group(2);
+            Document dom=XmlLineNumberParser.parseXml(resource.getResourceInputStream());
+            if (dom != null) {
+              List<Node> nodes=CamelXmlHelper.findAllEndpoints(dom);
+              for (              Node node : nodes) {
+                String uri=getSafeAttribute(node,"uri");
+                String id=getSafeAttribute(node,"id");
+                String lineNumber=(String)node.getUserData(XmlLineNumberParser.LINE_NUMBER);
                 CamelEndpointDetails detail=new CamelEndpointDetails();
                 detail.setResource(resource);
+                detail.setLineNumber(lineNumber);
                 detail.setEndpointInstance(id);
                 detail.setEndpointUri(uri);
                 detail.setEndpointComponentName(camelCatalog.endpointComponentName(uri));
@@ -22,7 +23,7 @@
               }
             }
           }
- catch (          IOException e) {
+ catch (          Exception e) {
           }
         }
       }
