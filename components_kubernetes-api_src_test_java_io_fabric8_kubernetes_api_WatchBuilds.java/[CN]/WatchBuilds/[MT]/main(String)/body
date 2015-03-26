@@ -14,14 +14,5 @@
   BuildWatcher watcher=new BuildWatcher(client,buildListener,namespace,consoleLink);
   long pollTime=3000;
   watcher.schedule(pollTime);
-  Object lock=new Object();
-  while (true) {
-synchronized (lock) {
-      try {
-        lock.wait();
-      }
- catch (      InterruptedException e) {
-      }
-    }
-  }
+  watcher.join();
 }
