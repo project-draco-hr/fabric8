@@ -1,0 +1,55 @@
+{
+  String camelComponentName=optionalAttributeValue(attributeMap,"componentName");
+  String endpointInstanceName=optionalAttributeValue(attributeMap,"instanceName");
+  String endpointUrl=mandatoryAttributeValue(attributeMap,"endpointUri");
+  String xml=mandatoryAttributeValue(attributeMap,"xml");
+  String lineNumber=mandatoryAttributeValue(attributeMap,"lineNumber");
+  Project project=getSelectedProject(context);
+  ResourcesFacet facet=project.getFacet(ResourcesFacet.class);
+  Dependency core=CamelProjectHelper.findCamelCoreDependency(project);
+  if (core == null) {
+    return Results.fail("The project does not include camel-core");
+  }
+  CamelComponentDetails details=new CamelComponentDetails();
+  Result result=loadCamelComponentDetails(camelComponentName,details);
+  if (result != null) {
+    return result;
+  }
+  result=ensureCamelArtifactIdAdded(project,details,dependencyInstaller);
+  if (result != null) {
+    return result;
+  }
+  Map<String,String> options=new HashMap<String,String>();
+  for (  InputComponent input : inputs) {
+    String key=input.getName();
+    if (input.hasValue()) {
+      String value=input.getValue().toString();
+      if (value != null) {
+        options.put(key,value);
+      }
+    }
+ else     if (input.isRequired() && input.hasDefaultValue()) {
+      String value=input.getValue().toString();
+      if (value != null) {
+        options.put(key,value);
+      }
+    }
+  }
+  CamelCatalog catalog=new DefaultCamelCatalog();
+  String uri=catalog.asEndpointUri(camelComponentName,options);
+  if (uri == null) {
+    return Results.fail("Cannot create endpoint uri");
+  }
+  FileResource file=facet.getResource(xml);
+  if (!file.exists()) {
+    return Results.fail("Cannot find XML file " + xml);
+  }
+  List<String> lines=LineNumberHelper.readLines(file.getResourceInputStream());
+  int idx=lineNumber != null ? Integer.valueOf(lineNumber) - 1 : 0;
+  String line=lines.get(idx);
+  line=line.replace(endpointUrl,uri);
+  lines.set(idx,line);
+  String content=LineNumberHelper.linesToString(lines);
+  file.setContents(content);
+  return Results.success("Update endpoint uri: " + uri + " in XML file "+ xml);
+}

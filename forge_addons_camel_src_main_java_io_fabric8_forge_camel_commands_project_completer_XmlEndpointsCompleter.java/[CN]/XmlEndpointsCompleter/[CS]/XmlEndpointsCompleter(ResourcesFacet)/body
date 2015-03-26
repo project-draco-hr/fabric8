@@ -13,8 +13,14 @@
                 String uri=getSafeAttribute(node,"uri");
                 String id=getSafeAttribute(node,"id");
                 String lineNumber=(String)node.getUserData(XmlLineNumberParser.LINE_NUMBER);
+                String baseDir=facet.getResourceDirectory().getFullyQualifiedName();
+                String fileName=resource.getFullyQualifiedName();
+                if (fileName.startsWith(baseDir)) {
+                  fileName=fileName.substring(baseDir.length() + 1);
+                }
                 CamelEndpointDetails detail=new CamelEndpointDetails();
                 detail.setResource(resource);
+                detail.setFileName(fileName);
                 detail.setLineNumber(lineNumber);
                 detail.setEndpointInstance(id);
                 detail.setEndpointUri(uri);
