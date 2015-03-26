@@ -1,8 +1,13 @@
 {
   Map<Object,Object> attributeMap=context.getUIContext().getAttributeMap();
-  attributeMap.put("componentName","timer");
-  attributeMap.put("instanceName","mytimer");
-  attributeMap.put("endpointUri",endpoints.getValue());
+  String selectedUri=endpoints.getValue();
+  CamelEndpointDetails detail=completer.getEndpointDetail(selectedUri);
+  if (detail == null) {
+    return null;
+  }
+  attributeMap.put("componentName",detail.getEndpointComponentName());
+  attributeMap.put("instanceName",detail.getEndpointInstance());
+  attributeMap.put("endpointUri",detail.getEndpointUri());
   attributeMap.put("kind","xml");
   attributeMap.put("xml","META-INF/spring/foo.xml");
   return Results.navigateTo(ConfigureEndpointPropertiesStep.class);

@@ -1,0 +1,32 @@
+{
+  facet.visitResources(new ResourceVisitor(){
+    @Override public void visit(    VisitContext context,    Resource<?> resource){
+      String name=resource.getName();
+      if (name.endsWith(".xml")) {
+        boolean camel=resource.getContents().contains("<camelContext");
+        if (camel) {
+          try {
+            List<String> lines=LineNumberHelper.readLines(resource.getResourceInputStream());
+            for (            String line : lines) {
+              line=line.trim();
+              Matcher matcher=pattern.matcher(line);
+              if (matcher.matches() && matcher.groupCount() == 2) {
+                String id=matcher.group(1);
+                String uri=matcher.group(2);
+                CamelEndpointDetails detail=new CamelEndpointDetails();
+                detail.setResource(resource);
+                detail.setEndpointInstance(id);
+                detail.setEndpointUri(uri);
+                detail.setEndpointComponentName(camelCatalog.endpointComponentName(uri));
+                endpoints.add(detail);
+              }
+            }
+          }
+ catch (          IOException e) {
+          }
+        }
+      }
+    }
+  }
+);
+}

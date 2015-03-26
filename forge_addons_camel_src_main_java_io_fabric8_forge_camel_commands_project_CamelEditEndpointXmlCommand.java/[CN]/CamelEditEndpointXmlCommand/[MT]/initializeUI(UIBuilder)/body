@@ -1,9 +1,7 @@
 {
   Project project=getSelectedProject(builder.getUIContext());
   ResourcesFacet resourcesFacet=project.getFacet(ResourcesFacet.class);
-  List<String> dummy=new ArrayList<>();
-  dummy.add("timer:foo?perdiod=5000");
-  dummy.add("seda:bar?timeout=10000");
-  endpoints.setValueChoices(dummy);
+  completer=new XmlEndpointsCompleter(resourcesFacet);
+  endpoints.setValueChoices(completer.getEndpointUris());
   builder.add(endpoints);
 }
