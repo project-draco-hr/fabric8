@@ -2,9 +2,9 @@
   List<Object> arguments=new ArrayList<>();
   for (  AnnotatedParameter<X> parameter : factoryMethod.getParameters()) {
     Type type=parameter.getBaseType();
-    Service service=parameter.getAnnotation(Service.class);
+    ServiceName serviceName=parameter.getAnnotation(ServiceName.class);
     Configuration configuration=parameter.getAnnotation(Configuration.class);
-    if (service != null) {
+    if (serviceName != null) {
       String serviceUrl=getServiceUrl(serviceId,serviceProtocol,ctx);
       arguments.add(serviceUrl);
     }
