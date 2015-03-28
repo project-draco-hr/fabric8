@@ -1,0 +1,31 @@
+{
+  List<Build> builds=findBuilds(name,namespace);
+  int size=builds.size();
+  if (size < 1) {
+    return null;
+  }
+ else   if (size == 1) {
+    return builds.get(0);
+  }
+ else {
+    SortedMap<Date,Build> map=new TreeMap<>();
+    for (    Build build : builds) {
+      Date date=Builds.getCreationTimestampDate(build);
+      if (date != null) {
+        Build otherBuild=map.get(date);
+        if (otherBuild != null) {
+          LOG.warn("Got 2 builds at the same time: " + build + " and "+ otherBuild);
+        }
+ else {
+          map.put(date,build);
+        }
+      }
+    }
+    Date lastKey=map.lastKey();
+    Build build=map.get(lastKey);
+    if (build == null) {
+      LOG.warn("Should have a value for the last key " + lastKey + " for builds "+ map);
+    }
+    return build;
+  }
+}

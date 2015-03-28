@@ -1,0 +1,22 @@
+{
+  long processInstanceId=workItem.getProcessInstanceId();
+  String buildName=(String)workItem.getParameter("BuildName");
+  String namespace=(String)workItem.getParameter("Namespace");
+  LOG.info("Executing namespace: " + namespace + " build: "+ buildName+ " processInstanceId: "+ processInstanceId+ " workItemId: "+ workItem.getId());
+  if (Strings.isNullOrBlank(namespace)) {
+    fail(workItem,manager,"Missing workflow configuration for Namespace");
+  }
+ else   if (Strings.isNullOrBlank(buildName)) {
+    fail(workItem,manager,"Missing workflow configuration for BuildName");
+  }
+ else {
+    String buildUuid=buildTrigger.trigger(namespace,buildName);
+    if (Strings.isNullOrBlank(buildUuid)) {
+      fail(workItem,manager,"Could not trigger build for namespace: " + namespace + " build: "+ buildName);
+    }
+ else {
+      BuildCorrelationKey key=new BuildCorrelationKey(namespace,buildName,buildUuid);
+      buildProcessCorrelator.putBuildProcessInstanceId(key,processInstanceId);
+    }
+  }
+}

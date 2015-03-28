@@ -1,0 +1,21 @@
+{
+  String buildName=event.getConfigName();
+  String buildUuid=event.getUid();
+  String buildLink=event.getBuildLink();
+  System.out.println("Build: " + buildUuid + " for config: "+ buildName+ " finished. Status: "+ event.getStatus()+ " link: "+ buildLink);
+  BuildCorrelationKey key=BuildCorrelationKey.create(event);
+  Map<String,String> signalObject=new HashMap<>();
+  signalObject.put("buildUuid",buildUuid);
+  signalObject.put("buildLink",buildLink);
+  List<Long> processIds=buildProcessCorrelator.findProcessInstancesForBuild(key);
+  if (processIds.isEmpty()) {
+    LOG.info("No existing processes associated with build " + key + " so lets signal a new process to start");
+    ksession.signalEvent(buildName,signalObject);
+  }
+ else {
+    for (    Long processId : processIds) {
+      LOG.info("Signalling event on process id: " + processId + " for "+ key+ " with data: "+ signalObject);
+      ksession.signalEvent(buildName,signalObject,processId);
+    }
+  }
+}

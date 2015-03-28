@@ -1,0 +1,27 @@
+{
+  String answer=triggerBuild(name,namespace);
+  if (Strings.isNullOrBlank(answer)) {
+    int sleepMillis=2000;
+    long endTime=System.currentTimeMillis() + maxTimeoutMs;
+    while (true) {
+      Build build=findLatestBuild(name,namespace);
+      if (build != null) {
+        String uid=Builds.getUid(build);
+        answer=uid;
+        break;
+      }
+      if (System.currentTimeMillis() > endTime) {
+        break;
+      }
+ else {
+        try {
+          Thread.sleep(sleepMillis);
+        }
+ catch (        InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+  return answer;
+}

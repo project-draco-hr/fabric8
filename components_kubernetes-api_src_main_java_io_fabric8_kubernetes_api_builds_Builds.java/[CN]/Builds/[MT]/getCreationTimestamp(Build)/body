@@ -1,0 +1,11 @@
+{
+  String answer=null;
+  if (build != null) {
+    Map<String,Object> metadata=getMetadata(build);
+    answer=getString(metadata,"creationTimestamp");
+    if (Strings.isNullOrBlank(answer)) {
+      answer=build.getCreationTimestamp();
+    }
+  }
+  return answer;
+}

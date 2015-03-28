@@ -33,7 +33,7 @@
       throw new IllegalArgumentException("BuildConfig does not have secret for build: " + name + " namespace: "+ namespace);
     }
     LOG.info("Triggering build " + name + " namespace: "+ namespace+ " type: "+ type);
-    getKubernetesExtensions().triggerBuild(name,namespace,secret,type,null);
+    return getKubernetesExtensions().triggerBuild(name,namespace,secret,type,null);
   }
  else {
     throw new IllegalArgumentException("No BuildConfig for build: " + name + " namespace: "+ namespace);

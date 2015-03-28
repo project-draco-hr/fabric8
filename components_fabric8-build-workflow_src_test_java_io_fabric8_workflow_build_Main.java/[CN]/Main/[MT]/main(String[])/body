@@ -1,0 +1,14 @@
+{
+  KieServices ks=KieServices.Factory.get();
+  KieContainer kContainer=ks.getKieClasspathContainer();
+  KieBase kbase=kContainer.getKieBase("kbase");
+  RuntimeManager manager=createRuntimeManager(kbase);
+  RuntimeEngine engine=manager.getRuntimeEngine(null);
+  final KieSession ksession=engine.getKieSession();
+  TaskService taskService=engine.getTaskService();
+  BuildSignallerService signallerService=new BuildSignallerService(kbase,engine);
+  signallerService.start();
+  signallerService.join();
+  manager.disposeRuntimeEngine(engine);
+  System.exit(0);
+}
