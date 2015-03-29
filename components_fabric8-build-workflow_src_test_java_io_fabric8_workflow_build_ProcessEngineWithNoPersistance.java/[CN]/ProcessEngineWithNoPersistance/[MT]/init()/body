@@ -1,0 +1,10 @@
+{
+  if (runtimeManager == null) {
+    KieServices ks=KieServices.Factory.get();
+    KieContainer kContainer=ks.getKieClasspathContainer();
+    kieBase=kContainer.getKieBase("kbase");
+    SimpleRegisterableItemsFactory factory=new SimpleRegisterableItemsFactory();
+    RuntimeEnvironmentBuilder builder=RuntimeEnvironmentBuilder.Factory.get().newEmptyBuilder().persistence(false).knowledgeBase(kieBase).registerableItemsFactory(factory);
+    runtimeManager=org.kie.internal.runtime.manager.RuntimeManagerFactory.Factory.get().newSingletonRuntimeManager(builder.get(),"com.sample:example:1.0");
+  }
+}

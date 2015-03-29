@@ -1,0 +1,13 @@
+{
+  ProcessEngineWithNoPersistance processEngine=new ProcessEngineWithNoPersistance();
+  processEngine.init();
+  RuntimeManager runtimeManager=processEngine.getRuntimeManager();
+  RuntimeEngine engine=runtimeManager.getRuntimeEngine(EmptyContext.get());
+  KieBase kbase=engine.getKieSession().getKieBase();
+  System.setProperty("FABRIC8_SIMULATOR_START_BUILD_NAME","buildSignalevent");
+  System.setProperty("FABRIC8_SIMULATOR_ENABLED","true");
+  BuildSignallerService signallerService=new BuildSignallerService(kbase,engine);
+  signallerService.start();
+  signallerService.join();
+  runtimeManager.disposeRuntimeEngine(engine);
+}
