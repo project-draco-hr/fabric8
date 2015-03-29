@@ -1,0 +1,13 @@
+{
+  String uuid="" + buildCounter.incrementAndGet();
+  final BuildCorrelationKey key=new BuildCorrelationKey(namespace,buildName,uuid);
+  TimerTask notifyBuildTask=new TimerTask(){
+    @Override public void run(){
+      System.out.println("Triggering build for: " + key);
+      notifyBuild(key);
+    }
+  }
+;
+  timer.schedule(notifyBuildTask,2 * pollTime);
+  return uuid;
+}

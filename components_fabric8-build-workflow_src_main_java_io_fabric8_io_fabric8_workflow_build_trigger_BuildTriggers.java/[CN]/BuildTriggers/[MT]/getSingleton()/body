@@ -1,3 +1,11 @@
 {
+  if (singleton == null) {
+    if (BuildSimulator.isEnabled()) {
+      singleton=new SimulatorBuildTrigger();
+    }
+ else {
+      singleton=new DefaultBuildTrigger();
+    }
+  }
   return singleton;
 }

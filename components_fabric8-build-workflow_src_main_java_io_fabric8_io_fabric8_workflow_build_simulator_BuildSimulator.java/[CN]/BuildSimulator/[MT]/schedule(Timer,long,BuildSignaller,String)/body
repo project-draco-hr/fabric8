@@ -1,0 +1,14 @@
+{
+  this.timer=timer;
+  this.pollTime=pollTime;
+  this.buildListener=buildListener;
+  this.consoleLink=consoleLink;
+  startBuildName=Systems.getEnvVarOrSystemProperty(FABRIC8_SIMULATOR_START_BUILD_NAME,startBuildName);
+  TimerTask startBuildTask=new TimerTask(){
+    @Override public void run(){
+      triggerBuild(startBuildNamespace,startBuildName);
+    }
+  }
+;
+  timer.schedule(startBuildTask,initialBuildDelay,startBuildPeriod);
+}

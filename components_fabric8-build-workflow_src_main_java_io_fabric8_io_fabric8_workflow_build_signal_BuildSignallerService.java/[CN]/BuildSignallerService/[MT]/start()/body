@@ -1,7 +1,14 @@
 {
   String consoleLink=Links.getFabric8ConsoleLink();
   String namespace=null;
-  watcher=new BuildWatcher(client,new BuildSignaller(kbase,engine,buildProcessCorrelator),namespace,consoleLink);
+  BuildSignaller buildListener=new BuildSignaller(kbase,engine,buildProcessCorrelator);
   long pollTime=3000;
-  watcher.schedule(timer,pollTime);
+  if (BuildSimulator.isEnabled()) {
+    simulator=BuildSimulator.getSingleton();
+    simulator.schedule(timer,pollTime,buildListener,consoleLink);
+  }
+ else {
+    watcher=new BuildWatcher(client,buildListener,namespace,consoleLink);
+    watcher.schedule(timer,pollTime);
+  }
 }
