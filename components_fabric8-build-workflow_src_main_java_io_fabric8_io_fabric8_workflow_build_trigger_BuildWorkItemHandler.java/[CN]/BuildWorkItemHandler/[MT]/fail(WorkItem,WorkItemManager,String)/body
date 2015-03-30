@@ -1,4 +1,6 @@
 {
   LOG.error("Failed to complete work item " + workItem.getId() + " due to: "+ reason);
-  workItem.getResults().put("Failed",reason);
+  Map<String,Object> result=new HashMap<>();
+  result.put("Failed",reason);
+  manager.completeWorkItem(workItem.getId(),result);
 }
