@@ -1,0 +1,12 @@
+{
+  AnnotationLiteral<Eager> annotationLiteral=new AnnotationLiteral<Eager>(){
+  }
+;
+  Set<Bean<?>> beans=beanManager.getBeans(Object.class,annotationLiteral);
+  for (  Bean<?> bean : beans) {
+    Class<?> beanClass=bean.getBeanClass();
+    if (beanClass.isAnnotationPresent(ApplicationScoped.class) || beanClass.isAnnotationPresent(Singleton.class)) {
+      beanManager.getReference(bean,bean.getBeanClass(),beanManager.createCreationalContext(bean)).toString();
+    }
+  }
+}
