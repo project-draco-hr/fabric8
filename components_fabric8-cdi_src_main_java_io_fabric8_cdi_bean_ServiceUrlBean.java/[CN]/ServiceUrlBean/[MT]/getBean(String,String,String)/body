@@ -1,0 +1,10 @@
+{
+  String serviceAlias=alias != null ? alias : id + "-" + protocol+ SUFFIX;
+  Key key=new Key(id,protocol,serviceAlias);
+  if (BEANS.containsKey(key)) {
+    return BEANS.get(key);
+  }
+  ServiceUrlBean bean=new ServiceUrlBean(id,protocol,serviceAlias);
+  BEANS.put(key,bean);
+  return bean;
+}
