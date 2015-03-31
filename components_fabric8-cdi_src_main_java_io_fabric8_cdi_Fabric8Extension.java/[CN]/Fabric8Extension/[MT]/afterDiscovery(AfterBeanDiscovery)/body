@@ -1,6 +1,21 @@
 {
   event.addBean(new KubernetesFactoryBean());
   event.addBean(new KubernetesClientBean());
+  List<FactoryMethodContext> reverseFactories=new ArrayList<>(FactoryMethodContext.sort(factories));
+  Collections.reverse(reverseFactories);
+  for (  final FactoryMethodContext factoryMethodContext : reverseFactories) {
+    ServiceBean.doWith(factoryMethodContext.getReturnType(),new ServiceBean.Callback(){
+      @Override public ServiceBean apply(      ServiceBean bean){
+        String serviceId=bean.getServiceId();
+        String serviceProtocol=bean.getServiceProtocol();
+        if (!String.class.equals(factoryMethodContext.getSourceType())) {
+          ServiceBean.getBean(serviceId,serviceProtocol,null,(Class<Object>)factoryMethodContext.getSourceType());
+        }
+        return bean.withProducer(new FactoryMethodProducer(factoryMethodContext.getBean(),factoryMethodContext.getFactoryMethod(),serviceId,serviceProtocol));
+      }
+    }
+);
+  }
   for (  ServiceUrlBean bean : ServiceUrlBean.getBeans()) {
     event.addBean(bean);
   }

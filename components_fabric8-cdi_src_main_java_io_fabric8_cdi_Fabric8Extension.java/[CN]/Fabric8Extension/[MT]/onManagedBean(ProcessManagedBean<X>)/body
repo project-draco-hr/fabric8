@@ -2,15 +2,9 @@
   for (  final AnnotatedMethod<?> method : event.getAnnotatedBeanClass().getMethods()) {
     final Factory factory=method.getAnnotation(Factory.class);
     if (factory != null) {
-      Type returnType=method.getJavaMember().getReturnType();
-      ServiceBean.doWith(returnType,new ServiceBean.Callback(){
-        @Override public ServiceBean apply(        ServiceBean bean){
-          String serviceId=bean.getServiceId();
-          String serviceProtocol=bean.getServiceProtocol();
-          return bean.withProducer(new FactoryMethodProducer(event.getBean(),method,serviceId,serviceProtocol));
-        }
-      }
-);
+      final Type sourceType=getSourceType(method);
+      final Type returnType=method.getJavaMember().getReturnType();
+      factories.add(new FactoryMethodContext(event.getBean(),(Class)sourceType,(Class)returnType,method));
     }
   }
 }
