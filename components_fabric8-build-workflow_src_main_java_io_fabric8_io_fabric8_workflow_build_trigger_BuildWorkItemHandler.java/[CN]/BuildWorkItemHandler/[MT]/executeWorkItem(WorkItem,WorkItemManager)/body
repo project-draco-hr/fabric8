@@ -2,7 +2,7 @@
   long processInstanceId=workItem.getProcessInstanceId();
   String buildName=(String)workItem.getParameter("BuildName");
   String namespace=(String)workItem.getParameter("Namespace");
-  LOG.info("Executing namespace: " + namespace + " build: "+ buildName+ " processInstanceId: "+ processInstanceId+ " workItemId: "+ workItem.getId());
+  System.out.println("BuildWorkItemHandler: Executing namespace: " + namespace + " build: "+ buildName+ " processInstanceId: "+ processInstanceId+ " workItemId: "+ workItem.getId());
   if (Strings.isNullOrBlank(namespace)) {
     fail(workItem,manager,"Missing workflow configuration for Namespace");
   }
@@ -16,7 +16,7 @@
     }
  else {
       BuildCorrelationKey key=new BuildCorrelationKey(namespace,buildName,buildUuid);
-      buildProcessCorrelator.putBuildProcessInstanceId(key,processInstanceId);
+      buildProcessCorrelator.putBuildWorkItemId(key,workItem.getId());
     }
   }
 }

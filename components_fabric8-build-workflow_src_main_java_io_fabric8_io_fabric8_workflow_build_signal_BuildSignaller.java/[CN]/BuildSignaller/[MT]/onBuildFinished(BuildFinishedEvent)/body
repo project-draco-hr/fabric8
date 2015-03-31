@@ -1,4 +1,5 @@
 {
+  String namespace=event.getNamespace();
   String buildName=event.getConfigName();
   String buildUuid=event.getUid();
   String buildLink=event.getBuildLink();
@@ -7,13 +8,42 @@
   Map<String,String> signalObject=new HashMap<>();
   signalObject.put("buildUuid",buildUuid);
   signalObject.put("buildLink",buildLink);
-  Long processId=buildProcessCorrelator.findProcessInstanceIdForBuild(key);
-  if (processId == null) {
+  BuildFinishedDTO buildFinishedDTO=new BuildFinishedDTO(event);
+  Long workItemId=buildProcessCorrelator.findWorkItemIdForBuild(key);
+  if (workItemId == null) {
+    String startNodeName=getStartSignalName(namespace,buildName);
     LOG.info("No existing processes associated with build " + key + " so lets signal a new process to start");
     ksession.signalEvent(buildName,signalObject);
+    Map<String,Object> inputParameters=new HashMap<>();
+    populateParameters(inputParameters,buildFinishedDTO);
+    Collection<Process> processes=ksession.getKieBase().getProcesses();
+    int startCount=0;
+    for (    Process process : processes) {
+      if (process instanceof WorkflowProcess) {
+        WorkflowProcess workflowProcess=(WorkflowProcess)process;
+        Node[] nodes=workflowProcess.getNodes();
+        if (nodes != null) {
+          for (          Node node : nodes) {
+            String name=node.getName();
+            if (Objects.equals(startNodeName,name)) {
+              String processId=process.getId();
+              LOG.info("Starting process " + processId + " with parameters: "+ inputParameters);
+              startCount++;
+              ksession.startProcess(processId,inputParameters);
+            }
+          }
+        }
+      }
+    }
+    if (startCount == 0) {
+      LOG.warn("No business process starts with signal of name: " + startNodeName);
+    }
   }
  else {
-    LOG.info("Signalling event on process id: " + processId + " for "+ key+ " with data: "+ signalObject);
-    ksession.signalEvent(buildName,signalObject,processId);
+    ksession.signalEvent(buildName,signalObject,workItemId);
+    Map<String,Object> results=new HashMap<>();
+    populateParameters(results,buildFinishedDTO);
+    LOG.info("Completing work item id: " + workItemId + " for "+ key+ " with data: "+ results);
+    ksession.getWorkItemManager().completeWorkItem(workItemId,results);
   }
 }
