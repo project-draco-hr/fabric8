@@ -13,6 +13,16 @@
  else {
       ServiceBean.getBean(serviceId,serviceProtocol,(Class)type);
     }
+    if (protocol == null) {
+      event.setInjectionPoint(new DelegatingInjectionPoint(injectionPoint){
+        @Override public Set<Annotation> getQualifiers(){
+          Set<Annotation> qualifiers=new LinkedHashSet<>(super.getQualifiers());
+          qualifiers.add(new ProtocolQualifier("tcp"));
+          return Collections.unmodifiableSet(qualifiers);
+        }
+      }
+);
+    }
   }
  else   if (isConfigurationInjectionPoint(injectionPoint)) {
     Annotated annotated=injectionPoint.getAnnotated();
