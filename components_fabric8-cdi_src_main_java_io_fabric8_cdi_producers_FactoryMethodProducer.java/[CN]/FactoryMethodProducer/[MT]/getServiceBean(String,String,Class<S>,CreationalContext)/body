@@ -1,0 +1,8 @@
+{
+  try {
+    return BeanProvider.getContextualReference(serviceType,Qualifiers.create(serviceId,serviceProtocol));
+  }
+ catch (  IllegalStateException e) {
+    return (S)ServiceBean.anyBean(serviceId,serviceProtocol,serviceType).getProducer().produce(context);
+  }
+}

@@ -4,9 +4,13 @@
     Type type=parameter.getBaseType();
     ServiceName serviceName=parameter.getAnnotation(ServiceName.class);
     Configuration configuration=parameter.getAnnotation(Configuration.class);
-    if (serviceName != null) {
+    if (serviceName != null && String.class.equals(type)) {
       String serviceUrl=getServiceUrl(serviceId,serviceProtocol,ctx);
       arguments.add(serviceUrl);
+    }
+ else     if (serviceName != null && !String.class.equals(type)) {
+      Object serviceBean=getServiceBean(serviceId,serviceProtocol,(Class<Object>)type,ctx);
+      arguments.add(serviceBean);
     }
  else     if (configuration != null) {
       Object config=getConfiguration(serviceId,(Class<Object>)type,ctx);
