@@ -58,12 +58,14 @@
         }
       }
       int extraSpaces=0;
+      int extraLines=0;
       if (found == null) {
         created=true;
         found=insertEndpointBefore(camel);
         if (found == null) {
           found=camelContext;
           extraSpaces=2;
+          extraLines=1;
         }
       }
       if (found == null) {
@@ -73,6 +75,7 @@
       List<String> lines=LineNumberHelper.readLines(file.getResourceInputStream());
       String line=String.format("<endpoint id=\"%s\" uri=\"%s\"/>",endpointInstanceName,uri);
       int idx=lineNumber != null ? Integer.valueOf(lineNumber) - 1 : 0;
+      idx+=extraLines;
       int spaces=LineNumberHelper.leadingSpaces(lines,idx) + extraSpaces;
       line=LineNumberHelper.padString(line,spaces);
       if (created) {
