@@ -1,0 +1,30 @@
+{
+  if (ObjectHelper.isEmpty(input)) {
+    return input;
+  }
+  if (from == null) {
+    throw new IllegalArgumentException("from cannot be null");
+  }
+  if (to == null) {
+    throw new IllegalArgumentException("to cannot be null");
+  }
+  if (!input.contains(from)) {
+    return input;
+  }
+  final int len=from.length();
+  final int max=input.length();
+  StringBuilder sb=new StringBuilder(max);
+  for (int i=0; i < max; ) {
+    if (i + len <= max) {
+      String token=input.substring(i,i + len);
+      if (from.equals(token)) {
+        sb.append(to);
+        i=i + len;
+        continue;
+      }
+    }
+    sb.append(input.charAt(i));
+    i++;
+  }
+  return sb.toString();
+}
