@@ -1,17 +1,7 @@
 {
   try {
-    ObjectMapper mapper=new ObjectMapper();
     Object entity=response.getEntity();
-    String message="No message";
-    if (entity instanceof InputStream) {
-      Status error=mapper.readValue((InputStream)entity,Status.class);
-      if (error != null) {
-        message=error.getMessage();
-      }
-    }
- else     if (entity != null) {
-      message=entity.toString();
-    }
+    String message=extractErrorMessage(entity);
     message="HTTP " + response.getStatus() + " "+ message;
     return new WebApplicationException(message,response);
   }

@@ -1,0 +1,20 @@
+{
+  WebClient webClient=getFactory(true).createWebClient();
+  String url=URLUtils.pathJoin("/osapi",KubernetesHelper.defaultOsApiVersion,"buildConfigHooks",name,secret,type);
+  LOG.debug("Triggering build by posting to: " + url);
+  webClient.getHeaders().remove(HttpHeaders.ACCEPT);
+  webClient=webClient.path(url).header(HttpHeaders.CONTENT_TYPE,"application/json");
+  Response response=webClient.post(null);
+  int status=response.getStatus();
+  if (status != 200) {
+    Object entity=response.getEntity();
+    if (entity != null) {
+      String message=ExceptionResponseMapper.extractErrorMessage(entity);
+      throw new WebApplicationException(status + ": " + message,status);
+    }
+ else {
+      throw new WebApplicationException(status);
+    }
+  }
+  return null;
+}
