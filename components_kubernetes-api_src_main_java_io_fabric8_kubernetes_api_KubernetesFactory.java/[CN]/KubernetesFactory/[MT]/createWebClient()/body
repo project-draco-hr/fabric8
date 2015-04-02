@@ -1,15 +1,3 @@
 {
-  List<Object> providers=createProviders();
-  WebClient webClient=WebClient.create(address,providers);
-  configureAuthDetails(webClient);
-  if (trustAllCerts) {
-    disableSslChecks(webClient);
-  }
- else   if (caCertFile != null || caCertData != null) {
-    configureCaCert(webClient);
-  }
-  if ((clientCertFile != null || clientCertData != null) && (clientKeyFile != null || clientKeyData != null)) {
-    configureClientCert(webClient);
-  }
-  return webClient;
+  return createWebClient(address);
 }
