@@ -1,9 +1,9 @@
 {
-  WorkItemManager workItemManager=engine.getKieSession().getWorkItemManager();
-  CustomWorkItemHandlers.register(workItemManager);
+  WorkItemManager workItemManager=ksession.getWorkItemManager();
+  CustomWorkItemHandlers.register(ksession,workItemManager);
   String consoleLink=Links.getFabric8ConsoleLink();
   String namespace=null;
-  BuildSignaller buildListener=new BuildSignaller(kbase,engine,buildProcessCorrelator);
+  BuildSignaller buildListener=new BuildSignaller(ksession,buildProcessCorrelator);
   long pollTime=3000;
   if (BuildSimulator.isEnabled()) {
     simulator=BuildSimulator.getSingleton();

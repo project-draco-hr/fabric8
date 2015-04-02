@@ -4,7 +4,8 @@
   KieBase kbase=kContainer.getKieBase("kbase");
   RuntimeManager manager=createRuntimeManager(kbase);
   RuntimeEngine engine=manager.getRuntimeEngine(null);
-  BuildSignallerService signallerService=new BuildSignallerService(kbase,engine);
+  KieSession ksession=engine.getKieSession();
+  BuildSignallerService signallerService=new BuildSignallerService(ksession);
   signallerService.start();
   signallerService.join();
   manager.disposeRuntimeEngine(engine);
