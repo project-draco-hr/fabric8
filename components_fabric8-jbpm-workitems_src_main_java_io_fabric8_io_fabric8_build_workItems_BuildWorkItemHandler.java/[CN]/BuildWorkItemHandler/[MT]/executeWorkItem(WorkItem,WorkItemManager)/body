@@ -1,0 +1,56 @@
+{
+  Map<String,Object> parameters=workItem.getParameters();
+  Map<String,Object> allParameters=new HashMap<String,Object>(parameters);
+  allParameters.put("processInstanceId",workItem.getProcessInstanceId());
+  allParameters.put("workItemId",workItem.getId());
+  if (!allParameters.containsKey("namespace") || !allParameters.containsKey("buildName")) {
+    String name=workItem.getName();
+    if (name != null) {
+      String[] pair=name.split("/",2);
+      if (pair != null && pair.length == 2) {
+        String namespace=pair[0];
+        String buildName=pair[1];
+        allParameters.put("namespace",namespace);
+        allParameters.put("buildName",buildName);
+      }
+    }
+  }
+  if (!allParameters.containsKey("namespace") || !allParameters.containsKey("buildName")) {
+    logWarning("Should have namespace and buildName but has " + allParameters);
+  }
+  StringBuilder buffer=new StringBuilder("{");
+  int count=0;
+  Set<Map.Entry<String,Object>> entries=allParameters.entrySet();
+  for (  Map.Entry<String,Object> entry : entries) {
+    String key=entry.getKey();
+    Object value=entry.getValue();
+    if (key != null && value != null) {
+      if (count++ > 0) {
+        buffer.append(", ");
+      }
+      encodeJson(buffer,key);
+      buffer.append(": ");
+      encodeJson(buffer,value);
+    }
+  }
+  buffer.append("}");
+  String json=buffer.toString();
+  System.out.println("About to post JSON: " + json);
+  String triggerBuildURL=createTriggerBuildURL();
+  try {
+    URL url=new URL(triggerBuildURL);
+    HttpURLConnection connection=(HttpURLConnection)url.openConnection();
+    connection.setRequestMethod("POST");
+    connection.setRequestProperty("Content-Type","application/json");
+    connection.setDoOutput(true);
+    OutputStreamWriter out=new OutputStreamWriter(connection.getOutputStream());
+    out.write(json);
+    out.close();
+    int responseCode=connection.getResponseCode();
+    String responseMessage=connection.getResponseMessage();
+    System.out.println("Got response code: " + responseCode + " message: "+ responseMessage);
+  }
+ catch (  IOException e) {
+    logError("Failed to post to: " + triggerBuildURL + ". "+ e,e);
+  }
+}

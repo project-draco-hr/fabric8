@@ -1,12 +1,12 @@
 {
   long processInstanceId=workItem.getProcessInstanceId();
-  String buildName=WorkItemHandlers.getMandatoryParameter(workItem,manager,"buildName");
+  long workItemId=workItem.getId();
   String namespace=WorkItemHandlers.getMandatoryParameter(workItem,manager,"namespace");
-  LOG.info("Executing build: " + namespace + "/"+ buildName+ " processInstanceId: "+ processInstanceId+ " workItemId: "+ workItem.getId());
+  String buildName=WorkItemHandlers.getMandatoryParameter(workItem,manager,"buildName");
+  LOG.info("Executing build: " + namespace + "/"+ buildName+ " processInstanceId: "+ processInstanceId+ " workItemId: "+ workItemId);
   String buildUuid=null;
   try {
-    buildUuid=buildTrigger.trigger(namespace,buildName);
-    LOG.info("Created " + buildUuid + " from build: "+ namespace+ "/"+ buildName+ " processInstanceId: "+ processInstanceId+ " workItemId: "+ workItem.getId());
+    buildUuid=triggerBuild(processInstanceId,workItemId,namespace,buildName);
   }
  catch (  Exception e) {
     WorkItemHandlers.fail(workItem,manager,"Could not trigger build for namespace: " + namespace + " build: "+ buildName,e);
@@ -14,9 +14,5 @@
   }
   if (Strings.isNullOrBlank(buildUuid)) {
     WorkItemHandlers.fail(workItem,manager,"Could not trigger build for namespace: " + namespace + " build: "+ buildName);
-  }
- else {
-    BuildCorrelationKey key=new BuildCorrelationKey(namespace,buildName,buildUuid);
-    buildProcessCorrelator.putBuildWorkItemId(key,workItem.getId());
   }
 }

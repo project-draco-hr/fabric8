@@ -1,0 +1,10 @@
+{
+  String buildUuid;
+  buildUuid=buildTrigger.trigger(namespace,buildName);
+  LOG.info("Created " + buildUuid + " from build: "+ namespace+ "/"+ buildName+ " processInstanceId: "+ processInstanceId+ " workItemId: "+ workItemId);
+  if (Strings.isNotBlank(buildUuid)) {
+    BuildCorrelationKey key=new BuildCorrelationKey(namespace,buildName,buildUuid);
+    buildProcessCorrelator.putBuildWorkItemId(key,workItemId);
+  }
+  return buildUuid;
+}
