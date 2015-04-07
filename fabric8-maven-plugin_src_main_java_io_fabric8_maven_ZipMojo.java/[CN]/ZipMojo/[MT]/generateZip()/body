@@ -38,12 +38,14 @@
 );
       if (icons == null || icons.length == 0) {
         InputStream in=loadPluginResource(iconRef);
-        for (        String ext : ICON_EXTENSIONS) {
-          String name=iconRef + ext;
-          in=loadPluginResource(name);
-          if (in != null) {
-            iconRef=name;
-            break;
+        if (in == null) {
+          for (          String ext : ICON_EXTENSIONS) {
+            String name=iconRef + ext;
+            in=loadPluginResource(name);
+            if (in != null) {
+              iconRef=name;
+              break;
+            }
           }
         }
         if (in == null) {
