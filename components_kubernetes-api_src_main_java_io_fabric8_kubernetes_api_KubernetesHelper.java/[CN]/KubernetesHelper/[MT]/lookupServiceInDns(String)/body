@@ -1,0 +1,24 @@
+{
+  try {
+    Lookup l=new Lookup(serviceName);
+    Record[] records=l.run();
+    if (l.getResult() == Lookup.SUCCESSFUL) {
+      Set<String> endpointAddresses=new HashSet<>(records.length);
+      for (int i=0; i < records.length; i++) {
+        ARecord aRecord=(ARecord)records[i];
+        endpointAddresses.add(aRecord.getAddress().getHostAddress());
+      }
+      return endpointAddresses;
+    }
+ else {
+      LOG.warn("Lookup {} result: {}",serviceName,l.getErrorString());
+    }
+  }
+ catch (  TextParseException e) {
+    LOG.error("Unparseable service name: {}",serviceName,e);
+  }
+catch (  ClassCastException e) {
+    LOG.error("Invalid response from DNS server - should have been A records",e);
+  }
+  return Collections.EMPTY_SET;
+}
