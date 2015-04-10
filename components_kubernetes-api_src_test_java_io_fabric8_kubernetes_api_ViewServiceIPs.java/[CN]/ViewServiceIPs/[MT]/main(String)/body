@@ -1,0 +1,20 @@
+{
+  System.out.println("Usage: [serviceName]");
+  try {
+    String service=null;
+    if (args.length > 0) {
+      service=args[0];
+    }
+    Set<String> addresses=KubernetesHelper.lookupServiceInDns(service);
+    if (addresses != null) {
+      System.out.println("addresses: " + addresses);
+    }
+ else {
+      System.out.println("null addresses");
+    }
+  }
+ catch (  Exception e) {
+    System.out.println("FAILED: " + e);
+    e.printStackTrace();
+  }
+}
