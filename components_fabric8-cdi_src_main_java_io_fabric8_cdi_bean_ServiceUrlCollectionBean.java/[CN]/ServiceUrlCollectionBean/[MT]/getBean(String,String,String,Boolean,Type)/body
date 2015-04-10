@@ -1,0 +1,10 @@
+{
+  String serviceAlias=alias != null ? alias : id + "-" + protocol+ (endpoint ? ENDPOINT_SUFFIX : SUFFIX);
+  Key key=new Key(id,protocol,serviceAlias,endpoint,collectionType);
+  if (BEANS.containsKey(key)) {
+    return BEANS.get(key);
+  }
+  ServiceUrlCollectionBean bean=new ServiceUrlCollectionBean(id,protocol,serviceAlias,endpoint,collectionType);
+  BEANS.put(key,bean);
+  return bean;
+}

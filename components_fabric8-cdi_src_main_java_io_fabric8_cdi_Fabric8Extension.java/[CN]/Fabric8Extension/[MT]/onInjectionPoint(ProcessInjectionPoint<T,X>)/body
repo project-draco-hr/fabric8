@@ -5,6 +5,7 @@
     Alias alias=annotated.getAnnotation(Alias.class);
     ServiceName serviceName=annotated.getAnnotation(ServiceName.class);
     Protocol protocol=annotated.getAnnotation(Protocol.class);
+    Boolean serviceEndpoint=annotated.getAnnotation(Endpoint.class) != null;
     String serviceId=serviceName.value();
     String serviceProtocol=protocol != null ? protocol.value() : "tcp";
     String serviceAlias=alias != null ? alias.value() : null;
@@ -12,18 +13,21 @@
     if (type.equals(String.class)) {
       ServiceUrlBean.getBean(serviceId,serviceProtocol,serviceAlias);
     }
+ else     if (serviceEndpoint && isGenericOf(type,List.class,String.class)) {
+      ServiceUrlCollectionBean.getBean(serviceId,serviceProtocol,serviceAlias,serviceEndpoint,Types.LIST_OF_STRINGS);
+    }
+ else     if (serviceEndpoint && isGenericOf(type,List.class,null)) {
+    }
+ else     if (serviceEndpoint && isGenericOf(type,Set.class,String.class)) {
+      ServiceUrlCollectionBean.getBean(serviceId,serviceProtocol,serviceAlias,serviceEndpoint,Types.SET_OF_STRINGS);
+    }
+ else     if (serviceEndpoint && isGenericOf(type,Set.class,null)) {
+    }
  else {
       ServiceBean.getBean(serviceId,serviceProtocol,serviceAlias,(Class)type);
     }
     if (protocol == null) {
-      event.setInjectionPoint(new DelegatingInjectionPoint(injectionPoint){
-        @Override public Set<Annotation> getQualifiers(){
-          Set<Annotation> qualifiers=new LinkedHashSet<>(super.getQualifiers());
-          qualifiers.add(new ProtocolQualifier("tcp"));
-          return Collections.unmodifiableSet(qualifiers);
-        }
-      }
-);
+      setDefaultProtocol(event);
     }
   }
  else   if (isConfigurationInjectionPoint(injectionPoint)) {

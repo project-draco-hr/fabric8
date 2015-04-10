@@ -1,0 +1,12 @@
+{
+  if (type instanceof ParameterizedType) {
+    ParameterizedType p=(ParameterizedType)type;
+    return p.getRawType() != null && p.getRawType().equals(raw) && p.getActualTypeArguments().length == 1 && (p.getActualTypeArguments()[0].equals(argument) || argument == null);
+  }
+ else   if (type instanceof Class) {
+    return argument == null && type.equals(raw);
+  }
+ else {
+    return false;
+  }
+}
