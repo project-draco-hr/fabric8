@@ -1,6 +1,6 @@
 {
   io.fabric8.kubernetes.api.model.Service srv=null;
-  String namespace=Systems.getEnvVarOrSystemProperty(KUBERNETES_NAMESPACE,(String)null);
+  String namespace=Systems.getEnvVarOrSystemProperty(KUBERNETES_NAMESPACE,DEFAULT_NAMESPACE);
   String serviceHost=serviceToHost(serviceId);
   String servicePort=serviceToPort(serviceId);
   String serviceProto=serviceProtocol != null ? serviceProtocol : serviceToProtocol(serviceId,servicePort);
@@ -11,7 +11,7 @@
     srv=KUBERNETES.getService(serviceId,namespace);
   }
  else {
-    for (    io.fabric8.kubernetes.api.model.Service s : KUBERNETES.getServices().getItems()) {
+    for (    io.fabric8.kubernetes.api.model.Service s : KUBERNETES.getServices(namespace).getItems()) {
       if (s.getId().equals(serviceId)) {
         srv=s;
         break;
