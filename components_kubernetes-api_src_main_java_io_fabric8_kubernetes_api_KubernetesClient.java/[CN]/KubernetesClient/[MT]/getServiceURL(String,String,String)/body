@@ -1,0 +1,30 @@
+{
+  Service srv=null;
+  String serviceHost=serviceToHost(serviceName);
+  String servicePort=serviceToPort(serviceName);
+  String serviceProto=serviceProtocol != null ? serviceProtocol : serviceToProtocol(serviceName,servicePort);
+  if (Strings.isNotBlank(serviceHost) && Strings.isNotBlank(servicePort) && Strings.isNotBlank(serviceProtocol)) {
+    return serviceProtocol + "://" + serviceHost+ ":"+ servicePort;
+  }
+ else   if (Strings.isNotBlank(namespace)) {
+    srv=getService(serviceName,namespace);
+  }
+ else {
+    for (    Service s : getServices().getItems()) {
+      if (s.getId().equals(serviceName)) {
+        srv=s;
+        break;
+      }
+    }
+  }
+  if (srv == null) {
+    throw new IllegalArgumentException("No kubernetes service could be found for name: " + serviceName + " in namespace: "+ namespace);
+  }
+  RouteList routeList=getRoutes(namespace);
+  for (  Route route : routeList.getItems()) {
+    if (route.getServiceName().equals(serviceName)) {
+      return (serviceProto + "://" + route.getHost()).toLowerCase();
+    }
+  }
+  return (serviceProto + "://" + srv.getPortalIP()+ ":"+ srv.getPort()).toLowerCase();
+}

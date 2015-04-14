@@ -14,14 +14,19 @@
   Controller controller=new Controller(kubernetes);
   controller.applyJson(json);
   String type="generic";
-  String kubeAddress=getServiceAddress("fabric8-console-service",namespace);
   String webhookUrl;
-  if (kubeAddress != null) {
+  String kubeAddress;
+  try {
+    kubeAddress=kubernetes.getServiceURL("fabric8-console-service",namespace,"http");
     webhookUrl=URLUtils.pathJoin(kubeAddress,"kubernetes","osapi",KubernetesHelper.defaultOsApiVersion,"buildConfigHooks",buildName,secret,type);
   }
- else {
+ catch (  Exception e) {
+    LOG.warn("failed to find fabric8 console service URL: " + e,e);
     kubeAddress=kubernetes.getAddress();
     webhookUrl=URLUtils.pathJoin(kubeAddress,"osapi",KubernetesHelper.defaultOsApiVersion,"buildConfigHooks",buildName,secret,type);
+  }
+  if (!Strings.isNullOrEmpty(namespace)) {
+    webhookUrl+="?namespace=" + namespace;
   }
   LOG.info("creating a web hook at: " + webhookUrl);
   try {
