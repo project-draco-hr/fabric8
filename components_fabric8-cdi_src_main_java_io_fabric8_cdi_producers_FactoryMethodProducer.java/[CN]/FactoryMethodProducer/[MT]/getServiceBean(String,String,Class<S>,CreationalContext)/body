@@ -1,9 +1,9 @@
 {
   try {
-    return BeanProvider.getContextualReference(serviceType,Qualifiers.create(serviceId,serviceProtocol,false));
+    return BeanProvider.getContextualReference(serviceType,Qualifiers.create(serviceId,serviceProtocol,false,serviceExternal));
   }
  catch (  IllegalStateException e) {
-    Producer<S> producer=ServiceBean.anyBean(serviceId,serviceProtocol,serviceType).getProducer();
+    Producer<S> producer=ServiceBean.anyBean(serviceId,serviceProtocol,serviceExternal,serviceType).getProducer();
     if (producer != null) {
       return (S)producer.produce(context);
     }

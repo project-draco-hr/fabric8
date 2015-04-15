@@ -5,13 +5,15 @@
     Alias alias=annotated.getAnnotation(Alias.class);
     ServiceName serviceName=annotated.getAnnotation(ServiceName.class);
     Protocol protocol=annotated.getAnnotation(Protocol.class);
+    External external=annotated.getAnnotation(External.class);
     Boolean serviceEndpoint=annotated.getAnnotation(Endpoint.class) != null;
     String serviceId=serviceName.value();
     String serviceProtocol=protocol != null ? protocol.value() : "tcp";
     String serviceAlias=alias != null ? alias.value() : null;
+    Boolean serviceExternal=external != null && external.value();
     Type type=annotated.getBaseType();
     if (type.equals(String.class)) {
-      ServiceUrlBean.getBean(serviceId,serviceProtocol,serviceAlias);
+      ServiceUrlBean.getBean(serviceId,serviceProtocol,serviceAlias,serviceExternal);
     }
  else     if (serviceEndpoint && isGenericOf(type,List.class,String.class)) {
       ServiceUrlCollectionBean.getBean(serviceId,serviceProtocol,serviceAlias,serviceEndpoint,Types.LIST_OF_STRINGS);
@@ -24,10 +26,13 @@
  else     if (serviceEndpoint && isGenericOf(type,Set.class,null)) {
     }
  else {
-      ServiceBean.getBean(serviceId,serviceProtocol,serviceAlias,(Class)type);
+      ServiceBean.getBean(serviceId,serviceProtocol,serviceAlias,serviceExternal,(Class)type);
     }
     if (protocol == null) {
       setDefaultProtocol(event);
+    }
+    if (external == null) {
+      setExternalFalse(event);
     }
   }
  else   if (isConfigurationInjectionPoint(injectionPoint)) {
