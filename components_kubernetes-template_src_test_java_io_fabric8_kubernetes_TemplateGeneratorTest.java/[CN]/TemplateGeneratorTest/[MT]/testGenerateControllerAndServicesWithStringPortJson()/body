@@ -2,7 +2,7 @@
   String serviceName="my-service";
   Integer servicePort=80;
   IntOrString serviceContainerPort=new IntOrString();
-  serviceContainerPort.setIntVal(8080);
+  serviceContainerPort.setStrVal("http");
   CreateAppDTO dto=createAppDto(4);
   dto.setServiceName(serviceName);
   dto.setServicePort(servicePort);
@@ -15,9 +15,9 @@
   Service service=(Service)serviceEntity;
   assertEquals("serviceName",serviceName,getId(service));
   assertEquals("servicePort",servicePort,getPort(service));
-  int containerPort=getContainerPort(service);
-  assertTrue("containerPort " + containerPort,containerPort > 0);
-  assertEquals("serviceContainerPort",serviceContainerPort.getIntVal().intValue(),containerPort);
+  String containerPort=getContainerPortString(service);
+  assertNotNull("containerPort " + containerPort,containerPort);
+  assertEquals("serviceContainerPort",serviceContainerPort.getStrVal(),containerPort);
   assertEquals("selector",dto.getLabels(),getSelector(service));
   Object entity=entities.get(1);
   assertGeneratedReplicationController(entity,dto);

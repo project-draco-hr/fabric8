@@ -35,7 +35,14 @@
     config.setReplicationControllerName(KubernetesHelper.validateKubernetesId(replicationControllerName,"fabric8.replicationController.name"));
     config.setServiceName(KubernetesHelper.validateKubernetesId(serviceName,"fabric8.service.name"));
     config.setServicePort(servicePort);
-    config.setServiceContainerPort(serviceContainerPort);
+    IntOrString actualServiceContainerPort=new IntOrString();
+    try {
+      actualServiceContainerPort.setIntVal(Integer.valueOf(serviceContainerPort));
+    }
+ catch (    NumberFormatException e) {
+      actualServiceContainerPort.setStrVal(serviceContainerPort);
+    }
+    config.setServiceContainerPort(actualServiceContainerPort);
     List<ClassLoader> classLoaders=Lists.newArrayList(Thread.currentThread().getContextClassLoader(),getTestClassLoader(),getClass().getClassLoader(),TemplateGenerator.class.getClassLoader());
     TemplateGenerator generator=new TemplateGenerator(config,classLoaders);
     generator.generate(kubernetesJson);

@@ -38,7 +38,10 @@
     }
     variables.put("serviceName",serviceName);
     variables.put("servicePort",config.getServicePort());
-    variables.put("serviceContainerPort",config.getServiceContainerPort());
+    if (config.getServiceContainerPort() != null) {
+      variables.put("serviceContainerPortString",config.getServiceContainerPort().getStrVal());
+      variables.put("serviceContainerPortInt",config.getServiceContainerPort().getIntVal());
+    }
     try {
       CompiledTemplate compiledTemplate=TemplateCompiler.compileTemplate(in,parserContext);
       String answer=TemplateRuntime.execute(compiledTemplate,parserContext,variables).toString();
