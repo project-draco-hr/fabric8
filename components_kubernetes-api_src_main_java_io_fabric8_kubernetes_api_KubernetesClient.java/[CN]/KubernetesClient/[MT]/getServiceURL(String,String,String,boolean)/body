@@ -3,7 +3,7 @@
   String serviceHost=serviceToHost(serviceName);
   String servicePort=serviceToPort(serviceName);
   String serviceProto=serviceProtocol != null ? serviceProtocol : serviceToProtocol(serviceName,servicePort);
-  if (Strings.isNotBlank(serviceHost) && Strings.isNotBlank(servicePort) && Strings.isNotBlank(serviceProtocol)) {
+  if (!serviceExternal && Strings.isNotBlank(serviceHost) && Strings.isNotBlank(servicePort)&& Strings.isNotBlank(serviceProtocol)) {
     return serviceProtocol + "://" + serviceHost+ ":"+ servicePort;
   }
  else   if (Strings.isNotBlank(namespace)) {
