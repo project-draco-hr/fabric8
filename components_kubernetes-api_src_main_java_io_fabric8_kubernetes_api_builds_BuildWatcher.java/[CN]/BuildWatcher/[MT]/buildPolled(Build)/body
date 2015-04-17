@@ -9,7 +9,7 @@
  else {
         if (seenBuildIds.add(uid)) {
           String name=Builds.getName(build);
-          String buildLink=URLUtils.pathJoin(fabric8ConsoleLink,"kubernetes/builds",name);
+          String buildLink=Builds.createConsoleBuildLink(this.fabric8ConsoleLink,name);
           BuildFinishedEvent event=new BuildFinishedEvent(uid,build,loading,buildLink);
           buildListener.onBuildFinished(event);
         }

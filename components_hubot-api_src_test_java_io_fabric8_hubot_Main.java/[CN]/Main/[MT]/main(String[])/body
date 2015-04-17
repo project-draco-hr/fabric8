@@ -1,0 +1,29 @@
+{
+  if (args.length < 2) {
+    System.out.println("Usage: room messages");
+    return;
+  }
+  String room=args[0];
+  StringBuilder buffer=new StringBuilder();
+  for (int i=1; i < args.length; i++) {
+    String arg=args[i];
+    if (i > 1) {
+      buffer.append(" ");
+    }
+    buffer.append(arg);
+  }
+  String message=buffer.toString();
+  try {
+    String hubotUrl=Systems.getServiceHostAndPort(HubotNotifier.HUBOT_WEB_HOOK_SERVICE_NAME,"hubot-webhook.fabric8.local","80");
+    String username=Systems.getEnvVarOrSystemProperty("HUBOT_USERNAME","");
+    String password=Systems.getEnvVarOrSystemProperty("HUBOT_PASSWORD","");
+    String roomExpression=Systems.getEnvVarOrSystemProperty("HUBOT_BUILD_ROOM",HubotNotifier.DEFAULT_ROOM_EXPRESSION);
+    System.out.println("Logging into hubot web hook with user " + username + " at URL: "+ hubotUrl);
+    HubotNotifier notifier=new HubotNotifier(hubotUrl,username,password,roomExpression);
+    notifier.notifyRoom(room,message);
+  }
+ catch (  Exception e) {
+    System.out.println("Caught: " + e);
+    e.printStackTrace();
+  }
+}
