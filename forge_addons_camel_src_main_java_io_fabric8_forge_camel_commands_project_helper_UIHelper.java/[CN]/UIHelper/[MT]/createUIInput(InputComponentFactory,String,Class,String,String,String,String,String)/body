@@ -14,6 +14,13 @@
       list.add(v);
     }
     ui.setValueChoices(list);
+    Iterator it=ui.getFacets().iterator();
+    while (it.hasNext()) {
+      Object facet=it.next();
+      if (facet instanceof HintsFacet) {
+        ((HintsFacet)facet).setPromptInInteractiveMode(true);
+      }
+    }
     input=ui;
   }
  else {
@@ -23,6 +30,13 @@
     }
     if (currentValue != null) {
       ui.setValue(currentValue);
+    }
+    Iterator it=ui.getFacets().iterator();
+    while (it.hasNext()) {
+      Object facet=it.next();
+      if (facet instanceof HintsFacet) {
+        ((HintsFacet)facet).setPromptInInteractiveMode(true);
+      }
     }
     input=ui;
   }
