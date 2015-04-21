@@ -12,13 +12,13 @@
       throw new IllegalArgumentException("replicationControllerName and serviceName are the same! (" + serviceName + ")");
     }
   }
-  KubernetesListBuilder builder=new KubernetesListBuilder().withKind("Config").withId(name).addNewReplicationController().withKind("ReplicationController").withId(replicationControllerName).withNewDesiredState().withReplicas(config.getReplicaCount()).withReplicaSelector(config.getLabels()).withNewPodTemplate().withNewDesiredState().withNewManifest().addNewContainer().withName(config.getContainerName()).withImage(dockerImage).withImagePullPolicy(config.getImagePullPolicy()).withEnv(config.getEnvironmentVariables()).endContainer().endManifest().endDesiredState().endPodTemplate().endDesiredState().withLabels(labels).endReplicationController();
+  KubernetesListBuilder builder=new KubernetesListBuilder().withKind("Config").withId(name).addNewReplicationController().withKind("ReplicationController").withId(replicationControllerName).withLabels(labels).withNewDesiredState().withReplicas(config.getReplicaCount()).withReplicaSelector(labels).withNewPodTemplate().withLabels(labels).withNewDesiredState().withNewManifest().addNewContainer().withName(config.getContainerName()).withImage(dockerImage).withImagePullPolicy(config.getImagePullPolicy()).withEnv(config.getEnvironmentVariables()).withPorts(config.getPorts()).endContainer().endManifest().endDesiredState().endPodTemplate().endDesiredState().endReplicationController();
   if (serviceName != null) {
-    builder=builder.addNewService().withId(serviceName).withKind("Service").withContainerPort(config.getServiceContainerPort()).withPort(config.getServicePort()).withSelector(labels).endService();
+    builder=builder.addNewService().withId(serviceName).withKind("Service").withContainerPort(config.getServiceContainerPort()).withPort(config.getServicePort()).withSelector(labels).withLabels(labels).endService();
   }
   KubernetesList kubernetesList=builder.build();
   try {
-    ObjectMapper mapper=new ObjectMapper();
+    ObjectMapper mapper=new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     String generated=mapper.writeValueAsString(kubernetesList);
     Files.writeToFile(kubernetesJson,generated,Charset.defaultCharset());
   }
