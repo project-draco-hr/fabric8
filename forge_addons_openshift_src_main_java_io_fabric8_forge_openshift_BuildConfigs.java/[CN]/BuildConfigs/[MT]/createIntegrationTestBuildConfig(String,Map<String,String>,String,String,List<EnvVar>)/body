@@ -1,0 +1,9 @@
+{
+  BuildParametersBuilder parametersBuilder=new BuildParametersBuilder();
+  addBuildParameterGitSource(parametersBuilder,gitUrlText);
+  if (Strings.isNotBlank(image)) {
+    addBuildParameterCustomStrategy(parametersBuilder,image,envVars);
+  }
+  BuildConfigBuilder builder=buildConfigBuilder(buildConfigName,labels,parametersBuilder.build());
+  return builder.build();
+}

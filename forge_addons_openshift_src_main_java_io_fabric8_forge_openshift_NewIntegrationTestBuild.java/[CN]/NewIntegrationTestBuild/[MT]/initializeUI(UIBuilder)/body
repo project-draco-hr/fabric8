@@ -4,15 +4,14 @@
     @Override public String call() throws Exception {
       Model mavenModel=getMavenModel(builder);
       if (mavenModel != null) {
-        return mavenModel.getArtifactId();
+        return mavenModel.getArtifactId() + "-int-test";
       }
       return null;
     }
   }
 );
   builder.add(buildName);
-  builder.add(imageTag);
+  builder.add(mavenCommand);
+  builder.add(image);
   builder.add(gitUri);
-  builder.add(outputImage);
-  builder.add(webHookSecret);
 }

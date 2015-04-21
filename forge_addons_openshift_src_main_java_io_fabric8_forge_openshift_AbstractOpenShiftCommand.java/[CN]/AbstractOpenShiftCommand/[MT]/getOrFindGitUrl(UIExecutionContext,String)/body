@@ -1,0 +1,18 @@
+{
+  if (Strings.isNullOrBlank(gitUrlText)) {
+    Model mavenModel=getMavenModel(context);
+    if (mavenModel != null) {
+      Scm scm=mavenModel.getScm();
+      if (scm != null) {
+        String connection=scm.getConnection();
+        if (Strings.isNotBlank(connection)) {
+          gitUrlText=connection;
+        }
+      }
+    }
+  }
+  if (Strings.isNullOrBlank(gitUrlText)) {
+    throw new IllegalArgumentException("Could not find git URL");
+  }
+  return gitUrlText;
+}

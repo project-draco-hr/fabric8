@@ -8,5 +8,8 @@
     addBuildParameterStiStrategy(parametersBuilder,imageText);
   }
   BuildConfigBuilder builder=buildConfigBuilder(buildConfigName,labels,parametersBuilder.build());
+  if (Strings.isNotBlank(webhookSecret)) {
+    addWebHookTriggers(builder,webhookSecret);
+  }
   return builder.build();
 }
