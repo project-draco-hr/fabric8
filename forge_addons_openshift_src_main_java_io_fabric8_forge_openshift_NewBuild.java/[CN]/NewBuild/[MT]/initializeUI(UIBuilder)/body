@@ -1,0 +1,16 @@
+{
+  super.initializeUI(builder);
+  buildName.setDefaultValue(new Callable<String>(){
+    @Override public String call() throws Exception {
+      Model mavenModel=getMavenModel(builder);
+      if (mavenModel != null) {
+        return mavenModel.getArtifactId();
+      }
+      return null;
+    }
+  }
+);
+  builder.add(buildName);
+  builder.add(imageTag);
+  builder.add(gitUri);
+}

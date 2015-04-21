@@ -1,0 +1,12 @@
+{
+  if (build != null) {
+    Map<String,Object> additionalProperties=build.getAdditionalProperties();
+    if (additionalProperties != null) {
+      Object metadata=additionalProperties.get("metadata");
+      if (metadata instanceof Map) {
+        return (Map<String,Object>)metadata;
+      }
+    }
+  }
+  return Collections.EMPTY_MAP;
+}

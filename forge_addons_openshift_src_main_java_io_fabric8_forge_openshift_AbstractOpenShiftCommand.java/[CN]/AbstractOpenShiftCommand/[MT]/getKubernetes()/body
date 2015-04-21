@@ -1,0 +1,13 @@
+{
+  if (kubernetes == null) {
+    String kubernetesAddress=kubernetesUrl.getValue();
+    if (Strings.isNotBlank(kubernetesAddress)) {
+      kubernetes=new KubernetesClient(new KubernetesFactory(kubernetesAddress));
+    }
+ else {
+      kubernetes=new KubernetesClient();
+    }
+  }
+  Objects.notNull(kubernetes,"kubernetes");
+  return kubernetes;
+}

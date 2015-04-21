@@ -1,0 +1,32 @@
+{
+  String buildConfigName=buildName.getValue();
+  Objects.assertNotNull(buildConfigName,"buildName");
+  Map<String,String> labels=BuildConfigs.createBuildLabels(buildConfigName);
+  String imageTagText=imageTag.getValue();
+  String gitUrlText=gitUri.getValue();
+  Model mavenModel=getMavenModel(context);
+  if (Strings.isNullOrBlank(gitUrlText)) {
+    if (mavenModel != null) {
+      Scm scm=mavenModel.getScm();
+      if (scm != null) {
+        String connection=scm.getConnection();
+        if (Strings.isNotBlank(connection)) {
+          gitUrlText=connection;
+        }
+      }
+    }
+  }
+  if (Strings.isNullOrBlank(gitUrlText)) {
+    throw new IllegalArgumentException("Could not find git URL");
+  }
+  String imageText=outputImage.getValue();
+  if (Strings.isNullOrBlank(imageText) && mavenModel != null) {
+    imageText=mavenModel.getProperties().getProperty("docker.image");
+  }
+  BuildConfig buildConfig=BuildConfigs.createBuildConfig(buildConfigName,labels,gitUrlText,imageTagText,imageText);
+  ImageRepository imageRepository=BuildConfigs.imageRepository(buildConfigName,labels);
+  Controller controller=createController();
+  controller.applyImageRepository(imageRepository,"generated ImageRepository: " + JsonHelper.toJson(imageRepository));
+  controller.applyBuildConfig(buildConfig,"generated BuildConfig: " + JsonHelper.toJson(buildConfig));
+  return Results.success("Added BuildConfig: " + Builds.getName(buildConfig) + " to OpenShift at master: "+ getKubernetes().getAddress());
+}
