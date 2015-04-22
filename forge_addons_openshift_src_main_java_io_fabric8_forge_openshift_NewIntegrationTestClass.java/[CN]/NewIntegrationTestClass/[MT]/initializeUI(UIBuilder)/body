@@ -1,0 +1,16 @@
+{
+  super.initializeUI(builder);
+  Project project=getSelectedProject(builder.getUIContext());
+  JavaSourceFacet facet=project.getFacet(JavaSourceFacet.class);
+  targetPackage.setCompleter(new TestPackageNameCompleter(facet));
+  targetPackage.addValidator(new PackageNameValidator());
+  targetPackage.setDefaultValue("io.fabric8.itests");
+  className.addValidator(new ClassNameValidator(false));
+  className.setDefaultValue(new Callable<String>(){
+    @Override public String call() throws Exception {
+      return "KubernetesIT";
+    }
+  }
+);
+  builder.add(targetPackage).add(className);
+}
