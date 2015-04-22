@@ -24,6 +24,7 @@
   config.setContainerName(getKubernetesContainerName());
   config.setEnvironmentVariables(getEnvironmentVariables());
   String pullPolicy=getImagePullPolicy();
+  config.setDockerImage(project.getProperties().getProperty("docker.image"));
   config.setImagePullPolicy(pullPolicy);
   config.setReplicaCount(replicaCount);
   config.setReplicationControllerName(KubernetesHelper.validateKubernetesId(replicationControllerName,"fabric8.replicationController.name"));

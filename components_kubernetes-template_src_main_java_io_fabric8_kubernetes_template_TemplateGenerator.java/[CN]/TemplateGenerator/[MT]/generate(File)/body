@@ -12,9 +12,9 @@
       throw new IllegalArgumentException("replicationControllerName and serviceName are the same! (" + serviceName + ")");
     }
   }
-  KubernetesListBuilder builder=new KubernetesListBuilder().withKind("Config").withId(name).addNewReplicationController().withKind("ReplicationController").withId(replicationControllerName).withLabels(labels).withNewDesiredState().withReplicas(config.getReplicaCount()).withReplicaSelector(labels).withNewPodTemplate().withLabels(labels).withNewDesiredState().withNewManifest().addNewContainer().withName(config.getContainerName()).withImage(dockerImage).withImagePullPolicy(config.getImagePullPolicy()).withEnv(config.getEnvironmentVariables()).withPorts(config.getPorts()).endContainer().endManifest().endDesiredState().endPodTemplate().endDesiredState().endReplicationController();
+  KubernetesListBuilder builder=new KubernetesListBuilder().withId(name).addNewReplicationController().withId(replicationControllerName).withLabels(labels).withNewDesiredState().withReplicas(config.getReplicaCount()).withReplicaSelector(labels).withNewPodTemplate().withLabels(labels).withNewDesiredState().withNewManifest().addNewContainer().withName(config.getContainerName()).withImage(dockerImage).withImagePullPolicy(config.getImagePullPolicy()).withEnv(config.getEnvironmentVariables()).withPorts(config.getPorts()).endContainer().endManifest().endDesiredState().endPodTemplate().endDesiredState().endReplicationController();
   if (serviceName != null) {
-    builder=builder.addNewService().withId(serviceName).withKind("Service").withContainerPort(config.getServiceContainerPort()).withPort(config.getServicePort()).withSelector(labels).withLabels(labels).endService();
+    builder=builder.addNewService().withId(serviceName).withContainerPort(config.getServiceContainerPort()).withPort(config.getServicePort()).withSelector(labels).withLabels(labels).endService();
   }
   KubernetesList kubernetesList=builder.build();
   try {
