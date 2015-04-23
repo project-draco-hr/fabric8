@@ -1,0 +1,17 @@
+{
+  return new DefaultComponentRegistry(){
+    @Override protected void registerRateLimiterComponent(){
+      addComponent(IRateLimiterComponent.class,new ESRateLimiterComponent(esConfig));
+    }
+    @Override protected void registerSharedStateComponent(){
+      addComponent(ISharedStateComponent.class,new ESSharedStateComponent(esConfig));
+    }
+    @Override protected void registerBufferFactoryComponent(){
+      addComponent(IBufferFactoryComponent.class,new BufferFactoryComponentImpl());
+    }
+    @Override protected void registerHttpClientComponent(){
+      addComponent(IHttpClientComponent.class,new HttpClientComponentImpl(vertx));
+    }
+  }
+;
+}

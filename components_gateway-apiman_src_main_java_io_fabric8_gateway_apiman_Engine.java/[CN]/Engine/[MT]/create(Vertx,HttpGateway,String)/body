@@ -1,21 +1,5 @@
 {
-  IEngineFactory factory=new DefaultEngineFactory(){
-    @Override protected IConnectorFactory createConnectorFactory(){
-      HttpGatewayServiceClient httpGatewayServiceClient=new HttpGatewayServiceClient(vertx,httpGateway);
-      return new Fabric8ConnectorFactory(vertx,httpGatewayServiceClient);
-    }
-    @Override protected IRegistry createRegistry(){
-      try {
-        registry=new FileBackedRegistry();
-        registry.load(port);
-        return registry;
-      }
- catch (      Exception e) {
-        throw new RuntimeException(e.getMessage(),e);
-      }
-    }
-  }
-;
+  IEngineFactory factory=new EngineFactory(vertx,httpGateway);
   final IEngine engine=factory.createEngine();
   ApiManEngine apimanEngine=new ApiManEngine(){
     @Override public IRegistry getRegistry(){

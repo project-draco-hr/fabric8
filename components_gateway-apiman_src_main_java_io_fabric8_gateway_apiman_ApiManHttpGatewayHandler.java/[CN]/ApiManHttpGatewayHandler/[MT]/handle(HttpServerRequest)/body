@@ -90,8 +90,8 @@
     requestExecutor.streamHandler(new IAsyncHandler<ISignalWriteStream>(){
       @Override public void handle(      final ISignalWriteStream writeStream){
         request.dataHandler(new Handler<Buffer>(){
-          public void handle(          Buffer data){
-            IApimanBuffer apimanBuffer=new VertxBuffer(data);
+          @Override public void handle(          Buffer data){
+            IApimanBuffer apimanBuffer=new VertxApimanBuffer(data);
             writeStream.write(apimanBuffer);
           }
         }
