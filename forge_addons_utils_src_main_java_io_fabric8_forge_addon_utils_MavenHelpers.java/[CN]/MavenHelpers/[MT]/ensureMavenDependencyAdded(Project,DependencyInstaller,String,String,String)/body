@@ -1,0 +1,20 @@
+{
+  List<Dependency> dependencies=project.getFacet(DependencyFacet.class).getEffectiveDependencies();
+  for (  Dependency d : dependencies) {
+    if (groupId.equals(d.getCoordinate().getGroupId()) && artifactId.equals(d.getCoordinate().getArtifactId())) {
+      System.out.println("Project already includes:  " + groupId + ":"+ artifactId+ " for version: "+ d.getCoordinate().getVersion());
+      return false;
+    }
+  }
+  DependencyBuilder component=DependencyBuilder.create().setGroupId(groupId).setArtifactId(artifactId).setScopeType(scope);
+  String version=MavenHelpers.getVersion(groupId,artifactId);
+  if (Strings.isNotBlank(version)) {
+    component=component.setVersion(version);
+    System.out.println("Adding pom.xml dependency:  " + groupId + ":"+ artifactId+ " version: "+ version+ " scope: "+ scope);
+  }
+ else {
+    System.out.println("No version could be found for:  " + groupId + ":"+ artifactId);
+  }
+  dependencyInstaller.install(project,component);
+  return true;
+}

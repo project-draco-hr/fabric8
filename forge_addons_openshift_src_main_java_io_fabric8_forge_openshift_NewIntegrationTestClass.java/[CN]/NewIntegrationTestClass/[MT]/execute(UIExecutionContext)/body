@@ -1,8 +1,41 @@
 {
   Project project=getSelectedProject(context);
-  ensureMavenDependencyAdded(project,dependencyInstaller,"io.fabric8","arquillian-fabric8","test");
-  ensureMavenDependencyAdded(project,dependencyInstaller,"org.jboss.arquillian.junit","arquillian-junit-container","test");
-  ensureMavenDependencyAdded(project,dependencyInstaller,"org.jboss.shrinkwrap.resolver","shrinkwrap-resolver-impl-maven","test");
+  MavenHelpers.ensureMavenDependencyAdded(project,dependencyInstaller,"io.fabric8","arquillian-fabric8","test");
+  MavenHelpers.ensureMavenDependencyAdded(project,dependencyInstaller,"org.jboss.arquillian.junit","arquillian-junit-container","test");
+  MavenHelpers.ensureMavenDependencyAdded(project,dependencyInstaller,"org.jboss.shrinkwrap.resolver","shrinkwrap-resolver-impl-maven","test");
+  String profileId=profile.getValue();
+  if (Strings.isNotBlank(profileId)) {
+    MavenFacet mavenFacet=getMavenFacet(context);
+    Model mavenModel=mavenFacet.getModel();
+    Profile kitProfile=MavenHelpers.findProfile(mavenModel,profileId);
+    if (kitProfile == null) {
+      System.out.println("Creating a new maven profile for id: " + profileId);
+      kitProfile=new Profile();
+      kitProfile.setId(profileId);
+    }
+    String version=MavenHelpers.getVersion(MavenHelpers.mavenPluginsGroupId,MavenHelpers.surefireArtifactId);
+    if (version != null) {
+      Coordinate coordinate=createCoordinate(MavenHelpers.mavenPluginsGroupId,MavenHelpers.surefireArtifactId,version);
+      MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
+      ProfileImpl kitProfileImpl=new ProfileImpl();
+      kitProfileImpl.setId(profileId);
+      MavenPlugin surefirePlugin=null;
+      try {
+        surefirePlugin=pluginFacet.getPlugin(coordinate,kitProfileImpl);
+      }
+ catch (      Exception e) {
+        LOG.debug("Ignored exception looking up maven plugin for " + coordinate + " for profile "+ kitProfileImpl);
+      }
+      if (surefirePlugin == null) {
+        System.out.println("Creating a new plugin for " + coordinate + " on profile "+ kitProfileImpl);
+        String wildcard=integrationTestWildcard.getValue();
+        ConfigurationBuilder configuration=ConfigurationBuilder.create();
+        configuration.createConfigurationElement("includes").createConfigurationElement("include").setText(wildcard);
+        surefirePlugin=MavenPluginBuilder.create().setCoordinate(coordinate).setConfiguration(configuration);
+        pluginFacet.addPlugin(surefirePlugin,kitProfileImpl);
+      }
+    }
+  }
   JavaSourceFacet facet=project.getFacet(JavaSourceFacet.class);
   String generatePackageName=targetPackage.getValue();
   String generateClassName=className.getValue();
@@ -22,7 +55,7 @@
   javaClass.addImport("org.junit.runner.RunWith");
   javaClass.addImport("io.fabric8.kubernetes.assertions.Assertions.assertThat").setStatic(true);
   javaClass.addAnnotation("RunWith").setLiteralValue("Arquillian.class");
-  javaClass.getJavaDoc().setText("Tests that the Kubernetes resources (Services, Replication Controllers and Pods)\n" + "can be provisioned and start up correctly.\n\n" + "This test creates a new Kubernetes Namespace for the duration of the test case");
+  javaClass.getJavaDoc().setText("Tests that the Kubernetes resources\n" + "* (Services, Replication Controllers and Pods)\n" + "* can be provisioned and start up correctly.\n"+ "* \n"+ "* This test creates a new Kubernetes Namespace for the duration of the test.\n"+ "* For more information see: http://fabric8.io/guide/testing.html");
   javaClass.addField().setProtected().setType("KubernetesClient").setName("kubernetes").addAnnotation("ArquillianResource");
   javaClass.addField().setProtected().setType("Session").setName("session").addAnnotation("ArquillianResource");
   String testBody="assertThat(kubernetes).pods()\n" + "        .runningStatus()\n" + "        .filterNamespace(session.getNamespace())\n"+ "        .haveAtLeast(1, new Condition<Pod>() {\n"+ "            @Override\n"+ "            public boolean matches(Pod pod) {\n"+ "                return true;\n"+ "            }\n"+ "        });";

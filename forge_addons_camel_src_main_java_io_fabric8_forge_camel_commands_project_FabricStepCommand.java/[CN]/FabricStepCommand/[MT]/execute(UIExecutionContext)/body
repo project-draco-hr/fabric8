@@ -1,15 +1,15 @@
 {
   Project project=getSelectedProject(context);
-  Dependency bom=DependencyBuilder.create().setCoordinate(createCoordinate("io.fabric8","fabric8-project",VersionHelper.fabric8Version(),"pom")).setScopeType("import");
+  Dependency bom=DependencyBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","fabric8-project",VersionHelper.fabric8Version(),"pom")).setScopeType("import");
   dependencyInstaller.installManaged(project,bom);
   if (test.getValue() != null && test.getValue()) {
-    Dependency dependency=DependencyBuilder.create().setCoordinate(createCoordinate("io.fabric8","arquillian-fabric8",null)).setScopeType("test");
+    Dependency dependency=DependencyBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","arquillian-fabric8",null)).setScopeType("test");
     dependencyInstaller.installManaged(project,dependency);
-    dependency=DependencyBuilder.create().setCoordinate(createCoordinate("org.jboss.arquillian.junit","arquillian-junit-container",null)).setScopeType("test");
+    dependency=DependencyBuilder.create().setCoordinate(MavenHelpers.createCoordinate("org.jboss.arquillian.junit","arquillian-junit-container",null)).setScopeType("test");
     dependencyInstaller.installManaged(project,dependency);
   }
   MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
-  MavenPlugin plugin=MavenPluginBuilder.create().setCoordinate(createCoordinate("io.fabric8","fabric8-maven-plugin",VersionHelper.fabric8Version())).addExecution(ExecutionBuilder.create().setId("json").addGoal("json")).addExecution(ExecutionBuilder.create().setId("zip").addGoal("zip"));
+  MavenPlugin plugin=MavenPluginBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","fabric8-maven-plugin",VersionHelper.fabric8Version())).addExecution(ExecutionBuilder.create().setId("json").addGoal("json")).addExecution(ExecutionBuilder.create().setId("zip").addGoal("zip"));
   pluginFacet.addPlugin(plugin);
   MavenFacet maven=project.getFacet(MavenFacet.class);
   Model pom=maven.getModel();
