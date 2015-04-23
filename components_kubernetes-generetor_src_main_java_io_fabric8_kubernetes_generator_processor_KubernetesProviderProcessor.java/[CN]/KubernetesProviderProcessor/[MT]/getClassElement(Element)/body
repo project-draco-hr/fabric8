@@ -1,0 +1,11 @@
+{
+  if (element instanceof PackageElement) {
+    throw new IllegalArgumentException("Invalid element. A package element can't be used to retrieve a class element");
+  }
+ else   if (element instanceof TypeElement && element.getEnclosingElement() instanceof PackageElement) {
+    return (TypeElement)element;
+  }
+ else {
+    return getClassElement(element.getEnclosingElement());
+  }
+}

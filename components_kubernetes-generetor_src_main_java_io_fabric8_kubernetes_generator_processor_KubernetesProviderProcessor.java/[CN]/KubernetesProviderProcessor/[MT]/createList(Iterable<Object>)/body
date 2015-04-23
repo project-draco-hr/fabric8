@@ -1,0 +1,46 @@
+{
+  StringBuilder sb=new StringBuilder();
+  List<Object> allItems=new ArrayList<>();
+  boolean first=true;
+  for (  Object obj : objects) {
+    if (first) {
+      first=false;
+    }
+ else {
+      sb.append("-");
+    }
+    if (obj instanceof Pod) {
+      sb.append(((Pod)obj).getId());
+      allItems.add(obj);
+    }
+ else     if (obj instanceof ReplicationController) {
+      sb.append(((ReplicationController)obj).getId());
+      allItems.add(obj);
+    }
+ else     if (obj instanceof Service) {
+      sb.append(((Service)obj).getServiceName());
+      allItems.add(obj);
+    }
+ else     if (obj instanceof BuildConfig) {
+      sb.append(((BuildConfig)obj).getName());
+      allItems.add(obj);
+    }
+ else     if (obj instanceof DeploymentConfig) {
+      sb.append(((DeploymentConfig)obj).getName());
+      allItems.add(obj);
+    }
+ else     if (obj instanceof ImageRepository) {
+      sb.append(((ImageRepository)obj).getName());
+      allItems.add(obj);
+    }
+ else     if (obj instanceof Route) {
+      sb.append(((Route)obj).getName());
+      allItems.add(obj);
+    }
+ else     if (obj instanceof KubernetesList) {
+      sb.append(((KubernetesList)obj).getId());
+      allItems.addAll(((KubernetesList)obj).getItems());
+    }
+  }
+  return new KubernetesListBuilder().withId(sb.toString()).withItems(allItems).build();
+}

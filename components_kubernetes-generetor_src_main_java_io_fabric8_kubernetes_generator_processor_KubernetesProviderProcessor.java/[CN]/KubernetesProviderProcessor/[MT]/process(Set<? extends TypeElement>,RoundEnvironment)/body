@@ -1,0 +1,46 @@
+{
+  Set<Object> provided=new LinkedHashSet<>();
+  CompilationTaskFactory compilationTaskFactory=new CompilationTaskFactory(processingEnv);
+  Set<TypeElement> providers=new HashSet<>();
+  for (  Element element : roundEnv.getElementsAnnotatedWith(KubernetesProvider.class)) {
+    providers.add(getClassElement(element));
+  }
+  if (providers.isEmpty()) {
+    return true;
+  }
+  try {
+    Callable<Boolean> compileTask=compilationTaskFactory.create(providers);
+    if (!compileTask.call()) {
+      processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Failed to compile provider classes");
+      return false;
+    }
+  }
+ catch (  Exception e) {
+    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Failed to compile provider classes");
+    return false;
+  }
+  for (  Element element : roundEnv.getElementsAnnotatedWith(KubernetesProvider.class)) {
+    try {
+      if (element instanceof ExecutableElement) {
+        KubernetesProvider provider=element.getAnnotation(KubernetesProvider.class);
+        ExecutableElement methodElement=(ExecutableElement)element;
+        TypeElement classElement=getClassElement(element);
+        Class<?> cls=Class.forName(classElement.getQualifiedName().toString());
+        Object instance=cls.newInstance();
+        Method providerMethod=instance.getClass().getDeclaredMethod(methodElement.getSimpleName().toString());
+        if (providerMethod != null) {
+          Object obj=providerMethod.invoke(instance);
+          if (obj != null) {
+            provided.add(obj);
+          }
+        }
+      }
+    }
+ catch (    Exception ex) {
+      processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Error creating Kubernetes configuration.");
+    }
+  }
+  KubernetesList list=createList(provided);
+  generateJson(list);
+  return true;
+}

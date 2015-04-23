@@ -1,0 +1,11 @@
+{
+  Filer filer=processingEnvironment.getFiler();
+  try {
+    Field field=filer.getClass().getDeclaredField(FILE_MANAGER_FIELD_NAME);
+    field.setAccessible(true);
+    return (JavaFileManager)field.get(filer);
+  }
+ catch (  Throwable t) {
+    throw new RuntimeException(t);
+  }
+}

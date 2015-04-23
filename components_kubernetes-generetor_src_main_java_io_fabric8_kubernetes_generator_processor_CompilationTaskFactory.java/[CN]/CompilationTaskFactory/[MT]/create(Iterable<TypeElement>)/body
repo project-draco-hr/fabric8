@@ -1,0 +1,15 @@
+{
+  Set<String> options=new LinkedHashSet<>();
+  Set<JavaFileObject> javaFileObjects=new LinkedHashSet<>();
+  ClassLoader classLoader=getClass().getClassLoader();
+  if (classLoader instanceof URLClassLoader) {
+    String classPath=createClassPath(((URLClassLoader)classLoader).getURLs());
+    options.add(DISABLE_ANNOTATION_PROCESSORS_OPT);
+    options.add(CLASSPATH_OPT);
+    options.add(classPath);
+  }
+  for (  TypeElement element : elements) {
+    javaFileObjects.add(fileManager.getJavaFileForInput(StandardLocation.SOURCE_PATH,element.getQualifiedName().toString(),JavaFileObject.Kind.SOURCE));
+  }
+  return compiler.getTask(null,fileManager,diagnosticListener,options,new ArrayList<String>(),javaFileObjects);
+}
