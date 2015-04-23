@@ -1,9 +1,0 @@
-{
-  String json=IOHelpers.readFully(jsonFile);
-  LOG.info("Generated: " + json);
-  Object loadedDTO=KubernetesHelper.loadJson(json);
-  LOG.info("Loaded json DTO: " + loadedDTO);
-  assertThat(loadedDTO).describedAs("loaded DTO").isNotNull().isInstanceOf(Config.class);
-  Config config=(Config)loadedDTO;
-  return KubernetesHelper.getEntities(config);
-}
