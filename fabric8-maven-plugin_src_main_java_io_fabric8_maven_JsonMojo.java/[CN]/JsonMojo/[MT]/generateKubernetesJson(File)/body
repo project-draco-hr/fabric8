@@ -17,18 +17,15 @@
   if (labelMap.isEmpty() && Strings.isNotBlank(name)) {
     labelMap.put("component",name);
   }
-  IntOrString actualServiceContainerPort=new IntOrString();
-  try {
-    actualServiceContainerPort.setIntVal(Integer.valueOf(serviceContainerPort));
-  }
- catch (  NumberFormatException e) {
-    actualServiceContainerPort.setStrVal(serviceContainerPort);
-  }
-  KubernetesListBuilder builder=new KubernetesListBuilder().withId(name).addNewReplicationController().withId(KubernetesHelper.validateKubernetesId(replicationControllerName,"fabric8.replicationController.name")).withLabels(labels).withNewDesiredState().withReplicas(replicaCount).withReplicaSelector(labelMap).withNewPodTemplate().withLabels(labelMap).withNewDesiredState().withNewManifest().addNewContainer().withName(getKubernetesContainerName()).withImage(getDockerImage()).withImagePullPolicy(getImagePullPolicy()).withEnv(getEnvironmentVariables()).withPorts(getPorts()).endContainer().endManifest().endDesiredState().endPodTemplate().endDesiredState().endReplicationController();
-  if (serviceName != null && servicePort != null && actualServiceContainerPort != null && (actualServiceContainerPort.getIntVal() != null || actualServiceContainerPort.getStrVal() != null)) {
-    KubernetesListFluent<KubernetesListBuilder>.ServicesNested<KubernetesListBuilder> serviceBuilder=builder.addNewService().withId(serviceName).withContainerPort(actualServiceContainerPort).withPort(servicePort).withSelector(labelMap).withLabels(labelMap);
-    if (Strings.isNotBlank(serviceProtocol)) {
-      serviceBuilder=serviceBuilder.withProtocol(serviceProtocol);
+  KubernetesListBuilder builder=new KubernetesListBuilder().withId(name).addNewReplicationController().withId(KubernetesHelper.validateKubernetesId(replicationControllerName,"fabric8.replicationController.name")).withLabels(labels).withNewDesiredState().withReplicas(replicaCount).withReplicaSelector(labelMap).withNewPodTemplate().withLabels(labelMap).withNewDesiredState().withNewManifest().addNewContainer().withName(getKubernetesContainerName()).withImage(getDockerImage()).withImagePullPolicy(getImagePullPolicy()).withEnv(getEnvironmentVariables()).withPorts(getContainerPorts()).endContainer().endManifest().endDesiredState().endPodTemplate().endDesiredState().endReplicationController();
+  if (serviceName != null) {
+    KubernetesListFluent<KubernetesListBuilder>.ServicesNested<KubernetesListBuilder> serviceBuilder=builder.addNewService().withId(serviceName).withSelector(labelMap).withLabels(labelMap);
+    List<ServicePort> servicePorts=getServicePorts();
+    if (servicePorts != null & !servicePorts.isEmpty()) {
+      serviceBuilder.withPorts(servicePorts);
+    }
+ else {
+      serviceBuilder.withPortalIP("None");
     }
     builder=serviceBuilder.endService();
   }

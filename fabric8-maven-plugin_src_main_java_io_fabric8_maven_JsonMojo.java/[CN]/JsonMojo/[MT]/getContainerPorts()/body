@@ -1,19 +1,19 @@
 {
-  if (ports == null) {
-    ports=new ArrayList<>();
+  if (containerPorts == null) {
+    containerPorts=new ArrayList<>();
   }
-  if (ports.isEmpty()) {
-    Map<String,Port> portMap=new HashMap<>();
+  if (containerPorts.isEmpty()) {
+    Map<String,ContainerPort> portMap=new HashMap<>();
     Properties properties1=getProject().getProperties();
     Map<String,String> hostPorts=findPropertiesWithPrefix(properties1,FABRIC8_PORT_HOST_PREFIX);
     Properties properties=getProject().getProperties();
-    Map<String,String> containerPorts=findPropertiesWithPrefix(properties,FABRIC8_PORT_CONTAINER_PREFIX);
-    for (    Map.Entry<String,String> entry : containerPorts.entrySet()) {
+    Map<String,String> containerPortsMap=findPropertiesWithPrefix(properties,FABRIC8_PORT_CONTAINER_PREFIX);
+    for (    Map.Entry<String,String> entry : containerPortsMap.entrySet()) {
       String name=entry.getKey();
       String portText=entry.getValue();
       Integer portNumber=parsePort(portText,FABRIC8_PORT_CONTAINER_PREFIX + name);
       if (portNumber != null) {
-        Port port=getOrCreatePort(portMap,name);
+        ContainerPort port=getOrCreatePort(portMap,name);
         port.setContainerPort(portNumber);
         port.setName(name);
       }
@@ -23,7 +23,7 @@
       String portText=entry.getValue();
       Integer portNumber=parsePort(portText,FABRIC8_PORT_HOST_PREFIX + name);
       if (portNumber != null) {
-        Port port=getOrCreatePort(portMap,name);
+        ContainerPort port=getOrCreatePort(portMap,name);
         port.setHostPort(portNumber);
         if (port.getContainerPort() == null) {
           port.setContainerPort(getDefaultContainerPortMap().get(name));
@@ -33,7 +33,7 @@
     getLog().info("Generated port mappings: " + portMap);
     getLog().debug("from host ports: " + hostPorts);
     getLog().debug("from containerPorts ports: " + containerPorts);
-    ports.addAll(portMap.values());
+    containerPorts.addAll(portMap.values());
   }
-  return ports;
+  return containerPorts;
 }

@@ -5,7 +5,7 @@
     PodState currentState=pod.getCurrentState();
     if (currentState != null) {
       String protocol="http://";
-      Port port=KubernetesHelper.findContainerPortByNumberOrName(pod,portNumberOrName);
+      ContainerPort port=KubernetesHelper.findContainerPortByNumberOrName(pod,portNumberOrName);
       Integer containerPort=port != null ? port.getContainerPort() : null;
       String podIP=currentState.getPodIP();
       if (Strings.isNotBlank(podIP)) {

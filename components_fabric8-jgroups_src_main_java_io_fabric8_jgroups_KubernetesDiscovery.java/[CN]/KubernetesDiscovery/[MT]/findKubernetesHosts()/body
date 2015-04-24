@@ -7,7 +7,7 @@
     if (podFilter.matches(pod)) {
       List<Container> containers=KubernetesHelper.getContainers(pod);
       for (      Container container : containers) {
-        for (        Port port : container.getPorts()) {
+        for (        ContainerPort port : container.getPorts()) {
           if (Constants.JGROUPS_TCP_PORT.equals(port.getName())) {
             try {
               String ip=pod.getCurrentState().getPodIP();
