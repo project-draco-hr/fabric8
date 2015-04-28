@@ -1,0 +1,12 @@
+{
+  delegate.retireService(service,new IAsyncResultHandler<Void>(){
+    @Override public void handle(    IAsyncResult<Void> result){
+      if (result.isSuccess()) {
+        String path=getServiceBindPath(service);
+        serviceBindPaths.remove(path);
+      }
+      handler.handle(result);
+    }
+  }
+);
+}

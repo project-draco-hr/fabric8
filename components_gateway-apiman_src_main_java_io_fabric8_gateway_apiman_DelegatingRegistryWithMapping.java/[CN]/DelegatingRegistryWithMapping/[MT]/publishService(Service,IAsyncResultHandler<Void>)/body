@@ -1,0 +1,16 @@
+{
+  delegate.publishService(service,new IAsyncResultHandler<Void>(){
+    @Override public void handle(    IAsyncResult<Void> result){
+      if (result.isSuccess()) {
+        String path=getServiceBindPath(service);
+        String[] serviceInfo=new String[3];
+        serviceInfo[0]=service.getOrganizationId();
+        serviceInfo[1]=service.getServiceId();
+        serviceInfo[2]=service.getVersion();
+        serviceBindPaths.put(path,serviceInfo);
+      }
+      handler.handle(result);
+    }
+  }
+);
+}

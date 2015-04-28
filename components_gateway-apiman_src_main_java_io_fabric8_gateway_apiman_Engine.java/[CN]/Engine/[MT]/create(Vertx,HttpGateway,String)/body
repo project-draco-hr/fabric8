@@ -1,5 +1,8 @@
 {
   IEngineFactory factory=new EngineFactory(vertx,httpGateway);
+  if ("in-memory".equals(System.getProperty("fabric8-apiman.engine-factory"))) {
+    factory=new InMemoryEngineFactory(vertx,httpGateway);
+  }
   final IEngine engine=factory.createEngine();
   ApiManEngine apimanEngine=new ApiManEngine(){
     @Override public IRegistry getRegistry(){
@@ -30,7 +33,7 @@
       throw new NotAuthorizedException("Service not found");
     }
     @Override public String[] getServiceInfo(    String servicePath){
-      return registry.getService(servicePath);
+      return ((DelegatingRegistryWithMapping)engine.getRegistry()).getService(servicePath);
     }
   }
 ;
