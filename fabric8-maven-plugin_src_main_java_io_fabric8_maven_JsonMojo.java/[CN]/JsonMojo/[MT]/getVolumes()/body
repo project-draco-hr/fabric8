@@ -1,7 +1,8 @@
 {
   List<Volume> volumes=new ArrayList<>();
   MavenProject project=getProject();
-  for (  Map.Entry<Object,Object> entry : project.getProperties().entrySet()) {
+  Properties properties=project.getProperties();
+  for (  Map.Entry<Object,Object> entry : properties.entrySet()) {
     Object key=entry.getKey();
     if (key instanceof String) {
       String s=(String)key;
@@ -9,19 +10,9 @@
       if (m.matches()) {
         String name=m.group(VOLUME_NAME);
         String type=m.group(VOLUME_ATTRIBUTE_TYPE);
-        if (type.equals(VOLUME_HOST_PATH)) {
-          String path=String.valueOf(entry.getValue());
-          volumes.add(new VolumeBuilder().withName(name).withNewSource().withHostDir(new HostPathVolumeSource(path)).endSource().build());
-        }
- else         if (type.equals(EMPTY_DIR_MEDIUM)) {
-          String medium=String.valueOf(entry.getValue());
-          volumes.add(new VolumeBuilder().withName(name).withNewSource().withEmptyDir(new EmptyDirVolumeSource(medium)).endSource().build());
-        }
- else         if (type.equals(VOLUME_GIT_REPO)) {
-          String repository=String.valueOf(entry.getValue());
-          String revisionPropertyName=String.format(VOLUME_GIT_REVISION_PROPERTY,name);
-          String revision=project.getProperties().getProperty(revisionPropertyName);
-          volumes.add(new VolumeBuilder().withName(name).withNewSource().withGitRepo(new GitRepoVolumeSource(repository,revision)).endSource().build());
+        VolumeType volumeType=VolumeType.typeFor(type);
+        if (volumeType != null) {
+          volumes.add(volumeType.fromProperties(name,properties));
         }
       }
     }
