@@ -1,0 +1,17 @@
+{
+  List<VolumeMount> volumeMount=new ArrayList<>();
+  MavenProject project=getProject();
+  for (  Map.Entry<Object,Object> entry : project.getProperties().entrySet()) {
+    Object key=entry.getKey();
+    if (key instanceof String) {
+      String s=(String)key;
+      Matcher m=VOLUME_PATTERN.matcher(s);
+      if (m.matches()) {
+        String name=m.group(VOLUME_NAME);
+        String path=String.valueOf(entry.getValue());
+        volumeMount.add(new VolumeMountBuilder().withName(name).withMountPath(path).withReadOnly(false).build());
+      }
+    }
+  }
+  return volumeMount;
+}
