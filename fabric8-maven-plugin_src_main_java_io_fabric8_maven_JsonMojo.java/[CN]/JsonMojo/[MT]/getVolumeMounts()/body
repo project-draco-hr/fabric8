@@ -7,8 +7,8 @@
       String s=(String)key;
       Matcher m=VOLUME_PATTERN.matcher(s);
       if (m.matches()) {
-        String name=m.group(VOLUME_NAME);
-        String type=m.group(VOLUME_ATTRIBUTE_TYPE);
+        String name=m.group(NAME);
+        String type=m.group(ATTRIBUTE_TYPE);
         if (type.equals(VOLUME_MOUNT_PATH)) {
           String path=String.valueOf(entry.getValue());
           volumeMount.add(new VolumeMountBuilder().withName(name).withMountPath(path).withReadOnly(false).build());

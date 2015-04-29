@@ -1,0 +1,25 @@
+{
+  List<io.fabric8.openshift.api.model.template.Parameter> parameters=new ArrayList<>();
+  MavenProject project=getProject();
+  Properties properties=project.getProperties();
+  for (  Map.Entry<Object,Object> entry : project.getProperties().entrySet()) {
+    Object key=entry.getKey();
+    if (key instanceof String) {
+      String s=(String)key;
+      Matcher m=PARAM_PATTERN.matcher(s);
+      if (m.matches()) {
+        String name=m.group(NAME);
+        String value=properties.getProperty(String.format(PARAMETER_PROPERTY,name,VALUE));
+        String from=properties.getProperty(String.format(PARAMETER_PROPERTY,name,FROM));
+        String description=properties.getProperty(String.format(PARAMETER_PROPERTY,name,DESCRIPTION));
+        String generate=properties.getProperty(String.format(PARAMETER_PROPERTY,name,GENEATE));
+        if (Strings.isNullOrBlank(value) && Strings.isNullOrBlank(from)) {
+          value=properties.getProperty(String.format(PARAMETER_NAME_PREFIX,name));
+        }
+        parameters.add(new ParameterBuilder().withName(name).withFrom(from).withValue(value).withGenerate(generate).withDescription(description).build());
+      }
+    }
+  }
+  String templateName=properties.containsKey(TEMPLATE_NAME) ? String.valueOf(properties.getProperty(TEMPLATE_NAME)) : project.getArtifactId();
+  return new TemplateBuilder().withName(templateName).withParameters(parameters).build();
+}

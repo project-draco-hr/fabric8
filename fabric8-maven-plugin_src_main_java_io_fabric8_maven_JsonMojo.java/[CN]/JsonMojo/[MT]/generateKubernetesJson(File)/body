@@ -29,6 +29,10 @@
     }
     builder=builder.addToServices(serviceBuilder.build());
   }
+  Template template=getTemplate();
+  if (!template.getParameters().isEmpty()) {
+    builder=builder.addToTemplates(template);
+  }
   KubernetesList kubernetesList=builder.build();
   try {
     ObjectMapper mapper=new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
