@@ -1,5 +1,5 @@
 {
   Pod entity1=new PodBuilder().withId("foo").addToLabels("label1","value1").addToLabels("label2","value2").addToAnnotations("podAnnotation1","podAnnValue1").withNewDesiredState().withNewManifest().addNewContainer().withImage("fabric8/jenkins").addNewEnv().withName("foo").withValue("bar").endEnv().endContainer().endManifest().endDesiredState().build();
   Pod entity2=new PodBuilder().withId("foo").addToLabels("label1","value1").addToLabels("label2","value2").addToAnnotations("podAnnotation1","podAnnValue1").withNewDesiredState().withNewManifest().addNewContainer().withImage("notSame").addNewEnv().withName("foo").withValue("bar").endEnv().endContainer().endManifest().endDesiredState().build();
-  assertCompareConfig(entity1,entity2,true);
+  assertCompareConfig(entity1,entity2,false);
 }
