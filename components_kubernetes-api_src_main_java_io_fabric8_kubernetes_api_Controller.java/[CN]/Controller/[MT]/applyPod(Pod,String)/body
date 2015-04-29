@@ -6,13 +6,18 @@
   String id=getId(pod);
   Pod old=podMap.get(id);
   if (isRunning(old)) {
-    LOG.info("Updating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getId(pod));
-    try {
-      Object answer=kubernetes.updatePod(id,pod);
-      LOG.info("Updated pod result: " + answer);
+    if (ConfigurationCompare.configEqual(pod,old)) {
+      LOG.info("Pod hasn't changed so not doing anything");
     }
- catch (    Exception e) {
-      onApplyError("Failed to update pod from " + sourceName + ". "+ e+ ". "+ pod,e);
+ else {
+      LOG.info("Updating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getId(pod));
+      try {
+        Object answer=kubernetes.updatePod(id,pod);
+        LOG.info("Updated pod result: " + answer);
+      }
+ catch (      Exception e) {
+        onApplyError("Failed to update pod from " + sourceName + ". "+ e+ ". "+ pod,e);
+      }
     }
   }
  else {

@@ -3,37 +3,37 @@
   if (serviceMap == null) {
     serviceMap=getServiceMap(kubernetes,namespace);
   }
-  String id=getId(serviceSchema);
+  String id=getId(service);
   Service old=serviceMap.get(id);
   if (isRunning(old)) {
-    if (ConfigurationCompare.configEqual(serviceSchema,old)) {
+    if (ConfigurationCompare.configEqual(service,old)) {
       LOG.info("Service hasn't changed so not doing anything");
     }
  else {
       LOG.info("Updating a service from " + sourceName);
       try {
-        Object answer=kubernetes.updateService(id,serviceSchema,namespace);
+        Object answer=kubernetes.updateService(id,service,namespace);
         LOG.info("Updated service: " + answer);
       }
  catch (      Exception e) {
-        onApplyError("Failed to update controller from " + sourceName + ". "+ e+ ". "+ serviceSchema,e);
+        onApplyError("Failed to update controller from " + sourceName + ". "+ e+ ". "+ service,e);
       }
     }
   }
  else {
-    LOG.info("Creating a service from " + sourceName + " namespace "+ namespace+ " name "+ getId(serviceSchema));
+    LOG.info("Creating a service from " + sourceName + " namespace "+ namespace+ " name "+ getId(service));
     try {
       Object answer;
       if (Strings.isNotBlank(namespace)) {
-        answer=kubernetes.createService(serviceSchema,namespace);
+        answer=kubernetes.createService(service,namespace);
       }
  else {
-        answer=kubernetes.createService(serviceSchema);
+        answer=kubernetes.createService(service);
       }
       LOG.info("Created service: " + answer);
     }
  catch (    Exception e) {
-      onApplyError("Failed to create service from " + sourceName + ". "+ e+ ". "+ serviceSchema,e);
+      onApplyError("Failed to create service from " + sourceName + ". "+ e+ ". "+ service,e);
     }
   }
 }
