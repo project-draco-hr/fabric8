@@ -1,0 +1,5 @@
+{
+  Service entity1=new ServiceBuilder().withId("foo").addToLabels("label1","value1").addToLabels("label2","value2").addToSelector("label1","value1").addToSelector("label2","value2").withPort(123).withNewContainerPort().withIntVal(456).endContainerPort().build();
+  Service entity2=new ServiceBuilder().withId("foo").addToLabels("label2","value2").addToLabels("notSame","value1").addToSelector("label1","value1").addToSelector("label2","value2").withPort(123).withNewContainerPort().withIntVal(456).endContainerPort().build();
+  assertCompareConfig(entity1,entity2,true);
+}

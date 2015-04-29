@@ -1,0 +1,17 @@
+{
+  int size1=size(map1);
+  int size2=size(map2);
+  if (size1 != size2) {
+    return false;
+  }
+  Set<Map.Entry<String,String>> entries=map1.entrySet();
+  for (  Map.Entry<String,String> entry : entries) {
+    String key=entry.getKey();
+    String value=entry.getValue();
+    String value2=map2.get(key);
+    if (!Objects.equal(value,value2)) {
+      return false;
+    }
+  }
+  return true;
+}

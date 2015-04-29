@@ -1,0 +1,29 @@
+{
+  if (entity1 == entity2) {
+    return true;
+  }
+ else   if (entity1 == null) {
+    return configEqual(entity2,entity1);
+  }
+ else   if (entity1 instanceof Service) {
+    return configEqual((Service)entity1,cast(Service.class,entity2));
+  }
+ else   if (entity1 instanceof IntOrString) {
+    return configEqual((IntOrString)entity1,cast(IntOrString.class,entity2));
+  }
+ else   if (entity1 instanceof Map) {
+    return configEqual((Map)entity1,cast(Map.class,entity2));
+  }
+ else   if (entity1 instanceof Number) {
+    return configEqual((Number)entity1,cast(Number.class,entity2));
+  }
+ else   if (entity1 instanceof Boolean) {
+    return configEqual((Boolean)entity1,cast(Boolean.class,entity2));
+  }
+ else   if (entity1 instanceof String) {
+    return configEqual((String)entity1,cast(String.class,entity2));
+  }
+ else {
+    throw new IllegalArgumentException("Unsupported type " + entity1.getClass().getName());
+  }
+}
