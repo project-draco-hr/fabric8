@@ -6,14 +6,14 @@
   boolean useFabric8Console=true;
   if (useFabric8Console) {
     baseUrl=getServiceURL("fabric8-console-service",namespace,"http",false);
-    url=URLUtils.pathJoin("/kubernetes/osapi",KubernetesHelper.defaultOsApiVersion,"buildConfigHooks",name,secret,type);
+    url=URLUtils.pathJoin("/kubernetes/osapi",defaultOsApiVersion,"buildConfigHooks",name,secret,type);
     webClient=new KubernetesFactory(baseUrl,true).createWebClient();
   }
  else {
     KubernetesFactory factory=getFactory(true);
     baseUrl=factory.getAddress();
     webClient=factory.createWebClient();
-    url=URLUtils.pathJoin("/osapi",KubernetesHelper.defaultOsApiVersion,"buildConfigHooks",name,secret,type);
+    url=URLUtils.pathJoin("/osapi",defaultOsApiVersion,"buildConfigHooks",name,secret,type);
   }
   if (Strings.isNotBlank(namespace)) {
     url+="?namespace=" + namespace;

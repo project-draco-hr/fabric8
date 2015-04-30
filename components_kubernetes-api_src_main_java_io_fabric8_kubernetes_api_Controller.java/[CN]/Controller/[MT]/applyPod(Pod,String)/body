@@ -1,9 +1,13 @@
 {
   String namespace=getNamespace();
+  String id=getId(pod);
+  if (isServicesOnlyMode()) {
+    LOG.debug("Only processing Services right now so ignoring Pod: " + namespace + ":"+ id);
+    return;
+  }
   if (podMap == null) {
     podMap=getPodMap(kubernetes,namespace);
   }
-  String id=getId(pod);
   Pod old=podMap.get(id);
   if (isRunning(old)) {
     if (ConfigurationCompare.configEqual(pod,old)) {
@@ -11,7 +15,7 @@
     }
  else {
       if (isUpdateViaDeleteAndCreate()) {
-        kubernetes.deletePod(pod);
+        kubernetes.deletePod(pod,namespace);
         doCreatePod(pod,namespace,sourceName);
       }
  else {
