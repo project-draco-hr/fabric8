@@ -1,9 +1,10 @@
 {
-  LOG.info("Deleting ReplicationController: " + KubernetesHelper.getId(replicationController) + " namespace: "+ KubernetesHelper.getNamespace(replicationController));
+  String id=KubernetesHelper.getId(replicationController);
+  String namespace=KubernetesHelper.getNamespace(replicationController);
+  LOG.info("Deleting ReplicationController: " + id + " namespace: "+ namespace);
   deleteReplicationController(replicationController);
   List<Pod> podsToDelete=getPodsForReplicationController(replicationController);
   for (  Pod pod : podsToDelete) {
-    LOG.info("Deleting Pod: " + KubernetesHelper.getId(pod) + " namespace: "+ KubernetesHelper.getNamespace(pod));
     deletePod(pod);
   }
 }

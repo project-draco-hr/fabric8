@@ -1,6 +1,6 @@
 {
-  String id=entity.getId();
-  String namespace=entity.getNamespace();
+  String namespace=KubernetesHelper.getNamespace(entity);
+  String id=KubernetesHelper.getId(entity);
   if (Strings.isNotBlank(namespace)) {
     deleteReplicationController(id,namespace);
   }
