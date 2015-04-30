@@ -1,0 +1,16 @@
+{
+  LOG.info("Creating a service from " + sourceName + " namespace "+ namespace+ " name "+ getId(service));
+  try {
+    Object answer;
+    if (Strings.isNotBlank(namespace)) {
+      answer=kubernetes.createService(service,namespace);
+    }
+ else {
+      answer=kubernetes.createService(service);
+    }
+    LOG.info("Created service: " + answer);
+  }
+ catch (  Exception e) {
+    onApplyError("Failed to create service from " + sourceName + ". "+ e+ ". "+ service,e);
+  }
+}

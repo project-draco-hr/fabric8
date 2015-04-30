@@ -10,13 +10,19 @@
       LOG.info("Pod hasn't changed so not doing anything");
     }
  else {
-      LOG.info("Updating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getId(pod));
-      try {
-        Object answer=kubernetes.updatePod(id,pod);
-        LOG.info("Updated pod result: " + answer);
+      if (isUpdateViaDeleteAndCreate()) {
+        kubernetes.deletePod(pod);
+        doCreatePod(pod,namespace,sourceName);
       }
- catch (      Exception e) {
-        onApplyError("Failed to update pod from " + sourceName + ". "+ e+ ". "+ pod,e);
+ else {
+        LOG.info("Updating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getId(pod));
+        try {
+          Object answer=kubernetes.updatePod(id,pod);
+          LOG.info("Updated pod result: " + answer);
+        }
+ catch (        Exception e) {
+          onApplyError("Failed to update pod from " + sourceName + ". "+ e+ ". "+ pod,e);
+        }
       }
     }
   }
@@ -25,20 +31,7 @@
       LOG.warn("Creation disabled so not creating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getId(pod));
     }
  else {
-      LOG.info("Creating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getId(pod));
-      try {
-        Object answer;
-        if (Strings.isNotBlank(namespace)) {
-          answer=kubernetes.createPod(pod,namespace);
-        }
- else {
-          answer=kubernetes.createPod(pod);
-        }
-        LOG.info("Created pod result: " + answer);
-      }
- catch (      Exception e) {
-        onApplyError("Failed to create pod from " + sourceName + ". "+ e+ ". "+ pod,e);
-      }
+      doCreatePod(pod,namespace,sourceName);
     }
   }
 }

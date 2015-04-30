@@ -1,0 +1,16 @@
+{
+  LOG.info("Creating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getId(pod));
+  try {
+    Object answer;
+    if (Strings.isNotBlank(namespace)) {
+      answer=kubernetes.createPod(pod,namespace);
+    }
+ else {
+      answer=kubernetes.createPod(pod);
+    }
+    LOG.info("Created pod result: " + answer);
+  }
+ catch (  Exception e) {
+    onApplyError("Failed to create pod from " + sourceName + ". "+ e+ ". "+ pod,e);
+  }
+}

@@ -24,9 +24,11 @@
     }
     Controller controller=new Controller(kubernetes);
     controller.setAllowCreate(createNewResources);
+    controller.setUpdateViaDeleteAndCreate(updateViaDeleteAndCreate);
+    controller.setThrowExceptionOnError(failOnError);
     controller.apply(dto,json.getName());
   }
- catch (  IOException e) {
+ catch (  Exception e) {
     throw new MojoExecutionException(e.getMessage(),e);
   }
 }

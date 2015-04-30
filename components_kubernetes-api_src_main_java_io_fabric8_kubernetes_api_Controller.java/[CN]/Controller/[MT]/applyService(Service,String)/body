@@ -10,13 +10,19 @@
       LOG.info("Service hasn't changed so not doing anything");
     }
  else {
-      LOG.info("Updating a service from " + sourceName);
-      try {
-        Object answer=kubernetes.updateService(id,service,namespace);
-        LOG.info("Updated service: " + answer);
+      if (isUpdateViaDeleteAndCreate()) {
+        kubernetes.deleteService(service);
+        doCreateService(service,namespace,sourceName);
       }
- catch (      Exception e) {
-        onApplyError("Failed to update controller from " + sourceName + ". "+ e+ ". "+ service,e);
+ else {
+        LOG.info("Updating a service from " + sourceName);
+        try {
+          Object answer=kubernetes.updateService(id,service,namespace);
+          LOG.info("Updated service: " + answer);
+        }
+ catch (        Exception e) {
+          onApplyError("Failed to update controller from " + sourceName + ". "+ e+ ". "+ service,e);
+        }
       }
     }
   }
@@ -25,20 +31,7 @@
       LOG.warn("Creation disabled so not creating a service from " + sourceName + " namespace "+ namespace+ " name "+ getId(service));
     }
  else {
-      LOG.info("Creating a service from " + sourceName + " namespace "+ namespace+ " name "+ getId(service));
-      try {
-        Object answer;
-        if (Strings.isNotBlank(namespace)) {
-          answer=kubernetes.createService(service,namespace);
-        }
- else {
-          answer=kubernetes.createService(service);
-        }
-        LOG.info("Created service: " + answer);
-      }
- catch (      Exception e) {
-        onApplyError("Failed to create service from " + sourceName + ". "+ e+ ". "+ service,e);
-      }
+      doCreateService(service,namespace,sourceName);
     }
   }
 }

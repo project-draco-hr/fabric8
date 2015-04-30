@@ -10,13 +10,19 @@
       LOG.info("ReplicationController hasn't changed so not doing anything");
     }
  else {
-      LOG.info("Updating replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getId(replicationController));
-      try {
-        Object answer=kubernetes.updateReplicationController(id,replicationController);
-        LOG.info("Updated replicationController: " + answer);
+      if (isUpdateViaDeleteAndCreate()) {
+        kubernetes.deleteReplicationControllerAndPods(replicationController);
+        doCreateReplicationController(replicationController,namespace,sourceName);
       }
- catch (      Exception e) {
-        onApplyError("Failed to update replicationController from " + sourceName + ". "+ e+ ". "+ replicationController,e);
+ else {
+        LOG.info("Updating replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getId(replicationController));
+        try {
+          Object answer=kubernetes.updateReplicationController(id,replicationController);
+          LOG.info("Updated replicationController: " + answer);
+        }
+ catch (        Exception e) {
+          onApplyError("Failed to update replicationController from " + sourceName + ". "+ e+ ". "+ replicationController,e);
+        }
       }
     }
   }
@@ -25,20 +31,7 @@
       LOG.warn("Creation disabled so not creating a replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getId(replicationController));
     }
  else {
-      LOG.info("Creating a replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getId(replicationController));
-      try {
-        Object answer;
-        if (Strings.isNotBlank(namespace)) {
-          answer=kubernetes.createReplicationController(replicationController,namespace);
-        }
- else {
-          answer=kubernetes.createReplicationController(replicationController);
-        }
-        LOG.info("Created replicationController: " + answer);
-      }
- catch (      Exception e) {
-        onApplyError("Failed to create replicationController from " + sourceName + ". "+ e+ ". "+ replicationController,e);
-      }
+      doCreateReplicationController(replicationController,namespace,sourceName);
     }
   }
 }
