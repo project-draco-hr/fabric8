@@ -5,7 +5,13 @@
       json=kubernetesSourceJson;
     }
  else {
-      throw new MojoFailureException("No such generated kubernetes json file: " + json + " or source json file "+ kubernetesSourceJson);
+      if (failOnNoKubernetesJson) {
+        throw new MojoFailureException("No such generated kubernetes json file: " + json + " or source json file "+ kubernetesSourceJson);
+      }
+ else {
+        getLog().warn("No such generated kubernetes json file: " + json + " or source json file "+ kubernetesSourceJson+ " for this project so ignoring");
+        return;
+      }
     }
   }
   KubernetesClient api=getKubernetes();
