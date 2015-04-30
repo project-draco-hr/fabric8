@@ -21,19 +21,24 @@
     }
   }
  else {
-    LOG.info("Creating a replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getId(replicationController));
-    try {
-      Object answer;
-      if (Strings.isNotBlank(namespace)) {
-        answer=kubernetes.createReplicationController(replicationController,namespace);
-      }
- else {
-        answer=kubernetes.createReplicationController(replicationController);
-      }
-      LOG.info("Created replicationController: " + answer);
+    if (!isAllowCreate()) {
+      LOG.warn("Creation disabled so not creating a replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getId(replicationController));
     }
- catch (    Exception e) {
-      onApplyError("Failed to create replicationController from " + sourceName + ". "+ e+ ". "+ replicationController,e);
+ else {
+      LOG.info("Creating a replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getId(replicationController));
+      try {
+        Object answer;
+        if (Strings.isNotBlank(namespace)) {
+          answer=kubernetes.createReplicationController(replicationController,namespace);
+        }
+ else {
+          answer=kubernetes.createReplicationController(replicationController);
+        }
+        LOG.info("Created replicationController: " + answer);
+      }
+ catch (      Exception e) {
+        onApplyError("Failed to create replicationController from " + sourceName + ". "+ e+ ". "+ replicationController,e);
+      }
     }
   }
 }
