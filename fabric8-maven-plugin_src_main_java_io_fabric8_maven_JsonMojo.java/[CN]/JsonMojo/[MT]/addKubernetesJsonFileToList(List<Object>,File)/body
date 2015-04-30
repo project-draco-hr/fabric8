@@ -1,0 +1,16 @@
+{
+  if (file.exists() && file.isFile()) {
+    try {
+      Object jsonObject=loadJsonFile(file);
+      if (jsonObject != null) {
+        list.add(jsonObject);
+      }
+    }
+ catch (    MojoExecutionException e) {
+      getLog().warn("Failed to parse file " + file + ". "+ e,e);
+    }
+  }
+ else {
+    getLog().warn("Ignoring missing file " + file);
+  }
+}

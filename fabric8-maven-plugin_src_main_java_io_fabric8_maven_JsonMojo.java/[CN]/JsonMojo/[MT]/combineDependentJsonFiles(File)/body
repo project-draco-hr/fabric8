@@ -1,0 +1,47 @@
+{
+  try {
+    MavenProject project=getProject();
+    List<Object> jsonObjectList=new ArrayList<>();
+    List<Dependency> dependencies=project.getDependencies();
+    Set<Artifact> dependencyArtifacts=project.getDependencyArtifacts();
+    for (    Artifact artifact : dependencyArtifacts) {
+      String classifier=artifact.getClassifier();
+      String type=artifact.getType();
+      File file=artifact.getFile();
+      if (isKubernetesJsonArtifact(classifier,type)) {
+        System.out.println("Found kubernetes dependency: " + artifact + " with file: "+ file);
+        if (file != null) {
+          addKubernetesJsonFileToList(jsonObjectList,file);
+        }
+ else {
+          Set<Artifact> artifacts=resolveArtifacts(artifact);
+          for (          Artifact resolvedArtifact : artifacts) {
+            classifier=resolvedArtifact.getClassifier();
+            type=resolvedArtifact.getType();
+            file=resolvedArtifact.getFile();
+            if (isKubernetesJsonArtifact(classifier,type) && file != null) {
+              System.out.println("resolved kubernetes dependency: " + artifact + " with file: "+ file);
+              addKubernetesJsonFileToList(jsonObjectList,file);
+            }
+          }
+        }
+      }
+    }
+    if (jsonObjectList.isEmpty()) {
+      throw new MojoExecutionException("Could not find any dependent kubernetes json files!");
+    }
+    Object combinedJson=null;
+    if (jsonObjectList.size() == 1) {
+      combinedJson=jsonObjectList.get(0);
+    }
+ else {
+      combinedJson=KubernetesHelper.combineJson(jsonObjectList.toArray());
+    }
+    json.getParentFile().mkdirs();
+    KubernetesHelper.saveJson(json,combinedJson);
+    getLog().info("Saved as :" + json.getAbsolutePath());
+  }
+ catch (  Exception e) {
+    throw new MojoExecutionException("Failed to save combined JSON files " + json + " and "+ kubernetesExtraJson+ " as "+ json+ ". "+ e,e);
+  }
+}
