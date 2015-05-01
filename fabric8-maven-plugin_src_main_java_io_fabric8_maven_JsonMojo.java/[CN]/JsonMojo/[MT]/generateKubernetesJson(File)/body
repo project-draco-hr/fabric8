@@ -21,13 +21,16 @@
   if (serviceName != null) {
     ServiceBuilder serviceBuilder=new ServiceBuilder().withId(serviceName).withSelector(labelMap).withLabels(labelMap);
     List<ServicePort> servicePorts=getServicePorts();
-    if (servicePorts != null & !servicePorts.isEmpty()) {
+    boolean hasPorts=servicePorts != null & !servicePorts.isEmpty();
+    if (hasPorts) {
       serviceBuilder.withPorts(servicePorts);
     }
  else {
       serviceBuilder.withPortalIP("None");
     }
-    builder=builder.addToServices(serviceBuilder.build());
+    if (headlessServices || hasPorts) {
+      builder=builder.addToServices(serviceBuilder.build());
+    }
   }
   Template template=getTemplate();
   if (!template.getParameters().isEmpty()) {
