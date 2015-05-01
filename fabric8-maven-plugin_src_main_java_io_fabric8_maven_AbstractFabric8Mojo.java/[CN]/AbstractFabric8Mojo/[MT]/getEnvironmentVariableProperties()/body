@@ -1,3 +1,12 @@
 {
-  return findPropertiesWithPrefix(getProject().getProperties(),"fabric8.env.",Strings.toEnvironmentVariableFunction());
+  Map<String,String> rawProperties=findPropertiesWithPrefix(getProject().getProperties(),"fabric8.env.",Strings.toEnvironmentVariableFunction());
+  Set<Map.Entry<String,String>> entries=rawProperties.entrySet();
+  Map<String,String> answer=new HashMap<>();
+  for (  Map.Entry<String,String> entry : entries) {
+    String key=entry.getKey();
+    String value=entry.getValue();
+    value=unquoteTemplateExpression(value);
+    answer.put(key,value);
+  }
+  return answer;
 }
