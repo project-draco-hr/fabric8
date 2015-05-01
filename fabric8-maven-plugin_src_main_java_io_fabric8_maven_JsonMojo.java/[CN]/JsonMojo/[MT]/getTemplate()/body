@@ -2,6 +2,7 @@
   List<io.fabric8.openshift.api.model.template.Parameter> parameters=new ArrayList<>();
   MavenProject project=getProject();
   Properties properties=project.getProperties();
+  Set<String> paramNames=new HashSet<>();
   for (  Map.Entry<Object,Object> entry : project.getProperties().entrySet()) {
     Object key=entry.getKey();
     if (key instanceof String) {
@@ -9,14 +10,17 @@
       Matcher m=PARAM_PATTERN.matcher(s);
       if (m.matches()) {
         String name=m.group(NAME);
-        String value=properties.getProperty(String.format(PARAMETER_PROPERTY,name,VALUE));
-        String from=properties.getProperty(String.format(PARAMETER_PROPERTY,name,FROM));
-        String description=properties.getProperty(String.format(PARAMETER_PROPERTY,name,DESCRIPTION));
-        String generate=properties.getProperty(String.format(PARAMETER_PROPERTY,name,GENEATE));
-        if (Strings.isNullOrBlank(value) && Strings.isNullOrBlank(from)) {
-          value=properties.getProperty(String.format(PARAMETER_NAME_PREFIX,name));
+        if (paramNames.add(name)) {
+          String value=properties.getProperty(String.format(PARAMETER_PROPERTY,name,VALUE));
+          String from=properties.getProperty(String.format(PARAMETER_PROPERTY,name,FROM));
+          String description=properties.getProperty(String.format(PARAMETER_PROPERTY,name,DESCRIPTION));
+          String generate=properties.getProperty(String.format(PARAMETER_PROPERTY,name,GENEATE));
+          if (Strings.isNullOrBlank(value) && Strings.isNullOrBlank(from)) {
+            value=properties.getProperty(String.format(PARAMETER_NAME_PREFIX,name));
+          }
+          getLog().info("Found Template parameter: " + name + labelValueOrBlank("value",value)+ labelValueOrBlank("from",from)+ labelValueOrBlank("generate",generate)+ labelValueOrBlank("description",description));
+          parameters.add(new ParameterBuilder().withName(name).withFrom(from).withValue(value).withGenerate(generate).withDescription(description).build());
         }
-        parameters.add(new ParameterBuilder().withName(name).withFrom(from).withValue(value).withGenerate(generate).withDescription(description).build());
       }
     }
   }
