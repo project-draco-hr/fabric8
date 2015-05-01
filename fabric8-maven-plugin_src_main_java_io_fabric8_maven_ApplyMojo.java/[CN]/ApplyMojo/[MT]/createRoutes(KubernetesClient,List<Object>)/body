@@ -1,0 +1,41 @@
+{
+  if (Strings.isNullOrBlank(routeDomain)) {
+    getLog().warn("No fabric8.apply.routeDomain property or $KUBERNETES_DOMAIN environment variable so cannot create any OpenShift Routes");
+    return;
+  }
+  String namespace=kubernetes.getNamespace();
+  try {
+    RouteList routes=kubernetes.getRoutes(namespace);
+    if (routes != null) {
+      List<Route> items=routes.getItems();
+    }
+  }
+ catch (  Exception e) {
+    getLog().warn("Could not load routes; we maybe are not connected to an OpenShift environment? " + e,e);
+    return;
+  }
+  List<Route> routes=new ArrayList<>();
+  for (  Object object : list) {
+    if (object instanceof Service) {
+      Service service=(Service)object;
+      String id=KubernetesHelper.getId(service);
+      if (Strings.isNotBlank(id)) {
+        Route route=new Route();
+        KubernetesHelper.setName(route,namespace,id + "-route");
+        route.setServiceName(id);
+        String host=Strings.stripSuffix(Strings.stripSuffix(id,"-service"),".");
+        route.setHost(host + "." + Strings.stripPrefix(routeDomain,"."));
+        String json=null;
+        try {
+          json=KubernetesHelper.toJson(route);
+        }
+ catch (        JsonProcessingException e) {
+          json=e.getMessage() + ". object: " + route;
+        }
+        getLog().debug("Created route: " + json);
+        routes.add(route);
+      }
+    }
+  }
+  list.addAll(routes);
+}

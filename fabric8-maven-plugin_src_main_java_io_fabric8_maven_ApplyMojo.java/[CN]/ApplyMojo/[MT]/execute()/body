@@ -14,15 +14,20 @@
       }
     }
   }
-  KubernetesClient api=getKubernetes();
-  getLog().info("Using kubernetes at: " + api.getAddress() + " in namespace "+ api.getNamespace());
+  KubernetesClient kubernetes=getKubernetes();
+  getLog().info("Using kubernetes at: " + kubernetes.getAddress() + " in namespace "+ kubernetes.getNamespace());
   getLog().info("Kubernetes JSON: " + json);
   try {
     Object dto=KubernetesHelper.loadJson(json);
     if (dto == null) {
       throw new MojoFailureException("Could not load kubernetes json: " + json);
     }
-    Controller controller=new Controller(kubernetes);
+    List<Object> list=KubernetesHelper.toItemList(dto);
+    if (createRoutes) {
+      createRoutes(kubernetes,list);
+      dto=list;
+    }
+    Controller controller=new Controller(this.kubernetes);
     controller.setAllowCreate(createNewResources);
     controller.setUpdateViaDeleteAndCreate(updateViaDeleteAndCreate);
     controller.setThrowExceptionOnError(failOnError);

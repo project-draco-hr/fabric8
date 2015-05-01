@@ -1,5 +1,11 @@
 {
-  if (dto instanceof Config) {
+  if (dto instanceof List) {
+    List list=(List)dto;
+    for (    Object element : list) {
+      apply(element,sourceName);
+    }
+  }
+ else   if (dto instanceof Config) {
     applyConfig((Config)dto,sourceName);
   }
  else   if (dto instanceof JsonNode) {
@@ -21,7 +27,7 @@
       LOG.warn("No JSON kind for: " + tree);
     }
   }
- else   if (dto instanceof Entity) {
+ else   if (dto != null) {
     applyEntity(dto,sourceName);
   }
 }
