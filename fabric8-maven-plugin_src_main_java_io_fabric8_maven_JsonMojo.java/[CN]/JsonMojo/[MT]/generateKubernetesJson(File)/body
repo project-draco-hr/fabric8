@@ -37,9 +37,10 @@
     builder=builder.addToTemplates(template);
   }
   KubernetesList kubernetesList=builder.build();
+  Object result=Templates.combineTemplates(kubernetesList);
   try {
     ObjectMapper mapper=new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-    String generated=mapper.writeValueAsString(kubernetesList);
+    String generated=mapper.writeValueAsString(result);
     Files.writeToFile(kubernetesJson,generated,Charset.defaultCharset());
   }
  catch (  IOException e) {

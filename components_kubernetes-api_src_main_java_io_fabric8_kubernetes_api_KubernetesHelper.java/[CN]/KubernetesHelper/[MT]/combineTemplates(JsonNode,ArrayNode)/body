@@ -1,0 +1,38 @@
+{
+  JsonNode template=null;
+  for (  JsonNode jsonNode : config) {
+    if (isTemplate(jsonNode)) {
+      if (template == null) {
+        template=jsonNode;
+      }
+ else {
+      }
+    }
+  }
+  if (template != null) {
+    JsonNode items=config.get("objects");
+    ArrayNode objects;
+    if (items instanceof ArrayNode) {
+      objects=(ArrayNode)items;
+    }
+ else {
+      objects=new ArrayNode(createNodeFactory());
+      if (template instanceof ObjectNode) {
+        ObjectNode objectNode=(ObjectNode)template;
+        objectNode.set("objects",itemArray);
+      }
+ else {
+        throw new IllegalArgumentException("config " + template + " is not a ObjectNode");
+      }
+    }
+    for (    JsonNode jsonNode : config) {
+      if (!isTemplate(jsonNode)) {
+        objects.add(jsonNode);
+      }
+    }
+    return template;
+  }
+ else {
+    return config;
+  }
+}

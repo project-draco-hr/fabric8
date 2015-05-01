@@ -1,0 +1,24 @@
+{
+  Template firstTemplate=null;
+  List<Object> items=kubernetesList.getItems();
+  for (  Object item : items) {
+    if (item instanceof Template) {
+      Template template=(Template)item;
+      if (firstTemplate == null) {
+        firstTemplate=template;
+      }
+ else {
+        firstTemplate=combineTemplates(firstTemplate,template);
+      }
+    }
+  }
+  if (firstTemplate != null) {
+    for (    Object object : items) {
+      if (!(object instanceof Template)) {
+        addTemplateObject(firstTemplate,object);
+        firstTemplate.getObjects().add(object);
+      }
+    }
+  }
+  return firstTemplate != null ? firstTemplate : kubernetesList;
+}

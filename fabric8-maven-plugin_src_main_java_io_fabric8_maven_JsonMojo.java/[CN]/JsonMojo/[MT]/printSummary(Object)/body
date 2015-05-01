@@ -1,4 +1,12 @@
 {
+  if (kubeResource instanceof Template) {
+    Template template=(Template)kubeResource;
+    String id=KubernetesHelper.getId(template);
+    getLog().info("  Template " + id + " "+ KubernetesHelper.summaryText(template));
+    printSummary(template.getObjects());
+    return;
+  }
+  List<Object> list=KubernetesHelper.toItemList(kubeResource);
   for (  Object object : list) {
     if (object != null) {
       if (object instanceof List) {
