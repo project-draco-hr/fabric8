@@ -29,9 +29,10 @@
     }
     Controller controller=new Controller(this.kubernetes);
     controller.setAllowCreate(createNewResources);
-    controller.setUpdateViaDeleteAndCreate(updateViaDeleteAndCreate);
+    controller.setRecreateMode(recreate);
     controller.setThrowExceptionOnError(failOnError);
     controller.setServicesOnlyMode(servicesOnly);
+    controller.setIgnoreServiceMode(ignoreServices);
     controller.apply(dto,json.getName());
   }
  catch (  Exception e) {

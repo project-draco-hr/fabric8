@@ -14,7 +14,7 @@
       LOG.info("ReplicationController hasn't changed so not doing anything");
     }
  else {
-      if (isUpdateViaDeleteAndCreate()) {
+      if (isRecreateMode()) {
         kubernetes.deleteReplicationControllerAndPods(replicationController,namespace);
         doCreateReplicationController(replicationController,namespace,sourceName);
       }

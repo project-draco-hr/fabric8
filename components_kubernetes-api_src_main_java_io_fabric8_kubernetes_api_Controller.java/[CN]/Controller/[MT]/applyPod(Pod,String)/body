@@ -14,7 +14,7 @@
       LOG.info("Pod hasn't changed so not doing anything");
     }
  else {
-      if (isUpdateViaDeleteAndCreate()) {
+      if (isRecreateMode()) {
         kubernetes.deletePod(pod,namespace);
         doCreatePod(pod,namespace,sourceName);
       }

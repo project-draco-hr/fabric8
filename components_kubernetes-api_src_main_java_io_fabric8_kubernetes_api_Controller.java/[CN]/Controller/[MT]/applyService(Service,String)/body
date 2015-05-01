@@ -1,16 +1,20 @@
 {
   String namespace=getNamespace();
+  String id=getId(service);
+  if (isIgnoreServiceMode()) {
+    LOG.debug("Ignoring Service: " + namespace + ":"+ id);
+    return;
+  }
   if (serviceMap == null) {
     serviceMap=getServiceMap(kubernetes,namespace);
   }
-  String id=getId(service);
   Service old=serviceMap.get(id);
   if (isRunning(old)) {
     if (ConfigurationCompare.configEqual(service,old)) {
       LOG.info("Service hasn't changed so not doing anything");
     }
  else {
-      if (isUpdateViaDeleteAndCreate()) {
+      if (isRecreateMode()) {
         kubernetes.deleteService(service,namespace);
         doCreateService(service,namespace,sourceName);
       }
