@@ -1,0 +1,14 @@
+{
+  if (podState != null) {
+    ContainerManifest manifest=podState.getManifest();
+    if (manifest != null) {
+      List<Container> containers=manifest.getContainers();
+      if (containers != null) {
+        for (        Container container : containers) {
+          String image=container.getImage();
+          appendText(buffer,"image: " + image);
+        }
+      }
+    }
+  }
+}

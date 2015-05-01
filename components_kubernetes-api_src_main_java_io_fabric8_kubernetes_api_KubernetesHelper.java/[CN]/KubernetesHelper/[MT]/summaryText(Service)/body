@@ -1,0 +1,22 @@
+{
+  StringBuilder portText=new StringBuilder();
+  List<ServicePort> ports=entity.getPorts();
+  if (ports != null) {
+    for (    ServicePort port : ports) {
+      Integer number=port.getPort();
+      if (number != null) {
+        if (portText.length() > 0) {
+          portText.append(", ");
+        }
+        portText.append("" + number);
+      }
+    }
+  }
+  if (portText.length() == 0) {
+    Integer port=entity.getPort();
+    if (port != null) {
+      portText.append("" + port);
+    }
+  }
+  return "selector: " + entity.getSelector() + " ports: "+ portText;
+}
