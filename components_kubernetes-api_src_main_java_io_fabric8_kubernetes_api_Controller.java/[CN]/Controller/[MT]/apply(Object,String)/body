@@ -17,7 +17,8 @@
         applyList(tree,sourceName);
       }
  else       if (Objects.equal("Template",kind)) {
-        applyTemplateConfig(tree,sourceName);
+        Template template=createObjectMapper().treeToValue(tree,Template.class);
+        applyTemplate(template,sourceName);
       }
  else {
         LOG.warn("Unknown JSON type " + kindNode + ". JSON: "+ tree);
