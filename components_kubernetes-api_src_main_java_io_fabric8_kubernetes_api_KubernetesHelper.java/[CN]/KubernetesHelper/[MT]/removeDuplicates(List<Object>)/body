@@ -1,0 +1,25 @@
+{
+  int size=itemArray.size();
+  int lastNonService=-1;
+  Set<String> keys=new HashSet<>();
+  for (int i=0; i < size; i++) {
+    Object item=itemArray.get(i);
+    if (item == null) {
+      itemArray.remove(i);
+      i--;
+      size--;
+    }
+ else {
+      String id=getObjectId(item);
+      String kind=item.getClass().getSimpleName();
+      if (Strings.isNotBlank(id)) {
+        String key=kind + ":" + id;
+        if (!keys.add(key)) {
+          itemArray.remove(i);
+          i--;
+          size--;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  KubernetesList list=assertParseExampleFile("list.json",KubernetesList.class);
+  List<Object> objects=list.getItems();
+  assertNotEmpty("objects",objects);
+  assertEquals("size",2,objects.size());
+  Object service=objects.get(0);
+  assertThat(service).isInstanceOf(Service.class);
+  Object rc=objects.get(1);
+  assertThat(rc).isInstanceOf(ReplicationController.class);
+  System.out.println("Generated JSON: " + toJson(list));
+}

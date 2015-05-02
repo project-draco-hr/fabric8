@@ -1,26 +1,16 @@
 {
-  JsonNode config=findOrCreateConfig(objects);
-  JsonNode items=config.get("items");
-  ArrayNode itemArray;
-  if (items instanceof ArrayNode) {
-    itemArray=(ArrayNode)items;
-  }
- else {
-    itemArray=new ArrayNode(createNodeFactory());
-    if (config instanceof ObjectNode) {
-      ObjectNode objectNode=(ObjectNode)config;
-      objectNode.set("items",itemArray);
-    }
- else {
-      throw new IllegalArgumentException("config " + config + " is not a ObjectNode");
-    }
+  KubernetesList list=findOrCreateList(objects);
+  List<Object> items=list.getItems();
+  if (items == null) {
+    items=new ArrayList<>();
+    list.setItems(items);
   }
   for (  Object object : objects) {
-    if (object != config) {
-      addObjectsToItemArray(itemArray,object);
+    if (object != list) {
+      addObjectsToItemArray(items,object);
     }
   }
-  moveServicesToFrontOfArray(itemArray);
-  removeDuplicates(itemArray);
-  return combineTemplates(config,itemArray);
+  moveServicesToFrontOfArray(items);
+  removeDuplicates(items);
+  return Templates.combineTemplates(list,items);
 }

@@ -1,0 +1,25 @@
+{
+  Template template=null;
+  for (  Object item : items) {
+    if (item instanceof Template) {
+      Template aTemplate=(Template)item;
+      if (template == null) {
+        template=aTemplate;
+      }
+ else {
+        template=combineTemplates(template,aTemplate);
+      }
+    }
+  }
+  if (template != null) {
+    for (    Object item : items) {
+      if (!(item instanceof Template)) {
+        addTemplateObject(template,item);
+      }
+    }
+    return template;
+  }
+ else {
+    return kubernetesList;
+  }
+}

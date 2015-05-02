@@ -1,0 +1,16 @@
+{
+  if (object instanceof KubernetesList) {
+    KubernetesList kubernetesList=(KubernetesList)object;
+    List<Object> items=kubernetesList.getItems();
+    if (items != null) {
+      destinationList.addAll(items);
+    }
+  }
+ else   if (object instanceof Collection) {
+    Collection collection=(Collection)object;
+    destinationList.addAll(collection);
+  }
+ else {
+    destinationList.add(object);
+  }
+}

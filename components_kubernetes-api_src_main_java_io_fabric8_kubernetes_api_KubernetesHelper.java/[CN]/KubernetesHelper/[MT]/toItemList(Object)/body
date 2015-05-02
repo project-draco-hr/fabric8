@@ -1,14 +1,14 @@
 {
-  if (entity instanceof JsonNode) {
-    JsonNode jsonNode=(JsonNode)entity;
-    return toItemList(getEntity(jsonNode));
-  }
   if (entity instanceof List) {
     return (List<Object>)entity;
   }
  else   if (entity instanceof Object[]) {
     Object[] array=(Object[])entity;
     return Arrays.asList(array);
+  }
+ else   if (entity instanceof KubernetesList) {
+    KubernetesList config=(KubernetesList)entity;
+    return config.getItems();
   }
  else   if (entity instanceof Config) {
     Config config=(Config)entity;

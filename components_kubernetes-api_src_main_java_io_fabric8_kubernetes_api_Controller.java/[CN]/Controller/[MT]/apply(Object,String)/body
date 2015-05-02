@@ -5,28 +5,11 @@
       apply(element,sourceName);
     }
   }
+ else   if (dto instanceof KubernetesList) {
+    applyList((KubernetesList)dto,sourceName);
+  }
  else   if (dto instanceof Config) {
     applyConfig((Config)dto,sourceName);
-  }
- else   if (dto instanceof JsonNode) {
-    JsonNode tree=(JsonNode)dto;
-    JsonNode kindNode=tree.get("kind");
-    if (kindNode != null) {
-      String kind=kindNode.asText();
-      if (Objects.equal("Config",kind) || Objects.equal("List",kind)) {
-        applyList(tree,sourceName);
-      }
- else       if (Objects.equal("Template",kind)) {
-        Template template=createObjectMapper().treeToValue(tree,Template.class);
-        applyTemplate(template,sourceName);
-      }
- else {
-        LOG.warn("Unknown JSON type " + kindNode + ". JSON: "+ tree);
-      }
-    }
- else {
-      LOG.warn("No JSON kind for: " + tree);
-    }
   }
  else   if (dto != null) {
     applyEntity(dto,sourceName);
