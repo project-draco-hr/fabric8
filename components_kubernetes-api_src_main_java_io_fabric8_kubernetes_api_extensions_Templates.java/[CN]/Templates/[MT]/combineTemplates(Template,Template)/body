@@ -5,5 +5,11 @@
       addTemplateObject(firstTemplate,object);
     }
   }
+  List<Parameter> parameters=firstTemplate.getParameters();
+  if (parameters == null) {
+    parameters=new ArrayList<>();
+    firstTemplate.setParameters(parameters);
+  }
+  combineParameters(parameters,template.getParameters());
   return firstTemplate;
 }

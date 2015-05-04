@@ -1,0 +1,20 @@
+{
+  if (otherParameters != null && otherParameters.size() > 0) {
+    Map<String,Parameter> map=new HashMap<>();
+    for (    Parameter parameter : parameters) {
+      map.put(parameter.getName(),parameter);
+    }
+    for (    Parameter otherParameter : otherParameters) {
+      String name=otherParameter.getName();
+      Parameter original=map.get(name);
+      if (original == null) {
+        parameters.add(otherParameter);
+      }
+ else {
+        if (Strings.isNotBlank(original.getValue())) {
+          original.setValue(otherParameter.getValue());
+        }
+      }
+    }
+  }
+}
