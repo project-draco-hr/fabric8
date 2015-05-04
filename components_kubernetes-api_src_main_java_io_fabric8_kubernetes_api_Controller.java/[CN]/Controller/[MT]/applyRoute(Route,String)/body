@@ -1,5 +1,6 @@
 {
   String id=KubernetesHelper.getId(entity);
+  Objects.notNull(id,"No name for " + entity + " "+ sourceName);
   String namespace=KubernetesHelper.getNamespace(entity);
   Route route=kubernetes.findRoute(id,namespace);
   if (route == null) {
@@ -8,7 +9,7 @@
       kubernetes.createRoute(entity,namespace);
     }
  catch (    Exception e) {
-      onApplyError("Failed to create BuildConfig from " + sourceName + ". "+ e,e);
+      onApplyError("Failed to create BuildConfig from " + sourceName + ". "+ e+ ". "+ entity,e);
     }
   }
 }

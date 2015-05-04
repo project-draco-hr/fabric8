@@ -1,11 +1,12 @@
 {
   String id=KubernetesHelper.getId(entity);
+  Objects.notNull(id,"No name for " + entity + " "+ sourceName);
   String namespace=KubernetesHelper.getNamespace(entity);
   LOG.warn("Creating Template " + namespace + ":"+ id+ " "+ summaryText(entity));
   try {
     kubernetes.createTemplate(entity);
   }
  catch (  Exception e) {
-    onApplyError("Failed to create controller from " + sourceName + ". "+ e,e);
+    onApplyError("Failed to create controller from " + sourceName + ". "+ e+ ". "+ entity,e);
   }
 }
