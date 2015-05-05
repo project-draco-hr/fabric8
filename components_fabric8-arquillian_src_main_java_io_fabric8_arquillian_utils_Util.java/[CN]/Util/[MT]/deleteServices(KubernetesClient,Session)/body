@@ -2,7 +2,7 @@
   List<Throwable> errors=new ArrayList<>();
   for (  Service service : client.getServices(session.getNamespace()).getItems()) {
     try {
-      session.getLogger().info("Deleting service:" + getId(service));
+      session.getLogger().info("Deleting service:" + KubernetesHelper.getName(service));
       client.deleteService(service.getId(),session.getNamespace());
     }
  catch (    Exception e) {

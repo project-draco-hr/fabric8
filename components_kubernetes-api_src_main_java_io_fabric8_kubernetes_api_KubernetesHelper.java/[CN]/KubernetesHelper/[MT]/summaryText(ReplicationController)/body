@@ -1,12 +1,11 @@
 {
   StringBuilder buffer=new StringBuilder();
-  ReplicationControllerState desiredState=entity.getDesiredState();
-  if (desiredState != null) {
-    buffer.append("replicas: " + desiredState.getReplicas());
-    PodTemplate podTemplate=desiredState.getPodTemplate();
-    if (podTemplate != null) {
-      PodState podState=podTemplate.getDesiredState();
-      appendSummaryText(buffer,podState);
+  ReplicationControllerSpec spec=entity.getSpec();
+  if (spec != null) {
+    buffer.append("replicas: " + spec.getReplicas());
+    PodTemplateSpec podTemplateSpec=spec.getTemplate();
+    if (podTemplateSpec != null) {
+      appendSummaryText(buffer,podTemplateSpec);
     }
   }
   return buffer.toString();

@@ -3,7 +3,7 @@
   ServiceList services=kube.getServices(Kubernetes.NAMESPACE_ALL);
   List<Service> serviceItems=services.getItems();
   for (  Service service : serviceItems) {
-    System.out.println("Service " + getId(service) + " labels: "+ service.getLabels()+ " selector: "+ getSelector(service)+ " port: "+ getPort(service));
+    System.out.println("Service " + KubernetesHelper.getName(service) + " labels: "+ service.getLabels()+ " selector: "+ getSelector(service)+ " ports: "+ getPorts(service));
   }
   System.out.println();
 }

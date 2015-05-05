@@ -1,13 +1,13 @@
 {
-  String id=KubernetesHelper.getId(entity);
+  String id=getName(entity);
   Objects.notNull(id,"No name for " + entity + " "+ sourceName);
-  String namespace=KubernetesHelper.getNamespace(entity);
+  String namespace=getNamespace(entity);
   LOG.info("Creating Template " + namespace + ":"+ id+ " "+ summaryText(entity));
   Object result=null;
   try {
     String json=kubernetes.createTemplate(entity,namespace);
     LOG.info("Template processed into: " + json);
-    result=KubernetesHelper.loadJson(json);
+    result=loadJson(json);
     printSummary(result);
   }
  catch (  Exception e) {

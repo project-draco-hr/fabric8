@@ -2,7 +2,7 @@
   List<Throwable> errors=new ArrayList<>();
   for (  ReplicationController replicationController : client.getReplicationControllers(session.getNamespace()).getItems()) {
     try {
-      session.getLogger().info("Deleting replication controller:" + getId(replicationController));
+      session.getLogger().info("Deleting replication controller:" + KubernetesHelper.getName(replicationController));
       client.deleteReplicationController(replicationController.getId(),session.getNamespace());
     }
  catch (    Exception e) {

@@ -11,7 +11,7 @@
   }
  else {
     for (    Service s : getServices().getItems()) {
-      String sid=getId(s);
+      String sid=getName(s);
       if (serviceName.equals(sid)) {
         srv=s;
         break;
@@ -23,9 +23,9 @@
   }
   RouteList routeList=getRoutes(namespace);
   for (  Route route : routeList.getItems()) {
-    if (route.getServiceName().equals(serviceName)) {
-      return (serviceProto + "://" + route.getHost()).toLowerCase();
+    if (route.getSpec().getTo().getName().equals(serviceName)) {
+      return (serviceProto + "://" + route.getSpec().getHost()).toLowerCase();
     }
   }
-  return (serviceProto + "://" + srv.getPortalIP()+ ":"+ srv.getPort()).toLowerCase();
+  return (serviceProto + "://" + srv.getSpec().getPortalIP()+ ":"+ srv.getSpec().getPorts().iterator().next().getPort()).toLowerCase();
 }

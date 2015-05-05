@@ -3,16 +3,13 @@
   PodList pods=kube.getPods(Kubernetes.NAMESPACE_ALL);
   List<Pod> items=pods.getItems();
   for (  Pod item : items) {
-    System.out.println("Pod " + getId(item) + " created: "+ item.getCreationTimestamp());
-    PodState desiredState=item.getDesiredState();
-    if (desiredState != null) {
-      ContainerManifest manifest=desiredState.getManifest();
-      if (manifest != null) {
-        List<Container> containers=manifest.getContainers();
-        if (containers != null) {
-          for (          Container container : containers) {
-            System.out.println("Container " + container.getImage() + " "+ container.getCommand()+ " ports: "+ container.getPorts());
-          }
+    System.out.println("Pod " + KubernetesHelper.getName(item) + " created: "+ item.getCreationTimestamp());
+    PodSpec spec=item.getSpec();
+    if (spec != null) {
+      List<Container> containers=spec.getContainers();
+      if (containers != null) {
+        for (        Container container : containers) {
+          System.out.println("Container " + container.getImage() + " "+ container.getCommand()+ " ports: "+ container.getPorts());
         }
       }
     }

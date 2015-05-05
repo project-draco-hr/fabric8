@@ -2,7 +2,7 @@
   List<Throwable> errors=new ArrayList<>();
   for (  Pod pod : client.getPods(session.getNamespace()).getItems()) {
     try {
-      session.getLogger().info("Deleting pod:" + getId(pod));
+      session.getLogger().info("Deleting pod:" + KubernetesHelper.getName(pod));
       client.deletePod(pod.getId(),session.getNamespace());
     }
  catch (    Exception e) {

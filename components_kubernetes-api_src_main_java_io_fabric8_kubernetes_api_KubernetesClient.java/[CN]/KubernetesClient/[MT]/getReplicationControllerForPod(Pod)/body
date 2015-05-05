@@ -15,13 +15,13 @@
         if (matchedSize > 1) {
           List<ReplicationController> nonZeroReplicas=Filters.filter(matched,new Filter<ReplicationController>(){
             @Override public boolean matches(            ReplicationController replicationController){
-              ReplicationControllerState desiredState=replicationController.getDesiredState();
-              if (desiredState != null) {
-                Integer desiredReplicas=desiredState.getReplicas();
+              ReplicationControllerSpec replicationControllerSpec=replicationController.getSpec();
+              if (replicationControllerSpec != null) {
+                Integer desiredReplicas=replicationControllerSpec.getReplicas();
                 if (desiredReplicas != null && desiredReplicas.intValue() > 0) {
-                  ReplicationControllerState currentState=replicationController.getCurrentState();
-                  if (currentState != null) {
-                    Integer replicas=currentState.getReplicas();
+                  ReplicationControllerStatus currentStatus=replicationController.getStatus();
+                  if (currentStatus != null) {
+                    Integer replicas=currentStatus.getReplicas();
                     if (replicas != null && replicas.intValue() > 0) {
                       return true;
                     }

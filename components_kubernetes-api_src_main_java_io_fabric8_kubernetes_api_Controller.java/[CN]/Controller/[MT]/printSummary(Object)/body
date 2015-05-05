@@ -4,12 +4,12 @@
   }
   if (kubeResource instanceof Template) {
     Template template=(Template)kubeResource;
-    String id=KubernetesHelper.getId(template);
-    LOG.info("  Template " + id + " "+ KubernetesHelper.summaryText(template));
+    String id=getName(template);
+    LOG.info("  Template " + id + " "+ summaryText(template));
     printSummary(Templates.getTemplateObjects(template));
     return;
   }
-  List<Object> list=KubernetesHelper.toItemList(kubeResource);
+  List<Object> list=toItemList(kubeResource);
   for (  Object object : list) {
     if (object != null) {
       if (object == list) {
@@ -21,8 +21,8 @@
       }
  else {
         String kind=object.getClass().getSimpleName();
-        String id=KubernetesHelper.getObjectId(object);
-        LOG.info("    " + kind + " "+ id+ " "+ KubernetesHelper.summaryText(object));
+        String id=getObjectId(object);
+        LOG.info("    " + kind + " "+ id+ " "+ summaryText(object));
       }
     }
   }

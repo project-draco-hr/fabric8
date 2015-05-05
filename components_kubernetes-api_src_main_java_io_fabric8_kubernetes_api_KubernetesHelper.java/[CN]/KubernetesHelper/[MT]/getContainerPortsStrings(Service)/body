@@ -1,0 +1,25 @@
+{
+  Set<String> answer=Collections.EMPTY_SET;
+  String id=getName(service);
+  ServiceSpec spec=service.getSpec();
+  if (spec != null) {
+    List<ServicePort> servicePorts=spec.getPorts();
+    Objects.notNull(servicePorts,"servicePorts for service " + id);
+    answer=new HashSet<>(servicePorts.size());
+    for (    ServicePort port : servicePorts) {
+      IntOrString intOrStringValue=port.getTargetPort();
+      Integer intValue=intOrStringValue.getIntVal();
+      if (intValue != null) {
+        answer.add(intValue.toString());
+      }
+ else {
+        String containerPortText=intOrStringValue.getStrVal();
+        if (Strings.isNullOrBlank(containerPortText)) {
+          throw new IllegalArgumentException("No servicePorts for service " + id);
+        }
+        answer.add(containerPortText);
+      }
+    }
+  }
+  return answer;
+}

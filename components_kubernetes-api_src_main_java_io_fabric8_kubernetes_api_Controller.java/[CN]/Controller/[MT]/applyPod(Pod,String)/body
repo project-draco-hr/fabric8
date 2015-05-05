@@ -1,5 +1,6 @@
 {
   String namespace=getNamespace();
+  String id=getName(pod);
   String id=getId(pod);
   Objects.notNull(id,"No name for " + pod + " "+ sourceName);
   if (isServicesOnlyMode()) {
@@ -20,7 +21,7 @@
         doCreatePod(pod,namespace,sourceName);
       }
  else {
-        LOG.info("Updating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getId(pod));
+        LOG.info("Updating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getName(pod));
         try {
           Object answer=kubernetes.updatePod(id,pod);
           LOG.info("Updated pod result: " + answer);
@@ -33,7 +34,7 @@
   }
  else {
     if (!isAllowCreate()) {
-      LOG.warn("Creation disabled so not creating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getId(pod));
+      LOG.warn("Creation disabled so not creating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getName(pod));
     }
  else {
       doCreatePod(pod,namespace,sourceName);

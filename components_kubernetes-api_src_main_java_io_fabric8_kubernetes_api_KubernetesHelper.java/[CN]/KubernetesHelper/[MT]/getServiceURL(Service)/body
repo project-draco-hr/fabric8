@@ -1,10 +1,10 @@
 {
   if (service != null) {
-    Service spec=service;
+    ServiceSpec spec=service.getSpec();
     if (spec != null) {
       String portalIP=spec.getPortalIP();
       if (portalIP != null) {
-        Integer port=spec.getPort();
+        Integer port=spec.getPorts().iterator().next().getPort();
         if (port != null && port > 0) {
           portalIP+=":" + port;
         }

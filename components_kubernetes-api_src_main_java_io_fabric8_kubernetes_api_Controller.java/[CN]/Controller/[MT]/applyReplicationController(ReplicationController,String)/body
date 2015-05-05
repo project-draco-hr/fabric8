@@ -1,6 +1,6 @@
 {
   String namespace=getNamespace();
-  String id=getId(replicationController);
+  String id=getName(replicationController);
   Objects.notNull(id,"No name for " + replicationController + " "+ sourceName);
   if (isServicesOnlyMode()) {
     LOG.debug("Only processing Services right now so ignoring ReplicationController: " + namespace + ":"+ id);
@@ -20,7 +20,7 @@
         doCreateReplicationController(replicationController,namespace,sourceName);
       }
  else {
-        LOG.info("Updating replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getId(replicationController));
+        LOG.info("Updating replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getName(replicationController));
         try {
           Object answer=kubernetes.updateReplicationController(id,replicationController);
           LOG.info("Updated replicationController: " + answer);
@@ -33,7 +33,7 @@
   }
  else {
     if (!isAllowCreate()) {
-      LOG.warn("Creation disabled so not creating a replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getId(replicationController));
+      LOG.warn("Creation disabled so not creating a replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getName(replicationController));
     }
  else {
       doCreateReplicationController(replicationController,namespace,sourceName);

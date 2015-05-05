@@ -3,12 +3,12 @@
   ReplicationControllerList replicationControllers=kube.getReplicationControllers(Kubernetes.NAMESPACE_ALL);
   List<ReplicationController> items=replicationControllers.getItems();
   for (  ReplicationController item : items) {
-    ReplicationControllerState desiredState=item.getDesiredState();
-    if (desiredState != null) {
-      System.out.println("ReplicationController " + getId(item) + " labels: "+ item.getLabels()+ " replicas: "+ desiredState.getReplicas()+ " replicatorSelector: "+ desiredState.getReplicaSelector()+ " podTemplate: "+ desiredState.getPodTemplate());
+    ReplicationControllerSpec replicationControllerSpec=item.getSpec();
+    if (replicationControllerSpec != null) {
+      System.out.println("ReplicationController " + KubernetesHelper.getName(item) + " labels: "+ item.getLabels()+ " replicas: "+ replicationControllerSpec.getReplicas()+ " replicatorSelector: "+ replicationControllerSpec.getSelector()+ " podTemplate: "+ replicationControllerSpec.getTemplate());
     }
  else {
-      System.out.println("ReplicationController " + getId(item) + " labels: "+ item.getLabels()+ " no desiredState");
+      System.out.println("ReplicationController " + KubernetesHelper.getName(item) + " labels: "+ item.getLabels()+ " no replicationControllerSpec");
     }
   }
   System.out.println();

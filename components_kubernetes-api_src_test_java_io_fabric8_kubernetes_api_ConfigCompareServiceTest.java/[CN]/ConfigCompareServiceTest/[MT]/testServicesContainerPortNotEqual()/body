@@ -1,5 +1,5 @@
 {
-  Service entity1=new ServiceBuilder().withId("foo").addToLabels("label1","value1").addToLabels("label2","value2").addToSelector("label1","value1").addToSelector("label2","value2").withPort(123).withNewContainerPort().withIntVal(456).endContainerPort().build();
-  Service entity2=new ServiceBuilder().withId("foo").addToLabels("label2","value2").addToLabels("label1","value1").addToSelector("label1","value1").addToSelector("label2","value2").withPort(123).withNewContainerPort().withIntVal(555).endContainerPort().build();
+  Service entity1=new ServiceBuilder().withName("foo").addToLabels("label1","value1").addToLabels("label2","value2").withNewSpec().addToSelector("label1","value1").addToSelector("label2","value2").addNewPort().withPort(123).withNewTargetPort().withIntVal(456).endTargetPort().endPort().endSpec().build();
+  Service entity2=new ServiceBuilder().withName("foo").addToLabels("label2","value2").addToLabels("label1","value1").withNewSpec().addToSelector("label1","value1").addToSelector("label2","value2").addNewPort().withPort(123).withNewTargetPort().withIntVal(555).endTargetPort().endPort().endSpec().build();
   assertCompareConfig(entity1,entity2,false);
 }

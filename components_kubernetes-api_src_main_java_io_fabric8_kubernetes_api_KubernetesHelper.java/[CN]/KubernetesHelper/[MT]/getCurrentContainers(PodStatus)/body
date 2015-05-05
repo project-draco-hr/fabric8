@@ -1,0 +1,11 @@
+{
+  if (podStatus != null) {
+    List<ContainerStatus> containerStatuses=podStatus.getContainerStatuses();
+    Map<String,ContainerStatus> info=new Hashtable<>(containerStatuses.size());
+    for (    ContainerStatus status : containerStatuses) {
+      info.put(status.getContainerID(),status);
+    }
+    return info;
+  }
+  return Collections.EMPTY_MAP;
+}
