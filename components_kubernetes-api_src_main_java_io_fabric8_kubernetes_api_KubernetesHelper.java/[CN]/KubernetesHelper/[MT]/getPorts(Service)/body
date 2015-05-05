@@ -1,7 +1,8 @@
 {
   Set<Integer> answer=new HashSet<>();
   if (entity != null) {
-    for (    ServicePort port : entity.getSpec().getPorts()) {
+    ServiceSpec spec=getOrCreateSpec(entity);
+    for (    ServicePort port : spec.getPorts()) {
       answer.add(port.getPort());
     }
   }

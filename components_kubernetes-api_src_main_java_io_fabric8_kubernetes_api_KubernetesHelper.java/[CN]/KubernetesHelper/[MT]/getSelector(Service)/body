@@ -1,9 +1,8 @@
 {
   Map<String,String> answer=null;
   if (entity != null) {
-    answer=entity.getSpec().getSelector();
-    if (answer == null) {
-    }
+    ServiceSpec spec=getOrCreateSpec(entity);
+    answer=spec.getSelector();
   }
   return answer != null ? answer : Collections.EMPTY_MAP;
 }
