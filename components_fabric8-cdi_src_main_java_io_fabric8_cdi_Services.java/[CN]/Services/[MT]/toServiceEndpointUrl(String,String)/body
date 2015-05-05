@@ -13,9 +13,11 @@
     return endpoints;
   }
   for (  io.fabric8.kubernetes.api.model.Endpoints item : KUBERNETES.getEndpoints(namespace).getItems()) {
-    if (item.getId().equals(serviceId) && (namespace == null || namespace.equals(item.getNamespace()))) {
-      for (      String endpoint : item.getEndpoints()) {
-        endpoints.add(serviceProto + "://" + endpoint);
+    if (item.getName().equals(serviceId) && (namespace == null || namespace.equals(item.getNamespace()))) {
+      for (      EndpointSubset subset : item.getSubsets()) {
+        for (        EndpointAddress address : subset.getAddresses()) {
+          endpoints.add(serviceProto + "://" + address.getIP());
+        }
       }
       break;
     }

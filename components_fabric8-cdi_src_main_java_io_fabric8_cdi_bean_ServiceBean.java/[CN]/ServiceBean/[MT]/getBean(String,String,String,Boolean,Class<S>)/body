@@ -1,10 +1,10 @@
 {
-  String serviceAlias=alias != null ? alias : (external ? "external-" : "") + id + "-"+ type.getName()+ "-"+ protocol+ SUFFIX;
-  Key key=new Key(id,protocol,serviceAlias,external,type,null);
+  String serviceAlias=alias != null ? alias : (external ? "external-" : "") + name + "-"+ type.getName()+ "-"+ protocol+ SUFFIX;
+  Key key=new Key(name,protocol,serviceAlias,external,type,null);
   if (BEANS.containsKey(key)) {
     return BEANS.get(key);
   }
-  ServiceBean bean=new ServiceBean(id,protocol,serviceAlias,type,null,external);
+  ServiceBean bean=new ServiceBean(name,protocol,serviceAlias,type,null,external);
   BEANS.put(key,bean);
   return bean;
 }
