@@ -1,5 +1,5 @@
 {
-  Pod entity1=new PodBuilder().withName("foo").addToLabels("label1","value1").addToLabels("label2","value2").addToAnnotations("podAnnotation1","podAnnValue1").withNewSpec().addNewContainer().withImage("fabric8/jenkins").addNewEnv().withName("foo").withValue("bar").endEnv().endContainer().endSpec().build();
-  Pod entity2=new PodBuilder().withName("foo").addToLabels("label1","value1").addToLabels("label2","value2").addToAnnotations("podAnnotation1","podAnnValue1").withNewSpec().addNewContainer().withImage("fabric8/jenkins").addNewEnv().withName("foo").withValue("notSame").endEnv().endContainer().endSpec().build();
+  Pod entity1=new PodBuilder().withNewMetadata().withName("foo").addToLabels("label1","value1").addToLabels("label2","value2").addToAnnotations("podAnnotation1","podAnnValue1").endMetadata().withNewSpec().addNewContainer().withImage("fabric8/jenkins").addNewEnv().withName("foo").withValue("bar").endEnv().endContainer().endSpec().build();
+  Pod entity2=new PodBuilder().withNewMetadata().withName("foo").addToLabels("label1","value1").addToLabels("label2","value2").addToAnnotations("podAnnotation1","podAnnValue1").endMetadata().withNewSpec().addNewContainer().withImage("fabric8/jenkins").addNewEnv().withName("foo").withValue("notSame").endEnv().endContainer().endSpec().build();
   assertCompareConfig(entity1,entity2,false);
 }

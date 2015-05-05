@@ -2,10 +2,10 @@
   Template template=assertParseExampleFile("template.json",Template.class);
   List<Object> objects=template.getObjects();
   assertNotEmpty("objects",objects);
-  assertTrue("size is " + objects.size(),objects.size() > 3);
+  assertTrue("size is " + objects.size(),objects.size() == 2);
   Object service=objects.get(0);
   assertThat(service).isInstanceOf(Service.class);
-  Object rc=objects.get(2);
+  Object rc=objects.get(1);
   assertThat(rc).isInstanceOf(ReplicationController.class);
   System.out.println("Generated JSON: " + toJson(template));
 }

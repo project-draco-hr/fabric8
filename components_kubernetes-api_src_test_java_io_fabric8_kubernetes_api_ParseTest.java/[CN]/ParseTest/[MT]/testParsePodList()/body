@@ -1,8 +1,8 @@
 {
-  PodList podList=assertParseExampleFile("pod-list.json",PodList.class);
-  List<Pod> items=podList.getItems();
+  KubernetesList podList=assertParseExampleFile("pod-list.json",KubernetesList.class);
+  List<Object> items=podList.getItems();
   assertNotEmpty("items",items);
-  Pod pod=items.get(0);
+  Pod pod=(Pod)items.get(0);
   assertNotNull("pod1",pod);
   assertEquals("pod1.id","my-pod-1",KubernetesHelper.getName(pod));
   PodSpec podSpec=pod.getSpec();
@@ -11,8 +11,8 @@
   assertNotEmpty("pod1.podSpec.manifest.containers",containers);
   Container container=containers.get(0);
   assertNotNull("pod1.podSpec.container[0]",container);
-  assertEquals("pod1.podSpec.manifest.container[0].name","nginx",container.getName());
-  assertEquals("pod1.podSpec.manifest.container[0].image","dockerfile/nginx",container.getImage());
+  assertEquals("pod1.podSpec.container[0].name","nginx",container.getName());
+  assertEquals("pod1.podSpec.container[0].image","dockerfile/nginx",container.getImage());
   LOG.info("pod1 container1 " + container);
   String json=toJson(podList);
   LOG.info("Got JSON: " + json);

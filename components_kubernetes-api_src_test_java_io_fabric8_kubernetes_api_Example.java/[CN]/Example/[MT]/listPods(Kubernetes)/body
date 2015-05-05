@@ -3,7 +3,7 @@
   PodList pods=kube.getPods(Kubernetes.NAMESPACE_ALL);
   List<Pod> items=pods.getItems();
   for (  Pod item : items) {
-    System.out.println("Pod " + KubernetesHelper.getName(item) + " created: "+ item.getCreationTimestamp());
+    System.out.println("Pod " + KubernetesHelper.getName(item) + " created: "+ item.getMetadata().getCreationTimestamp());
     PodSpec spec=item.getSpec();
     if (spec != null) {
       List<Container> containers=spec.getContainers();

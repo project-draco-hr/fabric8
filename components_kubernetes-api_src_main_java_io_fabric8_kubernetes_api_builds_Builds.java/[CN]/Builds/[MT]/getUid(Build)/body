@@ -1,7 +1,7 @@
 {
   String answer=null;
   if (build != null) {
-    answer=build.getUid();
+    answer=build.getMetadata().getUid();
     if (Strings.isNullOrBlank(answer)) {
       Map<String,Object> metadata=getMetadata(build);
       answer=getString(metadata,"uid");
@@ -13,7 +13,7 @@
       }
     }
     if (Strings.isNullOrBlank(answer)) {
-      answer=build.getName();
+      answer=build.getMetadata().getName();
     }
   }
   return answer;
