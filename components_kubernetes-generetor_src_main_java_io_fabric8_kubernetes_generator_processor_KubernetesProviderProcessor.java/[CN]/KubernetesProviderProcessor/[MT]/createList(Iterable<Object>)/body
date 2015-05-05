@@ -10,11 +10,11 @@
       sb.append("-");
     }
     if (obj instanceof Pod) {
-      sb.append(((Pod)obj).getId());
+      sb.append(getName((Pod)obj));
       allItems.add(obj);
     }
  else     if (obj instanceof ReplicationController) {
-      sb.append(((ReplicationController)obj).getId());
+      sb.append(getName((ReplicationController)obj));
       allItems.add(obj);
     }
  else     if (obj instanceof Service) {
@@ -29,8 +29,8 @@
       sb.append(((DeploymentConfig)obj).getName());
       allItems.add(obj);
     }
- else     if (obj instanceof ImageRepository) {
-      sb.append(((ImageRepository)obj).getName());
+ else     if (obj instanceof ImageStream) {
+      sb.append(getName((ImageStream)obj));
       allItems.add(obj);
     }
  else     if (obj instanceof Route) {
@@ -38,9 +38,8 @@
       allItems.add(obj);
     }
  else     if (obj instanceof KubernetesList) {
-      sb.append(((KubernetesList)obj).getId());
       allItems.addAll(((KubernetesList)obj).getItems());
     }
   }
-  return new KubernetesListBuilder().withId(sb.toString()).withItems(allItems).build();
+  return new KubernetesListBuilder().withItems(allItems).build();
 }
