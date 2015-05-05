@@ -1,0 +1,17 @@
+{
+  Object obj=map.get(key);
+  if (obj instanceof Long) {
+    return (Long)obj;
+  }
+ else   if (obj instanceof Number) {
+    Number number=(Number)obj;
+    return number.longValue();
+  }
+ else   if (obj != null) {
+    String text=obj.toString();
+    if (Strings.isNotBlank(text)) {
+      return Long.parseLong(text);
+    }
+  }
+  return defaultValue;
+}

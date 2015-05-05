@@ -1,0 +1,28 @@
+{
+  LivenessProbe answer=new LivenessProbe();
+  boolean added=false;
+  Properties properties=getProject().getProperties();
+  String httpGetPath=properties.getProperty("fabric8.livenessProbe.httpGet.path");
+  String httpGetPort=properties.getProperty("fabric8.livenessProbe.httpGet.port");
+  String httpGetHost=properties.getProperty("fabric8.livenessProbe.httpGet.host");
+  if (Strings.isNotBlank(httpGetPath)) {
+    added=true;
+    HTTPGetAction httpGet=new HTTPGetAction();
+    httpGet.setPath(httpGetPath);
+    httpGet.setHost(httpGetHost);
+    if (Strings.isNotBlank(httpGetPort)) {
+      IntOrString httpGetPortIntOrString=KubernetesHelper.createIntOrString(httpGetPort);
+      httpGet.setPort(httpGetPortIntOrString);
+    }
+    answer.setHttpGet(httpGet);
+  }
+  Long initialDelaySeconds=PropertiesHelper.getLong(properties,"fabric8.livenessProbe.initialDelaySeconds");
+  if (initialDelaySeconds != null) {
+    answer.setInitialDelaySeconds(initialDelaySeconds);
+  }
+  Long timeoutSeconds=PropertiesHelper.getLong(properties,"fabric8.livenessProbe.timeoutSeconds");
+  if (timeoutSeconds != null) {
+    answer.setTimeoutSeconds(timeoutSeconds);
+  }
+  return added ? answer : null;
+}

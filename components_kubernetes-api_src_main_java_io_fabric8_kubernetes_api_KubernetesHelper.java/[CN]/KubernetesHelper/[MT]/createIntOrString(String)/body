@@ -1,0 +1,23 @@
+{
+  if (isNullOrBlank(nameOrNumber)) {
+    return null;
+  }
+ else {
+    IntOrString answer=new IntOrString();
+    Integer intVal=null;
+    try {
+      intVal=Integer.parseInt(nameOrNumber);
+    }
+ catch (    Exception e) {
+    }
+    if (intVal != null) {
+      answer.setIntVal(intVal);
+      answer.setKind(INTORSTRING_KIND_INT);
+    }
+ else {
+      answer.setStrVal(nameOrNumber);
+      answer.setKind(INTORSTRING_KIND_STRING);
+    }
+    return answer;
+  }
+}
