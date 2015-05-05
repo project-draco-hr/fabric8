@@ -41,6 +41,10 @@
  else {
       combinedJson=KubernetesHelper.combineJson(jsonObjectList.toArray());
     }
+    if (combinedJson instanceof Template) {
+      Template template=(Template)combinedJson;
+      setName(template,getKubernetesName());
+    }
     json.getParentFile().mkdirs();
     KubernetesHelper.saveJson(json,combinedJson);
     getLog().info("Saved as :" + json.getAbsolutePath());
