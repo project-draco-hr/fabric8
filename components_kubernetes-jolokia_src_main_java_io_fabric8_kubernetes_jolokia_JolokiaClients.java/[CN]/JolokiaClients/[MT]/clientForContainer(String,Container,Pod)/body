@@ -6,7 +6,7 @@
       if (containerPort != null) {
         String name=port.getName();
         if (containerPort == 8778 || (Objects.equals("jolokia",name) && containerPort.intValue() > 0)) {
-          PodState currentState=pod.getCurrentState();
+          PodStatus currentState=pod.getStatus();
           String podIP=currentState.getPodIP();
           if (Strings.isNotBlank(podIP)) {
             return createJolokiaClientFromHostAndPort(container,podIP,containerPort);
