@@ -1,12 +1,11 @@
 {
-  String id=KubernetesHelper.getId(entity);
-  Objects.notNull(id,"No name for " + entity + " "+ sourceName);
-  String namespace=KubernetesHelper.getNamespace(entity);
-  LOG.warn("Creating Template " + namespace + ":"+ id+ " "+ summaryText(entity));
-  try {
-    kubernetes.createTemplate(entity);
-  }
- catch (  Exception e) {
-    onApplyError("Failed to create controller from " + sourceName + ". "+ e+ ". "+ entity,e);
+  Object result=processTemplate(entity,sourceName);
+  if (result != null) {
+    try {
+      applyEntity(result,sourceName);
+    }
+ catch (    Exception e) {
+      onApplyError("Failed to apply result of template expansion from " + sourceName + ". "+ e+ ". "+ result,e);
+    }
   }
 }

@@ -1,0 +1,17 @@
+{
+  String id=KubernetesHelper.getId(entity);
+  Objects.notNull(id,"No name for " + entity + " "+ sourceName);
+  String namespace=KubernetesHelper.getNamespace(entity);
+  LOG.info("Creating Template " + namespace + ":"+ id+ " "+ summaryText(entity));
+  Object result=null;
+  try {
+    String json=kubernetes.createTemplate(entity,namespace);
+    LOG.info("Template processed into: " + json);
+    result=KubernetesHelper.loadJson(json);
+    printSummary(result);
+  }
+ catch (  Exception e) {
+    onApplyError("Failed to create controller from " + sourceName + ". "+ e+ ". "+ entity,e);
+  }
+  return result;
+}

@@ -18,14 +18,10 @@
   getLog().info("Using kubernetes at: " + kubernetes.getAddress() + " in namespace "+ kubernetes.getNamespace());
   getLog().info("Kubernetes JSON: " + json);
   try {
+    String fileName=json.getName();
     Object dto=KubernetesHelper.loadJson(json);
     if (dto == null) {
       throw new MojoFailureException("Could not load kubernetes json: " + json);
-    }
-    List<Object> list=KubernetesHelper.toItemList(dto);
-    if (createRoutes) {
-      createRoutes(kubernetes,list);
-      dto=list;
     }
     Controller controller=new Controller(this.kubernetes);
     controller.setAllowCreate(createNewResources);
@@ -33,7 +29,17 @@
     controller.setThrowExceptionOnError(failOnError);
     controller.setServicesOnlyMode(servicesOnly);
     controller.setIgnoreServiceMode(ignoreServices);
-    controller.apply(dto,json.getName());
+    if (dto instanceof Template) {
+      Template template=(Template)dto;
+      KubernetesHelper.setNamespace(template,kubernetes.getNamespace());
+      dto=controller.processTemplate(template,fileName);
+    }
+    List<Object> list=KubernetesHelper.toItemList(dto);
+    if (createRoutes) {
+      createRoutes(kubernetes,list);
+      dto=list;
+    }
+    controller.apply(dto,fileName);
   }
  catch (  Exception e) {
     throw new MojoExecutionException(e.getMessage(),e);
