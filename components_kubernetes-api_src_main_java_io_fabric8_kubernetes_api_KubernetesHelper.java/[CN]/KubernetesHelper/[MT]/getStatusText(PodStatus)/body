@@ -1,0 +1,19 @@
+{
+  String status;
+  List<String> statusList=new ArrayList<>();
+  List<ContainerStatus> containerStatuses=podStatus.getContainerStatuses();
+  for (  ContainerStatus containerStatus : containerStatuses) {
+    ContainerState state=containerStatus.getState();
+    String statusText=summaryText(state);
+    if (statusText != null) {
+      statusList.add(statusText);
+    }
+  }
+  if (statusList.size() == 1) {
+    status=statusList.get(0);
+  }
+ else {
+    status=statusList.toString();
+  }
+  return status;
+}

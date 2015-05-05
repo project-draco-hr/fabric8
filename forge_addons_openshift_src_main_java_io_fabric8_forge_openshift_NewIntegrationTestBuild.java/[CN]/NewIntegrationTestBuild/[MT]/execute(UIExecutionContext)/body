@@ -7,9 +7,9 @@
   List<EnvVar> envVars=createEnvVars(buildConfigName,gitUrlText,mavenCommand.getValue());
   BuildConfig buildConfig=BuildConfigs.createIntegrationTestBuildConfig(buildConfigName,labels,gitUrlText,imageText,envVars);
   System.out.println("Generated BuildConfig: " + toJson(buildConfig));
-  ImageRepository imageRepository=BuildConfigs.imageRepository(buildConfigName,labels);
+  ImageStream imageRepository=BuildConfigs.imageRepository(buildConfigName,labels);
   Controller controller=createController();
-  controller.applyImageStream(imageRepository,"generated ImageRepository: " + toJson(imageRepository));
+  controller.applyImageStream(imageRepository,"generated ImageStream: " + toJson(imageRepository));
   controller.applyBuildConfig(buildConfig,"generated BuildConfig: " + toJson(buildConfig));
   return Results.success("Added BuildConfig: " + Builds.getName(buildConfig) + " to OpenShift at master: "+ getKubernetes().getAddress());
 }

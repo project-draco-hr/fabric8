@@ -11,11 +11,11 @@
       String id=KubernetesHelper.getName(item);
       String labels=KubernetesHelper.toLabelsString(item.getLabels());
       Integer replicas=null;
-      ReplicationControllerState desiredState=item.getDesiredState();
-      ReplicationControllerState currentState=item.getCurrentState();
+      ReplicationControllerSpec desiredState=item.getSpec();
+      ReplicationControllerStatus currentState=item.getStatus();
       String selector=null;
       if (desiredState != null) {
-        selector=KubernetesHelper.toLabelsString(desiredState.getReplicaSelector());
+        selector=KubernetesHelper.toLabelsString(desiredState.getSelector());
       }
       if (currentState != null) {
         replicas=currentState.getReplicas();

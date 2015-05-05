@@ -10,7 +10,16 @@
     if (filter.matches(service)) {
       String labels=KubernetesHelper.toLabelsString(service.getLabels());
       String selector=KubernetesHelper.toLabelsString(getSelector(service));
-      table.row(KubernetesHelper.getName(service),labels,selector,KubernetesHelper.toPositiveNonZeroText(getPort(service)));
+      Set<Integer> ports=getPorts(service);
+      List<Integer> portList=new ArrayList<>(ports);
+      String portText;
+      if (portList.size() == 1) {
+        portText=portList.get(0).toString();
+      }
+ else {
+        portText=Strings.join(portList,", ");
+      }
+      table.row(KubernetesHelper.getName(service),labels,selector,portText);
     }
   }
   table.print();
