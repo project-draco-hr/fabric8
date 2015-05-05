@@ -17,9 +17,9 @@
   if (labelMap.isEmpty() && Strings.isNotBlank(name)) {
     labelMap.put("component",name);
   }
-  KubernetesListBuilder builder=new KubernetesListBuilder().addNewReplicationController().withName(KubernetesHelper.validateKubernetesId(replicationControllerName,"fabric8.replicationController.name")).withLabels(labels).withNewSpec().withReplicas(replicaCount).withSelector(labelMap).withNewTemplate().withLabels(labelMap).withNewSpec().addNewContainer().withName(getKubernetesContainerName()).withImage(getDockerImage()).withImagePullPolicy(getImagePullPolicy()).withEnv(getEnvironmentVariables()).withPrivileged(getContainerPrivileged()).withPorts(getContainerPorts()).withVolumeMounts(getVolumeMounts()).withLivenessProbe(getLivenessProbe()).endContainer().withVolumes(getVolumes()).endSpec().endTemplate().endSpec().endReplicationController();
+  KubernetesListBuilder builder=new KubernetesListBuilder().addNewReplicationController().withNewMetadata().withName(KubernetesHelper.validateKubernetesId(replicationControllerName,"fabric8.replicationController.name")).withLabels(labels).endMetadata().withNewSpec().withReplicas(replicaCount).withSelector(labelMap).withNewTemplate().withNewMetadata().withLabels(labelMap).endMetadata().withNewSpec().addNewContainer().withName(getKubernetesContainerName()).withImage(getDockerImage()).withImagePullPolicy(getImagePullPolicy()).withEnv(getEnvironmentVariables()).withPrivileged(getContainerPrivileged()).withPorts(getContainerPorts()).withVolumeMounts(getVolumeMounts()).withLivenessProbe(getLivenessProbe()).endContainer().withVolumes(getVolumes()).endSpec().endTemplate().endSpec().endReplicationController();
   if (serviceName != null) {
-    ServiceBuilder serviceBuilder=new ServiceBuilder().withName(serviceName).withLabels(labelMap);
+    ServiceBuilder serviceBuilder=new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labelMap).endMetadata();
     ServiceFluent<ServiceBuilder>.SpecNested<ServiceBuilder> serviceSpecBuilder=serviceBuilder.withNewSpec().withSelector(labelMap);
     List<ServicePort> servicePorts=getServicePorts();
     System.out.println("Generated ports: " + servicePorts);

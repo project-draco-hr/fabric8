@@ -25,7 +25,5 @@
     }
   }
   String templateName=properties.containsKey(TEMPLATE_NAME) ? String.valueOf(properties.getProperty(TEMPLATE_NAME)) : project.getArtifactId();
-  Template template=new TemplateBuilder().withName(templateName).withParameters(parameters).build();
-  KubernetesHelper.setName(template,templateName);
-  return template;
+  return new TemplateBuilder().withNewMetadata().withName(templateName).endMetadata().withParameters(parameters).build();
 }

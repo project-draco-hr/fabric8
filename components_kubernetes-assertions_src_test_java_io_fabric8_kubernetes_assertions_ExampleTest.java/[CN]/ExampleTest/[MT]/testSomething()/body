@@ -3,8 +3,9 @@
   Map<String,String> expectedLabels=new HashMap<>();
   expectedLabels.put("foo","bar");
   final Pod pod=new Pod();
-  pod.setName(expectedId);
-  pod.setLabels(expectedLabels);
+  pod.setMetadata(new ObjectMeta());
+  pod.getMetadata().setName(expectedId);
+  pod.getMetadata().setLabels(expectedLabels);
   assertThat(pod).hasName(expectedId).hasLabels(expectedLabels);
   assertAssertionError(new Block(){
     @Override public void invoke() throws Exception {
