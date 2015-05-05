@@ -4,8 +4,8 @@
   Callable<Boolean> sessionPodsReady=new SessionPodsAreReady(client,session);
   Callable<Boolean> servicesReady=new SessionServicesAreReady(client,session,configuration);
   List<Object> entities=new ArrayList<>();
-  for (  Config c : kubeConfigs) {
-    entities.addAll(getEntities(c));
+  for (  KubernetesList c : kubeConfigs) {
+    entities.addAll(c.getItems());
   }
   Collections.sort(entities,new Comparator<Object>(){
     @Override public int compare(    Object left,    Object right){

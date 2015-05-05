@@ -8,7 +8,7 @@
   Filter<Service> filter=KubernetesHelper.createServiceFilter(filterText.getValue());
   for (  Service service : items) {
     if (filter.matches(service)) {
-      String labels=KubernetesHelper.toLabelsString(service.getLabels());
+      String labels=KubernetesHelper.toLabelsString(service.getMetadata().getLabels());
       String selector=KubernetesHelper.toLabelsString(getSelector(service));
       Set<Integer> ports=getPorts(service);
       List<Integer> portList=new ArrayList<>(ports);

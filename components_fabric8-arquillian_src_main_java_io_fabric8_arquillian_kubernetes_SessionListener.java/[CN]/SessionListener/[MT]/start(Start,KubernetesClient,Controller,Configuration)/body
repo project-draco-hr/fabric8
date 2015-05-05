@@ -12,14 +12,14 @@
   try {
     URL configUrl=configuration.getConfigUrl();
     List<String> dependencies=!configuration.getDependencies().isEmpty() ? configuration.getDependencies() : Util.getMavenDependencies(session);
-    List<Config> kubeConfigs=new LinkedList<>();
+    List<KubernetesList> kubeConfigs=new LinkedList<>();
     for (    String dependency : dependencies) {
       log.info("Found dependency: " + dependency);
       loadDependency(log,kubeConfigs,dependency);
     }
     if (configUrl != null) {
       log.status("Applying kubernetes configuration from: " + configuration.getConfigUrl());
-      kubeConfigs.add((Config)loadJson(readAsString(configuration.getConfigUrl())));
+      kubeConfigs.add((KubernetesList)loadJson(readAsString(configuration.getConfigUrl())));
     }
     if (applyConfiguration(client,controller,configuration,session,kubeConfigs)) {
       displaySessionStatus(client,session);
