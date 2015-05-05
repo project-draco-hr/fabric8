@@ -6,14 +6,19 @@
     session.getLogger().warn("No pods are available yet, waiting...");
   }
   for (  Pod pod : pods) {
-    result=result && Objects.equal(PodStatus.OK,KubernetesHelper.getPodStatus(pod));
+    result=result && Objects.equal(PodStatusType.OK,KubernetesHelper.getPodStatus(pod));
     if (!result) {
-      if (pod.getCurrentState().getInfo() != null) {
-        for (        Map.Entry<String,ContainerStatus> entry : pod.getCurrentState().getInfo().entrySet()) {
-          String containerId=entry.getKey();
-          ContainerStatus status=entry.getValue();
-          if (status.getState().getWaiting() != null) {
-            session.getLogger().warn("Waiting for container:" + containerId + ". Reason:"+ status.getState().getWaiting().getReason());
+      PodStatus podStatus=pod.getStatus();
+      if (podStatus != null) {
+        List<ContainerStatus> containerStatuses=podStatus.getContainerStatuses();
+        for (        ContainerStatus containerStatus : containerStatuses) {
+          ContainerState state=containerStatus.getState();
+          if (state != null) {
+            ContainerStateWaiting waiting=state.getWaiting();
+            if (waiting != null) {
+              String containerName=containerStatus.getName();
+              session.getLogger().warn("Waiting for container:" + containerName + ". Reason:"+ waiting.getReason());
+            }
           }
         }
       }

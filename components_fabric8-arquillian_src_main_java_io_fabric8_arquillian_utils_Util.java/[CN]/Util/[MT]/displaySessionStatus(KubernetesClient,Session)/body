@@ -3,9 +3,9 @@
     session.getLogger().info("Replication controller:" + KubernetesHelper.getName(replicationController));
   }
   for (  Pod pod : client.getPods(session.getNamespace()).getItems()) {
-    session.getLogger().info("Pod:" + KubernetesHelper.getName(pod) + " Status:"+ pod.getCurrentState().getStatus());
+    session.getLogger().info("Pod:" + KubernetesHelper.getName(pod) + " Status:"+ pod.getStatus());
   }
   for (  Service service : client.getServices(session.getNamespace()).getItems()) {
-    session.getLogger().info("Service:" + KubernetesHelper.getName(service) + " IP:"+ getPortalIP(service)+ " Port:"+ getPort(service));
+    session.getLogger().info("Service:" + KubernetesHelper.getName(service) + " IP:"+ getPortalIP(service)+ " Port:"+ getPorts(service));
   }
 }

@@ -3,7 +3,7 @@
   for (  ReplicationController replicationController : client.getReplicationControllers(session.getNamespace()).getItems()) {
     try {
       session.getLogger().info("Deleting replication controller:" + KubernetesHelper.getName(replicationController));
-      client.deleteReplicationController(replicationController.getId(),session.getNamespace());
+      client.deleteReplicationController(getName(replicationController),session.getNamespace());
     }
  catch (    Exception e) {
       e.printStackTrace();

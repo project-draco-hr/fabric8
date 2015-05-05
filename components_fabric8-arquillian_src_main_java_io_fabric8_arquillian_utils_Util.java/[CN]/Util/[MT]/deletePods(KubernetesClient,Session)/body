@@ -3,7 +3,7 @@
   for (  Pod pod : client.getPods(session.getNamespace()).getItems()) {
     try {
       session.getLogger().info("Deleting pod:" + KubernetesHelper.getName(pod));
-      client.deletePod(pod.getId(),session.getNamespace());
+      client.deletePod(getName(pod),session.getNamespace());
     }
  catch (    Exception e) {
       errors.add(e);
