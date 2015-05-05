@@ -1,7 +1,14 @@
 {
   for (  Route route : routeList.getItems()) {
-    if (route.getServiceName().equals(serviceId)) {
-      return route;
+    RouteSpec spec=route.getSpec();
+    if (spec != null) {
+      ObjectReference to=spec.getTo();
+      if (to != null) {
+        String name=to.getName();
+        if (serviceId.equals(name)) {
+          return route;
+        }
+      }
     }
   }
   return null;

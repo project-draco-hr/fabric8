@@ -3,19 +3,27 @@
   ServiceList serviceList=kubernetes.getServices(namespace);
   RouteList routeList=kubernetes.getRoutes(namespace);
   for (  Service service : serviceList.getItems()) {
-    String id=service.getId().toUpperCase().replace("-","_");
-    Route route=findRoute(service.getId(),routeList);
+    String serviceName=KubernetesHelper.getName(service);
+    String id=serviceName.toUpperCase().replace("-","_");
+    Route route=findRoute(serviceName,routeList);
+    RouteSpec spec=null;
     if (route != null) {
-      result.put(id + HOST_SUFFIX,route.getHost());
-      result.put(id + PORT_SUFFIX,String.valueOf(service.getPort()));
-      result.put(id + PROTO_SUFFIX,service.getProtocol());
-      result.put(id + PORT_SUFFIX + "_"+ service.getPort()+ PROTO_SUFFIX,service.getProtocol());
+      spec=route.getSpec();
     }
- else {
-      result.put(id + HOST_SUFFIX,service.getPortalIP());
-      result.put(id + PORT_SUFFIX,String.valueOf(service.getPort()));
-      result.put(id + PROTO_SUFFIX,service.getProtocol());
-      result.put(id + PORT_SUFFIX + "_"+ service.getPort()+ PROTO_SUFFIX,service.getProtocol());
+    ServiceSpec serviceSpec=service.getSpec();
+    if (spec != null) {
+      result.put(id + HOST_SUFFIX,spec.getHost());
+    }
+ else     if (serviceSpec != null) {
+      result.put(id + HOST_SUFFIX,serviceSpec.getPortalIP());
+    }
+    if (serviceSpec != null) {
+      List<ServicePort> ports=serviceSpec.getPorts();
+      for (      ServicePort port : ports) {
+        result.put(id + PORT_SUFFIX,String.valueOf(port.getPort()));
+        result.put(id + PROTO_SUFFIX,port.getProtocol());
+        result.put(id + PORT_SUFFIX + "_"+ port.getPort()+ PROTO_SUFFIX,port.getProtocol());
+      }
     }
   }
   return result;

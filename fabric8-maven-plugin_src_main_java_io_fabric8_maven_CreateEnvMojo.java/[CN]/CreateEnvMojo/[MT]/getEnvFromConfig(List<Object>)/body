@@ -3,7 +3,7 @@
   for (  Object entity : entities) {
     if (entity instanceof Pod) {
       Pod pod=(Pod)entity;
-      for (      Container container : pod.getDesiredState().getManifest().getContainers()) {
+      for (      Container container : pod.getSpec().getContainers()) {
         if (container.getImage().equals(name)) {
           result.putAll(mapFromEnv(container.getEnv()));
         }
@@ -11,7 +11,7 @@
     }
  else     if (entity instanceof ReplicationController) {
       ReplicationController replicationController=(ReplicationController)entity;
-      for (      Container container : replicationController.getDesiredState().getPodTemplate().getDesiredState().getManifest().getContainers()) {
+      for (      Container container : replicationController.getSpec().getTemplate().getSpec().getContainers()) {
         if (container.getImage().equals(name)) {
           result.putAll(mapFromEnv(container.getEnv()));
         }
