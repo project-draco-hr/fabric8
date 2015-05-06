@@ -2,7 +2,7 @@
   String buildConfigName=buildName.getValue();
   Objects.assertNotNull(buildConfigName,"buildName");
   Map<String,String> labels=BuildConfigs.createBuildLabels(buildConfigName);
-  String imageTagText=imageTag.getValue();
+  String ouputImageName=imageName.getValue();
   String gitUrlText=getOrFindGitUrl(context,gitUri.getValue());
   String imageText=outputImage.getValue();
   Model mavenModel=getMavenModel(context);
@@ -13,7 +13,7 @@
   if (Strings.isNullOrBlank(webhookSecretText)) {
     webhookSecretText="secret101";
   }
-  BuildConfig buildConfig=BuildConfigs.createBuildConfig(buildConfigName,labels,gitUrlText,imageTagText,imageText,webhookSecretText);
+  BuildConfig buildConfig=BuildConfigs.createBuildConfig(buildConfigName,labels,gitUrlText,ouputImageName,imageText,webhookSecretText);
   System.out.println("Generated BuildConfig: " + toJson(buildConfig));
   ImageStream imageRepository=BuildConfigs.imageRepository(buildConfigName,labels);
   Controller controller=createController();
