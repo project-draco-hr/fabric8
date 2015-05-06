@@ -1,0 +1,16 @@
+{
+  String id=getName(entity);
+  Objects.notNull(id,"No name for " + entity + " "+ sourceName);
+  String namespace=KubernetesHelper.getNamespace(entity);
+  if (Strings.isNullOrBlank(namespace)) {
+    namespace=kubernetes.getNamespace();
+  }
+  LOG.info("Creating OAuthClient " + namespace + ":"+ id+ " "+ summaryText(entity));
+  Object result=null;
+  try {
+    result=kubernetes.createOAuthClient(entity,namespace);
+  }
+ catch (  Exception e) {
+    onApplyError("Failed to create OAuthClient from " + sourceName + ". "+ e+ ". "+ entity,e);
+  }
+}

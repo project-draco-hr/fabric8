@@ -2,6 +2,9 @@
   String id=getName(entity);
   Objects.notNull(id,"No name for " + entity + " "+ sourceName);
   String namespace=KubernetesHelper.getNamespace(entity);
+  if (Strings.isNullOrBlank(namespace)) {
+    namespace=kubernetes.getNamespace();
+  }
   Route route=kubernetes.findRoute(id,namespace);
   if (route == null) {
     try {
