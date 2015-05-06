@@ -1,0 +1,7 @@
+{
+  Pod entity1=new PodBuilder().withNewMetadata().withName("foo").addToLabels("label1","value1").addToLabels("label2","value2").addToAnnotations("podAnnotation1","podAnnValue1").endMetadata().withNewSpec().addNewContainer().withImage("fabric8/jenkins").addNewEnv().withName("foo").withValue("bar").endEnv().endContainer().endSpec().build();
+  PodStatus status2=new PodStatus();
+  status2.setHostIP("abc");
+  Pod entity2=new PodBuilder().withNewMetadata().withName("foo").addToLabels("label1","value1").addToLabels("label2","value2").addToAnnotations("podAnnotation1","podAnnValue1").endMetadata().withNewSpec().addNewContainer().withImage("fabric8/jenkins").addNewEnv().withName("foo").withValue("bar").endEnv().endContainer().endSpec().withStatus(status2).build();
+  assertCompareConfig(entity1,entity2,true);
+}

@@ -1,0 +1,31 @@
+{
+  BeanInfo beanInfo=null;
+  try {
+    beanInfo=Introspector.getBeanInfo(clazz);
+  }
+ catch (  IntrospectionException e) {
+    LOG.warn("Failed to get beanInfo for " + clazz.getName() + ". "+ e,e);
+    return false;
+  }
+  try {
+    PropertyDescriptor[] propertyDescriptors=beanInfo.getPropertyDescriptors();
+    for (    PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+      String name=propertyDescriptor.getName();
+      if (ignoredProperties.contains(name)) {
+        continue;
+      }
+      Method readMethod=propertyDescriptor.getReadMethod();
+      if (readMethod != null) {
+        Object value1=invokeMethod(entity1,readMethod);
+        Object value2=invokeMethod(entity2,readMethod);
+        if (!configEqual(value1,value2)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+ catch (  Exception e) {
+    return false;
+  }
+}
