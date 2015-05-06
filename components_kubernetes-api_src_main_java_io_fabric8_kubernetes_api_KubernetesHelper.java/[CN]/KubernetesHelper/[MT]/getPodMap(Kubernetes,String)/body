@@ -1,3 +1,14 @@
 {
-  return toPodMap(kubernetes.getPods(namespace));
+  PodList pods=null;
+  try {
+    pods=kubernetes.getPods(namespace);
+  }
+ catch (  WebApplicationException e) {
+    if (e.getResponse().getStatus() == 404) {
+    }
+ else {
+      throw e;
+    }
+  }
+  return toPodMap(pods);
 }
