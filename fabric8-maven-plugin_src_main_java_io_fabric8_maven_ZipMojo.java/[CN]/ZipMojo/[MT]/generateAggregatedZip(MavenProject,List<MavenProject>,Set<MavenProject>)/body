@@ -87,7 +87,11 @@
     props.setProperty("version",rootProjectVersion);
     props.setProperty("classifier","app");
     props.setProperty("packaging","zip");
-    props.setProperty("url",deploymentRepository.getUrl());
+    String deployUrl=deployFileUrl;
+    if (Strings.isNullOrBlank(deployUrl)) {
+      deployUrl=deploymentRepository.getUrl();
+    }
+    props.setProperty("url",deployUrl);
     props.setProperty("repositoryId",deploymentRepository.getId());
     props.setProperty("generatePom","false");
     request.setProperties(props);
