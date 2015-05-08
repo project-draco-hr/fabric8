@@ -1,3 +1,13 @@
 {
-  return getKubernetesGlobalExtensions().getOAuthClient(name);
+  try {
+    return getKubernetesGlobalExtensions().getOAuthClient(name);
+  }
+ catch (  WebApplicationException e) {
+    if (e.getResponse().getStatus() == 404) {
+      return null;
+    }
+ else {
+      throw e;
+    }
+  }
 }
