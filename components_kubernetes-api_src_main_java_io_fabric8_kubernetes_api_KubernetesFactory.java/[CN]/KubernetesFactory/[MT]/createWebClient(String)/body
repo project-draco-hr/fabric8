@@ -1,15 +1,27 @@
 {
   List<Object> providers=createProviders();
+  AuthorizationHeaderFilter authorizationHeaderFilter=new AuthorizationHeaderFilter();
+  providers.add(authorizationHeaderFilter);
   WebClient webClient=WebClient.create(serviceAddress,providers);
   WebClients.configureUserAndPassword(webClient,this.username,this.password);
+  boolean registeredCert=false;
   if (trustAllCerts) {
     WebClients.disableSslChecks(webClient);
   }
  else   if (caCertFile != null || caCertData != null) {
     WebClients.configureCaCert(webClient,this.caCertData,this.caCertFile);
+    registeredCert=true;
   }
   if ((clientCertFile != null || clientCertData != null) && (clientKeyFile != null || clientKeyData != null)) {
     WebClients.configureClientCert(webClient,this.clientCertData,this.clientCertFile,this.clientKeyData,this.clientKeyFile,this.clientKeyAlgo,this.clientKeyPassword);
+    registeredCert=true;
+  }
+  if (!registeredCert) {
+    String token=findOpenShiftToken();
+    if (Strings.isNotBlank(token)) {
+      String authHeader="Bearer " + token;
+      authorizationHeaderFilter.setAuthorizationHeader(authHeader);
+    }
   }
   return webClient;
 }

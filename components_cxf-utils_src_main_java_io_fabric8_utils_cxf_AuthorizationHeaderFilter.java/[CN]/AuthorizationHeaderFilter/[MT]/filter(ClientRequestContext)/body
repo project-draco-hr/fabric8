@@ -1,0 +1,9 @@
+{
+  if (Strings.isNotBlank(authorizationHeader)) {
+    MultivaluedMap<String,Object> headers=requestContext.getHeaders();
+    headers.put("Authorization",Collections.<Object>singletonList(authorizationHeader));
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Added authorizationHeader: " + authorizationHeader);
+    }
+  }
+}
