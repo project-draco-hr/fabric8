@@ -6,23 +6,12 @@
     List<ServicePort> servicePorts=spec.getPorts();
     Objects.notNull(servicePorts,"servicePorts for service " + id);
     answer=new HashSet<>(servicePorts.size());
+    String message="service " + id;
     for (    ServicePort port : servicePorts) {
       IntOrString intOrStringValue=port.getTargetPort();
-      Integer intValue=intOrStringValue.getIntVal();
+      Integer intValue=intOrStringToInteger(intOrStringValue,message);
       if (intValue != null) {
         answer.add(intValue);
-      }
- else {
-        String containerPortText=intOrStringValue.getStrVal();
-        if (Strings.isNullOrBlank(containerPortText)) {
-          throw new IllegalArgumentException("No servicePorts for service " + id);
-        }
-        try {
-          answer.add(Integer.parseInt(containerPortText));
-        }
- catch (        NumberFormatException e) {
-          throw new IllegalStateException("Invalid servicePorts expression " + containerPortText + " for service "+ id+ ". "+ e,e);
-        }
       }
     }
   }

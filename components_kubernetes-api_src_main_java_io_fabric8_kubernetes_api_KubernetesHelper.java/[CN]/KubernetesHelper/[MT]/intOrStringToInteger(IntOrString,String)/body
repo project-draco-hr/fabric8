@@ -1,0 +1,16 @@
+{
+  Integer intValue=intOrStringValue.getIntVal();
+  if (intValue == null) {
+    String containerPortText=intOrStringValue.getStrVal();
+    if (Strings.isNullOrBlank(containerPortText)) {
+      throw new IllegalArgumentException("No port for " + message);
+    }
+    try {
+      intValue=Integer.parseInt(containerPortText);
+    }
+ catch (    NumberFormatException e) {
+      throw new IllegalStateException("Invalid servicePorts expression " + containerPortText + " for "+ message+ ". "+ e,e);
+    }
+  }
+  return intValue;
+}
