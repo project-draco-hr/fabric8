@@ -1,7 +1,10 @@
 {
   String namespace=System.getenv("KUBERNETES_NAMESPACE");
+  if (Strings.isNullOrBlank(namespace)) {
+    namespace=findDefaultOpenShiftContext();
+  }
   if (Strings.isNotBlank(namespace)) {
     return namespace;
   }
-  return Kubernetes.NAMESPACE_ALL;
+  return "default";
 }
