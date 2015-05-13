@@ -1,0 +1,26 @@
+{
+  List<io.fabric8.openshift.api.model.template.Parameter> parameters=template.getParameters();
+  MavenProject project=getProject();
+  if (parameters != null && project != null) {
+    Properties properties=project.getProperties();
+    properties.putAll(project.getProperties());
+    properties.putAll(System.getProperties());
+    boolean missingProperty=false;
+    for (    io.fabric8.openshift.api.model.template.Parameter parameter : parameters) {
+      String parameterName=parameter.getName();
+      String name="fabric8.apply." + parameterName;
+      String propertyValue=properties.getProperty(name);
+      if (Strings.isNotBlank(propertyValue)) {
+        getLog().info("Overriding template parameter " + name + " with value: "+ propertyValue);
+        parameter.setValue(propertyValue);
+      }
+ else {
+        missingProperty=true;
+        getLog().info("No property defined for template parameter: " + name);
+      }
+    }
+    if (missingProperty) {
+      getLog().debug("current properties " + new TreeSet<>(properties.keySet()));
+    }
+  }
+}

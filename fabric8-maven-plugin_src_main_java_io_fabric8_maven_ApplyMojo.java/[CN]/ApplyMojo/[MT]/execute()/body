@@ -32,6 +32,7 @@
     if (dto instanceof Template) {
       Template template=(Template)dto;
       KubernetesHelper.setNamespace(template,kubernetes.getNamespace());
+      overrideTemplateParameters(template);
       dto=controller.processTemplate(template,fileName);
     }
     List<Object> list=KubernetesHelper.toItemList(dto);
