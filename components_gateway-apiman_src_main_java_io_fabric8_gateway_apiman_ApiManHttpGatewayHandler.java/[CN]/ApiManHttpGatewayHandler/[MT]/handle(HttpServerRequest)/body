@@ -20,11 +20,11 @@
     IMappedServices mappedServices=HttpMapping.getMapping(request,httpGateway.getMappedServices());
     if (mappedServices != null) {
       ProxyMappingDetails proxyMappingDetails=mappedServices.getProxyMappingDetails();
-      String[] apiManagerServiceInfo=apiManager.getApiManagerServiceInfo(proxyMappingDetails.getServicePath());
+      ServiceMapping apiManagerServiceInfo=apiManager.getApiManagerServiceMapping(proxyMappingDetails.getServicePath());
       if (apiManagerServiceInfo == null)       throw new Exception("Service Not Found in API Manager.");
-      srequest.setServiceOrgId(apiManagerServiceInfo[0]);
-      srequest.setServiceId(apiManagerServiceInfo[1]);
-      srequest.setServiceVersion(apiManagerServiceInfo[2]);
+      srequest.setServiceOrgId(apiManagerServiceInfo.getOrganizationId());
+      srequest.setServiceId(apiManagerServiceInfo.getServiceId());
+      srequest.setServiceVersion(apiManagerServiceInfo.getVersion());
     }
  else {
       throw new Exception("Service Not Found in API Manager.");

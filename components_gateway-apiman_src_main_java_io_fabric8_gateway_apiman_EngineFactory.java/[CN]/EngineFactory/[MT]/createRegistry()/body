@@ -1,3 +1,5 @@
 {
-  return new DelegatingRegistryWithMapping(new ESRegistry(esConfig));
+  ESRegistry registry=new ESRegistry(esConfig);
+  ServiceMappingStorage mappingStorage=new ESServiceMappingStorage(esConfig);
+  return new DelegatingRegistryWithMapping(registry,mappingStorage);
 }

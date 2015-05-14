@@ -3,7 +3,11 @@
     @Override public void handle(    IAsyncResult<Void> result){
       if (result.isSuccess()) {
         String path=getServiceBindPath(service);
-        serviceBindPaths.remove(path);
+        mappingStorage.remove(path,new IAsyncResultHandler<Void>(){
+          @Override public void handle(          IAsyncResult<Void> result){
+          }
+        }
+);
       }
       handler.handle(result);
     }

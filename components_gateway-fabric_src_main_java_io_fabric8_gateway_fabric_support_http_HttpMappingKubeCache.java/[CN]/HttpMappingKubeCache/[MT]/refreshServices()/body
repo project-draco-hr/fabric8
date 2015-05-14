@@ -8,8 +8,8 @@
       if (selectorMatch(selector)) {
         String contextPath=KubernetesHelper.getName(service1);
         if (apiManager != null) {
-          String apiManagerServiceInfo[]=apiManager.getService().getApiManagerServiceInfo(contextPath);
-          if (apiManagerServiceInfo == null) {
+          ServiceMapping apiManagerServiceMapping=apiManager.getService().getApiManagerServiceMapping(contextPath);
+          if (apiManagerServiceMapping == null) {
             if (LOG.isDebugEnabled())             LOG.debug("Service is not registered in the API Manager, and is therefore not yet available");
             break;
           }

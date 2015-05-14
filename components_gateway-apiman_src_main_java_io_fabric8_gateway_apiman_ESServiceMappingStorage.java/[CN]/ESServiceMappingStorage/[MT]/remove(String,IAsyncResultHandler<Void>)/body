@@ -1,0 +1,23 @@
+{
+  String id=idFromPath(path);
+  Delete delete=new Delete.Builder(id).index(ESConstants.INDEX_NAME).type("f8_service_mapping").build();
+  try {
+    getClient().executeAsync(delete,new JestResultHandler<JestResult>(){
+      @Override public void completed(      JestResult result){
+        if (result.isSucceeded()) {
+          handler.handle(AsyncResultImpl.create((Void)null));
+        }
+ else {
+          handler.handle(AsyncResultImpl.create(new Exception("Failed to remove mapping at path: " + path),Void.class));
+        }
+      }
+      @Override public void failed(      Exception e){
+        handler.handle(AsyncResultImpl.create(new Exception("Error removing mapping at path: " + path,e),Void.class));
+      }
+    }
+);
+  }
+ catch (  ExecutionException|InterruptedException|IOException e) {
+    handler.handle(AsyncResultImpl.create(new Exception("Error removing mapping at path: " + path,e),Void.class));
+  }
+}
