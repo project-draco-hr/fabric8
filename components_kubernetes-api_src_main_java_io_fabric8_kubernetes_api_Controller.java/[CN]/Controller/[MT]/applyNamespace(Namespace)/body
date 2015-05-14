@@ -1,0 +1,10 @@
+{
+  LOG.info("Creating a namespace " + getOrCreateMetadata(entity).getName());
+  try {
+    Object answer=kubernetes.createNamespace(entity);
+    LOG.info("Created namespace: " + answer);
+  }
+ catch (  Exception e) {
+    onApplyError("Failed to create namespace. " + e + ". "+ entity,e);
+  }
+}

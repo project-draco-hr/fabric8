@@ -40,6 +40,10 @@
       controller.applyReplicationController(replicationController,session.getId());
       conditions.put(1,sessionPodsReady);
     }
+ else     if (entity != null) {
+      log.status("Applying " + entity.getClass().getSimpleName() + ":");
+      controller.apply(entity,session.getId());
+    }
   }
   if (!conditions.isEmpty()) {
     Callable<Boolean> compositeCondition=new CompositeCondition(conditions.values());

@@ -2,4 +2,7 @@
   this.id=id;
   this.logger=logger;
   namespacePrefix=Systems.getEnvVarOrSystemProperty("FABRIC8_NAMESPACE_PREFIX","itest-");
+  namespace=namespacePrefix + id;
+  namespaceDetails=new Namespace();
+  KubernetesHelper.getOrCreateMetadata(namespaceDetails).setName(namespace);
 }
