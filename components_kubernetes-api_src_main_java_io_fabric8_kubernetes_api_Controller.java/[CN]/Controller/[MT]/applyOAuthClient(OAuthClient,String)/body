@@ -8,7 +8,7 @@
   OAuthClient old=kubernetes.getOAuthClient(id);
   if (isRunning(old)) {
     if (isIgnoreRunningOAuthClients()) {
-      LOG.info("Not updating the OAuthClient as its already running");
+      LOG.info("Not updating the OAuthClient which are shared across namespaces as its already running");
       return;
     }
     if (UserConfigurationCompare.configEqual(entity,old)) {
