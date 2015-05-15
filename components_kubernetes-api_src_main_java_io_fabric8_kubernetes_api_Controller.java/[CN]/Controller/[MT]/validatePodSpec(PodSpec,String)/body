@@ -1,0 +1,14 @@
+{
+  List<Volume> volumes=podSpec.getVolumes();
+  if (volumes != null) {
+    for (    Volume volume : volumes) {
+      SecretVolumeSource secret=volume.getSecret();
+      if (secret != null) {
+        String secretName=secret.getSecretName();
+        if (Strings.isNotBlank(secretName)) {
+          KubernetesHelper.validateSecretExists(kubernetes,namespace,secretName);
+        }
+      }
+    }
+  }
+}

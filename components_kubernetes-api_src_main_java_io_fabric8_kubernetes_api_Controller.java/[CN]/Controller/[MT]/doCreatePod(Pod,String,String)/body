@@ -1,6 +1,10 @@
 {
   LOG.info("Creating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getName(pod));
   try {
+    PodSpec podSpec=pod.getSpec();
+    if (podSpec != null) {
+      validatePodSpec(podSpec,namespace);
+    }
     Object answer;
     if (Strings.isNotBlank(namespace)) {
       answer=kubernetes.createPod(pod,namespace);

@@ -1,6 +1,14 @@
 {
   LOG.info("Creating a replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getName(replicationController));
   try {
+    ReplicationControllerSpec spec=replicationController.getSpec();
+    if (spec != null) {
+      PodTemplateSpec template=spec.getTemplate();
+      if (template != null) {
+        PodSpec podSpec=template.getSpec();
+        validatePodSpec(podSpec,namespace);
+      }
+    }
     Object answer;
     if (Strings.isNotBlank(namespace)) {
       answer=kubernetes.createReplicationController(replicationController,namespace);
