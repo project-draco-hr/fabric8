@@ -1,0 +1,23 @@
+{
+  for (  Map.Entry<Object,Object> entry : properties.entrySet()) {
+    Object key=entry.getKey();
+    if (key instanceof String) {
+      String s=(String)key;
+      Matcher m=PARAM_PATTERN.matcher(s);
+      if (m.matches()) {
+        String name=m.group(NAME);
+        if (paramNames.add(name)) {
+          String value=properties.getProperty(String.format(PARAMETER_PROPERTY,name,VALUE));
+          String from=properties.getProperty(String.format(PARAMETER_PROPERTY,name,FROM));
+          String description=properties.getProperty(String.format(PARAMETER_PROPERTY,name,DESCRIPTION));
+          String generate=properties.getProperty(String.format(PARAMETER_PROPERTY,name,GENEATE));
+          if (Strings.isNullOrBlank(value) && Strings.isNullOrBlank(from)) {
+            value=properties.getProperty(String.format(PARAMETER_NAME_PREFIX,name));
+          }
+          getLog().info("Found Template parameter: " + name + labelValueOrBlank("value",value)+ labelValueOrBlank("from",from)+ labelValueOrBlank("generate",generate)+ labelValueOrBlank("description",description));
+          parameters.add(new ParameterBuilder().withName(name).withFrom(from).withValue(value).withGenerate(generate).withDescription(description).build());
+        }
+      }
+    }
+  }
+}
