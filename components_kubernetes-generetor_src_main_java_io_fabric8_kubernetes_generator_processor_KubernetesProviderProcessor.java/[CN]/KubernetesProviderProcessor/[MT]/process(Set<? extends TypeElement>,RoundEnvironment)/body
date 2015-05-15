@@ -24,10 +24,11 @@
       if (element instanceof ExecutableElement) {
         KubernetesProvider provider=element.getAnnotation(KubernetesProvider.class);
         ExecutableElement methodElement=(ExecutableElement)element;
+        String methodName=methodElement.getSimpleName().toString();
         TypeElement classElement=getClassElement(element);
         Class<?> cls=Class.forName(classElement.getQualifiedName().toString());
         Object instance=cls.newInstance();
-        Method providerMethod=instance.getClass().getDeclaredMethod(methodElement.getSimpleName().toString());
+        Method providerMethod=instance.getClass().getDeclaredMethod(methodName);
         if (providerMethod != null) {
           Object obj=providerMethod.invoke(instance);
           if (obj != null) {

@@ -1,0 +1,58 @@
+{
+  Set<Object> provided=new LinkedHashSet<>();
+  CompilationTaskFactory compilationTaskFactory=new CompilationTaskFactory(processingEnv);
+  Set<TypeElement> processors=new HashSet<>();
+  for (  Element element : roundEnv.getElementsAnnotatedWith(KubernetesModelProcessor.class)) {
+    processors.add(getClassElement(element));
+  }
+  if (processors.isEmpty()) {
+    return true;
+  }
+  try {
+    Callable<Boolean> compileTask=compilationTaskFactory.create(processors);
+    if (!compileTask.call()) {
+      processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Failed to compile provider classes");
+      return false;
+    }
+  }
+ catch (  Exception e) {
+    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Failed to compile provider classes");
+    return false;
+  }
+  for (  Element element : roundEnv.getElementsAnnotatedWith(KubernetesModelProcessor.class)) {
+    KubernetesListBuilder builder=new KubernetesListBuilder(readJson());
+    try {
+      if (element instanceof TypeElement) {
+        KubernetesModelProcessor processor=element.getAnnotation(KubernetesModelProcessor.class);
+        for (        ExecutableElement methodElement : ElementFilter.methodsIn(element.getEnclosedElements())) {
+          TypeElement classElement=getClassElement(element);
+          Class<?> cls=Class.forName(classElement.getQualifiedName().toString());
+          final Object instance=cls.newInstance();
+          final String methodName=methodElement.getSimpleName().toString();
+          builder.accept(new Visitor(){
+            @Override public void visit(            Object o){
+              for (              Method m : findMethods(instance,methodName,o.getClass())) {
+                try {
+                  m.invoke(instance,o);
+                }
+ catch (                IllegalAccessException e) {
+                  processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Error invoking visitor method:" + m.getName() + " on:"+ instance+ "with argument:"+ o);
+                }
+catch (                InvocationTargetException e) {
+                  processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Error invoking visitor method:" + m.getName() + " on:"+ instance+ "with argument:"+ o);
+                }
+              }
+            }
+          }
+);
+        }
+      }
+      KubernetesList list=builder.build();
+      generateJson(list);
+    }
+ catch (    Exception ex) {
+      processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Error creating Kubernetes configuration:" + ex.getMessage());
+    }
+  }
+  return true;
+}
