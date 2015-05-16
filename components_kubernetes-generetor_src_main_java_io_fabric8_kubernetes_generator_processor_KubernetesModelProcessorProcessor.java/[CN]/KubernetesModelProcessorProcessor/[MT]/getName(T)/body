@@ -1,0 +1,9 @@
+{
+  if (entity != null) {
+    Map<String,Object> additionalProperties=getAdditionalProperties(entity);
+    return Strings.firstNonBlank(getWithReflection(entity,String.class,"getName"),getName(getObjectMeta(entity)),getName(getBaseMeta(entity)),Maps.nestedValueAsString(additionalProperties,"metadata","id"),Maps.nestedValueAsString(additionalProperties,"metadata","name"),String.valueOf(additionalProperties.get("id")),getUuid(entity));
+  }
+ else {
+    return null;
+  }
+}

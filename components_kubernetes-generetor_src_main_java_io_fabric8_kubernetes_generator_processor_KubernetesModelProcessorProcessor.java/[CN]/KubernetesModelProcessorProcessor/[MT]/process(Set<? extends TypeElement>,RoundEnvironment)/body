@@ -23,7 +23,7 @@
     KubernetesListBuilder builder=new KubernetesListBuilder(readJson());
     try {
       if (element instanceof TypeElement) {
-        KubernetesModelProcessor processor=element.getAnnotation(KubernetesModelProcessor.class);
+        final KubernetesModelProcessor processor=element.getAnnotation(KubernetesModelProcessor.class);
         for (        ExecutableElement methodElement : ElementFilter.methodsIn(element.getEnclosedElements())) {
           TypeElement classElement=getClassElement(element);
           Class<?> cls=Class.forName(classElement.getQualifiedName().toString());
@@ -32,6 +32,14 @@
           builder.accept(new Visitor(){
             @Override public void visit(            Object o){
               for (              Method m : findMethods(instance,methodName,o.getClass())) {
+                Named named=m.getAnnotation(Named.class);
+                if (named != null && !Strings.isNullOrBlank(named.value())) {
+                  String objectName=getName(o);
+                  if (!named.value().equals(objectName)) {
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,"Named method:" + m.getName() + " with name:"+ named.value()+ " doesn't match: "+ objectName+ ", ignoring");
+                    return;
+                  }
+                }
                 try {
                   m.invoke(instance,o);
                 }
