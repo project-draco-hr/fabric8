@@ -1,0 +1,11 @@
+{
+  if ("kubernetes".equals(id) || "kubernetes-ro".equals(id)) {
+    return false;
+  }
+  Set<Integer> ports=KubernetesHelper.getPorts(service);
+  log.debug("Service " + id + " has ports: "+ ports);
+  if (!ports.contains(80) && !ports.contains(443)) {
+    return false;
+  }
+  return true;
+}

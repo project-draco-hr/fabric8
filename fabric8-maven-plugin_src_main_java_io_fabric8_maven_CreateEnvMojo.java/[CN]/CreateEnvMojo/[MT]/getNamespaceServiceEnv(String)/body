@@ -1,5 +1,6 @@
 {
   Map<String,String> result=new HashMap<>();
+  KubernetesClient kubernetes=getKubernetes();
   ServiceList serviceList=kubernetes.getServices(namespace);
   RouteList routeList=kubernetes.getRoutes(namespace);
   for (  Service service : serviceList.getItems()) {

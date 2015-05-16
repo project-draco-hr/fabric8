@@ -1,0 +1,24 @@
+{
+  try {
+    KubernetesClient kubernetes=getKubernetes();
+    Controller controller=createController();
+    String namespace=kubernetes.getNamespace();
+    Log log=getLog();
+    ServiceList services=kubernetes.getServices(namespace);
+    if (services != null) {
+      List<Service> items=services.getItems();
+      if (items != null) {
+        String routeDomainPostfix=routeDomain;
+        for (        Service service : items) {
+          Route route=ApplyMojo.createRouteForService(routeDomainPostfix,namespace,service,log);
+          if (route != null) {
+            controller.applyRoute(route,"Service " + getName(service));
+          }
+        }
+      }
+    }
+  }
+ catch (  Exception e) {
+    throw new MojoExecutionException("Failed to load environment schemas: " + e,e);
+  }
+}

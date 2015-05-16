@@ -1,6 +1,8 @@
 {
-  if (Strings.isNullOrBlank(routeDomain)) {
-    getLog().warn("No fabric8.apply.routeDomain property or $KUBERNETES_DOMAIN environment variable so cannot create any OpenShift Routes");
+  String routeDomainPostfix=this.routeDomain;
+  Log log=getLog();
+  if (Strings.isNullOrBlank(routeDomainPostfix)) {
+    log.warn("No fabric8.apply.routeDomain property or $KUBERNETES_DOMAIN environment variable so cannot create any OpenShift Routes");
     return;
   }
   String namespace=kubernetes.getNamespace();
@@ -11,33 +13,15 @@
     }
   }
  catch (  Exception e) {
-    getLog().warn("Could not load routes; we maybe are not connected to an OpenShift environment? " + e,e);
+    log.warn("Could not load routes; we maybe are not connected to an OpenShift environment? " + e,e);
     return;
   }
   List<Route> routes=new ArrayList<>();
   for (  Object object : list) {
     if (object instanceof Service) {
       Service service=(Service)object;
-      String id=KubernetesHelper.getName(service);
-      if (Strings.isNotBlank(id)) {
-        Route route=new Route();
-        KubernetesHelper.setName(route,namespace,id + "-route");
-        RouteSpec routeSpec=new RouteSpec();
-        ObjectReference objectRef=new ObjectReference();
-        objectRef.setName(id);
-        objectRef.setNamespace(namespace);
-        routeSpec.setTo(objectRef);
-        String host=Strings.stripSuffix(Strings.stripSuffix(id,"-service"),".");
-        routeSpec.setHost(host + "." + Strings.stripPrefix(routeDomain,"."));
-        route.setSpec(routeSpec);
-        String json=null;
-        try {
-          json=KubernetesHelper.toJson(route);
-        }
- catch (        JsonProcessingException e) {
-          json=e.getMessage() + ". object: " + route;
-        }
-        getLog().debug("Created route: " + json);
+      Route route=createRouteForService(routeDomainPostfix,namespace,service,log);
+      if (route != null) {
         routes.add(route);
       }
     }

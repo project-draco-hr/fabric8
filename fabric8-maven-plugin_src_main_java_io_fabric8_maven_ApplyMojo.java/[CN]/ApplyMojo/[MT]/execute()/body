@@ -23,10 +23,8 @@
     if (dto == null) {
       throw new MojoFailureException("Could not load kubernetes json: " + json);
     }
-    Controller controller=new Controller(this.kubernetes);
+    Controller controller=createController();
     controller.setAllowCreate(createNewResources);
-    controller.setRecreateMode(recreate);
-    controller.setThrowExceptionOnError(failOnError);
     controller.setServicesOnlyMode(servicesOnly);
     controller.setIgnoreServiceMode(ignoreServices);
     controller.setIgnoreRunningOAuthClients(ignoreRunningOAuthClients);
