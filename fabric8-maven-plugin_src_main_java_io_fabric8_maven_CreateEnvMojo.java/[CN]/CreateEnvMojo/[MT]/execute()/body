@@ -6,6 +6,7 @@
     Object config=loadKubernetesJson();
     List<Object> list=KubernetesHelper.toItemList(config);
     Map<String,String> env=getEnvFromConfig(list);
+    String namespace=getNamespace();
     env.putAll(getNamespaceServiceEnv(namespace));
     displayEnv(env);
     for (    Map.Entry<String,String> entry : env.entrySet()) {
