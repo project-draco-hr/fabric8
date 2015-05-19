@@ -96,7 +96,11 @@
       }
     }
     File outputZipFile=getZipFile();
-    Zips.createZipFile(getLog(),buildDir,outputZipFile);
+    File legalDir=null;
+    if (includeLegal) {
+      legalDir=new File(project.getBuild().getOutputDirectory(),"META-INF");
+    }
+    Zips.createZipFile(getLog(),buildDir,outputZipFile,legalDir);
     projectHelper.attachArtifact(project,artifactType,artifactClassifier,outputZipFile);
     getLog().info("Created app zip file: " + outputZipFile);
   }

@@ -6,6 +6,9 @@
     String path="";
     FileFilter filter=null;
     zipDirectory(log,sourceDir,zos,path,filter);
+    if (legalDir != null && legalDir.exists() && legalDir.isDirectory()) {
+      zipDirectory(log,legalDir,zos,"META-INF/",new LegalFilter());
+    }
   }
   finally {
     try {
