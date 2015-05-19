@@ -1,4 +1,8 @@
 {
+  String file=System.getProperty(OPENSHIFT_CONFIG_FILE_PROPERTY);
+  if (file != null) {
+    return new File(file);
+  }
   String homeDir=System.getProperty("user.home",".");
   return new File(homeDir,".config/openshift/config");
 }
