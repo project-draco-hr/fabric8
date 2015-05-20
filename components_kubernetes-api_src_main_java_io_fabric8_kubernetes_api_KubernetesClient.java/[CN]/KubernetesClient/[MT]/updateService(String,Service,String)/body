@@ -7,6 +7,13 @@
     }
     String resourceVersion=KubernetesHelper.getResourceVersion(service);
     KubernetesHelper.getOrCreateMetadata(entity).setResourceVersion(resourceVersion);
+    ServiceSpec oldSpec=service.getSpec();
+    ServiceSpec newSpec=entity.getSpec();
+    if (oldSpec != null && newSpec != null) {
+      if (Strings.isNullOrBlank(newSpec.getPortalIP())) {
+        newSpec.setPortalIP(oldSpec.getPortalIP());
+      }
+    }
   }
   return getWriteableKubernetes().updateService(serviceId,entity,namespace);
 }

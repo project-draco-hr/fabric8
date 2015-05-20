@@ -1,4 +1,12 @@
 {
   validateNamespace(namespace,entity);
+  if (!KubernetesHelper.hasResourceVersion(entity)) {
+    ReplicationController oldEntity=getReplicationController(controllerId,namespace);
+    if (oldEntity == null) {
+      return createReplicationController(entity,namespace);
+    }
+    String resourceVersion=KubernetesHelper.getResourceVersion(oldEntity);
+    KubernetesHelper.getOrCreateMetadata(entity).setResourceVersion(resourceVersion);
+  }
   return getWriteableKubernetes().updateReplicationController(controllerId,entity,namespace);
 }
