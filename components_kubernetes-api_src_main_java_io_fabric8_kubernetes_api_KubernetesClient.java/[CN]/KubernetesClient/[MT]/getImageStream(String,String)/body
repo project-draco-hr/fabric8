@@ -1,4 +1,9 @@
 {
   validateNamespace(namespace,name);
-  return getKubernetesExtensions().getImageStream(name,namespace);
+  return handle404ByReturningNull(new Callable<ImageStream>(){
+    @Override public ImageStream call() throws Exception {
+      return getKubernetesExtensions().getImageStream(name,namespace);
+    }
+  }
+);
 }

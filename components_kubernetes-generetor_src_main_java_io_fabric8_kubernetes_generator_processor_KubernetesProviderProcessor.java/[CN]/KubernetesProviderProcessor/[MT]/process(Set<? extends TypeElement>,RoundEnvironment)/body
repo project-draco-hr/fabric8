@@ -1,5 +1,5 @@
 {
-  Set<Object> provided=new LinkedHashSet<>();
+  Set<HasMetadata> provided=new LinkedHashSet<>();
   CompilationTaskFactory compilationTaskFactory=new CompilationTaskFactory(processingEnv);
   Set<TypeElement> providers=new HashSet<>();
   for (  Element element : roundEnv.getElementsAnnotatedWith(KubernetesProvider.class)) {
@@ -31,8 +31,8 @@
         Method providerMethod=instance.getClass().getDeclaredMethod(methodName);
         if (providerMethod != null) {
           Object obj=providerMethod.invoke(instance);
-          if (obj != null) {
-            provided.add(obj);
+          if (obj instanceof HasMetadata) {
+            provided.add((HasMetadata)obj);
           }
         }
       }

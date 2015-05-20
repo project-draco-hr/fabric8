@@ -1,4 +1,9 @@
 {
   validateNamespace(namespace,controllerId);
-  return getKubernetes().getReplicationController(controllerId,namespace);
+  return handle404ByReturningNull(new Callable<ReplicationController>(){
+    @Override public ReplicationController call() throws Exception {
+      return getKubernetes().getReplicationController(controllerId,namespace);
+    }
+  }
+);
 }

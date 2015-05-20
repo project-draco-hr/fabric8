@@ -1,4 +1,9 @@
 {
   validateNamespace(namespace,podId);
-  return getKubernetes().getPod(podId,namespace);
+  return handle404ByReturningNull(new Callable<Pod>(){
+    @Override public Pod call() throws Exception {
+      return getKubernetes().getPod(podId,namespace);
+    }
+  }
+);
 }

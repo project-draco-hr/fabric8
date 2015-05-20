@@ -1,4 +1,9 @@
 {
   validateNamespace(namespace,name);
-  return getKubernetesExtensions().getRoute(name,namespace);
+  return handle404ByReturningNull(new Callable<Route>(){
+    @Override public Route call() throws Exception {
+      return getKubernetesExtensions().getRoute(name,namespace);
+    }
+  }
+);
 }

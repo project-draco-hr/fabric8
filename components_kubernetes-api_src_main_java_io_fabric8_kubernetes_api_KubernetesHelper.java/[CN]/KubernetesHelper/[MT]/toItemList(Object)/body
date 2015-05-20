@@ -1,9 +1,9 @@
 {
   if (entity instanceof List) {
-    return (List<Object>)entity;
+    return (List<HasMetadata>)entity;
   }
- else   if (entity instanceof Object[]) {
-    Object[] array=(Object[])entity;
+ else   if (entity instanceof HasMetadata[]) {
+    HasMetadata[] array=(HasMetadata[])entity;
     return Arrays.asList(array);
   }
  else   if (entity instanceof KubernetesList) {
@@ -15,9 +15,9 @@
     return objects.getObjects();
   }
  else {
-    List<Object> answer=new ArrayList<>();
-    if (entity != null) {
-      answer.add(answer);
+    List<HasMetadata> answer=new ArrayList<>();
+    if (entity instanceof HasMetadata) {
+      answer.add((HasMetadata)entity);
     }
     return answer;
   }

@@ -1,0 +1,18 @@
+{
+  int size=list.size();
+  int lastNonService=-1;
+  for (int i=0; i < size; i++) {
+    HasMetadata item=list.get(i);
+    if (item instanceof Service) {
+      if (lastNonService >= 0) {
+        HasMetadata nonService=list.get(lastNonService);
+        list.set(i,nonService);
+        list.set(lastNonService,item);
+        lastNonService++;
+      }
+    }
+ else     if (lastNonService < 0) {
+      lastNonService=i;
+    }
+  }
+}

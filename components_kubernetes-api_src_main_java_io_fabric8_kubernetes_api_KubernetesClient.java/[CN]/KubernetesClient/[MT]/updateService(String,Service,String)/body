@@ -1,4 +1,12 @@
 {
   validateNamespace(namespace,entity);
+  if (!KubernetesHelper.hasResourceVersion(entity)) {
+    Service service=getService(serviceId,namespace);
+    if (service == null) {
+      return createService(entity,namespace);
+    }
+    String resourceVersion=KubernetesHelper.getResourceVersion(service);
+    KubernetesHelper.getOrCreateMetadata(entity).setResourceVersion(resourceVersion);
+  }
   return getWriteableKubernetes().updateService(serviceId,entity,namespace);
 }

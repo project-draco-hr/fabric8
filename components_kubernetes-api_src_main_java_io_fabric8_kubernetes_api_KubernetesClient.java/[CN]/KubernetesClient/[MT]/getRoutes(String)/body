@@ -1,4 +1,13 @@
 {
   validateNamespace(namespace,null);
-  return getKubernetesExtensions().getRoutes(namespace);
+  RouteList answer=handle404ByReturningNull(new Callable<RouteList>(){
+    @Override public RouteList call() throws Exception {
+      return getKubernetesExtensions().getRoutes(namespace);
+    }
+  }
+);
+  if (answer == null) {
+    answer=new RouteList();
+  }
+  return answer;
 }

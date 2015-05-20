@@ -1,0 +1,16 @@
+{
+  try {
+    return callable.call();
+  }
+ catch (  WebApplicationException e) {
+    if (e.getResponse().getStatus() == 404) {
+      return null;
+    }
+ else {
+      throw e;
+    }
+  }
+catch (  Exception e) {
+    throw new WebApplicationException(e);
+  }
+}

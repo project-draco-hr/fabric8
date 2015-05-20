@@ -4,7 +4,7 @@
     File propertiesFile=new File(basedir + "/target/" + envPropertiesFileName).getCanonicalFile();
     File scriptFile=new File(basedir + "/target/" + envScriptFileName).getCanonicalFile();
     Object config=loadKubernetesJson();
-    List<Object> list=KubernetesHelper.toItemList(config);
+    List<HasMetadata> list=KubernetesHelper.toItemList(config);
     Map<String,String> env=getEnvFromConfig(list);
     String namespace=getNamespace();
     env.putAll(getNamespaceServiceEnv(namespace));

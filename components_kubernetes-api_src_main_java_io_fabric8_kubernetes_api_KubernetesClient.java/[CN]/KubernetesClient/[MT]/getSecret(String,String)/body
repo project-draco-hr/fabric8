@@ -1,4 +1,9 @@
 {
   validateNamespace(namespace,secretId);
-  return getKubernetes().getSecret(secretId,namespace);
+  return handle404ByReturningNull(new Callable<Secret>(){
+    @Override public Secret call() throws Exception {
+      return getKubernetes().getSecret(secretId,namespace);
+    }
+  }
+);
 }

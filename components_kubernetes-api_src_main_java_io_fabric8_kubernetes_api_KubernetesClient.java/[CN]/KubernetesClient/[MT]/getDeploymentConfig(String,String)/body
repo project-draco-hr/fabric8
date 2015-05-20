@@ -1,4 +1,9 @@
 {
   validateNamespace(namespace,name);
-  return getKubernetesExtensions().getDeploymentConfig(name,namespace);
+  return handle404ByReturningNull(new Callable<DeploymentConfig>(){
+    @Override public DeploymentConfig call() throws Exception {
+      return getKubernetesExtensions().getDeploymentConfig(name,namespace);
+    }
+  }
+);
 }

@@ -1,4 +1,9 @@
 {
   validateNamespace(namespace,name);
-  return getKubernetesExtensions().getBuild(name,namespace);
+  return handle404ByReturningNull(new Callable<Build>(){
+    @Override public Build call() throws Exception {
+      return getKubernetesExtensions().getBuild(name,namespace);
+    }
+  }
+);
 }
