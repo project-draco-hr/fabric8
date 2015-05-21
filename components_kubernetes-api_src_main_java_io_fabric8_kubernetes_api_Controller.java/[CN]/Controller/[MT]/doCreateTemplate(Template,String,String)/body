@@ -1,0 +1,10 @@
+{
+  LOG.info("Creating a template from " + sourceName + " namespace "+ namespace+ " name "+ getName(entity));
+  try {
+    Object answer=kubernetes.createTemplate(entity,namespace);
+    LOG.info("Created template: " + answer);
+  }
+ catch (  Exception e) {
+    onApplyError("Failed to template entity from " + sourceName + ". "+ e+ ". "+ entity,e);
+  }
+}
