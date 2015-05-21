@@ -1,37 +1,39 @@
 {
-  String namespace=getNamespace();
-  String id=getName(entity);
-  Objects.notNull(id,"No name for " + entity + " "+ sourceName);
-  Template old=kubernetes.getTemplate(id,namespace);
-  if (isRunning(old)) {
-    if (UserConfigurationCompare.configEqual(entity,old)) {
-      LOG.info("Template hasn't changed so not doing anything");
+  if (!isProcessTemplatesLocally()) {
+    String namespace=getNamespace();
+    String id=getName(entity);
+    Objects.notNull(id,"No name for " + entity + " "+ sourceName);
+    Template old=kubernetes.getTemplate(id,namespace);
+    if (isRunning(old)) {
+      if (UserConfigurationCompare.configEqual(entity,old)) {
+        LOG.info("Template hasn't changed so not doing anything");
+      }
+ else {
+        boolean recreateMode=isRecreateMode();
+        recreateMode=true;
+        if (recreateMode) {
+          kubernetes.deleteTemplate(id,namespace);
+          doCreateTemplate(entity,namespace,sourceName);
+        }
+ else {
+          LOG.info("Updating a entity from " + sourceName);
+          try {
+            Object answer=kubernetes.updateTemplate(id,entity,namespace);
+            LOG.info("Updated entity: " + answer);
+          }
+ catch (          Exception e) {
+            onApplyError("Failed to update controller from " + sourceName + ". "+ e+ ". "+ entity,e);
+          }
+        }
+      }
     }
  else {
-      boolean recreateMode=isRecreateMode();
-      recreateMode=true;
-      if (recreateMode) {
-        kubernetes.deleteTemplate(id,namespace);
+      if (!isAllowCreate()) {
+        LOG.warn("Creation disabled so not creating a entity from " + sourceName + " namespace "+ namespace+ " name "+ getName(entity));
+      }
+ else {
         doCreateTemplate(entity,namespace,sourceName);
       }
- else {
-        LOG.info("Updating a entity from " + sourceName);
-        try {
-          Object answer=kubernetes.updateTemplate(id,entity,namespace);
-          LOG.info("Updated entity: " + answer);
-        }
- catch (        Exception e) {
-          onApplyError("Failed to update controller from " + sourceName + ". "+ e+ ". "+ entity,e);
-        }
-      }
-    }
-  }
- else {
-    if (!isAllowCreate()) {
-      LOG.warn("Creation disabled so not creating a entity from " + sourceName + " namespace "+ namespace+ " name "+ getName(entity));
-    }
- else {
-      doCreateTemplate(entity,namespace,sourceName);
     }
   }
   return processTemplate(entity,sourceName);

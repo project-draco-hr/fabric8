@@ -11,8 +11,16 @@
       LOG.info("Creating Route " + namespace + ":"+ id+ " "+ KubernetesHelper.summaryText(entity));
       kubernetes.createRoute(entity,namespace);
     }
- catch (    Exception e) {
-      onApplyError("Failed to create BuildConfig from " + sourceName + ". "+ e+ ". "+ entity,e);
+ catch (    WebApplicationException e) {
+      if (e.getResponse().getStatus() == 404) {
+        LOG.warn("Got a 404 - could be an old Kubernetes/OpenShift environment - lets try the old style REST API...");
+      }
+ else {
+        onApplyError("Failed to create Route from " + sourceName + ". "+ e+ ". "+ entity,e);
+      }
+    }
+catch (    Exception e) {
+      onApplyError("Failed to create Route from " + sourceName + ". "+ e+ ". "+ entity,e);
     }
   }
 }
