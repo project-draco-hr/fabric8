@@ -1,26 +1,28 @@
 {
-  String answer=null;
-  try {
-    if (iconTempDir != null) {
-      iconTempDir.mkdirs();
-      File iconFile=copyIconToFolder(iconTempDir);
-      if (iconFile == null) {
-        copyAppConfigFiles(iconTempDir,appConfigDir);
-        for (        String ext : ICON_EXTENSIONS) {
-          File file=new File(iconTempDir,"icon" + ext);
-          if (file.exists() && file.isFile()) {
-            iconFile=file;
-            break;
+  String answer=iconUrl;
+  if (Strings.isNullOrBlank(answer)) {
+    try {
+      if (iconTempDir != null) {
+        iconTempDir.mkdirs();
+        File iconFile=copyIconToFolder(iconTempDir);
+        if (iconFile == null) {
+          copyAppConfigFiles(iconTempDir,appConfigDir);
+          for (          String ext : ICON_EXTENSIONS) {
+            File file=new File(iconTempDir,"icon" + ext);
+            if (file.exists() && file.isFile()) {
+              iconFile=file;
+              break;
+            }
           }
         }
-      }
-      if (iconFile != null) {
-        answer=convertIconFileToURL(iconFile);
+        if (iconFile != null) {
+          answer=convertIconFileToURL(iconFile);
+        }
       }
     }
-  }
- catch (  Exception e) {
-    getLog().warn("Failed to load icon file: " + e,e);
+ catch (    Exception e) {
+      getLog().warn("Failed to load icon file: " + e,e);
+    }
   }
   if (Strings.isNullOrBlank(answer)) {
     getLog().warn("No icon file found for this project!");

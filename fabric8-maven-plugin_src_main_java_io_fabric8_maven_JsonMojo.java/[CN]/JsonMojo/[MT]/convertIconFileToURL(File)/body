@@ -16,25 +16,33 @@
       if (rootProjectFolder != null) {
         String relativePath=Files.getRelativePath(rootProjectFolder,iconSourceFile);
         String relativeParentPath=Files.getRelativePath(rootProjectFolder,getProject().getBasedir());
-        Scm scm=getProject().getScm();
-        if (scm != null) {
-          String url=scm.getUrl();
-          if (url != null) {
-            String[] prefixes={"http://github.com/","https://github.com/"};
-            for (            String prefix : prefixes) {
-              if (url.startsWith(prefix)) {
-                url=URLUtils.pathJoin("https://raw.githubusercontent.com/",url.substring(prefix.length()));
-                break;
+        String urlPrefix=iconUrlPrefix;
+        if (Strings.isNullOrBlank(urlPrefix)) {
+          Scm scm=getProject().getScm();
+          if (scm != null) {
+            String url=scm.getUrl();
+            if (url != null) {
+              String[] prefixes={"http://github.com/","https://github.com/"};
+              for (              String prefix : prefixes) {
+                if (url.startsWith(prefix)) {
+                  url=URLUtils.pathJoin("https://raw.githubusercontent.com/",url.substring(prefix.length()));
+                  break;
+                }
               }
+              if (url.endsWith(relativeParentPath)) {
+                url=url.substring(0,url.length() - relativeParentPath.length());
+              }
+              urlPrefix=url;
             }
-            if (url.endsWith(relativeParentPath)) {
-              url=url.substring(0,url.length() - relativeParentPath.length());
-            }
-            String branch="master";
-            String answer=URLUtils.pathJoin(url,branch,relativePath);
-            getLog().info("icon url is: " + answer);
-            return answer;
           }
+        }
+        if (Strings.isNullOrBlank(urlPrefix)) {
+          getLog().warn("No iconUrlPrefix defined or could be found via SCM in the pom.xml so cannot add an icon URL!");
+        }
+ else {
+          String answer=URLUtils.pathJoin(urlPrefix,iconBranch,relativePath);
+          getLog().info("icon url is: " + answer);
+          return answer;
         }
       }
     }
