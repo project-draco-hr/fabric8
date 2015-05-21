@@ -39,10 +39,11 @@
   String iconUrl=getIconUrl();
   boolean hasUrl=Strings.isNotBlank(iconUrl);
   if (!template.getParameters().isEmpty() || hasUrl) {
+    Map<String,String> annotations=KubernetesHelper.getOrCreateAnnotations(template);
     if (hasUrl) {
-      Map<String,String> annotations=KubernetesHelper.getOrCreateAnnotations(template);
-      annotations.put("fabric8/iconUrl",iconUrl);
+      annotations.put(AnnotationKeys.ICON_URL,iconUrl);
     }
+    addDocumentationAnnotations(template,annotations);
     builder=builder.addToTemplates(template);
   }
   KubernetesList kubernetesList=builder.build();

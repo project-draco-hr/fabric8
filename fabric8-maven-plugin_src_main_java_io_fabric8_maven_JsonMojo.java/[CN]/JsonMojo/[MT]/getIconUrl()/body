@@ -2,13 +2,13 @@
   String answer=iconUrl;
   if (Strings.isNullOrBlank(answer)) {
     try {
-      if (iconTempDir != null) {
-        iconTempDir.mkdirs();
-        File iconFile=copyIconToFolder(iconTempDir);
+      if (templateTempDir != null) {
+        templateTempDir.mkdirs();
+        File iconFile=copyIconToFolder(templateTempDir);
         if (iconFile == null) {
-          copyAppConfigFiles(iconTempDir,appConfigDir);
+          copyAppConfigFiles(templateTempDir,appConfigDir);
           for (          String ext : ICON_EXTENSIONS) {
-            File file=new File(iconTempDir,"icon" + ext);
+            File file=new File(templateTempDir,"icon" + ext);
             if (file.exists() && file.isFile()) {
               iconFile=file;
               break;

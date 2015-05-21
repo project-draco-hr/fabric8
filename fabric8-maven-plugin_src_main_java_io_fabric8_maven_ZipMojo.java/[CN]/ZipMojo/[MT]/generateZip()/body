@@ -22,18 +22,10 @@
   }
   if (hasConfigDir() || !ignoreProject) {
     if (includeReadMe) {
-      copyReadMe(project.getFile().getParentFile(),appBuildDir);
+      copyReadMe(appBuildDir);
     }
     if (generateSummaryFile) {
-      String description=project.getDescription();
-      if (Strings.isNotBlank(description)) {
-        File summaryMd=new File(appBuildDir,"Summary.md");
-        summaryMd.getParentFile().mkdirs();
-        if (!summaryMd.exists()) {
-          byte[] bytes=description.getBytes();
-          Files.copy(new ByteArrayInputStream(bytes),new FileOutputStream(summaryMd));
-        }
-      }
+      copySummaryText(appBuildDir);
     }
     if (generateAppPropertiesFile) {
       String name=project.getName();

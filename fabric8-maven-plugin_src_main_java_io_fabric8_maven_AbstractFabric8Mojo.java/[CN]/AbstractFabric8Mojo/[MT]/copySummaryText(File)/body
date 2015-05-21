@@ -1,0 +1,12 @@
+{
+  MavenProject project=getProject();
+  String description=project.getDescription();
+  if (Strings.isNotBlank(description)) {
+    File summaryMd=new File(appBuildDir,"Summary.md");
+    summaryMd.getParentFile().mkdirs();
+    if (!summaryMd.exists()) {
+      byte[] bytes=description.getBytes();
+      Files.copy(new ByteArrayInputStream(bytes),new FileOutputStream(summaryMd));
+    }
+  }
+}
