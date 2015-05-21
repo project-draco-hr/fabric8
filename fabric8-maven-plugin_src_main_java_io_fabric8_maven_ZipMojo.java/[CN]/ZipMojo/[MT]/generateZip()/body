@@ -18,47 +18,7 @@
       jsonFile.getParentFile().mkdirs();
       Files.copy(kubernetesJson,jsonFile);
     }
-    if (Strings.isNotBlank(iconRef)) {
-      File[] icons=appBuildDir.listFiles(new FilenameFilter(){
-        @Override public boolean accept(        File dir,        String name){
-          if (name == null) {
-            return false;
-          }
-          String lower=name.toLowerCase();
-          if (lower.startsWith("icon.")) {
-            for (            String ext : ICON_EXTENSIONS) {
-              if (lower.endsWith(ext)) {
-                return true;
-              }
-            }
-          }
-          return false;
-        }
-      }
-);
-      if (icons == null || icons.length == 0) {
-        InputStream in=loadPluginResource(iconRef);
-        if (in == null) {
-          for (          String ext : ICON_EXTENSIONS) {
-            String name=iconRef + ext;
-            in=loadPluginResource(name);
-            if (in != null) {
-              iconRef=name;
-              break;
-            }
-          }
-        }
-        if (in == null) {
-          getLog().warn("Could not find icon: " + iconRef + " on the ClassPath!");
-        }
- else {
-          String fileName="icon." + Files.getFileExtension(iconRef);
-          File outFile=new File(appBuildDir,fileName);
-          Files.copy(in,new FileOutputStream(outFile));
-          getLog().info("Generated icon file " + outFile + " from icon reference: "+ iconRef);
-        }
-      }
-    }
+    copyIconToFolder(appBuildDir);
   }
   if (hasConfigDir() || !ignoreProject) {
     if (includeReadMe) {

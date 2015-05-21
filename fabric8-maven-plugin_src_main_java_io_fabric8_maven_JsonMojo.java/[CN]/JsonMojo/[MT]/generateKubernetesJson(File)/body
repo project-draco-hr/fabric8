@@ -36,7 +36,13 @@
     }
   }
   Template template=getTemplate();
-  if (!template.getParameters().isEmpty()) {
+  String iconUrl=getIconUrl();
+  boolean hasUrl=Strings.isNotBlank(iconUrl);
+  if (!template.getParameters().isEmpty() || hasUrl) {
+    if (hasUrl) {
+      Map<String,String> annotations=KubernetesHelper.getOrCreateAnnotations(template);
+      annotations.put("fabric8/iconUrl",iconUrl);
+    }
     builder=builder.addToTemplates(template);
   }
   KubernetesList kubernetesList=builder.build();

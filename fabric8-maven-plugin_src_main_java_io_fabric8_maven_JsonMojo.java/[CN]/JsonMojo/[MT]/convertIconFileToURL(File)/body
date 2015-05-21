@@ -1,0 +1,44 @@
+{
+  long length=iconFile.length();
+  int sizeK=Math.round(length / 1024);
+  byte[] bytes=Files.readBytes(iconFile);
+  byte[] encoded=Base64Encoder.encode(bytes);
+  int base64SizeK=Math.round(encoded.length / 1024);
+  getLog().info("found icon file: " + iconFile + " which is "+ sizeK+ "K"+ " base64 encoded "+ base64SizeK+ "K");
+  if (base64SizeK < maximumDataUrlSizeK) {
+    String mimeType=guessMediaType(iconFile);
+    return "data:" + mimeType + ";charset=UTF-8;base64,"+ new String(encoded);
+  }
+ else {
+    File iconSourceFile=new File(appConfigDir,iconFile.getName());
+    if (iconSourceFile.exists()) {
+      File rootProjectFolder=getRootProjectFolder();
+      if (rootProjectFolder != null) {
+        String relativePath=Files.getRelativePath(rootProjectFolder,iconSourceFile);
+        String relativeParentPath=Files.getRelativePath(rootProjectFolder,getProject().getBasedir());
+        Scm scm=getProject().getScm();
+        if (scm != null) {
+          String url=scm.getUrl();
+          if (url != null) {
+            String[] prefixes={"http://github.com/","https://github.com/"};
+            for (            String prefix : prefixes) {
+              if (url.startsWith(prefix)) {
+                url=URLUtils.pathJoin("https://raw.githubusercontent.com/",url.substring(prefix.length()));
+                break;
+              }
+            }
+            if (url.endsWith(relativeParentPath)) {
+              url=url.substring(0,url.length() - relativeParentPath.length());
+            }
+            String branch="master";
+            String answer=URLUtils.pathJoin(url,branch,relativePath);
+            getLog().info("icon url is: " + answer);
+            return answer;
+          }
+        }
+      }
+    }
+    getLog().warn("TODO need to convert this file into a remote URL!");
+  }
+  return null;
+}
