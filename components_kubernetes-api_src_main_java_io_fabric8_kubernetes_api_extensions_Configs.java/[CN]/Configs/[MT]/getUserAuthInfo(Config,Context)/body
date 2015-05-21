@@ -1,0 +1,17 @@
+{
+  AuthInfo authInfo=null;
+  if (config != null && context != null) {
+    String user=context.getUser();
+    if (user != null) {
+      List<NamedAuthInfo> users=config.getUsers();
+      if (users != null) {
+        for (        NamedAuthInfo namedAuthInfo : users) {
+          if (Objects.equal(user,namedAuthInfo.getName())) {
+            authInfo=namedAuthInfo.getUser();
+          }
+        }
+      }
+    }
+  }
+  return authInfo;
+}

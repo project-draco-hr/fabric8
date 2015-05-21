@@ -1,36 +1,10 @@
 {
-  File file=getOpenShiftConfigFile();
-  String namePrefix="name:";
-  String namespacePrefix="namespace:";
-  String answer=null;
-  if (file.exists() && file.isFile()) {
-    LOG.debug("Parsing OpenShift configuration: " + file);
-    String context=findDefaultOpenShiftContext(file);
-    if (Strings.isNotBlank(context)) {
-      try (BufferedReader reader=new BufferedReader(new FileReader(file))){
-        boolean inUsers=false;
-        while (true) {
-          String line=reader.readLine();
-          if (line == null) {
-            break;
-          }
-          line=line.trim();
-          String namespaceValue=yamlValue(namespacePrefix,line);
-          if (namespaceValue != null) {
-            answer=namespaceValue;
-          }
- else {
-            String nameValue=yamlValue(namePrefix,line);
-            if (nameValue != null && nameValue.equals(context)) {
-              return answer;
-            }
-          }
-        }
-      }
- catch (      Exception e) {
-        LOG.warn("Could not parse OpenShift configuration file: " + file);
-      }
+  Config config=Configs.parseConfigs();
+  if (config != null) {
+    Context context=Configs.getCurrentContext(config);
+    if (context != null) {
+      return context.getNamespace();
     }
   }
-  return answer;
+  return null;
 }

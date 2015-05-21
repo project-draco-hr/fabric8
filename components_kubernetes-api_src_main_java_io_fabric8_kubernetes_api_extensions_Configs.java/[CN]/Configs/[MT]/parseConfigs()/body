@@ -1,0 +1,12 @@
+{
+  File file=getOpenShiftConfigFile();
+  if (file.exists() && file.isFile()) {
+    try {
+      return KubernetesHelper.loadYaml(file,Config.class);
+    }
+ catch (    IOException e) {
+      e.printStackTrace();
+    }
+  }
+  return null;
+}

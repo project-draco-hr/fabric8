@@ -1,0 +1,14 @@
+{
+  String contextName=config.getCurrentContext();
+  if (contextName != null) {
+    List<NamedContext> contexts=config.getContexts();
+    if (contexts != null) {
+      for (      NamedContext context : contexts) {
+        if (Objects.equal(contextName,context.getName())) {
+          return context.getContext();
+        }
+      }
+    }
+  }
+  return null;
+}
