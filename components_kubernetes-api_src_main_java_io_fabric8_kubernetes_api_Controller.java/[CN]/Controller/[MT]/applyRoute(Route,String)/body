@@ -14,6 +14,12 @@
  catch (    WebApplicationException e) {
       if (e.getResponse().getStatus() == 404) {
         LOG.warn("Got a 404 - could be an old Kubernetes/OpenShift environment - lets try the old style REST API...");
+        try {
+          kubernetes.createRouteOldAPi(entity,namespace);
+        }
+ catch (        Exception e1) {
+          onApplyError("Failed to create Route from " + sourceName + ". "+ e1+ ". "+ entity,e1);
+        }
       }
  else {
         onApplyError("Failed to create Route from " + sourceName + ". "+ e+ ". "+ entity,e);
