@@ -1,0 +1,12 @@
+{
+  StringBuilder buffer=new StringBuilder();
+  DeploymentConfigSpec spec=entity.getSpec();
+  if (spec != null) {
+    buffer.append("replicas: " + spec.getReplicas());
+    PodTemplateSpec podTemplateSpec=spec.getTemplate();
+    if (podTemplateSpec != null) {
+      appendSummaryText(buffer,podTemplateSpec);
+    }
+  }
+  return buffer.toString();
+}

@@ -1,0 +1,28 @@
+{
+  try {
+    Object dto=loadJsonFile(json);
+    if (dto instanceof KubernetesList) {
+      KubernetesList container=(KubernetesList)dto;
+      List<HasMetadata> items=container.getItems();
+      items=wrapInDeploymentConfigs(items);
+      getLog().info("Wrapped in DeploymentConfigs:");
+      printSummary(items);
+      container.setItems(items);
+      KubernetesHelper.saveJson(json,container);
+    }
+ else     if (dto instanceof Template) {
+      Template container=(Template)dto;
+      List<HasMetadata> items=container.getObjects();
+      items=wrapInDeploymentConfigs(items);
+      getLog().info("Wrapped in DeploymentConfigs:");
+      printSummary(items);
+      container.setObjects(items);
+      getLog().info("Template is now:");
+      printSummary(container.getObjects());
+      KubernetesHelper.saveJson(json,container);
+    }
+  }
+ catch (  IOException e) {
+    throw new MojoExecutionException("Failed to save combined JSON files " + json + " and "+ kubernetesExtraJson+ " as "+ json+ ". "+ e,e);
+  }
+}

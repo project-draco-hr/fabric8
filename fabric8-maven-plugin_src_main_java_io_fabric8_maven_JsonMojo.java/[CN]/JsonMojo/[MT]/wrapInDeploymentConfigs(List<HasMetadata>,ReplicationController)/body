@@ -1,0 +1,31 @@
+{
+  DeploymentConfigBuilder builder=new DeploymentConfigBuilder();
+  String name=KubernetesHelper.getName(replicationController);
+  if (Strings.isNotBlank(name)) {
+    name=Strings.stripSuffix(name,"controller") + "deployment";
+    Map<String,String> labels=KubernetesHelper.getLabels(replicationController);
+    builder=builder.withNewMetadata().withName(name).withLabels(labels).endMetadata();
+  }
+  ReplicationControllerSpec spec=replicationController.getSpec();
+  if (spec != null) {
+    List<String> containerNames=new ArrayList<>();
+    PodTemplateSpec podTemplateSpec=spec.getTemplate();
+    if (podTemplateSpec != null) {
+      PodSpec podSpec=podTemplateSpec.getSpec();
+      if (podSpec != null) {
+        List<Container> containers=podSpec.getContainers();
+        if (containers != null) {
+          for (          Container container : containers) {
+            String image=container.getImage();
+            if (Strings.isNotBlank(image)) {
+              containerNames.add(image);
+            }
+          }
+        }
+      }
+    }
+    builder=builder.withNewSpec().withTemplate(podTemplateSpec).withReplicas(spec.getReplicas()).withSelector(spec.getSelector()).withNewStrategy().withType("ImageChange").endStrategy().addNewTrigger().withNewImageChangeParams().withAutomatic(true).withContainerNames(containerNames).endImageChangeParams().endTrigger().endSpec();
+  }
+  DeploymentConfig config=builder.build();
+  list.add(config);
+}

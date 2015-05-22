@@ -1,0 +1,13 @@
+{
+  List<HasMetadata> answer=new ArrayList<>();
+  for (  HasMetadata item : items) {
+    if (item instanceof ReplicationController) {
+      ReplicationController replicationController=(ReplicationController)item;
+      wrapInDeploymentConfigs(answer,replicationController);
+    }
+ else {
+      answer.add(item);
+    }
+  }
+  return answer;
+}
