@@ -1,0 +1,13 @@
+{
+  for (  HasMetadata item : list) {
+    if (item instanceof ImageStream) {
+      ImageStream stream=(ImageStream)item;
+      if (Objects.equal(imageStreamName,getName(stream))) {
+        return stream;
+      }
+    }
+  }
+  ImageStream imageStream=new ImageStreamBuilder().withNewMetadata().withName(imageStreamName).withLabels(labels).endMetadata().build();
+  list.add(imageStream);
+  return imageStream;
+}

@@ -1,11 +1,16 @@
 {
   DeploymentConfigBuilder builder=new DeploymentConfigBuilder();
-  String name=KubernetesHelper.getName(replicationController);
+  String name=getName(replicationController);
   if (Strings.isNotBlank(name)) {
-    name=Strings.stripSuffix(name,"controller") + "deployment";
-    Map<String,String> labels=KubernetesHelper.getLabels(replicationController);
-    builder=builder.withNewMetadata().withName(name).withLabels(labels).endMetadata();
+    name=Strings.stripSuffix(name,"controller");
   }
+  if (Strings.isNullOrBlank(name)) {
+    name=getProject().getArtifactId();
+  }
+  String deploymentName=name + "deployment";
+  String imageStream=name + "imagestream";
+  Map<String,String> labels=KubernetesHelper.getLabels(replicationController);
+  builder=builder.withNewMetadata().withName(deploymentName).withLabels(labels).endMetadata();
   ReplicationControllerSpec spec=replicationController.getSpec();
   if (spec != null) {
     List<String> containerNames=new ArrayList<>();
@@ -16,15 +21,16 @@
         List<Container> containers=podSpec.getContainers();
         if (containers != null) {
           for (          Container container : containers) {
-            String image=container.getImage();
-            if (Strings.isNotBlank(image)) {
-              containerNames.add(image);
+            String containerName=container.getName();
+            if (Strings.isNotBlank(containerName)) {
+              containerNames.add(containerName);
             }
           }
         }
       }
     }
-    builder=builder.withNewSpec().withTemplate(podTemplateSpec).withReplicas(spec.getReplicas()).withSelector(spec.getSelector()).withNewStrategy().withType("ImageChange").endStrategy().addNewTrigger().withNewImageChangeParams().withAutomatic(true).withContainerNames(containerNames).endImageChangeParams().endTrigger().endSpec();
+    getOrAddImageStream(list,imageStream,labels);
+    builder=builder.withNewSpec().withTemplate(podTemplateSpec).withReplicas(spec.getReplicas()).withSelector(spec.getSelector()).withNewStrategy().withType(deploymentStrategy).endStrategy().addNewTrigger().withType("ImageChange").withNewImageChangeParams().withAutomatic(true).withContainerNames(containerNames).withNewFrom().withName(imageStream + ":" + lastTriggeredImageTag).endFrom().withLastTriggeredImage(lastTriggeredImageTag).endImageChangeParams().endTrigger().endSpec();
   }
   DeploymentConfig config=builder.build();
   list.add(config);
