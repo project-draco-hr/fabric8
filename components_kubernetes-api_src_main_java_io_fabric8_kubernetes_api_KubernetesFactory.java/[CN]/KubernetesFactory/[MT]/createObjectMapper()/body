@@ -1,10 +1,5 @@
 {
   ObjectMapper mapper=new ObjectMapper();
   mapper.enable(SerializationFeature.INDENT_OUTPUT);
-  Map<String,Class<?>> kindToClasses=getKindToClassMap();
-  KubernetesDeserializer deserializer=new KubernetesDeserializer(kindToClasses);
-  SimpleModule module=new SimpleModule("Kubernetes");
-  module.addDeserializer(Object.class,deserializer);
-  mapper.registerModule(module);
   return mapper;
 }

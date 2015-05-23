@@ -17,7 +17,7 @@
   if (labelMap.isEmpty() && Strings.isNotBlank(name)) {
     labelMap.put("component",name);
   }
-  KubernetesListBuilder builder=new KubernetesListBuilder().addNewReplicationController().withNewMetadata().withName(KubernetesHelper.validateKubernetesId(replicationControllerName,"fabric8.replicationController.name")).withLabels(labels).endMetadata().withNewSpec().withReplicas(replicaCount).withSelector(labelMap).withNewTemplate().withNewMetadata().withLabels(labelMap).endMetadata().withNewSpec().addNewContainer().withName(getKubernetesContainerName()).withImage(getDockerImage()).withImagePullPolicy(getImagePullPolicy()).withEnv(getEnvironmentVariables()).withPrivileged(getContainerPrivileged()).withPorts(getContainerPorts()).withVolumeMounts(getVolumeMounts()).withLivenessProbe(getLivenessProbe()).endContainer().withVolumes(getVolumes()).endSpec().endTemplate().endSpec().endReplicationController();
+  KubernetesListBuilder builder=new KubernetesListBuilder().addNewReplicationControllerItem().withNewMetadata().withName(KubernetesHelper.validateKubernetesId(replicationControllerName,"fabric8.replicationController.name")).withLabels(labels).endMetadata().withNewSpec().withReplicas(replicaCount).withSelector(labelMap).withNewTemplate().withNewMetadata().withLabels(labelMap).endMetadata().withNewSpec().addNewContainer().withName(getKubernetesContainerName()).withImage(getDockerImage()).withImagePullPolicy(getImagePullPolicy()).withEnv(getEnvironmentVariables()).withPrivileged(getContainerPrivileged()).withPorts(getContainerPorts()).withVolumeMounts(getVolumeMounts()).withLivenessProbe(getLivenessProbe()).endContainer().withVolumes(getVolumes()).endSpec().endTemplate().endSpec().endReplicationControllerItem();
   if (serviceName != null) {
     ServiceBuilder serviceBuilder=new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labelMap).endMetadata();
     ServiceFluent<ServiceBuilder>.SpecNested<ServiceBuilder> serviceSpecBuilder=serviceBuilder.withNewSpec().withSelector(labelMap);
@@ -32,7 +32,7 @@
     }
     serviceSpecBuilder.endSpec();
     if (headlessServices || hasPorts) {
-      builder=builder.addToServices(serviceBuilder.build());
+      builder=builder.addToServiceItems(serviceBuilder.build());
     }
   }
   Template template=getTemplate();
@@ -44,7 +44,7 @@
       annotations.put(AnnotationKeys.ICON_URL,iconUrl);
     }
     addDocumentationAnnotations(template,annotations);
-    builder=builder.addToTemplates(template);
+    builder=builder.addToTemplateItems(template);
   }
   KubernetesList kubernetesList=builder.build();
   Object result=Templates.combineTemplates(kubernetesList);
