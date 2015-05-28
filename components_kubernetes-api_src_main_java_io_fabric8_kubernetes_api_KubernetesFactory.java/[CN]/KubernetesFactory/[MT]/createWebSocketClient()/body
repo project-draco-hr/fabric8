@@ -1,0 +1,23 @@
+{
+  SslContextFactory sslContextFactory=null;
+  boolean registeredCert=false;
+  if (trustAllCerts) {
+    sslContextFactory=new SslContextFactory(trustAllCerts);
+  }
+ else   if (caCertData != null || caCertFile != null) {
+    KeyStore trustStore=WebClients.createTrustStore(caCertData,caCertFile);
+    sslContextFactory=new SslContextFactory();
+    sslContextFactory.setTrustStore(trustStore);
+  }
+  if ((clientCertFile != null || clientCertData != null) && (clientKeyFile != null || clientKeyData != null)) {
+    if (sslContextFactory == null) {
+      sslContextFactory=new SslContextFactory();
+    }
+    KeyStore keyStore=WebClients.createKeyStore(this.clientCertData,this.clientCertFile,this.clientKeyData,this.clientKeyFile,this.clientKeyAlgo,this.clientKeyPassword);
+    sslContextFactory=new SslContextFactory();
+    sslContextFactory.setKeyStore(keyStore);
+  }
+  sslContextFactory.setIncludeProtocols("TLSv1","TLSv1.1","TLSv1.2");
+  WebSocketClient client=new WebSocketClient(sslContextFactory);
+  return client;
+}

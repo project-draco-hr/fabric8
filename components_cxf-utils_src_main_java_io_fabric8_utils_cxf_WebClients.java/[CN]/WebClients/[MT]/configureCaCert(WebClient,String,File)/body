@@ -1,13 +1,9 @@
 {
-  try (InputStream pemInputStream=getInputStreamFromDataOrFile(caCertData,caCertFile)){
-    CertificateFactory certFactory=CertificateFactory.getInstance("X509");
-    X509Certificate cert=(X509Certificate)certFactory.generateCertificate(pemInputStream);
-    KeyStore trustStore=KeyStore.getInstance("JKS");
-    trustStore.load(null);
-    String alias=cert.getSubjectX500Principal().getName();
-    trustStore.setCertificateEntry(alias,cert);
+  try {
+    KeyStore trustStore=createTrustStore(caCertData,caCertFile);
     TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
     trustManagerFactory.init(trustStore);
+    TrustManager[] trustManagers=trustManagerFactory.getTrustManagers();
     HTTPConduit conduit=WebClient.getConfig(webClient).getHttpConduit();
     TLSClientParameters params=conduit.getTlsClientParameters();
     if (params == null) {
@@ -15,12 +11,8 @@
       conduit.setTlsClientParameters(params);
     }
     TrustManager[] existingTrustManagers=params.getTrustManagers();
-    TrustManager[] trustManagers;
-    if (existingTrustManagers == null || ArrayUtils.isEmpty(existingTrustManagers)) {
-      trustManagers=trustManagerFactory.getTrustManagers();
-    }
- else {
-      trustManagers=(TrustManager[])ArrayUtils.addAll(existingTrustManagers,trustManagerFactory.getTrustManagers());
+    if (!ArrayUtils.isEmpty(existingTrustManagers)) {
+      trustManagers=(TrustManager[])ArrayUtils.addAll(existingTrustManagers,trustManagers);
     }
     params.setTrustManagers(trustManagers);
   }
