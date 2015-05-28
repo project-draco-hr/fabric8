@@ -40,6 +40,7 @@
   if (uri == null) {
     return Results.fail("Cannot create endpoint uri");
   }
+  uri=org.apache.camel.util.StringHelper.xmlEncode(uri);
   FileResource file=facet.getResource(xml);
   if (!file.exists()) {
     return Results.fail("Cannot find XML file " + xml);
