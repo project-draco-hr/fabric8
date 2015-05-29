@@ -3,10 +3,20 @@
   if (enums != null) {
     UISelectOne ui=factory.createSelectOne(name,inputClazz);
     if (defaultValue != null) {
-      ui.setDefaultValue(defaultValue);
+      Object value=defaultValue;
+      Converter converter=converterFactory.getConverter(String.class,inputClazz);
+      if (converter != null) {
+        value=converter.convert(defaultValue);
+      }
+      ui.setDefaultValue(value);
     }
     if (currentValue != null) {
-      ui.setValue(currentValue);
+      Object value=currentValue;
+      Converter converter=converterFactory.getConverter(String.class,inputClazz);
+      if (converter != null) {
+        value=converter.convert(currentValue);
+      }
+      ui.setValue(value);
     }
     List<String> list=new ArrayList<>();
     String[] values=enums.split(",");
@@ -26,10 +36,20 @@
  else {
     UIInput ui=factory.createInput(name,inputClazz);
     if (defaultValue != null) {
-      ui.setDefaultValue(defaultValue);
+      Object value=defaultValue;
+      Converter converter=converterFactory.getConverter(String.class,inputClazz);
+      if (converter != null) {
+        value=converter.convert(defaultValue);
+      }
+      ui.setDefaultValue(value);
     }
     if (currentValue != null) {
-      ui.setValue(currentValue);
+      Object value=currentValue;
+      Converter converter=converterFactory.getConverter(String.class,inputClazz);
+      if (converter != null) {
+        value=converter.convert(currentValue);
+      }
+      ui.setValue(value);
     }
     Iterator it=ui.getFacets().iterator();
     while (it.hasNext()) {
