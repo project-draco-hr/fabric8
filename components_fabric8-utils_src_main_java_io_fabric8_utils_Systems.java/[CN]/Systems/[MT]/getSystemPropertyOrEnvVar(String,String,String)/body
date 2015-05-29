@@ -1,0 +1,18 @@
+{
+  String answer=null;
+  try {
+    answer=System.getProperty(systemProperty);
+  }
+ catch (  Exception e) {
+    LOG.warn("Failed to look up environment variable $" + envVarName + ". "+ e,e);
+  }
+  if (Strings.isNullOrBlank(answer)) {
+    answer=System.getenv(envVarName);
+  }
+  if (Strings.isNotBlank(answer)) {
+    return answer;
+  }
+ else {
+    return defaultValue;
+  }
+}

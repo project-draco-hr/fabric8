@@ -11,13 +11,7 @@
     kubernetesMaster=proto + "://" + kubernetesMaster+ ":"+ System.getenv(portEnvVar);
   }
  else {
-    kubernetesMaster=System.getenv(KUBERNETES_MASTER_ENV_VAR);
+    kubernetesMaster=Systems.getSystemPropertyOrEnvVar(KUBERNETES_MASTER_SYSTEM_PROPERTY,KUBERNETES_MASTER_ENV_VAR,DEFAULT_KUBERNETES_MASTER);
   }
-  if (Strings.isNullOrBlank(kubernetesMaster)) {
-    kubernetesMaster=System.getProperty(KUBERNETES_MASTER_SYSTEM_PROPERTY);
-  }
-  if (Strings.isNotBlank(kubernetesMaster)) {
-    return kubernetesMaster;
-  }
-  return DEFAULT_KUBERNETES_MASTER;
+  return kubernetesMaster;
 }
