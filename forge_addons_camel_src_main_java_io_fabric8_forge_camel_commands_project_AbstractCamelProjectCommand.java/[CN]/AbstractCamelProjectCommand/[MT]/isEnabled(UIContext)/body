@@ -1,9 +1,13 @@
 {
+  boolean enabled=super.isEnabled(context);
+  if (!enabled) {
+    return false;
+  }
   if (requiresCamelSetup()) {
     Project project=getSelectedProjectOrNull(context);
-    return project != null && super.isEnabled(context) && findCamelCoreDependency(project) != null;
+    if (project != null) {
+      return findCamelCoreDependency(project) != null;
+    }
   }
- else {
-    return super.isEnabled(context);
-  }
+  return false;
 }
