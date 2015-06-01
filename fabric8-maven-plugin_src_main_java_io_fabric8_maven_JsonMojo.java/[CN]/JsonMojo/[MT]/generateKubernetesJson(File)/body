@@ -40,10 +40,10 @@
   boolean hasUrl=Strings.isNotBlank(iconUrl);
   if (!template.getParameters().isEmpty() || hasUrl) {
     Map<String,String> annotations=KubernetesHelper.getOrCreateAnnotations(template);
+    addDocumentationAnnotations(template,annotations);
     if (hasUrl) {
       annotations.put(AnnotationKeys.ICON_URL,iconUrl);
     }
-    addDocumentationAnnotations(template,annotations);
     builder=builder.addToTemplateItems(template);
   }
   KubernetesList kubernetesList=builder.build();

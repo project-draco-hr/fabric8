@@ -1,22 +1,12 @@
 {
   try {
-    copyReadMe(templateTempDir);
     copySummaryText(templateTempDir);
+    copyReadMe(templateTempDir);
   }
  catch (  IOException e) {
     getLog().warn("Failed to copy documentation: " + e,e);
   }
-  File readme=new File(templateTempDir,"ReadMe.md");
   File summary=new File(templateTempDir,"Summary.md");
-  if (readme.exists() && readme.isFile()) {
-    try {
-      String text=Files.toString(readme);
-      annotations.put(AnnotationKeys.DESCRIPTION,text);
-    }
- catch (    IOException e) {
-      getLog().warn("Failed to load " + readme + ". "+ e,e);
-    }
-  }
   if (summary.exists() && summary.isFile()) {
     try {
       String text=Files.toString(summary);
@@ -24,6 +14,16 @@
     }
  catch (    IOException e) {
       getLog().warn("Failed to load " + summary + ". "+ e,e);
+    }
+  }
+  File readme=new File(templateTempDir,"ReadMe.md");
+  if (readme.exists() && readme.isFile()) {
+    try {
+      String text=Files.toString(readme);
+      annotations.put(AnnotationKeys.DESCRIPTION,text);
+    }
+ catch (    IOException e) {
+      getLog().warn("Failed to load " + readme + ". "+ e,e);
     }
   }
 }
