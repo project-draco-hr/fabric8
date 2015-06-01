@@ -25,7 +25,10 @@
     if (input.hasValue()) {
       String value=input.getValue().toString();
       if (value != null) {
-        options.put(key,value);
+        boolean matchDefault=isDefaultValue(camelComponentName,key,value);
+        if (!matchDefault) {
+          options.put(key,value);
+        }
       }
     }
  else     if (input.isRequired() && input.hasDefaultValue()) {

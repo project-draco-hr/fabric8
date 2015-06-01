@@ -1,0 +1,18 @@
+{
+  CamelCatalog catalog=new DefaultCamelCatalog();
+  String json=catalog.componentJSonSchema(scheme);
+  if (json == null) {
+    throw new IllegalArgumentException("Could not find catalog entry for component name: " + scheme);
+  }
+  List<Map<String,String>> data=JSonSchemaHelper.parseJsonSchema("properties",json,true);
+  if (data != null) {
+    for (    Map<String,String> propertyMap : data) {
+      String name=propertyMap.get("name");
+      String defaultValue=propertyMap.get("defaultValue");
+      if (key.equals(name)) {
+        return value.equalsIgnoreCase(defaultValue);
+      }
+    }
+  }
+  return false;
+}
