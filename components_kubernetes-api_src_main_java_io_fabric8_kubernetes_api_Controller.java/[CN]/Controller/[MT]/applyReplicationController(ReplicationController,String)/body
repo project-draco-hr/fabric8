@@ -23,7 +23,7 @@
         LOG.info("Updating replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getName(replicationController));
         try {
           Object answer=kubernetes.updateReplicationController(id,replicationController);
-          LOG.info("Updated replicationController: " + answer);
+          logGeneratedEntity("Updated replicationController: ",namespace,replicationController,answer);
         }
  catch (        Exception e) {
           onApplyError("Failed to update replicationController from " + sourceName + ". "+ e+ ". "+ replicationController,e);

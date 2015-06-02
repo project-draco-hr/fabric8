@@ -23,7 +23,7 @@
         LOG.info("Updating a service from " + sourceName);
         try {
           Object answer=kubernetes.updateService(id,service,namespace);
-          LOG.info("Updated service: " + answer);
+          logGeneratedEntity("Updated service: ",namespace,service,answer);
         }
  catch (        Exception e) {
           onApplyError("Failed to update controller from " + sourceName + ". "+ e+ ". "+ service,e);
