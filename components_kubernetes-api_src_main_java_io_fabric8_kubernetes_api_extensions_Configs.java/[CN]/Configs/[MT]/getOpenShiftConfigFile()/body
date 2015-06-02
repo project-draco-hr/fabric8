@@ -3,6 +3,10 @@
   if (file != null) {
     return new File(file);
   }
+  file=System.getenv(OPENSHIFT_CONFIG_FILE_ENV_VAR);
+  if (file != null) {
+    return new File(file);
+  }
   String homeDir=System.getProperty("user.home",".");
   return new File(homeDir,".config/openshift/config");
 }
