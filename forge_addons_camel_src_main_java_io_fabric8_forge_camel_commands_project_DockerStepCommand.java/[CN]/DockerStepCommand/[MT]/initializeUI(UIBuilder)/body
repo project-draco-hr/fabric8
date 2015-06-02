@@ -24,12 +24,7 @@
 );
   main.setRequired(new Callable<Boolean>(){
     @Override public Boolean call() throws Exception {
-      for (      String jar : jarImages) {
-        if (jar.equals(from.getValue())) {
-          return true;
-        }
-      }
-      return false;
+      return DockerSetupHelper.isJarImage(from.getValue());
     }
   }
 );
