@@ -4,12 +4,12 @@
   if (Strings.isNotBlank(labelsString)) {
     watchUrl+="&labelSelector=" + labelsString;
   }
-  String openShiftToken=getFactory(false).findOpenShiftToken();
+  String openShiftToken=getFactory().findOpenShiftToken();
   if (openShiftToken != null) {
     watchUrl+="&access_token=" + openShiftToken;
   }
   LOG.debug("Connecting to {}",watchUrl);
-  WebSocketClient client=getFactory(false).createWebSocketClient();
+  WebSocketClient client=getFactory().createWebSocketClient();
   try {
     URI watchUri=URI.create(watchUrl);
     ClientUpgradeRequest upgradeRequest=new ClientUpgradeRequest();
