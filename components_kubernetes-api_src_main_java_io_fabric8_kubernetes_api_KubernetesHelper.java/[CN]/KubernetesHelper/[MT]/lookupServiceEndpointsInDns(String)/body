@@ -1,0 +1,34 @@
+{
+  try {
+    Lookup l=new Lookup(serviceName,Type.SRV);
+    Record[] records=l.run();
+    if (l.getResult() == Lookup.SUCCESSFUL) {
+      SRVRecord[] srvRecords=Arrays.copyOf(records,records.length,SRVRecord[].class);
+      Arrays.sort(srvRecords,new Comparator<SRVRecord>(){
+        @Override public int compare(        SRVRecord a,        SRVRecord b){
+          int ret=Integer.compare(b.getPriority(),a.getPriority());
+          if (ret == 0) {
+            ret=Integer.compare(b.getWeight(),a.getWeight());
+          }
+          return ret;
+        }
+      }
+);
+      List<String> endpointAddresses=new ArrayList<>(srvRecords.length);
+      for (      SRVRecord srvRecord : srvRecords) {
+        endpointAddresses.add(srvRecord.getTarget().toString(true).concat(":").concat(String.valueOf(srvRecord.getPort())));
+      }
+      return endpointAddresses;
+    }
+ else {
+      LOG.warn("Lookup {} result: {}",serviceName,l.getErrorString());
+    }
+  }
+ catch (  TextParseException e) {
+    LOG.error("Unparseable service name: {}",serviceName,e);
+  }
+catch (  ClassCastException e) {
+    LOG.error("Invalid response from DNS server - should have been A records",e);
+  }
+  return Collections.EMPTY_LIST;
+}
