@@ -1,14 +1,14 @@
 {
-  LOG.trace("Received message: {}",msg);
-  if (msg != null && msg.length() > 0) {
+  LOG.trace("Received message: {}",message);
+  if (message != null && message.length() > 0) {
     try {
-      WatchEvent event=objectMapper.reader(WatchEvent.class).readValue(msg);
+      WatchEvent event=objectMapper.reader(WatchEvent.class).readValue(message);
       T obj=(T)event.getObject();
       Action action=Action.valueOf(event.getType());
       eventReceived(action,obj);
     }
  catch (    IOException e) {
-      LOG.error("Could not deserialize watch event: {}",msg,e);
+      LOG.error("Could not deserialize watch event: {}",message,e);
     }
 catch (    ClassCastException e) {
       LOG.error("Received wrong type of object for watch",e);
