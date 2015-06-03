@@ -1,0 +1,18 @@
+{
+  for (  Field field : REFLECTIONS.getFieldsAnnotatedWith(ServiceName.class)) {
+    Alias alias=field.getAnnotation(Alias.class);
+    ServiceName name=field.getAnnotation(ServiceName.class);
+    Protocol protocol=field.getAnnotation(Protocol.class);
+    External external=field.getAnnotation(External.class);
+    String serviceProtocol=protocol != null ? protocol.value() : DEFAULT_PROTOCOL;
+    String serviceAlias=alias != null ? alias.value() : name.value();
+    Boolean serviceExternal=external != null && external.value();
+    Service serviceInstance=getService(name.value());
+    serviceInstance.getAdditionalProperties().put(ALIAS,serviceAlias);
+    serviceInstance.getAdditionalProperties().put(PROTOCOL,serviceProtocol);
+    serviceInstance.getAdditionalProperties().put(EXTERNAL,serviceExternal);
+    Class targetClass=field.getType();
+    BeanDefinitionHolder holder=createBeanDefinition(serviceInstance,serviceAlias,serviceProtocol,targetClass);
+    BeanDefinitionReaderUtils.registerBeanDefinition(holder,registry);
+  }
+}
