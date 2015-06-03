@@ -20,5 +20,8 @@
     getLog().debug("from envs: " + envs);
     environmentVariables.addAll(envMap.values());
   }
+  if (includeNamespaceEnvVar) {
+    environmentVariables.add(new EnvVarBuilder().withName(kubernetesNamespaceEnvVar).withNewValueFrom().withNewFieldRef().withFieldPath("metadata.namespace").endFieldRef().endValueFrom().build());
+  }
   return environmentVariables;
 }
