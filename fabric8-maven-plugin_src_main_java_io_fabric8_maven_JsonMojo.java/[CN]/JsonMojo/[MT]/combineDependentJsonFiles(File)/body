@@ -31,7 +31,13 @@
       addKubernetesJsonFileToList(jsonObjectList,file);
     }
     if (jsonObjectList.isEmpty()) {
-      throw new MojoExecutionException("Could not find any dependent kubernetes JSON files!");
+      if (failOnMissingJsonFiles) {
+        throw new MojoExecutionException("Could not find any dependent kubernetes JSON files!");
+      }
+ else {
+        getLog().warn("Could not find any dependent kubernetes JSON files");
+        return;
+      }
     }
     Object combinedJson;
     if (jsonObjectList.size() == 1) {
