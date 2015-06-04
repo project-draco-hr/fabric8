@@ -8,7 +8,8 @@
   ConfigurationElement cfgBuild=ConfigurationElementBuilder.create().setName("build");
   cfgBuild.getChildren().add(cfgFrom);
   cfgBuild.getChildren().add(cfgAssembly);
-  if (isJarImage(fromImage) && main != null) {
+  boolean springBoot=hasSpringBootMavenPlugin(project);
+  if (!springBoot && isJarImage(fromImage) && main != null) {
     ConfigurationElement cfgMain=ConfigurationElementBuilder.create().setName("MAIN").setText("${docker.env.MAIN}");
     ConfigurationElement cfgEnv=ConfigurationElementBuilder.create().setName("env");
     cfgEnv.getChildren().add(cfgMain);
