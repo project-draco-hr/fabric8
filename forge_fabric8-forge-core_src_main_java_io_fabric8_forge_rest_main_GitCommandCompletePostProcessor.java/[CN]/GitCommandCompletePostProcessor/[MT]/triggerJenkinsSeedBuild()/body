@@ -1,0 +1,29 @@
+{
+  if (!Strings.isNullOrEmpty(jenkinsSeedJob)) {
+    String address=kubernetes.getServiceURL("cdelivery",kubernetes.getNamespace(),"http",false);
+    if (!Strings.isNullOrEmpty(address)) {
+      String jobUrl=URLUtils.pathJoin(address,"/job/",jenkinsSeedJob);
+      LOG.info("Attempting to trigger the jenkins seed build on: " + jobUrl);
+      String json="{}";
+      HttpURLConnection connection=null;
+      try {
+        URL url=new URL(jobUrl);
+        connection=(HttpURLConnection)url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type","application/json");
+        connection.setDoOutput(true);
+        OutputStreamWriter out=new OutputStreamWriter(connection.getOutputStream());
+        out.write(json);
+        out.close();
+      }
+ catch (      Exception e) {
+        LOG.error("Failed to trigger jenkins on " + jobUrl + ". "+ e,e);
+      }
+ finally {
+        if (connection != null) {
+          connection.disconnect();
+        }
+      }
+    }
+  }
+}
