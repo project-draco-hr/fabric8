@@ -1,13 +1,14 @@
 {
   String packaging=getProjectPackaging(getSelectedProject(builder));
+  boolean springBoot=hasSpringBootMavenPlugin(getSelectedProject(builder));
   List<String> choices=new ArrayList<String>();
-  if (packaging == null || "jar".equals(packaging)) {
+  if (packaging == null || springBoot || "jar".equals(packaging)) {
     choices.add(jarImages[0]);
   }
   if (packaging == null || "bundle".equals(packaging)) {
     choices.add(bundleImages[0]);
   }
-  if (packaging == null || "war".equals(packaging)) {
+  if (!springBoot && (packaging == null || "war".equals(packaging))) {
     choices.add(warImages[0]);
     choices.add(warImages[1]);
   }
