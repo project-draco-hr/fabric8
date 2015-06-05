@@ -1,0 +1,32 @@
+{
+  String dockerImage=getDockerImage();
+  if (Strings.isNullOrBlank(dockerImage)) {
+    getLog().error("Cannot delete any pods as there is no docker image specified via the `docker.image` property");
+    return;
+  }
+  KubernetesClient kubernetes=getKubernetes();
+  PodList podList=kubernetes.getPods();
+  int count=0;
+  if (podList != null) {
+    List<Pod> items=podList.getItems();
+    if (items != null) {
+      for (      Pod pod : items) {
+        if (podUsesDockerImage(pod,dockerImage)) {
+          try {
+            kubernetes.deletePod(pod);
+            count++;
+          }
+ catch (          Exception e) {
+            getLog().error("Failed to delete pod " + getName(pod) + " namespace: "+ KubernetesHelper.getNamespace(pod));
+          }
+        }
+      }
+    }
+  }
+  if (count == 0) {
+    getLog().info("No pods found using image " + dockerImage + " in namespace: "+ kubernetes.getNamespace()+ " on address: "+ kubernetes.getAddress());
+  }
+ else {
+    getLog().info("Deleted " + count + " pod(s) using image "+ dockerImage+ " in namespace: "+ kubernetes.getNamespace()+ " on address: "+ kubernetes.getAddress());
+  }
+}
