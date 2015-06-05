@@ -4,7 +4,11 @@
   String builderImage="fabric8/java-main";
   String osapiVersion="v1beta1";
   String namespace=kubernetes.getNamespace();
-  String gitServiceName="gogs-http-service";
+  if (Strings.isNullOrEmpty(namespace)) {
+    namespace=KubernetesClient.defaultNamespace();
+    kubernetes.setNamespace(namespace);
+  }
+  String gitServiceName="gogs";
   String gitAddress=getServiceAddress(gitServiceName,namespace);
   if (gitAddress == null) {
     LOG.warn("Could not find service " + gitServiceName + " for namespace "+ namespace);
@@ -20,7 +24,7 @@
     boolean appendNamespaceQuery=true;
     if (kubeAddress == null) {
       try {
-        kubeAddress=kubernetes.getServiceURL("cdelivery",namespace,"http",false);
+        kubeAddress=kubernetes.getServiceURL(ServiceNames.CDELIVERY_API,namespace,"http",false);
         webhookUrl=URLUtils.pathJoin(kubeAddress,"buildConfigHooks",namespace,buildName);
         appendNamespaceQuery=false;
       }
