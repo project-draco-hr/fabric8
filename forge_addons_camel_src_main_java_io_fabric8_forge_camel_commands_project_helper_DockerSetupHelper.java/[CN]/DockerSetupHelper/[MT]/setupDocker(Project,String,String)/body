@@ -8,12 +8,22 @@
   ConfigurationElement cfgBuild=ConfigurationElementBuilder.create().setName("build");
   cfgBuild.getChildren().add(cfgFrom);
   cfgBuild.getChildren().add(cfgAssembly);
+  Map<String,String> envs=new LinkedHashMap<>();
   boolean springBoot=hasSpringBootMavenPlugin(project);
-  if (!springBoot && isJarImage(fromImage) && main != null) {
-    ConfigurationElement cfgMain=ConfigurationElementBuilder.create().setName("MAIN").setText("${docker.env.MAIN}");
+  if (springBoot) {
+    envs.put("JAR","${project.artifactId}-${project.version}.war");
+    envs.put("JAVA_OPTIONS","-Djava.security.egd=/dev/./urandom");
+  }
+ else   if (main != null) {
+    envs.put("MAIN",main);
+  }
+  if (!envs.isEmpty()) {
     ConfigurationElement cfgEnv=ConfigurationElementBuilder.create().setName("env");
-    cfgEnv.getChildren().add(cfgMain);
-    cfgBuild.getChildren().add(cfgMain);
+    cfgBuild.getChildren().add(cfgEnv);
+    for (    Map.Entry<String,String> env : envs.entrySet()) {
+      ConfigurationElement cfg=ConfigurationElementBuilder.create().setName(env.getKey()).setText(env.getValue());
+      cfgEnv.getChildren().add(cfg);
+    }
   }
   ConfigurationElement cfgImage=ConfigurationElementBuilder.create().setName("image");
   cfgImage.getChildren().add(cfgName);
