@@ -8,6 +8,16 @@
     dependency=DependencyBuilder.create().setCoordinate(MavenHelpers.createCoordinate("org.jboss.arquillian.junit","arquillian-junit-container",null)).setScopeType("test");
     dependencyInstaller.installManaged(project,dependency);
   }
+  ResourcesFacet resourcesFactory=project.getFacet(ResourcesFacet.class);
+  FileResource fileResource=resourcesFactory.getResource("jolokia-access.xml");
+  if (!fileResource.exists()) {
+    Resource<URL> xml=resourceFactory.create(getClass().getResource("/templates/jolokia-access.ftl")).reify(URLResource.class);
+    Template template=factory.create(xml,FreemarkerTemplate.class);
+    Map<String,Object> params=new HashMap<String,Object>();
+    String output=template.process(params);
+    fileResource.createNewFile();
+    fileResource.setContents(output);
+  }
   MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
   MavenPlugin plugin=MavenPluginBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","fabric8-maven-plugin",VersionHelper.fabric8Version())).addExecution(ExecutionBuilder.create().setId("json").addGoal("json")).addExecution(ExecutionBuilder.create().setId("zip").addGoal("zip"));
   pluginFacet.addPlugin(plugin);
