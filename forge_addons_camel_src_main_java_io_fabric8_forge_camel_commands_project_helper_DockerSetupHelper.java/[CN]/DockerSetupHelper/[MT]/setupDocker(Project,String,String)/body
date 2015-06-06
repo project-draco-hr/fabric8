@@ -32,6 +32,10 @@
       cfgEnv.getChildren().add(cfg);
     }
   }
+  if (bundle) {
+    ConfigurationElement cfgCommand=ConfigurationElementBuilder.create().setName("command").setText("/usr/bin/deploy-and-start");
+    cfgBuild.getChildren().add(cfgCommand);
+  }
   ConfigurationElement cfgImage=ConfigurationElementBuilder.create().setName("image");
   cfgImage.getChildren().add(cfgName);
   cfgImage.getChildren().add(cfgBuild);
