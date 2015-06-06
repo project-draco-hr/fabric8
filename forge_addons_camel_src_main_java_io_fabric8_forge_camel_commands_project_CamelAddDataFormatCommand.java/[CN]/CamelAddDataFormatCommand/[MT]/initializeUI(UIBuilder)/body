@@ -1,5 +1,18 @@
 {
   Project project=getSelectedProject(builder);
   name.setValueChoices(new CamelDataFormatsCompleter(project).getValueChoices());
+  name.addValueChangeListener(new ValueChangeListener(){
+    @Override public void valueChanged(    ValueChangeEvent event){
+      String dataFormat=event.getNewValue() != null ? event.getNewValue().toString() : null;
+      if (dataFormat != null) {
+        String description=CamelCatalogHelper.getDataFormatDescription(dataFormat);
+        name.setNote(description != null ? description : "");
+      }
+ else {
+        name.setNote("");
+      }
+    }
+  }
+);
   builder.add(name);
 }

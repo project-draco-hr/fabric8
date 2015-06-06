@@ -1,0 +1,17 @@
+{
+  CamelCatalog catalog=new DefaultCamelCatalog();
+  String json=catalog.languageJSonSchema(language);
+  if (json == null) {
+    return null;
+  }
+  List<Map<String,String>> data=JSonSchemaHelper.parseJsonSchema("language",json,false);
+  if (data != null) {
+    for (    Map<String,String> propertyMap : data) {
+      String description=propertyMap.get("description");
+      if (description != null) {
+        return description;
+      }
+    }
+  }
+  return null;
+}
