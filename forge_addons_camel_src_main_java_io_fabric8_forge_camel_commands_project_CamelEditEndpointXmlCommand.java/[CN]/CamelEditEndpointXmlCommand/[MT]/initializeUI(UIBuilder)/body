@@ -1,7 +1,8 @@
 {
   Project project=getSelectedProject(builder.getUIContext());
   ResourcesFacet resourcesFacet=project.getFacet(ResourcesFacet.class);
-  completer=new XmlEndpointsCompleter(resourcesFacet);
+  WebResourcesFacet webResourcesFacet=project.getFacet(WebResourcesFacet.class);
+  completer=new XmlEndpointsCompleter(resourcesFacet,webResourcesFacet);
   endpoints.setValueChoices(completer.getEndpointUris());
   builder.add(endpoints);
 }
