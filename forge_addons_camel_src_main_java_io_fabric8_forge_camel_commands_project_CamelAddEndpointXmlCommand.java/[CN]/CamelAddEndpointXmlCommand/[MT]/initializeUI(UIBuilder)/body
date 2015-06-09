@@ -1,6 +1,7 @@
 {
   Project project=getSelectedProject(builder.getUIContext());
   ResourcesFacet resourcesFacet=project.getFacet(ResourcesFacet.class);
+  WebResourcesFacet webResourcesFacet=project.getFacet(WebResourcesFacet.class);
   componentNameFilter.setValueChoices(CamelCommandsHelper.createComponentNameValues(project));
   componentNameFilter.setDefaultValue("<all>");
   componentName.setValueChoices(CamelCommandsHelper.createComponentNameValues(project,componentNameFilter,false));
@@ -14,6 +15,6 @@
     }
   }
 );
-  xml.setValueChoices(new XmlFileCompleter(resourcesFacet).getFiles());
+  xml.setValueChoices(new XmlFileCompleter(resourcesFacet,webResourcesFacet).getFiles());
   builder.add(componentNameFilter).add(componentName).add(instanceName).add(xml);
 }
