@@ -60,6 +60,7 @@
           if (request.method().equals("PUT")) {
             Service service=getObjectMapper().readValue(body,Service.class);
             engine.getRegistry().publishService(service,voidHandler);
+            LOG.info("Published to Registry " + service.getEndpoint());
           }
  else           if (request.method().equals("DELETE")) {
             if (pathSegment.length < 6)             throw new UserException("Query Parse Exception , " + "expecting /rest/apimanager/applications/{organizationId}/{serviceId}/{version}");
@@ -68,6 +69,7 @@
             service.setServiceId(pathSegment[4]);
             service.setVersion(pathSegment[5]);
             engine.getRegistry().retireService(service,voidHandler);
+            LOG.info("Retired " + service.getEndpoint() + ", version "+ service.getVersion());
           }
  else           if (request.method().equals("GET")) {
             if (pathSegment.length < 7)             throw new UserException("Query Parse Exception , " + "expecting /rest/apimanager/applications/{organizationId}/{serviceId}/{version}/endpoint");
