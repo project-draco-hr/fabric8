@@ -8,6 +8,7 @@
   labels.put("user",username);
   labels.put("repo",repoName);
   Map<String,String> annotations=new HashMap<>();
+  String jenkinsJobUrl=null;
   try {
     String jenkinsUrl=kubernetes.getServiceURL(ServiceNames.JENKINS,kubernetes.getNamespace(),"http",true);
     if (Strings.isNotBlank(jenkinsUrl)) {
@@ -20,7 +21,8 @@
         annotations.put("fabric8.link.jenkins.pipeline/label","Pipeline");
       }
       if (Strings.isNotBlank(jenkinsJob)) {
-        annotations.put("fabric8.link.jenkins.job/url",URLUtils.pathJoin(jenkinsUrl,"/job",jenkinsJob));
+        jenkinsJobUrl=URLUtils.pathJoin(jenkinsUrl,"/job",jenkinsJob);
+        annotations.put("fabric8.link.jenkins.job/url",jenkinsJobUrl);
         annotations.put("fabric8.link.jenkins.job/label","Job");
       }
     }
@@ -37,6 +39,6 @@
   Controller controller=createController();
   controller.applyBuildConfig(buildConfig,"maven");
   getLog().info("Created build configuration for " + name + " in namespace: "+ controller.getNamespace()+ " at "+ kubernetes.getAddress());
-  createJenkinsWebhook();
+  createJenkinsWebhook(jenkinsJobUrl);
   createTaigaWebhook();
 }
