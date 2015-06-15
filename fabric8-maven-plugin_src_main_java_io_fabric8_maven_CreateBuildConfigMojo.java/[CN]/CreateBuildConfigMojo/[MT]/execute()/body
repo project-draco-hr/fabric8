@@ -28,8 +28,15 @@
  catch (  Exception e) {
     getLog().warn("Could not find the Jenkins URL!: " + e,e);
   }
+  String taigaLink=getTaigaProjectUrl();
+  if (Strings.isNotBlank(taigaLink)) {
+    annotations.put("fabric8.link.taiga/url",taigaLink);
+    annotations.put("fabric8.link.taiga/label","Issues");
+  }
   BuildConfig buildConfig=new BuildConfigBuilder().withNewMetadata().withName(name).withLabels(labels).withAnnotations(annotations).endMetadata().withNewSpec().withNewSource().withType("Git").withNewGit().withUri(gitUrl).endGit().endSource().withNewStrategy().withType("Docker").withNewDockerStrategy().withNewFrom().withName(buildImageStream + ":" + buildImageTag).endFrom().endDockerStrategy().endStrategy().addNewTrigger().withType("github").withNewGithub().withSecret(secret).endGithub().endTrigger().addNewTrigger().withType("generic").withNewGeneric().withSecret(secret).endGeneric().endTrigger().endSpec().build();
   Controller controller=createController();
   controller.applyBuildConfig(buildConfig,"maven");
   getLog().info("Created build configuration for " + name + " in namespace: "+ controller.getNamespace()+ " at "+ kubernetes.getAddress());
+  createJenkinsWebhook();
+  createTaigaWebhook();
 }

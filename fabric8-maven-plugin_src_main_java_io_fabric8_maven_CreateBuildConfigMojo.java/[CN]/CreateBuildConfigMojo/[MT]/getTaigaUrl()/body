@@ -1,0 +1,8 @@
+{
+  String url=null;
+  if (Strings.isNotBlank(taigaProjectName) && Strings.isNotBlank(taigaUserName)) {
+    KubernetesClient kubernetes=getKubernetes();
+    url=kubernetes.getServiceURL(ServiceNames.TAIGA,kubernetes.getNamespace(),"http",true);
+  }
+  return url;
+}
