@@ -8,7 +8,7 @@
   Model pom=maven.getModel();
   Properties properties=pom.getProperties();
   properties.put("docker.registryPrefix","${env.DOCKER_REGISTRY}/");
-  properties.put("docker.from",fromImage);
+  properties.put("docker.from",dockerFromImagePrefix + fromImage);
   properties.put("docker.image","${docker.registryPrefix}fabric8/${project.artifactId}:${project.version}");
   properties.put("docker.port.container.jolokia","8778");
   if (springBoot) {
