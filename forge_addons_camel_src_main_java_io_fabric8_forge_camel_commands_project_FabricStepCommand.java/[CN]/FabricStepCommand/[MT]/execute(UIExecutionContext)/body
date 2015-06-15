@@ -1,5 +1,6 @@
 {
   Project project=getSelectedProject(context);
+  facetFactory.install(project,ResourcesFacet.class);
   Dependency bom=DependencyBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","fabric8-project",VersionHelper.fabric8Version(),"pom")).setScopeType("import");
   dependencyInstaller.installManaged(project,bom);
   if (test.getValue() != null && test.getValue()) {
