@@ -2,7 +2,11 @@
   try {
     Object entity=response.getEntity();
     String message="No message";
-    if (entity != null) {
+    if (entity instanceof InputStream) {
+      InputStream inputStream=(InputStream)entity;
+      message=IOHelpers.readFully(inputStream);
+    }
+ else     if (entity != null) {
       message=entity.toString();
     }
     message="HTTP " + response.getStatus() + " "+ message;
