@@ -1,0 +1,35 @@
+{
+  if (Strings.isNullOrBlank(gogsUsername)) {
+    gogsUsername="gogsadmin";
+  }
+  if (Strings.isNullOrBlank(gogsPassword)) {
+    gogsPassword="RedHat$1";
+  }
+  try {
+    KubernetesClient kubernetes=getKubernetes();
+    String namespace=kubernetes.getNamespace();
+    Log log=getLog();
+    String gogsAddress=kubernetes.getServiceURL(ServiceNames.GOGS,namespace,"http",true);
+    log.info("Found gogs address: " + gogsAddress + " for namespace: "+ namespace+ " on Kubernetes address: "+ kubernetes.getAddress());
+    if (Strings.isNullOrBlank(gogsAddress)) {
+      throw new MojoExecutionException("No address for service " + ServiceNames.GOGS + " in namespace: "+ namespace+ " on Kubernetes address: "+ kubernetes.getAddress());
+    }
+    log.info("Querying webhooks in gogs for namespace: " + namespace + " on Kubernetes address: "+ kubernetes.getAddress());
+    GitRepoClient repoClient=new GitRepoClient(gogsAddress,gogsUsername,gogsPassword);
+    CreateWebhookDTO createWebhook=new CreateWebhookDTO();
+    createWebhook.setType("gogs");
+    WebhookConfig config=createWebhook.getConfig();
+    config.setUrl(webhookUrl);
+    config.setSecret(secret);
+    WebHookDTO webhook=repoClient.createWebhook(gogsUsername,repo,createWebhook);
+    if (log.isDebugEnabled()) {
+      log.debug("Got web hook: " + toJson(webhook));
+    }
+  }
+ catch (  MojoExecutionException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new MojoExecutionException("Failed to load environment schemas: " + e,e);
+  }
+}
