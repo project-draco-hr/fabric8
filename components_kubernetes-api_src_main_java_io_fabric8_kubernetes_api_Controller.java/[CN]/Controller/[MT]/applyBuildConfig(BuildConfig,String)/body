@@ -19,7 +19,9 @@
         LOG.info("Updating BuildConfig from " + sourceName);
         try {
           String resourceVersion=KubernetesHelper.getResourceVersion(old);
-          KubernetesHelper.getOrCreateMetadata(entity).setResourceVersion(resourceVersion);
+          ObjectMeta metadata=KubernetesHelper.getOrCreateMetadata(entity);
+          metadata.setNamespace(namespace);
+          metadata.setResourceVersion(resourceVersion);
           Object answer=kubernetes.updateBuildConfig(id,entity,namespace);
           logGeneratedEntity("Updated BuildConfig: ",namespace,entity,answer);
         }
