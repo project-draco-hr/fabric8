@@ -1,0 +1,17 @@
+{
+  if (taiga != null && taigaProject != null) {
+    String url=taiga.getAddress();
+    String slug=taigaProject.getSlug();
+    if (Strings.isNullOrBlank(slug)) {
+      slug=taigaProjectSlug;
+    }
+    String userName=taiga.getUsername();
+    if (Strings.isNullOrBlank(slug)) {
+      slug=userName + "-" + taigaProjectName;
+    }
+    if (Strings.isNotBlank(url) && Strings.isNotBlank(slug) && Strings.isNotBlank(projectRelativePage)) {
+      return URLUtils.pathJoin(url,"/project/",slug + "/",projectRelativePage);
+    }
+  }
+  return null;
+}

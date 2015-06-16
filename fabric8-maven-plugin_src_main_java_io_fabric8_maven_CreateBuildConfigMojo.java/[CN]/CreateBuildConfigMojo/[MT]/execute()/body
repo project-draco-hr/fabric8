@@ -39,10 +39,15 @@
  catch (  Exception e) {
     getLog().warn("Could not find the Jenkins URL!: " + e,e);
   }
-  String taigaLink=getTaigaProjectUrl(taiga,taigaProject);
+  String taigaLink=getProjectPageLink(taiga,taigaProject,this.taigaProjectLinkPage);
   if (Strings.isNotBlank(taigaLink)) {
     annotations.put("fabric8.link.taiga/url",taigaLink);
-    annotations.put("fabric8.link.taiga/label","Issues");
+    annotations.put("fabric8.link.taiga/label",taigaProjectLinkLabel);
+  }
+  String taigaTeamLink=getProjectPageLink(taiga,taigaProject,this.taigaTeamLinkPage);
+  if (Strings.isNotBlank(taigaTeamLink)) {
+    annotations.put("fabric8.link.taiga.team/url",taigaTeamLink);
+    annotations.put("fabric8.link.taiga.team/label",taigaTeamLinkLabel);
   }
   BuildConfig buildConfig=new BuildConfigBuilder().withNewMetadata().withName(name).withLabels(labels).withAnnotations(annotations).endMetadata().withNewSpec().withNewSource().withType("Git").withNewGit().withUri(gitUrl).endGit().endSource().withNewStrategy().withType("Docker").withNewDockerStrategy().withNewFrom().withName(buildImageStream + ":" + buildImageTag).endFrom().endDockerStrategy().endStrategy().addNewTrigger().withType("github").withNewGithub().withSecret(secret).endGithub().endTrigger().addNewTrigger().withType("generic").withNewGeneric().withSecret(secret).endGeneric().endTrigger().endSpec().build();
   Controller controller=createController();
