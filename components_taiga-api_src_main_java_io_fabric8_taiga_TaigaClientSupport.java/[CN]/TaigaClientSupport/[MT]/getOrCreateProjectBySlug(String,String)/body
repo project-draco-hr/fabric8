@@ -1,0 +1,13 @@
+{
+  ProjectDTO project=getProjectBySlug(slug);
+  if (project == null) {
+    project=new ProjectDTO();
+    project.setSlug(slug);
+    project.setName(name);
+    addUser(project,getMe());
+    return createProject(project);
+  }
+ else {
+    return project;
+  }
+}
