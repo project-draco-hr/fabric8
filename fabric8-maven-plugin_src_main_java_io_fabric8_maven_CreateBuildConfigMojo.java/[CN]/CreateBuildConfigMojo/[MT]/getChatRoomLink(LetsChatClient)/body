@@ -1,0 +1,16 @@
+{
+  if (letschat != null) {
+    String url=letschat.getAddress();
+    String slug=evaluateRoomExpression(letschatRoomExpression);
+    if (Strings.isNotBlank(url) && Strings.isNotBlank(slug)) {
+      RoomDTO room=letschat.getOrCreateRoom(slug);
+      if (room != null) {
+        String roomId=room.getId();
+        if (Strings.isNotBlank(roomId)) {
+          return URLUtils.pathJoin(url,"/#!/room/" + roomId);
+        }
+      }
+    }
+  }
+  return null;
+}

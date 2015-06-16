@@ -16,6 +16,13 @@
  catch (  Exception e) {
     getLog().error("Failed to load or lazily create the Taiga project: " + e,e);
   }
+  LetsChatClient letschat=null;
+  try {
+    letschat=createLetsChat();
+  }
+ catch (  Exception e) {
+    getLog().error("Failed to load or lazily create the LetsChat client: " + e,e);
+  }
   Map<String,String> annotations=new HashMap<>();
   String jenkinsJobUrl=null;
   try {
@@ -48,6 +55,11 @@
   if (Strings.isNotBlank(taigaTeamLink)) {
     annotations.put("fabric8.link.taiga.team/url",taigaTeamLink);
     annotations.put("fabric8.link.taiga.team/label",taigaTeamLinkLabel);
+  }
+  String chatRoomLink=getChatRoomLink(letschat);
+  if (Strings.isNotBlank(chatRoomLink)) {
+    annotations.put("fabric8.link.letschat.room/url",chatRoomLink);
+    annotations.put("fabric8.link.letschat.room/label",letschatRoomLinkLabel);
   }
   BuildConfig buildConfig=new BuildConfigBuilder().withNewMetadata().withName(name).withLabels(labels).withAnnotations(annotations).endMetadata().withNewSpec().withNewSource().withType("Git").withNewGit().withUri(gitUrl).endGit().endSource().withNewStrategy().withType("Docker").withNewDockerStrategy().withNewFrom().withName(buildImageStream + ":" + buildImageTag).endFrom().endDockerStrategy().endStrategy().addNewTrigger().withType("github").withNewGithub().withSecret(secret).endGithub().endTrigger().addNewTrigger().withType("generic").withNewGeneric().withSecret(secret).endGeneric().endTrigger().endSpec().build();
   Controller controller=createController();

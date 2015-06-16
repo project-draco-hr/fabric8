@@ -1,0 +1,16 @@
+{
+  if (!letschatEnabled) {
+    return null;
+  }
+  KubernetesClient kubernetes=getKubernetes();
+  LetsChatClient letsChat=LetsChatKubernetes.createLetsChat(kubernetes);
+  if (letsChat == null) {
+    getLog().warn("No letschat service availble n kubernetes " + kubernetes.getNamespace() + " on address: "+ kubernetes.getAddress());
+    return null;
+  }
+  if (!letsChat.isValid()) {
+    getLog().warn("No $LETSCHAT_TOKEN environment variable defined so LetsChat support is disabled");
+    return null;
+  }
+  return letsChat;
+}
