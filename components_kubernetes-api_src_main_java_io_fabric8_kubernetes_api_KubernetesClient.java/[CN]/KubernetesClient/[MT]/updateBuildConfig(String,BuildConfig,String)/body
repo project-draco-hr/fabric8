@@ -1,4 +1,14 @@
 {
   validateNamespace(namespace,entity);
+  ObjectMeta metadata=KubernetesHelper.getOrCreateMetadata(entity);
+  metadata.setNamespace(namespace);
+  if (!KubernetesHelper.hasResourceVersion(entity)) {
+    BuildConfig old=getBuildConfig(name,namespace);
+    if (old == null) {
+      return createBuildConfig(entity,namespace);
+    }
+    String resourceVersion=KubernetesHelper.getResourceVersion(old);
+    metadata.setResourceVersion(resourceVersion);
+  }
   return getKubernetesExtensions().updateBuildConfig(name,entity,namespace);
 }
