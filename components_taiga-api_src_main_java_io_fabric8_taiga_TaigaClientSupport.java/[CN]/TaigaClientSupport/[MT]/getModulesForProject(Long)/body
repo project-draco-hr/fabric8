@@ -1,0 +1,12 @@
+{
+  Map<String,ModuleDTO> answer=handle404ByReturningNull(new Callable<Map<String,ModuleDTO>>(){
+    @Override public Map<String,ModuleDTO> call() throws Exception {
+      return getApi().getModulesForProject(id);
+    }
+  }
+);
+  if (answer == null) {
+    answer=new HashMap<>();
+  }
+  return answer;
+}

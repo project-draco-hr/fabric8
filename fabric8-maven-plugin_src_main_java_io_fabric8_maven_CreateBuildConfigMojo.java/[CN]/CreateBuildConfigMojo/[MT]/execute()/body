@@ -7,6 +7,7 @@
   Map<String,String> labels=new HashMap<>();
   labels.put("user",username);
   labels.put("repo",repoName);
+  TaigaClient taiga=createTaiga();
   Map<String,String> annotations=new HashMap<>();
   String jenkinsJobUrl=null;
   try {
@@ -30,7 +31,7 @@
  catch (  Exception e) {
     getLog().warn("Could not find the Jenkins URL!: " + e,e);
   }
-  String taigaLink=getTaigaProjectUrl();
+  String taigaLink=getTaigaProjectUrl(taiga);
   if (Strings.isNotBlank(taigaLink)) {
     annotations.put("fabric8.link.taiga/url",taigaLink);
     annotations.put("fabric8.link.taiga/label","Issues");
@@ -40,5 +41,5 @@
   controller.applyBuildConfig(buildConfig,"maven");
   getLog().info("Created build configuration for " + name + " in namespace: "+ controller.getNamespace()+ " at "+ kubernetes.getAddress());
   createJenkinsWebhook(jenkinsJobUrl);
-  createTaigaWebhook();
+  createTaigaWebhook(taiga);
 }

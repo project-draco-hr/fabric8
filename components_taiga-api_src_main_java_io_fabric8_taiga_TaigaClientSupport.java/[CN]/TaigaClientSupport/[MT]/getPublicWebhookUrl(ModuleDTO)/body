@@ -1,0 +1,13 @@
+{
+  if (module != null) {
+    String webhooksUrl=module.getWebhooksUrl();
+    if (Strings.isNotBlank(webhooksUrl)) {
+      int idx=webhooksUrl.indexOf("/api/v");
+      if (idx > 0) {
+        return URLUtils.pathJoin(getAddress(),webhooksUrl.substring(idx));
+      }
+    }
+    return webhooksUrl;
+  }
+  return null;
+}

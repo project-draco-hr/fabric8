@@ -1,0 +1,15 @@
+{
+  String slug=validateSlug(slugOrNull,name);
+  ProjectDTO project=getProjectBySlug(slug);
+  if (project == null) {
+    project=new ProjectDTO();
+    project.setSlug(slug);
+    project.setName(name);
+    project.setDescription("Description of project " + name);
+    addUser(project,getMe());
+    return createProject(project);
+  }
+ else {
+    return project;
+  }
+}
