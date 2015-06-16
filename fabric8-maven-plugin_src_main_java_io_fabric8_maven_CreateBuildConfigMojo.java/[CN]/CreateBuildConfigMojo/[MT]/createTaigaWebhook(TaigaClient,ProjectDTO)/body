@@ -1,0 +1,19 @@
+{
+  if (taiga != null && project != null) {
+    Long projectId=project.getId();
+    ModuleDTO module=taiga.moduleForProject(projectId,TaigaModule.GOGS);
+    if (module != null) {
+      String webhookSecret=module.getSecret();
+      String webhook=taiga.getPublicWebhookUrl(module);
+      if (Strings.isNotBlank(webhookSecret) && Strings.isNotBlank(webhook)) {
+        createWebhook(webhook,webhookSecret);
+      }
+ else {
+        getLog().warn("Could not create webhook for Taiga. Missing module data for url: " + webhook + " secret: "+ webhookSecret);
+      }
+    }
+ else {
+      getLog().warn("No module for gogs so cannot create Taiga webhook");
+    }
+  }
+}
