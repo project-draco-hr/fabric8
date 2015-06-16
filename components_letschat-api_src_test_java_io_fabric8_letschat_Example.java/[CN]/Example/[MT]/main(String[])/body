@@ -1,0 +1,25 @@
+{
+  String roomName="fabric8_default";
+  if (args.length > 0) {
+    roomName=args[0];
+  }
+  try {
+    KubernetesClient kubernetes=new KubernetesClient();
+    LetsChatClient letschat=LetsChatKubernetes.createLetsChat(kubernetes);
+    System.out.println("Connecting to letschat on: " + letschat.getAddress());
+    List<RoomDTO> rooms=letschat.getRooms();
+    for (    RoomDTO room : rooms) {
+      System.out.println("Room " + room.getId() + " has slug: "+ room.getSlug()+ " name "+ room.getName());
+    }
+    RoomDTO myRoom=letschat.getRoom(roomName);
+    System.out.println("Found room: " + myRoom + " by slug: "+ roomName);
+    RoomDTO notExist=letschat.getRoom("does-not-exist");
+    System.out.println("Found non existing room: " + notExist);
+    RoomDTO newRoom=letschat.getOrCreateRoom("my_new_room_slug");
+    System.out.println("Found/created room: " + newRoom);
+  }
+ catch (  Exception e) {
+    System.out.println("Caught: " + e);
+    e.printStackTrace();
+  }
+}

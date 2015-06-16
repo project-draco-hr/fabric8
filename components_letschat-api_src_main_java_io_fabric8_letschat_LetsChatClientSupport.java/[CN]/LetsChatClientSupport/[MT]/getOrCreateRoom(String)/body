@@ -1,0 +1,14 @@
+{
+  RoomDTO room=getRoom(idOrSlug);
+  if (room == null) {
+    room=new RoomDTO();
+    room.setSlug(idOrSlug);
+    room.setName(idOrSlug);
+    room.setDescription("Description of room " + idOrSlug);
+    Rooms.setOwner(room,getAccount());
+    return createRoom(room);
+  }
+ else {
+    return room;
+  }
+}

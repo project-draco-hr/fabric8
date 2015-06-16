@@ -1,0 +1,16 @@
+{
+  if (api == null) {
+    api=createWebClient(LetsChatApi.class);
+    if (createToken) {
+      if (Strings.isNullOrBlank(authToken)) {
+        generateToken(api);
+      }
+    }
+ else {
+      if (Strings.isNullOrBlank(authToken)) {
+        throw new IllegalArgumentException("No token available for letschat so cannot login. Try setting the $LETSCHAT_TOKEN environment variable?");
+      }
+    }
+  }
+  return api;
+}

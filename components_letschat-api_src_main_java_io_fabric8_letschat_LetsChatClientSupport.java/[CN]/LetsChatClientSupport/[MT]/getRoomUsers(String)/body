@@ -1,0 +1,9 @@
+{
+  List<UserDTO> answer=handle404ByReturningNull(new Callable<List<UserDTO>>(){
+    @Override public List<UserDTO> call() throws Exception {
+      return getApi().getRoomUsers(idOrSlug);
+    }
+  }
+);
+  return notNullList(answer);
+}

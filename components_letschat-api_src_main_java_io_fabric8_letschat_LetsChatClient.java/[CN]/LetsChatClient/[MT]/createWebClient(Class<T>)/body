@@ -1,0 +1,7 @@
+{
+  List<Object> providers=WebClients.createProviders();
+  providers.add(new Authenticator());
+  WebClient webClient=WebClient.create(address,providers);
+  disableSslChecks(webClient);
+  return JAXRSClientFactory.fromClient(webClient,clientType);
+}

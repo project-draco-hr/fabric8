@@ -1,0 +1,12 @@
+{
+  try {
+    api.revokeToken();
+  }
+ catch (  Exception e) {
+    LOG.warn("Ignored error revoking: " + e,e);
+  }
+  TokenDTO tokenDTO=api.generateToken();
+  if (tokenDTO != null) {
+    this.authToken=tokenDTO.getToken();
+  }
+}
