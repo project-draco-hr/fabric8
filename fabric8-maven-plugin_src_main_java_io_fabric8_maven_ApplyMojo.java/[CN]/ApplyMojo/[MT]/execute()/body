@@ -18,11 +18,6 @@
   getLog().info("Using kubernetes at: " + kubernetes.getAddress() + " in namespace "+ kubernetes.getNamespace());
   getLog().info("Kubernetes JSON: " + json);
   try {
-    String fileName=json.getName();
-    Object dto=KubernetesHelper.loadJson(json);
-    if (dto == null) {
-      throw new MojoFailureException("Could not load kubernetes json: " + json);
-    }
     Controller controller=createController();
     controller.setAllowCreate(createNewResources);
     controller.setServicesOnlyMode(servicesOnly);
@@ -31,18 +26,68 @@
     controller.setProcessTemplatesLocally(processTemplatesLocally);
     controller.setLogJsonDir(jsonLogDir);
     controller.setBasedir(getRootProjectFolder());
+    String fileName=json.getName();
+    Object dto=KubernetesHelper.loadJson(json);
+    if (dto == null) {
+      throw new MojoFailureException("Could not load kubernetes json: " + json);
+    }
     if (dto instanceof Template) {
       Template template=(Template)dto;
       KubernetesHelper.setNamespace(template,kubernetes.getNamespace());
       overrideTemplateParameters(template);
       dto=controller.applyTemplate(template,fileName);
     }
-    List<HasMetadata> list=KubernetesHelper.toItemList(dto);
-    if (createRoutes) {
-      createRoutes(kubernetes,list);
-      dto=list;
+    Set<KubernetesList> kubeConfigs=new LinkedHashSet<>();
+    for (    File dependency : getDependencies()) {
+      getLog().info("Found dependency: " + dependency);
+      loadDependency(getLog(),kubeConfigs,dependency);
     }
-    controller.apply(dto,fileName);
+    Comparator<HasMetadata> metadataComparator=new Comparator<HasMetadata>(){
+      @Override public int compare(      HasMetadata left,      HasMetadata right){
+        if (left instanceof Service) {
+          return -1;
+        }
+ else         if (right instanceof Service) {
+          return 1;
+        }
+ else         if (left instanceof ReplicationController) {
+          return -1;
+        }
+ else         if (right instanceof ReplicationController) {
+          return -1;
+        }
+ else {
+          return 0;
+        }
+      }
+    }
+;
+    Set<HasMetadata> entities=new TreeSet<>(metadataComparator);
+    for (    KubernetesList c : kubeConfigs) {
+      entities.addAll(c.getItems());
+    }
+    entities.addAll(KubernetesHelper.toItemList(dto));
+    if (createRoutes) {
+      createRoutes(kubernetes,entities);
+    }
+    controller.setRecreateMode(true);
+    for (    HasMetadata entity : entities) {
+      if (entity instanceof Pod) {
+        Pod pod=(Pod)entity;
+        controller.applyPod(pod,fileName);
+      }
+ else       if (entity instanceof Service) {
+        Service service=(Service)entity;
+        controller.applyService(service,fileName);
+      }
+ else       if (entity instanceof ReplicationController) {
+        ReplicationController replicationController=(ReplicationController)entity;
+        controller.applyReplicationController(replicationController,fileName);
+      }
+ else       if (entity != null) {
+        controller.apply(entity,fileName);
+      }
+    }
   }
  catch (  Exception e) {
     throw new MojoExecutionException(e.getMessage(),e);

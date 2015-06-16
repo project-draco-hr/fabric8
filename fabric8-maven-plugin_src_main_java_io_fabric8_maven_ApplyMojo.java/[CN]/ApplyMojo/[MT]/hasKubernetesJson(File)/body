@@ -1,0 +1,10 @@
+{
+  try (FileInputStream fis=new FileInputStream(f);JarInputStream jis=new JarInputStream(fis)){
+    for (JarEntry entry=jis.getNextJarEntry(); entry != null; entry=jis.getNextJarEntry()) {
+      if (entry.getName().equals(DEFAULT_CONFIG_FILE_NAME)) {
+        return true;
+      }
+    }
+  }
+   return false;
+}
