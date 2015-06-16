@@ -1,9 +1,0 @@
-{
-  RuntimeProperties sysprops=runtimeProperties.get();
-  localRepo=sysprops.getDataPath().resolve(DEFAULT_GIT_PATH).toFile();
-  if (!localRepo.exists() && !localRepo.mkdirs()) {
-    throw new IOException("Failed to create local repository at:" + localRepo.getAbsolutePath());
-  }
-  git=openOrInit(localRepo);
-  activateComponent();
-}

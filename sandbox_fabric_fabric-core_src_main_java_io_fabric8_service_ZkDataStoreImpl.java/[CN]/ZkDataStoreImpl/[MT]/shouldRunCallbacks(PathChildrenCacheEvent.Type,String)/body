@@ -1,8 +1,0 @@
-{
-  if (path == null) {
-    return false;
-  }
-  String runtimeIdentity=runtimeProperties.get().getRuntimeIdentity();
-  String currentVersion=getContainerVersion(runtimeIdentity);
-  return (path.startsWith(ZkPath.CONTAINERS.getPath()) && type.equals(PathChildrenCacheEvent.Type.CHILD_UPDATED)) || path.equals(ZkPath.CONFIG_ENSEMBLES.getPath()) || path.equals(ZkPath.CONFIG_ENSEMBLE_URL.getPath())|| path.equals(ZkPath.CONFIG_ENSEMBLE_PASSWORD.getPath())|| path.equals(ZkPath.CONFIG_CONTAINER.getPath(runtimeIdentity))|| (currentVersion != null && path.equals(ZkPath.CONFIG_VERSIONS_CONTAINER.getPath(currentVersion,runtimeIdentity)));
-}

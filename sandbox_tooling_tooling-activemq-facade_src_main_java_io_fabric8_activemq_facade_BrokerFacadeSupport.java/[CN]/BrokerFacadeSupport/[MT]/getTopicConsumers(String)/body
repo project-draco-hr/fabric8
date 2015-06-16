@@ -1,7 +1,0 @@
-{
-  String brokerName=getBrokerName();
-  topicName=topicName.replace('\"','_');
-  ObjectName query=new ObjectName("org.apache.activemq:type=Broker,brokerName=" + brokerName + ",destinationType=Topic,destinationName="+ topicName+ ",endpoint=Consumer,*");
-  Set<ObjectName> queryResult=queryNames(query,null);
-  return getManagedObjects(queryResult.toArray(new ObjectName[queryResult.size()]),SubscriptionViewMBean.class,SubscriptionViewFacade.class);
-}

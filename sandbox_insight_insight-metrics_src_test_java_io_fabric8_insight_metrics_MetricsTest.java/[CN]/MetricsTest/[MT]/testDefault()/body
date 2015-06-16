@@ -1,9 +1,0 @@
-{
-  Query query=new Query("test",new HashSet<Request>(Arrays.asList(new MBeanAttrs("memory","java.lang:type=Memory",Arrays.asList("HeapMemoryUsage","NonHeapMemoryUsage")),new MBeanOpers("deadlocks","java.lang:type=Threading","dumpAllThreads",Arrays.<Object>asList(true,true),Arrays.<String>asList(boolean.class.getName(),boolean.class.getName())))),null,null,null,0,0);
-  System.gc();
-  QueryResult qrs=JmxUtils.execute(new Server("local"),query,ManagementFactory.getPlatformMBeanServer());
-  String output=new Renderer().render(qrs);
-  Map map=new ObjectMapper().readValue(output,Map.class);
-  assertEquals("local",map.get("host"));
-  assertNotNull(map.get("@timestamp"));
-}

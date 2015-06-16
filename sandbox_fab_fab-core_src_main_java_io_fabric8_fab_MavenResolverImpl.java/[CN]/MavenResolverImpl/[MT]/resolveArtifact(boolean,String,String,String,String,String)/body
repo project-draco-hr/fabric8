@@ -1,9 +1,0 @@
-{
-  RepositorySystem repo=getRepositorySystem();
-  MavenRepositorySystemSession session=createSession(offline,repo);
-  Artifact artifact=new DefaultArtifact(groupId,artifactId,classifier,extension,version);
-  List<RemoteRepository> repos=getRemoteRepositories();
-  ArtifactRequest request=new ArtifactRequest(artifact,repos,null);
-  ArtifactResult result=repo.resolveArtifact(session,request);
-  return result.getArtifact();
-}

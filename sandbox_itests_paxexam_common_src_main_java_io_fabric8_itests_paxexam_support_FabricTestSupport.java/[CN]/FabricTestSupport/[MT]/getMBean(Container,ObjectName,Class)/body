@@ -1,9 +1,0 @@
-{
-  JMXServiceURL url=new JMXServiceURL(container.getJmxUrl());
-  Map env=new HashMap();
-  String[] creds={"admin","admin"};
-  env.put(JMXConnector.CREDENTIALS,creds);
-  JMXConnector jmxc=JMXConnectorFactory.connect(url,env);
-  MBeanServerConnection mbsc=jmxc.getMBeanServerConnection();
-  return JMX.newMBeanProxy(mbsc,mbeanName,clazz,true);
-}

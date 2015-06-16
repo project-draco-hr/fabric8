@@ -1,8 +1,0 @@
-{
-  ProfileService profileService=fabricService.adapt(ProfileService.class);
-  Profile sourceProfile=profileService.getRequiredProfile(versionId,sourceId);
-  LOGGER.info("copyProfile: {} => {}",sourceProfile,targetId);
-  maybeDeleteProfile(fabricService,versionId,targetId,force);
-  ProfileBuilder builder=ProfileBuilder.Factory.createFrom(sourceProfile);
-  profileService.createProfile(builder.identity(targetId).getProfile());
-}

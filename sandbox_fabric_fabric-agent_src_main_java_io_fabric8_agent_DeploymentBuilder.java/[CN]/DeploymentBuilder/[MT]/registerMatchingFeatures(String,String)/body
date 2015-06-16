@@ -1,9 +1,0 @@
-{
-  if (!version.startsWith("[") && !version.startsWith("(")) {
-    Processor processor=new Processor();
-    processor.setProperty("@",VersionTable.getVersion(version).toString());
-    Macro macro=new Macro(processor);
-    version=macro.process(featureRange);
-  }
-  registerMatchingFeatures(name,new VersionRange(version));
-}

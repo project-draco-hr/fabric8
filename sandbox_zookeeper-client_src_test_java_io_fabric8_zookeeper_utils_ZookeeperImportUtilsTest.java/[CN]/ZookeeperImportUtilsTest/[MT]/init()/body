@@ -1,8 +1,0 @@
-{
-  int port=AvailablePortFinder.getNextAvailable(3000);
-  curator=CuratorFrameworkFactory.builder().connectString("localhost:" + port).retryPolicy(new RetryOneTime(1000)).build();
-  curator.start();
-  cnxnFactory=startZooKeeper(port);
-  curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
-  crlf=System.lineSeparator();
-}

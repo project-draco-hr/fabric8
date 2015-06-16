@@ -1,8 +1,0 @@
-{
-  FabricService fabricService=ServiceLocator.awaitService(bundleContext,FabricService.class);
-  ProfileRegistry profileRegistry=fabricService.adapt(ProfileRegistry.class);
-  for (long t=0; (!profileRegistry.hasProfile(version,profile) && t < timeout); t+=2000L) {
-    Thread.sleep(2000L);
-  }
-  return profileRegistry.hasProfile(version,profile);
-}

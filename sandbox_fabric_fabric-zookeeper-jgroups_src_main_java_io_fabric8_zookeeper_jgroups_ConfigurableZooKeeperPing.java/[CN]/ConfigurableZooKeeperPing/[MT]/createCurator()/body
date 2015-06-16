@@ -1,8 +1,0 @@
-{
-  log.info(String.format("Creating curator [%s], mode: %s",connection,getCreateMode()));
-  CuratorFrameworkFactory.Builder builder=CuratorFrameworkFactory.builder().ensembleProvider(new FixedEnsembleProvider(connection)).connectionTimeoutMs(connectionTimeout).sessionTimeoutMs(sessionTimeout).retryPolicy(new RetryNTimes(maxRetry,retryInterval));
-  if (password != null && password.length() > 0) {
-    builder=builder.authorization(getScheme(),getAuth()).aclProvider(aclProvider);
-  }
-  return builder.build();
-}

@@ -1,8 +1,0 @@
-{
-  InvoiceCorrection correction=new InvoiceCorrection().netValue(100);
-  Invoice invoice=new Invoice().invoiceId("INV-001").addCorrection(correction);
-  URI invoiceUri=restTemplate.postForLocation("http://localhost:8080/invoice",invoice);
-  Invoice receivedInvoice=restTemplate.getForObject(invoiceUri,Invoice.class);
-  assertEquals(1,receivedInvoice.getCorrections().size());
-  assertEquals(correction.getNetValue(),receivedInvoice.corrections().get(0).getNetValue());
-}

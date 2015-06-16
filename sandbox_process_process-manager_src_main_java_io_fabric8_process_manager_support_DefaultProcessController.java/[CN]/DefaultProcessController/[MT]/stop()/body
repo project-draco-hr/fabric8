@@ -1,8 +1,0 @@
-{
-  String customCommand=config.getKillCommand();
-  if (Strings.isNullOrEmpty(customCommand)) {
-    LOG.info("No stop command configured so lets just try killing it " + this);
-    return Processes.killProcess(getPid(),"");
-  }
-  return runConfigCommandValueOrLaunchScriptWith(customCommand,"stop");
-}

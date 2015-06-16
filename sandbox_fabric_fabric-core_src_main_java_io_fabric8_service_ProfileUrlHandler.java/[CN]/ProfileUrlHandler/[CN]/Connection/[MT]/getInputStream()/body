@@ -1,9 +1,0 @@
-{
-  assertValid();
-  String path=url.getPath();
-  Container container=fabricService.get().getCurrentContainer();
-  Profile overlayProfile=container.getOverlayProfile();
-  byte[] bytes=overlayProfile.getFileConfiguration(path);
-  IllegalStateAssertion.assertNotNull(bytes,"Resource " + path + " does not exist in the profile overlay.");
-  return new ByteArrayInputStream(bytes);
-}

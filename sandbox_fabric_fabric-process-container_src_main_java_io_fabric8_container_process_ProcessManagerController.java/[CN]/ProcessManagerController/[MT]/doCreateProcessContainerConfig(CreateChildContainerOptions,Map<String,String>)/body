@@ -1,9 +1,0 @@
-{
-  Set<String> profileIds=options.getProfiles();
-  String versionId=options.getVersion();
-  Map<String,String> configuration=Profiles.getOverlayConfiguration(fabricService,profileIds,versionId,Constants.PROCESS_CONTAINER_PID);
-  JolokiaAgentHelper.substituteEnvironmentVariableExpressions(configuration,environmentVariables,fabricService,curator,true);
-  ProcessContainerConfig configObject=new ProcessContainerConfig();
-  configurer.configure(configuration,configObject);
-  return configObject;
-}

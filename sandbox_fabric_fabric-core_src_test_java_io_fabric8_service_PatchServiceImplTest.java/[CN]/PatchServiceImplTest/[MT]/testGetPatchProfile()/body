@@ -1,9 +1,0 @@
-{
-  PatchServiceImpl.PatchDescriptor test1=getPatchDescriptor("test1.patch");
-  PatchServiceImpl.PatchDescriptor test3=getPatchDescriptor("test3.patch");
-  Version version=buildVersion("1.1").withProfiles("karaf","default","patch-test3").done();
-  Profile profile=PatchServiceImpl.getPatchProfile(version,test3);
-  assertNotNull("test3 patch profile should be found",profile);
-  assertEquals("patch-test3",profile.getId());
-  assertNull("test1 patch profile should not be found",PatchServiceImpl.getPatchProfile(version,test1));
-}

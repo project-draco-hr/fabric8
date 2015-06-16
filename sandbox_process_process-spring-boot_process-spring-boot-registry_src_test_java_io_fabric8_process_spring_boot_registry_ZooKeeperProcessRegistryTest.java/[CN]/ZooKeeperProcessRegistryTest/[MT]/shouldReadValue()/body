@@ -1,8 +1,0 @@
-{
-  String propertyValue="Hello world!";
-  CuratorFramework zk=newCurator(hosts);
-  new EnsurePath("/foo/bar/baz").ensure(zk.getZookeeperClient());
-  zk.setData().forPath("/foo/bar/baz",propertyValue.getBytes());
-  String readPropertyValue=registry.readProperty("foo.bar.baz");
-  assertEquals(propertyValue,readPropertyValue);
-}

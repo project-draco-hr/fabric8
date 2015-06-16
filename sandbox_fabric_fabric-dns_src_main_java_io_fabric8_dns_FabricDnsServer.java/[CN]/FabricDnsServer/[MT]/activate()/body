@@ -1,9 +1,0 @@
-{
-  socket=vertx.createDatagramSocket(InternetProtocolFamily.IPv4);
-  socket.listen(bindAddress,port,new AsyncResultHandler<DatagramSocket>(){
-    @Override public void handle(    AsyncResult<DatagramSocket> event){
-      socket.dataHandler(new DnsDatagramPacketHandler(fabricZoneManager.get(),socket));
-    }
-  }
-);
-}

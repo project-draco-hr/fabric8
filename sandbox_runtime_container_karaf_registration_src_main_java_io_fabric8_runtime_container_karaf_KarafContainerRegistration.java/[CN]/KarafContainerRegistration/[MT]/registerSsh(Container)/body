@@ -1,9 +1,0 @@
-{
-  int sshPort=getSshPort(container);
-  int sshConnectionPort=getSshConnectionPort(container);
-  String sshUrl=getSshUrl(container.getId(),sshConnectionPort);
-  setData(curator.get(),CONTAINER_SSH.getPath(container.getId()),sshUrl);
-  portService.get().registerPort(container,SSH_PID,SSH_BINDING_PORT_KEY,sshPort);
-  Configuration configuration=configAdmin.get().getConfiguration(SSH_PID,null);
-  updateIfNeeded(configuration,SSH_BINDING_PORT_KEY,sshPort);
-}

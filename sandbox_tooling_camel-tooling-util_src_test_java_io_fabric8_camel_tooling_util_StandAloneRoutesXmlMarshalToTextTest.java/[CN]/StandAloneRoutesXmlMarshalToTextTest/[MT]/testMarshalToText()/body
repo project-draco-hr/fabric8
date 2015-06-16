@@ -1,8 +1,0 @@
-{
-  String text=FileCopyUtils.copyToString(new FileReader(new File(getBaseDir(),"src/test/resources/routes.xml")));
-  RouteDefinition route=new RouteDefinition();
-  route.from("seda:new.in").to("seda:new.out");
-  String actual=tool.marshalToText(text,Arrays.asList(route));
-  System.out.println("Got " + actual);
-  assertTrue("Missing seda:new.in for: " + actual,actual.contains("seda:new.in"));
-}
