@@ -1,0 +1,30 @@
+{
+  if (Strings.isNullOrBlank(gerritUser)) {
+    gerritUser="admin";
+  }
+  if (Strings.isNullOrBlank(gerritPwd)) {
+    gerritPwd="secret";
+  }
+  String namespace=kubernetes.getNamespace();
+  String gerritAddress=kubernetes.getServiceURL("gerrit-http",namespace,"http",true);
+  log.info("Found gerrit address: " + gerritAddress + " for namespace: "+ namespace+ " on Kubernetes address: "+ kubernetes.getAddress());
+  if (Strings.isNullOrBlank(gerritAddress)) {
+    throw new MojoExecutionException("No address for service " + ServiceNames.GERRIT + " in namespace: "+ namespace+ " on Kubernetes address: "+ kubernetes.getAddress());
+  }
+  log.info("Querying Gerrit for namespace: " + namespace + " on Kubernetes address: "+ kubernetes.getAddress());
+  List<Object> providers=WebClients.createProviders();
+  WebClient webClient=WebClient.create(gerritAddress,providers);
+  disableSslChecks(webClient);
+  configureUserAndPassword(webClient,gerritUser,gerritPwd);
+  enableDigestAuthenticaionType(webClient);
+  GitApi gitApi=JAXRSClientFactory.fromClient(webClient,GitApi.class);
+  CreateRepositoryDTO createRepoDTO=new CreateRepositoryDTO();
+  createRepoDTO.setDescription(description);
+  createRepoDTO.setName(repoName);
+  RepositoryDTO repository=gitApi.createRepository(repoName,createRepoDTO);
+  if (log.isDebugEnabled()) {
+    log.debug("Got created web hook: " + toJson(repository));
+  }
+  log.info("Created git repo for " + repoName + " for namespace: "+ namespace+ " on gogs URL: "+ gerritAddress);
+  return true;
+}

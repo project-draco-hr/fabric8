@@ -1,0 +1,17 @@
+{
+  try {
+    KubernetesClient kubernetes=getKubernetes();
+    Log log=getLog();
+    String gerritUser=this.gerritAdminUsername;
+    String gerritPwd=this.gerritAdminPassword;
+    String repoName=this.repo;
+    String description=this.description;
+    createGerritRepo(kubernetes,log,gerritUser,gerritPwd,repoName,repoName,description);
+  }
+ catch (  MojoExecutionException e) {
+    throw e;
+  }
+catch (  Exception e) {
+    throw new MojoExecutionException("Failed to load environment schemas: " + e,e);
+  }
+}
