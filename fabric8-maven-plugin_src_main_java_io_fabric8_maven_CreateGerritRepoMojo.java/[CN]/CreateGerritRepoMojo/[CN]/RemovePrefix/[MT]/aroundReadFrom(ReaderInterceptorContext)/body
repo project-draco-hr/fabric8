@@ -1,0 +1,16 @@
+{
+  InputStream in=interceptorContext.getInputStream();
+  BufferedReader reader=new BufferedReader(new InputStreamReader(in));
+  StringBuilder received=new StringBuilder();
+  String line;
+  while ((line=reader.readLine()) != null) {
+    received.append(line);
+  }
+  String s=received.toString();
+  s=s.replace(")]}'","");
+  System.out.println("Reader Interceptor removing the prefix invoked.");
+  System.out.println("Content cleaned : " + s);
+  String responseContent=new String(s);
+  interceptorContext.setInputStream(new ByteArrayInputStream(responseContent.getBytes()));
+  return interceptorContext.proceed();
+}
