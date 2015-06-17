@@ -10,6 +10,9 @@
   }
  else   if (caCertFile != null || caCertData != null) {
     WebClients.configureCaCert(webClient,this.caCertData,this.caCertFile);
+    if (disableHostNameChecks) {
+      WebClients.disableHostNameChecks(webClient);
+    }
   }
   if ((clientCertFile != null || clientCertData != null) && (clientKeyFile != null || clientKeyData != null)) {
     WebClients.configureClientCert(webClient,this.clientCertData,this.clientCertFile,this.clientKeyData,this.clientKeyFile,this.clientKeyAlgo,this.clientKeyPassword);

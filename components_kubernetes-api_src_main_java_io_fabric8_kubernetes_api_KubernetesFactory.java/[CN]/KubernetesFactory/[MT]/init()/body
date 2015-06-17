@@ -11,6 +11,9 @@
       log.error("Specified CA certificate file {} does not exist or is not readable",candidateCaCertFile);
     }
   }
+  if (Systems.hasEnvVarOrSystemProperty(KUBERNETES_DISABLE_HOSTNAME_CHECK)) {
+    this.disableHostNameChecks=Systems.getEnvVarOrSystemProperty(KUBERNETES_DISABLE_HOSTNAME_CHECK,false);
+  }
   if (Systems.hasEnvVarOrSystemProperty(KUBERNETES_CA_CERTIFICATE_DATA_ENV_VAR)) {
     this.caCertData=Systems.getEnvVarOrSystemProperty(KUBERNETES_CA_CERTIFICATE_DATA_ENV_VAR);
   }

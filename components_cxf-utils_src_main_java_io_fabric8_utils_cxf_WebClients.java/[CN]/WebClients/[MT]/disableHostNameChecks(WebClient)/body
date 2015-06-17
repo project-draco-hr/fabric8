@@ -1,0 +1,15 @@
+{
+  HTTPConduit conduit=WebClient.getConfig(webClient).getHttpConduit();
+  TLSClientParameters params=conduit.getTlsClientParameters();
+  if (params == null) {
+    params=new TLSClientParameters();
+    conduit.setTlsClientParameters(params);
+  }
+  LOG.debug("Disabling host name checks");
+  params.setHostnameVerifier(new HostnameVerifier(){
+    @Override public boolean verify(    String s,    SSLSession sslSession){
+      return true;
+    }
+  }
+);
+}
