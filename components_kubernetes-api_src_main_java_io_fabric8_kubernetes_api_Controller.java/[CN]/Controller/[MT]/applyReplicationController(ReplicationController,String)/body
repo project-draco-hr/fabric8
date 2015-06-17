@@ -6,10 +6,7 @@
     LOG.debug("Only processing Services right now so ignoring ReplicationController: " + namespace + ":"+ id);
     return;
   }
-  if (replicationControllerMap == null) {
-    replicationControllerMap=getReplicationControllerMap(kubernetes,namespace);
-  }
-  ReplicationController old=replicationControllerMap.get(id);
+  ReplicationController old=kubernetes.getReplicationController(id,namespace);
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(replicationController,old)) {
       LOG.info("ReplicationController hasn't changed so not doing anything");

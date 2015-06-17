@@ -6,10 +6,7 @@
     LOG.debug("Only processing Services right now so ignoring Pod: " + namespace + ":"+ id);
     return;
   }
-  if (podMap == null) {
-    podMap=getPodMap(kubernetes,namespace);
-  }
-  Pod old=podMap.get(id);
+  Pod old=kubernetes.getPod(id,namespace);
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(pod,old)) {
       LOG.info("Pod hasn't changed so not doing anything");
