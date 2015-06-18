@@ -28,6 +28,7 @@
       CreateRepositoryDTO createRepoDTO=new CreateRepositoryDTO();
       createRepoDTO.setDescription(description);
       createRepoDTO.setName(repoName);
+      createRepoDTO.setCreate_empty_commit(Boolean.valueOf(empty_commit));
       RepositoryDTO repository=gitApi.createRepository(repoName,createRepoDTO);
       if (log.isDebugEnabled()) {
         log.debug("Git Repo created : " + toJson(repository));
