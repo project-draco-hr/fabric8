@@ -41,7 +41,14 @@
       processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Error creating Kubernetes configuration.");
     }
   }
-  KubernetesList list=createList(provided);
-  generateJson(list);
+  KubernetesResource answer=null;
+  try {
+    answer=(KubernetesResource)KubernetesHelper.combineJson(provided);
+  }
+ catch (  Exception e) {
+    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Failed to combine provider items");
+    return false;
+  }
+  generateJson(answer);
   return true;
 }
