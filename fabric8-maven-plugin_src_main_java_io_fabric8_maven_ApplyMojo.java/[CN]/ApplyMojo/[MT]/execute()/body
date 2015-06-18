@@ -38,9 +38,11 @@
       dto=controller.applyTemplate(template,fileName);
     }
     Set<KubernetesList> kubeConfigs=new LinkedHashSet<>();
-    for (    File dependency : getDependencies()) {
-      getLog().info("Found dependency: " + dependency);
-      loadDependency(getLog(),kubeConfigs,dependency);
+    if (!combineDependencies) {
+      for (      File dependency : getDependencies()) {
+        getLog().info("Found dependency: " + dependency);
+        loadDependency(getLog(),kubeConfigs,dependency);
+      }
     }
     Comparator<HasMetadata> metadataComparator=new Comparator<HasMetadata>(){
       @Override public int compare(      HasMetadata left,      HasMetadata right){

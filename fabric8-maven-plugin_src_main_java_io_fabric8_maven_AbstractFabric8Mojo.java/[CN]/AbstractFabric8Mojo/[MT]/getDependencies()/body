@@ -1,0 +1,28 @@
+{
+  Set<File> dependnencies=new LinkedHashSet<>();
+  MavenProject project=getProject();
+  Path dir=Paths.get(project.getBuild().getOutputDirectory(),"deps");
+  if (!dir.toFile().exists() && !dir.toFile().mkdirs()) {
+    throw new IOException("Cannot create temp directory at:" + dir.toAbsolutePath());
+  }
+  for (  Artifact candidate : project.getDependencyArtifacts()) {
+    File f=candidate.getFile();
+    if (f == null) {
+      continue;
+    }
+ else     if (f.getName().endsWith("jar") && hasKubernetesJson(f)) {
+      getLog().info("Found file:" + f.getAbsolutePath());
+      try (FileInputStream fis=new FileInputStream(f);JarInputStream jis=new JarInputStream(fis)){
+        Zips.unzip(new FileInputStream(f),dir.toFile());
+        File jsonPath=dir.resolve(DEFAULT_CONFIG_FILE_NAME).toFile();
+        if (jsonPath.exists()) {
+          dependnencies.add(jsonPath);
+        }
+      }
+     }
+ else     if (isKubernetesJsonArtifact(candidate.getClassifier(),candidate.getType())) {
+      dependnencies.add(f);
+    }
+  }
+  return dependnencies;
+}
