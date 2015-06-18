@@ -18,14 +18,26 @@
   disableSslChecks(webClient);
   configureUserAndPassword(webClient,gerritUser,gerritPwd);
   enableDigestAuthenticaionType(webClient);
-  GerritGitApi gitApi=JAXRSClientFactory.fromClient(webClient,GerritGitApi.class);
-  CreateRepositoryDTO createRepoDTO=new CreateRepositoryDTO();
-  createRepoDTO.setDescription(description);
-  createRepoDTO.setName(repoName);
-  GerritRepositoryDTO repository=gitApi.createRepository(repoName,createRepoDTO);
-  if (log.isDebugEnabled()) {
-    log.debug("Git Repo created : " + toJson(repository));
+  GitApi gitApi=JAXRSClientFactory.fromClient(webClient,GitApi.class);
+  ProjectInfoDTO project=null;
+  try {
+    project=gitApi.getRepository(repoName);
   }
-  log.info("Created git repo for " + repoName + " for namespace: "+ namespace+ " on gogs URL: "+ gerritAddress);
-  return true;
+ catch (  WebApplicationException ex) {
+    if (ex.getResponse().getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+      CreateRepositoryDTO createRepoDTO=new CreateRepositoryDTO();
+      createRepoDTO.setDescription(description);
+      createRepoDTO.setName(repoName);
+      RepositoryDTO repository=gitApi.createRepository(repoName,createRepoDTO);
+      if (log.isDebugEnabled()) {
+        log.debug("Git Repo created : " + toJson(repository));
+      }
+      log.info("Created git repo for " + repoName + " for namespace: "+ namespace+ " on gogs URL: "+ gerritAddress);
+      return true;
+    }
+  }
+  if ((project != null) && (project.getName().equals(repoName))) {
+    throw new MojoExecutionException("Repository " + repoName + " already exists !");
+  }
+  return false;
 }
