@@ -1,0 +1,27 @@
+{
+  Config kubeConfig=Configs.parseConfigs();
+  if (kubeConfig != null) {
+    Context currentContext=Configs.getCurrentContext(kubeConfig);
+    if (currentContext != null) {
+      Cluster currentCluster=Configs.getCluster(kubeConfig,currentContext);
+      if (currentCluster.getServer() != null) {
+        setAddress(currentCluster.getServer());
+        if (currentCluster.getInsecureSkipTlsVerify() != null) {
+          this.trustAllCerts=currentCluster.getInsecureSkipTlsVerify();
+        }
+        if (currentCluster.getCertificateAuthority() != null) {
+          File candidateCaCertFile=new File(currentCluster.getCertificateAuthority());
+          if (candidateCaCertFile.exists() && candidateCaCertFile.canRead()) {
+            this.caCertFile=candidateCaCertFile;
+          }
+ else {
+            log.error("Specified CA certificate file {} does not exist or is not readable",candidateCaCertFile);
+          }
+        }
+        if (currentCluster.getCertificateAuthorityData() != null) {
+          this.caCertData=currentCluster.getCertificateAuthorityData();
+        }
+      }
+    }
+  }
+}

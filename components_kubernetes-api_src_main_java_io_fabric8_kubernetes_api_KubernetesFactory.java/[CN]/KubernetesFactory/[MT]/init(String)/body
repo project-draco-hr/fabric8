@@ -1,4 +1,16 @@
 {
+  if (Strings.isNullOrBlank(address)) {
+    String kubeAddress=findKubernetesMaster();
+    if (kubeAddress != null) {
+      setAddress(kubeAddress);
+    }
+ else {
+      configureFromKubeConfig();
+    }
+  }
+ else {
+    setAddress(address);
+  }
   if (Systems.hasEnvVarOrSystemProperty(KUBERNETES_TRUST_ALL_CERIFICATES)) {
     this.trustAllCerts=Systems.getEnvVarOrSystemProperty(KUBERNETES_TRUST_ALL_CERIFICATES,false);
   }

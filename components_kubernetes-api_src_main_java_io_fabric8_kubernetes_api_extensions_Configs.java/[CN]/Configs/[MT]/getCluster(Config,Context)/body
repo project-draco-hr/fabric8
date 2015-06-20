@@ -1,0 +1,17 @@
+{
+  Cluster cluster=null;
+  if (config != null && context != null) {
+    String clusterName=context.getCluster();
+    if (clusterName != null) {
+      List<NamedCluster> clusters=config.getClusters();
+      if (clusters != null) {
+        for (        NamedCluster namedCluster : clusters) {
+          if (Objects.equal(clusterName,namedCluster.getName())) {
+            cluster=namedCluster.getCluster();
+          }
+        }
+      }
+    }
+  }
+  return cluster;
+}
