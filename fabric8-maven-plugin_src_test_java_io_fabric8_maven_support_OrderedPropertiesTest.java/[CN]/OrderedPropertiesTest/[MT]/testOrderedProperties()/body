@@ -1,0 +1,27 @@
+{
+  Properties envProperties=new Properties();
+  envProperties.put("B","value B");
+  envProperties.put("C","value C");
+  envProperties.put("A","value A");
+  envProperties.put("D","value D");
+  envProperties.put("port","8081");
+  Properties envOrdProperties=new OrderedProperties();
+  envOrdProperties.put("B","value B");
+  envOrdProperties.put("C","value C");
+  envOrdProperties.put("A","value A");
+  envOrdProperties.put("D","value D");
+  envOrdProperties.put("port","8082");
+  envOrdProperties.put("host","vagrant.local");
+  FileOutputStream fos=new FileOutputStream("./target/unordered.properties");
+  envProperties.store(fos,"Generated Unordered Environment Variables");
+  fos.close();
+  fos=new FileOutputStream("./target/ordered.properties");
+  envOrdProperties.store(fos,"Generated Ordered Environment Variables");
+  fos.close();
+  File orderedFile=new File("./target/ordered.properties");
+  assertThat(contentOf(orderedFile)).startsWith("#Generated Ordered Environment Variables\n").containsSequence("A=value A\n","B=value B\n","C=value C\n","D=value D\n","host=vagrant.local\n").endsWith("port=8082\n");
+  File unorderedFile=new File("./target/unordered.properties");
+  assertThat(contentOf(unorderedFile)).startsWith("#Generated Unordered Environment Variables\n").containsSequence("A=value A\n","port=8081\n","D=value D\n","C=value C\n").endsWith("B=value B\n");
+  unorderedFile.deleteOnExit();
+  orderedFile.deleteOnExit();
+}
