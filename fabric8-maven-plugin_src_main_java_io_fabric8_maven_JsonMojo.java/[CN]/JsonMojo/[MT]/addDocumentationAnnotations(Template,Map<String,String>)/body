@@ -16,14 +16,20 @@
       getLog().warn("Failed to load " + summary + ". "+ e,e);
     }
   }
+  String description=null;
   File readme=new File(templateTempDir,"ReadMe.md");
   if (readme.exists() && readme.isFile()) {
     try {
-      String text=Files.toString(readme);
-      annotations.put(AnnotationKeys.DESCRIPTION,text);
+      description=Files.toString(readme);
     }
  catch (    IOException e) {
       getLog().warn("Failed to load " + readme + ". "+ e,e);
     }
+  }
+  if (description == null) {
+    description=getProject().getDescription();
+  }
+  if (Strings.isNotBlank(description)) {
+    annotations.put(AnnotationKeys.DESCRIPTION,description);
   }
 }

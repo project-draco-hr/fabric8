@@ -28,17 +28,16 @@
   }
   Template template=getTemplate();
   String iconUrl=getIconUrl();
-  boolean hasUrl=Strings.isNotBlank(iconUrl);
-  if (!template.getParameters().isEmpty() || hasUrl) {
-    Map<String,String> annotations=KubernetesHelper.getOrCreateAnnotations(template);
-    addDocumentationAnnotations(template,annotations);
-    if (hasUrl) {
-      annotations.put(getTemplateKey(template,AnnotationKeys.ICON_URL),iconUrl);
-    }
+  if (!template.getParameters().isEmpty() || Strings.isNotBlank(iconUrl)) {
+    configureTemplateDescriptionAndIcon(template,iconUrl);
     builder=builder.addToTemplateItems(template);
   }
   KubernetesList kubernetesList=builder.build();
   Object result=Templates.combineTemplates(kubernetesList);
+  if (result instanceof Template) {
+    Template resultTemplate=(Template)result;
+    configureTemplateDescriptionAndIcon(template,iconUrl);
+  }
   try {
     ObjectMapper mapper=new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     String generated=mapper.writeValueAsString(result);
