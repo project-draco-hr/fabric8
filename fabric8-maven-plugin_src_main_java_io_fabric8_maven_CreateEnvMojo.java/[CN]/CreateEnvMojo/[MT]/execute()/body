@@ -9,6 +9,11 @@
     String namespace=getNamespace();
     env.putAll(getNamespaceServiceEnv(namespace));
     displayEnv(env);
+    StringBuilder sb=new StringBuilder();
+    DockerCommandPlainPrint dockerCommandPlainPrint=new DockerCommandPlainPrint(sb);
+    dockerCommandPlainPrint.appendParameters(env,IDockerCommandPlainPrintCostants.EXPRESSION_FLAG);
+    dockerCommandPlainPrint.appendImageName(name);
+    displayDockerRunCommand(dockerCommandPlainPrint);
     for (    Map.Entry<String,String> entry : env.entrySet()) {
       String key=entry.getKey();
       String value=entry.getValue();

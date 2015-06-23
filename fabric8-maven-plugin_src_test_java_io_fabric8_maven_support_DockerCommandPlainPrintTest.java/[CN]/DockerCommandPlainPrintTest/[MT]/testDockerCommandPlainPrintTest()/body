@@ -1,0 +1,12 @@
+{
+  Map<String,String> env=new LinkedHashMap<String,String>();
+  env.put("FOO","bar");
+  env.put("USER","test");
+  env.put("PWD","pass");
+  StringBuilder sb=new StringBuilder();
+  DockerCommandPlainPrint plainPrint=new DockerCommandPlainPrint(sb);
+  plainPrint.appendParameters(env,IDockerCommandPlainPrintCostants.EXPRESSION_FLAG);
+  plainPrint.appendImageName("test/test_image");
+  String expected="docker run -dP -e FOO=bar -e USER=test -e PWD=pass test/test_image";
+  assertThat(plainPrint.getDockerPlainTextCommand().toString()).isEqualTo(expected);
+}
