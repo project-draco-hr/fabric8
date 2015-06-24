@@ -1,0 +1,26 @@
+{
+  for (  HasMetadata hasMetadata : list) {
+    if (hasMetadata instanceof ReplicationController) {
+      ReplicationController rc=(ReplicationController)hasMetadata;
+      ReplicationControllerSpec spec=rc.getSpec();
+      if (spec != null) {
+        PodTemplateSpec podTemplateSpec=spec.getTemplate();
+        if (podTemplateSpec != null) {
+          PodSpec podSpec=podTemplateSpec.getSpec();
+          if (podSpec != null) {
+            List<Container> containers=podSpec.getContainers();
+            if (containers != null) {
+              for (              Container container : containers) {
+                String image=container.getImage();
+                if (Strings.isNotBlank(image)) {
+                  return image;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return null;
+}

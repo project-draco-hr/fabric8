@@ -9,11 +9,18 @@
     String namespace=getNamespace();
     env.putAll(getNamespaceServiceEnv(namespace));
     displayEnv(env);
+    if (name == null) {
+      name=findFirstImageName(list);
+    }
     StringBuilder sb=new StringBuilder();
     DockerCommandPlainPrint dockerCommandPlainPrint=new DockerCommandPlainPrint(sb);
     dockerCommandPlainPrint.appendParameters(env,IDockerCommandPlainPrintCostants.EXPRESSION_FLAG);
     dockerCommandPlainPrint.appendImageName(name);
     displayDockerRunCommand(dockerCommandPlainPrint);
+    Properties properties=getProject().getProperties();
+    if (properties == null) {
+      properties=new Properties();
+    }
     for (    Map.Entry<String,String> entry : env.entrySet()) {
       String key=entry.getKey();
       String value=entry.getValue();
@@ -24,11 +31,16 @@
         getLog().warn("Ignoring null value for key: " + key);
       }
  else {
-        getProject().getProperties().setProperty(DOCKE_ENV_PREFIX + key,value);
+        properties.setProperty(DOCKE_ENV_PREFIX + key,value);
       }
     }
-    getProject().getProperties().setProperty(DOCKER_NAME,name);
-    getProject().getProperties().setProperty(EXEC_ENV_SCRIPT,scriptFile.getAbsolutePath());
+    if (name != null) {
+      properties.setProperty(DOCKER_NAME,name);
+    }
+    String scriptFileAbsolutePath=scriptFile.getAbsolutePath();
+    if (scriptFileAbsolutePath != null) {
+      properties.setProperty(EXEC_ENV_SCRIPT,scriptFileAbsolutePath);
+    }
     Properties envProperties=new OrderedProperties();
     Set<Map.Entry<String,String>> entries=env.entrySet();
     for (    Map.Entry<String,String> entry : entries) {
