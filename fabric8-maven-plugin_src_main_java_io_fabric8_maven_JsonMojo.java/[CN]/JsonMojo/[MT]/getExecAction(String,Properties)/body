@@ -1,0 +1,11 @@
+{
+  ExecAction action=null;
+  String execCmd=properties.getProperty(prefix + ".exec");
+  if (Strings.isNotBlank(execCmd)) {
+    List<String> splitCommandLine=Commandline.translateCommandline(execCmd);
+    if (!splitCommandLine.isEmpty()) {
+      action=new ExecAction(splitCommandLine);
+    }
+  }
+  return action;
+}

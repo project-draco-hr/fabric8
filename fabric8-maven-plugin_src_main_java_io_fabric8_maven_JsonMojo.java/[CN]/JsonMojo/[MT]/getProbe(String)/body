@@ -1,28 +1,28 @@
 {
-  Probe answer=new Probe();
-  boolean added=false;
+  Probe probe=new Probe();
   Properties properties=getProject().getProperties();
-  String httpGetPath=properties.getProperty(prefix + ".httpGet.path");
-  String httpGetPort=properties.getProperty(prefix + ".httpGet.port");
-  String httpGetHost=properties.getProperty(prefix + ".httpGet.host");
-  if (Strings.isNotBlank(httpGetPath)) {
-    added=true;
-    HTTPGetAction httpGet=new HTTPGetAction();
-    httpGet.setPath(httpGetPath);
-    httpGet.setHost(httpGetHost);
-    if (Strings.isNotBlank(httpGetPort)) {
-      IntOrString httpGetPortIntOrString=KubernetesHelper.createIntOrString(httpGetPort);
-      httpGet.setPort(httpGetPortIntOrString);
-    }
-    answer.setHttpGet(httpGet);
-  }
   Long initialDelaySeconds=PropertiesHelper.getLong(properties,prefix + ".initialDelaySeconds");
   if (initialDelaySeconds != null) {
-    answer.setInitialDelaySeconds(initialDelaySeconds);
+    probe.setInitialDelaySeconds(initialDelaySeconds);
   }
   Long timeoutSeconds=PropertiesHelper.getLong(properties,prefix + ".timeoutSeconds");
   if (timeoutSeconds != null) {
-    answer.setTimeoutSeconds(timeoutSeconds);
+    probe.setTimeoutSeconds(timeoutSeconds);
   }
-  return added ? answer : null;
+  HTTPGetAction httpGetAction=getHTTPGetAction(prefix,properties);
+  if (httpGetAction != null) {
+    probe.setHttpGet(httpGetAction);
+    return probe;
+  }
+  ExecAction execAction=getExecAction(prefix,properties);
+  if (execAction != null) {
+    probe.setExec(execAction);
+    return probe;
+  }
+  TCPSocketAction tcpSocketAction=getTCPSocketAction(prefix,properties);
+  if (tcpSocketAction != null) {
+    probe.setTcpSocket(tcpSocketAction);
+    return probe;
+  }
+  return null;
 }

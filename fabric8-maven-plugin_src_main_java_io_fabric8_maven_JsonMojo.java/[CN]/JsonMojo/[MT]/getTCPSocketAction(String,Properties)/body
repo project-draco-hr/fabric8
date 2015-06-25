@@ -1,0 +1,16 @@
+{
+  TCPSocketAction action=null;
+  String port=properties.getProperty(prefix + ".port");
+  if (Strings.isNotBlank(port)) {
+    IntOrString portObj=new IntOrString();
+    try {
+      Integer portInt=Integer.parseInt(port);
+      portObj.setIntVal(portInt);
+    }
+ catch (    NumberFormatException e) {
+      portObj.setStrVal(port);
+    }
+    action=new TCPSocketAction(portObj);
+  }
+  return action;
+}
