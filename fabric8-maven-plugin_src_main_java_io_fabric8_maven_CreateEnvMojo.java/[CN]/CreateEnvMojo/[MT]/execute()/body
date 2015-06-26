@@ -3,6 +3,7 @@
     String basedir=System.getProperty("basedir",".");
     File propertiesFile=new File(basedir + "/target/" + envPropertiesFileName).getCanonicalFile();
     File scriptFile=new File(basedir + "/target/" + envScriptFileName).getCanonicalFile();
+    File dockerRunFile=new File(basedir + "/target/" + dockerRunScriptFileName).getCanonicalFile();
     Object config=loadKubernetesJson();
     List<HasMetadata> list=KubernetesHelper.toItemList(config);
     Map<String,String> env=getEnvFromConfig(list);
@@ -58,7 +59,8 @@
         envProperties.put(key,value);
       }
     }
-    saveScript(env,scriptFile);
+    saveEnvScript(env,scriptFile);
+    saveDockerRunScript(dockerCommandPlainPrint,dockerRunFile);
     saveProperties(envProperties,propertiesFile);
   }
  catch (  IOException e) {
