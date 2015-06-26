@@ -1,0 +1,14 @@
+{
+  Iterator<VolumeMount> it=volumesMount.iterator();
+  while (it.hasNext()) {
+    VolumeMount vol=it.next();
+    dockerPlainTextCommand.append(flag);
+    dockerPlainTextCommand.append(" ");
+    dockerPlainTextCommand.append(vol.getMountPath().toString());
+    if (vol.getReadOnly()) {
+      dockerPlainTextCommand.append(":");
+      dockerPlainTextCommand.append("ro");
+    }
+    dockerPlainTextCommand.append(" ");
+  }
+}

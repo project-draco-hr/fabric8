@@ -1,0 +1,16 @@
+{
+  List<VolumeMount> volumeList=new ArrayList<VolumeMount>();
+  for (  HasMetadata entity : entities) {
+    if (entity instanceof ReplicationController) {
+      ReplicationController replicationController=(ReplicationController)entity;
+      for (      Container container : replicationController.getSpec().getTemplate().getSpec().getContainers()) {
+        if (container.getImage().equals(name)) {
+          if (!container.getVolumeMounts().isEmpty()) {
+            return container.getVolumeMounts();
+          }
+        }
+      }
+    }
+  }
+  return volumeList;
+}

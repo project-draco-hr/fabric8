@@ -13,8 +13,10 @@
       name=findFirstImageName(list);
     }
     StringBuilder sb=new StringBuilder();
+    List<VolumeMount> volumeMount=getVolumeMountsFromConfig(list);
     DockerCommandPlainPrint dockerCommandPlainPrint=new DockerCommandPlainPrint(sb);
     dockerCommandPlainPrint.appendParameters(env,IDockerCommandPlainPrintCostants.EXPRESSION_FLAG);
+    dockerCommandPlainPrint.appendVolumeMounts(volumeMount,IDockerCommandPlainPrintCostants.VOLUME_FLAG);
     dockerCommandPlainPrint.appendImageName(name);
     displayDockerRunCommand(dockerCommandPlainPrint);
     Properties properties=getProject().getProperties();
