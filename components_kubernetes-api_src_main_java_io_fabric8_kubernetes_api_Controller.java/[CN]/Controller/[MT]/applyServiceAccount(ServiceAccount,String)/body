@@ -1,0 +1,39 @@
+{
+  String namespace=getNamespace();
+  String id=getName(serviceAccount);
+  Objects.notNull(id,"No name for " + serviceAccount + " "+ sourceName);
+  if (isServicesOnlyMode()) {
+    LOG.debug("Only processing Services right now so ignoring ServiceAccount: " + id);
+    return;
+  }
+  ServiceAccount old=kubernetes.getServiceAccount(id,namespace);
+  if (isRunning(old)) {
+    if (UserConfigurationCompare.configEqual(serviceAccount,old)) {
+      LOG.info("ServiceAccount hasn't changed so not doing anything");
+    }
+ else {
+      if (isRecreateMode()) {
+        kubernetes.deleteServiceAccount(serviceAccount,namespace);
+        doCreateServiceAccount(serviceAccount,namespace,sourceName);
+      }
+ else {
+        LOG.info("Updating a service account from " + sourceName);
+        try {
+          Object answer=kubernetes.updateServiceAccount(id,serviceAccount,namespace);
+          logGeneratedEntity("Updated service account: ",namespace,serviceAccount,answer);
+        }
+ catch (        Exception e) {
+          onApplyError("Failed to update service account from " + sourceName + ". "+ e+ ". "+ serviceAccount,e);
+        }
+      }
+    }
+  }
+ else {
+    if (!isAllowCreate()) {
+      LOG.warn("Creation disabled so not creating a service from " + sourceName + " namespace "+ namespace+ " name "+ getName(serviceAccount));
+    }
+ else {
+      doCreateServiceAccount(serviceAccount,namespace,sourceName);
+    }
+  }
+}
