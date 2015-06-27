@@ -15,8 +15,10 @@
     }
     StringBuilder sb=new StringBuilder();
     List<VolumeMount> volumeMount=getVolumeMountsFromConfig(list);
+    List<ContainerPort> containerPort=getContainerPortsFromConfig(list);
     DockerCommandPlainPrint dockerCommandPlainPrint=new DockerCommandPlainPrint(sb);
     dockerCommandPlainPrint.appendParameters(env,IDockerCommandPlainPrintCostants.EXPRESSION_FLAG);
+    dockerCommandPlainPrint.appendContainerPorts(containerPort,IDockerCommandPlainPrintCostants.PORT_FLAG);
     dockerCommandPlainPrint.appendVolumeMounts(volumeMount,IDockerCommandPlainPrintCostants.VOLUME_FLAG);
     dockerCommandPlainPrint.appendImageName(name);
     displayDockerRunCommand(dockerCommandPlainPrint);

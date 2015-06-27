@@ -1,0 +1,26 @@
+{
+  List<ContainerPort> containerPortList=new ArrayList<ContainerPort>();
+  for (  HasMetadata entity : entities) {
+    if (entity instanceof Pod) {
+      Pod pod=(Pod)entity;
+      for (      Container container : pod.getSpec().getContainers()) {
+        if (container.getImage().equals(name)) {
+          if (!container.getPorts().isEmpty()) {
+            containerPortList.addAll(container.getPorts());
+          }
+        }
+      }
+    }
+ else     if (entity instanceof ReplicationController) {
+      ReplicationController replicationController=(ReplicationController)entity;
+      for (      Container container : replicationController.getSpec().getTemplate().getSpec().getContainers()) {
+        if (container.getImage().equals(name)) {
+          if (!container.getPorts().isEmpty()) {
+            containerPortList.addAll(container.getPorts());
+          }
+        }
+      }
+    }
+  }
+  return containerPortList;
+}
