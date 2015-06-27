@@ -1,0 +1,10 @@
+{
+  String basedir=System.getProperty("basedir",".");
+  File file=new File(basedir,"src/test/resources/fabric8.yml");
+  assertThat(file).exists();
+  ProjectConfig config=YamlHelper.parseProjectConfig(file);
+  System.out.println("Parsed: " + config);
+  assertThat(config.getChatRoom()).isEqualTo("myroom");
+  assertThat(config.getIssueProjectName()).isEqualTo("foo");
+  assertThat(config.getFlows()).contains("io.fabric8.flow.maven.CanaryReleaseThenStage.groovy");
+}
