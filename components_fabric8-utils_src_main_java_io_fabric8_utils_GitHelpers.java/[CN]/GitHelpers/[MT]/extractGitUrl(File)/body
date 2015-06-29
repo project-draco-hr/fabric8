@@ -1,0 +1,16 @@
+{
+  if (basedir.exists() && basedir.isDirectory()) {
+    File gitConfig=new File(basedir,".git/config");
+    if (gitConfig.isFile() && gitConfig.exists()) {
+      String text=IOHelpers.readFully(gitConfig);
+      if (text != null) {
+        return extractGitUrl(text);
+      }
+    }
+  }
+  File parentFile=basedir.getParentFile();
+  if (parentFile != null) {
+    return extractGitUrl(parentFile);
+  }
+  return null;
+}

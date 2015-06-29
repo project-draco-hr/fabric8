@@ -3,6 +3,8 @@
     return null;
   }
   TaigaClient taiga=TaigaKubernetes.createTaiga(getKubernetes());
-  taiga.setAutoCreateProjects(taigaAutoCreate);
+  if (taiga != null) {
+    taiga.setAutoCreateProjects(taigaAutoCreate);
+  }
   return taiga;
 }

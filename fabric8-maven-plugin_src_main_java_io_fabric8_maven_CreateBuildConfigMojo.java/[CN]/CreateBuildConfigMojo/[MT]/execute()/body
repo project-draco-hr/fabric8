@@ -1,4 +1,5 @@
 {
+  loadConfigFile();
   KubernetesClient kubernetes=getKubernetes();
   String name=repoName;
   if (Strings.isNotBlank(username)) {
@@ -61,7 +62,14 @@
     annotations.put("fabric8.link.letschat.room/url",chatRoomLink);
     annotations.put("fabric8.link.letschat.room/label",letschatRoomLinkLabel);
   }
-  BuildConfig buildConfig=new BuildConfigBuilder().withNewMetadata().withName(name).withLabels(labels).withAnnotations(annotations).endMetadata().withNewSpec().withNewSource().withType("Git").withNewGit().withUri(gitUrl).endGit().endSource().withNewStrategy().withType("Docker").withNewDockerStrategy().withNewFrom().withName(buildImageStream + ":" + buildImageTag).endFrom().endDockerStrategy().endStrategy().addNewTrigger().withType("github").withNewGithub().withSecret(secret).endGithub().endTrigger().addNewTrigger().withType("generic").withNewGeneric().withSecret(secret).endGeneric().endTrigger().endSpec().build();
+  BuildConfigFluent<BuildConfigBuilder>.SpecNested<BuildConfigBuilder> specBuilder=new BuildConfigBuilder().withNewMetadata().withName(name).withLabels(labels).withAnnotations(annotations).endMetadata().withNewSpec();
+  if (Strings.isNotBlank(gitUrl)) {
+    specBuilder=specBuilder.withNewSource().withType("Git").withNewGit().withUri(gitUrl).endGit().endSource();
+  }
+  if (Strings.isNotBlank(buildImageStream) && Strings.isNotBlank(buildImageTag)) {
+    specBuilder=specBuilder.withNewStrategy().withType("Docker").withNewDockerStrategy().withNewFrom().withName(buildImageStream + ":" + buildImageTag).endFrom().endDockerStrategy().endStrategy();
+  }
+  BuildConfig buildConfig=specBuilder.addNewTrigger().withType("github").withNewGithub().withSecret(secret).endGithub().endTrigger().addNewTrigger().withType("generic").withNewGeneric().withSecret(secret).endGeneric().endTrigger().endSpec().build();
   Controller controller=createController();
   controller.applyBuildConfig(buildConfig,"maven");
   getLog().info("Created build configuration for " + name + " in namespace: "+ controller.getNamespace()+ " at "+ kubernetes.getAddress());

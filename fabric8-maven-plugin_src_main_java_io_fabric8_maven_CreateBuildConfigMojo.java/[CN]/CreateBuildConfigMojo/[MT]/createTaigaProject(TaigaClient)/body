@@ -1,5 +1,14 @@
 {
   if (taiga != null) {
+    if (Strings.isNullOrBlank(taigaProjectName)) {
+      getLog().info("Not creating Taiga project as no `fabric8.tagiaProjectName` property specified");
+      return null;
+    }
+    if (Strings.isNullOrBlank(taigaProjectSlug)) {
+      getLog().info("Not creating Taiga project as no `fabric8.taigaProjectSlug` property specified");
+      return null;
+    }
+    getLog().info("About to create Taiga project " + taigaProjectName + " with slug: "+ taigaProjectSlug);
     return taiga.getOrCreateProject(taigaProjectName,taigaProjectSlug);
   }
   return null;

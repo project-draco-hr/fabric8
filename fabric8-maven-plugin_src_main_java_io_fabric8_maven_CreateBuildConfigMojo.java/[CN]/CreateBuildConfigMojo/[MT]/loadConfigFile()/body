@@ -1,0 +1,40 @@
+{
+  if (projectConfigFile != null && projectConfigFile.exists() && projectConfigFile.isFile()) {
+    getLog().info("Parsing fabric8 devops project configuration from: " + projectConfigFile.getName());
+    ProjectConfig projectConfig=null;
+    try {
+      projectConfig=YamlHelper.parseProjectConfig(projectConfigFile);
+    }
+ catch (    IOException e) {
+      getLog().warn("Failed to parse " + projectConfigFile);
+    }
+    if (projectConfig != null) {
+      String chatRoom=projectConfig.getChatRoom();
+      if (Strings.isNotBlank(chatRoom)) {
+        getLog().info("Found chat room: " + chatRoom);
+        letschatRoomExpression=chatRoom;
+      }
+      String issueProjectName=projectConfig.getIssueProjectName();
+      if (Strings.isNotBlank(issueProjectName)) {
+        taigaProjectName=issueProjectName;
+      }
+    }
+  }
+ else {
+    getLog().info("No fabric8.yml file found for " + basedir);
+  }
+  if (Strings.isNullOrBlank(gitUrl)) {
+    try {
+      gitUrl=GitHelpers.extractGitUrl(basedir);
+    }
+ catch (    IOException e) {
+      getLog().warn("Could not load git URL from directory: " + e,e);
+    }
+  }
+  if (Strings.isNullOrBlank(taigaProjectName)) {
+    taigaProjectName=repoName;
+  }
+  if (Strings.isNullOrBlank(taigaProjectSlug)) {
+    taigaProjectSlug=taigaProjectName;
+  }
+}
