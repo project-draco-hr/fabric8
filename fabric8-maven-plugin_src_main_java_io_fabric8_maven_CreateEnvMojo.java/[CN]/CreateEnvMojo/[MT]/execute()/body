@@ -9,6 +9,7 @@
     Map<String,String> env=getEnvFromConfig(list);
     String namespace=getNamespace();
     env.putAll(getNamespaceServiceEnv(namespace));
+    removeDefaultEnv(env);
     displayEnv(env);
     if (name == null) {
       name=findFirstImageName(list);
