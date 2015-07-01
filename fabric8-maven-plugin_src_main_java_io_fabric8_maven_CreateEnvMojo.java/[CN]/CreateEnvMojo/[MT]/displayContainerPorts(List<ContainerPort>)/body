@@ -1,0 +1,26 @@
+{
+  TablePrinter table=new TablePrinter();
+  table.columns("Host IP","Host Port","Container Port");
+  Iterator<ContainerPort> it=containerPort.iterator();
+  while (it.hasNext()) {
+    ContainerPort port=it.next();
+    String hostIp=port.getHostIP();
+    String hostPort="";
+    String contPort="";
+    if (port.getHostPort() != null) {
+      hostPort=String.valueOf(port.getHostPort());
+    }
+    if (port.getContainerPort() != null) {
+      contPort=String.valueOf(port.getContainerPort());
+    }
+    table.row(hostIp,hostPort,contPort);
+  }
+  getLog().info("");
+  getLog().info("Container Ports Summary:");
+  getLog().info("-------------------------------");
+  List<String> lines=table.asTextLines();
+  for (  String line : lines) {
+    getLog().info(line);
+  }
+  getLog().info("");
+}

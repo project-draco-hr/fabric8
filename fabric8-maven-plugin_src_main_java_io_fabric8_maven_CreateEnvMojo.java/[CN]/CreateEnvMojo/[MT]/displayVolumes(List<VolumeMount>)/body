@@ -1,0 +1,23 @@
+{
+  TablePrinter table=new TablePrinter();
+  table.columns("Name","Mount Path","Read Only");
+  Iterator<VolumeMount> it=volumeMount.iterator();
+  while (it.hasNext()) {
+    VolumeMount vol=it.next();
+    String name=vol.getName();
+    String mounthPath=vol.getMountPath();
+    String ro=String.valueOf(Boolean.FALSE);
+    if (vol.getReadOnly() == true) {
+      ro=String.valueOf(Boolean.TRUE);
+    }
+    table.row(name,mounthPath,ro);
+  }
+  getLog().info("");
+  getLog().info("Volumes Summary:");
+  getLog().info("-------------------------------");
+  List<String> lines=table.asTextLines();
+  for (  String line : lines) {
+    getLog().info(line);
+  }
+  getLog().info("");
+}
