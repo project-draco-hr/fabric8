@@ -1,0 +1,45 @@
+{
+  flow.setValueChoices(getFlowURIs());
+  flow.addValueChangeListener(new ValueChangeListener(){
+    @Override public void valueChanged(    ValueChangeEvent event){
+      String value=event.getNewValue() != null ? event.getNewValue().toString() : null;
+      if (value != null) {
+        String description=getDescriptionForFlow(value);
+        flow.setNote(description != null ? description : "");
+      }
+ else {
+        flow.setNote("");
+      }
+    }
+  }
+);
+  chatRoom.setValueChoices(getChatRoomNames());
+  chatRoom.addValueChangeListener(new ValueChangeListener(){
+    @Override public void valueChanged(    ValueChangeEvent event){
+      String value=event.getNewValue() != null ? event.getNewValue().toString() : null;
+      if (value != null) {
+        String description=getDescriptionForChatRoom(value);
+        chatRoom.setNote(description != null ? description : "");
+      }
+ else {
+        chatRoom.setNote("");
+      }
+    }
+  }
+);
+  issueProjectName.setValueChoices(getIssueProjectNames());
+  issueProjectName.addValueChangeListener(new ValueChangeListener(){
+    @Override public void valueChanged(    ValueChangeEvent event){
+      String value=event.getNewValue() != null ? event.getNewValue().toString() : null;
+      if (value != null) {
+        String description=getDescriptionForIssueProject(value);
+        issueProjectName.setNote(description != null ? description : "");
+      }
+ else {
+        issueProjectName.setNote("");
+      }
+    }
+  }
+);
+  builder.add(flow).add(chatRoom).add(issueProjectName);
+}

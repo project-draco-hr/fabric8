@@ -1,7 +1,16 @@
 {
   AddonRegistry addonRegistry=furnace.getAddonRegistry();
   Imported<ResourceFactory> resourceFactoryImport=addonRegistry.getServices(ResourceFactory.class);
-  ResourceFactory resourceFactory=resourceFactoryImport.get();
+  ResourceFactory resourceFactory=null;
+  try {
+    resourceFactory=resourceFactoryImport.get();
+  }
+ catch (  Exception e) {
+    LOG.warn("Failed to get ResourceFactory injected: " + e,e);
+  }
+  if (resourceFactory == null) {
+    resourceFactory=resourceFactoryImport.get();
+  }
   Resource<?> selection=null;
   if (Strings.isNotBlank(resourcePath) && resourceFactory != null) {
     String path=Strings.stripPrefix(resourcePath,"/");
