@@ -15,13 +15,31 @@
   boolean enabled=input.isEnabled();
   boolean required=input.isRequired();
   List<Object> enumValues=new ArrayList<>();
+  Iterable valueChoices=null;
+  Converter converter=null;
+  boolean isSelect=false;
   if (input instanceof SelectComponent) {
     SelectComponent selectComponent=(SelectComponent)input;
-    Iterable valueChoices=selectComponent.getValueChoices();
-    Converter converter=selectComponent.getItemLabelConverter();
+    valueChoices=selectComponent.getValueChoices();
+    converter=selectComponent.getItemLabelConverter();
+    isSelect=true;
+  }
+  if (valueChoices == null && input instanceof HasCompleter) {
+    HasCompleter hasCompleter=(HasCompleter)input;
+    UICompleter completer=hasCompleter.getCompleter();
+    if (completer != null) {
+      Object currentValue=InputComponents.getValueFor(input);
+      String textValue=currentValue != null ? currentValue.toString() : "";
+      valueChoices=completer.getCompletionProposals(context,input,textValue);
+      converter=null;
+    }
+  }
+  if (valueChoices != null) {
     for (    Object valueChoice : valueChoices) {
       Object jsonValue=convertValueToSafeJson(converter,valueChoice);
       enumValues.add(jsonValue);
+    }
+    if (!isSelect) {
     }
   }
   if (enumValues.isEmpty()) {
