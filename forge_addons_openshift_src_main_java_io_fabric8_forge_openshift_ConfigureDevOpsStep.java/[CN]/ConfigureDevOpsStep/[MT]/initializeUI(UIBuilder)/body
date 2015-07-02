@@ -1,5 +1,10 @@
 {
-  flow.setValueChoices(getFlowURIs());
+  flow.setCompleter(new UICompleter<String>(){
+    @Override public Iterable<String> getCompletionProposals(    UIContext context,    InputComponent<?,String> input,    String value){
+      return getFlowURIs();
+    }
+  }
+);
   flow.addValueChangeListener(new ValueChangeListener(){
     @Override public void valueChanged(    ValueChangeEvent event){
       String value=event.getNewValue() != null ? event.getNewValue().toString() : null;
@@ -13,7 +18,12 @@
     }
   }
 );
-  chatRoom.setValueChoices(getChatRoomNames());
+  chatRoom.setCompleter(new UICompleter<String>(){
+    @Override public Iterable<String> getCompletionProposals(    UIContext context,    InputComponent<?,String> input,    String value){
+      return getChatRoomNames();
+    }
+  }
+);
   chatRoom.addValueChangeListener(new ValueChangeListener(){
     @Override public void valueChanged(    ValueChangeEvent event){
       String value=event.getNewValue() != null ? event.getNewValue().toString() : null;
@@ -27,7 +37,12 @@
     }
   }
 );
-  issueProjectName.setValueChoices(getIssueProjectNames());
+  issueProjectName.setCompleter(new UICompleter<String>(){
+    @Override public Iterable<String> getCompletionProposals(    UIContext context,    InputComponent<?,String> input,    String value){
+      return getIssueProjectNames();
+    }
+  }
+);
   issueProjectName.addValueChangeListener(new ValueChangeListener(){
     @Override public void valueChanged(    ValueChangeEvent event){
       String value=event.getNewValue() != null ? event.getNewValue().toString() : null;
@@ -41,5 +56,5 @@
     }
   }
 );
-  builder.add(flow).add(chatRoom).add(issueProjectName);
+  builder.add(flow).add(chatRoom).add(issueProjectName).add(codeReview);
 }
