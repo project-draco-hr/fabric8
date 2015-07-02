@@ -1,3 +1,22 @@
 {
-  return Arrays.asList("dummy");
+  TaigaClient letschat=getTaiga();
+  Set<String> answer=new TreeSet<>();
+  if (letschat != null) {
+    List<ProjectDTO> projects=null;
+    try {
+      projects=letschat.getProjects();
+    }
+ catch (    Exception e) {
+      LOG.warn("Failed to load chat projects! " + e,e);
+    }
+    if (projects != null) {
+      for (      ProjectDTO project : projects) {
+        String name=project.getName();
+        if (name != null) {
+          answer.add(name);
+        }
+      }
+    }
+  }
+  return answer;
 }
