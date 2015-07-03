@@ -1,0 +1,23 @@
+{
+  if (Strings.isNullOrBlank(userName)) {
+    userName=Systems.getEnvVarOrSystemProperty(JENKINS_GOGS_USER,"gogsadmin");
+  }
+  if (Strings.isNullOrBlank(password)) {
+    password=Systems.getEnvVarOrSystemProperty(JENKINS_GOGS_PASSWORD,"RedHat$1");
+  }
+  String namespace=kubernetes.getNamespace();
+  String address;
+  try {
+    address=kubernetes.getServiceURL(ServiceNames.GOGS,namespace,"http",true);
+    if (Strings.isNullOrBlank(address)) {
+      LOG.warn("No Gogs service could be found in kubernetes " + namespace + " on address: "+ kubernetes.getAddress());
+      return null;
+    }
+  }
+ catch (  IllegalArgumentException e) {
+    LOG.warn("No Gogs service could be found in kubernetes " + namespace + " on address: "+ kubernetes.getAddress());
+    return null;
+  }
+  LOG.info("Logging into Gogs at " + address + " as user "+ userName);
+  return new GitRepoClient(address,userName,password);
+}

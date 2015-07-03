@@ -1,18 +1,10 @@
 {
-  if (Strings.isNullOrBlank(gogsUser)) {
-    gogsUser="gogsadmin";
+  if (repoClient == null) {
+    log.info("Cannot create Gogs webhooks as no Gogs service could be found or created");
+    return false;
   }
-  if (Strings.isNullOrBlank(gogsPwd)) {
-    gogsPwd="RedHat$1";
-  }
-  String namespace=kubernetes.getNamespace();
-  String gogsAddress=kubernetes.getServiceURL(ServiceNames.GOGS,namespace,"http",true);
-  log.info("Found gogs address: " + gogsAddress + " for namespace: "+ namespace+ " on Kubernetes address: "+ kubernetes.getAddress());
-  if (Strings.isNullOrBlank(gogsAddress)) {
-    throw new MojoExecutionException("No address for service " + ServiceNames.GOGS + " in namespace: "+ namespace+ " on Kubernetes address: "+ kubernetes.getAddress());
-  }
-  log.info("Querying webhooks in gogs for namespace: " + namespace + " on Kubernetes address: "+ kubernetes.getAddress());
-  GitRepoClient repoClient=new GitRepoClient(gogsAddress,gogsUser,gogsPwd);
+  String gogsAddress=repoClient.getAddress();
+  log.info("Querying webhooks in gogs at address: " + gogsAddress + " for user "+ gogsUser+ " repoName: "+ repoName);
   RepositoryDTO repository=repoClient.getRepository(gogsUser,repoName);
   if (repository == null) {
     log.info("No repository found for user: " + gogsUser + " repo: "+ repoName+ " so cannot create any web hooks");
@@ -40,6 +32,6 @@
   if (log.isDebugEnabled()) {
     log.debug("Got created web hook: " + toJson(webhook));
   }
-  log.info("Created webhook for " + webhookUrl + " for namespace: "+ namespace+ " on gogs URL: "+ gogsAddress);
+  log.info("Created webhook for " + webhookUrl + " for user: "+ gogsUser+ " repoName: "+ repoName+ " on gogs URL: "+ gogsAddress);
   return true;
 }

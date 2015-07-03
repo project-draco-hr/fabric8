@@ -7,7 +7,13 @@
     String repoName=this.repo;
     String webhookUrlValue=this.webhookUrl;
     String webhookSecret=this.secret;
-    createGogsWebhook(kubernetes,log,gogsUser,gogsPwd,repoName,webhookUrlValue,webhookSecret);
+    GitRepoClient gitRepoClient=GitRepoKubernetes.createGitRepoClient(getKubernetes(),gogsUser,gogsPassword);
+    if (gitRepoClient == null) {
+      getLog().error("No Gogs service found in kubernetes at address " + kubernetes.getAddress() + " namespace "+ kubernetes.getNamespace());
+    }
+ else {
+      createGogsWebhook(gitRepoClient,log,gogsUser,repoName,webhookUrlValue,webhookSecret);
+    }
   }
  catch (  MojoExecutionException e) {
     throw e;

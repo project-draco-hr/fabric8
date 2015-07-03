@@ -1,6 +1,7 @@
 {
   try {
-    CreateGogsWebhook.createGogsWebhook(getKubernetes(),getLog(),username,password,repoName,url,webhookSecret);
+    GitRepoClient gitRepoClient=getGitRepoClient();
+    CreateGogsWebhook.createGogsWebhook(gitRepoClient,getLog(),username,repoName,url,webhookSecret);
   }
  catch (  Exception e) {
     getLog().error("Failed to create webhook " + url + " on repository "+ repoName+ ". Reason: "+ e,e);

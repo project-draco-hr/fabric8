@@ -1,0 +1,14 @@
+{
+  if (gitRepoClient == null) {
+    gitRepoClient=GitRepoKubernetes.createGitRepoClient(getKubernetes(),username,password);
+    if (gitRepoClient != null) {
+      if (Strings.isNullOrBlank(username)) {
+        username=gitRepoClient.getUsername();
+      }
+      if (Strings.isNullOrBlank(password)) {
+        password=gitRepoClient.getPassword();
+      }
+    }
+  }
+  return gitRepoClient;
+}
