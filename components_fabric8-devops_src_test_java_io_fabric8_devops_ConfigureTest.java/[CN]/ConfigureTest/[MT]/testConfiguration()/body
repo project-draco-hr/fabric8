@@ -1,0 +1,17 @@
+{
+  ProjectConfig config=new ProjectConfig();
+  config.setCodeReview(true);
+  Map map=new HashMap();
+  map.put("codeReview",false);
+  ProjectConfigs.configureProperties(config,map);
+  assertThat(config.getCodeReview()).describedAs("codeReview").isFalse();
+  map.put("codeReview","true");
+  ProjectConfigs.configureProperties(config,map);
+  assertThat(config.getCodeReview()).describedAs("codeReview").isTrue();
+  map.put("codeReview","false");
+  ProjectConfigs.configureProperties(config,map);
+  assertThat(config.getCodeReview()).describedAs("codeReview").isFalse();
+  map.put("codeReview",true);
+  ProjectConfigs.configureProperties(config,map);
+  assertThat(config.getCodeReview()).describedAs("codeReview").isTrue();
+}
