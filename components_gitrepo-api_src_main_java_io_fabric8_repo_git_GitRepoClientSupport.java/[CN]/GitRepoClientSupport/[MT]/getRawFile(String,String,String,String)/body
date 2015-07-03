@@ -1,0 +1,14 @@
+{
+  try {
+    return getApi().getRawFile(username,repo,branch,path);
+  }
+ catch (  WebApplicationException e) {
+    int status=e.getResponse().getStatus();
+    if (status == 500 || status == 404) {
+      return null;
+    }
+ else {
+      throw e;
+    }
+  }
+}

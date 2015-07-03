@@ -1,0 +1,43 @@
+{
+  if (args.length < 4) {
+    System.out.println("Usage: userName password repo file [branch]");
+    return;
+  }
+  String address="http://" + Systems.getEnvVarOrSystemProperty("GOGS_SERVICE_HOST","gogs.vagrant.f8");
+  String userName=args[0];
+  String password=args[1];
+  String repo=args[2];
+  String path=args[3];
+  String branch="master";
+  if (args.length > 4) {
+    branch=args[4];
+  }
+  try {
+    System.out.println("Logging into git repo at " + address + " with user "+ userName+ " to find file: "+ path);
+    GitRepoClient client=new GitRepoClient(address,userName,password);
+    InputStream input=client.getRawFile(userName,repo,branch,path);
+    if (input == null) {
+      System.out.println("No such file: " + path + " in branch "+ branch+ " for user: "+ userName);
+    }
+ else {
+      String text=IOHelpers.readFully(input);
+      System.out.println("File found!");
+      System.out.println();
+      System.out.println(text);
+      System.out.println();
+    }
+    path="DoesNotExist.garbage";
+    System.out.println("Now trying file that does not exist: " + path);
+    input=client.getRawFile(userName,repo,branch,path);
+    if (input == null) {
+      System.out.println("Correctly found no file!");
+    }
+ else {
+      System.out.println("WHOAH found content: " + IOHelpers.readFully(input));
+    }
+  }
+ catch (  Exception e) {
+    System.out.println("Caught: " + e);
+    e.printStackTrace();
+  }
+}
