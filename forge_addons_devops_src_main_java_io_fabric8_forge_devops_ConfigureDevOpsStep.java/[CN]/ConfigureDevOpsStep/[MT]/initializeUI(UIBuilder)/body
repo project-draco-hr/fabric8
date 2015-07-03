@@ -56,5 +56,16 @@
     }
   }
 );
-  builder.add(flow).add(chatRoom).add(issueProjectName).add(codeReview);
+  ProjectConfig config=null;
+  File configFile=getProjectConfigFile(getSelectedProject(builder.getUIContext()));
+  if (configFile != null && configFile.exists()) {
+    config=ProjectConfigs.parseProjectConfig(configFile);
+  }
+  if (config != null) {
+    CommandHelpers.setInitialComponentValue(flow,config.firstFlow());
+    CommandHelpers.setInitialComponentValue(chatRoom,config.getChatRoom());
+    CommandHelpers.setInitialComponentValue(issueProjectName,config.getIssueProjectName());
+    CommandHelpers.setInitialComponentValue(codeReview,config.getCodeReview());
+  }
+  inputComponents=CommandHelpers.addInputComponents(builder,flow,chatRoom,issueProjectName,codeReview);
 }

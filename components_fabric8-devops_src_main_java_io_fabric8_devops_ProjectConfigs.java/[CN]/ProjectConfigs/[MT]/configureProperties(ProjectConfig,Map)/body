@@ -1,0 +1,55 @@
+{
+  Class<? extends ProjectConfig> clazz=config.getClass();
+  BeanInfo beanInfo=null;
+  try {
+    beanInfo=Introspector.getBeanInfo(clazz);
+  }
+ catch (  IntrospectionException e) {
+    LOG.warn("Could not introspect " + clazz.getName() + ". "+ e,e);
+  }
+  if (beanInfo != null) {
+    PropertyDescriptor[] propertyDescriptors=beanInfo.getPropertyDescriptors();
+    for (    PropertyDescriptor descriptor : propertyDescriptors) {
+      Method writeMethod=descriptor.getWriteMethod();
+      if (writeMethod != null) {
+        String name=descriptor.getName();
+        Object value=map.get(name);
+        if (value != null) {
+          Object safeValue=null;
+          boolean updated=false;
+          Class<?> propertyType=descriptor.getPropertyType();
+          if (propertyType.isInstance(value)) {
+            safeValue=value;
+          }
+ else {
+            PropertyEditor editor=descriptor.createPropertyEditor(config);
+            if (editor != null) {
+              String text=value.toString();
+              editor.setAsText(text);
+              updated=true;
+            }
+ else {
+              LOG.warn("Cannot update property " + name + " with value "+ value+ " of type "+ propertyType.getName()+ " on "+ clazz.getName());
+            }
+          }
+          if (!updated && safeValue != null) {
+            try {
+              writeMethod.invoke(config,safeValue);
+            }
+ catch (            Exception e) {
+              LOG.warn("Failed to set property " + name + " with value "+ value+ " on "+ clazz.getName()+ " "+ config+ ". "+ e,e);
+            }
+          }
+        }
+      }
+    }
+  }
+  Object flowValue=map.get("flow");
+  if (flowValue != null) {
+    String flow=flowValue.toString();
+    if (Strings.isNotBlank(flow)) {
+      config.setFlows(null);
+      config.addFlow(flow);
+    }
+  }
+}
