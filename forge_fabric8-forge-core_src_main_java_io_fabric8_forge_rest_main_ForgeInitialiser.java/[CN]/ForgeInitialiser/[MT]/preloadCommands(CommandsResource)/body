@@ -1,0 +1,25 @@
+{
+  LOG.info("Preloading commands");
+  List<CommandInfoDTO> commands=commandsResource.getCommands();
+  LOG.info("Loaded " + commands.size() + " commands");
+  LOG.info("Preloading archetypes");
+  ExecutionRequest executionRequest=new ExecutionRequest();
+  List<Map<String,String>> inputList=new ArrayList<>();
+  Map<String,String> step1Inputs=new HashMap<>();
+  step1Inputs.put("buildSystem","Maven");
+  step1Inputs.put("named","dummy");
+  step1Inputs.put("targetLocation","/opt/jboss");
+  step1Inputs.put("topLevelPackage","org.example");
+  step1Inputs.put("type","From Archetype Catalog");
+  step1Inputs.put("version","1.0.0-SNAPSHOT");
+  inputList.add(step1Inputs);
+  executionRequest.setInputList(inputList);
+  executionRequest.setWizardStep(1);
+  try {
+    commandsResource.executeCommand("project-new",executionRequest);
+  }
+ catch (  Exception e) {
+    LOG.error("Failed to execute command: " + e,e);
+  }
+  LOG.info("Preloaded archetypes!");
+}

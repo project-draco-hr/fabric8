@@ -1,13 +1,17 @@
 {
   String user=gitUser;
   String password=gitPassword;
-  String authorization=request.getHeader("GogsAuthorization");
-  if (Strings.isNullOrEmpty(authorization)) {
-    authorization=request.getParameter("_gogsAuth");
-  }
-  String emailHeader=request.getHeader("GogsEmail");
-  if (Strings.isNullOrEmpty(emailHeader)) {
-    emailHeader=request.getParameter("_gogsEmail");
+  String authorization=null;
+  String emailHeader=null;
+  if (request != null) {
+    authorization=request.getHeader("GogsAuthorization");
+    if (Strings.isNullOrEmpty(authorization)) {
+      authorization=request.getParameter("_gogsAuth");
+    }
+    emailHeader=request.getHeader("GogsEmail");
+    if (Strings.isNullOrEmpty(emailHeader)) {
+      emailHeader=request.getParameter("_gogsEmail");
+    }
   }
   if (!Strings.isNullOrEmpty(authorization)) {
     String basicPrefix="basic";
