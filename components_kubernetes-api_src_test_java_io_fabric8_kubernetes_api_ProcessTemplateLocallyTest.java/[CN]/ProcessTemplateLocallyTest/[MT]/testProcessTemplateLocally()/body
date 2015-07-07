@@ -6,5 +6,7 @@
   assertThat(list).describedAs("results").isNotNull();
   List<HasMetadata> items=list.getItems();
   assertThat(items).describedAs("items").isNotNull();
+  ReplicationController rc=(ReplicationController)items.get(1);
+  assertEquals("Template value not replaced: items[1].spec.template.spec.containers[0].env[0].value","https://github.com/fabric8io/jenkins-pipeline-dsl.git",rc.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().get(0).getValue());
   System.out.println("Created JSON: " + toJson(list));
 }
