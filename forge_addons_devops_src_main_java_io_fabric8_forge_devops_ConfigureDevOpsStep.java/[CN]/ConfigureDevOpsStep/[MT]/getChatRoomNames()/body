@@ -1,22 +1,27 @@
 {
-  LetsChatClient letschat=getLetsChat();
   Set<String> answer=new TreeSet<>();
-  if (letschat != null) {
-    List<RoomDTO> rooms=null;
-    try {
-      rooms=letschat.getRooms();
-    }
- catch (    Exception e) {
-      LOG.warn("Failed to load chat rooms! " + e,e);
-    }
-    if (rooms != null) {
-      for (      RoomDTO room : rooms) {
-        String name=room.getSlug();
-        if (name != null) {
-          answer.add(name);
+  try {
+    LetsChatClient letschat=getLetsChat();
+    if (letschat != null) {
+      List<RoomDTO> rooms=null;
+      try {
+        rooms=letschat.getRooms();
+      }
+ catch (      Exception e) {
+        LOG.warn("Failed to load chat rooms! " + e,e);
+      }
+      if (rooms != null) {
+        for (        RoomDTO room : rooms) {
+          String name=room.getSlug();
+          if (name != null) {
+            answer.add(name);
+          }
         }
       }
     }
+  }
+ catch (  Exception e) {
+    LOG.warn("Failed to find chat room names: " + e,e);
   }
   return answer;
 }

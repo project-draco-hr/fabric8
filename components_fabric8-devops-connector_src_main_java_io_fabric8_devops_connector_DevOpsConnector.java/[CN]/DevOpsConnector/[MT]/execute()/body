@@ -1,0 +1,83 @@
+{
+  loadConfigFile();
+  KubernetesClient kubernetes=getKubernetes();
+  String name=repoName;
+  if (Strings.isNotBlank(username)) {
+    name=username + "-" + name;
+  }
+  Map<String,String> labels=new HashMap<>();
+  labels.put("user",username);
+  labels.put("repo",repoName);
+  TaigaClient taiga=null;
+  ProjectDTO taigaProject=null;
+  try {
+    taiga=createTaiga();
+    taigaProject=createTaigaProject(taiga);
+  }
+ catch (  Exception e) {
+    getLog().error("Failed to load or lazily create the Taiga project: " + e,e);
+  }
+  LetsChatClient letschat=null;
+  try {
+    letschat=createLetsChat();
+  }
+ catch (  Exception e) {
+    getLog().error("Failed to load or lazily create the LetsChat client: " + e,e);
+  }
+  Map<String,String> annotations=new HashMap<>();
+  String jenkinsJobUrl=null;
+  try {
+    String jenkinsUrl=kubernetes.getServiceURL(ServiceNames.JENKINS,kubernetes.getNamespace(),"http",true);
+    if (Strings.isNotBlank(jenkinsUrl)) {
+      if (Strings.isNotBlank(jenkinsMonitorView)) {
+        annotations.put("fabric8.link.jenkins.monitor/url",URLUtils.pathJoin(jenkinsUrl,"/view",jenkinsMonitorView));
+        annotations.put("fabric8.link.jenkins.monitor/label","Monitor");
+      }
+      if (Strings.isNotBlank(jenkinsPipelineView)) {
+        annotations.put("fabric8.link.jenkins.pipeline/url",URLUtils.pathJoin(jenkinsUrl,"/view",jenkinsPipelineView));
+        annotations.put("fabric8.link.jenkins.pipeline/label","Pipeline");
+      }
+      if (Strings.isNotBlank(jenkinsJob)) {
+        jenkinsJobUrl=URLUtils.pathJoin(jenkinsUrl,"/job",jenkinsJob);
+        annotations.put("fabric8.link.jenkins.job/url",jenkinsJobUrl);
+        annotations.put("fabric8.link.jenkins.job/label","Job");
+      }
+    }
+  }
+ catch (  Exception e) {
+    getLog().warn("Could not find the Jenkins URL!: " + e,e);
+  }
+  String taigaLink=getProjectPageLink(taiga,taigaProject,this.taigaProjectLinkPage);
+  if (Strings.isNotBlank(taigaLink)) {
+    annotations.put("fabric8.link.taiga/url",taigaLink);
+    annotations.put("fabric8.link.taiga/label",taigaProjectLinkLabel);
+  }
+  String taigaTeamLink=getProjectPageLink(taiga,taigaProject,this.taigaTeamLinkPage);
+  if (Strings.isNotBlank(taigaTeamLink)) {
+    annotations.put("fabric8.link.taiga.team/url",taigaTeamLink);
+    annotations.put("fabric8.link.taiga.team/label",taigaTeamLinkLabel);
+  }
+  String chatRoomLink=getChatRoomLink(letschat);
+  if (Strings.isNotBlank(chatRoomLink)) {
+    annotations.put("fabric8.link.letschat.room/url",chatRoomLink);
+    annotations.put("fabric8.link.letschat.room/label",letschatRoomLinkLabel);
+  }
+  BuildConfigFluent<BuildConfigBuilder>.SpecNested<BuildConfigBuilder> specBuilder=new BuildConfigBuilder().withNewMetadata().withName(name).withLabels(labels).withAnnotations(annotations).endMetadata().withNewSpec();
+  if (Strings.isNotBlank(gitUrl)) {
+    specBuilder=specBuilder.withNewSource().withType("Git").withNewGit().withUri(gitUrl).endGit().endSource();
+  }
+  if (Strings.isNotBlank(buildImageStream) && Strings.isNotBlank(buildImageTag)) {
+    specBuilder=specBuilder.withNewStrategy().withType("Docker").withNewDockerStrategy().withNewFrom().withName(buildImageStream + ":" + buildImageTag).endFrom().endDockerStrategy().endStrategy();
+  }
+  BuildConfig buildConfig=specBuilder.addNewTrigger().withType("github").withNewGithub().withSecret(secret).endGithub().endTrigger().addNewTrigger().withType("generic").withNewGeneric().withSecret(secret).endGeneric().endTrigger().endSpec().build();
+  Controller controller=createController();
+  try {
+    controller.applyBuildConfig(buildConfig,"maven");
+    getLog().info("Created build configuration for " + name + " in namespace: "+ controller.getNamespace()+ " at "+ kubernetes.getAddress());
+  }
+ catch (  Exception e) {
+    getLog().error("Failed to create BuildConfig for " + KubernetesHelper.toJson(buildConfig) + ". "+ e,e);
+  }
+  createJenkinsWebhook(jenkinsJobUrl);
+  createTaigaWebhook(taiga,taigaProject);
+}

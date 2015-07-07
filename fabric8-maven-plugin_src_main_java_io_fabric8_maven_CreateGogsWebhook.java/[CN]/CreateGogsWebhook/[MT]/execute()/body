@@ -1,7 +1,7 @@
 {
   try {
     KubernetesClient kubernetes=getKubernetes();
-    Log log=getLog();
+    final Log log=getLog();
     String gogsUser=this.gogsUsername;
     String gogsPwd=this.gogsPassword;
     String repoName=this.repo;
@@ -12,13 +12,11 @@
       getLog().error("No Gogs service found in kubernetes at address " + kubernetes.getAddress() + " namespace "+ kubernetes.getNamespace());
     }
  else {
-      createGogsWebhook(gitRepoClient,log,gogsUser,repoName,webhookUrlValue,webhookSecret);
+      Logger logger=LoggerFactory.getLogger(CreateGogsWebhook.class);
+      WebHooks.createGogsWebhook(gitRepoClient,logger,gogsUser,repoName,webhookUrlValue,webhookSecret);
     }
   }
- catch (  MojoExecutionException e) {
-    throw e;
-  }
-catch (  Exception e) {
+ catch (  Exception e) {
     throw new MojoExecutionException("Failed to load environment schemas: " + e,e);
   }
 }

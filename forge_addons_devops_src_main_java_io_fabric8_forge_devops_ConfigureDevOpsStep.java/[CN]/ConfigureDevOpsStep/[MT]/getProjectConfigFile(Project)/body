@@ -1,0 +1,14 @@
+{
+  if (project == null) {
+    return null;
+  }
+  Resource<?> root=project.getRoot();
+  if (root == null) {
+    return null;
+  }
+  Resource<?> configFileResource=root.getChild(ProjectConfigs.FILE_NAME);
+  if (configFileResource == null) {
+    return null;
+  }
+  return ResourceUtil.getContextFile(configFileResource);
+}
