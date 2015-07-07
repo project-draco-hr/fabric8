@@ -32,42 +32,47 @@
     message=operation + " " + fileName;
   }
   Map<Object,Object> attributeMap=context.getUIContext().getAttributeMap();
+  String gitUrl=null;
   Object object=attributeMap.get(Project.class);
+  String user=getStringAttribute(attributeMap,"gitUser");
+  String named=null;
   if (object instanceof Project) {
     Project newProject=(Project)object;
     MetadataFacet facet=newProject.getFacet(MetadataFacet.class);
     if (facet != null) {
-      String named=facet.getProjectName();
-      String user=getStringAttribute(attributeMap,"gitUser");
+      named=facet.getProjectName();
       String email=getStringAttribute(attributeMap,"gitAuthorEmail");
       String address=getStringAttribute(attributeMap,"gitAddress");
       String htmlUrl=address + user + "/"+ named;
-      String remoteUrl=address + user + "/"+ named+ ".git";
       String fullName=user + "/" + named;
-      String gitUrl=remoteUrl;
-      DevOpsConnector connector=new DevOpsConnector();
-      connector.setProjectConfig(config);
-      connector.setUsername(user);
-      connector.setPassword(getStringAttribute(attributeMap,"gitPassword"));
-      connector.setBranch(getStringAttribute(attributeMap,"gitBranch","master"));
-      connector.setBasedir(getBaseDir(project));
-      connector.setGitUrl(gitUrl);
-      connector.setRepoName(named);
-      connector.setTryLoadConfigFileFromRemoteGit(false);
-      LOG.info("Using connector: " + connector);
-      try {
-        connector.execute();
-      }
- catch (      Exception e) {
-        LOG.error("Failed to update DevOps resources: " + e,e);
-      }
+      gitUrl=address + user + "/"+ named+ ".git";
     }
  else {
       LOG.error("No MetadataFacet for newly created project " + newProject);
     }
   }
  else {
-    LOG.error("No New Project created!");
+    File basedir=CommandHelpers.getBaseDir(project);
+    gitUrl=GitHelpers.extractGitUrl(basedir);
+    if (basedir != null) {
+      named=basedir.getName();
+    }
+  }
+  DevOpsConnector connector=new DevOpsConnector();
+  connector.setProjectConfig(config);
+  connector.setTryLoadConfigFileFromRemoteGit(false);
+  connector.setUsername(user);
+  connector.setPassword(getStringAttribute(attributeMap,"gitPassword"));
+  connector.setBranch(getStringAttribute(attributeMap,"gitBranch","master"));
+  connector.setBasedir(CommandHelpers.getBaseDir(project));
+  connector.setGitUrl(gitUrl);
+  connector.setRepoName(named);
+  LOG.info("Using connector: " + connector);
+  try {
+    connector.execute();
+  }
+ catch (  Exception e) {
+    LOG.error("Failed to update DevOps resources: " + e,e);
   }
   return Results.success(message);
 }
