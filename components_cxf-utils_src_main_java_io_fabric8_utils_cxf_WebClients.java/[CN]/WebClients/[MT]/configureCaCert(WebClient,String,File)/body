@@ -11,8 +11,11 @@
       conduit.setTlsClientParameters(params);
     }
     TrustManager[] existingTrustManagers=params.getTrustManagers();
-    if (!ArrayUtils.isEmpty(existingTrustManagers)) {
-      trustManagers=(TrustManager[])ArrayUtils.addAll(existingTrustManagers,trustManagers);
+    if (existingTrustManagers != null && existingTrustManagers.length > 0) {
+      List<TrustManager> list=new ArrayList<>();
+      list.addAll(Arrays.asList(existingTrustManagers));
+      list.addAll(Arrays.asList(trustManagers));
+      trustManagers=list.toArray(new TrustManager[list.size()]);
     }
     params.setTrustManagers(trustManagers);
   }

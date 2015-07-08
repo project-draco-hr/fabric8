@@ -11,8 +11,11 @@
       conduit.setTlsClientParameters(params);
     }
     KeyManager[] existingKeyManagers=params.getKeyManagers();
-    if (!ArrayUtils.isEmpty(existingKeyManagers)) {
-      keyManagers=(KeyManager[])ArrayUtils.addAll(existingKeyManagers,keyManagers);
+    if (existingKeyManagers != null && existingKeyManagers.length > 0) {
+      List<KeyManager> list=new ArrayList<>();
+      list.addAll(Arrays.asList(existingKeyManagers));
+      list.addAll(Arrays.asList(keyManagers));
+      keyManagers=list.toArray(new KeyManager[list.size()]);
     }
     params.setKeyManagers(keyManagers);
   }
