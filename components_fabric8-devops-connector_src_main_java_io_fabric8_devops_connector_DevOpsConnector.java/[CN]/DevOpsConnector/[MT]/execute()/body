@@ -1,9 +1,21 @@
 {
   loadConfigFile();
   KubernetesClient kubernetes=getKubernetes();
-  String name=repoName;
-  if (Strings.isNotBlank(username)) {
-    name=username + "-" + name;
+  String name=null;
+  if (projectConfig != null) {
+    name=projectConfig.getBuildName();
+  }
+  if (Strings.isNullOrBlank(name)) {
+    name=jenkinsJob;
+  }
+  if (Strings.isNullOrBlank(name)) {
+    name=repoName;
+    if (Strings.isNotBlank(username)) {
+      name=username + "-" + name;
+    }
+    if (projectConfig != null) {
+      projectConfig.setBuildName(name);
+    }
   }
   Map<String,String> labels=new HashMap<>();
   labels.put("user",username);
@@ -43,8 +55,8 @@
         annotations.put("fabric8.link.jenkins.pipeline/label",label);
         addLink(label,url);
       }
-      if (Strings.isNotBlank(jenkinsJob)) {
-        jenkinsJobUrl=URLUtils.pathJoin(jenkinsUrl,"/job",jenkinsJob);
+      if (Strings.isNotBlank(name)) {
+        jenkinsJobUrl=URLUtils.pathJoin(jenkinsUrl,"/job",name);
         annotations.put("fabric8.link.jenkins.job/url",jenkinsJobUrl);
         String label="Job";
         annotations.put("fabric8.link.jenkins.job/label",label);
@@ -88,6 +100,9 @@
   }
  catch (  Exception e) {
     getLog().error("Failed to create BuildConfig for " + KubernetesHelper.toJson(buildConfig) + ". "+ e,e);
+  }
+  if (Strings.isNotBlank(name)) {
+    createJenkinsJob(name,jenkinsJobUrl);
   }
   createJenkinsWebhook(jenkinsJobUrl);
   createTaigaWebhook(taiga,taigaProject);

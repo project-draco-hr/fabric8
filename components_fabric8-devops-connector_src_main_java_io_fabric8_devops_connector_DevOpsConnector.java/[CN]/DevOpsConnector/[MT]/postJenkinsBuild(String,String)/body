@@ -1,0 +1,34 @@
+{
+  String address=kubernetes.getServiceURL(ServiceNames.JENKINS,kubernetes.getNamespace(),"http",false);
+  if (Strings.isNotBlank(address)) {
+    String jobUrl=URLUtils.pathJoin(address,"/createItem") + "?name=" + jobName;
+    getLog().info("POSTING the jenkins job to: " + jobUrl);
+    getLog().debug("Jenkins XML: " + xml);
+    String json="{}";
+    HttpURLConnection connection=null;
+    try {
+      URL url=new URL(jobUrl);
+      connection=(HttpURLConnection)url.openConnection();
+      connection.setRequestMethod("POST");
+      connection.setRequestProperty("Content-Type","text/xml");
+      connection.setDoOutput(true);
+      OutputStreamWriter out=new OutputStreamWriter(connection.getOutputStream());
+      out.write(xml);
+      out.close();
+      int status=connection.getResponseCode();
+      String message=connection.getResponseMessage();
+      getLog().info("Got response code from Jenkins: " + status + " message: "+ message);
+      if (status != 200) {
+        getLog().error("Failed to trigger job " + jobName + " on "+ jobUrl+ ". Status: "+ status+ " message: "+ message);
+      }
+    }
+ catch (    Exception e) {
+      getLog().error("Failed to trigger jenkins on " + jobUrl + ". "+ e,e);
+    }
+ finally {
+      if (connection != null) {
+        connection.disconnect();
+      }
+    }
+  }
+}
