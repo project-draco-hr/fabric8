@@ -1,0 +1,13 @@
+{
+  if (filter.matches(file)) {
+    collection.add(file);
+  }
+  if (file.isDirectory()) {
+    File[] files=file.listFiles();
+    if (files != null) {
+      for (      File child : files) {
+        findRecursive(child,filter,collection);
+      }
+    }
+  }
+}

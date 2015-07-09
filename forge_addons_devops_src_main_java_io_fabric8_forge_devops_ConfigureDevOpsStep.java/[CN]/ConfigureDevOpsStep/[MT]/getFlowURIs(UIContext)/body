@@ -1,0 +1,30 @@
+{
+  Object workflowFolder=context.getAttributeMap().get("jenkinsWorkflowFolder");
+  if (workflowFolder instanceof File) {
+    File dir=(File)workflowFolder;
+    Filter<File> filter=new Filter<File>(){
+      @Override public boolean matches(      File file){
+        String extension=Files.getFileExtension(file);
+        return file.isFile() && Objects.equal("groovy",extension);
+      }
+    }
+;
+    Set<File> files=Files.findRecursive(dir,filter);
+    Set<String> names=new TreeSet<>();
+    for (    File file : files) {
+      try {
+        String relativePath=Files.getRelativePath(dir,file);
+        String name=Strings.stripPrefix(relativePath,"/");
+        names.add(name);
+      }
+ catch (      IOException e) {
+        LOG.warn("Failed to find relative path for folder " + dir + " and file "+ file+ ". "+ e,e);
+      }
+    }
+    return new ArrayList<>(names);
+  }
+ else {
+    LOG.warn("No jenkinsWorkflowFolder!");
+    return new ArrayList<>();
+  }
+}

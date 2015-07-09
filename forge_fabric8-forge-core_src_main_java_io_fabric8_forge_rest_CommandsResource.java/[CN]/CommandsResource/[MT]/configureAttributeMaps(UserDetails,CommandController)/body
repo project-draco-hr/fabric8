@@ -1,0 +1,12 @@
+{
+  Map<Object,Object> attributeMap=controller.getContext().getAttributeMap();
+  if (userDetails != null) {
+    attributeMap.put("gitUser",userDetails.getUser());
+    attributeMap.put("gitPassword",userDetails.getPassword());
+    attributeMap.put("gitAuthorEmail",userDetails.getEmail());
+    attributeMap.put("gitAddress",userDetails.getAddress());
+    attributeMap.put("gitBranch",userDetails.getBranch());
+    attributeMap.put("jenkinsWorkflowFolder",projectFileSystem.getJenkinsWorkflowFolder());
+    projectFileSystem.asyncCloneOrPullJenkinsWorkflows(userDetails);
+  }
+}

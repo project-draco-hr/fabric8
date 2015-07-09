@@ -1,7 +1,8 @@
 {
+  final UIContext context=builder.getUIContext();
   flow.setCompleter(new UICompleter<String>(){
     @Override public Iterable<String> getCompletionProposals(    UIContext context,    InputComponent<?,String> input,    String value){
-      return getFlowURIs();
+      return getFlowURIs(context);
     }
   }
 );
@@ -57,7 +58,7 @@
   }
 );
   ProjectConfig config=null;
-  Project project=getSelectedProject(builder.getUIContext());
+  Project project=getSelectedProject(context);
   File configFile=getProjectConfigFile(project);
   if (configFile != null && configFile.exists()) {
     config=ProjectConfigs.parseProjectConfig(configFile);

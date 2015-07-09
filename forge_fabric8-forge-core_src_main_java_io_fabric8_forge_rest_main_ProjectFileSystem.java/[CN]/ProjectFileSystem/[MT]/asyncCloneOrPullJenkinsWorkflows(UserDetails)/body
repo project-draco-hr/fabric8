@@ -1,0 +1,15 @@
+{
+  final File folder=getJenkinsWorkflowFolder();
+  if (Strings.isNotBlank(jenkinsWorkflowGitUrl)) {
+    executorService.execute(new Runnable(){
+      @Override public void run(){
+        LOG.debug("Cloning or pulling jenkins workflow repo from " + jenkinsWorkflowGitUrl + " to "+ folder);
+        cloneOrPullRepo(userDetails,folder,jenkinsWorkflowGitUrl);
+      }
+    }
+);
+  }
+ else {
+    LOG.warn("Cannot clone jenkins workflow repository as the environment variable JENKINS_WORKFLOW_GIT_REPOSITORY is not defined");
+  }
+}
