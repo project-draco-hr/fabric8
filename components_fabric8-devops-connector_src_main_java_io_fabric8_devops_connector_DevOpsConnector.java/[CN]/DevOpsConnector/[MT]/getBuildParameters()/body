@@ -1,0 +1,14 @@
+{
+  Map<String,String> answer=new HashMap<>();
+  if (projectConfig != null) {
+    String flow=projectConfig.getFlow();
+    if (flow != null && Strings.isNotBlank(gitUrl)) {
+      answer.put("GIT_URL",gitUrl);
+    }
+    Map<String,String> parameters=projectConfig.getBuildParameters();
+    if (parameters != null) {
+      answer.putAll(parameters);
+    }
+  }
+  return answer;
+}

@@ -1,6 +1,18 @@
 {
   if (Strings.isNotBlank(jenkinsJobUrl)) {
     String jenkinsWebHook=URLUtils.pathJoin(jenkinsJobUrl,"/build");
+    Map<String,String> buildParameters=getBuildParameters();
+    if (!buildParameters.isEmpty()) {
+      String postfix="";
+      for (      Map.Entry<String,String> entry : buildParameters.entrySet()) {
+        if (postfix.length() > 0) {
+          postfix+="&";
+        }
+        postfix+=entry.getKey() + "=" + entry.getValue();
+      }
+      jenkinsWebHook+="WithParameters?" + postfix;
+    }
     createWebhook(jenkinsWebHook,this.secret);
+    triggerJenkinsWebHook(jenkinsWebHook,this.secret);
   }
 }
