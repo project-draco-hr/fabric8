@@ -20,8 +20,8 @@
   Map<String,String> labels=new HashMap<>();
   labels.put("user",username);
   labels.put("repo",repoName);
-  TaigaClient taiga=null;
-  ProjectDTO taigaProject=null;
+  taiga=null;
+  taigaProject=null;
   try {
     taiga=createTaiga();
     taigaProject=createTaigaProject(taiga);
@@ -37,7 +37,7 @@
     getLog().error("Failed to load or lazily create the LetsChat client: " + e,e);
   }
   Map<String,String> annotations=new HashMap<>();
-  String jenkinsJobUrl=null;
+  jenkinsJobUrl=null;
   try {
     String jenkinsUrl=kubernetes.getServiceURL(ServiceNames.JENKINS,kubernetes.getNamespace(),"http",true);
     if (Strings.isNotBlank(jenkinsUrl)) {
@@ -104,8 +104,9 @@
   if (Strings.isNotBlank(name)) {
     createJenkinsJob(name,jenkinsJobUrl);
   }
-  createJenkinsWebhook(jenkinsJobUrl);
-  createTaigaWebhook(taiga,taigaProject);
+  if (isRegisterWebHooks()) {
+    registerWebHooks();
+  }
   if (modifiedConfig) {
     if (basedir == null) {
       getLog().error("Could not save updated " + ProjectConfigs.FILE_NAME + " due to missing basedir");
