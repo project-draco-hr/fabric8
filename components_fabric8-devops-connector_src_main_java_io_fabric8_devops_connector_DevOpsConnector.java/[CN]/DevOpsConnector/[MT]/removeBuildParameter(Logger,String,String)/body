@@ -1,0 +1,38 @@
+{
+  try {
+    DocumentBuilder documentBuilder=DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    Document doc=documentBuilder.parse(new InputSource(new StringReader(template)));
+    Element rootElement=doc.getDocumentElement();
+    NodeList stringDefs=rootElement.getElementsByTagName("hudson.model.StringParameterDefinition");
+    if (stringDefs != null) {
+      for (int i=0, size=stringDefs.getLength(); i < size; i++) {
+        Node item=stringDefs.item(i);
+        if (item instanceof Element) {
+          Element element=(Element)item;
+          Element name=DomHelper.firstChild(element,"name");
+          if (name != null) {
+            String textContent=name.getTextContent();
+            if (textContent != null) {
+              if (parameterName.equals(textContent.trim())) {
+                Node parameterDefinitions=item.getParentNode();
+                Node parametersDefinitionProperty=parameterDefinitions != null ? parameterDefinitions.getParentNode() : null;
+                DomHelper.detach(item);
+                if (DomHelper.firstChildElement(parameterDefinitions) == null) {
+                  DomHelper.detach(parameterDefinitions);
+                }
+                if (DomHelper.firstChildElement(parametersDefinitionProperty) == null) {
+                  DomHelper.detach(parametersDefinitionProperty);
+                }
+                return DomHelper.toXml(doc);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+ catch (  Exception e) {
+    log.error("Failed to remove the build parameter from the Jenkins XML. " + e,e);
+  }
+  return template;
+}

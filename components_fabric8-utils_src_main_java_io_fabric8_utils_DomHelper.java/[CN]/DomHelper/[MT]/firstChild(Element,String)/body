@@ -1,0 +1,15 @@
+{
+  NodeList nodes=element.getChildNodes();
+  if (nodes != null) {
+    for (int i=0, size=nodes.getLength(); i < size; i++) {
+      Node item=nodes.item(i);
+      if (item instanceof Element) {
+        Element childElement=(Element)item;
+        if (name.equals(childElement.getTagName())) {
+          return childElement;
+        }
+      }
+    }
+  }
+  return null;
+}

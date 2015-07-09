@@ -1,26 +1,26 @@
 {
   if (projectConfig != null) {
     String flow=projectConfig.getFlow();
-    if (Strings.isNotBlank(flow) && Strings.isNotBlank(gitUrl) && Strings.isNotBlank(flowGitUrl)) {
-      String templateName="jenkinsBuildConfig.xml";
-      URL url=getClass().getResource(templateName);
-      if (url == null) {
-        getLog().error("Could not load " + templateName + " on the classpath!");
-      }
- else {
-        String template=null;
-        try {
-          template=IOHelpers.loadFully(url);
+    String flowGitUrlValue=null;
+    boolean localFlow=false;
+    if (Strings.isNotBlank(flow)) {
+      flowGitUrlValue=this.flowGitUrl;
+    }
+ else     if (projectConfig.isUseLocalFlow()) {
+      flow=ProjectConfigs.LOCAL_FLOW_FILE_NAME;
+      flowGitUrlValue=this.gitUrl;
+      localFlow=true;
+    }
+    if (Strings.isNotBlank(flow) && Strings.isNotBlank(gitUrl) && Strings.isNotBlank(flowGitUrlValue)) {
+      String template=loadJenkinsBuildTemplate(getLog());
+      if (Strings.isNotBlank(template)) {
+        template=template.replace("${FLOW_PATH}",flow);
+        template=template.replace("${FLOW_GIT_URL}",flowGitUrlValue);
+        template=template.replace("${GIT_URL}",gitUrl);
+        if (localFlow) {
+          template=removeBuildParameter(getLog(),template,"GIT_URL");
         }
- catch (        IOException e) {
-          getLog().error("Failed to load template " + templateName + " from "+ url+ ". "+ e,e);
-        }
-        if (Strings.isNotBlank(template)) {
-          template=template.replace("${FLOW_PATH}",flow);
-          template=template.replace("${FLOW_GIT_URL}",flowGitUrl);
-          template=template.replace("${GIT_URL}",gitUrl);
-          postJenkinsBuild(buildName,template);
-        }
+        postJenkinsBuild(buildName,template);
       }
     }
   }

@@ -1,0 +1,15 @@
+{
+  File dir=getJenkinsWorkflowFolder(context);
+  if (dir != null) {
+    File file=new File(dir,flow);
+    if (file.isFile() && file.exists()) {
+      try {
+        return IOHelpers.readFully(file);
+      }
+ catch (      IOException e) {
+        LOG.warn("Failed to load local flow " + file + ". "+ e,e);
+      }
+    }
+  }
+  return null;
+}

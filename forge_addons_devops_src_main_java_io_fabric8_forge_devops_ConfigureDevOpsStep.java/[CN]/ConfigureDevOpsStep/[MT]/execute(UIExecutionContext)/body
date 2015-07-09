@@ -31,11 +31,13 @@
     ProjectConfigs.saveConfig(config,configFile);
     message=operation + " " + fileName;
   }
-  Map<Object,Object> attributeMap=context.getUIContext().getAttributeMap();
+  UIContext uiContext=context.getUIContext();
+  Map<Object,Object> attributeMap=uiContext.getAttributeMap();
   String gitUrl=null;
   Object object=attributeMap.get(Project.class);
   String user=getStringAttribute(attributeMap,"gitUser");
   String named=null;
+  File basedir=CommandHelpers.getBaseDir(project);
   if (object instanceof Project) {
     Project newProject=(Project)object;
     MetadataFacet facet=newProject.getFacet(MetadataFacet.class);
@@ -52,10 +54,37 @@
     }
   }
  else {
-    File basedir=CommandHelpers.getBaseDir(project);
     gitUrl=GitHelpers.extractGitUrl(basedir);
     if (basedir != null) {
       named=basedir.getName();
+    }
+  }
+  Boolean copyFlowToProjectValue=copyFlowToProject.getValue();
+  if (copyFlowToProjectValue != null && copyFlowToProjectValue.booleanValue()) {
+    if (basedir == null && !basedir.isDirectory()) {
+      LOG.warn("Cannot copy the flow to the project as no basedir!");
+    }
+ else {
+      String flow=this.flow.getValue();
+      if (Strings.isNullOrBlank(flow)) {
+        LOG.warn("Cannot copy the flow to the project as no flow selected!");
+      }
+ else {
+        String flowText=getFlowContent(flow,uiContext);
+        if (Strings.isNullOrBlank(flowText)) {
+          LOG.warn("Cannot copy the flow to the project as no flow text could be loaded!");
+        }
+ else {
+          flowText=Strings.replaceAllWithoutRegex(flowText,"GIT_URL","'" + gitUrl + "'");
+          File newFile=new File(basedir,ProjectConfigs.LOCAL_FLOW_FILE_NAME);
+          Files.writeToFile(newFile,flowText.getBytes());
+          LOG.info("Written flow to " + newFile);
+          if (config != null) {
+            config.setFlow(null);
+            config.setUseLocalFlow(true);
+          }
+        }
+      }
     }
   }
   final DevOpsConnector connector=new DevOpsConnector();
@@ -64,7 +93,7 @@
   connector.setUsername(user);
   connector.setPassword(getStringAttribute(attributeMap,"gitPassword"));
   connector.setBranch(getStringAttribute(attributeMap,"gitBranch","master"));
-  connector.setBasedir(CommandHelpers.getBaseDir(project));
+  connector.setBasedir(basedir);
   connector.setGitUrl(gitUrl);
   connector.setRepoName(named);
   connector.setRegisterWebHooks(false);

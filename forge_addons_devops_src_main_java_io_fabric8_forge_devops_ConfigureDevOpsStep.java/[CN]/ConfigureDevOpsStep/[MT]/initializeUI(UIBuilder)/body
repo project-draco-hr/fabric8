@@ -16,6 +16,8 @@
  else {
         flow.setNote("");
       }
+      boolean canCopy=Strings.isNotBlank(value);
+      copyFlowToProject.setEnabled(canCopy);
     }
   }
 );
@@ -69,5 +71,5 @@
     CommandHelpers.setInitialComponentValue(issueProjectName,config.getIssueProjectName());
     CommandHelpers.setInitialComponentValue(codeReview,config.getCodeReview());
   }
-  inputComponents=CommandHelpers.addInputComponents(builder,flow,chatRoom,issueProjectName,codeReview);
+  inputComponents=CommandHelpers.addInputComponents(builder,flow,copyFlowToProject,chatRoom,issueProjectName,codeReview);
 }

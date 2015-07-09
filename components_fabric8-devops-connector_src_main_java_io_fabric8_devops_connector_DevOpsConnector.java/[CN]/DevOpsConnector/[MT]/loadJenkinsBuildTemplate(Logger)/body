@@ -1,0 +1,17 @@
+{
+  String template=null;
+  String templateName="jenkinsBuildConfig.xml";
+  URL url=DevOpsConnector.class.getResource(templateName);
+  if (url == null) {
+    log.error("Could not load " + templateName + " on the classpath!");
+  }
+ else {
+    try {
+      template=IOHelpers.loadFully(url);
+    }
+ catch (    IOException e) {
+      log.error("Failed to load template " + templateName + " from "+ url+ ". "+ e,e);
+    }
+  }
+  return template;
+}

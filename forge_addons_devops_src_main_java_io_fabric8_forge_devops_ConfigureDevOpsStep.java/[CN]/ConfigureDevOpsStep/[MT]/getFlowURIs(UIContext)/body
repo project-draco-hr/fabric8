@@ -1,7 +1,6 @@
 {
-  Object workflowFolder=context.getAttributeMap().get("jenkinsWorkflowFolder");
-  if (workflowFolder instanceof File) {
-    File dir=(File)workflowFolder;
+  File dir=getJenkinsWorkflowFolder(context);
+  if (dir != null) {
     Filter<File> filter=new Filter<File>(){
       @Override public boolean matches(      File file){
         String extension=Files.getFileExtension(file);
