@@ -23,5 +23,8 @@
   if (includeNamespaceEnvVar) {
     environmentVariables.add(new EnvVarBuilder().withName(kubernetesNamespaceEnvVar).withNewValueFrom().withNewFieldRef().withFieldPath("metadata.namespace").endFieldRef().endValueFrom().build());
   }
+  if (includePodEnvVar) {
+    environmentVariables.add(new EnvVarBuilder().withName(kubernetesPodEnvVar).withNewValueFrom().withNewFieldRef().withFieldPath("metadata.name").endFieldRef().endValueFrom().build());
+  }
   return environmentVariables;
 }
