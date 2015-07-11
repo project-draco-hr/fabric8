@@ -1,0 +1,23 @@
+{
+  MavenProject project=getProject();
+  if (project != null) {
+    Properties properties=project.getProperties();
+    properties.putAll(project.getProperties());
+    properties.putAll(System.getProperties());
+    for (    Map.Entry<String,String> entry : env.entrySet()) {
+      String envValue=entry.getValue();
+      if (envValue != null && !envValue.isEmpty() && envValue.startsWith("${") && envValue.endsWith("}")) {
+        String parameterName=envValue.substring(2,envValue.length() - 1);
+        String name="fabric8.create-env." + parameterName;
+        String propertyValue=properties.getProperty(name);
+        if (Strings.isNotBlank(propertyValue)) {
+          getLog().info("Overriding environment variable " + parameterName + " with value: "+ propertyValue);
+          entry.setValue(propertyValue);
+        }
+ else {
+          getLog().info("No property defined for environment variable: " + parameterName);
+        }
+      }
+    }
+  }
+}
