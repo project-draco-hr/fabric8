@@ -16,8 +16,8 @@
   }
  else {
     Set<Class<?>> classes=new HashSet<>(KindToClassMapping.getKindToClassMap().values());
-    Class<?> aClass=entity1.getClass();
-    if (classes.contains(aClass)) {
+    Class<?> aClass=getMappedClass(entity1.getClass(),classes);
+    if (aClass != null) {
       Object castEntity2=castTo(aClass,entity2);
       if (castEntity2 == null) {
         return false;

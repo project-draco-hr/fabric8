@@ -1,12 +1,12 @@
 {
-  List<io.fabric8.openshift.api.model.template.Parameter> parameters=template.getParameters();
+  List<io.fabric8.openshift.api.model.Parameter> parameters=template.getParameters();
   MavenProject project=getProject();
   if (parameters != null && project != null) {
     Properties properties=project.getProperties();
     properties.putAll(project.getProperties());
     properties.putAll(System.getProperties());
     boolean missingProperty=false;
-    for (    io.fabric8.openshift.api.model.template.Parameter parameter : parameters) {
+    for (    io.fabric8.openshift.api.model.Parameter parameter : parameters) {
       String parameterName=parameter.getName();
       String name="fabric8.apply." + parameterName;
       String propertyValue=properties.getProperty(name);
