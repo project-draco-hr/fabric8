@@ -26,6 +26,11 @@
     controller.setProcessTemplatesLocally(processTemplatesLocally);
     controller.setLogJsonDir(jsonLogDir);
     controller.setBasedir(getRootProjectFolder());
+    boolean openShift=kubernetes.isOpenShift();
+    getLog().info("Is OpenShift: " + openShift);
+    if (!openShift) {
+      disableOpenShiftFeatures(controller);
+    }
     String fileName=json.getName();
     Object dto=KubernetesHelper.loadJson(json);
     if (dto == null) {

@@ -1,0 +1,12 @@
+{
+  KubernetesClient client=new KubernetesClient();
+  System.out.println("Connecting to kubernetes on: " + client.getAddress());
+  try {
+    boolean openShift=client.isOpenShift();
+    System.out.println("OpenShift: " + openShift);
+  }
+ catch (  Exception e) {
+    System.out.println("FAILED: " + e);
+    e.printStackTrace();
+  }
+}

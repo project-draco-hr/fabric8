@@ -1,0 +1,14 @@
+{
+  RootPaths rootPaths=getKubernetesGlobalExtensions().getRootPaths();
+  if (rootPaths != null) {
+    List<String> paths=rootPaths.getPaths();
+    if (paths != null) {
+      for (      String path : paths) {
+        if (Objects.equals("/oapi",path) || Objects.equals("oapi",path)) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
