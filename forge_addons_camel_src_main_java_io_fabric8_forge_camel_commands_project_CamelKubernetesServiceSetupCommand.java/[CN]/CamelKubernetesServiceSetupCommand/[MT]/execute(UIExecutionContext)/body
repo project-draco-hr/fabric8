@@ -1,0 +1,23 @@
+{
+  Project project=getSelectedProject(context);
+  MavenFacet maven=project.getFacet(MavenFacet.class);
+  Model pom=maven.getModel();
+  Properties properties=pom.getProperties();
+  boolean updated=false;
+  if (serviceName.getValue() != null) {
+    properties.put("fabric8.service.name",serviceName.getValue());
+    updated=true;
+  }
+  if (servicePort.getValue() != null) {
+    properties.put("fabric8.service.port",servicePort.getValue());
+    updated=true;
+  }
+  if (containerPort.getValue() != null) {
+    properties.put("fabric8.service.containerPort",containerPort.getValue());
+    updated=true;
+  }
+  if (updated) {
+    maven.setModel(pom);
+  }
+  return Results.success("Adding/Updating Kubernetes service");
+}
