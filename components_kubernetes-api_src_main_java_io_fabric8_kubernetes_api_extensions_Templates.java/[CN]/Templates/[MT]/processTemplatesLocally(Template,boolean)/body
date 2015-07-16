@@ -14,8 +14,13 @@
         String name=parameter.getName();
         String regex="${" + name + "}";
         String value=parameter.getValue();
-        if (failOnMissingParameterValue && Strings.isNullOrBlank(value)) {
-          throw new IllegalArgumentException("No value available for parameter name: " + name);
+        if (Strings.isNullOrBlank(value)) {
+          if (failOnMissingParameterValue) {
+            throw new IllegalArgumentException("No value available for parameter name: " + name);
+          }
+ else {
+            value="";
+          }
         }
         json=Strings.replaceAllWithoutRegex(json,regex,value);
       }

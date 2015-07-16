@@ -50,6 +50,12 @@
       Template template=(Template)combinedJson;
       setName(template,getKubernetesName());
       configureTemplateDescriptionAndIcon(template,getIconUrl());
+      if (pureKubernetes) {
+        combinedJson=applyTemplates(template);
+      }
+    }
+    if (pureKubernetes) {
+      combinedJson=filterPureKubernetes(combinedJson);
     }
     json.getParentFile().mkdirs();
     KubernetesHelper.saveJson(json,combinedJson);

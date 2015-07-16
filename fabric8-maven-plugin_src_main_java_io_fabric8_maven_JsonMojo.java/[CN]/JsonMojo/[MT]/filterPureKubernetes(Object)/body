@@ -1,0 +1,12 @@
+{
+  List<HasMetadata> items=KubernetesHelper.toItemList(dto);
+  List<HasMetadata> filtered=new ArrayList<>();
+  for (  HasMetadata item : items) {
+    if (KubernetesHelper.isPureKubernetes(item)) {
+      filtered.add(item);
+    }
+  }
+  KubernetesList answer=new KubernetesList();
+  answer.setItems(filtered);
+  return answer;
+}

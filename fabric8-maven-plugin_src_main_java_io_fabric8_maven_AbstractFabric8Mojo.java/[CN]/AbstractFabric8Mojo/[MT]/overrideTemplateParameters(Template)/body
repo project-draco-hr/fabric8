@@ -10,7 +10,7 @@
       String parameterName=parameter.getName();
       String name="fabric8.apply." + parameterName;
       String propertyValue=properties.getProperty(name);
-      if (Strings.isNotBlank(propertyValue)) {
+      if (propertyValue != null) {
         getLog().info("Overriding template parameter " + name + " with value: "+ propertyValue);
         parameter.setValue(propertyValue);
       }

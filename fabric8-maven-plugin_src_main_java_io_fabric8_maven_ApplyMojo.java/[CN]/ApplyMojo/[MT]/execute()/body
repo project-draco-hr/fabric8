@@ -38,9 +38,7 @@
     }
     if (dto instanceof Template) {
       Template template=(Template)dto;
-      KubernetesHelper.setNamespace(template,kubernetes.getNamespace());
-      overrideTemplateParameters(template);
-      dto=controller.applyTemplate(template,fileName);
+      dto=applyTemplates(template,kubernetes,controller,fileName);
     }
     Set<KubernetesList> kubeConfigs=new LinkedHashSet<>();
     if (!combineDependencies) {
