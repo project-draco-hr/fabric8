@@ -3,7 +3,7 @@
   io.fabric8.kubernetes.api.model.Service service=kubernetes.getService(serviceName,namespace);
   String serviceAddress=null;
   if (service != null) {
-    String portalIP=service.getSpec().getPortalIP();
+    String portalIP=service.getSpec().getClusterIP();
     if (!Strings.isNullOrEmpty(portalIP)) {
       List<ServicePort> servicePorts=service.getSpec().getPorts();
       if (servicePorts != null && !servicePorts.isEmpty()) {

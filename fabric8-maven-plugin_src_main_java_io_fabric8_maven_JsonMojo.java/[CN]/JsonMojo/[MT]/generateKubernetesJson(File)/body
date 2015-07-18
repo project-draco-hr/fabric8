@@ -8,7 +8,7 @@
   if (!labelMap.containsKey("provider") && Strings.isNotBlank(provider)) {
     labelMap.put("provider",provider);
   }
-  KubernetesListBuilder builder=new KubernetesListBuilder().addNewReplicationControllerItem().withNewMetadata().withName(KubernetesHelper.validateKubernetesId(replicationControllerName,"fabric8.replicationController.name")).withLabels(labelMap).endMetadata().withNewSpec().withReplicas(replicaCount).withSelector(labelMap).withNewTemplate().withNewMetadata().withLabels(labelMap).endMetadata().withNewSpec().withServiceAccount(serviceAccount).addNewContainer().withName(getKubernetesContainerName()).withImage(getDockerImage()).withImagePullPolicy(getImagePullPolicy()).withEnv(getEnvironmentVariables()).withNewSecurityContext().withPrivileged(getContainerPrivileged()).endSecurityContext().withPorts(getContainerPorts()).withVolumeMounts(getVolumeMounts()).withLivenessProbe(getLivenessProbe()).withReadinessProbe(getReadinessProbe()).endContainer().withVolumes(getVolumes()).endSpec().endTemplate().endSpec().endReplicationControllerItem();
+  KubernetesListBuilder builder=new KubernetesListBuilder().addNewReplicationControllerItem().withNewMetadata().withName(KubernetesHelper.validateKubernetesId(replicationControllerName,"fabric8.replicationController.name")).withLabels(labelMap).endMetadata().withNewSpec().withReplicas(replicaCount).withSelector(labelMap).withNewTemplate().withNewMetadata().withLabels(labelMap).endMetadata().withNewSpec().withServiceAccountName(serviceAccount).addNewContainer().withName(getKubernetesContainerName()).withImage(getDockerImage()).withImagePullPolicy(getImagePullPolicy()).withEnv(getEnvironmentVariables()).withNewSecurityContext().withPrivileged(getContainerPrivileged()).endSecurityContext().withPorts(getContainerPorts()).withVolumeMounts(getVolumeMounts()).withLivenessProbe(getLivenessProbe()).withReadinessProbe(getReadinessProbe()).endContainer().withVolumes(getVolumes()).endSpec().endTemplate().endSpec().endReplicationControllerItem();
   if (serviceName != null) {
     ServiceBuilder serviceBuilder=new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labelMap).endMetadata();
     ServiceFluent<ServiceBuilder>.SpecNested<ServiceBuilder> serviceSpecBuilder=serviceBuilder.withNewSpec().withSelector(labelMap);
@@ -19,7 +19,7 @@
       serviceSpecBuilder.withPorts(servicePorts);
     }
  else {
-      serviceSpecBuilder.withPortalIP("None");
+      serviceSpecBuilder.withClusterIP("None");
     }
     serviceSpecBuilder.endSpec();
     if (headlessServices || hasPorts) {
