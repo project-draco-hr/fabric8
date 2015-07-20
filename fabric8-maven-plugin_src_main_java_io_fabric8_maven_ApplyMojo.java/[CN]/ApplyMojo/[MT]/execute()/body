@@ -36,6 +36,8 @@
     if (dto == null) {
       throw new MojoFailureException("Could not load kubernetes json: " + json);
     }
+    String namespace=kubernetes.getNamespace();
+    controller.applyNamespace(namespace);
     if (dto instanceof Template) {
       Template template=(Template)dto;
       dto=applyTemplates(template,kubernetes,controller,fileName);
