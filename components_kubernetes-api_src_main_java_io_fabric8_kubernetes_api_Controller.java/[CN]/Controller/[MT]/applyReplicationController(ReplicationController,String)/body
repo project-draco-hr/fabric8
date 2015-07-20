@@ -21,6 +21,9 @@
         try {
           Object answer=kubernetes.updateReplicationController(id,replicationController);
           logGeneratedEntity("Updated replicationController: ",namespace,replicationController,answer);
+          if (deletePodsOnReplicationControllerUpdate) {
+            kubernetes.deleteReplicationControllerPods(replicationController);
+          }
         }
  catch (        Exception e) {
           onApplyError("Failed to update replicationController from " + sourceName + ". "+ e+ ". "+ replicationController,e);

@@ -4,8 +4,5 @@
   validateNamespace(namespace,replicationController);
   LOG.info("Deleting ReplicationController: " + id + " namespace: "+ namespace);
   deleteReplicationController(replicationController);
-  List<Pod> podsToDelete=getPodsForReplicationController(replicationController);
-  for (  Pod pod : podsToDelete) {
-    deletePod(pod);
-  }
+  deleteReplicationControllerPods(replicationController);
 }
