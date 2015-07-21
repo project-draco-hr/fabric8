@@ -1,0 +1,16 @@
+{
+  LOG.info("Creating a secret from " + sourceName + " namespace "+ namespace+ " name "+ getName(secret));
+  try {
+    Object answer;
+    if (Strings.isNotBlank(namespace)) {
+      answer=kubernetes.createSecret(secret,namespace);
+    }
+ else {
+      answer=kubernetes.createSecret(secret,getNamespace());
+    }
+    logGeneratedEntity("Created secret: ",namespace,secret,answer);
+  }
+ catch (  Exception e) {
+    onApplyError("Failed to create secret from " + sourceName + ". "+ e+ ". "+ secret,e);
+  }
+}
