@@ -9,6 +9,19 @@
     if (parameters != null) {
       answer.putAll(parameters);
     }
+    Map<String,String> environments=projectConfig.getEnvironments();
+    if (environments != null) {
+      Set<Map.Entry<String,String>> entries=environments.entrySet();
+      for (      Map.Entry<String,String> entry : entries) {
+        String key=entry.getKey();
+        String value=entry.getValue();
+        String paramName=key.toUpperCase() + "_NAMESPACE";
+        answer.put(paramName,value);
+      }
+    }
+    if (!answer.containsKey("VERSION_PREFIX")) {
+      answer.put("VERSION_PREFIX","1.0");
+    }
   }
   return answer;
 }

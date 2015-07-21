@@ -1,0 +1,11 @@
+{
+  if (config != null) {
+    String buildName=config.getBuildName();
+    if (Strings.isNotBlank(buildName) && Maps.isNullOrEmpty(config.getEnvironments())) {
+      String defaultEnvironmentsText=Systems.getEnvVarOrSystemProperty("FABRIC8_DEFAULT_ENVIRONMENTS","Staging=${buildName}-staging,Production=${buildName}-prod");
+      String text=Strings.replaceAllWithoutRegex(defaultEnvironmentsText,"${buildName}",buildName);
+      Map<String,String> environments=Maps.parseMap(text);
+      config.setEnvironments(environments);
+    }
+  }
+}
