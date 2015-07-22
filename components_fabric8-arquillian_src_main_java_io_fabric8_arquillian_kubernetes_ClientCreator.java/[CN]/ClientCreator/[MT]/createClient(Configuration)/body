@@ -1,3 +1,11 @@
 {
-  kubernetesProducer.set(new KubernetesClient(config.getMasterUrl()));
+  KubernetesClient client;
+  String masterUrl=config.getMasterUrl();
+  if (Strings.isNotBlank(masterUrl)) {
+    client=new KubernetesClient(masterUrl);
+  }
+ else {
+    client=new KubernetesClient();
+  }
+  kubernetesProducer.set(client);
 }
