@@ -10,7 +10,14 @@
   }
   KubernetesListBuilder builder=new KubernetesListBuilder().addNewReplicationControllerItem().withNewMetadata().withName(KubernetesHelper.validateKubernetesId(replicationControllerName,"fabric8.replicationController.name")).withLabels(labelMap).endMetadata().withNewSpec().withReplicas(replicaCount).withSelector(labelMap).withNewTemplate().withNewMetadata().withLabels(labelMap).endMetadata().withNewSpec().withServiceAccountName(serviceAccount).addNewContainer().withName(getKubernetesContainerName()).withImage(getDockerImage()).withImagePullPolicy(getImagePullPolicy()).withEnv(getEnvironmentVariables()).withNewSecurityContext().withPrivileged(getContainerPrivileged()).endSecurityContext().withPorts(getContainerPorts()).withVolumeMounts(getVolumeMounts()).withLivenessProbe(getLivenessProbe()).withReadinessProbe(getReadinessProbe()).endContainer().withVolumes(getVolumes()).endSpec().endTemplate().endSpec().endReplicationControllerItem();
   if (serviceName != null) {
-    ServiceBuilder serviceBuilder=new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labelMap).endMetadata();
+    Map<String,String> metricsAnnotations=new HashMap<>();
+    if (metricsScrape) {
+      metricsAnnotations.put(metricsScrapeAnnotation,Boolean.toString(metricsScrape));
+      if (metricsPort != null) {
+        metricsAnnotations.put(metricsPortAnnotation,metricsPort.toString());
+      }
+    }
+    ServiceBuilder serviceBuilder=new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labelMap).withAnnotations(metricsAnnotations).endMetadata();
     ServiceFluent<ServiceBuilder>.SpecNested<ServiceBuilder> serviceSpecBuilder=serviceBuilder.withNewSpec().withSelector(labelMap);
     List<ServicePort> servicePorts=getServicePorts();
     System.out.println("Generated ports: " + servicePorts);
