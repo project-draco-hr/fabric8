@@ -8,11 +8,8 @@
   if (args.length > 1) {
     namespace=args[1];
   }
-  KubernetesClient client=new KubernetesClient();
-  System.out.println("Connecting to kubernetes on: " + client.getAddress());
+  KubernetesClient client=new DefaultKubernetesClient();
   try {
-    String uuid=client.triggerBuildAndGetUuid(name,namespace);
-    System.out.println("Build triggered: got UUID: " + uuid);
   }
  catch (  Exception e) {
     System.out.println("FAILED: " + e);

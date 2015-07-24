@@ -1,0 +1,26 @@
+{
+  System.out.println("Looking up pods");
+  PodList pods=kube.pods().list();
+  List<Pod> items=pods.getItems();
+  for (  Pod item : items) {
+    System.out.println("Pod " + KubernetesHelper.getName(item) + " created: "+ item.getMetadata().getCreationTimestamp());
+    PodSpec spec=item.getSpec();
+    if (spec != null) {
+      List<Container> containers=spec.getContainers();
+      if (containers != null) {
+        for (        Container container : containers) {
+          System.out.println("Container " + container.getImage() + " "+ container.getCommand()+ " ports: "+ container.getPorts());
+        }
+      }
+    }
+    Map<String,ContainerStatus> currentContainers=KubernetesHelper.getCurrentContainers(item);
+    System.out.println("Has " + currentContainers.size() + " container(s)");
+    Set<Map.Entry<String,ContainerStatus>> entries=currentContainers.entrySet();
+    for (    Map.Entry<String,ContainerStatus> entry : entries) {
+      String id=entry.getKey();
+      ContainerStatus info=entry.getValue();
+      System.out.println("Current container: " + id + " info: "+ info);
+    }
+  }
+  System.out.println();
+}

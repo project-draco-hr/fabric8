@@ -1,0 +1,14 @@
+{
+  PodList pods=null;
+  try {
+    pods=kubernetes.pods().inNamespace(namespace).list();
+  }
+ catch (  KubernetesClientException e) {
+    if (e.getCode() == 404) {
+    }
+ else {
+      throw e;
+    }
+  }
+  return toPodMap(pods);
+}

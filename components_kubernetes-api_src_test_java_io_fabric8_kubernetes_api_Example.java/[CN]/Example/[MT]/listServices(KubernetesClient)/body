@@ -1,0 +1,9 @@
+{
+  System.out.println("Looking up services");
+  ServiceList services=kube.services().list();
+  List<Service> serviceItems=services.getItems();
+  for (  Service service : serviceItems) {
+    System.out.println("Service " + KubernetesHelper.getName(service) + " labels: "+ service.getMetadata().getLabels()+ " selector: "+ getSelector(service)+ " ports: "+ getPorts(service));
+  }
+  System.out.println();
+}

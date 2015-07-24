@@ -4,7 +4,7 @@
     namespace=args[0];
   }
   String consoleLink=Links.getFabric8ConsoleLink();
-  KubernetesClient client=new KubernetesClient();
+  OpenShiftClient client=new DefaultKubernetesClient();
   BuildListener buildListener=new BuildListener(){
     @Override public void onBuildFinished(    BuildFinishedEvent event){
       System.out.println("Build: " + event.getUid() + " for config: "+ event.getConfigName()+ " finished. Status: "+ event.getStatus()+ " link: "+ event.getBuildLink());

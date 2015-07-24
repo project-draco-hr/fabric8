@@ -6,7 +6,7 @@
     LOG.debug("Only processing Services right now so ignoring Secrets: " + id);
     return;
   }
-  Secret old=kubernetes.getSecret(id,namespace);
+  Secret old=kubernetes.secrets().inNamespace(namespace).withName(id).get();
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(secret,old)) {
       LOG.info("Secret hasn't changed so not doing anything");
@@ -14,13 +14,13 @@
     }
  else {
       if (isRecreateMode()) {
-        kubernetes.deleteSecret(id,namespace);
+        kubernetes.secrets().inNamespace(namespace).withName(id).delete();
         doCreateSecret(secret,namespace,sourceName);
       }
  else {
         LOG.info("Updateing a secret from " + sourceName);
         try {
-          Object answer=kubernetes.updateSecret(id,secret,namespace);
+          Object answer=kubernetes.secrets().inNamespace(namespace).withName(id).update(secret);
           logGeneratedEntity("Updated secret:",namespace,secret,answer);
         }
  catch (        Exception e) {

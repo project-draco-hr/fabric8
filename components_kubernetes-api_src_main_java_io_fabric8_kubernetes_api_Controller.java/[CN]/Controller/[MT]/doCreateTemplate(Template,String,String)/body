@@ -1,7 +1,7 @@
 {
   LOG.info("Creating a template from " + sourceName + " namespace "+ namespace+ " name "+ getName(entity));
   try {
-    Object answer=kubernetes.createTemplate(entity,namespace);
+    Object answer=kubernetes.templates().inNamespace(namespace).create(entity);
     logGeneratedEntity("Created template: ",namespace,entity,answer);
   }
  catch (  Exception e) {

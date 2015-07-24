@@ -1,28 +1,9 @@
 {
-  if (isProcessTemplatesLocally()) {
-    try {
-      return Templates.processTemplatesLocally(entity,failOnMissingParameterValue);
-    }
- catch (    IOException e) {
-      onApplyError("Failed to process template " + sourceName + ". "+ e+ ". "+ entity,e);
-      return null;
-    }
+  try {
+    return Templates.processTemplatesLocally(entity,failOnMissingParameterValue);
   }
- else {
-    String id=getName(entity);
-    Objects.notNull(id,"No name for " + entity + " "+ sourceName);
-    String namespace=KubernetesHelper.getNamespace(entity);
-    LOG.info("Creating Template " + namespace + ":"+ id+ " "+ summaryText(entity));
-    Object result=null;
-    try {
-      String json=kubernetes.processTemplate(entity,namespace);
-      logGeneratedEntity("Template processed into: ",namespace,entity,json);
-      result=loadJson(json);
-      printSummary(result);
-    }
- catch (    Exception e) {
-      onApplyError("Failed to create controller from " + sourceName + ". "+ e+ ". "+ entity,e);
-    }
-    return result;
+ catch (  IOException e) {
+    onApplyError("Failed to process template " + sourceName + ". "+ e+ ". "+ entity,e);
+    return null;
   }
 }

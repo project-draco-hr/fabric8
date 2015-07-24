@@ -4,8 +4,7 @@
     return;
   }
   try {
-    KubernetesClient kube=new KubernetesClient();
-    System.out.println("Connecting to kubernetes on: " + kube.getAddress());
+    OpenShiftClient kube=new DefaultKubernetesClient();
     File file=new File(args[0]);
     System.out.println("Applying file: " + file);
     if (!file.exists() || !file.isFile()) {

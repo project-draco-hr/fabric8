@@ -11,10 +11,10 @@
     }
     Object answer;
     if (Strings.isNotBlank(namespace)) {
-      answer=kubernetes.createReplicationController(replicationController,namespace);
+      answer=kubernetes.replicationControllers().inNamespace(namespace).create(replicationController);
     }
  else {
-      answer=kubernetes.createReplicationController(replicationController);
+      answer=kubernetes.replicationControllers().inNamespace(getNamespace()).create(replicationController);
     }
     logGeneratedEntity("Created replicationController: ",namespace,replicationController,answer);
   }

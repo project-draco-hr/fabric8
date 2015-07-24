@@ -1,6 +1,6 @@
 {
   boolean foundBuild=false;
-  BuildList buildList=kubernetes.getBuilds(namespace);
+  BuildList buildList=kubernetes.builds().inNamespace(namespace).list();
   if (buildList != null) {
     List<Build> items=buildList.getItems();
     if (items != null) {

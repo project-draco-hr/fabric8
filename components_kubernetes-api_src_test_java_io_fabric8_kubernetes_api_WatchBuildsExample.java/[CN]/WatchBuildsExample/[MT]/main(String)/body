@@ -1,7 +1,10 @@
 {
-  KubernetesClient kube=new KubernetesClient();
-  System.out.println("Connecting to kubernetes on: " + kube.getAddress());
-  WebSocketClient client=kube.watchBuilds(new ExampleWatcher());
-  Thread.sleep(10000l);
-  client.stop();
+  OpenShiftClient client=new DefaultKubernetesClient();
+  client.builds().watch(new Watcher<Build>(){
+    @Override public void eventReceived(    Action action,    Build build){
+      System.out.println(action + ": " + build);
+    }
+  }
+);
+  client.close();
 }

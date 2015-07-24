@@ -23,7 +23,7 @@
     }
   }
  catch (  SSLHandshakeException e) {
-    LOG.error("SSL handshake failed - this probably means that you need to trust the kubernetes root SSL certificate or set the environment variable " + KubernetesFactory.KUBERNETES_TRUST_ALL_CERIFICATES,e);
+    LOG.error("SSL handshake failed - this probably means that you need to trust the kubernetes root SSL certificate or set the environment variable " + Utils.convertSystemPropertyNameToEnvVar(DefaultKubernetesClient.KUBERNETES_TRUST_CERT_SYSTEM_PROPERTY),e);
   }
 catch (  SSLProtocolException e) {
     LOG.error("SSL protocol error",e);

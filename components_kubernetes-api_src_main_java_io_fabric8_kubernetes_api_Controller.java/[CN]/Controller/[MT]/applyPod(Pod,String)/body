@@ -6,20 +6,20 @@
     LOG.debug("Only processing Services right now so ignoring Pod: " + namespace + ":"+ id);
     return;
   }
-  Pod old=kubernetes.getPod(id,namespace);
+  Pod old=kubernetes.pods().inNamespace(namespace).withName(id).get();
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(pod,old)) {
       LOG.info("Pod hasn't changed so not doing anything");
     }
  else {
       if (isRecreateMode()) {
-        kubernetes.deletePod(pod,namespace);
+        kubernetes.pods().inNamespace(namespace).withName(id).delete();
         doCreatePod(pod,namespace,sourceName);
       }
  else {
         LOG.info("Updating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getName(pod));
         try {
-          Object answer=kubernetes.updatePod(id,pod);
+          Object answer=kubernetes.pods().inNamespace(namespace).withName(id).update(pod);
           LOG.info("Updated pod result: " + answer);
         }
  catch (        Exception e) {

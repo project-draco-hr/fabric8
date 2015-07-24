@@ -3,10 +3,10 @@
   try {
     Object answer;
     if (Strings.isNotBlank(namespace)) {
-      answer=kubernetes.createServiceAccount(serviceAccount,namespace);
+      answer=kubernetes.serviceAccounts().inNamespace(namespace).create(serviceAccount);
     }
  else {
-      answer=kubernetes.createServiceAccount(serviceAccount);
+      answer=kubernetes.serviceAccounts().inNamespace(getNamespace()).create(serviceAccount);
     }
     logGeneratedEntity("Created service account: ",namespace,serviceAccount,answer);
   }

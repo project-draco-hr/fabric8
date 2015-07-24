@@ -1,7 +1,10 @@
 {
-  KubernetesClient kube=new KubernetesClient();
-  System.out.println("Connecting to kubernetes on: " + kube.getAddress());
-  WebSocketClient client=kube.watchServices("jimmi",null,new ExampleWatcher());
-  Thread.sleep(10000l);
-  client.stop();
+  KubernetesClient client=new DefaultKubernetesClient();
+  client.services().watch(new io.fabric8.kubernetes.client.Watcher<Service>(){
+    @Override public void eventReceived(    Action action,    Service service){
+      System.out.println(action + ": " + service);
+    }
+  }
+);
+  client.close();
 }

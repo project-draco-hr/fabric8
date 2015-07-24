@@ -1,0 +1,15 @@
+{
+  System.out.println("Looking up replicationControllers");
+  ReplicationControllerList replicationControllers=kube.replicationControllers().list();
+  List<ReplicationController> items=replicationControllers.getItems();
+  for (  ReplicationController item : items) {
+    ReplicationControllerSpec replicationControllerSpec=item.getSpec();
+    if (replicationControllerSpec != null) {
+      System.out.println("ReplicationController " + KubernetesHelper.getName(item) + " labels: "+ item.getMetadata().getLabels()+ " replicas: "+ replicationControllerSpec.getReplicas()+ " replicatorSelector: "+ replicationControllerSpec.getSelector()+ " podTemplate: "+ replicationControllerSpec.getTemplate());
+    }
+ else {
+      System.out.println("ReplicationController " + KubernetesHelper.getName(item) + " labels: "+ item.getMetadata().getLabels()+ " no replicationControllerSpec");
+    }
+  }
+  System.out.println();
+}

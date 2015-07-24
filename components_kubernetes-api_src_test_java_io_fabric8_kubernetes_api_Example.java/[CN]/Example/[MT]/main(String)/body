@@ -1,15 +1,10 @@
 {
-  KubernetesFactory kubeFactory=new KubernetesFactory();
-  if (args.length > 0) {
-    kubeFactory.setAddress(args[0]);
-  }
-  System.out.println("Connecting to kubernetes on: " + kubeFactory.getAddress());
   try {
-    Kubernetes kube=kubeFactory.createKubernetes();
+    KubernetesClient kube=new DefaultKubernetesClient();
     listPods(kube);
     listServices(kube);
     listReplicationControllers(kube);
-    createPod(kube,kubeFactory);
+    createPod(kube);
     listPods(kube);
   }
  catch (  Exception e) {
