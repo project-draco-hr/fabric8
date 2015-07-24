@@ -2,9 +2,9 @@
   assertThat(podId).isNotNull();
   Pod pod=null;
   try {
-    pod=client.getPod(namespace);
+    pod=client.pods().inNamespace(namespace).withName(podId).get();
   }
- catch (  NotFoundException e) {
+ catch (  Exception e) {
     fail("Could not find pod for '" + podId + "'");
   }
   assertThat(pod).isNotNull();

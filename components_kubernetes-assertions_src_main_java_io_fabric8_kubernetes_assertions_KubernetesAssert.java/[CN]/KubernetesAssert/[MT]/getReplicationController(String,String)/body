@@ -2,9 +2,9 @@
   assertThat(replicationControllerId).isNotNull();
   ReplicationController replicationController=null;
   try {
-    replicationController=client.getReplicationController(replicationControllerId,namespace);
+    replicationController=client.replicationControllers().inNamespace(namespace).withName(replicationControllerId).get();
   }
- catch (  NotFoundException e) {
+ catch (  Exception e) {
     fail("Could not find replicationController for '" + replicationControllerId + "'");
   }
   assertThat(replicationController).isNotNull();

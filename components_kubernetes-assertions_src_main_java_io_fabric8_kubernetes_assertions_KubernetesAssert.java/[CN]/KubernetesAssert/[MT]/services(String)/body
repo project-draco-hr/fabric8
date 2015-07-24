@@ -1,5 +1,5 @@
 {
-  ServiceList serviceList=client.getServices(namespace);
+  ServiceList serviceList=client.services().inNamespace(namespace).list();
   assertThat(serviceList).isNotNull();
   List<Service> services=serviceList.getItems();
   return (ListAssert<Service>)assertThat(services);

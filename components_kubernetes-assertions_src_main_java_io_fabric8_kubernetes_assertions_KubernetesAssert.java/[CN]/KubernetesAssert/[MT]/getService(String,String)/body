@@ -2,9 +2,9 @@
   assertThat(serviceId).isNotNull();
   Service service=null;
   try {
-    service=client.getService(serviceId,namespace);
+    service=client.services().inNamespace(namespace).withName(serviceId).get();
   }
- catch (  NotFoundException e) {
+ catch (  Exception e) {
     fail("Could not find service for '" + serviceId + "'");
   }
   assertThat(service).isNotNull();
