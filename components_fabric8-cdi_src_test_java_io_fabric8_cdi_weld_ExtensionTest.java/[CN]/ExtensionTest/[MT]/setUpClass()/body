@@ -6,6 +6,7 @@
   KUBERNETES_SERVICE_JSON=Resources.toString(ExtensionTest.class.getResource("/mock/kubernetes-service.json"),Charsets.UTF_8);
   FABRIC8_CONSOLE_SERVICE_JSON=Resources.toString(ExtensionTest.class.getResource("/mock/kubernetes-service.json"),Charsets.UTF_8);
   APP_LIBRARY_SERVICE_JSON=Resources.toString(ExtensionTest.class.getResource("/mock/app-library-service.json"),Charsets.UTF_8);
+  EMPTY_ROUTES_JSON=Resources.toString(ExtensionTest.class.getResource("/mock/empty-routes.json"),Charsets.UTF_8);
   server.setDispatcher(new Dispatcher(){
     @Override public MockResponse dispatch(    RecordedRequest request) throws InterruptedException {
       if (request.getPath().equals("/api/v1/namespaces/default/services/kubernetes")) {
@@ -14,13 +15,13 @@
  else       if (request.getPath().matches("/api/[^/]+/namespaces/[^/]+/services/fabric8-console-service")) {
         return new MockResponse().setResponseCode(200).setHeader("Content-Type","application/json").setBody(FABRIC8_CONSOLE_SERVICE_JSON);
       }
- else       if (request.getPath().matches("/api/[^/]+/namespaces/[^/]+/services/app-library")) {
+ else       if (request.getPath().matches("/api/[^/]+/namespaces/[^/]+/services/app-library[/]*")) {
         return new MockResponse().setResponseCode(200).setHeader("Content-Type","application/json").setBody(APP_LIBRARY_SERVICE_JSON);
       }
- else       if (request.getPath().matches("/oapi/[^/]+/namespaces/[^/]+/routes")) {
-        return new MockResponse().setResponseCode(200).setHeader("Content-Type","application/json").setBody("{}");
+ else       if (request.getPath().matches("/oapi/[^/]+/namespaces/[^/]+/routes[/]*")) {
+        return new MockResponse().setResponseCode(200).setHeader("Content-Type","application/json").setBody(EMPTY_ROUTES_JSON);
       }
- else       if (request.getPath().matches("/api/[^/]+/namespaces/[^/]+/endpoints")) {
+ else       if (request.getPath().matches("/api/[^/]+/namespaces/[^/]+/endpoints[/]*")) {
         return new MockResponse().setResponseCode(200).setHeader("Content-Type","application/json").setBody("{}");
       }
  else {
@@ -30,7 +31,6 @@
   }
 );
   server.play();
-  System.setProperty(KubernetesFactory.KUBERNETES_MASTER_SYSTEM_PROPERTY,"http://" + server.getHostName() + ":"+ server.getPort());
-  System.setProperty(KubernetesFactory.KUBERNETES_TRUST_ALL_CERIFICATES,"true");
-  System.setProperty(KubernetesFactory.KUBERNETES_VERIFY_SYSTEM_PROPERTY,"false");
+  System.setProperty(DefaultKubernetesClient.KUBERNETES_MASTER_SYSTEM_PROPERTY,"http://" + server.getHostName() + ":"+ server.getPort());
+  System.setProperty(DefaultKubernetesClient.KUBERNETES_TRUST_CERT_SYSTEM_PROPERTY,"true");
 }
