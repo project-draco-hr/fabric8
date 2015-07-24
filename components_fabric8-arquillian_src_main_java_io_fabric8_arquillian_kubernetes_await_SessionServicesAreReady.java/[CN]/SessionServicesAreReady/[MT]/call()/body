@@ -1,6 +1,6 @@
 {
   boolean result=true;
-  List<Service> services=kubernetesClient.getServices(session.getNamespace()).getItems();
+  List<Service> services=kubernetesClient.services().inNamespace(session.getNamespace()).list().getItems();
   if (services.isEmpty()) {
     result=false;
     session.getLogger().warn("No services are available yet, waiting...");

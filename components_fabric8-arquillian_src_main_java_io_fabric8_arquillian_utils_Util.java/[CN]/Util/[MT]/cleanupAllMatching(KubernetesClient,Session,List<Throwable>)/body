@@ -1,24 +1,24 @@
 {
   for (int i=0; i < 10; i++) {
     try {
-      deleteReplicationControllers(client,session);
+      client.replicationControllers().inNamespace(session.getNamespace()).delete();
     }
- catch (    MultiException e) {
-      errors.addAll(Arrays.asList(e.getCauses()));
-    }
-    try {
-      deletePods(client,session);
-    }
- catch (    MultiException e) {
-      errors.addAll(Arrays.asList(e.getCauses()));
+ catch (    KubernetesClientException e) {
+      errors.add(e);
     }
     try {
-      deleteServices(client,session);
+      client.pods().inNamespace(session.getNamespace()).delete();
     }
- catch (    MultiException e) {
-      errors.addAll(Arrays.asList(e.getCauses()));
+ catch (    KubernetesClientException e) {
+      errors.add(e);
     }
-    List<Pod> filteredPods=client.getPods(session.getNamespace()).getItems();
+    try {
+      client.services().inNamespace(session.getNamespace()).delete();
+    }
+ catch (    KubernetesClientException e) {
+      errors.add(e);
+    }
+    List<Pod> filteredPods=client.pods().inNamespace(session.getNamespace()).list().getItems();
     if (filteredPods.isEmpty()) {
       return;
     }

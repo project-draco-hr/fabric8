@@ -1,6 +1,6 @@
 {
   KubernetesClient client=this.clientInstance.get();
   Session session=sessionInstance.get();
-  ServiceList services=client.getServices(session.getNamespace());
+  ServiceList services=client.services().inNamespace(session.getNamespace()).list();
   return services;
 }

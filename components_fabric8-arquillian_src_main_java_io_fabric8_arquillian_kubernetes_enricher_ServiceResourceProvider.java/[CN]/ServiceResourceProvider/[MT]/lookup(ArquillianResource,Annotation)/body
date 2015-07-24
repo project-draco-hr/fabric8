@@ -1,7 +1,7 @@
 {
   KubernetesClient client=this.clientInstance.get();
   Session session=sessionInstance.get();
-  for (  Service service : client.getServices(session.getNamespace()).getItems()) {
+  for (  Service service : client.services().inNamespace(session.getNamespace()).list().getItems()) {
     if (qualifies(service,qualifiers)) {
       return service;
     }

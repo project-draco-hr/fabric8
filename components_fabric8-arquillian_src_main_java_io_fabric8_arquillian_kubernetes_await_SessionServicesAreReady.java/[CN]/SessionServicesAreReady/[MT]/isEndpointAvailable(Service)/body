@@ -2,8 +2,8 @@
   String serviceStatus=null;
   boolean result=false;
   String sid=getName(s);
-  String namespace=kubernetesClient.getNamespace();
-  Endpoints endpoints=kubernetesClient.endpointsForService(sid,namespace);
+  String namespace=session.getNamespace();
+  Endpoints endpoints=kubernetesClient.endpoints().inNamespace(namespace).withName(sid).get();
   ServiceSpec spec=s.getSpec();
   if (endpoints != null && spec != null) {
     List<EndpointSubset> subsets=endpoints.getSubsets();
