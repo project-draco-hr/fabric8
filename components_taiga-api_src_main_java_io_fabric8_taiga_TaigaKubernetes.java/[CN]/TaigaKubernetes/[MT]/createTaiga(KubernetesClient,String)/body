@@ -1,17 +1,16 @@
 {
   String userName=Systems.getEnvVarOrSystemProperty("TAIGA_USERNAME","admin");
   String password=Systems.getEnvVarOrSystemProperty("TAIGA_PASSWORD","123123");
-  String namespace=kubernetes.getNamespace();
   String address=null;
   try {
-    address=kubernetes.getServiceURL(ServiceNames.TAIGA,namespace,"http",true);
+    address=KubernetesHelper.getServiceURL(kubernetes,ServiceNames.TAIGA,namespace,"http",true);
     if (Strings.isNullOrBlank(address)) {
-      LOG.warn("No Taiga service could be found in kubernetes " + namespace + " on address: "+ kubernetes.getAddress());
+      LOG.warn("No Taiga service could be found in kubernetes " + namespace + " on address: "+ kubernetes.getMasterUrl());
       return null;
     }
   }
  catch (  IllegalArgumentException e) {
-    LOG.warn("No Taiga service could be found in kubernetes " + namespace + " on address: "+ kubernetes.getAddress());
+    LOG.warn("No Taiga service could be found in kubernetes " + namespace + " on address: "+ kubernetes.getMasterUrl());
     return null;
   }
   LOG.info("Logging into Taiga at " + address + " as user "+ userName);

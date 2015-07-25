@@ -4,8 +4,8 @@
     projectName=args[0];
   }
   try {
-    KubernetesClient kubernetes=new KubernetesClient();
-    TaigaClient taiga=TaigaKubernetes.createTaiga(kubernetes);
+    KubernetesClient kubernetes=new DefaultKubernetesClient();
+    TaigaClient taiga=TaigaKubernetes.createTaiga(kubernetes,KubernetesHelper.defaultNamespace());
     System.out.println("Connecting to taiga on: " + taiga.getAddress());
     ProjectDTO myProject=taiga.getProjectBySlug(projectName);
     System.out.println("Found project: " + myProject + " by slug: "+ projectName);
