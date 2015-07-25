@@ -2,10 +2,10 @@
   try {
     KubernetesClient kubernetes=getKubernetes();
     Controller controller=createController();
-    String namespace=kubernetes.getNamespace();
+    String namespace=getNamespace();
     Log log=getLog();
-    log.info("Querying services in namespace: " + namespace + " on Kubernetes address: "+ kubernetes.getAddress());
-    ServiceList services=kubernetes.getServices(namespace);
+    log.info("Querying services in namespace: " + namespace + " on Kubernetes address: "+ kubernetes.getMasterUrl());
+    ServiceList services=kubernetes.services().inNamespace(namespace).list();
     if (services != null) {
       List<Service> items=services.getItems();
       if (items != null) {

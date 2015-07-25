@@ -9,7 +9,7 @@
     String webhookSecret=this.secret;
     GitRepoClient gitRepoClient=GitRepoKubernetes.createGitRepoClient(getKubernetes(),gogsUser,gogsPassword);
     if (gitRepoClient == null) {
-      getLog().error("No Gogs service found in kubernetes at address " + kubernetes.getAddress() + " namespace "+ kubernetes.getNamespace());
+      getLog().error("No Gogs service found in kubernetes at address " + kubernetes.getMasterUrl() + " namespace "+ getNamespace());
     }
  else {
       Logger logger=LoggerFactory.getLogger(CreateGogsWebhook.class);

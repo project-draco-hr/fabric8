@@ -1,0 +1,8 @@
+{
+  if (KubernetesHelper.isOpenShift(client)) {
+    return KubernetesHelper.toOpenshift(client).routes().inNamespace(namespace).list();
+  }
+ else {
+    return new RouteListBuilder().build();
+  }
+}

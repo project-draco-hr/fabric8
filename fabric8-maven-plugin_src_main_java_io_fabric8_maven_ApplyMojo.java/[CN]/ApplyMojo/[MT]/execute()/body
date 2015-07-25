@@ -15,7 +15,7 @@
     }
   }
   KubernetesClient kubernetes=getKubernetes();
-  getLog().info("Using kubernetes at: " + kubernetes.getAddress() + " in namespace "+ kubernetes.getNamespace());
+  getLog().info("Using kubernetes at: " + kubernetes.getMasterUrl() + " in namespace "+ getNamespace());
   getLog().info("Kubernetes JSON: " + json);
   try {
     Controller controller=createController();
@@ -27,7 +27,7 @@
     controller.setIgnoreRunningOAuthClients(ignoreRunningOAuthClients);
     controller.setProcessTemplatesLocally(processTemplatesLocally);
     controller.setDeletePodsOnReplicationControllerUpdate(deletePodsOnReplicationControllerUpdate);
-    boolean openShift=kubernetes.isOpenShift();
+    boolean openShift=KubernetesHelper.isOpenShift(kubernetes);
     getLog().info("Is OpenShift: " + openShift);
     if (!openShift) {
       disableOpenShiftFeatures(controller);
@@ -37,7 +37,7 @@
     if (dto == null) {
       throw new MojoFailureException("Could not load kubernetes json: " + json);
     }
-    String namespace=kubernetes.getNamespace();
+    String namespace=getNamespace();
     controller.applyNamespace(namespace);
     if (dto instanceof Template) {
       Template template=(Template)dto;

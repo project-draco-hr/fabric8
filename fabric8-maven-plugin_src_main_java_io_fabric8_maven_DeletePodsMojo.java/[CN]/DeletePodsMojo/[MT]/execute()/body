@@ -5,7 +5,7 @@
     return;
   }
   KubernetesClient kubernetes=getKubernetes();
-  PodList podList=kubernetes.getPods();
+  PodList podList=kubernetes.pods().inNamespace(getNamespace()).list();
   int count=0;
   if (podList != null) {
     List<Pod> items=podList.getItems();
@@ -13,7 +13,7 @@
       for (      Pod pod : items) {
         if (podUsesDockerImage(pod,dockerImage)) {
           try {
-            kubernetes.deletePod(pod);
+            kubernetes.pods().inNamespace(getNamespace()).withName(KubernetesHelper.getName(pod)).delete();
             count++;
           }
  catch (          Exception e) {
@@ -24,9 +24,9 @@
     }
   }
   if (count == 0) {
-    getLog().info("No pods found using image " + dockerImage + " in namespace: "+ kubernetes.getNamespace()+ " on address: "+ kubernetes.getAddress());
+    getLog().info("No pods found using image " + dockerImage + " in namespace: "+ getNamespace()+ " on address: "+ kubernetes.getMasterUrl());
   }
  else {
-    getLog().info("Deleted " + count + " pod(s) using image "+ dockerImage+ " in namespace: "+ kubernetes.getNamespace()+ " on address: "+ kubernetes.getAddress());
+    getLog().info("Deleted " + count + " pod(s) using image "+ dockerImage+ " in namespace: "+ getNamespace()+ " on address: "+ kubernetes.getMasterUrl());
   }
 }

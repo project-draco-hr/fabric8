@@ -1,3 +1,6 @@
 {
-  return getKubernetes().getNamespace();
+  if (Strings.isNullOrBlank(namespace)) {
+    namespace=KubernetesHelper.defaultNamespace();
+  }
+  return namespace;
 }
