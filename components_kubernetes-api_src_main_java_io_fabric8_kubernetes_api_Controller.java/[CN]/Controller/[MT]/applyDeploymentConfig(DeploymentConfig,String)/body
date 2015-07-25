@@ -1,6 +1,6 @@
 {
   try {
-    kubernetes.deploymentConfigs().inNamespace(getNamespace()).create(entity);
+    toOpenshift(kubernetes).deploymentConfigs().inNamespace(getNamespace()).create(entity);
   }
  catch (  Exception e) {
     onApplyError("Failed to create DeploymentConfig from " + sourceName + ". "+ e,e);

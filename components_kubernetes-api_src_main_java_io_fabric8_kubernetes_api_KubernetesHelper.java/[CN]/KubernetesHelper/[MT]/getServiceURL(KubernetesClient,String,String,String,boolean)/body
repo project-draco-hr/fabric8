@@ -21,10 +21,13 @@
   if (srv == null) {
     throw new IllegalArgumentException("No kubernetes service could be found for name: " + serviceName + " in namespace: "+ namespace);
   }
-  RouteList routeList=client.routes().inNamespace(namespace).list();
-  for (  Route route : routeList.getItems()) {
-    if (route.getSpec().getTo().getName().equals(serviceName)) {
-      return (serviceProto + "://" + route.getSpec().getHost()).toLowerCase();
+  if (isOpenShift(client)) {
+    OpenShiftClient openShiftClient=(OpenShiftClient)client;
+    RouteList routeList=openShiftClient.routes().inNamespace(namespace).list();
+    for (    Route route : routeList.getItems()) {
+      if (route.getSpec().getTo().getName().equals(serviceName)) {
+        return (serviceProto + "://" + route.getSpec().getHost()).toLowerCase();
+      }
     }
   }
   return (serviceProto + "://" + srv.getSpec().getClusterIP()+ ":"+ srv.getSpec().getPorts().iterator().next().getPort()).toLowerCase();

@@ -1,4 +1,5 @@
 {
+  OpenShiftClient openShiftClient=toOpenshift(kubernetes);
   if (supportOAuthClients) {
     String id=getName(entity);
     Objects.notNull(id,"No name for " + entity + " "+ sourceName);
@@ -6,7 +7,7 @@
       LOG.debug("Only processing Services right now so ignoring OAuthClient: " + id);
       return;
     }
-    OAuthClient old=kubernetes.oAuthClients().withName(id).get();
+    OAuthClient old=openShiftClient.oAuthClients().withName(id).get();
     if (isRunning(old)) {
       if (isIgnoreRunningOAuthClients()) {
         LOG.info("Not updating the OAuthClient which are shared across namespaces as its already running");
@@ -17,12 +18,12 @@
       }
  else {
         if (isRecreateMode()) {
-          kubernetes.oAuthClients().withName(id).delete();
+          openShiftClient.oAuthClients().withName(id).delete();
           doCreateOAuthClient(entity,sourceName);
         }
  else {
           try {
-            Object answer=kubernetes.oAuthClients().withName(id).update(entity);
+            Object answer=openShiftClient.oAuthClients().withName(id).update(entity);
             LOG.info("Updated pod result: " + answer);
           }
  catch (          Exception e) {

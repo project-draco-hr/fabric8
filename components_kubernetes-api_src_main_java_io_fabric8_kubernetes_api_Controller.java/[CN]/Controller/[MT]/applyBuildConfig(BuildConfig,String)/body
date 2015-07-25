@@ -1,18 +1,19 @@
 {
   String id=getName(entity);
+  OpenShiftClient openShiftClient=toOpenshift(kubernetes);
   Objects.notNull(id,"No name for " + entity + " "+ sourceName);
   String namespace=KubernetesHelper.getNamespace(entity);
   if (Strings.isNullOrBlank(namespace)) {
     namespace=getNamespace();
   }
-  BuildConfig old=kubernetes.buildConfigs().inNamespace(namespace).withName(id).get();
+  BuildConfig old=openShiftClient.buildConfigs().inNamespace(namespace).withName(id).get();
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(entity,old)) {
       LOG.info("BuildConfig hasn't changed so not doing anything");
     }
  else {
       if (isRecreateMode()) {
-        kubernetes.buildConfigs().inNamespace(namespace).withName(id).delete();
+        openShiftClient.buildConfigs().inNamespace(namespace).withName(id).delete();
         doCreateBuildConfig(entity,namespace,sourceName);
       }
  else {
@@ -22,7 +23,7 @@
           ObjectMeta metadata=KubernetesHelper.getOrCreateMetadata(entity);
           metadata.setNamespace(namespace);
           metadata.setResourceVersion(resourceVersion);
-          Object answer=kubernetes.buildConfigs().inNamespace(namespace).withName(id).update(entity);
+          Object answer=openShiftClient.buildConfigs().inNamespace(namespace).withName(id).update(entity);
           logGeneratedEntity("Updated BuildConfig: ",namespace,entity,answer);
         }
  catch (        Exception e) {
