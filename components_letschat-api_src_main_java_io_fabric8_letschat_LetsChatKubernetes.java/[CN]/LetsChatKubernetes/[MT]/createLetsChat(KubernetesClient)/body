@@ -2,17 +2,17 @@
   String userName=Systems.getEnvVarOrSystemProperty(LETSCHAT_HUBOT_USERNAME,"fabric8");
   String password=Systems.getEnvVarOrSystemProperty(LETSCHAT_HUBOT_PASSWORD,"RedHat$1");
   String token=Systems.getEnvVarOrSystemProperty(LETSCHAT_HUBOT_TOKEN);
-  String namespace=kubernetes.getNamespace();
+  String namespace=KubernetesHelper.defaultNamespace();
   String address;
   try {
-    address=kubernetes.getServiceURL(ServiceNames.LETSCHAT,namespace,"http",true);
+    address=KubernetesHelper.getServiceURL(kubernetes,ServiceNames.LETSCHAT,namespace,"http",true);
     if (Strings.isNullOrBlank(address)) {
-      LOG.warn("No LetsChat service could be found in kubernetes " + namespace + " on address: "+ kubernetes.getAddress());
+      LOG.warn("No LetsChat service could be found in kubernetes " + namespace + " on address: "+ kubernetes.getMasterUrl());
       return null;
     }
   }
  catch (  IllegalArgumentException e) {
-    LOG.warn("No LetsChat service could be found in kubernetes " + namespace + " on address: "+ kubernetes.getAddress());
+    LOG.warn("No LetsChat service could be found in kubernetes " + namespace + " on address: "+ kubernetes.getMasterUrl());
     return null;
   }
   LOG.info("Logging into LetsChat at " + address + " as user "+ userName);

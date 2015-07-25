@@ -4,7 +4,7 @@
     roomName=args[0];
   }
   try {
-    KubernetesClient kubernetes=new KubernetesClient();
+    OpenShiftClient kubernetes=new DefaultKubernetesClient();
     LetsChatClient letschat=LetsChatKubernetes.createLetsChat(kubernetes);
     System.out.println("Connecting to letschat on: " + letschat.getAddress());
     List<RoomDTO> rooms=letschat.getRooms();
