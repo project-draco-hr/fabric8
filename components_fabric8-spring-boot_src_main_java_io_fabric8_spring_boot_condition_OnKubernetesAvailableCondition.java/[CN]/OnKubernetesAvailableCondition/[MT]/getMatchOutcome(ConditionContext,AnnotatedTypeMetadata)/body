@@ -1,8 +1,6 @@
 {
-  if (System.getenv().containsKey(KubernetesFactory.KUBERNETES_MASTER_ENV_VAR)) {
-    return ConditionOutcome.match();
-  }
- else   if (System.getProperties().containsKey(KubernetesFactory.KUBERNETES_MASTER_SYSTEM_PROPERTY)) {
+  String masterUrl=Utils.getSystemPropertyOrEnvVar(DefaultKubernetesClient.KUBERNETES_MASTER_SYSTEM_PROPERTY);
+  if (!Strings.isNullOrBlank(masterUrl)) {
     return ConditionOutcome.match();
   }
   return ConditionOutcome.noMatch("Url to kubernetes master, not found in environment variables or system properties.");

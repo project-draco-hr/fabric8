@@ -1,4 +1,5 @@
 {
-  KubernetesClient kubernetes=new KubernetesClient();
-  return kubernetes.getService(name);
+  KubernetesClient kubernetes=new DefaultKubernetesClient();
+  String serviceNamespace=Systems.getEnvVarOrSystemProperty(KUBERNETES_NAMESPACE,DEFAULT_NAMESPACE);
+  return kubernetes.services().inNamespace(serviceNamespace).withName(name).get();
 }
