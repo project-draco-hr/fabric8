@@ -1,4 +1,9 @@
 {
   super.init();
-  client=new KubernetesClient(new KubernetesFactory(address));
+  if (!Strings.isNullOrBlank(address)) {
+    client=new DefaultKubernetesClient(new DefaultKubernetesClient.ConfigBuilder().masterUrl(address).build());
+  }
+ else {
+    client=new DefaultKubernetesClient();
+  }
 }

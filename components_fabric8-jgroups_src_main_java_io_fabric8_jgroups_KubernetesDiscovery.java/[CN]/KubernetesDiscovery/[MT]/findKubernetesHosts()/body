@@ -1,23 +1,19 @@
 {
   List<PhysicalAddress> addresses=new ArrayList<>();
   Map<String,String> labels=Collections.singletonMap(Constants.JGROUPS_CLUSTER_NAME,cluster_name);
-  Filter<Pod> podFilter=KubernetesHelper.createPodFilter(labels);
-  List<Pod> podList=filterPods(client.getPods().getItems(),podFilter);
-  for (  Pod pod : podList) {
-    if (podFilter.matches(pod)) {
-      List<Container> containers=KubernetesHelper.getContainers(pod);
-      for (      Container container : containers) {
-        for (        ContainerPort port : container.getPorts()) {
-          if (Constants.JGROUPS_TCP_PORT.equals(port.getName())) {
-            try {
-              String ip=pod.getStatus().getPodIP();
-              if (ip != null) {
-                addresses.add(new IpAddress(ip,port.getContainerPort()));
-              }
+  for (  Pod pod : client.pods().withLabels(labels).list().getItems()) {
+    List<Container> containers=KubernetesHelper.getContainers(pod);
+    for (    Container container : containers) {
+      for (      ContainerPort port : container.getPorts()) {
+        if (Constants.JGROUPS_TCP_PORT.equals(port.getName())) {
+          try {
+            String ip=pod.getStatus().getPodIP();
+            if (ip != null) {
+              addresses.add(new IpAddress(ip,port.getContainerPort()));
             }
- catch (            Exception ex) {
-              LOGGER.warn("Failed to create Address {}.",pod.getStatus().getPodIP());
-            }
+          }
+ catch (          Exception ex) {
+            LOGGER.warn("Failed to create Address {}.",pod.getStatus().getPodIP());
           }
         }
       }
