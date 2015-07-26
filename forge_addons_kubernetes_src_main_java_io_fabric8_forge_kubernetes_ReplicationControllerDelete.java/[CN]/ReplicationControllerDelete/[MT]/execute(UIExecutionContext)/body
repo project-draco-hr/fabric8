@@ -1,6 +1,6 @@
 {
   String idText=replicationControllerId.getValue();
-  ReplicationController replicationController=getKubernetes().replicationControllers().inNamespace(getNamespace()).withName(idText).get();
+  ReplicationController replicationController=getKubernetes().replicationControllers().inNamespace(getNamespace()).withName(idText).getIfExists();
   if (replicationController == null) {
     System.out.println("No replicationController for id: " + idText);
   }

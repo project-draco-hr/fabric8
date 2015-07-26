@@ -3,7 +3,7 @@
   boolean result=false;
   String sid=getName(s);
   String namespace=session.getNamespace();
-  Endpoints endpoints=kubernetesClient.endpoints().inNamespace(namespace).withName(sid).get();
+  Endpoints endpoints=kubernetesClient.endpoints().inNamespace(namespace).withName(sid).getIfExists();
   ServiceSpec spec=s.getSpec();
   if (endpoints != null && spec != null) {
     List<EndpointSubset> subsets=endpoints.getSubsets();

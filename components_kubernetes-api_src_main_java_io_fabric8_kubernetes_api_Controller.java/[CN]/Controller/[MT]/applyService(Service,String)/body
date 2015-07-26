@@ -6,7 +6,7 @@
     LOG.debug("Ignoring Service: " + namespace + ":"+ id);
     return;
   }
-  Service old=kubernetes.services().inNamespace(namespace).withName(id).get();
+  Service old=kubernetes.services().inNamespace(namespace).withName(id).getIfExists();
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(service,old)) {
       LOG.info("Service hasn't changed so not doing anything");

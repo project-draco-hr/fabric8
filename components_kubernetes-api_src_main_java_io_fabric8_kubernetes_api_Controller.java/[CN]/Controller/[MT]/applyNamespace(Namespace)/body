@@ -3,7 +3,7 @@
   LOG.info("Creating a namespace " + namespace);
   String name=getName(entity);
   Objects.notNull(name,"No name for " + entity);
-  Namespace old=kubernetes.namespaces().withName(name).get();
+  Namespace old=kubernetes.namespaces().withName(name).getIfExists();
   if (!isRunning(old)) {
     try {
       Object answer=kubernetes.namespaces().create(entity);

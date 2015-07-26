@@ -6,7 +6,7 @@
     LOG.debug("Only processing Services right now so ignoring Secrets: " + id);
     return;
   }
-  Secret old=kubernetes.secrets().inNamespace(namespace).withName(id).get();
+  Secret old=kubernetes.secrets().inNamespace(namespace).withName(id).getIfExists();
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(secret,old)) {
       LOG.info("Secret hasn't changed so not doing anything");

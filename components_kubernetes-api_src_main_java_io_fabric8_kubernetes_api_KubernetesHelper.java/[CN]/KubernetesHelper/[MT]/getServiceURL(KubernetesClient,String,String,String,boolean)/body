@@ -7,7 +7,7 @@
     return serviceProtocol + "://" + serviceHost+ ":"+ servicePort;
   }
  else   if (Strings.isNotBlank(namespace)) {
-    srv=client.services().inNamespace(namespace).withName(serviceName).get();
+    srv=client.services().inNamespace(namespace).withName(serviceName).getIfExists();
   }
  else {
     for (    Service s : client.services().list().getItems()) {

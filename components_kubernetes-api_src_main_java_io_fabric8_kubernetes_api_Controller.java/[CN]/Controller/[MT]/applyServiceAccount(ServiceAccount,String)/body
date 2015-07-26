@@ -6,7 +6,7 @@
     LOG.debug("Only processing Services right now so ignoring ServiceAccount: " + id);
     return;
   }
-  ServiceAccount old=kubernetes.serviceAccounts().inNamespace(namespace).withName(id).get();
+  ServiceAccount old=kubernetes.serviceAccounts().inNamespace(namespace).withName(id).getIfExists();
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(serviceAccount,old)) {
       LOG.info("ServiceAccount hasn't changed so not doing anything");

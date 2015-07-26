@@ -6,7 +6,7 @@
     LOG.debug("Only processing Services right now so ignoring ReplicationController: " + namespace + ":"+ id);
     return;
   }
-  ReplicationController old=kubernetes.replicationControllers().inNamespace(namespace).withName(id).get();
+  ReplicationController old=kubernetes.replicationControllers().inNamespace(namespace).withName(id).getIfExists();
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(replicationController,old)) {
       LOG.info("ReplicationController hasn't changed so not doing anything");

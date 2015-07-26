@@ -3,7 +3,7 @@
     String namespace=getNamespace();
     String id=getName(entity);
     Objects.notNull(id,"No name for " + entity + " "+ sourceName);
-    Template old=kubernetes.templates().inNamespace(namespace).withName(id).get();
+    Template old=kubernetes.templates().inNamespace(namespace).withName(id).getIfExists();
     if (isRunning(old)) {
       if (UserConfigurationCompare.configEqual(entity,old)) {
         LOG.info("Template hasn't changed so not doing anything");

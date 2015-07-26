@@ -6,7 +6,7 @@
   if (Strings.isNullOrBlank(namespace)) {
     namespace=getNamespace();
   }
-  BuildConfig old=openShiftClient.buildConfigs().inNamespace(namespace).withName(id).get();
+  BuildConfig old=openShiftClient.buildConfigs().inNamespace(namespace).withName(id).getIfExists();
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(entity,old)) {
       LOG.info("BuildConfig hasn't changed so not doing anything");

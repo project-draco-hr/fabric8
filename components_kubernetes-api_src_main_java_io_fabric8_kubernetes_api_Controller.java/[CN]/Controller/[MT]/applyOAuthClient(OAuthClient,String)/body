@@ -7,7 +7,7 @@
       LOG.debug("Only processing Services right now so ignoring OAuthClient: " + id);
       return;
     }
-    OAuthClient old=openShiftClient.oAuthClients().withName(id).get();
+    OAuthClient old=openShiftClient.oAuthClients().withName(id).getIfExists();
     if (isRunning(old)) {
       if (isIgnoreRunningOAuthClients()) {
         LOG.info("Not updating the OAuthClient which are shared across namespaces as its already running");

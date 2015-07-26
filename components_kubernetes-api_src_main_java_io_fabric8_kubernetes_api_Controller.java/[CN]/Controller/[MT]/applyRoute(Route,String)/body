@@ -6,7 +6,7 @@
   if (Strings.isNullOrBlank(namespace)) {
     namespace=getNamespace();
   }
-  Route route=openShiftClient.routes().inNamespace(namespace).withName(id).get();
+  Route route=openShiftClient.routes().inNamespace(namespace).withName(id).getIfExists();
   if (route == null) {
     try {
       LOG.info("Creating Route " + namespace + ":"+ id+ " "+ KubernetesHelper.summaryText(entity));

@@ -6,7 +6,7 @@
     LOG.debug("Only processing Services right now so ignoring Pod: " + namespace + ":"+ id);
     return;
   }
-  Pod old=kubernetes.pods().inNamespace(namespace).withName(id).get();
+  Pod old=kubernetes.pods().inNamespace(namespace).withName(id).getIfExists();
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(pod,old)) {
       LOG.info("Pod hasn't changed so not doing anything");
