@@ -3,11 +3,7 @@
   String secret="secret101";
   String builderImage="fabric8/java-main";
   String osapiVersion="v1";
-  String namespace=kubernetes.getNamespace();
-  if (Strings.isNullOrEmpty(namespace)) {
-    namespace=KubernetesClient.defaultNamespace();
-    kubernetes.setNamespace(namespace);
-  }
+  String namespace=KubernetesHelper.defaultNamespace();
   String gitServiceName="gogs";
   String gitAddress=getServiceAddress(gitServiceName,namespace);
   if (gitAddress == null) {
@@ -24,7 +20,7 @@
     boolean appendNamespaceQuery=true;
     if (kubeAddress == null) {
       try {
-        kubeAddress=kubernetes.getServiceURL(ServiceNames.CDELIVERY_API,namespace,"http",false);
+        kubeAddress=KubernetesHelper.getServiceURL(kubernetes,ServiceNames.CDELIVERY_API,namespace,"http",false);
         webhookUrl=URLUtils.pathJoin(kubeAddress,"buildConfigHooks",namespace,buildName);
         appendNamespaceQuery=false;
       }
@@ -33,7 +29,7 @@
       }
     }
     if (kubeAddress == null) {
-      kubeAddress=kubernetes.getAddress();
+      kubeAddress=kubernetes.getMasterUrl().toString();
     }
     String namespacePath="";
     if (appendNamespaceQuery && !Strings.isNullOrEmpty(namespace)) {

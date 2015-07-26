@@ -2,13 +2,10 @@
   if (kubernetes == null) {
     String kubernetesAddress=kubernetesUrl.getValue();
     if (Strings.isNotBlank(kubernetesAddress)) {
-      kubernetes=new KubernetesClient(new KubernetesFactory(kubernetesAddress));
+      kubernetes=new DefaultKubernetesClient(new DefaultKubernetesClient.ConfigBuilder().masterUrl(kubernetesAddress).build());
     }
  else {
-      kubernetes=new KubernetesClient();
-    }
-    if (namespace != null) {
-      kubernetes.setNamespace(namespace);
+      kubernetes=new DefaultKubernetesClient();
     }
   }
   Objects.notNull(kubernetes,"kubernetes");

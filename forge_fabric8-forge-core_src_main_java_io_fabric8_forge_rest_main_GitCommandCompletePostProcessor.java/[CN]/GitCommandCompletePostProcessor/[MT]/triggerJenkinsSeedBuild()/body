@@ -1,6 +1,6 @@
 {
   if (!Strings.isNullOrEmpty(jenkinsSeedJob)) {
-    String address=kubernetes.getServiceURL(ServiceNames.JENKINS,kubernetes.getNamespace(),"http",false);
+    String address=KubernetesHelper.getServiceURL(kubernetes,ServiceNames.JENKINS,KubernetesHelper.defaultNamespace(),"http",false);
     if (!Strings.isNullOrEmpty(address)) {
       String jobUrl=URLUtils.pathJoin(address,"/job/",jenkinsSeedJob,"/build");
       LOG.info("Attempting to trigger the jenkins seed build on: " + jobUrl);

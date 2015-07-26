@@ -3,7 +3,7 @@
   replicationControllerId.setCompleter(new UICompleter<String>(){
     @Override public Iterable<String> getCompletionProposals(    UIContext context,    InputComponent<?,String> input,    String value){
       List<String> list=new ArrayList<String>();
-      ReplicationControllerList replicationControllers=getKubernetes().getReplicationControllers();
+      ReplicationControllerList replicationControllers=getKubernetes().replicationControllers().inNamespace(getNamespace()).list();
       if (replicationControllers != null) {
         List<ReplicationController> items=replicationControllers.getItems();
         if (items != null) {

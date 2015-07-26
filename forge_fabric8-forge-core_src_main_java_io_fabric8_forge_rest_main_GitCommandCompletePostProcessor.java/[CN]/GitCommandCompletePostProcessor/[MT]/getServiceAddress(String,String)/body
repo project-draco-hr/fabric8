@@ -1,6 +1,6 @@
 {
   LOG.info("Looking up service " + serviceName + " for namespace: "+ namespace);
-  io.fabric8.kubernetes.api.model.Service service=kubernetes.getService(serviceName,namespace);
+  io.fabric8.kubernetes.api.model.Service service=kubernetes.services().inNamespace(namespace).withName(serviceName).get();
   String serviceAddress=null;
   if (service != null) {
     String portalIP=service.getSpec().getClusterIP();
