@@ -1,7 +1,6 @@
 {
   String kubernetesMaster=configuation.getKubernetesMaster();
-  KubernetesFactory factory=new KubernetesFactory(kubernetesMaster);
   contextPathsCache=new ArrayList<String>();
-  client=new KubernetesClient(factory);
+  client=new DefaultKubernetesClient(new DefaultKubernetesClient.ConfigBuilder().masterUrl(kubernetesMaster).build());
   serviceCacheExecutor.scheduleWithFixedDelay(this,0,5,SECONDS);
 }
