@@ -5,7 +5,7 @@
   KubernetesClient kubernetes=getKubernetes();
   LetsChatClient letsChat=LetsChatKubernetes.createLetsChat(kubernetes);
   if (letsChat == null) {
-    getLog().warn("No letschat service availble n kubernetes " + kubernetes.getNamespace() + " on address: "+ kubernetes.getAddress());
+    getLog().warn("No letschat service availble n kubernetes " + namespace + " on address: "+ kubernetes.getMasterUrl());
     return null;
   }
   if (!letsChat.isValid()) {

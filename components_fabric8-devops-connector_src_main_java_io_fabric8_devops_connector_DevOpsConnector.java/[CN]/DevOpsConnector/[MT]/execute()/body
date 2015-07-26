@@ -39,7 +39,7 @@
   Map<String,String> annotations=new HashMap<>();
   jenkinsJobUrl=null;
   try {
-    String jenkinsUrl=kubernetes.getServiceURL(ServiceNames.JENKINS,kubernetes.getNamespace(),"http",true);
+    String jenkinsUrl=KubernetesHelper.getServiceURL(kubernetes,ServiceNames.JENKINS,KubernetesHelper.defaultNamespace(),"http",true);
     if (Strings.isNotBlank(jenkinsUrl)) {
       if (Strings.isNotBlank(jenkinsMonitorView)) {
         String url=URLUtils.pathJoin(jenkinsUrl,"/view",jenkinsMonitorView);
@@ -86,7 +86,7 @@
     addLink(letschatRoomLinkLabel,chatRoomLink);
   }
   ProjectConfigs.defaultEnvironments(projectConfig);
-  String consoleUrl=kubernetes.getServiceURL(ServiceNames.FABRIC8_CONSOLE,kubernetes.getNamespace(),"http",true);
+  String consoleUrl=KubernetesHelper.getServiceURL(kubernetes,ServiceNames.FABRIC8_CONSOLE,namespace,"http",true);
   if (Strings.isNotBlank(consoleUrl) && projectConfig != null) {
     Map<String,String> environments=projectConfig.getEnvironments();
     if (environments != null) {
@@ -112,7 +112,7 @@
   Controller controller=createController();
   try {
     controller.applyBuildConfig(buildConfig,"maven");
-    getLog().info("Created build configuration for " + name + " in namespace: "+ controller.getNamespace()+ " at "+ kubernetes.getAddress());
+    getLog().info("Created build configuration for " + name + " in namespace: "+ controller.getNamespace()+ " at "+ kubernetes.getMasterUrl());
   }
  catch (  Exception e) {
     getLog().error("Failed to create BuildConfig for " + KubernetesHelper.toJson(buildConfig) + ". "+ e,e);

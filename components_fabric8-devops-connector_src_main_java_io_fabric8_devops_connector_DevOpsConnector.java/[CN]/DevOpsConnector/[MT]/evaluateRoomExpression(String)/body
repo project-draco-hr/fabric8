@@ -1,9 +1,6 @@
 {
   if (Strings.isNotBlank(roomExpresion)) {
-    String namespace=getKubernetes().getNamespace();
-    if (namespace == null) {
-      namespace=KubernetesClient.defaultNamespace();
-    }
+    String namespace=KubernetesHelper.defaultNamespace();
     String answer=roomExpresion;
     answer=replaceExpression(answer,"namespace",namespace);
     answer=replaceExpression(answer,"repoName",repoName);
