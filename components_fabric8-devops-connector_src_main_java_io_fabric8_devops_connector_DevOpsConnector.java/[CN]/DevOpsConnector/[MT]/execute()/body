@@ -106,11 +106,17 @@
     specBuilder=specBuilder.withNewSource().withType("Git").withNewGit().withUri(gitUrl).endGit().endSource();
   }
   if (Strings.isNotBlank(buildImageStream) && Strings.isNotBlank(buildImageTag)) {
-    specBuilder=specBuilder.withNewStrategy().withType("Docker").withNewDockerStrategy().withNewFrom().withName(buildImageStream + ":" + buildImageTag).endFrom().endDockerStrategy().endStrategy();
+    List<EnvVar> buildEnvVars=new ArrayList<EnvVar>();
+    EnvVar jobName=new EnvVar();
+    jobName.setName("JENKINS_JOB_URL");
+    jobName.setValue(jenkinsJobUrl);
+    buildEnvVars.add(jobName);
+    specBuilder=specBuilder.withNewStrategy().withType("Custom").withNewCustomStrategy().withNewFrom().withKind("DockerImage").withName(s2iCustomBuilderImage).endFrom().withEnv(buildEnvVars).endCustomStrategy().endStrategy();
   }
   BuildConfig buildConfig=specBuilder.addNewTrigger().withType("GitHub").withNewGithub().withSecret(secret).endGithub().endTrigger().addNewTrigger().withType("Generic").withNewGeneric().withSecret(secret).endGeneric().endTrigger().endSpec().build();
   Controller controller=createController();
   try {
+    getLog().info("About to apply build config: " + new JSONObject(KubernetesHelper.toJson(buildConfig)).toString(4));
     controller.applyBuildConfig(buildConfig,"maven");
     getLog().info("Created build configuration for " + name + " in namespace: "+ controller.getNamespace()+ " at "+ kubernetes.getMasterUrl());
   }
