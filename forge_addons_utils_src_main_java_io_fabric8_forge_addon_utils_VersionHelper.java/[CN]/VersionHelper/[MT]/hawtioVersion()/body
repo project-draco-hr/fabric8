@@ -1,0 +1,23 @@
+{
+  String version=null;
+  InputStream is=null;
+  try {
+    is=Thread.currentThread().getContextClassLoader().getResourceAsStream("/META-INF/maven/io.fabric8.forge/utils/pom.xml");
+    if (is != null) {
+      String text=loadText(is);
+      version=between(text,"<hawtio.version>","</hawtio.version>");
+    }
+  }
+ catch (  Exception e) {
+  }
+ finally {
+    if (is != null) {
+      try {
+        is.close();
+      }
+ catch (      Exception e) {
+      }
+    }
+  }
+  return version;
+}

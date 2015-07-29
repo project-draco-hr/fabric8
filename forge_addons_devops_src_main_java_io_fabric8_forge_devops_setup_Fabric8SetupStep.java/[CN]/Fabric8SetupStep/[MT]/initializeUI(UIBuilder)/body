@@ -1,0 +1,96 @@
+{
+  Project project=getCurrentProject(builder.getUIContext());
+  System.out.println("====== initializeUI() and we have a project: " + project);
+  String packaging=getProjectPackaging(project);
+  boolean springBoot=hasSpringBootMavenPlugin(project);
+  List<String> choices=new ArrayList<String>();
+  if (packaging == null || springBoot || "jar".equals(packaging)) {
+    choices.add(jarImages[0]);
+  }
+  if (packaging == null || "bundle".equals(packaging)) {
+    choices.add(bundleImages[0]);
+  }
+  if (!springBoot && (packaging == null || "war".equals(packaging))) {
+    choices.add(warImages[0]);
+    choices.add(warImages[1]);
+  }
+  from.setValueChoices(choices);
+  String defaultChoice=DockerSetupHelper.defaultDockerImage(project);
+  if (defaultChoice != null && choices.contains(defaultChoice)) {
+    from.setDefaultValue(defaultChoice);
+  }
+  from.addValueChangeListener(new ValueChangeListener(){
+    @Override public void valueChanged(    ValueChangeEvent event){
+      builder.getUIContext().getAttributeMap().put("docker.from",event.getNewValue());
+    }
+  }
+);
+  builder.add(from);
+  if (packaging == null || (!packaging.equals("war") && packaging.equals("ear"))) {
+    main.setRequired(new Callable<Boolean>(){
+      @Override public Boolean call() throws Exception {
+        return DockerSetupHelper.isJarImage(from.getValue());
+      }
+    }
+);
+    main.setEnabled(main.isRequired());
+    if (project != null) {
+      main.setDefaultValue(DockerSetupHelper.defaultMainClass(project));
+    }
+    main.addValidator(new ClassNameValidator(true));
+    main.addValueChangeListener(new ValueChangeListener(){
+      @Override public void valueChanged(      ValueChangeEvent event){
+        builder.getUIContext().getAttributeMap().put("docker.main",event.getNewValue());
+      }
+    }
+);
+  }
+  builder.add(main);
+  container.setDefaultValue(new Callable<String>(){
+    @Override public String call() throws Exception {
+      String from=(String)builder.getUIContext().getAttributeMap().get("docker.from");
+      if (from != null) {
+        return asContainer(from);
+      }
+      return null;
+    }
+  }
+);
+  icon.setValueChoices(new Iterable<String>(){
+    @Override public Iterator<String> iterator(){
+      Set<String> choices=new LinkedHashSet<String>();
+      choices.add("activemq");
+      choices.add("camel");
+      choices.add("java");
+      choices.add("jetty");
+      choices.add("karaf");
+      choices.add("mule");
+      choices.add("tomcat");
+      choices.add("tomee");
+      choices.add("weld");
+      choices.add("wildfly");
+      return choices.iterator();
+    }
+  }
+);
+  icon.setDefaultValue(new Callable<String>(){
+    @Override public String call() throws Exception {
+      if (container.getValue() != null) {
+        for (        String choice : icon.getValueChoices()) {
+          if (choice.equals(container.getValue())) {
+            return choice;
+          }
+        }
+      }
+      return null;
+    }
+  }
+);
+  group.setDefaultValue(new Callable<String>(){
+    @Override public String call() throws Exception {
+      return null;
+    }
+  }
+);
+  builder.add(container).add(group).add(icon).add(test);
+}
