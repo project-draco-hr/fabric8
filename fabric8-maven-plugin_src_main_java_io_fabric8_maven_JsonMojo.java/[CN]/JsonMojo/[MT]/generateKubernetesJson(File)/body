@@ -29,6 +29,9 @@
       serviceSpecBuilder.withClusterIP("None");
       serviceSpecBuilder.withPorts(new ServicePort(null,null,1,null,null));
     }
+    if (Strings.isNotBlank(serviceType)) {
+      serviceSpecBuilder.withType(serviceType);
+    }
     serviceSpecBuilder.endSpec();
     if (headlessServices || hasPorts) {
       builder=builder.addToServiceItems(serviceBuilder.build());
