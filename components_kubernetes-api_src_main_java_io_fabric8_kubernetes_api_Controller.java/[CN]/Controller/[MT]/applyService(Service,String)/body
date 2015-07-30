@@ -13,6 +13,7 @@
     }
  else {
       if (isRecreateMode()) {
+        LOG.info("Deleting Service: " + id);
         kubernetes.services().inNamespace(namespace).withName(id).delete();
         doCreateService(service,namespace,sourceName);
       }

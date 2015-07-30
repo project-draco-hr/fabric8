@@ -13,6 +13,7 @@
     }
  else {
       if (isRecreateMode()) {
+        LOG.info("Deleting Pod: " + id);
         kubernetes.pods().inNamespace(namespace).withName(id).delete();
         doCreatePod(pod,namespace,sourceName);
       }

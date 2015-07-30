@@ -13,6 +13,7 @@
     }
  else {
       if (isRecreateMode()) {
+        LOG.info("Deleting ReplicationController: " + id);
         kubernetes.replicationControllers().inNamespace(namespace).withName(id).delete();
         doCreateReplicationController(replicationController,namespace,sourceName);
       }

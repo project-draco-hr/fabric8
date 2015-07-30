@@ -13,6 +13,7 @@
     }
  else {
       if (isRecreateMode()) {
+        LOG.info("Deleting BuildConfig: " + id);
         openShiftClient.buildConfigs().inNamespace(namespace).withName(id).delete();
         doCreateBuildConfig(entity,namespace,sourceName);
       }
