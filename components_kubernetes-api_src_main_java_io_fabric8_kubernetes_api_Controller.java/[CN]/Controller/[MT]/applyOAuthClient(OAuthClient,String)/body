@@ -1,5 +1,5 @@
 {
-  OpenShiftClient openShiftClient=toOpenshift(kubernetes);
+  OpenShiftClient openShiftClient=kubernetesClient.adapt(OpenShiftClient.class);
   if (supportOAuthClients) {
     String id=getName(entity);
     Objects.notNull(id,"No name for " + entity + " "+ sourceName);
@@ -7,7 +7,7 @@
       LOG.debug("Only processing Services right now so ignoring OAuthClient: " + id);
       return;
     }
-    OAuthClient old=openShiftClient.oAuthClients().withName(id).getIfExists();
+    OAuthClient old=openShiftClient.oAuthClients().withName(id).get();
     if (isRunning(old)) {
       if (isIgnoreRunningOAuthClients()) {
         LOG.info("Not updating the OAuthClient which are shared across namespaces as its already running");

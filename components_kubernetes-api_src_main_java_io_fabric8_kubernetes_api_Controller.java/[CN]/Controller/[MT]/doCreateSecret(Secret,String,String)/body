@@ -3,10 +3,10 @@
   try {
     Object answer;
     if (Strings.isNotBlank(namespace)) {
-      answer=kubernetes.secrets().inNamespace(namespace).create(secret);
+      answer=kubernetesClient.secrets().inNamespace(namespace).create(secret);
     }
  else {
-      answer=kubernetes.secrets().inNamespace(getNamespace()).create(secret);
+      answer=kubernetesClient.secrets().inNamespace(getNamespace()).create(secret);
     }
     logGeneratedEntity("Created secret: ",namespace,secret,answer);
   }

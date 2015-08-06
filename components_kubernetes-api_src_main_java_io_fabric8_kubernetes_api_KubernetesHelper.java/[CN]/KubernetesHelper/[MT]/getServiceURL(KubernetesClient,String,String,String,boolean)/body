@@ -7,7 +7,7 @@
     return serviceProtocol + "://" + serviceHost+ ":"+ servicePort;
   }
  else   if (Strings.isNotBlank(namespace)) {
-    srv=client.services().inNamespace(namespace).withName(serviceName).getIfExists();
+    srv=client.services().inNamespace(namespace).withName(serviceName).get();
   }
  else {
     for (    Service s : client.services().list().getItems()) {
@@ -22,7 +22,7 @@
     throw new IllegalArgumentException("No kubernetes service could be found for name: " + serviceName + " in namespace: "+ namespace);
   }
   if (isOpenShift(client)) {
-    OpenShiftClient openShiftClient=(OpenShiftClient)client;
+    OpenShiftClient openShiftClient=client.adapt(OpenShiftClient.class);
     RouteList routeList=openShiftClient.routes().inNamespace(namespace).list();
     for (    Route route : routeList.getItems()) {
       if (route.getSpec().getTo().getName().equals(serviceName)) {

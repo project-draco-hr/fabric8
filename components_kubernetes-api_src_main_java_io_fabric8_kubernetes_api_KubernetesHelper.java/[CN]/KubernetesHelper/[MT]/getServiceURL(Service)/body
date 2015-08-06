@@ -9,7 +9,7 @@
           portalIP+=":" + port;
         }
         String protocol="http://";
-        if (KubernetesHelper.isServiceSsl(spec.getClusterIP(),port,Utils.getSystemPropertyOrEnvVar(DefaultKubernetesClient.KUBERNETES_TRUST_CERT_SYSTEM_PROPERTY,false))) {
+        if (KubernetesHelper.isServiceSsl(spec.getClusterIP(),port,Utils.getSystemPropertyOrEnvVar(io.fabric8.kubernetes.client.Config.KUBERNETES_TRUST_CERT_SYSTEM_PROPERTY,false))) {
           protocol="https://";
         }
         return protocol + portalIP;

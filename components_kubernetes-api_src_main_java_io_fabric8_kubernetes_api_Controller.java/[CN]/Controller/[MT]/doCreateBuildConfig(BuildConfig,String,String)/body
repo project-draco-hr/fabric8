@@ -1,6 +1,6 @@
 {
   try {
-    toOpenshift(kubernetes).buildConfigs().inNamespace(namespace).create(entity);
+    kubernetesClient.adapt(OpenShiftClient.class).buildConfigs().inNamespace(namespace).create(entity);
   }
  catch (  Exception e) {
     onApplyError("Failed to create BuildConfig from " + sourceName + ". "+ e,e);

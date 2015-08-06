@@ -6,7 +6,7 @@
     LOG.debug("Ignoring Service: " + namespace + ":"+ id);
     return;
   }
-  Service old=kubernetes.services().inNamespace(namespace).withName(id).getIfExists();
+  Service old=kubernetesClient.services().inNamespace(namespace).withName(id).get();
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(service,old)) {
       LOG.info("Service hasn't changed so not doing anything");
@@ -14,13 +14,13 @@
  else {
       if (isRecreateMode()) {
         LOG.info("Deleting Service: " + id);
-        kubernetes.services().inNamespace(namespace).withName(id).delete();
+        kubernetesClient.services().inNamespace(namespace).withName(id).delete();
         doCreateService(service,namespace,sourceName);
       }
  else {
         LOG.info("Updating a service from " + sourceName);
         try {
-          Object answer=kubernetes.services().inNamespace(namespace).withName(id).update(service);
+          Object answer=kubernetesClient.services().inNamespace(namespace).withName(id).update(service);
           logGeneratedEntity("Updated service: ",namespace,service,answer);
         }
  catch (        Exception e) {

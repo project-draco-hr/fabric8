@@ -1,12 +1,12 @@
 {
   String id=getName(entity);
-  OpenShiftClient openShiftClient=toOpenshift(kubernetes);
+  OpenShiftClient openShiftClient=kubernetesClient.adapt(OpenShiftClient.class);
   Objects.notNull(id,"No name for " + entity + " "+ sourceName);
   String namespace=KubernetesHelper.getNamespace(entity);
   if (Strings.isNullOrBlank(namespace)) {
     namespace=getNamespace();
   }
-  BuildConfig old=openShiftClient.buildConfigs().inNamespace(namespace).withName(id).getIfExists();
+  BuildConfig old=openShiftClient.buildConfigs().inNamespace(namespace).withName(id).get();
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(entity,old)) {
       LOG.info("BuildConfig hasn't changed so not doing anything");

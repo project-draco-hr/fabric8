@@ -1,24 +1,22 @@
 {
-  if (client instanceof OpenShiftClient) {
-    URL masterUrl=client.getMasterUrl();
-    if (IS_OPENSHIFT.containsKey(masterUrl)) {
-      return IS_OPENSHIFT.get(masterUrl);
-    }
+  URL masterUrl=client.getMasterUrl();
+  if (IS_OPENSHIFT.containsKey(masterUrl)) {
+    return IS_OPENSHIFT.get(masterUrl);
+  }
  else {
-      RootPaths rootPaths=client.rootPaths();
-      if (rootPaths != null) {
-        List<String> paths=rootPaths.getPaths();
-        if (paths != null) {
-          for (          String path : paths) {
-            if (java.util.Objects.equals("/oapi",path) || java.util.Objects.equals("oapi",path)) {
-              IS_OPENSHIFT.putIfAbsent(masterUrl,true);
-              return true;
-            }
+    RootPaths rootPaths=client.rootPaths();
+    if (rootPaths != null) {
+      List<String> paths=rootPaths.getPaths();
+      if (paths != null) {
+        for (        String path : paths) {
+          if (java.util.Objects.equals("/oapi",path) || java.util.Objects.equals("oapi",path)) {
+            IS_OPENSHIFT.putIfAbsent(masterUrl,true);
+            return true;
           }
         }
       }
     }
-    IS_OPENSHIFT.putIfAbsent(masterUrl,false);
   }
+  IS_OPENSHIFT.putIfAbsent(masterUrl,false);
   return false;
 }

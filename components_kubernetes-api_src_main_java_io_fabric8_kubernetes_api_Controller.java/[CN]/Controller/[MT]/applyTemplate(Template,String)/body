@@ -1,9 +1,10 @@
 {
+  OpenShiftClient openShiftClient=kubernetesClient.adapt(OpenShiftClient.class);
   if (!isProcessTemplatesLocally()) {
     String namespace=getNamespace();
     String id=getName(entity);
     Objects.notNull(id,"No name for " + entity + " "+ sourceName);
-    Template old=kubernetes.templates().inNamespace(namespace).withName(id).getIfExists();
+    Template old=openShiftClient.templates().inNamespace(namespace).withName(id).get();
     if (isRunning(old)) {
       if (UserConfigurationCompare.configEqual(entity,old)) {
         LOG.info("Template hasn't changed so not doing anything");
@@ -12,13 +13,13 @@
         boolean recreateMode=isRecreateMode();
         recreateMode=true;
         if (recreateMode) {
-          kubernetes.templates().inNamespace(namespace).withName(id).delete();
+          openShiftClient.templates().inNamespace(namespace).withName(id).delete();
           doCreateTemplate(entity,namespace,sourceName);
         }
  else {
           LOG.info("Updating a entity from " + sourceName);
           try {
-            Object answer=kubernetes.templates().inNamespace(namespace).withName(id).update(entity);
+            Object answer=openShiftClient.templates().inNamespace(namespace).withName(id).update(entity);
             LOG.info("Updated entity: " + answer);
           }
  catch (          Exception e) {

@@ -1,7 +1,7 @@
 {
   Secret secret=null;
   try {
-    secret=kubernetes.secrets().inNamespace(namespace).withName(secretName).getIfExists();
+    secret=kubernetes.secrets().inNamespace(namespace).withName(secretName).get();
   }
  catch (  KubernetesClientException e) {
     if (e.getCode() == 404 || e.getCode() == 403) {

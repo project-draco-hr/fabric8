@@ -7,7 +7,7 @@
   }
   String namespace=getNamespace();
   try {
-    RouteList routes=KubernetesHelper.toOpenshift(kubernetes).routes().inNamespace(namespace).list();
+    RouteList routes=kubernetes.adapt(OpenShiftClient.class).routes().inNamespace(namespace).list();
     if (routes != null) {
       List<Route> items=routes.getItems();
     }

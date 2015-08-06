@@ -1,12 +1,12 @@
 {
-  OpenShiftClient openShiftClient=toOpenshift(kubernetes);
+  OpenShiftClient openShiftClient=kubernetesClient.adapt(OpenShiftClient.class);
   String id=getName(entity);
   Objects.notNull(id,"No name for " + entity + " "+ sourceName);
   String namespace=KubernetesHelper.getNamespace(entity);
   if (Strings.isNullOrBlank(namespace)) {
     namespace=getNamespace();
   }
-  Route route=openShiftClient.routes().inNamespace(namespace).withName(id).getIfExists();
+  Route route=openShiftClient.routes().inNamespace(namespace).withName(id).get();
   if (route == null) {
     try {
       LOG.info("Creating Route " + namespace + ":"+ id+ " "+ KubernetesHelper.summaryText(entity));

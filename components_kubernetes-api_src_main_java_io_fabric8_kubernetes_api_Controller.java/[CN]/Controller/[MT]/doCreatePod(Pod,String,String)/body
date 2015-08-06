@@ -7,10 +7,10 @@
     }
     Object answer;
     if (Strings.isNotBlank(namespace)) {
-      answer=kubernetes.pods().inNamespace(namespace).create(pod);
+      answer=kubernetesClient.pods().inNamespace(namespace).create(pod);
     }
  else {
-      answer=kubernetes.pods().inNamespace(getNamespace()).create(pod);
+      answer=kubernetesClient.pods().inNamespace(getNamespace()).create(pod);
     }
     LOG.info("Created pod result: " + answer);
   }

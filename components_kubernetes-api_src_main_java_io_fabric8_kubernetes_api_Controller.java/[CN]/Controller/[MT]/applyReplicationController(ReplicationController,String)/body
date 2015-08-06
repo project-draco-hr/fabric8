@@ -6,7 +6,7 @@
     LOG.debug("Only processing Services right now so ignoring ReplicationController: " + namespace + ":"+ id);
     return;
   }
-  ReplicationController old=kubernetes.replicationControllers().inNamespace(namespace).withName(id).getIfExists();
+  ReplicationController old=kubernetesClient.replicationControllers().inNamespace(namespace).withName(id).get();
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(replicationController,old)) {
       LOG.info("ReplicationController hasn't changed so not doing anything");
@@ -14,16 +14,16 @@
  else {
       if (isRecreateMode()) {
         LOG.info("Deleting ReplicationController: " + id);
-        kubernetes.replicationControllers().inNamespace(namespace).withName(id).delete();
+        kubernetesClient.replicationControllers().inNamespace(namespace).withName(id).delete();
         doCreateReplicationController(replicationController,namespace,sourceName);
       }
  else {
         LOG.info("Updating replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getName(replicationController));
         try {
-          Object answer=kubernetes.replicationControllers().inNamespace(namespace).withName(id).update(replicationController);
+          Object answer=kubernetesClient.replicationControllers().inNamespace(namespace).withName(id).update(replicationController);
           logGeneratedEntity("Updated replicationController: ",namespace,replicationController,answer);
           if (deletePodsOnReplicationControllerUpdate) {
-            kubernetes.replicationControllers().inNamespace(namespace).withName(KubernetesHelper.getName(replicationController)).delete();
+            kubernetesClient.replicationControllers().inNamespace(namespace).withName(KubernetesHelper.getName(replicationController)).delete();
             LOG.info("Deleting any pods for the replication controller to ensure they use the new configuration");
           }
  else {

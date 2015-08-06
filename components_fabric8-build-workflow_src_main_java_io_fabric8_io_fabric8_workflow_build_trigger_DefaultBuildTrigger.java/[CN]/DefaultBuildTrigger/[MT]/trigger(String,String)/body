@@ -1,6 +1,6 @@
 {
   final BlockingQueue<String> uuid=new ArrayBlockingQueue<>(1);
-  try (WebSocket webSocket=KubernetesHelper.toOpenshift(kubernetes).builds().inNamespace(namespace).watch(new Watcher<Build>(){
+  try (WebSocket webSocket=kubernetes.adapt(OpenShiftClient.class).builds().inNamespace(namespace).watch(new Watcher<Build>(){
     @Override public void eventReceived(    Action action,    Build build){
       if (action == Action.ADDED && KubernetesHelper.getName(build).equals(buildName)) {
         uuid.add(Builds.getUid(build));
