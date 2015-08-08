@@ -1,4 +1,5 @@
 {
+  String regex="\\$\\{(.*?)\\}";
   MavenProject project=getProject();
   if (project != null) {
     Properties properties=project.getProperties();
@@ -7,16 +8,20 @@
     for (    Map.Entry<String,String> entry : env.entrySet()) {
       String envValue=entry.getValue();
       if (envValue != null && !envValue.isEmpty() && envValue.contains("${") && envValue.contains("}")) {
-        String parameterName=envValue.substring(envValue.indexOf("${") + 2,envValue.indexOf("}"));
-        String name="fabric8.create-env." + parameterName;
-        String propertyValue=properties.getProperty(name);
-        if (Strings.isNotBlank(propertyValue)) {
-          getLog().info("Overriding environment variable " + parameterName + " with value: "+ propertyValue);
-          String replaced=checkAndReplaceValue(envValue,propertyValue,parameterName);
-          entry.setValue(replaced);
-        }
+        Pattern p=Pattern.compile(regex);
+        Matcher m=p.matcher(entry.getValue());
+        while (m.find()) {
+          String parameterName=m.group(1);
+          String name="fabric8.create-env." + parameterName;
+          String propertyValue=properties.getProperty(name);
+          if (Strings.isNotBlank(propertyValue)) {
+            getLog().info("Overriding environment variable " + parameterName + " with value: "+ propertyValue);
+            String replaced=checkAndReplaceValue(entry.getValue(),propertyValue,parameterName);
+            entry.setValue(replaced);
+          }
  else {
-          getLog().info("No property defined for environment variable: " + parameterName);
+            getLog().info("No property defined for environment variable: " + parameterName);
+          }
         }
       }
     }
