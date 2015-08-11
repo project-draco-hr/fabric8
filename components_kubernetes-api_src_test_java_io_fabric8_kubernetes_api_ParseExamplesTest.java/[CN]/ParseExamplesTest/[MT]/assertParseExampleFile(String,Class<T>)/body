@@ -1,7 +1,7 @@
 {
   File exampleFile=new File(getKubernetesExamplesDir(),fileName);
   assertFileExists(exampleFile);
-  T answer=OBJECT_MAPPER.reader(clazz).readValue(exampleFile);
+  T answer=OBJECT_MAPPER.readerFor(clazz).readValue(exampleFile);
   assertNotNull("Null returned while unmarshalling " + exampleFile,answer);
   LOG.info("Parsed: " + fileName + " as: "+ answer);
   return answer;
