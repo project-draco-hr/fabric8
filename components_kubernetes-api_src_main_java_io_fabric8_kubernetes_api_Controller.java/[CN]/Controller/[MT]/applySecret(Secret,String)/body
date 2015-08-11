@@ -20,7 +20,7 @@
  else {
         LOG.info("Updateing a secret from " + sourceName);
         try {
-          Object answer=kubernetesClient.secrets().inNamespace(namespace).withName(id).update(secret);
+          Object answer=kubernetesClient.secrets().inNamespace(namespace).withName(id).replace(secret);
           logGeneratedEntity("Updated secret:",namespace,secret,answer);
         }
  catch (        Exception e) {

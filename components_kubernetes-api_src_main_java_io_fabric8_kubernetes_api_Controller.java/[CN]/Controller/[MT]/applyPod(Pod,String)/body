@@ -20,7 +20,7 @@
  else {
         LOG.info("Updating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getName(pod));
         try {
-          Object answer=kubernetesClient.pods().inNamespace(namespace).withName(id).update(pod);
+          Object answer=kubernetesClient.pods().inNamespace(namespace).withName(id).replace(pod);
           LOG.info("Updated pod result: " + answer);
         }
  catch (        Exception e) {

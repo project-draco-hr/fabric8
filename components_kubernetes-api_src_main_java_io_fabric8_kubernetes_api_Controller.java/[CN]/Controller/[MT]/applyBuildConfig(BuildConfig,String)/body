@@ -24,7 +24,7 @@
           ObjectMeta metadata=KubernetesHelper.getOrCreateMetadata(entity);
           metadata.setNamespace(namespace);
           metadata.setResourceVersion(resourceVersion);
-          Object answer=openShiftClient.buildConfigs().inNamespace(namespace).withName(id).update(entity);
+          Object answer=openShiftClient.buildConfigs().inNamespace(namespace).withName(id).replace(entity);
           logGeneratedEntity("Updated BuildConfig: ",namespace,entity,answer);
         }
  catch (        Exception e) {

@@ -20,7 +20,7 @@
  else {
         LOG.info("Updating a service from " + sourceName);
         try {
-          Object answer=kubernetesClient.services().inNamespace(namespace).withName(id).update(service);
+          Object answer=kubernetesClient.services().inNamespace(namespace).withName(id).replace(service);
           logGeneratedEntity("Updated service: ",namespace,service,answer);
         }
  catch (        Exception e) {

@@ -19,7 +19,7 @@
  else {
         LOG.info("Updating a service account from " + sourceName);
         try {
-          Object answer=kubernetesClient.serviceAccounts().inNamespace(namespace).withName(id).update(serviceAccount);
+          Object answer=kubernetesClient.serviceAccounts().inNamespace(namespace).withName(id).replace(serviceAccount);
           logGeneratedEntity("Updated service account: ",namespace,serviceAccount,answer);
         }
  catch (        Exception e) {

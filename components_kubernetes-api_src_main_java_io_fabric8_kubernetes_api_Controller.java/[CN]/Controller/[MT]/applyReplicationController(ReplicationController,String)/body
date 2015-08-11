@@ -20,7 +20,7 @@
  else {
         LOG.info("Updating replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getName(replicationController));
         try {
-          Object answer=kubernetesClient.replicationControllers().inNamespace(namespace).withName(id).update(replicationController);
+          Object answer=kubernetesClient.replicationControllers().inNamespace(namespace).withName(id).replace(replicationController);
           logGeneratedEntity("Updated replicationController: ",namespace,replicationController,answer);
           if (deletePodsOnReplicationControllerUpdate) {
             kubernetesClient.replicationControllers().inNamespace(namespace).withName(KubernetesHelper.getName(replicationController)).delete();
