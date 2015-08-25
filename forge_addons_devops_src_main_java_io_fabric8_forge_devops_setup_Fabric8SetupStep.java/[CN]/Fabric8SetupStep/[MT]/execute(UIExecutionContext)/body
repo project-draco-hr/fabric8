@@ -1,35 +1,34 @@
 {
   Project project=getCurrentProject(context.getUIContext());
-  System.out.println("====== execute() and we have a project: " + project);
+  MavenFacet maven=project.getFacet(MavenFacet.class);
+  Model pom=maven.getModel();
   DockerSetupHelper.setupDocker(project,from.getValue(),main.getValue());
   facetFactory.install(project,ResourcesFacet.class);
   if (test.getValue() != null && test.getValue()) {
-    Dependency bom=DependencyBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","fabric8-project",VersionHelper.fabric8Version(),"pom")).setScopeType("import");
-    dependencyInstaller.installManaged(project,bom);
-    Dependency dependency=DependencyBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","arquillian-fabric8",null)).setScopeType("test");
-    dependencyInstaller.installManaged(project,dependency);
-    dependency=DependencyBuilder.create().setCoordinate(MavenHelpers.createCoordinate("org.jboss.arquillian.junit","arquillian-junit-container",null)).setScopeType("test");
-    dependencyInstaller.installManaged(project,dependency);
+    boolean hasFabric8Arquillian=!MavenHelpers.hasDependency(pom,"io.fabric8","fabric8-arquillian");
+    boolean hasArquillianJunitContainer=!MavenHelpers.hasDependency(pom,"org.jboss.arquillian.junit","arquillian-junit-container");
+    if (!hasFabric8Arquillian || !hasArquillianJunitContainer) {
+      if (!MavenHelpers.hasManagedDependency(pom,"io.fabric8","fabric8-project")) {
+        Dependency bom=DependencyBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","fabric8-project",VersionHelper.fabric8Version(),"pom")).setScopeType("import");
+        dependencyInstaller.installManaged(project,bom);
+      }
+    }
+    ensureMavenDependencyAdded(project,dependencyInstaller,"io.fabric8","fabric8-arquillian","test");
+    ensureMavenDependencyAdded(project,dependencyInstaller,"org.jboss.arquillian.junit","arquillian-junit-container","test");
   }
-  MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
-  MavenPlugin plugin=MavenPluginBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","fabric8-maven-plugin",VersionHelper.fabric8Version())).addExecution(ExecutionBuilder.create().setId("json").addGoal("json")).addExecution(ExecutionBuilder.create().setId("zip").addGoal("zip"));
-  pluginFacet.addPlugin(plugin);
-  MavenFacet maven=project.getFacet(MavenFacet.class);
-  Model pom=maven.getModel();
+  if (!MavenHelpers.hasMavenPlugin(pom,"io.fabric8","fabric8-maven-plugin")) {
+    MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
+    MavenPlugin plugin=MavenPluginBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","fabric8-maven-plugin",VersionHelper.fabric8Version())).addExecution(ExecutionBuilder.create().setId("json").addGoal("json")).addExecution(ExecutionBuilder.create().setId("zip").addGoal("zip"));
+    pluginFacet.addPlugin(plugin);
+  }
   Properties properties=pom.getProperties();
   boolean updated=false;
-  if (container.getValue() != null) {
-    properties.put("fabric8.label.container",container.getValue());
-    updated=true;
+  updated=MavenHelpers.updatePomProperty(properties,"fabric8.label.container",container.getValue(),updated);
+  String iconValue=icon.getValue();
+  if (Strings.isNotBlank(iconValue)) {
+    updated=MavenHelpers.updatePomProperty(properties,"fabric8.iconRef","icons/" + iconValue,updated);
   }
-  if (icon.getValue() != null) {
-    properties.put("fabric8.iconRef","icons/" + icon.getValue());
-    updated=true;
-  }
-  if (group.getValue() != null) {
-    properties.put("fabric8.label.group",group.getValue());
-    updated=true;
-  }
+  updated=MavenHelpers.updatePomProperty(properties,"fabric8.label.group",group.getValue(),updated);
   if (updated) {
     maven.setModel(pom);
   }

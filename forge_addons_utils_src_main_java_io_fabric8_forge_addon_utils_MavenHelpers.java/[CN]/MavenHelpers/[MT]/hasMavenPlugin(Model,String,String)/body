@@ -1,0 +1,16 @@
+{
+  if (pom != null) {
+    Build build=pom.getBuild();
+    if (build != null) {
+      List<Plugin> plugins=build.getPlugins();
+      if (plugins != null) {
+        for (        Plugin plugin : plugins) {
+          if (Objects.equal(groupId,plugin.getGroupId()) && Objects.equal(artifactId,plugin.getArtifactId())) {
+            return true;
+          }
+        }
+      }
+    }
+  }
+  return false;
+}

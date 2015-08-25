@@ -7,24 +7,29 @@
   MavenFacet maven=project.getFacet(MavenFacet.class);
   Model pom=maven.getModel();
   Properties properties=pom.getProperties();
-  properties.put("docker.registryPrefix","${env.DOCKER_REGISTRY}/");
-  properties.put("docker.from",dockerFromImagePrefix + fromImage);
-  properties.put("docker.image","${docker.registryPrefix}fabric8/${project.artifactId}:${project.version}");
-  properties.put("docker.port.container.jolokia","8778");
+  boolean updated=false;
+  updated=MavenHelpers.updatePomProperty(properties,"docker.registryPrefix","${env.DOCKER_REGISTRY}/",updated);
+  if (Strings.isNotBlank(fromImage)) {
+    updated=MavenHelpers.updatePomProperty(properties,"docker.from",dockerFromImagePrefix + fromImage,updated);
+  }
+  updated=MavenHelpers.updatePomProperty(properties,"docker.image","${docker.registryPrefix}fabric8/${project.artifactId}:${project.version}",updated);
+  updated=MavenHelpers.updatePomProperty(properties,"docker.port.container.jolokia","8778",updated);
   if (springBoot) {
-    properties.put("docker.assemblyDescriptorRef","artifact");
-    properties.put("docker.port.container.http","8080");
+    updated=MavenHelpers.updatePomProperty(properties,"docker.assemblyDescriptorRef","artifact",updated);
+    updated=MavenHelpers.updatePomProperty(properties,"docker.port.container.http","8080",updated);
   }
  else   if (war) {
-    properties.put("docker.assemblyDescriptorRef","rootWar");
-    properties.put("docker.port.container.http","8080");
+    updated=MavenHelpers.updatePomProperty(properties,"docker.assemblyDescriptorRef","rootWar",updated);
+    updated=MavenHelpers.updatePomProperty(properties,"docker.port.container.http","8080",updated);
   }
  else   if (bundle) {
-    properties.put("docker.assemblyDescriptorRef","artifact-with-dependencies");
-    properties.put("docker.port.container.http","8181");
+    updated=MavenHelpers.updatePomProperty(properties,"docker.assemblyDescriptorRef","artifact-with-dependencies",updated);
+    updated=MavenHelpers.updatePomProperty(properties,"docker.port.container.http","8181",updated);
   }
  else {
-    properties.put("docker.assemblyDescriptorRef","artifact-with-dependencies");
+    updated=MavenHelpers.updatePomProperty(properties,"docker.assemblyDescriptorRef","artifact-with-dependencies",updated);
   }
-  maven.setModel(pom);
+  if (updated) {
+    maven.setModel(pom);
+  }
 }
