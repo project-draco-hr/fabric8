@@ -1,5 +1,7 @@
 {
-  event.addBean(new KubernetesClientBean());
+  if (beanManager.getBeans(KubernetesClient.class).isEmpty()) {
+    event.addBean(new KubernetesClientBean());
+  }
   List<FactoryMethodContext> reverseFactories=new ArrayList<>(FactoryMethodContext.sort(factories));
   Collections.reverse(reverseFactories);
   for (  final FactoryMethodContext factoryMethodContext : reverseFactories) {
