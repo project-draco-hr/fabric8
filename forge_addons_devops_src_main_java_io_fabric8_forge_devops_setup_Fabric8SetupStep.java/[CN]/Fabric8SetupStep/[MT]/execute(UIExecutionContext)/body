@@ -3,9 +3,9 @@
   System.out.println("====== execute() and we have a project: " + project);
   DockerSetupHelper.setupDocker(project,from.getValue(),main.getValue());
   facetFactory.install(project,ResourcesFacet.class);
-  Dependency bom=DependencyBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","fabric8-project",VersionHelper.fabric8Version(),"pom")).setScopeType("import");
-  dependencyInstaller.installManaged(project,bom);
   if (test.getValue() != null && test.getValue()) {
+    Dependency bom=DependencyBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","fabric8-project",VersionHelper.fabric8Version(),"pom")).setScopeType("import");
+    dependencyInstaller.installManaged(project,bom);
     Dependency dependency=DependencyBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","arquillian-fabric8",null)).setScopeType("test");
     dependencyInstaller.installManaged(project,dependency);
     dependency=DependencyBuilder.create().setCoordinate(MavenHelpers.createCoordinate("org.jboss.arquillian.junit","arquillian-junit-container",null)).setScopeType("test");

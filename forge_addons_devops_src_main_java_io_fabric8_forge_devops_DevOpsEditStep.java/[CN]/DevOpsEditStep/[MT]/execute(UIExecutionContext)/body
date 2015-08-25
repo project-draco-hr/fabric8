@@ -97,15 +97,9 @@
   connector.setBasedir(basedir);
   connector.setGitUrl(gitUrl);
   connector.setRepoName(named);
-  connector.setRegisterWebHooks(false);
+  connector.setRegisterWebHooks(true);
+  connector.setTriggerJenkinsJob(true);
   LOG.info("Using connector: " + connector);
-  attributeMap.put("registerWebHooks",new Runnable(){
-    @Override public void run(){
-      LOG.info("Now registering webhooks!");
-      connector.registerWebHooks();
-    }
-  }
-);
   try {
     connector.execute();
   }

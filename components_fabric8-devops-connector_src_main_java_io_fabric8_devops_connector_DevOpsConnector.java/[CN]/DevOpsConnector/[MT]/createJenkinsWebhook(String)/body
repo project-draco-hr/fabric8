@@ -13,6 +13,8 @@
       jenkinsWebHook+="WithParameters?" + postfix;
     }
     createWebhook(jenkinsWebHook,this.secret);
-    triggerJenkinsWebHook(jenkinsWebHook,this.secret);
+    if (triggerJenkinsJob) {
+      triggerJenkinsWebHook(jenkinsWebHook,this.secret);
+    }
   }
 }
