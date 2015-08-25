@@ -1,6 +1,11 @@
 {
   if (api == null) {
-    api=createWebClient(HubotRestApi.class);
+    if (Strings.isNotBlank(hubotUrl)) {
+      api=createWebClient(HubotRestApi.class,hubotUrl);
+    }
+ else {
+      api=new NoopHubotRestApi();
+    }
   }
   return api;
 }
