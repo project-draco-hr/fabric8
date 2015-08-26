@@ -1,4 +1,12 @@
 {
+  for (  Method method : REFLECTIONS.getMethodsAnnotatedWith(Factory.class)) {
+    String methodName=method.getName();
+    Class sourceType=getSourceType(method);
+    Class targetType=method.getReturnType();
+    Class beanType=method.getDeclaringClass();
+    BeanDefinitionHolder holder=createConverterBean(beanType,methodName,sourceType,targetType);
+    BeanDefinitionReaderUtils.registerBeanDefinition(holder,registry);
+  }
   for (  Field field : REFLECTIONS.getFieldsAnnotatedWith(ServiceName.class)) {
     Alias alias=field.getAnnotation(Alias.class);
     ServiceName name=field.getAnnotation(ServiceName.class);
@@ -12,7 +20,7 @@
     serviceInstance.getAdditionalProperties().put(PROTOCOL,serviceProtocol);
     serviceInstance.getAdditionalProperties().put(EXTERNAL,serviceExternal);
     Class targetClass=field.getType();
-    BeanDefinitionHolder holder=createBeanDefinition(serviceInstance,serviceAlias,serviceProtocol,targetClass);
+    BeanDefinitionHolder holder=createServiceDefinition(serviceInstance,serviceAlias,serviceProtocol,targetClass);
     BeanDefinitionReaderUtils.registerBeanDefinition(holder,registry);
   }
 }

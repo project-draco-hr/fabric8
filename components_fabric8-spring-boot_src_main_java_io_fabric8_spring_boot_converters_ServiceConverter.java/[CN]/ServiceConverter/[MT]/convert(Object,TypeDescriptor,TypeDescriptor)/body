@@ -1,0 +1,21 @@
+{
+  Service source=(Service)o;
+  String serviceName=KubernetesHelper.getName(source);
+  String serviceNamespace=KubernetesHelper.getNamespace(source);
+  String serviceProtocol=getProtocolOfService(source);
+  Boolean serviceExternal=isServiceExternal(source);
+  serviceNamespace=serviceNamespace != null ? serviceNamespace : KubernetesHelper.defaultNamespace();
+  String str=KubernetesHelper.getServiceURL(kubernetesClient,serviceName,serviceNamespace,serviceProtocol,serviceExternal);
+  try {
+    if (String.class.equals(targetType.getObjectType())) {
+      return str;
+    }
+ else     if (URL.class.equals(targetType.getObjectType())) {
+      return new URL(str);
+    }
+  }
+ catch (  Throwable t) {
+    throw new RuntimeException("Failed to convert from: " + sourceType.getObjectType() + " to: "+ targetType.getObjectType());
+  }
+  throw new IllegalStateException("Invalid target type: " + targetType.getObjectType());
+}

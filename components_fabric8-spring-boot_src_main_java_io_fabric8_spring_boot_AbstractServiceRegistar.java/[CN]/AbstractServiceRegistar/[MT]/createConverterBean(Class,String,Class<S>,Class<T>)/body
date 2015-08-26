@@ -1,0 +1,10 @@
+{
+  BeanDefinitionBuilder builder=BeanDefinitionBuilder.genericBeanDefinition(FactoryConverter.class);
+  String beanName=type.getName() + "." + methodName;
+  builder.addPropertyValue("name",methodName);
+  builder.addPropertyValue("type",type.getCanonicalName());
+  builder.addPropertyValue("sourceType",sourceType.getCanonicalName());
+  builder.addPropertyValue("targetType",targetType.getCanonicalName());
+  builder.setAutowireMode(Autowire.BY_TYPE.value());
+  return new BeanDefinitionHolder(builder.getBeanDefinition(),beanName);
+}

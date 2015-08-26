@@ -1,0 +1,10 @@
+{
+  try {
+    final Object factory=beanFactory.getBean(type);
+    final Method method=factory.getClass().getDeclaredMethod(name,sourceType);
+    return (T)method.invoke(factory,o);
+  }
+ catch (  Throwable t) {
+    throw new RuntimeException("Failed to convert.",t);
+  }
+}
