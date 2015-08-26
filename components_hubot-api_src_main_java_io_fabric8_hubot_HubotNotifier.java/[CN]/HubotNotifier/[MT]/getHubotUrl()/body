@@ -1,3 +1,15 @@
 {
+  if (!initalised) {
+    initalised=true;
+    if (hubotUrl == null && hubotUrlHolder != null) {
+      hubotUrl=hubotUrlHolder.get();
+    }
+    if (Strings.isNotBlank(hubotUrl)) {
+      LOG.info("Starting HubotNotifier using address: " + hubotUrl);
+    }
+ else {
+      LOG.warn("No kubernetes service found for " + HUBOT_WEB_HOOK_SERVICE_NAME + " so chat messages just going to logs instead");
+    }
+  }
   return hubotUrl;
 }
