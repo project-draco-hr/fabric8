@@ -59,11 +59,13 @@
           results.setOutputProperty("htmlUrl",htmlUrl);
           LOG.info("Using remoteUrl: " + remoteUrl + " and remote name "+ origin);
           configureBranch(git,branch,origin,remoteUrl);
-          createKubernetesResources(user,named,remoteUrl,branch,repoClient,address);
           addDummyFileToEmptyFolders(basedir);
           String message=createCommitMessage(name,executionRequest);
+          LOG.info("Commiting and pushing to: " + remoteUrl + " and remote name "+ origin);
           doAddCommitAndPushFiles(git,credentials,personIdent,remoteUrl,branch,origin,message);
+          LOG.info("Creating any pending webhooks");
           registerWebHooks(context);
+          LOG.info("Done creating webhooks!");
         }
       }
     }
