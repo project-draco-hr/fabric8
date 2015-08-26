@@ -26,5 +26,5 @@
   }
   loadParametersFromProperties(projectProperties,parameters,paramNames);
   String templateName=projectProperties.containsKey(TEMPLATE_NAME) ? String.valueOf(projectProperties.getProperty(TEMPLATE_NAME)) : project.getArtifactId();
-  return new TemplateBuilder().withNewMetadata().withName(templateName).endMetadata().withParameters(parameters).build();
+  return new TemplateBuilder().withNewMetadata().withName(templateName).withAnnotations(getTemplateAnnotations()).endMetadata().withParameters(parameters).build();
 }
