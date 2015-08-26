@@ -1,0 +1,17 @@
+{
+  List<String> namespaceList=new ArrayList<>(Arrays.asList(namespaces));
+  String[] defaults={KubernetesHelper.defaultNamespace(),"default"};
+  for (  String defaultNamespace : defaults) {
+    if (namespaceList.contains(defaultNamespace)) {
+      namespaceList.add(defaultNamespace);
+    }
+  }
+  for (  String namespace : namespaceList) {
+    try {
+      return KubernetesHelper.getServiceURL(getKubernetes(),serviceName,namespace,"http",serviceExternal);
+    }
+ catch (    Exception e) {
+    }
+  }
+  return null;
+}

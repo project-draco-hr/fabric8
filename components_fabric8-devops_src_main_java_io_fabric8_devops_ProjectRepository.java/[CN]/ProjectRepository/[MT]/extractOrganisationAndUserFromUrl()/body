@@ -1,0 +1,16 @@
+{
+  if (Strings.isNotBlank(url)) {
+    String text=Strings.stripSuffix(url,"./");
+    text=Strings.stripSuffix(text,".git");
+    text=Strings.stripSuffix(text,"/");
+    String[] split=text.split("/");
+    if (split != null && split.length > 1) {
+      if (Strings.isNullOrBlank(user)) {
+        user=split[split.length - 2];
+      }
+      if (Strings.isNullOrBlank(repoName)) {
+        repoName=split[split.length - 1];
+      }
+    }
+  }
+}

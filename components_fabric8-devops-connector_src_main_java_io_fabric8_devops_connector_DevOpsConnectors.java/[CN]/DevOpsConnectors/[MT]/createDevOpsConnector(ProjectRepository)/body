@@ -1,0 +1,28 @@
+{
+  DevOpsConnector connector=new DevOpsConnector();
+  connector.setGitUrl(project.getGitUrl());
+  String repoName=project.getRepoName();
+  connector.setRepoName(repoName);
+  String username=project.getUser();
+  connector.setUsername(username);
+  String buildName=ProjectRepositories.createBuildName(username,repoName);
+  if (project.isGitHubProject()) {
+    String url=project.getUrl();
+    if (Strings.isNotBlank(url)) {
+      connector.setIssueTrackerUrl(URLUtils.pathJoin(url,"issues"));
+      connector.setTeamUrl(URLUtils.pathJoin(url,"graphs/contributors"));
+      connector.setReleasesUrl(URLUtils.pathJoin(url,"tags"));
+      connector.setRepositoryBrowseLink(url);
+    }
+    ProjectConfig config=ProjectConfigs.loadFromUrl(URLUtils.pathJoin(url,"blob/master/fabric8.yml"));
+    if (config == null) {
+      config=new ProjectConfig();
+      config.setFlow("maven/Deploy.groovy");
+    }
+    config.setBuildName(buildName);
+    connector.setProjectConfig(config);
+    connector.setRegisterWebHooks(false);
+    System.out.println("Created config " + config.getBuildName() + " with flow "+ config.getFlow());
+  }
+  return connector;
+}

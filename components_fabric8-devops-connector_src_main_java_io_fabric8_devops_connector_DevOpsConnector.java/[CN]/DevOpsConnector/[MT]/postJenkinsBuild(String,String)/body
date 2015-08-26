@@ -1,5 +1,5 @@
 {
-  String address=KubernetesHelper.getServiceURL(kubernetes,ServiceNames.JENKINS,namespace,"http",false);
+  String address=getServiceUrl(ServiceNames.JENKINS,false,namespace,jenkinsNamespace);
   if (Strings.isNotBlank(address)) {
     String jobUrl=URLUtils.pathJoin(address,"/createItem") + "?name=" + jobName;
     getLog().info("POSTING the jenkins job to: " + jobUrl);

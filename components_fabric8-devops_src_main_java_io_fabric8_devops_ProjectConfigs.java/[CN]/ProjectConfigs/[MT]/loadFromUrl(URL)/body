@@ -1,0 +1,22 @@
+{
+  InputStream input=null;
+  try {
+    input=url.openStream();
+  }
+ catch (  FileNotFoundException e) {
+    LOG.info("No fabric8.yml at URL: " + url);
+  }
+catch (  IOException e) {
+    LOG.warn("Failed to open fabric8.yml file at URL: " + url + ". "+ e,e);
+  }
+  if (input != null) {
+    try {
+      LOG.info("Parsing " + ProjectConfigs.FILE_NAME + " from "+ url);
+      return ProjectConfigs.parseProjectConfig(input);
+    }
+ catch (    IOException e) {
+      LOG.warn("Failed to parse " + ProjectConfigs.FILE_NAME + " from "+ url+ ". "+ e,e);
+    }
+  }
+  return null;
+}

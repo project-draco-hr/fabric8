@@ -1,0 +1,14 @@
+{
+  String basedir=System.getProperty("basedir",".");
+  File file=new File(basedir,"src/test/resources/projects.yml");
+  assertThat(file).exists();
+  List<ProjectRepository> projects=ProjectRepositories.loadProjectRepositories(file);
+  assertThat(projects).isNotNull().isNotEmpty();
+  for (  ProjectRepository project : projects) {
+    System.out.println("Got project: " + project);
+    assertThat(project.isGitHubProject()).isTrue();
+    assertThat(project.getGitUrl()).isNotEmpty();
+    assertThat(project.getRepoName()).isNotEmpty();
+    assertThat(project.getUser()).isNotEmpty();
+  }
+}

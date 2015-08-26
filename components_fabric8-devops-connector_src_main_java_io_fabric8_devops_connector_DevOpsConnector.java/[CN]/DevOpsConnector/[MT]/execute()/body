@@ -9,10 +9,7 @@
     name=jenkinsJob;
   }
   if (Strings.isNullOrBlank(name)) {
-    name=repoName;
-    if (Strings.isNotBlank(username)) {
-      name=username + "-" + name;
-    }
+    name=ProjectRepositories.createBuildName(username,repoName);
     if (projectConfig != null) {
       projectConfig.setBuildName(name);
     }
@@ -40,54 +37,39 @@
   jenkinsJobUrl=null;
   String jenkinsUrl=null;
   try {
-    jenkinsUrl=KubernetesHelper.getServiceURL(kubernetes,ServiceNames.JENKINS,KubernetesHelper.defaultNamespace(),"http",true);
+    jenkinsUrl=getJenkinsServiceUrl();
     if (Strings.isNotBlank(jenkinsUrl)) {
       if (Strings.isNotBlank(jenkinsMonitorView)) {
         String url=URLUtils.pathJoin(jenkinsUrl,"/view",jenkinsMonitorView);
-        annotations.put("fabric8.link.jenkins.monitor/url",url);
-        String label="Monitor";
-        annotations.put("fabric8.link.jenkins.monitor/label",label);
-        addLink(label,url);
+        annotationLink(annotations,"fabric8.link.jenkins.monitor/",url,"Monitor");
       }
       if (Strings.isNotBlank(jenkinsPipelineView)) {
         String url=URLUtils.pathJoin(jenkinsUrl,"/view",jenkinsPipelineView);
-        annotations.put("fabric8.link.jenkins.pipeline/url",url);
-        String label="Pipeline";
-        annotations.put("fabric8.link.jenkins.pipeline/label",label);
-        addLink(label,url);
+        annotationLink(annotations,"fabric8.link.jenkins.pipeline/",url,"Pipeline");
       }
       if (Strings.isNotBlank(name)) {
         jenkinsJobUrl=URLUtils.pathJoin(jenkinsUrl,"/job",name);
-        annotations.put("fabric8.link.jenkins.job/url",jenkinsJobUrl);
-        String label="Job";
-        annotations.put("fabric8.link.jenkins.job/label",label);
-        addLink(label,jenkinsJobUrl);
+        annotationLink(annotations,"fabric8.link.jenkins.job/",jenkinsJobUrl,"Job");
       }
     }
   }
  catch (  Exception e) {
     getLog().warn("Could not find the Jenkins URL!: " + e,e);
   }
-  String taigaLink=getProjectPageLink(taiga,taigaProject,this.taigaProjectLinkPage);
-  if (Strings.isNotBlank(taigaLink)) {
-    annotations.put("fabric8.link.taiga/url",taigaLink);
-    annotations.put("fabric8.link.taiga/label",taigaProjectLinkLabel);
-    addLink(taigaProjectLinkLabel,taigaLink);
+  if (!annotationLink(annotations,"fabric8.link.issues/",issueTrackerUrl,issueTrackerLabel)) {
+    String taigaLink=getProjectPageLink(taiga,taigaProject,this.taigaProjectLinkPage);
+    annotationLink(annotations,"fabric8.link.taiga/",taigaLink,taigaProjectLinkLabel);
   }
-  String taigaTeamLink=getProjectPageLink(taiga,taigaProject,this.taigaTeamLinkPage);
-  if (Strings.isNotBlank(taigaTeamLink)) {
-    annotations.put("fabric8.link.taiga.team/url",taigaTeamLink);
-    annotations.put("fabric8.link.taiga.team/label",taigaTeamLinkLabel);
-    addLink(taigaTeamLinkLabel,taigaTeamLink);
+  if (!annotationLink(annotations,"fabric8.link.team/",teamUrl,teamLabel)) {
+    String taigaTeamLink=getProjectPageLink(taiga,taigaProject,this.taigaTeamLinkPage);
+    annotationLink(annotations,"fabric8.link.taiga.team/",taigaTeamLink,taigaTeamLinkLabel);
   }
+  annotationLink(annotations,"fabric8.link.releases/",releasesUrl,releasesLabel);
   String chatRoomLink=getChatRoomLink(letschat);
-  if (Strings.isNotBlank(chatRoomLink)) {
-    annotations.put("fabric8.link.letschat.room/url",chatRoomLink);
-    annotations.put("fabric8.link.letschat.room/label",letschatRoomLinkLabel);
-    addLink(letschatRoomLinkLabel,chatRoomLink);
-  }
+  annotationLink(annotations,"fabric8.link.letschat.room/",chatRoomLink,letschatRoomLinkLabel);
+  annotationLink(annotations,"fabric8.link.repository.browse/",repositoryBrowseLink,repositoryBrowseLabel);
   ProjectConfigs.defaultEnvironments(projectConfig);
-  String consoleUrl=KubernetesHelper.getServiceURL(kubernetes,ServiceNames.FABRIC8_CONSOLE,namespace,"http",true);
+  String consoleUrl=getServiceUrl(ServiceNames.FABRIC8_CONSOLE,namespace,fabric8ConsoleNamespace);
   if (Strings.isNotBlank(consoleUrl) && projectConfig != null) {
     Map<String,String> environments=projectConfig.getEnvironments();
     if (environments != null) {
