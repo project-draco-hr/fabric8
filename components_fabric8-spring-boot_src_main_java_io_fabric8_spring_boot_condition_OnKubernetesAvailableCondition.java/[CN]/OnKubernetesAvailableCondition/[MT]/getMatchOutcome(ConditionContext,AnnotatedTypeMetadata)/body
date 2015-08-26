@@ -1,7 +1,9 @@
 {
-  String masterUrl=Utils.getSystemPropertyOrEnvVar(Config.KUBERNETES_MASTER_SYSTEM_PROPERTY);
-  if (!Strings.isNullOrBlank(masterUrl)) {
-    return ConditionOutcome.match();
+  ConditionOutcome outcome=inside.getMatchOutcome(context,metadata);
+  if (outcome.isMatch()) {
+    return ConditionOutcome.noMatch("Inside condition match.");
   }
-  return ConditionOutcome.noMatch("Url to kubernetes master, not found in environment variables or system properties.");
+ else {
+    return ConditionOutcome.match("Inside not matches, assuming external!");
+  }
 }

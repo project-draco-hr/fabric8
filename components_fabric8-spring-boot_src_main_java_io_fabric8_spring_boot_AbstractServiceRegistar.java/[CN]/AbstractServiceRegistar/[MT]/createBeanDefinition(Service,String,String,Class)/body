@@ -3,6 +3,7 @@
   builder.addPropertyValue("name",alias);
   builder.addPropertyValue("service",service);
   builder.addPropertyValue("type",type.getCanonicalName());
+  builder.setAutowireMode(Autowire.BY_TYPE.value());
   builder.getBeanDefinition().addQualifier(new AutowireCandidateQualifier(Protocol.class,protocol));
   return new BeanDefinitionHolder(builder.getBeanDefinition(),alias);
 }
