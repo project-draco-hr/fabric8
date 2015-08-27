@@ -53,27 +53,7 @@
         loadDependency(getLog(),kubeConfigs,dependency);
       }
     }
-    Comparator<HasMetadata> metadataComparator=new Comparator<HasMetadata>(){
-      @Override public int compare(      HasMetadata left,      HasMetadata right){
-        if (left instanceof Service) {
-          return -1;
-        }
- else         if (right instanceof Service) {
-          return 1;
-        }
- else         if (left instanceof ReplicationController) {
-          return -1;
-        }
- else         if (right instanceof ReplicationController) {
-          return -1;
-        }
- else {
-          return 0;
-        }
-      }
-    }
-;
-    Set<HasMetadata> entities=new TreeSet<>(metadataComparator);
+    Set<HasMetadata> entities=new TreeSet<>(new HasMetadataComparator());
     for (    KubernetesList c : kubeConfigs) {
       entities.addAll(c.getItems());
     }
