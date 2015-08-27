@@ -1,0 +1,24 @@
+{
+  Set<String> secretAnnotations=new HashSet<>(Arrays.asList(Annotations.Secrets.SSH_KEY,Annotations.Secrets.SSH_PUBLIC_KEY,Annotations.Secrets.GPG_KEY));
+  Set<Map.Entry<String,String>> entries=annotations.entrySet();
+  Set<String> secretNameSet=new TreeSet<>();
+  for (  Map.Entry<String,String> entry : entries) {
+    String key=entry.getKey();
+    String value=entry.getValue();
+    if (secretAnnotations.contains(key)) {
+      List<String> secretNames=parseSecretNames(value);
+      secretNameSet.addAll(secretNames);
+    }
+  }
+  List<ObjectReference> secrets=new ArrayList<>();
+  for (  String secretName : secretNameSet) {
+    ObjectReference secretRef=new ObjectReferenceBuilder().withName(secretName).build();
+    secrets.add(secretRef);
+  }
+  if (!secrets.isEmpty()) {
+    if (Strings.isNullOrBlank(serviceAccount)) {
+      serviceAccount=getProject().getArtifactId();
+    }
+    builder.addNewServiceAccountItem().withNewMetadata().withName(serviceAccount).endMetadata().withSecrets(secrets).endServiceAccountItem();
+  }
+}

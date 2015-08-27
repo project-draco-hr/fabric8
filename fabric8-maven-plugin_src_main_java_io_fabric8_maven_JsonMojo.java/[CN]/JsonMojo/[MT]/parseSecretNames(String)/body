@@ -1,0 +1,19 @@
+{
+  List<String> answer=new ArrayList<>();
+  String[] split=value.split("\\[|\\]");
+  if (split != null && split.length > 0) {
+    int i=0;
+    while (i < split.length) {
+      String name=split[i];
+      if (name.startsWith(",")) {
+        name=name.substring(1);
+      }
+      splitCommas(name,answer);
+      i+=2;
+    }
+  }
+ else {
+    splitCommas(value,answer);
+  }
+  return answer;
+}
