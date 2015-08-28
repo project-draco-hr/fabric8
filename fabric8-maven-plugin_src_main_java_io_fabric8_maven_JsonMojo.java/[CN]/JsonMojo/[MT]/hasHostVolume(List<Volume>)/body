@@ -1,0 +1,11 @@
+{
+  if (volumes != null) {
+    for (    Volume volume : volumes) {
+      HostPathVolumeSource hostPath=volume.getHostPath();
+      if (hostPath != null && Strings.isNotBlank(hostPath.getPath())) {
+        return true;
+      }
+    }
+  }
+  return false;
+}

@@ -11,8 +11,14 @@
   Map<String,String> podSpecAnnotations=getPodSpecAnnotations();
   Map<String,String> rcAnnotations=getRCAnnotations();
   KubernetesListBuilder builder=new KubernetesListBuilder();
-  addServiceAccountIfIUsingSecretAnnotations(builder,podSpecAnnotations);
-  builder.addNewReplicationControllerItem().withNewMetadata().withName(KubernetesHelper.validateKubernetesId(replicationControllerName,"fabric8.replicationController.name")).withLabels(labelMap).withAnnotations(rcAnnotations).endMetadata().withNewSpec().withReplicas(replicaCount).withSelector(labelMap).withNewTemplate().withNewMetadata().withLabels(labelMap).withAnnotations(podSpecAnnotations).endMetadata().withNewSpec().withServiceAccountName(serviceAccount).addNewContainer().withName(getKubernetesContainerName()).withImage(getDockerImage()).withImagePullPolicy(getImagePullPolicy()).withEnv(getEnvironmentVariables()).withNewSecurityContext().withPrivileged(getContainerPrivileged()).endSecurityContext().withPorts(getContainerPorts()).withVolumeMounts(getVolumeMounts()).withLivenessProbe(getLivenessProbe()).withReadinessProbe(getReadinessProbe()).endContainer().withVolumes(getVolumes()).endSpec().endTemplate().endSpec().endReplicationControllerItem();
+  boolean addedServiceAcount=addServiceAccountIfIUsingSecretAnnotations(builder,podSpecAnnotations);
+  List<Volume> volumes=getVolumes();
+  List<VolumeMount> volumeMounts=getVolumeMounts();
+  Boolean containerPrivileged=getContainerPrivileged();
+  if (addedServiceAcount) {
+    addServiceConstraints(builder,volumes,containerPrivileged);
+  }
+  builder.addNewReplicationControllerItem().withNewMetadata().withName(KubernetesHelper.validateKubernetesId(replicationControllerName,"fabric8.replicationController.name")).withLabels(labelMap).withAnnotations(rcAnnotations).endMetadata().withNewSpec().withReplicas(replicaCount).withSelector(labelMap).withNewTemplate().withNewMetadata().withLabels(labelMap).withAnnotations(podSpecAnnotations).endMetadata().withNewSpec().withServiceAccountName(serviceAccount).addNewContainer().withName(getKubernetesContainerName()).withImage(getDockerImage()).withImagePullPolicy(getImagePullPolicy()).withEnv(getEnvironmentVariables()).withNewSecurityContext().withPrivileged(containerPrivileged).endSecurityContext().withPorts(getContainerPorts()).withVolumeMounts(volumeMounts).withLivenessProbe(getLivenessProbe()).withReadinessProbe(getReadinessProbe()).endContainer().withVolumes(volumes).endSpec().endTemplate().endSpec().endReplicationControllerItem();
   if (serviceName != null) {
     Map<String,String> metricsAnnotations=new HashMap<>();
     if (metricsScrape) {

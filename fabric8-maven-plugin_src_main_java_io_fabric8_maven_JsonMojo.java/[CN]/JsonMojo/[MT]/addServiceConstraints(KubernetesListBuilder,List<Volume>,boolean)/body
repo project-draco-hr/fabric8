@@ -1,0 +1,7 @@
+{
+  boolean hostVolume=hasHostVolume(volumes);
+  if (hostVolume || containerPrivileged) {
+    RunAsUserStrategyOptions runAsUser;
+    builder.addNewSecurityContextConstraintsItem().withNewMetadata().withName(serviceAccount).endMetadata().withAllowHostDirVolumePlugin(hostVolume).withAllowPrivilegedContainer(containerPrivileged).withNewRunAsUser().withType("RunAsAny").endRunAsUser().withNewSeLinuxContext().withType("RunAsAny").endSeLinuxContext().withUsers("system:serviceaccount:" + getNamespace() + ":"+ serviceAccount).endSecurityContextConstraintsItem();
+  }
+}
