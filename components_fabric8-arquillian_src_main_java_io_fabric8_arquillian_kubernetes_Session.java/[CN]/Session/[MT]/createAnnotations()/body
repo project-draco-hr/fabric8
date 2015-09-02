@@ -1,0 +1,27 @@
+{
+  Map<String,String> annotations=new HashMap<>();
+  File dir=getBaseDir();
+  String gitUrl=findGitUrl(dir);
+  if (Strings.isNotBlank(gitUrl)) {
+    annotations.put("fabric8.devops/gitUrl",gitUrl);
+  }
+  File pomProperties=new File(dir,"target/maven-archiver/pom.properties");
+  if (pomProperties.isFile()) {
+    try {
+      Properties properties=new Properties();
+      properties.load(new FileInputStream(pomProperties));
+      Map<String,String> map=PropertiesHelper.toMap(properties);
+      for (      Map.Entry<String,String> entry : map.entrySet()) {
+        String key=entry.getKey();
+        String value=entry.getValue();
+        if (Strings.isNotBlank(key) && Strings.isNotBlank(value)) {
+          annotations.put("fabric8.devops/" + key,value);
+        }
+      }
+    }
+ catch (    IOException e) {
+      logger.warn("Failed to load " + pomProperties + " file to annotate the namespace: "+ e);
+    }
+  }
+  return annotations;
+}
