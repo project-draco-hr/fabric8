@@ -25,6 +25,7 @@
     if (entity instanceof Pod) {
       Pod pod=(Pod)entity;
       log.status("Applying pod:" + getName(pod));
+      generateSecrets(client,session,pod.getMetadata());
       controller.applyPod(pod,session.getId());
       conditions.put(1,sessionPodsReady);
     }
@@ -38,6 +39,7 @@
       ReplicationController replicationController=(ReplicationController)entity;
       log.status("Applying replication controller:" + getName(replicationController));
       controller.applyReplicationController(replicationController,session.getId());
+      generateSecrets(client,session,replicationController.getSpec().getTemplate().getMetadata());
       conditions.put(1,sessionPodsReady);
     }
  else     if (entity != null) {

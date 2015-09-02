@@ -1,0 +1,16 @@
+{
+  Map<String,String> annotations=meta.getAnnotations();
+  for (  Map.Entry<String,String> entry : annotations.entrySet()) {
+    String key=entry.getKey();
+    String value=entry.getValue();
+    if (SecretKeys.isSecretKey(key)) {
+      SecretKeys keyType=SecretKeys.fromValue(key);
+      String name=Secrets.getName(value);
+      Map<String,String> data=new HashMap<>();
+      for (      String c : Secrets.getContents(value)) {
+        data.put(c,keyType.generate());
+      }
+      client.secrets().inNamespace(session.getNamespace()).createNew().withNewMetadata().withName(name).endMetadata().withData(data).done();
+    }
+  }
+}
