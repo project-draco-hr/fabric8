@@ -1,0 +1,41 @@
+{
+  String namespace=getNamespace();
+  String id=getName(resource);
+  String kind=getKind(resource);
+  Objects.notNull(id,"No name for " + resource + " "+ sourceName);
+  if (isServicesOnlyMode()) {
+    LOG.debug("Ignoring " + kind + ": "+ namespace+ ":"+ id);
+    return;
+  }
+  T old=resources.inNamespace(namespace).withName(id).get();
+  if (isRunning(old)) {
+    if (UserConfigurationCompare.configEqual(resource,old)) {
+      LOG.info(kind + " hasn't changed so not doing anything");
+    }
+ else {
+      if (isRecreateMode()) {
+        LOG.info("Deleting " + kind + ": "+ id);
+        resources.inNamespace(namespace).withName(id).delete();
+        doCreateResource(resource,namespace,sourceName,resources);
+      }
+ else {
+        LOG.info("Updating " + kind + " from "+ sourceName);
+        try {
+          Object answer=resources.inNamespace(namespace).withName(id).replace(resource);
+          logGeneratedEntity("Updated " + kind + ": ",namespace,resource,answer);
+        }
+ catch (        Exception e) {
+          onApplyError("Failed to update " + kind + " from "+ sourceName+ ". "+ e+ ". "+ resource,e);
+        }
+      }
+    }
+  }
+ else {
+    if (!isAllowCreate()) {
+      LOG.warn("Creation disabled so not creating a " + kind + " from "+ sourceName+ " namespace "+ namespace+ " name "+ getName(resource));
+    }
+ else {
+      doCreateResource(resource,namespace,sourceName,resources);
+    }
+  }
+}

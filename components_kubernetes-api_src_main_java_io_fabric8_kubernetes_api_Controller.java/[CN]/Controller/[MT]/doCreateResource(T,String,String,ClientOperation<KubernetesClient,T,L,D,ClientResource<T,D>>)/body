@@ -1,0 +1,17 @@
+{
+  String kind=getKind(resource);
+  LOG.info("Creating a " + kind + " from "+ sourceName+ " namespace "+ namespace+ " name "+ getName(resource));
+  try {
+    Object answer;
+    if (Strings.isNotBlank(namespace)) {
+      answer=resources.inNamespace(namespace).create(resource);
+    }
+ else {
+      answer=resources.inNamespace(getNamespace()).create(resource);
+    }
+    logGeneratedEntity("Created " + kind + ": ",namespace,resource,answer);
+  }
+ catch (  Exception e) {
+    onApplyError("Failed to create " + kind + " from "+ sourceName+ ". "+ e+ ". "+ resource,e);
+  }
+}

@@ -1,0 +1,36 @@
+{
+  for (  Volume volume : volumes) {
+    PersistentVolumeClaimVolumeSource persistentVolumeClaim=volume.getPersistentVolumeClaim();
+    if (persistentVolumeClaim != null) {
+      String name=volume.getName();
+      String claimName=persistentVolumeClaim.getClaimName();
+      Boolean readOnly=persistentVolumeClaim.getReadOnly();
+      if (Strings.isNotBlank(claimName)) {
+        String accessModes;
+        if (readOnly != null && readOnly.booleanValue()) {
+          accessModes="ReadOnly";
+        }
+ else {
+          accessModes="ReadWrite";
+        }
+        Properties properties=getProject().getProperties();
+        String requestStorageProperty=String.format(VolumeType.VOLUME_PROPERTY,name,VolumeType.VOLUME_PVC_REQUEST_STORAGE);
+        String amount=properties.getProperty(requestStorageProperty);
+        if (Strings.isNullOrBlank(amount)) {
+          amount=defaultPersistentVolumeClaimRequestsStorage;
+          getLog().info("No maven property defined for `" + requestStorageProperty + "` so defaulting the requestStorage to "+ amount);
+        }
+ else {
+          getLog().debug("Maven property `" + requestStorageProperty + "` = "+ amount);
+        }
+        Map<String,Quantity> requests=new HashMap<>();
+        Quantity requestLimit=new QuantityBuilder().withAmount(amount).build();
+        requests.put("storage",requestLimit);
+        builder.addNewPersistentVolumeClaimItem().withNewMetadata().withName(claimName).endMetadata().withNewSpec().withAccessModes(accessModes).withVolumeName(claimName).withNewResources().withRequests(requests).endResources().endSpec().endPersistentVolumeClaimItem();
+      }
+ else {
+        getLog().warn("No claimName for persistent volume " + volume);
+      }
+    }
+  }
+}
