@@ -1,7 +1,7 @@
 {
   Map<String,String> annotations=new HashMap<>();
-  File dir=getBaseDir();
-  String gitUrl=findGitUrl(dir);
+  File dir=getProjectBaseDir(session);
+  String gitUrl=findGitUrl(session,dir);
   if (Strings.isNotBlank(gitUrl)) {
     annotations.put("fabric8.devops/gitUrl",gitUrl);
   }
@@ -20,7 +20,7 @@
       }
     }
  catch (    IOException e) {
-      logger.warn("Failed to load " + pomProperties + " file to annotate the namespace: "+ e);
+      session.getLogger().warn("Failed to load " + pomProperties + " file to annotate the namespace: "+ e);
     }
   }
   return annotations;
