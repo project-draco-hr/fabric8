@@ -1,0 +1,14 @@
+{
+  List<ObjectReference> secretRefs=new ArrayList<>();
+  for (  Secret secret : secrets) {
+    secretRefs.add(new ObjectReferenceBuilder().withNamespace(session.getNamespace()).withName(KubernetesHelper.getName(secret)).build());
+  }
+  client.securityContextConstraints().createNew().withNewMetadata().withName(session.getNamespace()).endMetadata().withAllowHostDirVolumePlugin(true).withAllowPrivilegedContainer(true).withNewRunAsUser().withType("RunAsAny").endRunAsUser().withNewSeLinuxContext().withType("RunAsAny").endSeLinuxContext().withUsers("system:serviceaccount:" + session.getNamespace() + ":"+ serviceAccountName).done();
+  ServiceAccount serviceAccount=client.serviceAccounts().inNamespace(session.getNamespace()).withName(serviceAccountName).get();
+  if (serviceAccount == null) {
+    client.serviceAccounts().inNamespace(session.getNamespace()).createNew().withNewMetadata().withName(serviceAccountName).endMetadata().withSecrets(secretRefs).done();
+  }
+ else {
+    client.serviceAccounts().inNamespace(session.getNamespace()).withName(serviceAccountName).replace(new ServiceAccountBuilder(serviceAccount).withNewMetadata().withName(serviceAccountName).endMetadata().addToSecrets(secretRefs.toArray(new ObjectReference[secretRefs.size()])).build());
+  }
+}

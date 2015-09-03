@@ -25,7 +25,11 @@
     if (entity instanceof Pod) {
       Pod pod=(Pod)entity;
       log.status("Applying pod:" + getName(pod));
-      generateSecrets(client,session,pod.getMetadata());
+      Set<Secret> secrets=generateSecrets(client,session,pod.getMetadata());
+      String serviceAccountName=pod.getSpec().getServiceAccountName();
+      if (Strings.isNotBlank(serviceAccountName)) {
+        generateServiceAccount(client,session,secrets,serviceAccountName);
+      }
       controller.applyPod(pod,session.getId());
       conditions.put(1,sessionPodsReady);
     }
@@ -38,12 +42,16 @@
  else     if (entity instanceof ReplicationController) {
       ReplicationController replicationController=(ReplicationController)entity;
       log.status("Applying replication controller:" + getName(replicationController));
+      Set<Secret> secrets=generateSecrets(client,session,replicationController.getSpec().getTemplate().getMetadata());
+      String serviceAccountName=replicationController.getSpec().getTemplate().getSpec().getServiceAccountName();
+      if (Strings.isNotBlank(serviceAccountName)) {
+        generateServiceAccount(client,session,secrets,serviceAccountName);
+      }
       controller.applyReplicationController(replicationController,session.getId());
-      generateSecrets(client,session,replicationController.getSpec().getTemplate().getMetadata());
       conditions.put(1,sessionPodsReady);
     }
  else     if (entity instanceof HasMetadata) {
-      log.status("Applying " + entity.getClass().getSimpleName() + ":"+ KubernetesHelper.getName((ObjectMeta)entity));
+      log.status("Applying " + entity.getClass().getSimpleName() + ":"+ KubernetesHelper.getName((HasMetadata)entity));
       controller.apply(entity,session.getId());
     }
  else     if (entity != null) {
