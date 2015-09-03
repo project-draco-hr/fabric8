@@ -8,16 +8,24 @@
   if (providers.isEmpty()) {
     return true;
   }
+  StringWriter writer=new StringWriter();
   try {
-    Callable<Boolean> compileTask=compilationTaskFactory.create(providers);
+    Callable<Boolean> compileTask=compilationTaskFactory.create(providers,writer);
     if (!compileTask.call()) {
-      processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Failed to compile provider classes");
+      processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Failed to compile provider classes. See output below.");
       return false;
     }
   }
  catch (  Exception e) {
-    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Failed to compile provider classes");
+    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Error to compile provider classes, due to: " + e.getMessage() + ". See output below.");
     return false;
+  }
+ finally {
+    String output=writer.toString();
+    if (Strings.isNullOrBlank(output)) {
+      output="success";
+    }
+    processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE,"Fabric8 model generator compiler output:" + output);
   }
   for (  Element element : roundEnv.getElementsAnnotatedWith(KubernetesProvider.class)) {
     try {
