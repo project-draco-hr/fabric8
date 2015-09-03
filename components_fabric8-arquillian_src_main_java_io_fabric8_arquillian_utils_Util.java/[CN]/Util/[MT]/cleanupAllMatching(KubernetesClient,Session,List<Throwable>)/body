@@ -18,6 +18,12 @@
  catch (    KubernetesClientException e) {
       errors.add(e);
     }
+    try {
+      client.securityContextConstraints().withName(session.getNamespace()).delete();
+    }
+ catch (    KubernetesClientException e) {
+      errors.add(e);
+    }
     List<Pod> filteredPods=client.pods().inNamespace(session.getNamespace()).list().getItems();
     if (filteredPods.isEmpty()) {
       return;
