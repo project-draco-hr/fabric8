@@ -1,9 +1,0 @@
-{
-  System.out.println("Mapping requests are not routed through apiman");
-  int httpPort=httpGatewayServer.getPort();
-  HttpClient httpClient=new HttpClient();
-  HttpMethod method=new GetMethod("http://127.0.0.1:" + httpPort + "/");
-  assertEquals(200,httpClient.executeMethod(method));
-  String content=method.getResponseBodyAsString();
-  assertEquals("{\"/hello/world\":[\"http://localhost:18181/root/\"]}",content);
-}

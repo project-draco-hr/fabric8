@@ -1,7 +1,0 @@
-{
-  final InputStream in=JsonRuleBaseBuilder.newRuleBase().rule("/foo/{path}","https://foo.com/cheese/{path}").rule("/cust/{id}/address/{addressId}","http://at.com/addresses/{addressId}/cust/id}").inputStream();
-  Map<String,HttpProxyRule> rules=JsonRuleBaseReader.parseJson(in);
-  assertEquals("https://foo.com/cheese/{path}",asString(rules.get("/foo/{path}")));
-  assertEquals("http://at.com/addresses/{addressId}/cust/id}",asString(rules.get("/cust/{id}/address/{addressId}")));
-  assertClosed(in);
-}
