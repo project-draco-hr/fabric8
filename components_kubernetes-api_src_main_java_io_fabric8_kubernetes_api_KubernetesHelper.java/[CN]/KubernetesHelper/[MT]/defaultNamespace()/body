@@ -1,10 +1,10 @@
 {
-  String namespace=System.getenv("KUBERNETES_NAMESPACE");
+  String namespace=Systems.getSystemPropertyOrEnvVar(KUBERNETES_NAMESPACE_SYSTEM_PROPERTY,KUBERNETES_NAMESPACE_ENV,null);
   if (Strings.isNullOrBlank(namespace)) {
     namespace=findDefaultKubernetesNamespace();
   }
   if (Strings.isNotBlank(namespace)) {
     return namespace;
   }
-  return "default";
+  return DEFAULT_NAMESPACE;
 }
