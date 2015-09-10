@@ -15,7 +15,7 @@
     }
   }
   KubernetesClient kubernetes=getKubernetes();
-  if (kubernetes.getMasterUrl() == null) {
+  if (kubernetes.getMasterUrl() == null || Strings.isNullOrBlank(kubernetes.getMasterUrl().toString())) {
     throw new MojoFailureException("Can't find Kubernetes master URL");
   }
   getLog().info("Using kubernetes at: " + kubernetes.getMasterUrl() + " in namespace "+ getNamespace());
