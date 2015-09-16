@@ -1,0 +1,20 @@
+{
+  Map<String,String> logs=new HashMap<>();
+  List<Pod> pods=get();
+  for (  Pod pod : pods) {
+    ObjectMeta metadata=pod.getMetadata();
+    if (metadata != null) {
+      String name=metadata.getName();
+      String namespace=metadata.getNamespace();
+      String key=name;
+      if (Strings.isNotBlank(namespace)) {
+        key=namespace + "/" + name;
+      }
+      String log=client.getPodLog(namespace,name,containerName,true);
+      if (log != null) {
+        logs.put(key,log);
+      }
+    }
+  }
+  return new PodLogsAssert(logs,containerName);
+}

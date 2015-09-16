@@ -1,0 +1,12 @@
+{
+  String basedir=System.getProperty("basedir",".");
+  File dir=new File(basedir,"target/fabric8/systest/logs");
+  String name=podName;
+  if (containerName != null) {
+    name+="." + containerName;
+  }
+  name+=".log";
+  File answer=new File(dir,name);
+  answer.getParentFile().mkdirs();
+  return answer;
+}

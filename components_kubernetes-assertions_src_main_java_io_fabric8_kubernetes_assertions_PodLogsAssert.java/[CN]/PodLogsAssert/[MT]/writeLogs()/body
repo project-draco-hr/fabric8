@@ -1,0 +1,14 @@
+{
+  Set<Map.Entry<String,String>> entries=actual.entrySet();
+  for (  Map.Entry<String,String> entry : entries) {
+    String podName=entry.getKey();
+    String value=entry.getValue();
+    File file=podLogFileName(podName);
+    try {
+      IOHelpers.writeFully(file,value);
+    }
+ catch (    IOException e) {
+      LOG.error("Failed to write log of pod " + podName + " container:"+ containerName+ " to file: "+ file+ ". "+ e,e);
+    }
+  }
+}

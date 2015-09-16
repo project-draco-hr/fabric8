@@ -1,0 +1,29 @@
+{
+  long end=System.currentTimeMillis() + timeoutMs;
+  while (true) {
+    if (System.currentTimeMillis() > end) {
+      break;
+    }
+    try {
+      block.invoke();
+    }
+ catch (    AssertionError e) {
+      if (isVerboseWaitMessage()) {
+        e.printStackTrace();
+      }
+      throw e;
+    }
+catch (    Exception e) {
+      if (isVerboseWaitMessage()) {
+        e.printStackTrace();
+      }
+      throw new AssertionError(e);
+    }
+    try {
+      Thread.sleep(1000);
+    }
+ catch (    InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  for (  String text : texts) {
+    Set<Map.Entry<String,String>> entries=actual.entrySet();
+    for (    Map.Entry<String,String> entry : entries) {
+      String podName=entry.getKey();
+      String value=entry.getValue();
+      File file=podLogFileName(podName);
+      int idx=value.indexOf(text);
+      if (idx >= 0) {
+        Fail.fail("Log of pod " + podName + " in file: "+ file+ " contains text `"+ text+ "` at "+ textCoords(value.substring(0,idx)));
+      }
+ else {
+        LOG.debug("does not contain '" + text + "' in  Log of pod "+ podName+ " in file: "+ file);
+      }
+    }
+  }
+}
