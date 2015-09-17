@@ -1,7 +1,7 @@
 {
   List<T> answer=new ArrayList<>();
   if (json.exists() && json.isFile()) {
-    MappingIterator<T> iter=objectMapper.reader(clazz).readValues(json);
+    MappingIterator<T> iter=objectMapper.readerFor(clazz).readValues(json);
     while (iter.hasNext()) {
       answer.add(iter.next());
     }
