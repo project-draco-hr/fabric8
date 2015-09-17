@@ -10,7 +10,12 @@
   controller.setThrowExceptionOnError(true);
   controller.setRecreateMode(true);
   controller.setIgnoreRunningOAuthClients(true);
-  createNamespace(client,session);
+  if (Strings.isNullOrBlank(configuration.getExistingNamespace())) {
+    createNamespace(client,session);
+  }
+ else {
+    assertNamespaceExists(client,session);
+  }
   shutdownHook=new ShutdownHook(client,session);
   Runtime.getRuntime().addShutdownHook(shutdownHook);
   try {
