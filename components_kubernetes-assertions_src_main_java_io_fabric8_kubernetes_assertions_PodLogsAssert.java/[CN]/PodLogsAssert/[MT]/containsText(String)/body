@@ -6,11 +6,8 @@
       String value=entry.getValue();
       File file=podLogFileName(podName);
       int idx=value.indexOf(text);
-      if (idx >= 0) {
-        Fail.fail("Log of pod " + podName + " in file: "+ file+ " contains text `"+ text+ "` at "+ logFileCoords(podName,value.substring(0,idx)));
-      }
- else {
-        LOG.debug("does not contain '" + text + "' in  Log of pod "+ podName+ " in file: "+ file);
+      if (idx < 0) {
+        Fail.fail("Log of pod " + podName + " in file: "+ file+ " does not contains text `"+ text+ "` at "+ logFileCoords(podName,value.substring(0,idx)));
       }
     }
   }

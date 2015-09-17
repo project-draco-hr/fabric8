@@ -1,0 +1,19 @@
+{
+  Map<String,String> newLogs=new HashMap<>();
+  Map<String,String> prefixes=new HashMap<>();
+  Set<Map.Entry<String,String>> entries=actual.entrySet();
+  for (  Map.Entry<String,String> entry : entries) {
+    String podName=entry.getKey();
+    String value=entry.getValue();
+    File file=podLogFileName(podName);
+    int idx=value.indexOf(startText);
+    if (idx >= 0) {
+      int splitIdx=idx + startText.length();
+      String remaining=value.substring(splitIdx);
+      String prefix=value.substring(0,splitIdx);
+      newLogs.put(podName,remaining);
+      prefixes.put(podName,prefix);
+    }
+  }
+  return new PodLogsAssert(newLogs,containerName,prefixes);
+}
