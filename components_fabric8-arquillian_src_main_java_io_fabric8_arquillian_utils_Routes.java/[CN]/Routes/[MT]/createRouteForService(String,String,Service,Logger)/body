@@ -1,0 +1,25 @@
+{
+  Route route=null;
+  String id=KubernetesHelper.getName(service);
+  if (Strings.isNotBlank(id) && shouldCreateRouteForService(log,service,id)) {
+    route=new Route();
+    String routeId=id;
+    KubernetesHelper.setName(route,namespace,routeId);
+    RouteSpec routeSpec=new RouteSpec();
+    ObjectReference objectRef=new ObjectReference();
+    objectRef.setName(id);
+    objectRef.setNamespace(namespace);
+    routeSpec.setTo(objectRef);
+    String host=Strings.stripSuffix(Strings.stripSuffix(id,"-service"),".");
+    routeSpec.setHost(host + "." + Strings.stripPrefix(routeDomainPostfix,"."));
+    route.setSpec(routeSpec);
+    String json=null;
+    try {
+      json=KubernetesHelper.toJson(route);
+    }
+ catch (    JsonProcessingException e) {
+      json=e.getMessage() + ". object: " + route;
+    }
+  }
+  return route;
+}

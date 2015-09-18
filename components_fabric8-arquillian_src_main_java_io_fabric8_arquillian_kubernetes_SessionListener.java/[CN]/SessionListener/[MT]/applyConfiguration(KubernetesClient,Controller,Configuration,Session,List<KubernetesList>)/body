@@ -21,6 +21,9 @@
     }
   }
 );
+  String namespace=session.getNamespace();
+  String routePrefix=namespace + "." + configuration.getRouteDomainPostfix();
+  List<Object> routes=new ArrayList<>();
   for (  Object entity : entities) {
     if (entity instanceof Pod) {
       Pod pod=(Pod)entity;
@@ -35,9 +38,16 @@
     }
  else     if (entity instanceof Service) {
       Service service=(Service)entity;
-      log.status("Applying service:" + getName(service));
+      String serviceName=getName(service);
+      log.status("Applying service:" + serviceName);
       controller.applyService(service,session.getId());
       conditions.put(2,servicesReady);
+      Route route=Routes.createRouteForService(routePrefix,namespace,service,log);
+      if (route != null) {
+        log.status("Applying route for:" + serviceName);
+        controller.applyRoute(route,"route for " + serviceName);
+        routes.add(route);
+      }
     }
  else     if (entity instanceof ReplicationController) {
       ReplicationController replicationController=(ReplicationController)entity;
@@ -59,6 +69,7 @@
       controller.apply(entity,session.getId());
     }
   }
+  entities.addAll(routes);
   if (!conditions.isEmpty()) {
     Callable<Boolean> compositeCondition=new CompositeCondition(conditions.values());
     WaitStrategy waitStrategy=new WaitStrategy(compositeCondition,configuration.getTimeout(),configuration.getPollInterval());
