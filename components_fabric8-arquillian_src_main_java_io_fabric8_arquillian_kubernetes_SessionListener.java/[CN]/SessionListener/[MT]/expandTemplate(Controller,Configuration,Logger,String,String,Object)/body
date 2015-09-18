@@ -1,0 +1,14 @@
+{
+  if (dto instanceof Template) {
+    Template template=(Template)dto;
+    KubernetesHelper.setNamespace(template,namespace);
+    String parameterNamePrefix="";
+    overrideTemplateParameters(template,configuration.getProperties(),parameterNamePrefix);
+    log.status("Applying template in namespace " + namespace);
+    dto=controller.processTemplate(template,sourceName);
+    if (dto == null) {
+      throw new IllegalArgumentException("Failed to process Template!");
+    }
+  }
+  return dto;
+}
