@@ -3,9 +3,10 @@
   for (  Map.Entry<String,String> entry : entries) {
     String podName=entry.getKey();
     String value=entry.getValue();
+    String logText=fullLogText(podName,value);
     File file=podLogFileName(podName);
     try {
-      IOHelpers.writeFully(file,value);
+      IOHelpers.writeFully(file,logText);
     }
  catch (    IOException e) {
       LOG.error("Failed to write log of pod " + podName + " container:"+ containerName+ " to file: "+ file+ ". "+ e,e);

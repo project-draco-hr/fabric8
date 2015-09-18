@@ -19,7 +19,8 @@
         }
       }
       if (idx >= 0) {
-        Fail.fail("Log of pod " + podName + " in file: "+ file+ " contains text `"+ text+ "` "+ count+ " times with the last at at "+ logFileCoords(podName,value.substring(0,idx - 1)));
+        String logText=fullLogText(podName,value.substring(0,idx - 1));
+        Fail.fail("Log of pod " + podName + " in file: "+ file+ " contains text `"+ text+ "` "+ count+ " times with the last at at "+ textCoords(logText));
       }
  else {
         LOG.debug("does not contain '" + text + "' in Log of pod "+ podName+ " in file: "+ file+ " "+ count+ " times");
