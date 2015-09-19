@@ -23,7 +23,7 @@
 );
   String namespace=session.getNamespace();
   String routePrefix=namespace + "." + configuration.getRouteDomainPostfix();
-  List<Object> routes=new ArrayList<>();
+  List<Object> extraEntities=new ArrayList<>();
   for (  Object entity : entities) {
     if (entity instanceof Pod) {
       Pod pod=(Pod)entity;
@@ -46,7 +46,7 @@
       if (route != null) {
         log.status("Applying route for:" + serviceName);
         controller.applyRoute(route,"route for " + serviceName);
-        routes.add(route);
+        extraEntities.add(route);
       }
     }
  else     if (entity instanceof ReplicationController) {
@@ -60,6 +60,18 @@
       controller.applyReplicationController(replicationController,session.getId());
       conditions.put(1,sessionPodsReady);
     }
+ else     if (entity instanceof OAuthClient) {
+      OAuthClient oc=(OAuthClient)entity;
+      ObjectMeta metadata=KubernetesHelper.getOrCreateMetadata(oc);
+      String name=metadata.getName();
+      metadata.setName(name + "-" + namespace);
+      List<String> redirectURIs=oc.getRedirectURIs();
+      redirectURIs.add("http://" + name + "."+ routePrefix);
+      oc.setRedirectURIs(redirectURIs);
+      log.status("Applying OAuthClient:" + metadata.getName());
+      controller.setSupportOAuthClients(true);
+      controller.applyOAuthClient(oc,session.getId());
+    }
  else     if (entity instanceof HasMetadata) {
       log.status("Applying " + entity.getClass().getSimpleName() + ":"+ KubernetesHelper.getName((HasMetadata)entity));
       controller.apply(entity,session.getId());
@@ -69,7 +81,7 @@
       controller.apply(entity,session.getId());
     }
   }
-  entities.addAll(routes);
+  entities.addAll(extraEntities);
   if (!conditions.isEmpty()) {
     Callable<Boolean> compositeCondition=new CompositeCondition(conditions.values());
     WaitStrategy waitStrategy=new WaitStrategy(compositeCondition,configuration.getTimeout(),configuration.getPollInterval());
