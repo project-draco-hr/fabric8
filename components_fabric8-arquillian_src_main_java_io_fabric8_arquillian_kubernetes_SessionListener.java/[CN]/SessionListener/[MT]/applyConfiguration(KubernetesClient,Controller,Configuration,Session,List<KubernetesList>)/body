@@ -71,8 +71,13 @@
         current=oc;
         create=true;
       }
+      boolean updated=false;
       List<String> redirectURIs=current.getRedirectURIs();
-      redirectURIs.add("http://" + name + "."+ routePrefix);
+      String redirectUri="http://" + name + "."+ routePrefix;
+      if (!redirectURIs.contains(redirectUri)) {
+        redirectURIs.add(redirectUri);
+        updated=true;
+      }
       current.setRedirectURIs(redirectURIs);
       log.status("Applying OAuthClient:" + name);
       controller.setSupportOAuthClients(true);
@@ -80,9 +85,11 @@
         openShiftClient.oAuthClients().create(current);
       }
  else {
-        openShiftClient.oAuthClients().withName(name).delete();
-        current.getMetadata().setResourceVersion(null);
-        openShiftClient.oAuthClients().create(current);
+        if (updated) {
+          openShiftClient.oAuthClients().withName(name).delete();
+          current.getMetadata().setResourceVersion(null);
+          openShiftClient.oAuthClients().create(current);
+        }
       }
     }
  else     if (entity instanceof HasMetadata) {
