@@ -5,6 +5,7 @@
     String parameterNamePrefix="";
     overrideTemplateParameters(template,configuration.getProperties(),parameterNamePrefix);
     log.status("Applying template in namespace " + namespace);
+    controller.installTemplate(template,sourceName);
     dto=controller.processTemplate(template,sourceName);
     if (dto == null) {
       throw new IllegalArgumentException("Failed to process Template!");

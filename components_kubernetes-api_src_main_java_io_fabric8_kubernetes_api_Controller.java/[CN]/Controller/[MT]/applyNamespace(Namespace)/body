@@ -8,9 +8,11 @@
     try {
       Object answer=kubernetesClient.namespaces().create(entity);
       logGeneratedEntity("Created namespace: ",namespace,entity,answer);
+      return true;
     }
  catch (    Exception e) {
       onApplyError("Failed to create namespace. " + e + ". "+ entity,e);
     }
   }
+  return false;
 }

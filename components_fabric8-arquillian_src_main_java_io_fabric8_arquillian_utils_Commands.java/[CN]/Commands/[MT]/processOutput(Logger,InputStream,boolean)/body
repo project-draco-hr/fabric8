@@ -1,0 +1,22 @@
+{
+  BufferedReader reader=new BufferedReader(new InputStreamReader(inputStream));
+  try {
+    while (true) {
+      String line=reader.readLine();
+      if (line == null)       break;
+      if (error) {
+        logger.error(line);
+      }
+ else {
+        logger.info(line);
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Failed to process " + (error ? "stderr" : "stdout") + ": "+ e);
+    throw e;
+  }
+ finally {
+    Closeables.closeQuietly(reader);
+  }
+}
