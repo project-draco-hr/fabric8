@@ -64,13 +64,26 @@
       OAuthClient oc=(OAuthClient)entity;
       ObjectMeta metadata=KubernetesHelper.getOrCreateMetadata(oc);
       String name=metadata.getName();
-      metadata.setName(name + "-" + namespace);
-      List<String> redirectURIs=oc.getRedirectURIs();
+      OpenShiftClient openShiftClient=client.adapt(OpenShiftClient.class);
+      OAuthClient current=openShiftClient.oAuthClients().withName(name).get();
+      boolean create=false;
+      if (current == null) {
+        current=oc;
+        create=true;
+      }
+      List<String> redirectURIs=current.getRedirectURIs();
       redirectURIs.add("http://" + name + "."+ routePrefix);
-      oc.setRedirectURIs(redirectURIs);
-      log.status("Applying OAuthClient:" + metadata.getName());
+      current.setRedirectURIs(redirectURIs);
+      log.status("Applying OAuthClient:" + name);
       controller.setSupportOAuthClients(true);
-      controller.applyOAuthClient(oc,session.getId());
+      if (create) {
+        openShiftClient.oAuthClients().create(current);
+      }
+ else {
+        openShiftClient.oAuthClients().withName(name).delete();
+        current.getMetadata().setResourceVersion(null);
+        openShiftClient.oAuthClients().create(current);
+      }
     }
  else     if (entity instanceof HasMetadata) {
       log.status("Applying " + entity.getClass().getSimpleName() + ":"+ KubernetesHelper.getName((HasMetadata)entity));
