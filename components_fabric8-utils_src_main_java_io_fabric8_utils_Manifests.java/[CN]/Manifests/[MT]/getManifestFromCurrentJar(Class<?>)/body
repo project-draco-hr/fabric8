@@ -1,0 +1,12 @@
+{
+  String jarPath=theClazz.getProtectionDomain().getCodeSource().getLocation().getPath();
+  Manifest manifest=null;
+  if (jarPath.endsWith("/")) {
+    String manifestPath=jarPath + JarFile.MANIFEST_NAME;
+    manifest=new Manifest(new File(manifestPath).toURI().toURL().openStream());
+  }
+ else {
+    manifest=Manifests.getManifest(new File(jarPath));
+  }
+  return manifest;
+}

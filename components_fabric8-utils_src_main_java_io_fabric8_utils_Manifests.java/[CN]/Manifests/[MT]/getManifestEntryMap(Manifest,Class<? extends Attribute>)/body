@@ -1,0 +1,10 @@
+{
+  Map<Attribute,String> result=new HashMap<Attribute,String>();
+  Attributes mainAttributes=manifest.getMainAttributes();
+  for (  Attribute attributeName : attributeEnum.getEnumConstants()) {
+    if (mainAttributes.getValue(attributeName.value()) != null && !mainAttributes.getValue(attributeName.value()).contains("${")) {
+      result.put(attributeName,mainAttributes.getValue(attributeName.value()));
+    }
+  }
+  return result;
+}
