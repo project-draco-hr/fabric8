@@ -1,5 +1,5 @@
 {
-  OpenshiftMockClient mock=new OpenshiftMockClient();
+  KubernetesMockClient mock=new KubernetesMockClient();
   mock.getMasterUrl().andReturn(new URL("https://kubernetes.default.svc")).anyTimes();
   mock.rootPaths().andReturn(new RootPathsBuilder().addToPaths("/api","/api/v1beta3","/api/v1","/controllers","/healthz","/healthz/ping","/logs/","/metrics","/ready","/osapi","/osapi/v1beta3","/oapi","/oapi/v1","/swaggerapi/").build()).anyTimes();
   Service kubernetesService=new ServiceBuilder().withNewMetadata().withName("kubernetes").endMetadata().withNewSpec().addNewPort().withProtocol("TCP").withPort(443).withNewTargetPort(443).endPort().withPortalIP("172.30.17.2").endSpec().build();
@@ -9,7 +9,7 @@
   mock.services().inNamespace("default").withName("fabric8-console-service").get().andReturn(consoleService).anyTimes();
   mock.services().inNamespace("default").withName("app-library").get().andReturn(appLibService).anyTimes();
   mock.services().list().andReturn(new ServiceListBuilder().addToItems(kubernetesService,consoleService,appLibService).build()).anyTimes();
-  mock.routes().inNamespace("default").list().andReturn(new RouteListBuilder().build()).anyTimes();
   mock.endpoints().inNamespace("default").list().andReturn(new EndpointsListBuilder().build()).anyTimes();
+  mock.adapt(OpenShiftClient.class).andReturn(getOpenshiftClient()).anyTimes();
   return mock.replay();
 }
