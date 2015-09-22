@@ -1,4 +1,18 @@
 {
+  MavenFacet maven=project.getFacet(MavenFacet.class);
+  if (maven != null) {
+    Model pom=maven.getModel();
+    if (pom != null) {
+      Properties properties=pom.getProperties();
+      String answer=properties.getProperty("docker.env.MAIN");
+      if (Strings.isNullOrBlank(answer)) {
+        answer=properties.getProperty("fabric8.env.MAIN");
+      }
+      if (Strings.isNotBlank(answer)) {
+        return answer;
+      }
+    }
+  }
   if (CamelProjectHelper.findCamelCDIDependency(project) != null) {
     return "org.apache.camel.cdi.Main";
   }
