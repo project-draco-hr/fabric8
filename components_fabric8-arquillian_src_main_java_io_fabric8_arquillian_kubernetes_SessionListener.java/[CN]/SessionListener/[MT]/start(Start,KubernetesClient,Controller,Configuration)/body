@@ -16,25 +16,28 @@
  else {
     assertNamespaceExists(client,session,configuration);
   }
+  boolean disableEnvironmentInit=Systems.getEnvVarOrSystemProperty(Constants.FABRIC8_DISABLE_ENVIRONMENT_INIT,Boolean.FALSE);
   shutdownHook=new ShutdownHook(client,session);
   Runtime.getRuntime().addShutdownHook(shutdownHook);
   try {
     URL configUrl=configuration.getConfigUrl();
     List<String> dependencies=!configuration.getDependencies().isEmpty() ? configuration.getDependencies() : Util.getMavenDependencies(session);
     List<KubernetesList> kubeConfigs=new LinkedList<>();
-    for (    String dependency : dependencies) {
-      log.info("Found dependency: " + dependency);
-      loadDependency(log,kubeConfigs,dependency,controller,configuration,namespace);
+    if (!disableEnvironmentInit) {
+      for (      String dependency : dependencies) {
+        log.info("Found dependency: " + dependency);
+        loadDependency(log,kubeConfigs,dependency,controller,configuration,namespace);
+      }
+      if (configUrl != null) {
+        log.status("Applying kubernetes configuration from: " + configUrl);
+        Object dto=loadJson(readAsString(configUrl));
+        dto=expandTemplate(controller,configuration,log,namespace,configUrl.toString(),dto);
+        KubernetesList kubeList=KubernetesHelper.asKubernetesList(dto);
+        List<HasMetadata> items=kubeList.getItems();
+        kubeConfigs.add(kubeList);
+      }
     }
-    if (configUrl != null) {
-      log.status("Applying kubernetes configuration from: " + configUrl);
-      Object dto=loadJson(readAsString(configUrl));
-      dto=expandTemplate(controller,configuration,log,namespace,configUrl.toString(),dto);
-      KubernetesList kubeList=KubernetesHelper.asKubernetesList(dto);
-      List<HasMetadata> items=kubeList.getItems();
-      kubeConfigs.add(kubeList);
-    }
-    if (applyConfiguration(client,controller,configuration,session,kubeConfigs)) {
+    if (disableEnvironmentInit || applyConfiguration(client,controller,configuration,session,kubeConfigs)) {
       displaySessionStatus(client,session);
     }
  else {
