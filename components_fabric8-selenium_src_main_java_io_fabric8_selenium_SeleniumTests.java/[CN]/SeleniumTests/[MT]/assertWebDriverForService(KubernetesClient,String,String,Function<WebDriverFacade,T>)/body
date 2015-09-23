@@ -1,7 +1,8 @@
 {
-  WebDriver driver=createWebDriverForService(client,namespace,serviceName);
+  WebDriver driver=createWebDriver();
   try {
-    WebDriverFacade facade=new WebDriverFacade(driver);
+    WebDriverFacade facade=new WebDriverFacade(driver,client,namespace);
+    facade.navigateToService(serviceName);
     T apply=block.apply(facade);
     String property=Systems.getEnvVarOrSystemProperty(WAIT_AFTER_SELENIUM);
     if (property != null) {

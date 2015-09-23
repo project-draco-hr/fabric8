@@ -1,34 +1,5 @@
 {
-  String driverName=Systems.getEnvVarOrSystemProperty(FABRIC8_WEBDRIVER_NAME);
-  if (driverName != null) {
-    driverName=driverName.toLowerCase();
-    if (driverName.equals("chrome")) {
-      return new ChromeDriver();
-    }
- else     if (driverName.equals("edge")) {
-      return new EdgeDriver();
-    }
- else     if (driverName.equals("firefox")) {
-      return new FirefoxDriver();
-    }
- else     if (driverName.equals("htmlunit")) {
-      return new HtmlUnitDriver();
-    }
- else     if (driverName.equals("internetexplorer") || driverName.equals("ie")) {
-      return new InternetExplorerDriver();
-    }
- else     if (driverName.equals("opera")) {
-      return new OperaDriver();
-    }
- else     if (driverName.equals("phantomjs")) {
-      return new PhantomJSDriver();
-    }
- else     if (driverName.equals("safari")) {
-      return new SafariDriver();
-    }
- else     if (driverName.equals("htmlunit")) {
-      return new HtmlUnitDriver();
-    }
-  }
-  return new HtmlUnitDriver();
+  WebDriver answer=doCreateWebDriver();
+  logInfo("Using WebDriver implementation: " + answer);
+  return answer;
 }

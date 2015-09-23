@@ -1,0 +1,7 @@
+{
+  String url=KubernetesHelper.getServiceURL(client,serviceName,namespace,"http",true);
+  assertNotNull("No external Service URL could be found for namespace: " + namespace + " and name: "+ serviceName,url);
+  assertTrue("No external Service URL could be found for namespace: " + namespace + " and name: "+ serviceName,Strings.isNotBlank(url));
+  logInfo("Service " + serviceName + " in namespace: "+ namespace+ " URL = "+ url);
+  return url;
+}
