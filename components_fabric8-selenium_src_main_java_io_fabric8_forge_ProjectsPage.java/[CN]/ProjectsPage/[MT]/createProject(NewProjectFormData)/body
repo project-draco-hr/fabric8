@@ -1,0 +1,19 @@
+{
+  goToProjectsPage();
+  WebDriverFacade facade=getFacade();
+  WebDriver driver=getDriver();
+  facade.untilLinkClicked(createProjectBy);
+  By nextButton=By.xpath("//button[@ng-click='execute()']");
+  facade.setDefaultTimeoutInSeconds(60 * 3);
+  String named=form.getNamed();
+  facade.form().clearAndSendKeys(By.xpath("//input[@ng-model='entity.named']"),named).submitButton(nextButton).submit();
+  facade.form().completeComboBox(By.xpath("//label[text() = 'Archetype']/following::input[@type='text']"),form.getArchetypeFilter()).submitButton(nextButton).submit();
+  untilNextWizardPage(facade,nextButton);
+  facade.form().submitButton(nextButton).submit();
+  untilNextWizardPage(facade,nextButton);
+  facade.form().completeComboBox(By.xpath("//label[text() = 'Flow']/following::input[@type='text']"),form.getJenkinsFileFilter()).submitButton(nextButton).submit();
+  facade.untilIsDisplayed(By.xpath("//a[@href='/forge/repos' and text()='Done']"));
+  logInfo("Created project: " + named);
+  goToProjectsPage();
+  facade.untilIsDisplayed(By.partialLinkText(named));
+}

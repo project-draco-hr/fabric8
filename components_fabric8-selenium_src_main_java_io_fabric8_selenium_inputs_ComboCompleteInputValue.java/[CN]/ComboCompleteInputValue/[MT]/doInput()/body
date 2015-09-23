@@ -1,0 +1,19 @@
+{
+  final WebDriverFacade facade=getFacade();
+  final By firstBy=getBy();
+  facade.sleep(Millis.seconds(2));
+  WebElement element=facade.findOptionalElement(firstBy);
+  if (element == null) {
+    return null;
+  }
+  super.doInputOnElement(element);
+  logInput("" + firstBy + " value: "+ getValue());
+  facade.sleep(Millis.seconds(2));
+  element=facade.findOptionalElement(firstBy);
+  if (element != null) {
+    element.sendKeys(Keys.TAB);
+    facade.sleep(Millis.seconds(2));
+    element=facade.findOptionalElement(firstBy);
+  }
+  return element;
+}

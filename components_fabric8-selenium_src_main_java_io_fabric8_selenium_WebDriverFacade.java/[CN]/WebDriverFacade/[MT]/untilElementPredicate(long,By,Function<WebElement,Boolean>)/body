@@ -1,0 +1,24 @@
+{
+  String message="" + by + " matches  "+ elementPredicate;
+  return until(message,timeoutInSeconds,new ExpectedCondition<Boolean>(){
+    public Boolean apply(    WebDriver driver){
+      WebElement element=findOptionalElement(by);
+      if (element == null) {
+        logWait("" + by + "");
+        return false;
+      }
+ else {
+        Boolean value=elementPredicate.apply(element);
+        if (value != null && value.booleanValue()) {
+          logInfo("" + by + " matches  "+ elementPredicate+ "");
+          return true;
+        }
+ else {
+          logWait("" + by + " matches  "+ elementPredicate+ "");
+          return false;
+        }
+      }
+    }
+  }
+);
+}

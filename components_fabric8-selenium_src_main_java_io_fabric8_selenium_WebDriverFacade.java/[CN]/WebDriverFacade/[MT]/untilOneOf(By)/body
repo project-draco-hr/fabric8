@@ -1,0 +1,18 @@
+{
+  final List<By> byList=Arrays.asList(bys);
+  String message="One of these is available: " + byList;
+  until(message,defaultTimeoutInSeconds,new ExpectedCondition<Boolean>(){
+    @Override public Boolean apply(    WebDriver driver){
+      for (      By by : bys) {
+        WebElement element=findOptionalElement(by);
+        if (element != null && element.isDisplayed() && element.isEnabled()) {
+          logInfo("Found " + element + " for "+ by+ "");
+          return true;
+        }
+      }
+      logInfo("Still not found any of " + byList + "");
+      return false;
+    }
+  }
+);
+}

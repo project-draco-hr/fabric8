@@ -1,0 +1,19 @@
+{
+  String message="click link " + by;
+  return until(message,timeoutInSeconds,new ExpectedCondition<Boolean>(){
+    public Boolean apply(    WebDriver driver){
+      WebElement link=findOptionalElement(by);
+      if (link != null) {
+        logInfo("Clicking link: " + by + "");
+        link.click();
+        logInfo("Clicked link: " + by + " now");
+        return true;
+      }
+ else {
+        logInfo("Not found link " + by + "");
+        return false;
+      }
+    }
+  }
+);
+}

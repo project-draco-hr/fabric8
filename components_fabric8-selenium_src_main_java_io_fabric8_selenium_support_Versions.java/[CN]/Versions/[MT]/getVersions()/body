@@ -1,0 +1,15 @@
+{
+  if (versions == null) {
+    versions=new Properties();
+    String basedir=System.getProperty("basedir",".");
+    versionsFile=new File(basedir,"target/test-classes/versions.properties");
+    assertTrue("Versions file does not exist: " + versionsFile.getPath(),versionsFile.exists() && versionsFile.isFile());
+    try {
+      versions.load(new FileInputStream(versionsFile));
+    }
+ catch (    IOException e) {
+      throw new AssertionError("Failed to load " + versionsFile.getPath() + ". "+ e,e);
+    }
+  }
+  return versions;
+}

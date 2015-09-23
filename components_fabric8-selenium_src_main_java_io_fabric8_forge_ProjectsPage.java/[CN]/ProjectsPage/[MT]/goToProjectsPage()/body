@@ -1,0 +1,17 @@
+{
+  WebDriverFacade facade=getFacade();
+  WebDriver driver=getDriver();
+  facade.untilLinkClickedLoop(projectsLinkBy,buildConfigsUrl);
+  facade.untilOneOf(signInBy,createProjectBy);
+  WebElement signIn=facade.findOptionalElement(signInBy);
+  if (signIn != null && signIn.isDisplayed()) {
+    logInfo("Waiting for signin button to be clicked");
+    facade.untilLinkClicked(signInBy);
+    signIntoGogs();
+  }
+ else {
+    logInfo("Sign in button not present");
+  }
+  logWait("button: " + createProjectBy + "");
+  facade.untilIsEnabled(createProjectBy);
+}

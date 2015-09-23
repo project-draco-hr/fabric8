@@ -1,0 +1,44 @@
+{
+  getFacade().until("Form inputs: " + inputValues,new ExpectedCondition<Boolean>(){
+    @Override public Boolean apply(    WebDriver driver){
+      logWait("" + inputValues + " on "+ driver.getCurrentUrl());
+      WebElement submitElement=null;
+      for (      InputValue inputValue : inputValues) {
+        submitElement=inputValue.doInput();
+        if (submitElement == null) {
+          logInfo("Missing " + inputValue + "");
+          return false;
+        }
+      }
+      if (submitBy == null && submitElement == null) {
+        fail("No input fields submitted yet");
+        return false;
+      }
+ else {
+        getFacade().sleep(Millis.seconds(5));
+        if (submitBy != null) {
+          getFacade().untilIsEnabled(submitBy);
+          submitElement=getFacade().findOptionalElement(submitBy);
+          if (submitElement == null) {
+            logWarn("Could not find submit button " + submitBy + "");
+            return false;
+          }
+ else {
+            if (!submitElement.isDisplayed() || !submitElement.isEnabled()) {
+              logWarn("Submit button " + submitBy + " not enabled and visible");
+              return false;
+            }
+            logInfo("Submitting form: " + inputValues + " on "+ submitElement+ "");
+            submitElement.click();
+          }
+        }
+ else {
+          logInfo("Submitting form: " + inputValues + " on "+ submitElement+ "");
+          submitElement.submit();
+        }
+        return true;
+      }
+    }
+  }
+);
+}

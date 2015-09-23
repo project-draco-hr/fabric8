@@ -1,0 +1,17 @@
+{
+  WebElement element=getFacade().findOptionalElement(by);
+  if (element != null) {
+    for (int i=0; i < 10; i++) {
+      try {
+        doInputOnElement(element);
+        return element;
+      }
+ catch (      StaleElementReferenceException e) {
+        logWarn("Caught: " + e);
+        getFacade().sleep(Millis.seconds(5));
+      }
+    }
+    logWarn("Failed to perform input on " + by + " to due repeated StaleElementReferenceException!");
+  }
+  return null;
+}

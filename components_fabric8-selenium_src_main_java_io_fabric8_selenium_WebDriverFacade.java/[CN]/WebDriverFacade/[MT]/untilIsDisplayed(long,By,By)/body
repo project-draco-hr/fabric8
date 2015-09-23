@@ -1,0 +1,24 @@
+{
+  String message="" + firstBy + " then  "+ secondBy+ " is displayed";
+  return until(message,timeoutInSeconds,new ExpectedCondition<Boolean>(){
+    public Boolean apply(    WebDriver driver){
+      WebElement element=findOptionalElement(firstBy);
+      if (element == null) {
+        logWait("" + firstBy + "");
+        return false;
+      }
+ else {
+        WebElement link=findOptionalElement(element,secondBy);
+        if (link != null && link.isDisplayed()) {
+          logInfo("" + firstBy + " then "+ secondBy+ " displayed");
+          return true;
+        }
+ else {
+          logWait("" + firstBy + " then "+ secondBy+ " displayed");
+          return false;
+        }
+      }
+    }
+  }
+);
+}
