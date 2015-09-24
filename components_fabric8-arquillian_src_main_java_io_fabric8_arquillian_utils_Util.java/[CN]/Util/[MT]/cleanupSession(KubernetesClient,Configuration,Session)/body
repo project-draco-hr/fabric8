@@ -1,0 +1,16 @@
+{
+  if (configuration.isNamespaceCleanupEnabled()) {
+    waitUntilWeCanDestroyNamespace(session);
+    List<Throwable> errors=new ArrayList<>();
+    cleanupAllMatching(client,session,errors);
+    try {
+      client.namespaces().withName(session.getNamespace()).delete();
+    }
+ catch (    Exception e) {
+      errors.add(e);
+    }
+    if (!errors.isEmpty()) {
+      throw new MultiException("Error while cleaning up session.",errors);
+    }
+  }
+}

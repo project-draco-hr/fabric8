@@ -17,7 +17,7 @@
     assertNamespaceExists(client,session,configuration);
   }
   boolean disableEnvironmentInit=Systems.getEnvVarOrSystemProperty(Constants.FABRIC8_DISABLE_ENVIRONMENT_INIT,Boolean.FALSE);
-  shutdownHook=new ShutdownHook(client,session);
+  shutdownHook=new ShutdownHook(client,configuration,session);
   Runtime.getRuntime().addShutdownHook(shutdownHook);
   try {
     URL configUrl=configuration.getConfigUrl();
@@ -46,7 +46,7 @@
   }
  catch (  Exception e) {
     try {
-      cleanupSession(client,session);
+      cleanupSession(client,configuration,session);
     }
  catch (    MultiException me) {
       throw e;
