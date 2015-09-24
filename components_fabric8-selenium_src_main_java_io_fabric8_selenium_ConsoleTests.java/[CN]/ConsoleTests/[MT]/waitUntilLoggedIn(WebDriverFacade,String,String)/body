@@ -1,0 +1,29 @@
+{
+  String namespace=facade.getNamespace();
+  facade.sleep(Millis.seconds(5));
+  for (int i=0; i < 5; i++) {
+    try {
+      facade.untilIsDisplayed(inputUsernameBy);
+    }
+ catch (    Throwable e) {
+      facade.logWarn("Trying to reload the browser!");
+      facade.getDriver().navigate().refresh();
+    }
+  }
+  facade.form().clearAndSendKeys(inputUsernameBy,userName).clearAndSendKeys(inputPasswordBy,password).submit();
+  facade.logInfo("Logged in - waiting for the browser initialise the web app");
+  facade.sleep(Millis.seconds(5));
+  facade.logInfo("Logged in!");
+  for (int i=0; i < 5; i++) {
+    try {
+      facade.untilIsEnabled(namespaceSelectBy);
+    }
+ catch (    Throwable e) {
+      facade.logWarn("Trying to reload the browser!");
+      facade.getDriver().navigate().refresh();
+    }
+  }
+  facade.untilSelectedByVisibleText(namespaceSelectBy,namespace);
+  facade.sleep(Millis.seconds(10));
+  facade.logInfo("Viewing namespace: " + namespace);
+}

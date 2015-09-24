@@ -3,9 +3,13 @@
     PodSpec spec=pod.getSpec();
     if (spec != null) {
       List<Container> containers=spec.getContainers();
-      if (containers != null && containers.size() > 0) {
-        Container container=containers.get(0);
-        return getContainerEnvVar(container,envVarName);
+      if (containers != null) {
+        for (        Container container : containers) {
+          String answer=getContainerEnvVar(container,envVarName);
+          if (Strings.isNotBlank(answer)) {
+            return answer;
+          }
+        }
       }
     }
   }
