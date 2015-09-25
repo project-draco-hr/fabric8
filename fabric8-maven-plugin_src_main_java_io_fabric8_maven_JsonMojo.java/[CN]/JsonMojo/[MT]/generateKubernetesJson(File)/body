@@ -1,9 +1,12 @@
 {
   MavenProject project=getProject();
   Map<String,String> labelMap=getLabels();
-  String name=getKubernetesName();
-  if (labelMap.isEmpty() && Strings.isNotBlank(name)) {
-    labelMap.put("component",name);
+  String name=getProjectName();
+  if (!labelMap.containsKey("version")) {
+    labelMap.put("version",project.getVersion());
+  }
+  if (!labelMap.containsKey("project") && Strings.isNotBlank(name)) {
+    labelMap.put("project",name);
   }
   if (!labelMap.containsKey("provider") && Strings.isNotBlank(provider)) {
     labelMap.put("provider",provider);
