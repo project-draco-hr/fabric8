@@ -60,6 +60,31 @@
     }
   }
   ProjectConfigs.defaultEnvironments(config);
+  String projectName=config.getBuildName();
+  if (Strings.isNullOrBlank(projectName)) {
+    projectName=named;
+  }
+  LOG.info("Project name is: " + projectName);
+  if (Strings.isNotBlank(projectName)) {
+    MavenFacet maven=project.getFacet(MavenFacet.class);
+    Model pom=maven.getModel();
+    if (pom != null) {
+      Properties properties=pom.getProperties();
+      boolean updated=false;
+      updated=MavenHelpers.updatePomProperty(properties,"fabric8.label.project",projectName,updated);
+      updated=MavenHelpers.updatePomProperty(properties,"fabric8.label.version","${project.version}",updated);
+      if (updated) {
+        LOG.info("Updating pom.xml properties!");
+        maven.setModel(pom);
+      }
+ else {
+        LOG.warn("Did not update pom.xml properties!");
+      }
+    }
+ else {
+      LOG.warn("No pom.xml found!");
+    }
+  }
   Boolean copyFlowToProjectValue=copyFlowToProject.getValue();
   if (copyFlowToProjectValue != null && copyFlowToProjectValue.booleanValue()) {
     if (basedir == null && !basedir.isDirectory()) {

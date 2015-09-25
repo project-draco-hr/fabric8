@@ -1,9 +1,12 @@
 {
+  LOG.info("starting to setup fabric8 project");
   Project project=getCurrentProject(context.getUIContext());
   MavenFacet maven=project.getFacet(MavenFacet.class);
   Model pom=maven.getModel();
   DockerSetupHelper.setupDocker(project,from.getValue(),main.getValue());
+  LOG.info("docker now setup");
   facetFactory.install(project,ResourcesFacet.class);
+  LOG.info("checking dependencies");
   if (test.getValue() != null && test.getValue()) {
     boolean hasFabric8Arquillian=!MavenHelpers.hasDependency(pom,"io.fabric8","fabric8-arquillian");
     boolean hasArquillianJunitContainer=!MavenHelpers.hasDependency(pom,"org.jboss.arquillian.junit","arquillian-junit-container");
@@ -31,6 +34,7 @@
   updated=MavenHelpers.updatePomProperty(properties,"fabric8.label.group",group.getValue(),updated);
   if (updated) {
     maven.setModel(pom);
+    LOG.info("updated pom.xml");
   }
   return Results.success("Adding Fabric8 maven support with base Docker image: " + from.getValue());
 }

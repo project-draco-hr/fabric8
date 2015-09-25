@@ -1,12 +1,18 @@
 {
-  List<String> answer=new ArrayList<>();
-  String lowerInputValue=inputValue.toLowerCase();
-  for (  String value : values) {
-    if (value != null) {
-      if (value.toLowerCase().indexOf(lowerInputValue) >= 0) {
-        answer.add(value);
+  boolean ignoreFilteringAsItBreaksHawtio=true;
+  if (ignoreFilteringAsItBreaksHawtio) {
+    return values;
+  }
+ else {
+    List<String> answer=new ArrayList<>();
+    String lowerInputValue=inputValue.toLowerCase();
+    for (    String value : values) {
+      if (value != null) {
+        if (value.toLowerCase().indexOf(lowerInputValue) >= 0) {
+          answer.add(value);
+        }
       }
     }
+    return answer;
   }
-  return answer;
 }
