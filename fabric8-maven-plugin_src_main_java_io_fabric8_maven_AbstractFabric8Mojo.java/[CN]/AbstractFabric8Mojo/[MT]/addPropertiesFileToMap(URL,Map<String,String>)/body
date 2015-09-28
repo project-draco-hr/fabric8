@@ -1,0 +1,13 @@
+{
+  if (url != null) {
+    try (InputStream in=url.openStream()){
+      Properties properties=new Properties();
+      properties.load(in);
+      Map<String,String> map=toMap(properties);
+      answer.putAll(map);
+    }
+ catch (    IOException e) {
+      throw new MojoExecutionException("Failed to load properties URL: " + url + ". "+ e,e);
+    }
+  }
+}

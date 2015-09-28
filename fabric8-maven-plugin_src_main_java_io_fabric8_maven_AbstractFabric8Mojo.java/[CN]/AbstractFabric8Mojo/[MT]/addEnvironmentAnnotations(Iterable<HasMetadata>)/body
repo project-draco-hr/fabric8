@@ -1,0 +1,20 @@
+{
+  if (items != null) {
+    for (    HasMetadata item : items) {
+      if (item instanceof KubernetesList) {
+        KubernetesList list=(KubernetesList)item;
+        addEnvironmentAnnotations(list.getItems());
+      }
+ else       if (item instanceof Template) {
+        Template template=(Template)item;
+        addEnvironmentAnnotations(template.getObjects());
+      }
+ else       if (item instanceof ReplicationController) {
+        addEnvironmentAnnotations(item);
+      }
+ else       if (item instanceof DeploymentConfig) {
+        addEnvironmentAnnotations(item);
+      }
+    }
+  }
+}

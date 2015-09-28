@@ -8,16 +8,6 @@
     value=unquoteTemplateExpression(value);
     answer.put(key,value);
   }
-  if (envPropertiesFile != null && envPropertiesFile.isFile() && envPropertiesFile.exists()) {
-    try {
-      Properties properties=new Properties();
-      properties.load(new FileInputStream(envPropertiesFile));
-      Map<String,String> map=toMap(properties);
-      answer.putAll(map);
-    }
- catch (    IOException e) {
-      throw new MojoExecutionException("Failed to load environment properties file: " + envPropertiesFile + ". "+ e,e);
-    }
-  }
+  addPropertiesFileToMap(this.envPropertiesFile,answer);
   return answer;
 }

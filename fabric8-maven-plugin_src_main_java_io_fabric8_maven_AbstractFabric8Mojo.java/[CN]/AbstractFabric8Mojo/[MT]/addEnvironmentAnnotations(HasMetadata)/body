@@ -1,0 +1,26 @@
+{
+  Map<String,String> mapEnvVarToAnnotation=new HashMap<>();
+  String resourceName="environmentAnnotations.properties";
+  URL url=getClass().getResource(resourceName);
+  if (url == null) {
+    throw new MojoExecutionException("Could not find resource `" + resourceName + "` on the classpath!");
+  }
+  addPropertiesFileToMap(url,mapEnvVarToAnnotation);
+  addPropertiesFileToMap(this.environmentVariableToAnnotationsFile,mapEnvVarToAnnotation);
+  Map<String,String> annotations=KubernetesHelper.getOrCreateAnnotations(resource);
+  Set<Map.Entry<String,String>> entries=mapEnvVarToAnnotation.entrySet();
+  for (  Map.Entry<String,String> entry : entries) {
+    String envVar=entry.getKey();
+    String annotation=entry.getValue();
+    String value=Systems.getEnvVarOrSystemProperty(envVar);
+    if (Strings.isNotBlank(value)) {
+      String oldValue=annotations.get(annotation);
+      if (Strings.isNotBlank(oldValue)) {
+        getLog().warn("Not adding annotation `" + annotation + "` to "+ KubernetesHelper.getKind(resource)+ " "+ KubernetesHelper.getName(resource)+ " with value `"+ value+ "` as there is already an annotation value of `"+ oldValue+ "`");
+      }
+ else {
+        annotations.put(annotation,value);
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  if (file != null && file.isFile() && file.exists()) {
+    try (FileInputStream in=new FileInputStream(file)){
+      Properties properties=new Properties();
+      properties.load(in);
+      Map<String,String> map=toMap(properties);
+      answer.putAll(map);
+    }
+ catch (    IOException e) {
+      throw new MojoExecutionException("Failed to load properties file: " + file + ". "+ e,e);
+    }
+  }
+}
