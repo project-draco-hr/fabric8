@@ -18,9 +18,9 @@
             for (            ServicePort port : ports) {
               Integer portNumber=port.getPort();
               if (portNumber != null && portNumber > 0) {
-                if (configuration.isConnectToServicesEnabled()) {
+                if (configuration.isWaitForServiceConnectionEnabled()) {
                   try (Socket socket=new Socket()){
-                    socket.connect(new InetSocketAddress(ip,portNumber),configuration.getServiceConnectionTimeout());
+                    socket.connect(new InetSocketAddress(ip,portNumber),configuration.getWaitForServiceConnectionTimeout().intValue());
                     serviceStatus="Service: " + sid + " is ready. Provider:"+ addr+ ".";
                     return true;
                   }

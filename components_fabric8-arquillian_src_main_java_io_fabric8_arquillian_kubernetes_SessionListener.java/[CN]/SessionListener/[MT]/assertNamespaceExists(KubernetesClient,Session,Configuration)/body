@@ -1,7 +1,7 @@
 {
   String namespace=session.getNamespace();
   if (client.namespaces().withName(namespace).get() == null) {
-    if (configuration.isLazyCreateNamespace()) {
+    if (configuration.isNamespaceLazyCreateEnabled()) {
       Controller controller=new Controller(client);
       controller.applyNamespace(namespace);
     }

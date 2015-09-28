@@ -22,7 +22,7 @@
   }
 );
   String namespace=session.getNamespace();
-  String routePrefix=namespace + "." + configuration.getRouteDomainPostfix();
+  String routePrefix=namespace + "." + configuration.getKubernetesDomain();
   preprocessEnvironment(client,controller,configuration,session);
   List<Object> extraEntities=new ArrayList<>();
   for (  Object entity : entities) {
@@ -105,7 +105,7 @@
   entities.addAll(extraEntities);
   if (!conditions.isEmpty()) {
     Callable<Boolean> compositeCondition=new CompositeCondition(conditions.values());
-    WaitStrategy waitStrategy=new WaitStrategy(compositeCondition,configuration.getTimeout(),configuration.getPollInterval());
+    WaitStrategy waitStrategy=new WaitStrategy(compositeCondition,configuration.getWaitTimeout(),configuration.getWaitPollInterval());
     if (!waitStrategy.await()) {
       log.error("Timed out waiting for pods/services!");
       return false;

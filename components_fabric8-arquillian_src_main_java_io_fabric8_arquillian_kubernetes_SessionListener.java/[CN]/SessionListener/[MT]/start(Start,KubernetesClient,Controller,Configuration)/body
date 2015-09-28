@@ -11,20 +11,19 @@
   controller.setThrowExceptionOnError(true);
   controller.setRecreateMode(true);
   controller.setIgnoreRunningOAuthClients(true);
-  if (Strings.isNullOrBlank(configuration.getExistingNamespace())) {
+  if (Strings.isNullOrBlank(configuration.getNamespaceToUse())) {
     createNamespace(client,session);
   }
  else {
     assertNamespaceExists(client,session,configuration);
   }
-  boolean disableEnvironmentInit=Systems.getEnvVarOrSystemProperty(Constants.FABRIC8_DISABLE_ENVIRONMENT_INIT,Boolean.FALSE);
   shutdownHook=new ShutdownHook(client,configuration,session);
   Runtime.getRuntime().addShutdownHook(shutdownHook);
   try {
-    URL configUrl=configuration.getConfigUrl();
-    List<String> dependencies=!configuration.getDependencies().isEmpty() ? configuration.getDependencies() : Util.getMavenDependencies(session);
+    URL configUrl=configuration.getEnvironmentConfigUrl();
+    List<String> dependencies=!configuration.getEnvironmentDependencies().isEmpty() ? configuration.getEnvironmentDependencies() : Util.getMavenDependencies(session);
     List<KubernetesList> kubeConfigs=new LinkedList<>();
-    if (!disableEnvironmentInit) {
+    if (configuration.isEnvironmentInitEnabled()) {
       for (      String dependency : dependencies) {
         log.info("Found dependency: " + dependency);
         loadDependency(log,kubeConfigs,dependency,controller,configuration,namespace);
@@ -38,7 +37,7 @@
         kubeConfigs.add(kubeList);
       }
     }
-    if (disableEnvironmentInit || applyConfiguration(client,controller,configuration,session,kubeConfigs)) {
+    if (!configuration.isEnvironmentInitEnabled() || applyConfiguration(client,controller,configuration,session,kubeConfigs)) {
       displaySessionStatus(client,session);
     }
  else {
