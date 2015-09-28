@@ -1,7 +1,8 @@
 {
+  String prefix=name.toUpperCase();
   Map<String,String> env=System.getenv();
-  String serviceHost=env.get(name + HOST_SUFFIX);
-  String port=env.get(name + PORT_SUFFIX);
-  String protocol=env.get(name + PORT_SUFFIX + "_"+ port+ PROTO_SUFFIX);
-  return new ServiceBuilder().withNewMetadata().withName(name).endMetadata().withNewSpec().withClusterIP(serviceHost).addNewPort().withNewTargetPort(port).withProtocol(protocol).endPort().endSpec().build();
+  String serviceHost=env.get(prefix + HOST_SUFFIX);
+  String port=env.get(prefix + PORT_SUFFIX);
+  String protocol=env.get(prefix + PORT_SUFFIX + "_"+ port+ PROTO_SUFFIX);
+  return new ServiceBuilder().withNewMetadata().withName(name).endMetadata().withNewSpec().withClusterIP(serviceHost).addNewPort().withPort(Integer.parseInt(port)).withProtocol(protocol).endPort().endSpec().build();
 }
