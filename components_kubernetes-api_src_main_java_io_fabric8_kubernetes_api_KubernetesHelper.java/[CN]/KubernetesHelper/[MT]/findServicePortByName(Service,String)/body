@@ -1,0 +1,11 @@
+{
+  if (Strings.isNullOrBlank(portName)) {
+    return service.getSpec().getPorts().iterator().next();
+  }
+  for (  ServicePort servicePort : service.getSpec().getPorts()) {
+    if (servicePort.getName().equals(portName)) {
+      return servicePort;
+    }
+  }
+  return null;
+}
