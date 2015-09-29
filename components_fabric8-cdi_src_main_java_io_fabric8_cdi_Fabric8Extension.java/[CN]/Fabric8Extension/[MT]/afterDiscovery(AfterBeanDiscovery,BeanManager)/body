@@ -9,11 +9,12 @@
       @Override public ServiceBean apply(      ServiceBean bean){
         String serviceId=bean.getServiceName();
         String serviceProtocol=bean.getServiceProtocol();
+        String servicePort=bean.getServicePort();
         Boolean serviceExternal=bean.getServiceExternal();
         if (!String.class.equals(factoryMethodContext.getSourceType())) {
-          ServiceBean.getBean(serviceId,serviceProtocol,null,serviceExternal,(Class<Object>)factoryMethodContext.getSourceType());
+          ServiceBean.getBean(serviceId,serviceProtocol,null,servicePort,serviceExternal,(Class<Object>)factoryMethodContext.getSourceType());
         }
-        return bean.withProducer(new FactoryMethodProducer(factoryMethodContext.getBean(),factoryMethodContext.getFactoryMethod(),serviceId,serviceProtocol,serviceExternal));
+        return bean.withProducer(new FactoryMethodProducer(factoryMethodContext.getBean(),factoryMethodContext.getFactoryMethod(),serviceId,serviceProtocol,servicePort,serviceExternal));
       }
     }
 );

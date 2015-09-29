@@ -1,0 +1,10 @@
+{
+  String serviceAlias=alias != null ? alias : (external ? "external-" : "") + name + "-"+ protocol+ "-"+ port+ SUFFIX;
+  Key key=new Key(name,protocol,serviceAlias,port,external);
+  if (BEANS.containsKey(key)) {
+    return BEANS.get(key);
+  }
+  ServiceUrlBean bean=new ServiceUrlBean(name,protocol,serviceAlias,port,external);
+  BEANS.put(key,bean);
+  return bean;
+}

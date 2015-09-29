@@ -4,35 +4,40 @@
     Annotated annotated=injectionPoint.getAnnotated();
     Alias alias=annotated.getAnnotation(Alias.class);
     ServiceName name=annotated.getAnnotation(ServiceName.class);
+    PortName port=annotated.getAnnotation(PortName.class);
     Protocol protocol=annotated.getAnnotation(Protocol.class);
     External external=annotated.getAnnotation(External.class);
     Boolean serviceEndpoint=annotated.getAnnotation(Endpoint.class) != null;
     String serviceName=name.value();
     String serviceProtocol=protocol != null ? protocol.value() : "tcp";
     String serviceAlias=alias != null ? alias.value() : null;
+    String servicePort=port != null ? port.value() : null;
     Boolean serviceExternal=external != null && external.value();
     Type type=annotated.getBaseType();
     if (type instanceof ParameterizedType && Instance.class.equals(((ParameterizedType)type).getRawType())) {
       type=((ParameterizedType)type).getActualTypeArguments()[0];
     }
     if (type.equals(String.class)) {
-      ServiceUrlBean.getBean(serviceName,serviceProtocol,serviceAlias,serviceExternal);
+      ServiceUrlBean.getBean(serviceName,serviceProtocol,serviceAlias,servicePort,serviceExternal);
     }
  else     if (serviceEndpoint && isGenericOf(type,List.class,String.class)) {
-      ServiceUrlCollectionBean.getBean(serviceName,serviceProtocol,serviceAlias,serviceEndpoint,Types.LIST_OF_STRINGS);
+      ServiceUrlCollectionBean.getBean(serviceName,serviceProtocol,serviceAlias,servicePort,serviceEndpoint,Types.LIST_OF_STRINGS);
     }
  else     if (serviceEndpoint && isGenericOf(type,List.class,null)) {
     }
  else     if (serviceEndpoint && isGenericOf(type,Set.class,String.class)) {
-      ServiceUrlCollectionBean.getBean(serviceName,serviceProtocol,serviceAlias,serviceEndpoint,Types.SET_OF_STRINGS);
+      ServiceUrlCollectionBean.getBean(serviceName,serviceProtocol,serviceAlias,servicePort,serviceEndpoint,Types.SET_OF_STRINGS);
     }
  else     if (serviceEndpoint && isGenericOf(type,Set.class,null)) {
     }
  else {
-      ServiceBean.getBean(serviceName,serviceProtocol,serviceAlias,serviceExternal,(Class)type);
+      ServiceBean.getBean(serviceName,serviceProtocol,serviceAlias,servicePort,serviceExternal,(Class)type);
     }
     if (protocol == null) {
       setDefaultProtocol(event);
+    }
+    if (port == null) {
+      setDefaultPort(event);
     }
     if (external == null) {
       setExternalFalse(event);
