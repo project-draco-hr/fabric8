@@ -2,8 +2,11 @@
   BeanDefinitionBuilder builder=BeanDefinitionBuilder.genericBeanDefinition(KubernetesServiceFactoryBean.class);
   builder.addPropertyValue("name",alias);
   builder.addPropertyValue("service",service);
+  builder.addPropertyValue("port",port);
   builder.addPropertyValue("type",type.getCanonicalName());
   builder.setAutowireMode(Autowire.BY_TYPE.value());
+  builder.getBeanDefinition().addQualifier(new AutowireCandidateQualifier(ServiceName.class,KubernetesHelper.getName(service)));
   builder.getBeanDefinition().addQualifier(new AutowireCandidateQualifier(Protocol.class,protocol));
+  builder.getBeanDefinition().addQualifier(new AutowireCandidateQualifier(PortName.class,port != null ? port : ""));
   return new BeanDefinitionHolder(builder.getBeanDefinition(),alias);
 }

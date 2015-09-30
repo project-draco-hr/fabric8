@@ -1,11 +1,8 @@
 {
   Service source=(Service)o;
-  String serviceName=KubernetesHelper.getName(source);
-  String serviceNamespace=KubernetesHelper.getNamespace(source);
   String serviceProtocol=getProtocolOfService(source);
-  Boolean serviceExternal=isServiceExternal(source);
-  serviceNamespace=serviceNamespace != null ? serviceNamespace : KubernetesHelper.defaultNamespace();
-  String str=KubernetesHelper.getServiceURL(kubernetesClient,serviceName,serviceNamespace,serviceProtocol,serviceExternal);
+  String servicePort=getPortOfService(source);
+  String str=getServiceURL(kubernetesClient,source,serviceProtocol,servicePort);
   try {
     if (String.class.equals(targetType.getObjectType())) {
       return str;

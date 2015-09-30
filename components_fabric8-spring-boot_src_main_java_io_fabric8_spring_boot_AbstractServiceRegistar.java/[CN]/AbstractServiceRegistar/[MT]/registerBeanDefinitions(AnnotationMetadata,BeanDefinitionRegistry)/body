@@ -8,19 +8,25 @@
     BeanDefinitionReaderUtils.registerBeanDefinition(holder,registry);
   }
   for (  Field field : REFLECTIONS.getFieldsAnnotatedWith(ServiceName.class)) {
+    Class targetClass=field.getType();
     Alias alias=field.getAnnotation(Alias.class);
     ServiceName name=field.getAnnotation(ServiceName.class);
+    PortName port=field.getAnnotation(PortName.class);
     Protocol protocol=field.getAnnotation(Protocol.class);
     External external=field.getAnnotation(External.class);
+    String serviceName=name != null ? name.value() : null;
+    Service serviceInstance=new ServiceBuilder(getService(serviceName)).build();
+    String servicePort=port != null ? port.value() : null;
     String serviceProtocol=protocol != null ? protocol.value() : DEFAULT_PROTOCOL;
-    String serviceAlias=alias != null ? alias.value() : name.value();
     Boolean serviceExternal=external != null && external.value();
-    Service serviceInstance=getService(name.value());
+    String serviceAlias=alias != null ? alias.value() : createAlias(serviceName,targetClass,serviceProtocol,servicePort,serviceExternal);
     serviceInstance.getAdditionalProperties().put(ALIAS,serviceAlias);
     serviceInstance.getAdditionalProperties().put(PROTOCOL,serviceProtocol);
     serviceInstance.getAdditionalProperties().put(EXTERNAL,serviceExternal);
-    Class targetClass=field.getType();
-    BeanDefinitionHolder holder=createServiceDefinition(serviceInstance,serviceAlias,serviceProtocol,targetClass);
+    if (port != null) {
+      serviceInstance.getAdditionalProperties().put(PORT,servicePort);
+    }
+    BeanDefinitionHolder holder=createServiceDefinition(serviceInstance,serviceAlias,serviceProtocol,servicePort,targetClass);
     BeanDefinitionReaderUtils.registerBeanDefinition(holder,registry);
   }
 }

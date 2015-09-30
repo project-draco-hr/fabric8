@@ -1,8 +1,23 @@
 {
-  String prefix=name.toUpperCase();
   Map<String,String> env=System.getenv();
+  String prefix=serviceName.toUpperCase();
   String serviceHost=env.get(prefix + HOST_SUFFIX);
-  String port=env.get(prefix + PORT_SUFFIX);
-  String protocol=env.get(prefix + PORT_SUFFIX + "_"+ port+ PROTO_SUFFIX);
-  return new ServiceBuilder().withNewMetadata().withName(name).endMetadata().withNewSpec().withClusterIP(serviceHost).addNewPort().withPort(Integer.parseInt(port)).withProtocol(protocol).endPort().endSpec().build();
+  String defaultPortName=prefix + SERVICE_PORT;
+  String namedPortPrefix=defaultPortName + "_";
+  List<ServicePort> servicePorts=new ArrayList<>();
+  for (  Map.Entry<String,String> entry : env.entrySet()) {
+    String key=entry.getKey();
+    if (key.startsWith(namedPortPrefix)) {
+      String name=key.substring(namedPortPrefix.length());
+      String portValue=entry.getValue();
+      String protocolValue=env.get(key + "_" + PROTO_SUFFIX);
+      servicePorts.add(new ServicePortBuilder().withName(name.toLowerCase()).withPort(Integer.parseInt(portValue)).withProtocol(protocolValue != null ? protocolValue : "TCP").build());
+    }
+  }
+  if (servicePorts.isEmpty()) {
+    String portValue=env.get(defaultPortName);
+    String protocolValue=env.get(defaultPortName + PROTO_SUFFIX);
+    servicePorts.add(new ServicePortBuilder().withPort(Integer.parseInt(portValue)).withProtocol(protocolValue != null ? protocolValue : "TCP").build());
+  }
+  return new ServiceBuilder().withNewMetadata().withName(serviceName).endMetadata().withNewSpec().withPortalIP(serviceHost).withPorts(servicePorts).endSpec().build();
 }

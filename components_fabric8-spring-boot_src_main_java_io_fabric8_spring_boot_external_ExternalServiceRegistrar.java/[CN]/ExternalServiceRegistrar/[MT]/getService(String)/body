@@ -1,7 +1,6 @@
 {
-  String serviceNamespace=KubernetesHelper.defaultNamespace();
   if (kubernetesClient == null) {
     kubernetesClient=beanFactory.getBean(KubernetesClient.class);
   }
-  return kubernetesClient.services().inNamespace(serviceNamespace).withName(name).get();
+  return kubernetesClient.services().withName(serviceName).get();
 }

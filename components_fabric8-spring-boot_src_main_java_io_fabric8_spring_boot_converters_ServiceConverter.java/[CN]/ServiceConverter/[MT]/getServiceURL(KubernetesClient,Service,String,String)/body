@@ -1,0 +1,18 @@
+{
+  String serviceName=KubernetesHelper.getName(srv);
+  String serviceProto=serviceProtocol != null ? serviceProtocol : KubernetesHelper.serviceToProtocol(serviceName,servicePortName);
+  if (Strings.isNullOrBlank(servicePortName) && KubernetesHelper.isOpenShift(client)) {
+    OpenShiftClient openShiftClient=client.adapt(OpenShiftClient.class);
+    RouteList routeList=openShiftClient.routes().list();
+    for (    Route route : routeList.getItems()) {
+      if (route.getSpec().getTo().getName().equals(serviceName)) {
+        return (serviceProto + "://" + route.getSpec().getHost()).toLowerCase();
+      }
+    }
+  }
+  ServicePort port=KubernetesHelper.findServicePortByName(srv,servicePortName);
+  if (port == null) {
+    throw new RuntimeException("Couldn't find port: " + servicePortName + " for service:"+ serviceName);
+  }
+  return (serviceProto + "://" + srv.getSpec().getPortalIP()+ ":"+ port.getPort()).toLowerCase();
+}
