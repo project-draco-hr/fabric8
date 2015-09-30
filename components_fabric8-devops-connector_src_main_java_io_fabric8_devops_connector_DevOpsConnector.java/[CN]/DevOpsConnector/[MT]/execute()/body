@@ -36,6 +36,12 @@
     getLog().error("Failed to load or lazily create the LetsChat client: " + e,e);
   }
   getLog().info("letschat " + letschat);
+  try {
+    createGerritRepo(repoName);
+  }
+ catch (  Exception e) {
+    getLog().error("Failed to create GerritGit repo : " + e,e);
+  }
   Map<String,String> annotations=new HashMap<>();
   jenkinsJobUrl=null;
   String jenkinsUrl=null;

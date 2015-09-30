@@ -1,0 +1,45 @@
+{
+  String gerritUser=null;
+  String gerritPwd=null;
+  String description="Fabric8 Git Repo";
+  String empty_commit="true";
+  if (Strings.isNullOrBlank(gerritUser)) {
+    gerritUser="admin";
+  }
+  if (Strings.isNullOrBlank(gerritPwd)) {
+    gerritPwd="secret";
+  }
+  String gerritAddress=KubernetesHelper.getServiceURL(kubernetes,ServiceNames.GERRIT,namespace,"http",true);
+  log.info("Found gerrit address: " + gerritAddress + " for namespace: "+ namespace+ " on Kubernetes address: "+ kubernetes.getMasterUrl());
+  if (Strings.isNullOrBlank(gerritAddress)) {
+    throw new Exception("No address for service " + ServiceNames.GERRIT + " in namespace: "+ namespace+ " on Kubernetes address: "+ kubernetes.getMasterUrl());
+  }
+  log.info("Querying Gerrit for namespace: " + namespace + " on Kubernetes address: "+ kubernetes.getMasterUrl());
+  List<Object> providers=WebClients.createProviders();
+  providers.add(new RemovePrefix());
+  WebClient webClient=WebClient.create(gerritAddress,providers);
+  disableSslChecks(webClient);
+  configureUserAndPassword(webClient,gerritUser,gerritPwd);
+  enableDigestAuthenticaionType(webClient);
+  GitApi gitApi=JAXRSClientFactory.fromClient(webClient,GitApi.class);
+  ProjectInfoDTO project=null;
+  try {
+    project=gitApi.getRepository(repoName);
+  }
+ catch (  WebApplicationException ex) {
+    if (ex.getResponse().getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+      CreateRepositoryDTO createRepoDTO=new CreateRepositoryDTO();
+      createRepoDTO.setDescription(description);
+      createRepoDTO.setName(repoName);
+      createRepoDTO.setCreate_empty_commit(Boolean.valueOf(empty_commit));
+      RepositoryDTO repository=gitApi.createRepository(repoName,createRepoDTO);
+      if (log.isDebugEnabled()) {
+        log.debug("Git Repo created : " + toJson(repository));
+      }
+      log.info("Created git repo for " + repoName + " for namespace: "+ namespace+ " on gogs URL: "+ gerritAddress);
+    }
+  }
+  if ((project != null) && (project.getName().equals(repoName))) {
+    throw new Exception("Repository " + repoName + " already exists !");
+  }
+}
