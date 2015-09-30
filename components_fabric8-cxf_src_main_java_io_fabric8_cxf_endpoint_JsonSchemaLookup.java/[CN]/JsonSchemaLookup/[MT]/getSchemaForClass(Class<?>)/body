@@ -3,7 +3,9 @@
   String name=clazz.getName();
   try {
     ObjectWriter writer=mapper.writer().with(new FourSpacePrettyPrinter());
-    return writer.writeValueAsString(mapper.generateJsonSchema(clazz));
+    JsonSchemaGenerator jsg=new JsonSchemaGenerator(mapper);
+    JsonSchema jsonSchema=jsg.generateSchema(clazz);
+    return writer.writeValueAsString(jsonSchema);
   }
  catch (  Exception e) {
     LOG.log(Level.FINEST,"Failed to generate JSON schema for class " + name,e);
