@@ -1,0 +1,85 @@
+{
+  try (RestUIContext context=uiContext){
+    UICommand command=getCommandByName(context,name);
+    if (command == null) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+    List<Map<String,String>> inputList=executionRequest.getInputList();
+    CommandController controller=createController(context,command);
+    configureAttributeMaps(userDetails,controller);
+    ExecutionResult answer=null;
+    if (controller instanceof WizardCommandController) {
+      WizardCommandController wizardCommandController=(WizardCommandController)controller;
+      List<WizardCommandController> controllers=new ArrayList<>();
+      List<CommandInputDTO> stepPropertiesList=new ArrayList<>();
+      List<ExecutionResult> stepResultList=new ArrayList<>();
+      List<ValidationResult> stepValidationList=new ArrayList<>();
+      controllers.add(wizardCommandController);
+      WizardCommandController lastController=wizardCommandController;
+      Result lastResult=null;
+      int page=executionRequest.wizardStep();
+      int nextPage=page + 1;
+      boolean canMoveToNextStep=false;
+      for (      Map<String,String> inputs : inputList) {
+        UICommands.populateController(inputs,lastController,getConverterFactory());
+        List<UIMessage> messages=lastController.validate();
+        ValidationResult stepValidation=UICommands.createValidationResult(context,lastController,messages);
+        stepValidationList.add(stepValidation);
+        if (!stepValidation.isValid()) {
+          break;
+        }
+        canMoveToNextStep=lastController.canMoveToNextStep();
+        boolean valid=lastController.isValid();
+        if (!canMoveToNextStep) {
+          lastResult=lastController.execute();
+          LOG.debug("Invoked command " + name + " with "+ executionRequest+ " result: "+ lastResult);
+          ExecutionResult stepResults=UICommands.createExecutionResult(context,lastResult,false);
+          stepResultList.add(stepResults);
+          break;
+        }
+ else         if (!valid) {
+          LOG.warn("Cannot move to next step as invalid despite the validation saying otherwise");
+          break;
+        }
+        WizardCommandController nextController=lastController.next();
+        if (nextController != null) {
+          if (nextController == lastController) {
+            LOG.warn("No idea whats going on ;)");
+            break;
+          }
+          lastController=nextController;
+          lastController.initialize();
+          controllers.add(lastController);
+          CommandInputDTO stepDto=UICommands.createCommandInputDTO(context,command,lastController);
+          stepPropertiesList.add(stepDto);
+        }
+ else {
+          int i=0;
+          for (          WizardCommandController stepController : controllers) {
+            Map<String,String> stepControllerInputs=inputList.get(i++);
+            UICommands.populateController(stepControllerInputs,stepController,getConverterFactory());
+            lastResult=stepController.execute();
+            LOG.debug("Invoked command " + name + " with "+ executionRequest+ " result: "+ lastResult);
+            ExecutionResult stepResults=UICommands.createExecutionResult(context,lastResult,false);
+            stepResultList.add(stepResults);
+          }
+          break;
+        }
+      }
+      answer=UICommands.createExecutionResult(context,lastResult,canMoveToNextStep);
+      WizardResultsDTO wizardResultsDTO=new WizardResultsDTO(stepPropertiesList,stepValidationList,stepResultList);
+      answer.setWizardResults(wizardResultsDTO);
+    }
+ else {
+      Map<String,String> inputs=inputList.get(0);
+      UICommands.populateController(inputs,controller,getConverterFactory());
+      Result result=controller.execute();
+      LOG.debug("Invoked command " + name + " with "+ executionRequest+ " result: "+ result);
+      answer=UICommands.createExecutionResult(context,result,false);
+    }
+    if (answer.isCommandCompleted() && postProcessor != null) {
+      postProcessor.firePostCompleteActions(name,executionRequest,context,controller,answer,request);
+    }
+    return Response.ok(answer).build();
+  }
+ }
