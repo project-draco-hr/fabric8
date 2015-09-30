@@ -1,5 +1,6 @@
 {
   try {
+    LOG.info("Checking if a service is SSL on " + host + ":"+ port);
     SSLSocketFactory sslsocketfactory;
     if (trustAllCerts) {
       sslsocketfactory=TrustEverythingSSLTrustManager.getTrustingSSLSocketFactory();
@@ -19,6 +20,7 @@
       return true;
     }
   finally {
+      LOG.info("Checked if a service is SSL on " + host + ":"+ port);
       socket.close();
     }
   }
