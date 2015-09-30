@@ -1,8 +1,4 @@
 {
-  String gerritUser=null;
-  String gerritPwd=null;
-  String description="Fabric8 Git Repo";
-  String empty_commit="true";
   if (Strings.isNullOrBlank(gerritUser)) {
     gerritUser="admin";
   }
@@ -30,9 +26,9 @@
  catch (  WebApplicationException ex) {
     if (ex.getResponse().getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
       CreateRepositoryDTO createRepoDTO=new CreateRepositoryDTO();
-      createRepoDTO.setDescription(description);
+      createRepoDTO.setDescription(gerritGitRepoDesription);
       createRepoDTO.setName(repoName);
-      createRepoDTO.setCreate_empty_commit(Boolean.valueOf(empty_commit));
+      createRepoDTO.setCreate_empty_commit(Boolean.valueOf(gerritGitInitialCommit));
       RepositoryDTO repository=gitApi.createRepository(repoName,createRepoDTO);
       if (log.isDebugEnabled()) {
         log.debug("Git Repo created : " + toJson(repository));
