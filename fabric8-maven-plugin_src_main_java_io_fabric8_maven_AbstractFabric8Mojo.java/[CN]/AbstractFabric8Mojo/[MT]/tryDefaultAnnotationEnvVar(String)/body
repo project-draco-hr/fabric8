@@ -39,7 +39,7 @@
     }
     return jobUrl;
   }
-  if (Objects.equal("GIT_URL",envVarName)) {
+ else   if (Objects.equal("GIT_URL",envVarName)) {
     if (Strings.isNotBlank(repoName) && Strings.isNotBlank(username)) {
       try {
         String gogsUrl=KubernetesHelper.getServiceURLInCurrentNamespace(getKubernetes(),ServiceNames.GOGS,"http",null,true);
@@ -51,6 +51,29 @@
     }
  else {
       getLog().warn("Cannot auto-default GIT_URL as there is no environment variable `" + userEnvVar + "` defined so we can't guess the Gogs build URL");
+    }
+  }
+ else   if (Objects.equal("GIT_COMMIT",envVarName)) {
+    try (Repository repository=getGitRepository(basedir,envVarName)){
+      if (repository != null) {
+        ObjectId id=repository.resolve(repository.getFullBranch());
+        if (id != null) {
+          return id.getName();
+        }
+      }
+    }
+ catch (    IOException e) {
+      getLog().warn("failed to find git commit id. " + e,e);
+    }
+  }
+ else   if (Objects.equal("GIT_BRANCH",envVarName)) {
+    try (Repository repository=getGitRepository(basedir,envVarName)){
+      if (repository != null) {
+        return repository.getBranch();
+      }
+    }
+ catch (    IOException e) {
+      getLog().warn("failed to find git commit id. " + e,e);
     }
   }
   return null;

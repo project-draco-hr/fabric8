@@ -1,0 +1,15 @@
+{
+  try {
+    Repository repository=null;
+    FileRepositoryBuilder builder=new FileRepositoryBuilder();
+    repository=builder.setGitDir(basedir).readEnvironment().findGitDir().build();
+    if (repository == null) {
+      getLog().warn("Could not create default value for $" + envVarName + " as no .git/config file could be found");
+    }
+    return repository;
+  }
+ catch (  IOException e) {
+    getLog().warn("Failed to initialise Git Repository: " + e,e);
+    return null;
+  }
+}
