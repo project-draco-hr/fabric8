@@ -1,0 +1,57 @@
+{
+  MavenProject rootProject=getRootProject();
+  File basedir=rootProject.getBasedir();
+  ProjectConfig projectConfig=ProjectConfigs.loadFromFolder(basedir);
+  String repoName=rootProject.getArtifactId();
+  String userEnvVar="JENKINS_GOGS_USER";
+  String username=Systems.getEnvVarOrSystemProperty(userEnvVar);
+  if (Objects.equal("BUILD_URL",envVarName)) {
+    String jobUrl=projectConfig.getLink("Job");
+    if (Strings.isNullOrBlank(jobUrl)) {
+      String name=projectConfig.getBuildName();
+      if (Strings.isNullOrBlank(name)) {
+        if (Strings.isNotBlank(repoName)) {
+          name=repoName;
+          if (Strings.isNotBlank(username)) {
+            name=ProjectRepositories.createBuildName(username,repoName);
+          }
+ else {
+            getLog().warn("Cannot auto-default BUILD_URL as there is no environment variable `" + userEnvVar + "` defined so we can't guess the Jenkins build URL");
+          }
+        }
+      }
+      if (Strings.isNotBlank(name)) {
+        try {
+          String jenkinsUrl=KubernetesHelper.getServiceURLInCurrentNamespace(getKubernetes(),ServiceNames.JENKINS,"http",null,true);
+          jobUrl=URLUtils.pathJoin(jenkinsUrl,"/job",name);
+          String buildId=Systems.getEnvVarOrSystemProperty("BUILD_ID");
+          if (Strings.isNotBlank(buildId)) {
+            jobUrl=URLUtils.pathJoin(jobUrl,buildId);
+          }
+ else {
+            getLog().warn("Could not find BUILD_ID to create a specific jenkins build URL. So using: " + jobUrl);
+          }
+        }
+ catch (        Exception e) {
+          getLog().warn("Could not find jenkins service URL: " + e,e);
+        }
+      }
+    }
+    return jobUrl;
+  }
+  if (Objects.equal("GIT_URL",envVarName)) {
+    if (Strings.isNotBlank(repoName) && Strings.isNotBlank(username)) {
+      try {
+        String gogsUrl=KubernetesHelper.getServiceURLInCurrentNamespace(getKubernetes(),ServiceNames.GOGS,"http",null,true);
+        return URLUtils.pathJoin(gogsUrl,username,repoName);
+      }
+ catch (      Exception e) {
+        getLog().warn("Could not find gogs service URL: " + e,e);
+      }
+    }
+ else {
+      getLog().warn("Cannot auto-default GIT_URL as there is no environment variable `" + userEnvVar + "` defined so we can't guess the Gogs build URL");
+    }
+  }
+  return null;
+}

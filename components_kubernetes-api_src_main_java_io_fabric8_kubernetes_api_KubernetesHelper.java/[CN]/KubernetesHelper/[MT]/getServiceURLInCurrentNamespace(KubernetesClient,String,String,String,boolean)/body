@@ -1,0 +1,29 @@
+{
+  Service srv=null;
+  String serviceHost=serviceToHost(serviceName);
+  String servicePort=serviceToPort(serviceName,servicePortName);
+  String serviceProto=serviceProtocol != null ? serviceProtocol : serviceToProtocol(serviceName,servicePort);
+  if (!serviceExternal && Strings.isNotBlank(serviceHost) && Strings.isNotBlank(servicePort)&& Strings.isNotBlank(serviceProtocol)) {
+    return serviceProtocol + "://" + serviceHost+ ":"+ servicePort;
+  }
+ else {
+    srv=client.services().withName(serviceName).get();
+  }
+  if (srv == null) {
+    throw new IllegalArgumentException("No kubernetes service could be found for name: " + serviceName);
+  }
+  if (Strings.isNullOrBlank(servicePortName) && isOpenShift(client)) {
+    OpenShiftClient openShiftClient=client.adapt(OpenShiftClient.class);
+    RouteList routeList=openShiftClient.routes().list();
+    for (    Route route : routeList.getItems()) {
+      if (route.getSpec().getTo().getName().equals(serviceName)) {
+        return (serviceProto + "://" + route.getSpec().getHost()).toLowerCase();
+      }
+    }
+  }
+  ServicePort port=findServicePortByName(srv,servicePortName);
+  if (port == null) {
+    throw new RuntimeException("Couldn't find port: " + servicePortName + " for service:"+ serviceName);
+  }
+  return (serviceProto + "://" + srv.getSpec().getPortalIP()+ ":"+ port.getPort()).toLowerCase();
+}

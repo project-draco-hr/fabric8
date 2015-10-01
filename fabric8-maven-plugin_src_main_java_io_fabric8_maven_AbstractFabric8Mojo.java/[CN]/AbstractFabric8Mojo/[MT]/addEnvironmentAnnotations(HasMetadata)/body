@@ -12,14 +12,19 @@
   for (  Map.Entry<String,String> entry : entries) {
     String envVar=entry.getKey();
     String annotation=entry.getValue();
-    String value=Systems.getEnvVarOrSystemProperty(envVar);
-    if (Strings.isNotBlank(value)) {
-      String oldValue=annotations.get(annotation);
-      if (Strings.isNotBlank(oldValue)) {
-        getLog().warn("Not adding annotation `" + annotation + "` to "+ KubernetesHelper.getKind(resource)+ " "+ KubernetesHelper.getName(resource)+ " with value `"+ value+ "` as there is already an annotation value of `"+ oldValue+ "`");
+    if (Strings.isNotBlank(envVar) && Strings.isNotBlank(annotation)) {
+      String value=Systems.getEnvVarOrSystemProperty(envVar);
+      if (Strings.isNullOrBlank(value)) {
+        value=tryDefaultAnnotationEnvVar(envVar);
       }
+      if (Strings.isNotBlank(value)) {
+        String oldValue=annotations.get(annotation);
+        if (Strings.isNotBlank(oldValue)) {
+          getLog().warn("Not adding annotation `" + annotation + "` to "+ KubernetesHelper.getKind(resource)+ " "+ KubernetesHelper.getName(resource)+ " with value `"+ value+ "` as there is already an annotation value of `"+ oldValue+ "`");
+        }
  else {
-        annotations.put(annotation,value);
+          annotations.put(annotation,value);
+        }
       }
     }
   }
