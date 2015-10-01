@@ -35,17 +35,19 @@
   try {
     LOG.info("Now trying to create a new project in: " + tempDir);
     CommandCompletePostProcessor postProcessor=null;
-    commandsResource.doExecute("project-new",executionRequest,postProcessor,userDetails,commandsResource.createUIContext(new File(tempDir)));
+    dumpResult(commandsResource.doExecute("project-new",executionRequest,postProcessor,userDetails,commandsResource.createUIContext(new File(tempDir))));
     LOG.info("Created project!");
     LOG.info("Now lets try validate the devops-edit command");
     executionRequest=new ExecutionRequest();
     step1Inputs=new HashMap<>();
+    step1Inputs.put("from","fabric8/java");
+    step1Inputs.put("main","org.apache.camel.cdi.Main");
     inputList=new ArrayList<>();
     inputList.add(step1Inputs);
     executionRequest.setInputList(inputList);
     executionRequest.setWizardStep(1);
-    commandsResource.doExecute("devops-edit",executionRequest,postProcessor,userDetails,commandsResource.createUIContext(new File(tempDir,projectName)));
-    LOG.info("Validated!");
+    dumpResult(commandsResource.doExecute("devops-edit",executionRequest,postProcessor,userDetails,commandsResource.createUIContext(new File(tempDir,projectName))));
+    LOG.info("Dev-Ops!");
   }
  catch (  Exception e) {
     LOG.error("Failed to execute command: " + e,e);
