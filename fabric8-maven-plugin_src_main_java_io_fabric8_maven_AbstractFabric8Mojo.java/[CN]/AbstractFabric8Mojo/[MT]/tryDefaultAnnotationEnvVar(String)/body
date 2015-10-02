@@ -32,8 +32,23 @@
             getLog().warn("Could not find BUILD_ID to create a specific jenkins build URL. So using: " + jobUrl);
           }
         }
- catch (        Exception e) {
-          getLog().warn("Could not find jenkins service URL: " + e,e);
+ catch (        Throwable e) {
+          Throwable cause=e;
+          boolean connectError=false;
+          Iterable<Throwable> it=createExceptionIterable(e);
+          for (          Throwable t : it) {
+            connectError=t instanceof ConnectException || "No route to host".equals(t.getMessage());
+            if (connectError) {
+              cause=t;
+              break;
+            }
+          }
+          if (connectError) {
+            getLog().debug("Cannot connect to Kubernetes due: " + cause.getMessage());
+          }
+ else {
+            getLog().warn("Could not find gogs service URL: " + cause,cause);
+          }
         }
       }
     }
@@ -45,8 +60,23 @@
         String gogsUrl=KubernetesHelper.getServiceURLInCurrentNamespace(getKubernetes(),ServiceNames.GOGS,"http",null,true);
         return URLUtils.pathJoin(gogsUrl,username,repoName);
       }
- catch (      Exception e) {
-        getLog().warn("Could not find gogs service URL: " + e,e);
+ catch (      Throwable e) {
+        Throwable cause=e;
+        boolean connectError=false;
+        Iterable<Throwable> it=createExceptionIterable(e);
+        for (        Throwable t : it) {
+          connectError=t instanceof ConnectException || "No route to host".equals(t.getMessage());
+          if (connectError) {
+            cause=t;
+            break;
+          }
+        }
+        if (connectError) {
+          getLog().debug("Cannot connect to Kubernetes due: " + cause.getMessage());
+        }
+ else {
+          getLog().warn("Could not find gogs service URL: " + cause,cause);
+        }
       }
     }
  else {
