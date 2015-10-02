@@ -1,14 +1,17 @@
 {
+  KubernetesClient kube=new DefaultKubernetesClient();
   try {
-    KubernetesClient kube=new DefaultKubernetesClient();
     listPods(kube);
-    listServices(kube);
     listReplicationControllers(kube);
-    createPod(kube);
-    listPods(kube);
+    listServices(kube);
+    listServiceAccounts(kube);
+    listEndpoints(kube);
   }
  catch (  Exception e) {
     System.out.println("FAILED: " + e);
     e.printStackTrace();
+  }
+ finally {
+    kube.close();
   }
 }

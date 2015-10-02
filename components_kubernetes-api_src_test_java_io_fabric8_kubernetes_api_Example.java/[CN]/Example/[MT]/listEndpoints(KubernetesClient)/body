@@ -1,0 +1,10 @@
+{
+  System.out.println("\n\nLooking up endpoints");
+  System.out.println("=========================================================================");
+  EndpointsList endpoints=kube.endpoints().list();
+  List<Endpoints> endpointItems=endpoints.getItems();
+  for (  Endpoints endpoint : endpointItems) {
+    System.out.println("Endpoint " + KubernetesHelper.getName(endpoint) + " labels: "+ endpoint.getMetadata().getLabels());
+  }
+  System.out.println();
+}
