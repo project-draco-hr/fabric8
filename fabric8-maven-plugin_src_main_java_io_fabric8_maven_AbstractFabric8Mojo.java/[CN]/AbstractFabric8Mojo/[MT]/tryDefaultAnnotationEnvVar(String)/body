@@ -29,7 +29,7 @@
             jobUrl=URLUtils.pathJoin(jobUrl,buildId);
           }
  else {
-            getLog().warn("Could not find BUILD_ID to create a specific jenkins build URL. So using: " + jobUrl);
+            getLog().warn("Cannot find BUILD_ID to create a specific jenkins build URL. So using: " + jobUrl);
           }
         }
  catch (        Throwable e) {
@@ -44,10 +44,10 @@
             }
           }
           if (connectError) {
-            getLog().debug("Cannot connect to Kubernetes due: " + cause.getMessage());
+            getLog().warn("Cannot connect to Kubernetes to find jenkins service URL: " + cause.getMessage());
           }
  else {
-            getLog().warn("Could not find gogs service URL: " + cause,cause);
+            getLog().warn("Cannot find jenkins service URL: " + cause,cause);
           }
         }
       }
@@ -72,10 +72,10 @@
           }
         }
         if (connectError) {
-          getLog().debug("Cannot connect to Kubernetes due: " + cause.getMessage());
+          getLog().warn("Cannot connect to Kubernetes to find gogs service URL: " + cause.getMessage());
         }
  else {
-          getLog().warn("Could not find gogs service URL: " + cause,cause);
+          getLog().warn("Cannot find gogs service URL: " + cause,cause);
         }
       }
     }
@@ -99,7 +99,7 @@
       }
     }
  catch (    IOException e) {
-      getLog().warn("failed to find git commit id. " + e,e);
+      getLog().warn("Failed to find git commit id. " + e,e);
     }
   }
  else   if (Objects.equal("GIT_BRANCH",envVarName)) {
@@ -109,7 +109,7 @@
       }
     }
  catch (    IOException e) {
-      getLog().warn("failed to find git commit id. " + e,e);
+      getLog().warn("Failed to find git commit id. " + e,e);
     }
   }
   return null;
