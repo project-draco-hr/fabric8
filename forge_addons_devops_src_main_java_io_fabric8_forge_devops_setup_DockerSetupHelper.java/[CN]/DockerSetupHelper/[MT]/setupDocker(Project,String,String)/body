@@ -1,52 +1,46 @@
 {
   MavenFacet maven=project.getFacet(MavenFacet.class);
   Model pom=maven.getModel();
-  if (!MavenHelpers.hasMavenPlugin(pom,"org.jolokia","docker-maven-plugin")) {
-    MavenPluginBuilder plugin=MavenPluginBuilder.create().setCoordinate(createCoordinate("org.jolokia","docker-maven-plugin",VersionHelper.dockerVersion()));
-    ConfigurationElement cfgName=ConfigurationElementBuilder.create().setName("name").setText("${docker.image}");
-    ConfigurationElement cfgFrom=ConfigurationElementBuilder.create().setName("from").setText("${docker.from}");
-    ConfigurationElement cfgDescriptorRef=ConfigurationElementBuilder.create().setName("descriptorRef").setText("${docker.assemblyDescriptorRef}");
-    ConfigurationElement cfgAssembly=ConfigurationElementBuilder.create().setName("assembly");
-    cfgAssembly.getChildren().add(cfgDescriptorRef);
-    ConfigurationElement cfgBuild=ConfigurationElementBuilder.create().setName("build");
-    cfgBuild.getChildren().add(cfgFrom);
-    cfgBuild.getChildren().add(cfgAssembly);
-    Map<String,String> envs=new LinkedHashMap<>();
-    boolean springBoot=hasSpringBootMavenPlugin(project);
-    String packaging=getProjectPackaging(project);
-    boolean war=packaging != null && packaging.equals("war");
-    boolean bundle=packaging != null && packaging.equals("bundle");
-    boolean jar=packaging != null && packaging.equals("jar");
-    if (springBoot) {
-      envs.put("JAR","${project.artifactId}-${project.version}.war");
-      envs.put("JAVA_OPTIONS","-Djava.security.egd=/dev/./urandom");
-    }
- else     if (war) {
-      envs.put("CATALINA_OPTS","-javaagent:/opt/tomcat/jolokia-agent.jar=host=0.0.0.0,port=8778");
-    }
- else     if (jar && main != null) {
-      envs.put("MAIN",main);
-    }
-    if (!envs.isEmpty()) {
-      ConfigurationElement cfgEnv=ConfigurationElementBuilder.create().setName("env");
-      cfgBuild.getChildren().add(cfgEnv);
-      for (      Map.Entry<String,String> env : envs.entrySet()) {
-        ConfigurationElement cfg=ConfigurationElementBuilder.create().setName(env.getKey()).setText(env.getValue());
-        cfgEnv.getChildren().add(cfg);
-      }
-    }
-    if (bundle) {
-      ConfigurationElement cfgCommand=ConfigurationElementBuilder.create().setName("command").setText("/usr/bin/deploy-and-start");
-      cfgBuild.getChildren().add(cfgCommand);
-    }
-    ConfigurationElement cfgImage=ConfigurationElementBuilder.create().setName("image");
-    cfgImage.getChildren().add(cfgName);
-    cfgImage.getChildren().add(cfgBuild);
-    ConfigurationElement cfgImages=ConfigurationElementBuilder.create().setName("images");
-    cfgImages.getChildren().add(cfgImage);
-    setupDockerProperties(project,fromImage);
-    MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
-    plugin.createConfiguration().addConfigurationElement(cfgImages);
-    pluginFacet.addPlugin(plugin);
+  boolean springBoot=hasSpringBootMavenPlugin(project);
+  String packaging=getProjectPackaging(project);
+  boolean war=packaging != null && packaging.equals("war");
+  boolean bundle=packaging != null && packaging.equals("bundle");
+  boolean jar=packaging != null && packaging.equals("jar");
+  Map<String,String> envs=new LinkedHashMap<>();
+  if (springBoot) {
+    envs.put("JAR","${project.artifactId}-${project.version}.war");
+    envs.put("JAVA_OPTIONS","-Djava.security.egd=/dev/./urandom");
   }
+ else   if (war) {
+    envs.put("CATALINA_OPTS","-javaagent:/opt/tomcat/jolokia-agent.jar=host=0.0.0.0,port=8778");
+  }
+ else   if (jar && main != null) {
+    envs.put("JAVA_MAIN_CLASS",main);
+  }
+  MavenPluginBuilder pluginBuilder=null;
+  ConfigurationBuilder configurationBuilder=null;
+  MavenPlugin plugin=MavenHelpers.findPlugin(project,"org.jolokia","docker-maven-plugin");
+  if (plugin != null) {
+    pluginBuilder=MavenPluginBuilder.create(plugin);
+    Configuration config=plugin.getConfig();
+    if (config != null) {
+      configurationBuilder=ConfigurationBuilder.create(config,pluginBuilder);
+    }
+ else {
+      configurationBuilder=ConfigurationBuilder.create(pluginBuilder);
+    }
+  }
+ else {
+    pluginBuilder=MavenPluginBuilder.create().setCoordinate(createCoordinate("org.jolokia","docker-maven-plugin",VersionHelper.dockerVersion()));
+    ;
+    configurationBuilder=pluginBuilder.createConfiguration();
+  }
+  String commandShell=null;
+  if (bundle) {
+    commandShell="/usr/bin/deploy-and-start";
+  }
+  setupDockerConfiguration(configurationBuilder,envs,commandShell);
+  MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
+  pluginFacet.addPlugin(pluginBuilder);
+  setupDockerProperties(project,fromImage);
 }

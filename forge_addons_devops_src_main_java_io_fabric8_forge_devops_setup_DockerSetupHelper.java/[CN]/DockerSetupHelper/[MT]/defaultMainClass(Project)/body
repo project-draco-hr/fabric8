@@ -1,16 +1,27 @@
 {
   MavenFacet maven=project.getFacet(MavenFacet.class);
   if (maven != null) {
-    Model pom=maven.getModel();
-    if (pom != null) {
-      Properties properties=pom.getProperties();
-      String answer=properties.getProperty("docker.env.MAIN");
-      if (Strings.isNullOrBlank(answer)) {
-        answer=properties.getProperty("fabric8.env.MAIN");
+    String answer=null;
+    MavenPlugin plugin=MavenHelpers.findPlugin(project,"org.jolokia","docker-maven-plugin");
+    if (plugin != null) {
+      Configuration config=plugin.getConfig();
+      ConfigurationElement element=MavenHelpers.getConfigurationElement(config,"images","image","build","env","JAVA_MAIN_CLASS");
+      if (element != null) {
+        answer=element.getText();
       }
-      if (Strings.isNotBlank(answer)) {
-        return answer;
+    }
+    if (Strings.isNullOrBlank(answer)) {
+      Model pom=maven.getModel();
+      if (pom != null) {
+        Properties properties=pom.getProperties();
+        answer=properties.getProperty("docker.env.MAIN");
+        if (Strings.isNullOrBlank(answer)) {
+          answer=properties.getProperty("fabric8.env.MAIN");
+        }
       }
+    }
+    if (Strings.isNotBlank(answer)) {
+      return answer;
     }
   }
   if (CamelProjectHelper.findCamelCDIDependency(project) != null) {

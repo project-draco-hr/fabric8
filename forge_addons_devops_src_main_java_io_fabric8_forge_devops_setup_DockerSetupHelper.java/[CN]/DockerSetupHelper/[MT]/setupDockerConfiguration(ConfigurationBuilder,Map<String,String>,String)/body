@@ -1,0 +1,31 @@
+{
+  ConfigurationElement images=MavenHelpers.getOrCreateElement(config,"images");
+  ConfigurationElement image=MavenHelpers.getOrCreateElement(images,"image");
+  ConfigurationElement build=MavenHelpers.getOrCreateElement(image,"build");
+  ConfigurationElement env=MavenHelpers.getOrCreateElement(build,"env");
+  for (  Map.Entry<String,String> entry : envs.entrySet()) {
+    ConfigurationElement cfg=ConfigurationElementBuilder.create().setName(entry.getKey()).setText(entry.getValue());
+    env.getChildren().add(cfg);
+  }
+  if (Strings.isNotBlank(commandShell)) {
+    ConfigurationElementBuilder shell=MavenHelpers.getOrCreateElementBuilder(build,"cmd","shell");
+    if (Strings.isNullOrBlank(shell.getText())) {
+      MavenHelpers.asConfigurationElementBuilder(shell).setText(commandShell);
+    }
+  }
+  ConfigurationElementBuilder from=MavenHelpers.getOrCreateElementBuilder(image,"from");
+  if (Strings.isNullOrBlank(from.getText())) {
+    from.setText("${docker.from}");
+  }
+  ConfigurationElementBuilder name=MavenHelpers.getOrCreateElementBuilder(build,"name");
+  if (Strings.isNullOrBlank(name.getText())) {
+    name.setText("${docker.image}");
+  }
+  ConfigurationElementBuilder assembly=MavenHelpers.getOrCreateElementBuilder(build,"assembly");
+  if (!assembly.hasChildByName("descriptor")) {
+    ConfigurationElementBuilder descriptorRef=MavenHelpers.getOrCreateElementBuilder(assembly,"descriptorRef");
+    if (Strings.isNullOrBlank(descriptorRef.getText())) {
+      descriptorRef.setText("${docker.assemblyDescriptorRef}");
+    }
+  }
+}

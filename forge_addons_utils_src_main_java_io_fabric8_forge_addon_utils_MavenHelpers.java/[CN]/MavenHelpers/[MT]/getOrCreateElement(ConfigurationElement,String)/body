@@ -1,0 +1,11 @@
+{
+  ConfigurationElement answer=config;
+  for (  String name : names) {
+    answer=findChildByName(answer,name);
+    if (answer == null) {
+      ConfigurationElementBuilder configBuilder=asConfigurationElementBuilder(config);
+      answer=configBuilder.addChild(name);
+    }
+  }
+  return answer;
+}

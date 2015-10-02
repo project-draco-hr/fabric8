@@ -30,13 +30,8 @@
 );
   builder.add(from);
   if (packaging == null || (!packaging.equals("war") && !packaging.equals("ear"))) {
-    main.setRequired(new Callable<Boolean>(){
-      @Override public Boolean call() throws Exception {
-        return DockerSetupHelper.isJarImage(from.getValue());
-      }
-    }
-);
-    main.setEnabled(main.isRequired());
+    boolean jarImage=DockerSetupHelper.isJarImage(from.getValue());
+    main.setEnabled(jarImage);
     if (project != null) {
       main.setDefaultValue(DockerSetupHelper.defaultMainClass(project));
     }
