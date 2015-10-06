@@ -1,6 +1,12 @@
 {
   MavenProject rootProject=getRootProject();
   File basedir=rootProject.getBasedir();
+  if (basedir == null) {
+    basedir=getProject().getBasedir();
+  }
+  if (basedir == null) {
+    basedir=new File(System.getProperty("basedir","."));
+  }
   ProjectConfig projectConfig=ProjectConfigs.loadFromFolder(basedir);
   String repoName=rootProject.getArtifactId();
   String userEnvVar="JENKINS_GOGS_USER";

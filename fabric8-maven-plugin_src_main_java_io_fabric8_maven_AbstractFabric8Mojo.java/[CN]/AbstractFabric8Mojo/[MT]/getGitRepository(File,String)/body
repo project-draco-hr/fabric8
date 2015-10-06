@@ -1,14 +1,18 @@
 {
   try {
-    Repository repository=null;
+    File gitFolder=GitHelpers.findGitFolder(basedir);
+    if (gitFolder == null) {
+      getLog().warn("Could not find .git folder based on the current basedir of " + basedir);
+      return null;
+    }
     FileRepositoryBuilder builder=new FileRepositoryBuilder();
-    repository=builder.readEnvironment().findGitDir(basedir).build();
+    Repository repository=builder.readEnvironment().setGitDir(gitFolder).build();
     if (repository == null) {
       getLog().warn("Cannot create default value for $" + envVarName + " as no .git/config file could be found");
     }
     return repository;
   }
- catch (  IOException e) {
+ catch (  Exception e) {
     getLog().warn("Failed to initialise Git Repository: " + e,e);
     return null;
   }
