@@ -98,19 +98,18 @@
  else   if (Objects.equal("GIT_COMMIT",envVarName)) {
     try (Repository repository=getGitRepository(basedir,envVarName)){
       if (repository != null) {
-        String fullBranch=repository.getFullBranch();
-        if (fullBranch == null) {
-          fullBranch=repository.getBranch();
+        System.out.println("Looking at repo with directory " + repository.getDirectory());
+        Iterable<RevCommit> logs=new Git(repository).log().call();
+        for (        RevCommit rev : logs) {
+          return rev.getName();
         }
-        if (fullBranch != null) {
-          ObjectId id=repository.resolve(fullBranch);
-          if (id != null) {
-            return id.getName();
-          }
-        }
+        getLog().warn("Cannot default " + envVarName + " no commits could be found");
+      }
+ else {
+        getLog().warn("Cannot default " + envVarName + " as no git repository could be found");
       }
     }
- catch (    IOException e) {
+ catch (    Exception e) {
       getLog().warn("Failed to find git commit id. " + e,e);
     }
   }

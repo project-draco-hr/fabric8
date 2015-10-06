@@ -2,7 +2,7 @@
   try {
     Repository repository=null;
     FileRepositoryBuilder builder=new FileRepositoryBuilder();
-    repository=builder.setGitDir(basedir).readEnvironment().findGitDir().build();
+    repository=builder.readEnvironment().findGitDir(basedir).build();
     if (repository == null) {
       getLog().warn("Cannot create default value for $" + envVarName + " as no .git/config file could be found");
     }
