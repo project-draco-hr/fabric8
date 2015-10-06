@@ -1,7 +1,7 @@
 {
   Configuration configuration=new Configuration();
   try {
-    configuration.masterUrl=getStringProperty(KUBERNETES_MASTER,map,DEFAULT_KUBERNETES_MASTER);
+    configuration.masterUrl=getStringProperty(KUBERNETES_MASTER,map,FALLBACK_CONFIG.getMasterUrl());
     configuration.environmentInitEnabled=getBooleanProperty(ENVIRONMENT_INIT_ENABLED,map,true);
     configuration.environmentConfigUrl=getKubernetesConfigurationUrl(map);
     configuration.environmentDependencies=Strings.splitAndTrimAsList(getStringProperty(ENVIRONMENT_DEPENDENCIES,map,"")," ");

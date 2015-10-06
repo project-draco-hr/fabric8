@@ -1,0 +1,6 @@
+{
+  System.setProperty(Config.KUBERNETES_KUBECONFIG_FILE,getClass().getResource("/test-kubeconfig").getFile());
+  Configuration config=Configuration.fromMap(new HashMap<String,String>());
+  assertNotNull(config);
+  assertEquals("https://from.kube.config:8443/",config.getMasterUrl());
+}
