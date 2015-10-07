@@ -1,7 +1,7 @@
 {
   List<String> dependencies=new ArrayList<>();
   try {
-    File[] files=Maven.resolver().loadPomFromFile("pom.xml").importTestDependencies().resolve().withoutTransitivity().asFile();
+    File[] files=Maven.resolver().loadPomFromFile(pathToPomFile).importTestDependencies().resolve().withoutTransitivity().asFile();
     for (    File f : files) {
       if (f.getName().endsWith("jar") && hasKubernetesJson(f)) {
         Path dir=Files.createTempDirectory(session.getId());
@@ -19,7 +19,12 @@
     }
   }
  catch (  Exception e) {
-    session.getLogger().warn("Skipping maven project dependencies. Caused by:" + e.getMessage());
+    if (rethrowExcpetions) {
+      throw e;
+    }
+ else {
+      session.getLogger().warn("Skipping maven project dependencies. Caused by:" + e.getMessage());
+    }
   }
   return dependencies;
 }

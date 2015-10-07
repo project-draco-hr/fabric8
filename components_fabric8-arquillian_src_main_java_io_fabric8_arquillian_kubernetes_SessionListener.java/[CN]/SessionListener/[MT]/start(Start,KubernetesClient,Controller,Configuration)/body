@@ -21,7 +21,7 @@
   Runtime.getRuntime().addShutdownHook(shutdownHook);
   try {
     URL configUrl=configuration.getEnvironmentConfigUrl();
-    List<String> dependencies=!configuration.getEnvironmentDependencies().isEmpty() ? configuration.getEnvironmentDependencies() : Util.getMavenDependencies(session);
+    List<String> dependencies=!configuration.getEnvironmentDependencies().isEmpty() ? configuration.getEnvironmentDependencies() : resolver.resolve(session);
     List<KubernetesList> kubeConfigs=new LinkedList<>();
     if (configuration.isEnvironmentInitEnabled()) {
       for (      String dependency : dependencies) {
