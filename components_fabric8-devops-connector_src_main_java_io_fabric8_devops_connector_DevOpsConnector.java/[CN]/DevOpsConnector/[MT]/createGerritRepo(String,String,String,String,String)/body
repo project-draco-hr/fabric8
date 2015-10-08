@@ -11,32 +11,52 @@
   if (Strings.isNullOrBlank(gerritAddress)) {
     throw new Exception("No address for service " + ServiceNames.GERRIT + " in namespace: "+ namespace+ " on Kubernetes address: "+ kubernetes.getMasterUrl());
   }
-  log.info("Querying Gerrit for namespace: " + namespace + " on Kubernetes address: "+ kubernetes.getMasterUrl());
-  List<Object> providers=WebClients.createProviders();
-  providers.add(new RemovePrefix());
-  WebClient webClient=WebClient.create(gerritAddress,providers);
-  disableSslChecks(webClient);
-  configureUserAndPassword(webClient,gerritUser,gerritPwd);
-  enableDigestAuthenticaionType(webClient);
-  GitApi gitApi=JAXRSClientFactory.fromClient(webClient,GitApi.class);
-  ProjectInfoDTO project=null;
+  DefaultHttpClient httpclient=new DefaultHttpClient();
+  DefaultHttpClient httpclientPost=new DefaultHttpClient();
+  String GERRIT_URL=gerritAddress + "/a/projects/" + repoName;
+  HttpGet httpget=new HttpGet(GERRIT_URL);
+  System.out.println("Requesting : " + httpget.getURI());
   try {
-    project=gitApi.getRepository(repoName);
-  }
- catch (  WebApplicationException ex) {
-    if (ex.getResponse().getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+    HttpResponse response=httpclient.execute(httpget);
+    System.out.println(response.getStatusLine());
+    if (response.getStatusLine().getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
+      Header authHeader=response.getFirstHeader(AUTH.WWW_AUTH);
+      System.out.println("authHeader = " + authHeader);
+      DigestScheme digestScheme=new DigestScheme();
+      digestScheme.processChallenge(authHeader);
+      UsernamePasswordCredentials creds=new UsernamePasswordCredentials("admin","secret");
+      httpget.addHeader(digestScheme.authenticate(creds,httpget,null));
+      HttpPost httpPost=new HttpPost(GERRIT_URL);
+      httpPost.addHeader(digestScheme.authenticate(creds,httpPost,null));
+      httpPost.addHeader("Content-Type","application/json");
       CreateRepositoryDTO createRepoDTO=new CreateRepositoryDTO();
-      createRepoDTO.setDescription(gerritGitRepoDesription);
+      createRepoDTO.setDescription(gerritGitRepoDescription);
       createRepoDTO.setName(repoName);
       createRepoDTO.setCreate_empty_commit(Boolean.valueOf(gerritGitInitialCommit));
-      RepositoryDTO repository=gitApi.createRepository(repoName,createRepoDTO);
-      if (log.isDebugEnabled()) {
-        log.debug("Git Repo created : " + toJson(repository));
-      }
-      log.info("Created git repo for " + repoName + " for namespace: "+ namespace+ " on gogs URL: "+ gerritAddress);
+      ObjectMapper mapper=new ObjectMapper();
+      String json=mapper.writeValueAsString(createRepoDTO);
+      HttpEntity entity=new StringEntity(json);
+      httpPost.setEntity(entity);
+      ResponseHandler<String> responseHandler=new BasicResponseHandler();
+      String responseBody=httpclientPost.execute(httpPost,responseHandler);
+      System.out.println("responseBody : " + responseBody);
     }
   }
-  if ((project != null) && (project.getName().equals(repoName))) {
+ catch (  MalformedChallengeException e) {
+    e.printStackTrace();
+  }
+catch (  AuthenticationException e) {
+    e.printStackTrace();
+  }
+catch (  ConnectException e) {
+    System.out.println("Gerrit Server is not responding");
+  }
+catch (  HttpResponseException e) {
+    System.out.println("Response from Gerrit Server : " + e.getMessage());
     throw new Exception("Repository " + repoName + " already exists !");
+  }
+ finally {
+    httpclient.getConnectionManager().shutdown();
+    httpclientPost.getConnectionManager().shutdown();
   }
 }
