@@ -11,5 +11,17 @@
       throw new MojoExecutionException("Failed to load podSpecAnnotationsFile properties file " + podSpecAnnotationsFile + ". "+ e,e);
     }
   }
-  return answer;
+  Map<String,String> newAnswer=new HashMap<String,String>();
+  for (  String key : answer.keySet()) {
+    int lastDot=key.lastIndexOf(".");
+    if (!key.contains("/") && lastDot > 0) {
+      String namespace=key.substring(0,lastDot);
+      String name=key.substring(lastDot + 1);
+      newAnswer.put(namespace + "/" + name,answer.get(key));
+    }
+ else {
+      newAnswer.put(key,answer.get(key));
+    }
+  }
+  return newAnswer;
 }
