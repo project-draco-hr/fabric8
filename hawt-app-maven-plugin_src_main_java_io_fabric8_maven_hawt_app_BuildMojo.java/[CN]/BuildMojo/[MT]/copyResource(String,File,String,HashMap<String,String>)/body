@@ -1,0 +1,13 @@
+{
+  try {
+    String content=loadTextResource(getClass().getResource(source));
+    if (interpolations != null) {
+      content=StringUtils.interpolate(content,interpolations);
+    }
+    content=content.replaceAll("\\r?\\n",Matcher.quoteReplacement(separator));
+    FileUtils.fileWrite(target,content);
+  }
+ catch (  IOException e) {
+    throw new MojoExecutionException("Could create the " + target + " file",e);
+  }
+}
