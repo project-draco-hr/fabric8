@@ -31,7 +31,7 @@
       throw new MojoExecutionException("Could not copy artifact to lib dir",e);
     }
   }
-  String classpathTxt=StringUtils.join(classpath.iterator(),"\r\n") + "\r\n";
+  String classpathTxt=StringUtils.join(classpath.iterator(),"\n") + "\n";
   try {
     FileUtils.fileWrite(new File(libDir,".classpath"),classpathTxt);
   }
@@ -40,9 +40,7 @@
   }
   HashMap<String,String> interpolations=new HashMap<String,String>();
   interpolations.put("mvn.artifactId",project.getArtifactId());
-  if (main != null) {
-    interpolations.put("mvn.main",main);
-  }
+  interpolations.put("mvn.main",main != null ? main : "");
   copyResource("bin/run",new File(binDir,"run"),"\n",interpolations);
   chmodExecutable(new File(binDir,"run"));
   if (source != null && source.exists()) {
