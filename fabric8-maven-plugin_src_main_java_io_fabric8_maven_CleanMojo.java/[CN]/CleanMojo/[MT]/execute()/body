@@ -1,0 +1,28 @@
+{
+  KubernetesClient client=getKubernetes().inNamespace(getNamespace());
+  client.services().delete();
+  client.replicationControllers().delete();
+  client.pods().delete();
+  client.endpoints().delete();
+  client.events().delete();
+  if (deep) {
+    client.secrets().delete();
+    client.serviceAccounts().delete();
+    client.securityContextConstraints().delete();
+  }
+  if (client.isAdaptable(OpenShiftClient.class)) {
+    OpenShiftClient openShiftClient=client.adapt(OpenShiftClient.class);
+    openShiftClient.routes().delete();
+    openShiftClient.builds().delete();
+    openShiftClient.imageStreams().delete();
+    openShiftClient.buildConfigs().delete();
+    openShiftClient.deploymentConfigs().delete();
+    openShiftClient.templates().delete();
+    if (deep) {
+      openShiftClient.users().delete();
+      openShiftClient.groups().delete();
+      openShiftClient.policies().delete();
+      openShiftClient.policyBindings().delete();
+    }
+  }
+}
