@@ -1,9 +1,0 @@
-{
-  MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
-  MavenPluginBuilder plugin=MavenPluginBuilder.create().setCoordinate(createCoordinate("io.fabric8.jube","jube-maven-plugin",VersionHelper.jubeVersion(),null,null));
-  plugin.addExecution(ExecutionBuilder.create().addGoal("build").setPhase("package"));
-  pluginFacet.addPlugin(plugin);
-  String jubeImage=asJubeImage(fromImage);
-  Dependency bom=DependencyBuilder.create().setCoordinate(createCoordinate("io.fabric8.jube.images.fabric8",jubeImage,VersionHelper.jubeVersion(),"image","zip"));
-  dependencyInstaller.installManaged(project,bom);
-}
