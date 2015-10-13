@@ -31,18 +31,18 @@
       throw new MojoExecutionException("Could not copy artifact to lib dir",e);
     }
   }
-  String classpathTxt=StringUtils.join(classpath.iterator(),"\n") + "\n";
   try {
-    FileUtils.fileWrite(new File(libDir,".classpath"),classpathTxt);
+    String classpathTxt=StringUtils.join(classpath.iterator(),"\n") + "\n";
+    FileUtils.fileWrite(new File(libDir,"classpath"),classpathTxt);
   }
  catch (  IOException e) {
-    throw new MojoExecutionException("Could create the .classpath file",e);
+    throw new MojoExecutionException("Could create the classpath file",e);
   }
   HashMap<String,String> interpolations=new HashMap<String,String>();
-  interpolations.put("mvn.artifactId",project.getArtifactId());
-  interpolations.put("mvn.main",main != null ? main : "");
-  copyResource("bin/run",new File(binDir,"run"),"\n",interpolations);
-  chmodExecutable(new File(binDir,"run"));
+  interpolations.put("hawtapp.mvn.main.property",javaMainClass != null ? javaMainClass : "");
+  File targetRun=new File(binDir,"run.sh");
+  copyResource("bin/run.sh",targetRun,interpolations);
+  chmodExecutable(targetRun);
   if (source != null && source.exists()) {
     try {
       FileUtils.copyDirectoryStructure(source,assembly);
