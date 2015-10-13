@@ -1,0 +1,12 @@
+{
+  Set<File> result=new HashSet<>();
+  if (root != null) {
+    result.add(root);
+    if (root.isDirectory()) {
+      for (      File child : root.listFiles(filter)) {
+        result.addAll(recursiveList(child,filter));
+      }
+    }
+  }
+  return result;
+}
