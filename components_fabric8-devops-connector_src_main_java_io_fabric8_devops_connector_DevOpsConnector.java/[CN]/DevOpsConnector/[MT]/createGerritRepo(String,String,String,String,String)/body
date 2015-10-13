@@ -11,52 +11,25 @@
   if (Strings.isNullOrBlank(gerritAddress)) {
     throw new Exception("No address for service " + ServiceNames.GERRIT + " in namespace: "+ namespace+ " on Kubernetes address: "+ kubernetes.getMasterUrl());
   }
-  DefaultHttpClient httpclient=new DefaultHttpClient();
-  DefaultHttpClient httpclientPost=new DefaultHttpClient();
   String GERRIT_URL=gerritAddress + "/a/projects/" + repoName;
-  HttpGet httpget=new HttpGet(GERRIT_URL);
-  System.out.println("Requesting : " + httpget.getURI());
+  Realm realm=new Realm.RealmBuilder().setPrincipal(gerritUser).setPassword(gerritPwd).setUsePreemptiveAuth(false).setScheme(Realm.AuthScheme.DIGEST).build();
+  AsyncHttpClientConfig.Builder configBuilder=new AsyncHttpClientConfig.Builder().setRealm(realm);
+  AsyncHttpClient client=new AsyncHttpClient(configBuilder.build());
+  System.out.println("Requesting : " + GERRIT_URL);
   try {
-    HttpResponse response=httpclient.execute(httpget);
-    System.out.println(response.getStatusLine());
-    if (response.getStatusLine().getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
-      Header authHeader=response.getFirstHeader(AUTH.WWW_AUTH);
-      System.out.println("authHeader = " + authHeader);
-      DigestScheme digestScheme=new DigestScheme();
-      digestScheme.processChallenge(authHeader);
-      UsernamePasswordCredentials creds=new UsernamePasswordCredentials("admin","secret");
-      httpget.addHeader(digestScheme.authenticate(creds,httpget,null));
-      HttpPost httpPost=new HttpPost(GERRIT_URL);
-      httpPost.addHeader(digestScheme.authenticate(creds,httpPost,null));
-      httpPost.addHeader("Content-Type","application/json");
-      CreateRepositoryDTO createRepoDTO=new CreateRepositoryDTO();
-      createRepoDTO.setDescription(gerritGitRepoDescription);
-      createRepoDTO.setName(repoName);
-      createRepoDTO.setCreate_empty_commit(Boolean.valueOf(gerritGitInitialCommit));
-      ObjectMapper mapper=new ObjectMapper();
-      String json=mapper.writeValueAsString(createRepoDTO);
-      HttpEntity entity=new StringEntity(json);
-      httpPost.setEntity(entity);
-      ResponseHandler<String> responseHandler=new BasicResponseHandler();
-      String responseBody=httpclientPost.execute(httpPost,responseHandler);
-      System.out.println("responseBody : " + responseBody);
-    }
+    CreateRepositoryDTO createRepoDTO=new CreateRepositoryDTO();
+    createRepoDTO.setDescription(gerritGitRepoDescription);
+    createRepoDTO.setName(repoName);
+    createRepoDTO.setCreate_empty_commit(Boolean.valueOf(gerritGitInitialCommit));
+    String json=MAPPER.writeValueAsString(createRepoDTO);
+    Future<Response> future=client.preparePost(GERRIT_URL).addHeader("Content-Type","application/json").setBody(json).execute();
+    Response response=future.get();
+    System.out.println("responseBody : " + response.getResponseBody());
   }
- catch (  MalformedChallengeException e) {
-    e.printStackTrace();
-  }
-catch (  AuthenticationException e) {
-    e.printStackTrace();
-  }
-catch (  ConnectException e) {
-    System.out.println("Gerrit Server is not responding");
-  }
-catch (  HttpResponseException e) {
-    System.out.println("Response from Gerrit Server : " + e.getMessage());
-    throw new Exception("Repository " + repoName + " already exists !");
+ catch (  Throwable t) {
+    throw new RuntimeException(t);
   }
  finally {
-    httpclient.getConnectionManager().shutdown();
-    httpclientPost.getConnectionManager().shutdown();
+    client.close();
   }
 }
