@@ -1,5 +1,11 @@
 {
+  InputStreamReader reader=new InputStreamReader(getClass().getResourceAsStream("default-archetype-descriptor.xml"));
   StringWriter sw=new StringWriter();
-  IOUtils.copy(getClass().getResourceAsStream("default-archetype-descriptor.xml"),sw,"UTF-8");
+  try {
+    IOHelpers.copy(reader,sw);
+  }
+  finally {
+    IOHelpers.close(reader,sw);
+  }
   return sw.toString();
 }

@@ -7,11 +7,11 @@
   File outputGitIgnoreFile=new File(archetypeDir,".gitignore");
   if (clean) {
     LOG.debug("Removing generated archetype dir {}",archetypeDir);
-    FileUtils.deleteDirectory(archetypeDir);
+    Files.recursiveDelete(archetypeDir);
   }
  else   if (outputSrcDir.exists() && outputGitIgnoreFile.exists() && fileIncludesLine(outputGitIgnoreFile,"src")) {
     LOG.debug("Removing generated src dir {}",outputSrcDir);
-    FileUtils.deleteDirectory(outputSrcDir);
+    Files.recursiveDelete(outputSrcDir);
     if (outputSrcDir.exists()) {
       throw new RuntimeException("The projectDir " + outputSrcDir + " should not exist!");
     }

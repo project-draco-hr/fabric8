@@ -1,6 +1,6 @@
 {
   LOG.debug("Parsing " + projectPom);
-  String text=replaceFn.replace(FileUtils.readFileToString(projectPom));
+  String text=replaceFn.replace(IOHelpers.readFully(projectPom));
   Document doc=archetypeUtils.parseXml(new InputSource(new StringReader(text)));
   Element root=doc.getDocumentElement();
   String originalArtifactId, originalName, originalDescription;
@@ -106,7 +106,7 @@
   File archetypeProjectPom=new File(archetypeDir,"pom.xml");
   if (!archetypeProjectPom.exists()) {
     StringWriter sw=new StringWriter();
-    IOUtils.copy(getClass().getResourceAsStream("default-archetype-pom.xml"),sw,"UTF-8");
+    IOHelpers.copy(new InputStreamReader(getClass().getResourceAsStream("default-archetype-pom.xml")),sw);
     Document pomDocument=archetypeUtils.parseXml(new InputSource(new StringReader(sw.toString())));
     List<String> emptyList=Collections.emptyList();
     Element artifactId=replaceOrAddElement(pomDocument,pomDocument.getDocumentElement(),"artifactId",emptyList);

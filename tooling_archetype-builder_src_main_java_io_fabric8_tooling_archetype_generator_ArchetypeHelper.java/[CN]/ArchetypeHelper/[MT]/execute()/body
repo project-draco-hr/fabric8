@@ -73,9 +73,7 @@
   }
   if (!replaceProperties.isEmpty()) {
     File pom=new File(outputDir,"pom.xml");
-    FileReader reader=new FileReader(pom);
-    String text=IOUtils.toString(reader);
-    IOUtils.closeQuietly(reader);
+    String text=IOHelpers.readFully(new FileReader(pom));
     for (    Map.Entry<String,String> e : replaceProperties.entrySet()) {
       text=replaceVariable(text,e.getKey(),e.getValue());
     }
@@ -85,9 +83,7 @@
     if (Strings.isNotBlank(description)) {
       text=text.replaceFirst("<description>(.*)</description>","<description>" + description + "</description>");
     }
-    FileWriter writer=new FileWriter(pom);
-    IOUtils.write(text,writer);
-    IOUtils.closeQuietly(writer);
+    IOHelpers.writeTo(pom,text);
   }
   if (createDefaultDirectories) {
     File srcDir=new File(outputDir,"src");
