@@ -22,7 +22,7 @@
             name=ProjectRepositories.createBuildName(username,repoName);
           }
  else {
-            getLog().warn("Cannot auto-default BUILD_URL as there is no environment variable `" + userEnvVar + "` defined so we can't guess the Jenkins build URL");
+            warnIfInCDBuild("Cannot auto-default BUILD_URL as there is no environment variable `" + userEnvVar + "` defined so we can't guess the Jenkins build URL");
           }
         }
       }
@@ -45,13 +45,13 @@
             }
           }
           if (connectError) {
-            getLog().warn("Cannot connect to Kubernetes to find jenkins service URL: " + cause.getMessage());
+            warnIfInCDBuild("Cannot connect to Kubernetes to find jenkins service URL: " + cause.getMessage());
           }
  else           if (notFound) {
-            getLog().warn(cause.getMessage());
+            warnIfInCDBuild(cause.getMessage());
           }
  else {
-            getLog().warn("Cannot find jenkins service URL: " + cause,cause);
+            warnIfInCDBuild("Cannot find jenkins service URL: " + cause,cause);
           }
         }
       }
@@ -62,7 +62,7 @@
         jobUrl=URLUtils.pathJoin(jobUrl,buildId);
       }
  else {
-        getLog().warn("Cannot find BUILD_ID to create a specific jenkins build URL. So using: " + jobUrl);
+        warnIfInCDBuild("Cannot find BUILD_ID to create a specific jenkins build URL. So using: " + jobUrl);
       }
     }
     return jobUrl;
@@ -87,18 +87,18 @@
           }
         }
         if (connectError) {
-          getLog().warn("Cannot connect to Kubernetes to find gogs service URL: " + cause.getMessage());
+          warnIfInCDBuild("Cannot connect to Kubernetes to find gogs service URL: " + cause.getMessage());
         }
  else         if (notFound) {
-          getLog().warn(cause.getMessage());
+          warnIfInCDBuild(cause.getMessage());
         }
  else {
-          getLog().warn("Cannot find gogs service URL: " + cause,cause);
+          warnIfInCDBuild("Cannot find gogs service URL: " + cause,cause);
         }
       }
     }
  else {
-      getLog().warn("Cannot auto-default GIT_URL as there is no environment variable `" + userEnvVar + "` defined so we can't guess the Gogs build URL");
+      warnIfInCDBuild("Cannot auto-default GIT_URL as there is no environment variable `" + userEnvVar + "` defined so we can't guess the Gogs build URL");
     }
   }
  else   if (Objects.equal("GIT_COMMIT",envVarName)) {
@@ -109,14 +109,14 @@
         for (        RevCommit rev : logs) {
           return rev.getName();
         }
-        getLog().warn("Cannot default " + envVarName + " no commits could be found");
+        warnIfInCDBuild("Cannot default " + envVarName + " no commits could be found");
       }
  else {
-        getLog().warn("Cannot default " + envVarName + " as no git repository could be found");
+        warnIfInCDBuild("Cannot default " + envVarName + " as no git repository could be found");
       }
     }
  catch (    Exception e) {
-      getLog().warn("Failed to find git commit id. " + e,e);
+      warnIfInCDBuild("Failed to find git commit id. " + e,e);
     }
   }
  else   if (Objects.equal("GIT_BRANCH",envVarName)) {
@@ -126,7 +126,7 @@
       }
     }
  catch (    IOException e) {
-      getLog().warn("Failed to find git commit id. " + e,e);
+      warnIfInCDBuild("Failed to find git commit id. " + e,e);
     }
   }
   return null;
