@@ -1,0 +1,17 @@
+{
+  MavenProject rootProject=getRootProject();
+  File basedir=null;
+  if (rootProject != null) {
+    basedir=rootProject.getBasedir();
+  }
+  if (basedir == null) {
+    MavenProject project=getProject();
+    if (project != null) {
+      basedir=project.getBasedir();
+    }
+  }
+  if (basedir == null) {
+    basedir=new File(System.getProperty("basedir","."));
+  }
+  return ProjectConfigs.loadFromFolder(basedir);
+}

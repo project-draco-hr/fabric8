@@ -1,5 +1,10 @@
 {
   if (Strings.isNullOrBlank(namespace)) {
+    if (Strings.isNotBlank(environment)) {
+      namespace=getNamespaceForEnvironment(environment);
+    }
+  }
+  if (Strings.isNullOrBlank(namespace)) {
     namespace=KubernetesHelper.defaultNamespace();
   }
   return namespace;
