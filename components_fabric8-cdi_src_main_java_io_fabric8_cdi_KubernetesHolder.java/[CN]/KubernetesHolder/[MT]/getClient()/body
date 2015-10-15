@@ -2,14 +2,19 @@
   if (client != null) {
     return client;
   }
-  BeanManager beanManager=CDI.current().getBeanManager();
-  Set<Bean<?>> beans=beanManager.getBeans(KubernetesClient.class);
-  if (beans.isEmpty()) {
-    throw new IllegalStateException("Could not find client beans!");
+  BeanManager beanManager=getBeanManager();
+  if (beanManager != null) {
+    Set<Bean<?>> beans=beanManager.getBeans(KubernetesClient.class);
+    if (beans.isEmpty()) {
+      throw new IllegalStateException("Could not find client beans!");
+    }
+ else {
+      CreationalContext ctx=beanManager.createCreationalContext(null);
+      client=(KubernetesClient)beanManager.getReference(beans.iterator().next(),KubernetesClient.class,ctx);
+    }
   }
  else {
-    CreationalContext ctx=beanManager.createCreationalContext(null);
-    client=(KubernetesClient)beanManager.getReference(beans.iterator().next(),KubernetesClient.class,ctx);
+    client=new DefaultKubernetesClient();
   }
   return client;
 }
