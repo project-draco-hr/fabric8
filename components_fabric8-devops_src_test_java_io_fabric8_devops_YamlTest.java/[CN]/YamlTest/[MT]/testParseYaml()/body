@@ -7,4 +7,17 @@
   assertThat(config.getChatRoom()).isEqualTo("myroom");
   assertThat(config.getIssueProjectName()).isEqualTo("foo");
   assertThat(config.getFlow()).isEqualTo("maven/CanaryReleaseThenStage.groovy");
+  LinkedHashMap<String,String> environments=config.getEnvironments();
+  List<Pair<String,String>> expectedEnvironents=Arrays.asList(new Pair<String,String>("Testing","gogsadmin-james4-testing"),new Pair<String,String>("Staging","gogsadmin-james4-staging"),new Pair<String,String>("Production","gogsadmin-james4-prod"));
+  int idx=0;
+  Set<Map.Entry<String,String>> entries=environments.entrySet();
+  for (  Map.Entry<String,String> entry : entries) {
+    String key=entry.getKey();
+    String value=entry.getValue();
+    System.out.println("Found environment " + key + " = "+ value);
+    Pair<String,String> actual=new Pair<>(key,value);
+    assertTrue("Too many entries - found unexpected value: " + actual,expectedEnvironents.size() > idx);
+    Pair<String,String> expected=expectedEnvironents.get(idx++);
+    assertEquals("environment " + idx,expected,actual);
+  }
 }
