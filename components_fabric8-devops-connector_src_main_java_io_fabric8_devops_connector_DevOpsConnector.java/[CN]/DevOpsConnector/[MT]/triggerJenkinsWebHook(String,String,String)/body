@@ -1,0 +1,42 @@
+{
+  String lastBuild=URLUtils.pathJoin(jobUrl,"/lastBuild/api/json");
+  JsonNode lastBuildJson=parseLastBuildJson(lastBuild);
+  JsonNode building=null;
+  if (lastBuildJson != null && lastBuildJson.isObject()) {
+    building=lastBuildJson.get("building");
+    if (building != null && building.isBoolean()) {
+      if (building.booleanValue()) {
+        getLog().info("Build is already running so lets not trigger another one!");
+        return;
+      }
+    }
+  }
+  getLog().info("Got last build JSON: " + lastBuildJson + " building: "+ building);
+  getLog().info("Triggering Jenkins webhook: " + triggerUrl);
+  String json="{}";
+  HttpURLConnection connection=null;
+  try {
+    URL url=new URL(triggerUrl);
+    connection=(HttpURLConnection)url.openConnection();
+    connection.setRequestMethod("POST");
+    connection.setRequestProperty("Content-Type","application/json");
+    connection.setDoOutput(true);
+    OutputStreamWriter out=new OutputStreamWriter(connection.getOutputStream());
+    out.write(json);
+    out.close();
+    int status=connection.getResponseCode();
+    String message=connection.getResponseMessage();
+    getLog().info("Got response code from Jenkins: " + status + " message: "+ message);
+    if (status != 200) {
+      getLog().error("Failed to trigger job " + triggerUrl + ". Status: "+ status+ " message: "+ message);
+    }
+  }
+ catch (  Exception e) {
+    getLog().error("Failed to trigger jenkins on " + triggerUrl + ". "+ e,e);
+  }
+ finally {
+    if (connection != null) {
+      connection.disconnect();
+    }
+  }
+}

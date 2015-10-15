@@ -4,7 +4,6 @@
     String jobUrl=URLUtils.pathJoin(address,"/createItem") + "?name=" + jobName;
     getLog().info("POSTING the jenkins job to: " + jobUrl);
     getLog().debug("Jenkins XML: " + xml);
-    String json="{}";
     HttpURLConnection connection=null;
     try {
       URL url=new URL(jobUrl);
@@ -19,11 +18,11 @@
       String message=connection.getResponseMessage();
       getLog().info("Got response code from Jenkins: " + status + " message: "+ message);
       if (status != 200) {
-        getLog().error("Failed to trigger job " + jobName + " on "+ jobUrl+ ". Status: "+ status+ " message: "+ message);
+        getLog().error("Failed to register job " + jobName + " on "+ jobUrl+ ". Status: "+ status+ " message: "+ message);
       }
     }
  catch (    Exception e) {
-      getLog().error("Failed to trigger jenkins on " + jobUrl + ". "+ e,e);
+      getLog().error("Failed to register jenkins on " + jobUrl + ". "+ e,e);
     }
  finally {
       if (connection != null) {

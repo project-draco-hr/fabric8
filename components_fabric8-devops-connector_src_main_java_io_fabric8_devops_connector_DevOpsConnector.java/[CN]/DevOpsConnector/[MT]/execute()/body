@@ -116,10 +116,7 @@
  catch (  Exception e) {
     getLog().error("Failed to create BuildConfig for " + KubernetesHelper.toJson(buildConfig) + ". "+ e,e);
   }
-  if (Strings.isNotBlank(name)) {
-    createJenkinsJob(name,jenkinsJobUrl);
-    getLog().info("created jenkins job");
-  }
+  this.jenkinsJobName=name;
   if (isRegisterWebHooks()) {
     registerWebHooks();
     getLog().info("webhooks done");

@@ -1,0 +1,29 @@
+{
+  HttpURLConnection connection=null;
+  String message=null;
+  try {
+    URL url=new URL(urlText);
+    connection=(HttpURLConnection)url.openConnection();
+    connection.setRequestMethod("GET");
+    connection.setRequestProperty("Content-Type","application/json");
+    int status=connection.getResponseCode();
+    message=connection.getResponseMessage();
+    getLog().info("Got response code from URL: " + url + " "+ status+ " message: "+ message);
+    if (status != 200 || Strings.isNullOrBlank(message)) {
+      getLog().debug("Failed to load URL " + url + ". Status: "+ status+ " message: "+ message);
+    }
+ else {
+      ObjectMapper objectMapper=new ObjectMapper();
+      return objectMapper.reader().readTree(message);
+    }
+  }
+ catch (  Exception e) {
+    getLog().debug("Failed to load URL " + urlText + ". "+ e,e);
+  }
+ finally {
+    if (connection != null) {
+      connection.disconnect();
+    }
+  }
+  return null;
+}

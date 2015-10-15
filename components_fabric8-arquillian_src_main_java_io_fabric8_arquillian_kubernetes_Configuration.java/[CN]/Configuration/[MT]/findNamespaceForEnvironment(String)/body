@@ -1,0 +1,23 @@
+{
+  String namespace=null;
+  String basedir=System.getProperty("basedir",".");
+  File folder=new File(basedir);
+  ProjectConfig projectConfig=ProjectConfigs.findFromFolder(folder);
+  if (projectConfig != null) {
+    LinkedHashMap<String,String> environments=projectConfig.getEnvironments();
+    if (environments != null) {
+      namespace=environments.get(environment);
+    }
+  }
+  if (Strings.isNullOrBlank(namespace)) {
+    String envVarName=environment.toUpperCase() + "_NAMESPACE";
+    namespace=Systems.getEnvVarOrSystemProperty(envVarName);
+    if (Strings.isNullOrBlank(namespace)) {
+      throw new IllegalStateException("Could not find namespace for environment `" + environment + "` by looking for a fabric8.yml file and at environment variable $"+ envVarName);
+    }
+  }
+  if (Strings.isNotBlank(namespace)) {
+    System.out.println("Mapping environment `" + environment + "` to namespace `"+ namespace+ "`");
+  }
+  return namespace;
+}
