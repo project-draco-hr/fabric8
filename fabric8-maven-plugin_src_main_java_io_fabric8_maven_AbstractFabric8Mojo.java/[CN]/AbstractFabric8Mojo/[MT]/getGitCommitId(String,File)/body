@@ -1,0 +1,19 @@
+{
+  try (Repository repository=getGitRepository(basedir,envVarName)){
+    if (repository != null) {
+      System.out.println("Looking at repo with directory " + repository.getDirectory());
+      Iterable<RevCommit> logs=new Git(repository).log().call();
+      for (      RevCommit rev : logs) {
+        return rev.getName();
+      }
+      warnIfInCDBuild("Cannot default " + envVarName + " no commits could be found");
+    }
+ else {
+      warnIfInCDBuild("Cannot default " + envVarName + " as no git repository could be found");
+    }
+  }
+ catch (  Exception e) {
+    warnIfInCDBuild("Failed to find git commit id. " + e,e);
+  }
+  return null;
+}
