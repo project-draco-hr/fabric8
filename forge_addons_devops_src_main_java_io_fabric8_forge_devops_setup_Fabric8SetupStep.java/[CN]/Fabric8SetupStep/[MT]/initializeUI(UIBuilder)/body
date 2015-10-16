@@ -6,14 +6,13 @@
   boolean springBoot=hasSpringBootMavenPlugin(project);
   List<String> choices=new ArrayList<String>();
   if (packaging == null || springBoot || "jar".equals(packaging)) {
-    choices.add(jarImages[0]);
+    choices.addAll(Arrays.asList(jarImages));
   }
   if (packaging == null || "bundle".equals(packaging)) {
     choices.add(bundleImages[0]);
   }
   if (!springBoot && (packaging == null || "war".equals(packaging))) {
-    choices.add(warImages[0]);
-    choices.add(warImages[1]);
+    choices.addAll(Arrays.asList(warImages));
   }
   from.setValueChoices(choices);
   if (choices.size() > 0) {
