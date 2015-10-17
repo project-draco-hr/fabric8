@@ -11,8 +11,8 @@
     throw new MojoExecutionException("No address for service " + ServiceNames.GERRIT + " in namespace: "+ namespace+ " on Kubernetes address: "+ kubernetes.getMasterUrl());
   }
   log.info("Querying Gerrit for namespace: " + namespace + " on Kubernetes address: "+ kubernetes.getMasterUrl());
-  DefaultHttpClient httpclient=new DefaultHttpClient();
-  DefaultHttpClient httpclientPost=new DefaultHttpClient();
+  CloseableHttpClient httpclient=HttpClientBuilder.create().build();
+  CloseableHttpClient httpclientPost=HttpClientBuilder.create().build();
   String GERRIT_URL=gerritAddress + "/a/projects/" + repoName;
   HttpGet httpget=new HttpGet(GERRIT_URL);
   System.out.println("Requesting : " + httpget.getURI());
@@ -56,8 +56,8 @@ catch (  HttpResponseException e) {
     throw new MojoExecutionException("Repository " + repoName + " already exists !");
   }
  finally {
-    httpclient.getConnectionManager().shutdown();
-    httpclientPost.getConnectionManager().shutdown();
+    httpclient.close();
+    httpclientPost.close();
   }
   return false;
 }
