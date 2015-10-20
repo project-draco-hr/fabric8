@@ -40,7 +40,7 @@
       }
     }
     ServiceBuilder serviceBuilder=new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labelMap).withAnnotations(serviceAnnotations).endMetadata();
-    ServiceFluent<ServiceBuilder>.SpecNested<ServiceBuilder> serviceSpecBuilder=serviceBuilder.withNewSpec().withSelector(selector);
+    ServiceFluent.SpecNested<ServiceBuilder> serviceSpecBuilder=serviceBuilder.withNewSpec().withSelector(selector);
     List<ServicePort> servicePorts=getServicePorts();
     System.out.println("Generated ports: " + servicePorts);
     boolean hasPorts=servicePorts != null & !servicePorts.isEmpty();
