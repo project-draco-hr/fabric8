@@ -14,20 +14,20 @@
  else   if (entity2 instanceof ObjectMeta) {
     return configEqualObjectMeta((ObjectMeta)entity1,castTo(ObjectMeta.class,entity2));
   }
+ else   if (entity1 instanceof Collection && entity2 instanceof Collection) {
+    return collectionsEqual((Collection)entity1,(Collection)entity2);
+  }
  else {
-    Set<Class<?>> classes=new HashSet<>(KindToClassMapping.getKindToClassMap().values());
-    Class<?> aClass=getMappedClass(entity1.getClass(),classes);
+    Class<?> aClass=getCommonDenominator(entity1.getClass(),entity2.getClass());
     if (aClass != null) {
       Object castEntity2=castTo(aClass,entity2);
       if (castEntity2 == null) {
         return false;
       }
- else {
+ else       if (aClass.getPackage().getName().startsWith("io.fabric8")) {
         return configEqualKubernetesDTO(entity1,entity2,aClass);
       }
     }
- else {
-      return Objects.equal(entity1,entity2);
-    }
+    return Objects.equal(entity1,entity2);
   }
 }
