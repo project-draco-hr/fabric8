@@ -1,26 +1,32 @@
 {
   final UIContext context=builder.getUIContext();
-  flow.setCompleter(new UICompleter<String>(){
+  pipeline.setCompleter(new UICompleter<String>(){
     @Override public Iterable<String> getCompletionProposals(    UIContext context,    InputComponent<?,String> input,    String value){
       return filterCompletions(getFlowURIs(context),value);
     }
   }
 );
-  flow.addValueChangeListener(new ValueChangeListener(){
+  pipeline.addValueChangeListener(new ValueChangeListener(){
     @Override public void valueChanged(    ValueChangeEvent event){
       String value=event.getNewValue() != null ? event.getNewValue().toString() : null;
       if (value != null) {
         String description=getDescriptionForFlow(value);
-        flow.setNote(description != null ? description : "");
+        pipeline.setNote(description != null ? description : "");
       }
  else {
-        flow.setNote("");
+        pipeline.setNote("");
       }
       boolean canCopy=Strings.isNotBlank(value);
       copyFlowToProject.setEnabled(canCopy);
     }
   }
 );
+  if (getCurrentSelectedProject(context) != null) {
+    pipeline.setDefaultValue(DEFAULT_MAVEN_FLOW);
+    pipeline.setValue(DEFAULT_MAVEN_FLOW);
+  }
+ else {
+  }
   chatRoom.setCompleter(new UICompleter<String>(){
     @Override public Iterable<String> getCompletionProposals(    UIContext context,    InputComponent<?,String> input,    String value){
       return filterCompletions(getChatRoomNames(),value);
@@ -66,10 +72,13 @@
     config=ProjectConfigs.parseProjectConfig(configFile);
   }
   if (config != null) {
-    CommandHelpers.setInitialComponentValue(flow,config.getFlow());
+    String flow=config.getPipeline();
+    if (Strings.isNotBlank(flow)) {
+      CommandHelpers.setInitialComponentValue(this.pipeline,flow);
+    }
     CommandHelpers.setInitialComponentValue(chatRoom,config.getChatRoom());
     CommandHelpers.setInitialComponentValue(issueProjectName,config.getIssueProjectName());
     CommandHelpers.setInitialComponentValue(codeReview,config.getCodeReview());
   }
-  inputComponents=CommandHelpers.addInputComponents(builder,flow,copyFlowToProject,chatRoom,issueProjectName,codeReview);
+  inputComponents=CommandHelpers.addInputComponents(builder,pipeline,copyFlowToProject,chatRoom,issueProjectName,codeReview);
 }

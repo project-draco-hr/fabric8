@@ -1,6 +1,6 @@
 {
   if (projectConfig != null) {
-    String flow=projectConfig.getFlow();
+    String flow=projectConfig.getPipeline();
     String flowGitUrlValue=null;
     boolean localFlow=false;
     if (Strings.isNotBlank(flow)) {
@@ -10,6 +10,9 @@
       flow=ProjectConfigs.LOCAL_FLOW_FILE_NAME;
       flowGitUrlValue=this.gitUrl;
       localFlow=true;
+    }
+ else {
+      getLog().info("Not creating Jenkins job as no pipeline defined for project configuration!");
     }
     String versionPrefix=Systems.getSystemPropertyOrEnvVar("VERSION_PREFIX","VERSION_PREFIX","1.0");
     if (Strings.isNotBlank(flow) && Strings.isNotBlank(gitUrl) && Strings.isNotBlank(flowGitUrlValue)) {

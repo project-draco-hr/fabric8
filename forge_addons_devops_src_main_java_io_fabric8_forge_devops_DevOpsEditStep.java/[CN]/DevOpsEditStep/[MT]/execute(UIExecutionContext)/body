@@ -88,25 +88,25 @@
   Boolean copyFlowToProjectValue=copyFlowToProject.getValue();
   if (copyFlowToProjectValue != null && copyFlowToProjectValue.booleanValue()) {
     if (basedir == null && !basedir.isDirectory()) {
-      LOG.warn("Cannot copy the flow to the project as no basedir!");
+      LOG.warn("Cannot copy the pipeline to the project as no basedir!");
     }
  else {
-      String flow=this.flow.getValue();
+      String flow=this.pipeline.getValue();
       if (Strings.isNullOrBlank(flow)) {
-        LOG.warn("Cannot copy the flow to the project as no flow selected!");
+        LOG.warn("Cannot copy the pipeline to the project as no pipeline selected!");
       }
  else {
         String flowText=getFlowContent(flow,uiContext);
         if (Strings.isNullOrBlank(flowText)) {
-          LOG.warn("Cannot copy the flow to the project as no flow text could be loaded!");
+          LOG.warn("Cannot copy the pipeline to the project as no pipeline text could be loaded!");
         }
  else {
           flowText=Strings.replaceAllWithoutRegex(flowText,"GIT_URL","'" + gitUrl + "'");
           File newFile=new File(basedir,ProjectConfigs.LOCAL_FLOW_FILE_NAME);
           Files.writeToFile(newFile,flowText.getBytes());
-          LOG.info("Written flow to " + newFile);
+          LOG.info("Written pipeline to " + newFile);
           if (config != null) {
-            config.setFlow(null);
+            config.setPipeline(null);
             config.setUseLocalFlow(true);
           }
         }

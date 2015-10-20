@@ -47,9 +47,12 @@
     }
   }
   String flow=null;
-  Object flowValue=map.get("flow");
+  Object flowValue=map.get("pipeline");
+  if (flowValue == null) {
+    flowValue=map.get("flow");
+  }
   if (flowValue != null) {
     flow=flowValue.toString();
   }
-  config.setFlow(flow);
+  config.setPipeline(flow);
 }
