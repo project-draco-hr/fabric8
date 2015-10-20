@@ -4,7 +4,7 @@
   LOG.info("Got the current project");
   String packaging=getProjectPackaging(project);
   boolean springBoot=hasSpringBootMavenPlugin(project);
-  List<String> choices=new ArrayList<String>();
+  final List<String> choices=new ArrayList<String>();
   if (packaging == null || springBoot || "jar".equals(packaging)) {
     choices.addAll(Arrays.asList(jarImages));
   }
@@ -14,7 +14,12 @@
   if (!springBoot && (packaging == null || "war".equals(packaging))) {
     choices.addAll(Arrays.asList(warImages));
   }
-  from.setValueChoices(choices);
+  from.setCompleter(new UICompleter<String>(){
+    @Override public Iterable<String> getCompletionProposals(    UIContext context,    InputComponent<?,String> input,    String value){
+      return choices;
+    }
+  }
+);
   if (choices.size() > 0) {
     String defaultChoice=choices.get(0);
     if (defaultChoice != null) {
@@ -34,7 +39,7 @@
     if (project != null) {
       main.setDefaultValue(DockerSetupHelper.defaultMainClass(project));
     }
-    main.addValidator(new ClassNameValidator(true));
+    main.addValidator(new ClassNameOrMavenPropertyValidator(true));
     main.addValueChangeListener(new ValueChangeListener(){
       @Override public void valueChanged(      ValueChangeEvent event){
         builder.getUIContext().getAttributeMap().put("docker.main",event.getNewValue());
