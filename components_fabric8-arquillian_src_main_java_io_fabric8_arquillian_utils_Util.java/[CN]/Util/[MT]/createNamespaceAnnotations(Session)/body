@@ -2,8 +2,9 @@
   Map<String,String> annotations=new HashMap<>();
   File dir=getProjectBaseDir(session);
   String gitUrl=findGitUrl(session,dir);
+  annotations.put(Annotations.Tests.SESSION_ID,session.getId());
   if (Strings.isNotBlank(gitUrl)) {
-    annotations.put("fabric8.devops/gitUrl",gitUrl);
+    annotations.put(Annotations.Builds.GIT_URL,gitUrl);
   }
   File pomProperties=new File(dir,"target/maven-archiver/pom.properties");
   if (pomProperties.isFile()) {
@@ -15,7 +16,7 @@
         String key=entry.getKey();
         String value=entry.getValue();
         if (Strings.isNotBlank(key) && Strings.isNotBlank(value)) {
-          annotations.put("fabric8.devops/" + key,value);
+          annotations.put(Annotations.Project.PREFIX + key,value);
         }
       }
     }
