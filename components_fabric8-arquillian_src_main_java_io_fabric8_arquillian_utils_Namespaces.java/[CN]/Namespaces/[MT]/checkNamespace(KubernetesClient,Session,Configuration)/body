@@ -1,0 +1,10 @@
+{
+  Namespace result=client.namespaces().withName(session.getNamespace()).get();
+  if (result != null) {
+    return result;
+  }
+ else   if (configuration.isNamespaceLazyCreateEnabled()) {
+    return createNamespace(client,session);
+  }
+  throw new IllegalStateException("Namespace " + session.getNamespace() + "doesn't exists");
+}

@@ -1,7 +1,9 @@
 {
   KubernetesMockClient mock=new KubernetesMockClient();
+  Namespace namespace=new NamespaceBuilder().withNewMetadata().withName("arquillian").endMetadata().build();
   mock.getMasterUrl().andReturn(new URL("http://mock.client:80")).anyTimes();
-  mock.namespaces().withName("arquillian").get().andReturn(new NamespaceBuilder().withNewMetadata().withName("arquillian").endMetadata().build());
+  mock.namespaces().withName("arquillian").get().andReturn(namespace).anyTimes();
+  mock.namespaces().withName("arquillian").edit().done().andReturn(namespace).anyTimes();
   mock.replicationControllers().inNamespace("arquillian").list().andReturn(new ReplicationControllerListBuilder().build()).once();
   mock.pods().inNamespace("arquillian").list().andReturn(new PodListBuilder().build()).once();
   mock.services().inNamespace("arquillian").list().andReturn(new ServiceListBuilder().build()).once();

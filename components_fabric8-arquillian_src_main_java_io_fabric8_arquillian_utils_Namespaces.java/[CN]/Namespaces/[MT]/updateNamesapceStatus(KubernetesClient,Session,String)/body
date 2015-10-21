@@ -1,0 +1,14 @@
+{
+  return client.namespaces().withName(session.getNamespace()).edit().accept(new Visitor(){
+    @Override public void visit(    Object item){
+      if (item instanceof ObjectMetaBuilder) {
+        ObjectMetaBuilder builder=(ObjectMetaBuilder)item;
+        Map<String,String> annotations=createNamespaceAnnotations(session,status);
+        for (        Map.Entry<String,String> entry : annotations.entrySet()) {
+          builder.addToAnnotations(entry.getKey(),entry.getValue());
+        }
+      }
+    }
+  }
+).done();
+}

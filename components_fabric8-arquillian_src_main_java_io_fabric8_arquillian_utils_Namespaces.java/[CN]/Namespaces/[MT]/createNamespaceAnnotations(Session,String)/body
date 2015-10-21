@@ -1,8 +1,9 @@
 {
   Map<String,String> annotations=new HashMap<>();
-  File dir=getProjectBaseDir(session);
-  String gitUrl=findGitUrl(session,dir);
+  File dir=Util.getProjectBaseDir(session);
+  String gitUrl=Util.findGitUrl(session,dir);
   annotations.put(Annotations.Tests.SESSION_ID,session.getId());
+  annotations.put(Annotations.Tests.STATUS,status);
   if (Strings.isNotBlank(gitUrl)) {
     annotations.put(Annotations.Builds.GIT_URL,gitUrl);
   }
