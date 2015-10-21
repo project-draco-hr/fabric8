@@ -4,12 +4,12 @@
   if (project == null) {
     return Results.fail("No pom.xml available so cannot edit the project!");
   }
-  MavenFacet maven=project.getFacet(MavenFacet.class);
-  Model pom=maven.getModel();
   DockerSetupHelper.setupDocker(project,from.getValue(),main.getValue());
   LOG.info("docker now setup");
   facetFactory.install(project,ResourcesFacet.class);
   LOG.info("checking dependencies");
+  MavenFacet maven=project.getFacet(MavenFacet.class);
+  Model pom=maven.getModel();
   if (test.getValue() != null && test.getValue()) {
     boolean hasFabric8Arquillian=!MavenHelpers.hasDependency(pom,"io.fabric8","fabric8-arquillian");
     boolean hasArquillianJunitContainer=!MavenHelpers.hasDependency(pom,"org.jboss.arquillian.junit","arquillian-junit-container");
@@ -35,6 +35,11 @@
     updated=MavenHelpers.updatePomProperty(properties,"fabric8.iconRef","icons/" + iconValue,updated);
   }
   updated=MavenHelpers.updatePomProperty(properties,"fabric8.label.group",group.getValue(),updated);
+  String servicePort=getDefaultServicePort(project);
+  if (servicePort != null) {
+    updated=MavenHelpers.updatePomProperty(properties,"fabric8.service.containerPort",servicePort,updated);
+    updated=MavenHelpers.updatePomProperty(properties,"fabric8.service.port","80",updated);
+  }
   if (updated) {
     maven.setModel(pom);
     LOG.info("updated pom.xml");
