@@ -2,12 +2,14 @@
   Configuration configuration=new Configuration();
   try {
     configuration.masterUrl=getStringProperty(KUBERNETES_MASTER,map,FALLBACK_CONFIG.getMasterUrl());
+    configuration.environment=getStringProperty(FABRIC8_ENVIRONMENT,map,null);
     configuration.environmentInitEnabled=getBooleanProperty(ENVIRONMENT_INIT_ENABLED,map,true);
     configuration.environmentConfigUrl=getKubernetesConfigurationUrl(map);
     configuration.environmentDependencies=Strings.splitAndTrimAsList(getStringProperty(ENVIRONMENT_DEPENDENCIES,map,"")," ");
     configuration.namespaceLazyCreateEnabled=getBooleanProperty(NAMESPACE_LAZY_CREATE_ENABLED,map,DEFAULT_NAMESPACE_LAZY_CREATE_ENABLED);
-    configuration.namespaceToUse=getStringProperty(NAMESPACE_TO_USE,map,null);
-    configuration.environment=getStringProperty(FABRIC8_ENVIRONMENT,map,null);
+    String existingNamespace=getStringProperty(NAMESPACE_TO_USE,map,null);
+    String environmentNamespace=findNamespaceForEnvironment(configuration.environment,map);
+    configuration.namespaceToUse=selectNamespace(environmentNamespace,existingNamespace);
     configuration.namespaceCleanupEnabled=getBooleanProperty(NAMESPACE_CLEANUP_ENABLED,map,Strings.isNullOrBlank(configuration.namespaceToUse));
     configuration.namespaceCleanupConfirmationEnabled=getBooleanProperty(NAMESPACE_CLEANUP_CONFIRM_ENABLED,map,false);
     configuration.namespaceCleanupTimeout=getLongProperty(NAMESPACE_CLEANUP_TIMEOUT,map,DEFAULT_NAMESPACE_CLEANUP_TIMEOUT);
@@ -22,7 +24,12 @@
     configuration.properties=map;
   }
  catch (  Throwable t) {
-    throw new RuntimeException(t);
+    if (t instanceof RuntimeException) {
+      throw (RuntimeException)t;
+    }
+ else {
+      throw new RuntimeException(t);
+    }
   }
   return configuration;
 }

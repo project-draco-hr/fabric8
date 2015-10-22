@@ -1,0 +1,17 @@
+{
+  if (environment == null && explicit == null) {
+    return null;
+  }
+ else   if (environment != null && explicit == null) {
+    return environment;
+  }
+ else   if (environment == null && explicit != null) {
+    return explicit;
+  }
+ else   if (environment.equals(explicit)) {
+    return environment;
+  }
+ else {
+    throw new IllegalStateException("Different namespace values have been specified via environment:" + environment + " and explicitly:"+ explicit+ ".");
+  }
+}
