@@ -1,0 +1,27 @@
+{
+  KubernetesClient client=this.clientInstance.get();
+  Session session=this.sessionInstance.get();
+  JolokiaClients jolokiaClients=new JolokiaClients(client);
+  String serviceName=getServiceName(qualifiers);
+  String podName=getPodName(qualifiers);
+  String replicationControllerName=getReplicationControllerName(qualifiers);
+  if (Strings.isNotBlank(serviceName)) {
+    Service service=client.services().inNamespace(session.getNamespace()).withName(serviceName).get();
+    if (service != null) {
+      return jolokiaClients.clientForService(service);
+    }
+  }
+  if (Strings.isNotBlank(podName)) {
+    Pod pod=client.pods().inNamespace(session.getNamespace()).withName(serviceName).get();
+    if (pod != null) {
+      return jolokiaClients.clientForPod(pod);
+    }
+  }
+  if (Strings.isNotBlank(replicationControllerName)) {
+    ReplicationController replicationController=client.replicationControllers().inNamespace(session.getNamespace()).withName(serviceName).get();
+    if (replicationController != null) {
+      return jolokiaClients.clientForReplicationController(replicationController);
+    }
+  }
+  return null;
+}
