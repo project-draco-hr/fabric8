@@ -1,16 +1,26 @@
 {
   KubernetesMockClient mock=new KubernetesMockClient();
   Namespace namespace=new NamespaceBuilder().withNewMetadata().withName("arquillian").endMetadata().build();
+  Service testService=new ServiceBuilder().withNewMetadata().withName("test-service").endMetadata().build();
+  ReplicationController testReplicationController=new ReplicationControllerBuilder().withNewMetadata().withName("test-controller").endMetadata().build();
+  Pod testPod=new PodBuilder().withNewMetadata().withName("test-pod").endMetadata().withNewSpec().addNewContainer().withName("test-container").withImage("test/image1").endContainer().endSpec().withNewStatus().withPhase("run").endStatus().build();
   mock.getMasterUrl().andReturn(new URL("http://mock.client:80")).anyTimes();
   mock.namespaces().withName("arquillian").get().andReturn(namespace).anyTimes();
   mock.namespaces().withName("arquillian").edit().done().andReturn(namespace).anyTimes();
   mock.replicationControllers().inNamespace("arquillian").list().andReturn(new ReplicationControllerListBuilder().build()).once();
   mock.pods().inNamespace("arquillian").list().andReturn(new PodListBuilder().build()).once();
   mock.services().inNamespace("arquillian").list().andReturn(new ServiceListBuilder().build()).once();
-  Pod testPod=new PodBuilder().withNewMetadata().withName("test-pod").endMetadata().withNewSpec().addNewContainer().withName("test-container").withImage("test/image1").endContainer().endSpec().withNewStatus().withPhase("run").endStatus().build();
   mock.pods().inNamespace("arquillian").withName("test-pod").get().andReturn(null).once();
   mock.pods().inNamespace("arquillian").create(EasyMock.<Pod>anyObject()).andReturn(testPod).once();
   mock.pods().inNamespace("arquillian").withName("test-pod").get().andReturn(testPod).anyTimes();
   mock.pods().inNamespace("arquillian").list().andReturn(new PodListBuilder().addToItems(testPod).build()).anyTimes();
+  mock.services().inNamespace("arquillian").withName("test-service").get().andReturn(null).once();
+  mock.services().inNamespace("arquillian").create(EasyMock.<Service>anyObject()).andReturn(testService).anyTimes();
+  mock.services().inNamespace("arquillian").withName("test-service").get().andReturn(testService).anyTimes();
+  mock.services().inNamespace("arquillian").list().andReturn(new ServiceListBuilder().addToItems(testService).build()).anyTimes();
+  mock.replicationControllers().inNamespace("arquillian").withName("test-controller").get().andReturn(null).once();
+  mock.replicationControllers().inNamespace("arquillian").create(EasyMock.<ReplicationController>anyObject()).andReturn(testReplicationController).anyTimes();
+  mock.replicationControllers().inNamespace("arquillian").list().andReturn(new ReplicationControllerListBuilder().addToItems(testReplicationController).build()).anyTimes();
+  mock.adapt(OpenShiftClient.class).andReturn(createOpenshiftClient()).anyTimes();
   kubernetes.set(mock.replay());
 }

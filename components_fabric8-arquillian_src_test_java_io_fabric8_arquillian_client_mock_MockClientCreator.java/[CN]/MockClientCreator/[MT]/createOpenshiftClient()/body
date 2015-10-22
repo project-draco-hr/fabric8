@@ -1,0 +1,5 @@
+{
+  OpenShiftMockClient mock=new OpenShiftMockClient();
+  mock.routes().inNamespace("arquillian").withName("test-service").get().andReturn(new RouteBuilder().build());
+  return mock.replay();
+}
