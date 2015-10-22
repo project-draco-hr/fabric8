@@ -1,10 +1,6 @@
 {
   KubernetesClient client=this.clientInstance.get();
   Session session=sessionInstance.get();
-  for (  Service service : client.services().inNamespace(session.getNamespace()).list().getItems()) {
-    if (qualifies(service,qualifiers)) {
-      return service;
-    }
-  }
-  return null;
+  String name=getServiceName(qualifiers);
+  return client.pods().inNamespace(session.getNamespace()).withName(name).get();
 }

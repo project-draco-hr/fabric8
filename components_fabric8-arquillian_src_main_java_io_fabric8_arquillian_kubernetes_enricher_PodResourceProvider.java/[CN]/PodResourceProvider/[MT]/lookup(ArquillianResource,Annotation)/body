@@ -1,6 +1,6 @@
 {
   KubernetesClient client=this.clientInstance.get();
   Session session=sessionInstance.get();
-  String name=getReplicationControllerName(qualifiers);
+  String name=getPodName(qualifiers);
   return client.pods().inNamespace(session.getNamespace()).withName(name).get();
 }
