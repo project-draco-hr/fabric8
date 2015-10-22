@@ -1,0 +1,26 @@
+{
+  String content=null;
+  String encoding=null;
+  if (includeContent && file.isFile()) {
+    try {
+      byte[] bytes=Files.readBytes(file);
+      content=new String(Base64Encoder.encode(bytes));
+      encoding="base64";
+    }
+ catch (    IOException e) {
+      LOG.warn("Failed to load: " + file.getPath() + ". "+ e,e);
+    }
+  }
+  String type=file.isDirectory() ? "dir" : "file";
+  long size=0;
+  if (file.isFile()) {
+    size=file.length();
+  }
+  String name=file.getName();
+  String path=name;
+  if (Strings.isNotBlank(parentPath)) {
+    String separator=path.endsWith("/") ? "" : "/";
+    path=parentPath + separator + name;
+  }
+  return new FileDTO(type,size,name,path,encoding,content);
+}

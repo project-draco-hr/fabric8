@@ -1,0 +1,14 @@
+{
+  this.gitFolder=gitFolder;
+  this.userDetails=userDetails;
+  this.basedir=gitFolder.getParentFile();
+  this.origin=origin;
+  this.branch=branch;
+  System.out.println("Using git folder: " + gitFolder);
+  if (!gitFolder.exists() || !gitFolder.isDirectory()) {
+    throw new IOException(".git folder does not exist at " + gitFolder.getPath());
+  }
+  if (Strings.isNullOrBlank(origin)) {
+    throw new IOException("Could not find remote git URL for folder " + gitFolder.getPath());
+  }
+}

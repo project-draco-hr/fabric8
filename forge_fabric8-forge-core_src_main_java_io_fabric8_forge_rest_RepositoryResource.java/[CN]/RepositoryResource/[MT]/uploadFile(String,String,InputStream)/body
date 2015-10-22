@@ -1,0 +1,15 @@
+{
+  this.message=message;
+  final File file=getRelativeFile(path);
+  return writeOperation(new Callable<Response>(){
+    @Override public Response call() throws Exception {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("writing file: " + file.getPath());
+      }
+      file.getParentFile().mkdirs();
+      IOHelpers.writeTo(file,body);
+      return Response.ok("updated " + file.getPath()).build();
+    }
+  }
+);
+}

@@ -1,0 +1,23 @@
+{
+  final File file=getRelativeFile(path);
+  if (LOG.isDebugEnabled()) {
+    LOG.debug("reading file: " + file.getPath());
+  }
+  if (file.isDirectory()) {
+    File[] files=file.listFiles();
+    List<FileDTO> answer=new ArrayList<>();
+    if (files != null) {
+      for (      File child : files) {
+        FileDTO dto=createFileDTO(child,false);
+        if (dto != null) {
+          answer.add(dto);
+        }
+      }
+    }
+    return Response.ok(answer).build();
+  }
+ else {
+    FileDTO answer=createFileDTO(file,true);
+    return Response.ok(answer).build();
+  }
+}

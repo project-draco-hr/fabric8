@@ -8,7 +8,7 @@
   String branch=userDetails.getBranch();
   String origin=projectFileSystem.getRemote();
   try {
-    disableSslCertificateChecks();
+    GitHelpers.disableSslCertificateChecks();
     CredentialsProvider credentials=userDetails.createCredentialsProvider();
     PersonIdent personIdent=new PersonIdent(user,authorEmail);
     if (name.equals(PROJECT_NEW_COMMAND)) {
@@ -59,11 +59,11 @@
           results.setOutputProperty("cloneUrl",remoteUrl);
           results.setOutputProperty("htmlUrl",htmlUrl);
           LOG.info("Using remoteUrl: " + remoteUrl + " and remote name "+ origin);
-          configureBranch(git,branch,origin,remoteUrl);
+          GitHelpers.configureBranch(git,branch,origin,remoteUrl);
           addDummyFileToEmptyFolders(basedir);
           String message=createCommitMessage(name,executionRequest);
           LOG.info("Commiting and pushing to: " + remoteUrl + " and remote name "+ origin);
-          doAddCommitAndPushFiles(git,credentials,personIdent,remoteUrl,branch,origin,message);
+          GitHelpers.doAddCommitAndPushFiles(git,credentials,personIdent,branch,origin,message,isPushOnCommit());
           LOG.info("Creating any pending webhooks");
           registerWebHooks(context);
           LOG.info("Done creating webhooks!");
@@ -79,13 +79,13 @@
           FileRepositoryBuilder builder=new FileRepositoryBuilder();
           Repository repository=builder.setGitDir(gitFolder).readEnvironment().findGitDir().build();
           Git git=new Git(repository);
-          String remoteUrl=getRemoteURL(git,branch);
+          String remoteUrl=GitHelpers.getRemoteURL(git,branch);
           if (origin == null) {
             LOG.warn("Could not find remote git URL for folder " + absolutePath);
           }
  else {
             String message=createCommitMessage(name,executionRequest);
-            doAddCommitAndPushFiles(git,credentials,personIdent,remoteUrl,branch,origin,message);
+            GitHelpers.doAddCommitAndPushFiles(git,credentials,personIdent,branch,origin,message,isPushOnCommit());
           }
         }
       }
