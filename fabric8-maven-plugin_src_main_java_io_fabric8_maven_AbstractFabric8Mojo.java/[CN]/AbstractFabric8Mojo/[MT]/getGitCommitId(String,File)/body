@@ -1,5 +1,6 @@
 {
-  try (Repository repository=getGitRepository(basedir,envVarName)){
+  Repository repository=getGitRepository(basedir,envVarName);
+  try {
     if (repository != null) {
       System.out.println("Looking at repo with directory " + repository.getDirectory());
       Iterable<RevCommit> logs=new Git(repository).log().call();
@@ -14,6 +15,11 @@
   }
  catch (  Exception e) {
     warnIfInCDBuild("Failed to find git commit id. " + e,e);
+  }
+ finally {
+    if (repository != null) {
+      repository.close();
+    }
   }
   return null;
 }
