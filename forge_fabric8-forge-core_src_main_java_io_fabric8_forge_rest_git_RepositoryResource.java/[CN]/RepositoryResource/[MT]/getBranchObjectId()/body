@@ -1,0 +1,22 @@
+{
+  Ref branchRef=null;
+  try {
+    String branchRevName="refs/heads/" + branch;
+    List<Ref> branches=git.branchList().call();
+    for (    Ref ref : branches) {
+      String revName=ref.getName();
+      if (Objects.equals(branchRevName,revName)) {
+        branchRef=ref;
+        break;
+      }
+    }
+  }
+ catch (  GitAPIException e) {
+    LOG.warn("Failed to find branches " + e,e);
+  }
+  ObjectId branchObjectId=null;
+  if (branchRef != null) {
+    branchObjectId=branchRef.getObjectId();
+  }
+  return branchObjectId;
+}

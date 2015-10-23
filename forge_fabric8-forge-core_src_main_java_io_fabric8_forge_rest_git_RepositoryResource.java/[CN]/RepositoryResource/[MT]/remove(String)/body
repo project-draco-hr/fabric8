@@ -1,0 +1,13 @@
+{
+  File file=getRelativeFile(path);
+  if (file.exists()) {
+    Files.recursiveDelete(file);
+    String filePattern=getFilePattern(path);
+    git.rm().addFilepattern(filePattern).call();
+    CommitCommand commit=git.commit().setAll(true).setAuthor(personIdent).setMessage(message);
+    return commitThenPush(commit);
+  }
+ else {
+    return null;
+  }
+}

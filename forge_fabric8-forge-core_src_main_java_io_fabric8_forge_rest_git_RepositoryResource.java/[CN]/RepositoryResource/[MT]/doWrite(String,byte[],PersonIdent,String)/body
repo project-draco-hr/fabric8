@@ -1,0 +1,11 @@
+{
+  File file=getRelativeFile(path);
+  file.getParentFile().mkdirs();
+  Files.writeToFile(file,contents);
+  String filePattern=getFilePattern(path);
+  AddCommand add=git.add().addFilepattern(filePattern).addFilepattern(".");
+  add.call();
+  CommitCommand commit=git.commit().setAll(true).setAuthor(personIdent).setMessage(commitMessage);
+  RevCommit revCommit=commitThenPush(commit);
+  return createCommitInfo(revCommit);
+}
