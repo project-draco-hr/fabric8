@@ -5,7 +5,7 @@
     String filePattern=getFilePattern(path);
     git.rm().addFilepattern(filePattern).call();
     CommitCommand commit=git.commit().setAll(true).setAuthor(personIdent).setMessage(message);
-    return commitThenPush(commit);
+    return createCommitInfo(commitThenPush(commit));
   }
  else {
     return null;

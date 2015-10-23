@@ -1,0 +1,19 @@
+{
+  if (paths != null && paths.size() > 0) {
+    int count=0;
+    for (    String path : paths) {
+      File file=getRelativeFile(path);
+      if (file.exists()) {
+        count++;
+        Files.recursiveDelete(file);
+        String filePattern=getFilePattern(path);
+        git.rm().addFilepattern(filePattern).call();
+      }
+    }
+    if (count > 0) {
+      CommitCommand commit=git.commit().setAll(true).setAuthor(personIdent).setMessage(message);
+      return createCommitInfo(commitThenPush(commit));
+    }
+  }
+  return null;
+}
