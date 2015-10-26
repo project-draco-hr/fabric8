@@ -1,0 +1,16 @@
+{
+  ReentrantLock lock=getLock(gitFolder);
+  lock.lock();
+  try {
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Started lock for " + gitFolder + " instance "+ lock);
+    }
+    return block.call();
+  }
+  finally {
+    lock.unlock();
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Ended lock for " + gitFolder + " instance "+ lock);
+    }
+  }
+}

@@ -1,15 +1,8 @@
 {
-  SortedSet<String> names=new TreeSet<String>();
-  List<Ref> call=git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call();
-  for (  Ref ref : call) {
-    String name=ref.getName();
-    int idx=name.lastIndexOf('/');
-    if (idx >= 0) {
-      name=name.substring(idx + 1);
-    }
-    if (name.length() > 0) {
-      names.add(name);
+  return gitReadOperation(new GitOperation<List<String>>(){
+    @Override public List<String> call(    Git git,    GitContext context) throws Exception {
+      return doListBranches(git);
     }
   }
-  return new ArrayList<String>(names);
+);
 }

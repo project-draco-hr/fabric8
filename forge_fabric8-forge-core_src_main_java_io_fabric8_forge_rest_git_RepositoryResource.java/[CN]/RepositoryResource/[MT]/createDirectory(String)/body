@@ -1,13 +1,8 @@
 {
-  File file=getRelativeFile(path);
-  if (file.exists()) {
-    return null;
+  return gitWriteOperation(new GitOperation<CommitInfo>(){
+    @Override public CommitInfo call(    Git git,    GitContext context) throws Exception {
+      return doCreateDirectory(git,path);
+    }
   }
-  file.mkdirs();
-  String filePattern=getFilePattern(path);
-  AddCommand add=git.add().addFilepattern(filePattern).addFilepattern(".");
-  add.call();
-  CommitCommand commit=git.commit().setAll(true).setAuthor(personIdent).setMessage(message);
-  RevCommit revCommit=commitThenPush(commit);
-  return createCommitInfo(revCommit);
+);
 }

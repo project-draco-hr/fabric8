@@ -1,0 +1,14 @@
+{
+  final File file=getRelativeFile(path);
+  if (LOG.isDebugEnabled()) {
+    LOG.debug("reading file: " + file.getPath());
+  }
+  if (file.isDirectory()) {
+    Object directoryDto=null;
+    return Response.ok(directoryDto).build();
+  }
+ else {
+    byte[] data=Files.readBytes(file);
+    return Response.ok(data).build();
+  }
+}

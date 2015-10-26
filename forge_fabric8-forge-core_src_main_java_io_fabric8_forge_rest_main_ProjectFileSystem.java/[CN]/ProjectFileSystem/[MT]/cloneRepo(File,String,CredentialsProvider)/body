@@ -1,0 +1,12 @@
+{
+  boolean cloneAll=true;
+  LOG.info("Cloning git repo " + cloneUrl + " into directory "+ projectFolder.getAbsolutePath()+ " cloneAllBranches: "+ cloneAll);
+  CloneCommand command=Git.cloneRepository().setCredentialsProvider(credentialsProvider).setCloneAllBranches(cloneAll).setURI(cloneUrl).setDirectory(projectFolder).setRemote(remote);
+  try {
+    Git git=command.call();
+  }
+ catch (  Throwable e) {
+    LOG.error("Failed to command remote repo " + cloneUrl + " due: "+ e.getMessage(),e);
+    throw new RuntimeException("Failed to command remote repo " + cloneUrl + " due: "+ e.getMessage());
+  }
+}

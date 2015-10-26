@@ -1,0 +1,44 @@
+{
+  List<CommitInfo> results=new ArrayList<CommitInfo>();
+  Repository r=git.getRepository();
+  try {
+    String head=getHEAD(git);
+  }
+ catch (  Exception e) {
+    LOG.error("Cannot find HEAD of this git repository! " + e,e);
+    return results;
+  }
+  String path=trimLeadingSlash(pathOrBlobPath);
+  CommitFinder finder=new CommitFinder(r);
+  CommitListFilter filter=new CommitListFilter();
+  if (Strings.isNotBlank(path)) {
+    finder.setFilter(PathFilterUtils.and(path));
+  }
+  finder.setFilter(filter);
+  if (limit > 0) {
+    finder.setFilter(new CommitLimitFilter(limit).setStop(true));
+  }
+  if (Strings.isNotBlank(objectId)) {
+    finder.findFrom(objectId);
+  }
+ else {
+    if (Strings.isNotBlank(branch)) {
+      ObjectId branchObjectId=getBranchObjectId(git);
+      if (branchObjectId != null) {
+        finder=finder.findFrom(branchObjectId);
+      }
+ else {
+        finder=finder.findInBranches();
+      }
+    }
+ else {
+      finder.find();
+    }
+  }
+  List<RevCommit> commits=filter.getCommits();
+  for (  RevCommit entry : commits) {
+    CommitInfo commitInfo=createCommitInfo(entry);
+    results.add(commitInfo);
+  }
+  return results;
+}

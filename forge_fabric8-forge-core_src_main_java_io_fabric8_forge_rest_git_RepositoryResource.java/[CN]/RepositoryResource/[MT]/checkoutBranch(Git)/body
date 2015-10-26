@@ -1,0 +1,16 @@
+{
+  String current=currentBranch(git);
+  if (Objects.equals(current,branch)) {
+    return;
+  }
+  CheckoutCommand command=git.checkout().setName(branch);
+  boolean exists=localBranchExists(git,branch);
+  if (!exists) {
+    command=command.setCreateBranch(true).setForce(true).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).setStartPoint(getRemote() + "/" + branch);
+  }
+  Ref ref=command.call();
+  if (LOG.isDebugEnabled()) {
+    LOG.debug("Checked out branch " + branch + " with results "+ ref.getName());
+  }
+  configureBranch(git,branch);
+}

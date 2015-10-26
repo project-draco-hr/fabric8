@@ -1,0 +1,11 @@
+{
+  String key=gitFolder.getCanonicalPath();
+synchronized (locks) {
+    ReentrantLock answer=locks.get(key);
+    if (answer == null) {
+      answer=new ReentrantLock();
+      locks.put(key,answer);
+    }
+    return answer;
+  }
+}

@@ -1,0 +1,51 @@
+{
+  Repository r=git.getRepository();
+  String blobPath=trimLeadingSlash(pathOrBlobPath);
+  RevCommit commit;
+  if (Strings.isNotBlank(objectId)) {
+    commit=CommitUtils.getCommit(r,objectId);
+  }
+ else {
+    commit=CommitUtils.getHead(r);
+  }
+  RevCommit baseCommit=null;
+  if (Strings.isNotBlank(baseObjectId)) {
+    baseCommit=CommitUtils.getCommit(r,baseObjectId);
+  }
+  ByteArrayOutputStream buffer=new ByteArrayOutputStream();
+  RawTextComparator cmp=RawTextComparator.DEFAULT;
+  DiffFormatter formatter=new DiffFormatter(buffer);
+  formatter.setRepository(r);
+  formatter.setDiffComparator(cmp);
+  formatter.setDetectRenames(true);
+  RevTree commitTree=commit.getTree();
+  RevTree baseTree;
+  if (baseCommit == null) {
+    if (commit.getParentCount() > 0) {
+      final RevWalk rw=new RevWalk(r);
+      RevCommit parent=rw.parseCommit(commit.getParent(0).getId());
+      rw.dispose();
+      baseTree=parent.getTree();
+    }
+ else {
+      baseTree=commitTree;
+    }
+  }
+ else {
+    baseTree=baseCommit.getTree();
+  }
+  List<DiffEntry> diffEntries=formatter.scan(baseTree,commitTree);
+  if (blobPath != null && blobPath.length() > 0) {
+    for (    DiffEntry diffEntry : diffEntries) {
+      if (diffEntry.getNewPath().equalsIgnoreCase(blobPath)) {
+        formatter.format(diffEntry);
+        break;
+      }
+    }
+  }
+ else {
+    formatter.format(diffEntries);
+  }
+  formatter.flush();
+  return buffer.toString();
+}

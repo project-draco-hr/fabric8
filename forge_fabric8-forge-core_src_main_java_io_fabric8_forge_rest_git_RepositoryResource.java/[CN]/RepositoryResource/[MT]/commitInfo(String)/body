@@ -1,10 +1,8 @@
 {
-  Repository repository=git.getRepository();
-  RevCommit commit=CommitUtils.getCommit(repository,commitId);
-  if (commit == null) {
-    return null;
+  return gitReadOperation(new GitOperation<CommitInfo>(){
+    @Override public CommitInfo call(    Git git,    GitContext context) throws Exception {
+      return doCommitInfo(git,commitId);
+    }
   }
- else {
-    return createCommitInfo(commit);
-  }
+);
 }

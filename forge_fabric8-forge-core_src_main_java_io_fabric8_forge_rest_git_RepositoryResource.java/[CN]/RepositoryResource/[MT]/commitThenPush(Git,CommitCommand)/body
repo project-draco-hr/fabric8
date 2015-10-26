@@ -1,0 +1,15 @@
+{
+  RevCommit answer=commit.call();
+  if (LOG.isDebugEnabled()) {
+    LOG.debug("Committed " + answer.getId() + " "+ answer.getFullMessage());
+  }
+  if (isPushOnCommit()) {
+    Iterable<PushResult> results=doPush(git);
+    for (    PushResult result : results) {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Pushed " + result.getMessages() + " "+ result.getURI()+ " branch: "+ branch+ " updates: "+ toString(result.getRemoteUpdates()));
+      }
+    }
+  }
+  return answer;
+}

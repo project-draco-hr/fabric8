@@ -1,16 +1,7 @@
 {
-  this.message=message;
-  final File file=getRelativeFile(path);
-  return writeOperation(new Callable<Response>(){
-    @Override public Response call() throws Exception {
-      boolean exists=file.exists();
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("writing file: " + file.getPath());
-      }
-      file.getParentFile().mkdirs();
-      IOHelpers.writeTo(file,body);
-      String status=exists ? "updated" : "created";
-      return Response.ok(new StatusDTO(path,status)).build();
+  return gitWriteOperation(new GitOperation<Response>(){
+    @Override public Response call(    Git git,    GitContext context) throws Exception {
+      return doUploadFile(path,message,body);
     }
   }
 );

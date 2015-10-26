@@ -5,10 +5,11 @@
   if (Strings.isNullOrBlank(branch)) {
     branch="master";
   }
-  File projectFolder=projectFileSystem.cloneOrPullProjectFolder(userId,repositoryName,userDetails);
+  File projectFolder=projectFileSystem.getUserProjectFolder(userId,repositoryName);
+  String cloneUrl=projectFileSystem.getCloneUrl(userId,repositoryName,userDetails);
   File gitFolder=new File(projectFolder,".git");
   String remoteRepository=userId + "/" + repositoryName;
-  RepositoryResource resource=new RepositoryResource(gitFolder,userDetails,origin,branch,remoteRepository);
+  RepositoryResource resource=new RepositoryResource(projectFolder,gitFolder,userDetails,origin,branch,remoteRepository,lockManager,projectFileSystem,cloneUrl);
   try {
     String message=request.getParameter("message");
     if (Strings.isNotBlank(message)) {

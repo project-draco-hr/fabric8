@@ -1,9 +1,8 @@
 {
-  String contents=doGetContent(objectId,blobPath);
-  if (contents != null) {
-    return doWrite(blobPath,contents.getBytes(),personIdent,message);
+  return gitWriteOperation(new GitOperation<CommitInfo>(){
+    @Override public CommitInfo call(    Git git,    GitContext context) throws Exception {
+      return doRevert(git,objectId,blobPath);
+    }
   }
- else {
-    return null;
-  }
+);
 }

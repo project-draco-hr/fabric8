@@ -1,19 +1,8 @@
 {
-  File file=getRelativeFile(oldPath);
-  File newFile=getRelativeFile(newPath);
-  if (file.exists()) {
-    File parentFile=newFile.getParentFile();
-    parentFile.mkdirs();
-    if (!parentFile.exists()) {
-      throw new IOException("Could not create directory " + parentFile + " when trying to move "+ file+ " to "+ newFile+ ". Maybe a file permission issue?");
+  return gitWriteOperation(new GitOperation<CommitInfo>(){
+    @Override public CommitInfo call(    Git git,    GitContext context) throws Exception {
+      return doRename(git,oldPath,newPath);
     }
-    file.renameTo(newFile);
-    String filePattern=getFilePattern(newPath);
-    git.add().addFilepattern(filePattern).call();
-    CommitCommand commit=git.commit().setAll(true).setAuthor(personIdent).setMessage(message);
-    return createCommitInfo(commitThenPush(commit));
   }
- else {
-    return null;
-  }
+);
 }
