@@ -9,8 +9,16 @@
   updated=MavenHelpers.updatePomProperty(properties,"fabric8.label.group",group.getValue(),updated);
   String servicePort=getDefaultServicePort(project);
   if (servicePort != null) {
+    String name=pom.getArtifactId();
+    if (name.length() > 24) {
+      String msg="The fabric8.service.name: " + name + " is being limited to max 24 chars as that is required by Kubernetes/Openshift."+ " You can change the name of the service in the <properties> section of the Maven pom file.";
+      LOG.warn(msg);
+      System.out.println(msg);
+      name=name.substring(0,24);
+    }
     updated=MavenHelpers.updatePomProperty(properties,"fabric8.service.containerPort",servicePort,updated);
     updated=MavenHelpers.updatePomProperty(properties,"fabric8.service.port","80",updated);
+    updated=MavenHelpers.updatePomProperty(properties,"fabric8.service.name",name,updated);
   }
   if (updated) {
     maven.setModel(pom);
