@@ -4,45 +4,18 @@
   if (project == null) {
     return Results.fail("No pom.xml available so cannot edit the project!");
   }
-  DockerSetupHelper.setupDocker(project,from.getValue(),main.getValue());
-  LOG.info("docker now setup");
-  facetFactory.install(project,ResourcesFacet.class);
-  LOG.info("checking dependencies");
+  setupDocker(project,from.getValue(),main.getValue());
+  LOG.info("docker-maven-plugin now setup");
+  setupFabricMavenPlugin(project);
+  LOG.info("fabric8-maven-plugin now setup");
   MavenFacet maven=project.getFacet(MavenFacet.class);
   Model pom=maven.getModel();
-  if (test.getValue() != null && test.getValue()) {
-    boolean hasFabric8Arquillian=!MavenHelpers.hasDependency(pom,"io.fabric8","fabric8-arquillian");
-    boolean hasArquillianJunitContainer=!MavenHelpers.hasDependency(pom,"org.jboss.arquillian.junit","arquillian-junit-container");
-    if (!hasFabric8Arquillian || !hasArquillianJunitContainer) {
-      if (!MavenHelpers.hasManagedDependency(pom,"io.fabric8","fabric8-project")) {
-        Dependency bom=DependencyBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","fabric8-project",VersionHelper.fabric8Version(),"pom")).setScopeType("import");
-        dependencyInstaller.installManaged(project,bom);
-      }
-    }
-    ensureMavenDependencyAdded(project,dependencyInstaller,"io.fabric8","fabric8-arquillian","test");
-    ensureMavenDependencyAdded(project,dependencyInstaller,"org.jboss.arquillian.junit","arquillian-junit-container","test");
-  }
-  if (!MavenHelpers.hasMavenPlugin(pom,"io.fabric8","fabric8-maven-plugin")) {
-    MavenPluginFacet pluginFacet=project.getFacet(MavenPluginFacet.class);
-    MavenPlugin plugin=MavenPluginBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","fabric8-maven-plugin",VersionHelper.fabric8Version())).addExecution(ExecutionBuilder.create().setId("json").addGoal("json")).addExecution(ExecutionBuilder.create().setId("zip").addGoal("zip"));
-    pluginFacet.addPlugin(plugin);
-  }
-  Properties properties=pom.getProperties();
-  boolean updated=false;
-  updated=MavenHelpers.updatePomProperty(properties,"fabric8.label.container",container.getValue(),updated);
-  String iconValue=icon.getValue();
-  if (Strings.isNotBlank(iconValue)) {
-    updated=MavenHelpers.updatePomProperty(properties,"fabric8.iconRef","icons/" + iconValue,updated);
-  }
-  updated=MavenHelpers.updatePomProperty(properties,"fabric8.label.group",group.getValue(),updated);
-  String servicePort=getDefaultServicePort(project);
-  if (servicePort != null) {
-    updated=MavenHelpers.updatePomProperty(properties,"fabric8.service.containerPort",servicePort,updated);
-    updated=MavenHelpers.updatePomProperty(properties,"fabric8.service.port","80",updated);
-  }
-  if (updated) {
-    maven.setModel(pom);
-    LOG.info("updated pom.xml");
-  }
-  return Results.success("Adding Fabric8 maven support with base Docker image: " + from.getValue());
+  LOG.info("importing fabric8 bom");
+  importFabricBom(project,pom);
+  facetFactory.install(project,ResourcesFacet.class);
+  LOG.info("setting up arquillian test");
+  setupArguillianTest(project,pom);
+  LOG.info("setting up fabric8 properties");
+  setupFabricProperties(project,maven,pom);
+  return Results.success("Adding Fabric8 Maven support with base Docker image: " + from.getValue());
 }

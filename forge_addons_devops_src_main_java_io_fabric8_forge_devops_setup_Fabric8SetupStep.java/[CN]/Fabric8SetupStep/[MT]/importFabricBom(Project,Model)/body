@@ -1,0 +1,6 @@
+{
+  if (!MavenHelpers.hasManagedDependency(pom,"io.fabric8","fabric8-project")) {
+    Dependency bom=DependencyBuilder.create().setCoordinate(MavenHelpers.createCoordinate("io.fabric8","fabric8-project",VersionHelper.fabric8Version(),"pom")).setScopeType("import");
+    dependencyInstaller.installManaged(project,bom);
+  }
+}

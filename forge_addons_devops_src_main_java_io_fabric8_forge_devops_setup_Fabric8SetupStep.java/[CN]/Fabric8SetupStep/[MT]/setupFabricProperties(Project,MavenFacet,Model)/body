@@ -1,0 +1,19 @@
+{
+  boolean updated=false;
+  Properties properties=pom.getProperties();
+  updated=MavenHelpers.updatePomProperty(properties,"fabric8.label.container",container.getValue(),updated);
+  String iconValue=icon.getValue();
+  if (Strings.isNotBlank(iconValue)) {
+    updated=MavenHelpers.updatePomProperty(properties,"fabric8.iconRef","icons/" + iconValue,updated);
+  }
+  updated=MavenHelpers.updatePomProperty(properties,"fabric8.label.group",group.getValue(),updated);
+  String servicePort=getDefaultServicePort(project);
+  if (servicePort != null) {
+    updated=MavenHelpers.updatePomProperty(properties,"fabric8.service.containerPort",servicePort,updated);
+    updated=MavenHelpers.updatePomProperty(properties,"fabric8.service.port","80",updated);
+  }
+  if (updated) {
+    maven.setModel(pom);
+    LOG.info("updated pom.xml");
+  }
+}
