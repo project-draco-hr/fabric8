@@ -1,4 +1,5 @@
 {
-  CredentialsProvider credentials=userDetails.createCredentialsProvider();
-  return git.push().setCredentialsProvider(credentials).setRemote(getRemote()).call();
+  PushCommand command=git.push();
+  configureCommand(command,userDetails);
+  return command.setRemote(getRemote()).call();
 }

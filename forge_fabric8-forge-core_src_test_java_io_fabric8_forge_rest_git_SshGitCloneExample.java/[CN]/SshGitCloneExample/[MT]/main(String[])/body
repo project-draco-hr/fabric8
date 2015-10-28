@@ -1,0 +1,19 @@
+{
+  if (args.length < 3) {
+    System.out.println("Arguments: gitUrl privateKeyFile publicKeyFile");
+    return;
+  }
+  String cloneUrl=args[0];
+  String privateKeyPath=args[1];
+  String publicKeyPath=args[2];
+  File projectFolder=new File("target/myproject");
+  if (projectFolder.exists()) {
+    Files.recursiveDelete(projectFolder);
+  }
+  File sshPrivateKey=new File(privateKeyPath);
+  File sshPublicKey=new File(publicKeyPath);
+  String remote="origin";
+  assertThat(sshPrivateKey).exists();
+  assertThat(sshPublicKey).exists();
+  ProjectFileSystem.cloneRepo(projectFolder,cloneUrl,null,sshPrivateKey,sshPublicKey,remote);
+}

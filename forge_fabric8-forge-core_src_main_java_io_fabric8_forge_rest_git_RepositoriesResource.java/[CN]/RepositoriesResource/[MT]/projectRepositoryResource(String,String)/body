@@ -1,0 +1,74 @@
+{
+  UserDetails userDetails=gitUserHelper.createUserDetails(request);
+  String origin=projectFileSystem.getRemote();
+  String remoteRepository=namespace + "/" + projectId;
+  String branch=request.getParameter("ref");
+  if (Strings.isNullOrBlank(branch)) {
+    branch="master";
+  }
+  File projectFolder=projectFileSystem.getNamespaceProjectFolder(namespace,projectId);
+  OpenShiftClient osClient=kubernetes.adapt(OpenShiftClient.class).inNamespace(namespace);
+  BuildConfig buildConfig=osClient.buildConfigs().withName(projectId).get();
+  if (buildConfig == null) {
+    LOG.debug("No build config for " + remoteRepository);
+    return null;
+  }
+  BuildConfigSpec spec=buildConfig.getSpec();
+  if (spec == null) {
+    LOG.debug("No build config spec for " + remoteRepository);
+    return null;
+  }
+  BuildSource source=spec.getSource();
+  if (source == null) {
+    LOG.debug("No build config source for " + remoteRepository);
+    return null;
+  }
+  GitBuildSource gitSource=source.getGit();
+  if (gitSource == null) {
+    LOG.debug("No build config git source for " + remoteRepository);
+    return null;
+  }
+  String uri=gitSource.getUri();
+  if (Strings.isNullOrBlank(uri)) {
+    LOG.debug("No build config git URI for " + remoteRepository);
+    return null;
+  }
+  String sourceSecretName=null;
+  LocalObjectReference sourceSecret=source.getSourceSecret();
+  if (sourceSecret != null) {
+    sourceSecretName=sourceSecret.getName();
+  }
+  String cloneUrl=uri;
+  File gitFolder=new File(projectFolder,".git");
+  LOG.debug("Cloning " + cloneUrl);
+  RepositoryResource resource=new RepositoryResource(projectFolder,gitFolder,userDetails,origin,branch,remoteRepository,lockManager,projectFileSystem,cloneUrl);
+  if (sourceSecretName != null) {
+    try {
+      Secret secret=osClient.secrets().withName(sourceSecretName).get();
+      if (secret != null) {
+        Map<String,String> data=secret.getData();
+        File privateKeyFile=createSshKeyFile(namespace,sourceSecretName,SSH_PRIVATE_KEY_DATA_KEY,data.get(SSH_PRIVATE_KEY_DATA_KEY));
+        userDetails.setSshPrivateKey(privateKeyFile);
+        if (privateKeyFile != null) {
+          privateKeyFile.setReadable(false,true);
+        }
+        File publicKeyFile=createSshKeyFile(namespace,sourceSecretName,SSH_PUBLIC_KEY_DATA_KEY,data.get(SSH_PUBLIC_KEY_DATA_KEY));
+        userDetails.setSshPublicKey(publicKeyFile);
+      }
+    }
+ catch (    IOException e) {
+      LOG.error("Failed to load secret key " + sourceSecretName + ". "+ e,e);
+      throw new RuntimeException("Failed to load secret key " + sourceSecretName + ". "+ e,e);
+    }
+  }
+  try {
+    String message=request.getParameter("message");
+    if (Strings.isNotBlank(message)) {
+      resource.setMessage(message);
+    }
+  }
+ catch (  Exception e) {
+    LOG.warn("failed to load message parameter: " + e,e);
+  }
+  return resource;
+}

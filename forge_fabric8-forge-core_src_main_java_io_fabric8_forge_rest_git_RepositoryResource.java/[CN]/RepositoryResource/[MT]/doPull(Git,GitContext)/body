@@ -1,5 +1,7 @@
 {
   LOG.info("Performing a pull in git repository " + this.gitFolder + " on remote URL: "+ this.remoteRepository);
   CredentialsProvider cp=userDetails.createCredentialsProvider();
-  git.pull().setCredentialsProvider(cp).setRebase(true).call();
+  PullCommand command=git.pull();
+  configureCommand(command,userDetails);
+  command.setCredentialsProvider(cp).setRebase(true).call();
 }

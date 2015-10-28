@@ -1,7 +1,9 @@
 {
   boolean cloneAll=true;
   LOG.info("Cloning git repo " + cloneUrl + " into directory "+ projectFolder.getAbsolutePath()+ " cloneAllBranches: "+ cloneAll);
-  CloneCommand command=Git.cloneRepository().setCredentialsProvider(credentialsProvider).setCloneAllBranches(cloneAll).setURI(cloneUrl).setDirectory(projectFolder).setRemote(remote);
+  CloneCommand command=Git.cloneRepository();
+  GitHelpers.configureCommand(command,credentialsProvider,sshPrivateKey,sshPublicKey);
+  command=command.setCredentialsProvider(credentialsProvider).setCloneAllBranches(cloneAll).setURI(cloneUrl).setDirectory(projectFolder).setRemote(remote);
   try {
     Git git=command.call();
   }

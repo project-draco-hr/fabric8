@@ -2,10 +2,10 @@
   File gitFolder=new File(projectFolder,".git");
   CredentialsProvider credentialsProvider=userDetails.createCredentialsProvider();
   if (!Files.isDirectory(gitFolder) || !Files.isDirectory(projectFolder)) {
-    cloneRepo(projectFolder,cloneUrl,credentialsProvider);
+    cloneRepo(projectFolder,cloneUrl,credentialsProvider,sshPrivateKey,sshPublicKey,this.remote);
   }
  else {
-    doPull(gitFolder,credentialsProvider,userDetails.getBranch(),userDetails.createPersonIdent());
+    doPull(gitFolder,credentialsProvider,userDetails.getBranch(),userDetails.createPersonIdent(),userDetails);
   }
   return projectFolder;
 }
