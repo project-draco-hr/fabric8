@@ -1,9 +1,9 @@
 {
   File keyFile=null;
   if (privateKey != null) {
-    byte[] text=Base64.getDecoder().decode(privateKey);
+    String text=Base64Encoder.decode(privateKey);
     keyFile=projectFileSystem.getSecretsFolder(namespace,sourceSecretName,privateKeyName);
-    Files.writeToFile(keyFile,text);
+    Files.writeToFile(keyFile,text.getBytes());
   }
   return keyFile;
 }
