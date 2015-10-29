@@ -2,7 +2,7 @@
   Repository repository=getGitRepository(basedir,envVarName);
   try {
     if (repository != null) {
-      System.out.println("Looking at repo with directory " + repository.getDirectory());
+      getLog().info("Looking at repo with directory " + repository.getDirectory());
       Iterable<RevCommit> logs=new Git(repository).log().call();
       for (      RevCommit rev : logs) {
         return rev.getName();
@@ -18,7 +18,11 @@
   }
  finally {
     if (repository != null) {
-      repository.close();
+      try {
+        repository.close();
+      }
+ catch (      Exception e) {
+      }
     }
   }
   return null;

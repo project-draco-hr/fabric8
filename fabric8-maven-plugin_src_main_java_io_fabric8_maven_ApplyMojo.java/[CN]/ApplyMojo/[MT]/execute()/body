@@ -16,7 +16,7 @@
   }
   KubernetesClient kubernetes=getKubernetes();
   if (kubernetes.getMasterUrl() == null || Strings.isNullOrBlank(kubernetes.getMasterUrl().toString())) {
-    throw new MojoFailureException("Can't find Kubernetes master URL");
+    throw new MojoFailureException("Cannot find Kubernetes master URL");
   }
   getLog().info("Using kubernetes at: " + kubernetes.getMasterUrl() + " in namespace "+ getNamespace());
   getLog().info("Kubernetes JSON: " + json);
@@ -33,14 +33,16 @@
     controller.setRollingUpgrade(rollingUpgrades);
     controller.setRollingUpgradePreserveScale(isRollingUpgradePreserveScale());
     boolean openShift=KubernetesHelper.isOpenShift(kubernetes);
-    getLog().info("Is OpenShift: " + openShift);
-    if (!openShift) {
+    if (openShift) {
+      getLog().info("OpenShift platform detected");
+    }
+ else {
       disableOpenShiftFeatures(controller);
     }
     String fileName=json.getName();
     Object dto=KubernetesHelper.loadJson(json);
     if (dto == null) {
-      throw new MojoFailureException("Could not load kubernetes json: " + json);
+      throw new MojoFailureException("Cannot load kubernetes json: " + json);
     }
     String namespace=getNamespace();
     controller.applyNamespace(namespace);

@@ -9,11 +9,11 @@
   try {
     RouteList routes=kubernetes.adapt(OpenShiftClient.class).routes().inNamespace(namespace).list();
     if (routes != null) {
-      List<Route> items=routes.getItems();
+      routes.getItems();
     }
   }
  catch (  Exception e) {
-    log.warn("Could not load routes; we maybe are not connected to an OpenShift environment? " + e,e);
+    log.warn("Cannot load OpenShift Routes; maybe not connected to an OpenShift platform? " + e,e);
     return;
   }
   List<Route> routes=new ArrayList<>();
