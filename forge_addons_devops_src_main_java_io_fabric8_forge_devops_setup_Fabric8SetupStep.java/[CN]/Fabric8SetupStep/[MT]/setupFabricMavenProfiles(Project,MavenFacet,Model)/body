@@ -1,0 +1,50 @@
+{
+  if (profiles.getValue() == null || !profiles.getValue()) {
+    return;
+  }
+  boolean updated=false;
+  Profile profile=MavenHelpers.findProfile(pom,"f8-build");
+  if (profile == null) {
+    LOG.info("Adding f8-build profile");
+    profile=new Profile();
+    profile.setId("f8-build");
+    Build build=new Build();
+    build.setDefaultGoal("clean install docker:build fabric8:json");
+    profile.setBuild(build);
+    pom.addProfile(profile);
+    updated=true;
+  }
+  profile=MavenHelpers.findProfile(pom,"f8-deploy");
+  if (profile == null) {
+    LOG.info("Adding f8-deploy profile");
+    profile=new Profile();
+    profile.setId("f8-deploy");
+    Properties prop=new Properties();
+    prop.setProperty("fabric8.imagePullPolicySnapshot","Always");
+    prop.setProperty("fabric8.recreate","true");
+    profile.setProperties(prop);
+    Build build=new Build();
+    build.setDefaultGoal("clean install docker:build docker:push fabric8:json fabric8:apply");
+    profile.setBuild(build);
+    pom.addProfile(profile);
+    updated=true;
+  }
+  profile=MavenHelpers.findProfile(pom,"f8-local-deploy");
+  if (profile == null) {
+    LOG.info("Adding f8-local-deploy profile");
+    profile=new Profile();
+    profile.setId("f8-local-deploy");
+    Properties prop=new Properties();
+    prop.setProperty("fabric8.recreate","true");
+    profile.setProperties(prop);
+    Build build=new Build();
+    build.setDefaultGoal("clean install docker:build fabric8:json fabric8:apply");
+    profile.setBuild(build);
+    pom.addProfile(profile);
+    updated=true;
+  }
+  if (updated) {
+    maven.setModel(pom);
+    LOG.info("updated pom.xml");
+  }
+}
