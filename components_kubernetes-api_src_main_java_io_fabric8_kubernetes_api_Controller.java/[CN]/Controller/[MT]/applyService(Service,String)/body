@@ -9,7 +9,7 @@
   Service old=kubernetesClient.services().inNamespace(namespace).withName(id).get();
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(service,old)) {
-      LOG.info("Service hasn't changed so not doing anything");
+      LOG.info("Service has not changed so not doing anything");
     }
  else {
       if (isRecreateMode()) {
@@ -18,20 +18,20 @@
         doCreateService(service,namespace,sourceName);
       }
  else {
-        LOG.info("Updating a service from " + sourceName);
+        LOG.info("Updating a Service from " + sourceName);
         try {
           Object answer=kubernetesClient.services().inNamespace(namespace).withName(id).replace(service);
-          logGeneratedEntity("Updated service: ",namespace,service,answer);
+          logGeneratedEntity("Updated Service: ",namespace,service,answer);
         }
  catch (        Exception e) {
-          onApplyError("Failed to update controller from " + sourceName + ". "+ e+ ". "+ service,e);
+          onApplyError("Failed to update Service from " + sourceName + ". "+ e+ ". "+ service,e);
         }
       }
     }
   }
  else {
     if (!isAllowCreate()) {
-      LOG.warn("Creation disabled so not creating a service from " + sourceName + " namespace "+ namespace+ " name "+ getName(service));
+      LOG.warn("Creation disabled so not creating a Service from " + sourceName + " namespace "+ namespace+ " name "+ getName(service));
     }
  else {
       doCreateService(service,namespace,sourceName);

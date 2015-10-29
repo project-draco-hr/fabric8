@@ -9,7 +9,7 @@
   ServiceAccount old=kubernetesClient.serviceAccounts().inNamespace(namespace).withName(id).get();
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(serviceAccount,old)) {
-      LOG.info("ServiceAccount hasn't changed so not doing anything");
+      LOG.info("ServiceAccount has not changed so not doing anything");
     }
  else {
       if (isRecreateMode()) {
@@ -17,20 +17,20 @@
         doCreateServiceAccount(serviceAccount,namespace,sourceName);
       }
  else {
-        LOG.info("Updating a service account from " + sourceName);
+        LOG.info("Updating a ServiceAccount from " + sourceName);
         try {
           Object answer=kubernetesClient.serviceAccounts().inNamespace(namespace).withName(id).replace(serviceAccount);
-          logGeneratedEntity("Updated service account: ",namespace,serviceAccount,answer);
+          logGeneratedEntity("Updated ServiceAccount: ",namespace,serviceAccount,answer);
         }
  catch (        Exception e) {
-          onApplyError("Failed to update service account from " + sourceName + ". "+ e+ ". "+ serviceAccount,e);
+          onApplyError("Failed to update ServiceAccount from " + sourceName + ". "+ e+ ". "+ serviceAccount,e);
         }
       }
     }
   }
  else {
     if (!isAllowCreate()) {
-      LOG.warn("Creation disabled so not creating a service from " + sourceName + " namespace "+ namespace+ " name "+ getName(serviceAccount));
+      LOG.warn("Creation disabled so not creating a ServiceAccount from " + sourceName + " namespace "+ namespace+ " name "+ getName(serviceAccount));
     }
  else {
       doCreateServiceAccount(serviceAccount,namespace,sourceName);

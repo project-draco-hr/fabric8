@@ -14,7 +14,7 @@
         return;
       }
       if (UserConfigurationCompare.configEqual(entity,old)) {
-        LOG.info("OAuthClient hasn't changed so not doing anything");
+        LOG.info("OAuthClient has not changed so not doing anything");
       }
  else {
         if (isRecreateMode()) {
@@ -24,10 +24,10 @@
  else {
           try {
             Object answer=openShiftClient.oAuthClients().withName(id).replace(entity);
-            LOG.info("Updated pod result: " + answer);
+            LOG.info("Updated OAuthClient result: " + answer);
           }
  catch (          Exception e) {
-            onApplyError("Failed to update pod from " + sourceName + ". "+ e+ ". "+ entity,e);
+            onApplyError("Failed to update OAuthClient from " + sourceName + ". "+ e+ ". "+ entity,e);
           }
         }
       }

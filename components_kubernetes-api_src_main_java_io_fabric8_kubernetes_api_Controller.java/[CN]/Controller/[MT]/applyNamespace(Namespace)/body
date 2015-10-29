@@ -1,6 +1,6 @@
 {
   String namespace=getOrCreateMetadata(entity).getName();
-  LOG.info("Creating a namespace " + namespace);
+  LOG.info("Using namespace: " + namespace);
   String name=getName(entity);
   Objects.notNull(name,"No name for " + entity);
   Namespace old=kubernetesClient.namespaces().withName(name).get();
@@ -11,7 +11,7 @@
       return true;
     }
  catch (    Exception e) {
-      onApplyError("Failed to create namespace. " + e + ". "+ entity,e);
+      onApplyError("Failed to create namespace: " + name + " due "+ e.getMessage(),e);
     }
   }
   return false;

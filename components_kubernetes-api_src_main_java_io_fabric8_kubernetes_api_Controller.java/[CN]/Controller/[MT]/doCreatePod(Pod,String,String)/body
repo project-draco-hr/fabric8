@@ -1,5 +1,5 @@
 {
-  LOG.info("Creating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getName(pod));
+  LOG.info("Creating a Pod from " + sourceName + " namespace "+ namespace+ " name "+ getName(pod));
   try {
     PodSpec podSpec=pod.getSpec();
     if (podSpec != null) {
@@ -12,9 +12,9 @@
  else {
       answer=kubernetesClient.pods().inNamespace(getNamespace()).create(pod);
     }
-    LOG.info("Created pod result: " + answer);
+    LOG.info("Created Pod result: " + answer);
   }
  catch (  Exception e) {
-    onApplyError("Failed to create pod from " + sourceName + ". "+ e+ ". "+ pod,e);
+    onApplyError("Failed to create Pod from " + sourceName + ". "+ e+ ". "+ pod,e);
   }
 }

@@ -1,5 +1,5 @@
 {
-  LOG.info("Creating a service account from " + sourceName + " namespace "+ namespace+ " name "+ getName(serviceAccount));
+  LOG.info("Creating a ServiceAccount from " + sourceName + " namespace "+ namespace+ " name "+ getName(serviceAccount));
   try {
     Object answer;
     if (Strings.isNotBlank(namespace)) {
@@ -8,9 +8,9 @@
  else {
       answer=kubernetesClient.serviceAccounts().inNamespace(getNamespace()).create(serviceAccount);
     }
-    logGeneratedEntity("Created service account: ",namespace,serviceAccount,answer);
+    logGeneratedEntity("Created ServiceAccount: ",namespace,serviceAccount,answer);
   }
  catch (  Exception e) {
-    onApplyError("Failed to create service account from " + sourceName + ". "+ e+ ". "+ serviceAccount,e);
+    onApplyError("Failed to create ServiceAccount from " + sourceName + ". "+ e+ ". "+ serviceAccount,e);
   }
 }

@@ -1,5 +1,5 @@
 {
-  LOG.info("Creating a service from " + sourceName + " namespace "+ namespace+ " name "+ getName(service));
+  LOG.info("Creating a Service from " + sourceName + " namespace "+ namespace+ " name "+ getName(service));
   try {
     Object answer;
     if (Strings.isNotBlank(namespace)) {
@@ -8,9 +8,9 @@
  else {
       answer=kubernetesClient.services().inNamespace(getNamespace()).create(service);
     }
-    logGeneratedEntity("Created service: ",namespace,service,answer);
+    logGeneratedEntity("Created Service: ",namespace,service,answer);
   }
  catch (  Exception e) {
-    onApplyError("Failed to create service from " + sourceName + ". "+ e+ ". "+ service,e);
+    onApplyError("Failed to create Service from " + sourceName + ". "+ e+ ". "+ service,e);
   }
 }

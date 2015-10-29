@@ -1,5 +1,5 @@
 {
-  LOG.info("Creating a replicationController from " + sourceName + " namespace "+ namespace+ " name "+ getName(replicationController));
+  LOG.info("Creating a ReplicationController from " + sourceName + " namespace "+ namespace+ " name "+ getName(replicationController));
   try {
     ReplicationControllerSpec spec=replicationController.getSpec();
     if (spec != null) {
@@ -16,9 +16,9 @@
  else {
       answer=kubernetesClient.replicationControllers().inNamespace(getNamespace()).create(replicationController);
     }
-    logGeneratedEntity("Created replicationController: ",namespace,replicationController,answer);
+    logGeneratedEntity("Created ReplicationController: ",namespace,replicationController,answer);
   }
  catch (  Exception e) {
-    onApplyError("Failed to create replicationController from " + sourceName + ". "+ e+ ". "+ replicationController,e);
+    onApplyError("Failed to create ReplicationController from " + sourceName + ". "+ e+ ". "+ replicationController,e);
   }
 }

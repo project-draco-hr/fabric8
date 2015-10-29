@@ -9,7 +9,7 @@
   Pod old=kubernetesClient.pods().inNamespace(namespace).withName(id).get();
   if (isRunning(old)) {
     if (UserConfigurationCompare.configEqual(pod,old)) {
-      LOG.info("Pod hasn't changed so not doing anything");
+      LOG.info("Pod has not changed so not doing anything");
     }
  else {
       if (isRecreateMode()) {
@@ -18,13 +18,13 @@
         doCreatePod(pod,namespace,sourceName);
       }
  else {
-        LOG.info("Updating a pod from " + sourceName + " namespace "+ namespace+ " name "+ getName(pod));
+        LOG.info("Updating a Pod from " + sourceName + " namespace "+ namespace+ " name "+ getName(pod));
         try {
           Object answer=kubernetesClient.pods().inNamespace(namespace).withName(id).replace(pod);
-          LOG.info("Updated pod result: " + answer);
+          LOG.info("Updated Pod result: " + answer);
         }
  catch (        Exception e) {
-          onApplyError("Failed to update pod from " + sourceName + ". "+ e+ ". "+ pod,e);
+          onApplyError("Failed to update Pod from " + sourceName + ". "+ e+ ". "+ pod,e);
         }
       }
     }
