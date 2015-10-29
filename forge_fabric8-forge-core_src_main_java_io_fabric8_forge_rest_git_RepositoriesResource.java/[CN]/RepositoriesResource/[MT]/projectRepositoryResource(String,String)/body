@@ -10,28 +10,23 @@
   OpenShiftClient osClient=kubernetes.adapt(OpenShiftClient.class).inNamespace(namespace);
   BuildConfig buildConfig=osClient.buildConfigs().withName(projectId).get();
   if (buildConfig == null) {
-    LOG.debug("No build config for " + remoteRepository);
-    return null;
+    throw new NotFoundException("No BuildConfig for " + remoteRepository);
   }
   BuildConfigSpec spec=buildConfig.getSpec();
   if (spec == null) {
-    LOG.debug("No build config spec for " + remoteRepository);
-    return null;
+    throw new NotFoundException("No BuildConfig spec for " + remoteRepository);
   }
   BuildSource source=spec.getSource();
   if (source == null) {
-    LOG.debug("No build config source for " + remoteRepository);
-    return null;
+    throw new NotFoundException("No BuildConfig source for " + remoteRepository);
   }
   GitBuildSource gitSource=source.getGit();
   if (gitSource == null) {
-    LOG.debug("No build config git source for " + remoteRepository);
-    return null;
+    throw new NotFoundException("No BuildConfig git source for " + remoteRepository);
   }
   String uri=gitSource.getUri();
   if (Strings.isNullOrBlank(uri)) {
-    LOG.debug("No build config git URI for " + remoteRepository);
-    return null;
+    throw new NotFoundException("No BuildConfig git URI for " + remoteRepository);
   }
   String sourceSecretName=null;
   LocalObjectReference sourceSecret=source.getSourceSecret();

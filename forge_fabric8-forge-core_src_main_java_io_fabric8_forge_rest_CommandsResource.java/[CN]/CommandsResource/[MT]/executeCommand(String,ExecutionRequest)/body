@@ -1,13 +1,22 @@
 {
   try {
-    UserDetails userDetails=null;
-    CommandCompletePostProcessor postProcessor=this.commandCompletePostProcessor;
+    final CommandCompletePostProcessor postProcessor=this.commandCompletePostProcessor;
+    final UserDetails userDetails;
     if (postProcessor != null) {
       userDetails=postProcessor.preprocessRequest(name,executionRequest,request);
     }
+ else {
+      userDetails=null;
+    }
+    String namespace=executionRequest.getNamespace();
+    String projectName=executionRequest.getProjectName();
     String resourcePath=executionRequest.getResource();
-    RestUIContext uiContext=createUIContext(resourcePath);
-    return doExecute(name,executionRequest,postProcessor,userDetails,uiContext);
+    return withUIContext(namespace,projectName,resourcePath,true,new RestUIFunction<Response>(){
+      @Override public Response apply(      RestUIContext uiContext) throws Exception {
+        return doExecute(name,executionRequest,postProcessor,userDetails,uiContext);
+      }
+    }
+);
   }
  catch (  Throwable e) {
     LOG.warn("Failed to invoke command " + name + " on "+ executionRequest+ ". "+ e,e);

@@ -1,0 +1,42 @@
+{
+  final ResourceFactory resourceFactory=getResourceFactory();
+  if (Strings.isNotBlank(namespace) && Strings.isNotBlank(projectName) && resourceFactory != null) {
+    RepositoriesResource repositoriesResource=new RepositoriesResource(gitUserHelper,repositoryCache,projectFileSystem,lockManager,kubernetes);
+    repositoriesResource.setRequest(request);
+    final RepositoryResource projectResource=repositoriesResource.projectRepositoryResource(namespace,projectName);
+    if (projectResource == null) {
+      throw new NotFoundException("Could not find git project for namespace: " + namespace + " and projectName: "+ projectName);
+    }
+ else {
+      GitOperation<T> operation=new GitOperation<T>(){
+        @Override public T call(        Git git,        GitContext gitContext) throws Exception {
+          Repository repository=git.getRepository();
+          File gitDir=repository.getDirectory();
+          File directory=gitDir.getParentFile();
+          LOG.debug("using repository directory: " + directory.getAbsolutePath());
+          Resource<?> selection=resourceFactory.create(directory);
+          try (RestUIContext context=new RestUIContext(selection)){
+            T answer=function.apply(context);
+            String commitMessage=context.getCommitMessage();
+            if (Strings.isNotBlank(commitMessage)) {
+              projectResource.setMessage(commitMessage);
+            }
+            return answer;
+          }
+         }
+      }
+;
+      if (write) {
+        return projectResource.gitWriteOperation(operation);
+      }
+ else {
+        return projectResource.gitReadOperation(operation);
+      }
+    }
+  }
+ else {
+    try (RestUIContext context=new RestUIContext(null)){
+      return function.apply(context);
+    }
+   }
+}

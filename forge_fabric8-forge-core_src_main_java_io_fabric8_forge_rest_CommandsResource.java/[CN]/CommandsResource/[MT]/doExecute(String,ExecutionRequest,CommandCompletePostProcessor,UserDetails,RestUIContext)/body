@@ -80,6 +80,7 @@
     if (answer.isCommandCompleted() && postProcessor != null) {
       postProcessor.firePostCompleteActions(name,executionRequest,context,controller,answer,request);
     }
+    context.setCommitMessage(ExecutionRequest.createCommitMessage(name,executionRequest));
     return Response.ok(answer).build();
   }
  }

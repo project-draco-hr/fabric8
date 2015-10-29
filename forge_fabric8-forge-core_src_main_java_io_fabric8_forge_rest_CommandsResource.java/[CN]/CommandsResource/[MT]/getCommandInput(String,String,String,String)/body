@@ -1,7 +1,7 @@
 {
-  try {
-    CommandInputDTO answer=null;
-    try (RestUIContext context=createUIContext(resourcePath)){
+  return withUIContext(namespace,projectName,resourcePath,false,new RestUIFunction<Response>(){
+    @Override public Response apply(    RestUIContext context) throws Exception {
+      CommandInputDTO answer=null;
       UICommand command=getCommandByName(context,name);
       if (command != null) {
         CommandController controller=createController(context,command);
@@ -14,9 +14,6 @@
         return Response.status(Status.NOT_FOUND).build();
       }
     }
-   }
- catch (  Throwable e) {
-    LOG.warn("Failed to find input for command " + name + ". "+ e,e);
-    throw e;
   }
+);
 }

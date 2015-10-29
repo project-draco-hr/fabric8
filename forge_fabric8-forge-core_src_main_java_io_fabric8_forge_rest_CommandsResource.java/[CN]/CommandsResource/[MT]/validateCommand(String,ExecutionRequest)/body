@@ -1,11 +1,21 @@
 {
   try {
-    UserDetails userDetails=null;
+    final UserDetails userDetails;
     if (commandCompletePostProcessor != null) {
       userDetails=commandCompletePostProcessor.preprocessRequest(name,executionRequest,request);
     }
-    String resourcePath=executionRequest.getResource();
-    return doValidate(name,executionRequest,userDetails,createUIContext(resourcePath));
+ else {
+      userDetails=null;
+    }
+    final String namespace=executionRequest.getNamespace();
+    final String projectName=executionRequest.getProjectName();
+    final String resourcePath=executionRequest.getResource();
+    return withUIContext(namespace,projectName,resourcePath,false,new RestUIFunction<Response>(){
+      @Override public Response apply(      RestUIContext uiContext) throws Exception {
+        return doValidate(name,executionRequest,userDetails,uiContext);
+      }
+    }
+);
   }
  catch (  Throwable e) {
     LOG.warn("Failed to invoke command " + name + " on "+ executionRequest+ ". "+ e,e);

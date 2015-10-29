@@ -1,0 +1,20 @@
+{
+  return withUIContext(namespace,projectName,resourcePath,false,new RestUIFunction<List<CommandInfoDTO>>(){
+    @Override public List<CommandInfoDTO> apply(    RestUIContext context){
+      List<CommandInfoDTO> answer=new ArrayList<>();
+      for (      String name : commandFactory.getCommandNames(context)) {
+        try {
+          CommandInfoDTO dto=createCommandInfoDTO(context,name);
+          if (dto != null && dto.isEnabled()) {
+            answer.add(dto);
+          }
+        }
+ catch (        Exception e) {
+          LOG.warn("Ignored exception on command " + name + " probably due to missing project?: "+ e,e);
+        }
+      }
+      return answer;
+    }
+  }
+);
+}
