@@ -1,6 +1,6 @@
 {
   if (profiles.getValue() == null || !profiles.getValue()) {
-    return;
+    return false;
   }
   boolean updated=false;
   Profile profile=MavenHelpers.findProfile(pom,"f8-build");
@@ -47,4 +47,5 @@
     maven.setModel(pom);
     LOG.info("updated pom.xml");
   }
+  return true;
 }
