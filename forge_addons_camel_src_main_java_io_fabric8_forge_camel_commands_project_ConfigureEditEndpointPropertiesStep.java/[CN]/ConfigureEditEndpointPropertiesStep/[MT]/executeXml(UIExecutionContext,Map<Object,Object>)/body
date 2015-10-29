@@ -6,7 +6,10 @@
   String lineNumber=mandatoryAttributeValue(attributeMap,"lineNumber");
   Project project=getSelectedProject(context);
   ResourcesFacet facet=project.getFacet(ResourcesFacet.class);
-  WebResourcesFacet webFacet=project.getFacet(WebResourcesFacet.class);
+  WebResourcesFacet webResourcesFacet=null;
+  if (project.hasFacet(WebResourcesFacet.class)) {
+    webResourcesFacet=project.getFacet(WebResourcesFacet.class);
+  }
   Dependency core=CamelProjectHelper.findCamelCoreDependency(project);
   if (core == null) {
     return Results.fail("The project does not include camel-core");
@@ -40,14 +43,13 @@
     }
   }
   CamelCatalog catalog=new DefaultCamelCatalog();
-  String uri=catalog.asEndpointUri(camelComponentName,options);
+  String uri=catalog.asEndpointUriXml(camelComponentName,options);
   if (uri == null) {
     return Results.fail("Cannot create endpoint uri");
   }
-  uri=org.apache.camel.util.StringHelper.xmlEncode(uri);
   FileResource file=facet != null ? facet.getResource(xml) : null;
   if (file == null || !file.exists()) {
-    file=webFacet != null ? webFacet.getWebResource(xml) : null;
+    file=webResourcesFacet != null ? webResourcesFacet.getWebResource(xml) : null;
   }
   if (file == null || !file.exists()) {
     return Results.fail("Cannot find XML file " + xml);
