@@ -1,18 +1,23 @@
 {
   loadConfigFile();
   KubernetesClient kubernetes=getKubernetes();
-  String name=null;
-  if (projectConfig != null) {
-    name=projectConfig.getBuildName();
-  }
+  String name=projectName;
   if (Strings.isNullOrBlank(name)) {
-    name=jenkinsJob;
-  }
-  if (Strings.isNullOrBlank(name)) {
-    name=ProjectRepositories.createBuildName(username,repoName);
     if (projectConfig != null) {
-      projectConfig.setBuildName(name);
+      name=projectConfig.getBuildName();
     }
+    if (Strings.isNullOrBlank(name)) {
+      name=jenkinsJob;
+    }
+    if (Strings.isNullOrBlank(name)) {
+      name=ProjectRepositories.createBuildName(username,repoName);
+      if (projectConfig != null) {
+        projectConfig.setBuildName(name);
+      }
+    }
+  }
+  if (Strings.isNullOrBlank(projectName)) {
+    projectName=name;
   }
   Map<String,String> labels=new HashMap<>();
   labels.put("user",username);
@@ -36,7 +41,7 @@
     getLog().error("Failed to load or lazily create the LetsChat client: " + e,e);
   }
   getLog().info("letschat " + letschat);
-  if (projectConfig.hasCodeReview()) {
+  if (projectConfig != null && projectConfig.hasCodeReview()) {
     try {
       createGerritRepo(repoName,gerritUser,gerritPwd,gerritGitInitialCommit,gerritGitRepoDesription);
     }
@@ -96,7 +101,7 @@
       }
     }
   }
-  BuildConfigFluent.SpecNested<BuildConfigBuilder> specBuilder=new BuildConfigBuilder().withNewMetadata().withName(name).withLabels(labels).withAnnotations(annotations).endMetadata().withNewSpec();
+  BuildConfigFluent.SpecNested<BuildConfigBuilder> specBuilder=new BuildConfigBuilder().withNewMetadata().withName(projectName).withLabels(labels).withAnnotations(annotations).endMetadata().withNewSpec();
   if (Strings.isNotBlank(gitUrl)) {
     specBuilder=specBuilder.withNewSource().withType("Git").withNewGit().withUri(gitUrl).endGit().endSource();
   }

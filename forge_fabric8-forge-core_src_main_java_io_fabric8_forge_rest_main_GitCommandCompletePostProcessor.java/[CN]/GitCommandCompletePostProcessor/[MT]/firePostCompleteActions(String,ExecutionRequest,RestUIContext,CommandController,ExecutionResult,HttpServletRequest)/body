@@ -8,7 +8,6 @@
   try {
     if (name.equals(PROJECT_NEW_COMMAND)) {
       GitHelpers.disableSslCertificateChecks();
-      CredentialsProvider credentials=userDetails.createCredentialsProvider();
       PersonIdent personIdent=userDetails.createPersonIdent();
       String targetLocation=null;
       String named=null;
@@ -53,6 +52,7 @@
           }
           String htmlUrl=address + user + "/"+ named;
           String remoteUrl=internalAddress + user + "/"+ named+ ".git";
+          String cloneUrl=htmlUrl + ".git";
           results.setOutputProperty("fullName",fullName);
           results.setOutputProperty("cloneUrl",remoteUrl);
           results.setOutputProperty("htmlUrl",htmlUrl);
@@ -62,6 +62,10 @@
           String message=ExecutionRequest.createCommitMessage(name,executionRequest);
           LOG.info("Commiting and pushing to: " + remoteUrl + " and remote name "+ origin);
           GitHelpers.doAddCommitAndPushFiles(git,userDetails,personIdent,branch,origin,message,isPushOnCommit());
+          String namespace=firstNotBlank(context.getProjectName(),executionRequest.getNamespace());
+          String projectName=firstNotBlank(named,context.getProjectName(),executionRequest.getProjectName());
+          results.setProjectName(projectName);
+          createBuildConfig(context,namespace,projectName,cloneUrl);
           LOG.info("Creating any pending webhooks");
           registerWebHooks(context);
           LOG.info("Done creating webhooks!");
