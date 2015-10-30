@@ -10,12 +10,14 @@
     final String namespace=executionRequest.getNamespace();
     final String projectName=executionRequest.getProjectName();
     final String resourcePath=executionRequest.getResource();
+    GitContext gitContext=new GitContext();
+    gitContext.setRequirePull(false);
     return withUIContext(namespace,projectName,resourcePath,false,new RestUIFunction<Response>(){
       @Override public Response apply(      RestUIContext uiContext) throws Exception {
         return doValidate(name,executionRequest,userDetails,uiContext);
       }
     }
-);
+,gitContext);
   }
  catch (  Throwable e) {
     LOG.warn("Failed to invoke command " + name + " on "+ executionRequest+ ". "+ e,e);
