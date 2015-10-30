@@ -1,10 +1,6 @@
 {
-  if (Strings.isNullOrBlank(gerritUser)) {
-    gerritUser="admin";
-  }
-  if (Strings.isNullOrBlank(gerritPwd)) {
-    gerritPwd="secret";
-  }
+  final String username=Strings.isNullOrBlank(gerritUser) ? "admin" : gerritUser;
+  final String password=Strings.isNullOrBlank(gerritPwd) ? "secret" : gerritPwd;
   log.info("A Gerrit git repo will be created for this name : " + repoName);
   String gerritAddress=KubernetesHelper.getServiceURL(kubernetes,ServiceNames.GERRIT,namespace,"http",true);
   log.info("Found gerrit address: " + gerritAddress + " for namespace: "+ namespace+ " on Kubernetes address: "+ kubernetes.getMasterUrl());
@@ -12,24 +8,43 @@
     throw new Exception("No address for service " + ServiceNames.GERRIT + " in namespace: "+ namespace+ " on Kubernetes address: "+ kubernetes.getMasterUrl());
   }
   String GERRIT_URL=gerritAddress + "/a/projects/" + repoName;
-  Realm realm=new Realm.RealmBuilder().setPrincipal(gerritUser).setPassword(gerritPwd).setUsePreemptiveAuth(false).setScheme(Realm.AuthScheme.DIGEST).build();
-  AsyncHttpClientConfig.Builder configBuilder=new AsyncHttpClientConfig.Builder().setRealm(realm);
-  AsyncHttpClient client=new AsyncHttpClient(configBuilder.build());
+  OkHttpClient client=new OkHttpClient();
+  if (isNotNullOrEmpty(gerritUser) && isNotNullOrEmpty(gerritPwd)) {
+    client.setAuthenticator(new Authenticator(){
+      @Override public Request authenticate(      Proxy proxy,      Response response) throws IOException {
+        List<Challenge> challenges=response.challenges();
+        Request request=response.request();
+        for (int i=0, size=challenges.size(); i < size; i++) {
+          Challenge challenge=challenges.get(i);
+          if (!"Basic".equalsIgnoreCase(challenge.getScheme()))           continue;
+          String credential=Credentials.basic(username,password);
+          return request.newBuilder().header("Authorization",credential).build();
+        }
+        return null;
+      }
+      @Override public Request authenticateProxy(      Proxy proxy,      Response response) throws IOException {
+        return null;
+      }
+    }
+);
+  }
   System.out.println("Requesting : " + GERRIT_URL);
   try {
     CreateRepositoryDTO createRepoDTO=new CreateRepositoryDTO();
     createRepoDTO.setDescription(gerritGitRepoDescription);
     createRepoDTO.setName(repoName);
     createRepoDTO.setCreate_empty_commit(Boolean.valueOf(gerritGitInitialCommit));
-    String json=MAPPER.writeValueAsString(createRepoDTO);
-    Future<Response> future=client.preparePost(GERRIT_URL).addHeader("Content-Type","application/json").setBody(json).execute();
-    Response response=future.get();
-    System.out.println("responseBody : " + response.getResponseBody());
+    RequestBody body=RequestBody.create(JSON,MAPPER.writeValueAsString(createRepoDTO));
+    Request request=new Request.Builder().post(body).url(GERRIT_URL).build();
+    Response response=client.newCall(request).execute();
+    System.out.println("responseBody : " + response.body().string());
   }
  catch (  Throwable t) {
     throw new RuntimeException(t);
   }
  finally {
-    client.close();
+    if (client != null && client.getConnectionPool() != null) {
+      client.getConnectionPool().evictAll();
+    }
   }
 }
