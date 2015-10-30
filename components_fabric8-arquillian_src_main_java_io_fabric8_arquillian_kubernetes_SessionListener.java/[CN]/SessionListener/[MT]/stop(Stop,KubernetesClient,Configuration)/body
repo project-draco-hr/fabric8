@@ -1,6 +1,7 @@
 {
   try {
-    cleanupSession(client,configuration,event.getSession(),result.getStatus().name());
+    Session session=event.getSession();
+    cleanupSession(client,configuration,session,Util.getSessionStatus(session));
   }
   finally {
     if (shutdownHook != null) {
