@@ -3,24 +3,28 @@
     String flow=projectConfig.getPipeline();
     String flowGitUrlValue=null;
     boolean localFlow=false;
+    String projectGitUrl=convertGitUrlToHttpFromSsh(this.gitUrl);
     if (Strings.isNotBlank(flow)) {
       flowGitUrlValue=this.flowGitUrl;
     }
  else     if (projectConfig.isUseLocalFlow()) {
       flow=ProjectConfigs.LOCAL_FLOW_FILE_NAME;
-      flowGitUrlValue=this.gitUrl;
+      flowGitUrlValue=projectGitUrl;
       localFlow=true;
     }
  else {
       getLog().info("Not creating Jenkins job as no pipeline defined for project configuration!");
     }
     String versionPrefix=Systems.getSystemPropertyOrEnvVar("VERSION_PREFIX","VERSION_PREFIX","1.0");
-    if (Strings.isNotBlank(flow) && Strings.isNotBlank(gitUrl) && Strings.isNotBlank(flowGitUrlValue)) {
+    if (Strings.isNotBlank(flow) && Strings.isNotBlank(projectGitUrl) && Strings.isNotBlank(flowGitUrlValue)) {
       String template=loadJenkinsBuildTemplate(getLog());
       if (Strings.isNotBlank(template)) {
+        if (Strings.isNotBlank(gitSourceSecretName)) {
+          template=addBuildParameter(getLog(),template,"SOURCE_SECRET",gitSourceSecretName,"Name of the Kubernetes Secret required to clone the git repository");
+        }
         template=template.replace("${FLOW_PATH}",flow);
         template=template.replace("${FLOW_GIT_URL}",flowGitUrlValue);
-        template=template.replace("${GIT_URL}",gitUrl);
+        template=template.replace("${GIT_URL}",projectGitUrl);
         template=template.replace("${VERSION_PREFIX}",versionPrefix);
         if (localFlow) {
           template=removeBuildParameter(getLog(),template,"GIT_URL");

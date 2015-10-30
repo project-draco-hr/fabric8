@@ -1,0 +1,24 @@
+{
+  try {
+    DocumentBuilder documentBuilder=DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    Document doc=documentBuilder.parse(new InputSource(new StringReader(template)));
+    Element rootElement=doc.getDocumentElement();
+    NodeList parameterDefs=rootElement.getElementsByTagName("parameterDefinitions");
+    if (parameterDefs != null && parameterDefs.getLength() > 0) {
+      Node paramDefNode=parameterDefs.item(0);
+      Element stringParamDef=DomHelper.addChildElement(paramDefNode,"hudson.model.StringParameterDefinition");
+      DomHelper.addChildElement(stringParamDef,"name",parameterName);
+      DomHelper.addChildElement(stringParamDef,"defaultValue",parameterValue);
+      if (Strings.isNotBlank(description)) {
+        DomHelper.addChildElement(stringParamDef,"description",description);
+      }
+    }
+ else {
+      log.warn("Could not find the <parameterDefinitions> to add the build parameter name " + parameterName + " with value: "+ parameterValue);
+    }
+  }
+ catch (  Exception e) {
+    log.error("Failed to add the build parameter from the Jenkins XML. " + e,e);
+  }
+  return template;
+}

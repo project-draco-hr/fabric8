@@ -1,0 +1,11 @@
+{
+  if (Strings.isNotBlank(gitUrl)) {
+    String prefix="git@";
+    if (gitUrl.startsWith(prefix)) {
+      String remaining=gitUrl.substring(prefix.length());
+      remaining=remaining.replace(":","/");
+      return "https://" + remaining;
+    }
+  }
+  return gitUrl;
+}
