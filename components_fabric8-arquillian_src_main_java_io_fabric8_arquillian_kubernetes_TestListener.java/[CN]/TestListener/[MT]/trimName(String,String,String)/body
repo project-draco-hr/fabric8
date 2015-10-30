@@ -1,0 +1,13 @@
+{
+  StringBuilder sb=new StringBuilder();
+  sb.append(trimPackage(packageName)).append(".").append(className).append(".").append(methodName);
+  String result=sb.toString();
+  int prefixLength=Annotations.Tests.TEST_CASE_STATUS.length();
+  if (prefixLength + result.length() > MAX_ANNOTATION_KEY_LENGTH) {
+    result=result.substring(prefixLength + result.length() - MAX_ANNOTATION_KEY_LENGTH);
+  }
+  if (result.charAt(0) == '.') {
+    result=result.substring(1);
+  }
+  return result;
+}

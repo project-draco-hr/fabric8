@@ -1,0 +1,16 @@
+{
+  String pkg=event.getTestClass().getJavaClass().getPackage().getName();
+  String className=event.getTestClass().getJavaClass().getSimpleName();
+  String methodName=event.getTestMethod().getName();
+  Namespaces.updateNamespaceTestStatus(client,session,trimName(pkg,className,methodName),result.getStatus().name());
+switch (result.getStatus()) {
+case PASSED:
+    session.getPassed().incrementAndGet();
+  break;
+case FAILED:
+session.getFailed().incrementAndGet();
+break;
+case SKIPPED:
+session.getSkiped().incrementAndGet();
+}
+}
