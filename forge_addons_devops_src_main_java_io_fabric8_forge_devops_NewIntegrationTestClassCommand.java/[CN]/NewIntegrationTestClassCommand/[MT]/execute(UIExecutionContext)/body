@@ -9,7 +9,7 @@
     Model mavenModel=mavenFacet.getModel();
     Profile kitProfile=MavenHelpers.findProfile(mavenModel,profileId);
     if (kitProfile == null) {
-      System.out.println("Creating a new maven profile for id: " + profileId);
+      LOG.info("Creating a new maven profile for id: " + profileId);
       kitProfile=new Profile();
       kitProfile.setId(profileId);
     }
@@ -19,7 +19,7 @@
       itestPluginArtifactId=itestPluginValue.getArtifactId();
     }
     if (itestPluginArtifactId == null) {
-      System.out.println("Warning - no itestPlugin specified!");
+      LOG.warn("Warning - no itestPlugin specified!");
       itestPluginArtifactId=MavenHelpers.failsafeArtifactId;
     }
     String version=MavenHelpers.getVersion(MavenHelpers.mavenPluginsGroupId,itestPluginArtifactId);
@@ -36,7 +36,7 @@
         LOG.debug("Ignored exception looking up maven plugin for " + coordinate + " for profile "+ kitProfileImpl);
       }
       if (surefirePlugin == null) {
-        System.out.println("Creating a new plugin for " + coordinate + " on profile "+ kitProfileImpl);
+        LOG.info("Creating a new plugin for " + coordinate + " on profile "+ kitProfileImpl);
         String wildcard=integrationTestWildcard.getValue();
         ConfigurationBuilder configuration=ConfigurationBuilder.create();
         configuration.createConfigurationElement("includes").createConfigurationElement("include").setText(wildcard);

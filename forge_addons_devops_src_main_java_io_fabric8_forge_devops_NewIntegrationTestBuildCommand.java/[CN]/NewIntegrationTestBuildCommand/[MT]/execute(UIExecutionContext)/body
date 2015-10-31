@@ -6,7 +6,7 @@
   String imageText=image.getValue();
   List<EnvVar> envVars=createEnvVars(buildConfigName,gitUrlText,mavenCommand.getValue());
   BuildConfig buildConfig=BuildConfigs.createIntegrationTestBuildConfig(buildConfigName,labels,gitUrlText,imageText,envVars);
-  System.out.println("Generated BuildConfig: " + toJson(buildConfig));
+  LOG.info("Generated BuildConfig: " + toJson(buildConfig));
   ImageStream imageRepository=BuildConfigs.imageRepository(buildConfigName,labels);
   Controller controller=createController();
   controller.applyImageStream(imageRepository,"generated ImageStream: " + toJson(imageRepository));
