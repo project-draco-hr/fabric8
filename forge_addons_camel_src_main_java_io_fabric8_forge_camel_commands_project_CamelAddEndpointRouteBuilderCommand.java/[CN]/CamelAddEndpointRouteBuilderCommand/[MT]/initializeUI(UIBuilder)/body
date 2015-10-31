@@ -1,6 +1,6 @@
 {
   Project project=getSelectedProject(builder.getUIContext());
-  final JavaSourceFacet facet=project.getFacet(JavaSourceFacet.class);
+  JavaSourceFacet facet=project.getFacet(JavaSourceFacet.class);
   componentNameFilter.setValueChoices(CamelCommandsHelper.createComponentNameValues(project));
   componentNameFilter.setDefaultValue("<all>");
   componentName.setValueChoices(CamelCommandsHelper.createComponentNameValues(project,componentNameFilter,false));
@@ -9,18 +9,6 @@
       String value=componentName.getValue();
       if (value != null) {
         value=value.replaceAll("-","");
-      }
-      List<CamelEndpointDetails> endpoints=new ArrayList<>();
-      ResourceVisitor visitor=new XmlResourcesCamelEndpointsVisitor((ResourcesFacet)facet,endpoints);
-      ((ResourcesFacet)facet).visitResources(visitor);
-      Iterator<CamelEndpointDetails> it=endpoints.iterator();
-      while (it.hasNext()) {
-        CamelEndpointDetails det=it.next();
-        if (det.getEndpointInstance() != null) {
-          if (det.getEndpointInstance().equals(instanceName)) {
-            return null;
-          }
-        }
       }
       return value;
     }
