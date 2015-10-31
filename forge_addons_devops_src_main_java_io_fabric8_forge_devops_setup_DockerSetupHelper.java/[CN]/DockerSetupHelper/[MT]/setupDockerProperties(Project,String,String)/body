@@ -8,11 +8,10 @@
   Model pom=maven.getModel();
   Properties properties=pom.getProperties();
   boolean updated=false;
-  updated=MavenHelpers.updatePomProperty(properties,"docker.registryPrefix","${env.DOCKER_REGISTRY}/",updated);
   if (Strings.isNotBlank(fromImage)) {
     updated=MavenHelpers.updatePomProperty(properties,"docker.from",dockerFromImagePrefix + fromImage,updated);
   }
-  updated=MavenHelpers.updatePomProperty(properties,"docker.image","${docker.registryPrefix}fabric8/${project.artifactId}:${project.version}",updated);
+  updated=MavenHelpers.updatePomProperty(properties,"docker.image",organization + "/${project.artifactId}:${project.version}",updated);
   updated=MavenHelpers.updatePomProperty(properties,"docker.port.container.jolokia","8778",updated);
   if (springBoot) {
     updated=MavenHelpers.updatePomProperty(properties,"docker.assemblyDescriptorRef","artifact",updated);
