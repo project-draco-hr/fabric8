@@ -1,8 +1,8 @@
 {
   LOG.info("Creating a BuildConfig for namespace: " + namespace + " project: "+ projectName);
-  DevOpsConnector connector=new DevOpsConnector();
-  connector.setGitUrl(cloneUrl);
-  connector.setNamespace(namespace);
-  connector.setProjectName(projectName);
-  connector.execute();
+  String jenkinsUrl=getJenkinsServiceUrl(namespace);
+  BuildConfig buildConfig=Builds.createDefaultBuildConfig(projectName,cloneUrl,jenkinsUrl);
+  Controller controller=new Controller(kubernetes);
+  controller.setNamespace(namespace);
+  controller.applyBuildConfig(buildConfig,"from project " + projectName);
 }
