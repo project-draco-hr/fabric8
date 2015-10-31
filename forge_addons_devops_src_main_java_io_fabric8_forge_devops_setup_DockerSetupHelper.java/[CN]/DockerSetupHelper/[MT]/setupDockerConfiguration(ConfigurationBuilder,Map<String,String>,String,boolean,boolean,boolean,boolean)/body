@@ -22,6 +22,12 @@
     name.setText("${docker.image}");
   }
   ConfigurationElementBuilder assembly=MavenHelpers.getOrCreateElementBuilder(build,"assembly");
+  if (springBoot || jar) {
+    if (!assembly.hasChildByName("basedir")) {
+      ConfigurationElementBuilder baseDir=MavenHelpers.getOrCreateElementBuilder(assembly,"basedir");
+      baseDir.setText("/app");
+    }
+  }
   if (!assembly.hasChildByName("descriptor")) {
     ConfigurationElementBuilder descriptorRef=MavenHelpers.getOrCreateElementBuilder(assembly,"descriptorRef");
     if (Strings.isNullOrBlank(descriptorRef.getText())) {
