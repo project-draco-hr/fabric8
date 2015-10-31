@@ -1,6 +1,6 @@
 {
   LOG.info("Getting the current project");
-  Project project=getCurrentSelectedProject(builder.getUIContext());
+  final Project project=getCurrentSelectedProject(builder.getUIContext());
   LOG.info("Got the current project");
   String packaging=getProjectPackaging(project);
   boolean springBoot=hasSpringBootMavenPlugin(project);
@@ -77,6 +77,9 @@
 );
   icon.setDefaultValue(new Callable<String>(){
     @Override public String call() throws Exception {
+      if (!findCamelArtifacts(project).isEmpty()) {
+        return "camel";
+      }
       if (container.getValue() != null) {
         for (        String choice : icon.getValueChoices()) {
           if (choice.equals(container.getValue())) {
@@ -84,7 +87,7 @@
           }
         }
       }
-      return null;
+      return "java";
     }
   }
 );

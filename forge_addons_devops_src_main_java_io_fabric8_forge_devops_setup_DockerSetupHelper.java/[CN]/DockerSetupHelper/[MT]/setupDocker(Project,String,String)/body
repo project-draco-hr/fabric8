@@ -5,7 +5,7 @@
   String packaging=getProjectPackaging(project);
   boolean war=packaging != null && packaging.equals("war");
   boolean bundle=packaging != null && packaging.equals("bundle");
-  boolean jar=packaging != null && packaging.equals("jar");
+  boolean jar=packaging == null || packaging.equals("jar");
   Map<String,String> envs=new LinkedHashMap<>();
   if (springBoot) {
     envs.put("JAR","${project.artifactId}-${project.version}.war");
