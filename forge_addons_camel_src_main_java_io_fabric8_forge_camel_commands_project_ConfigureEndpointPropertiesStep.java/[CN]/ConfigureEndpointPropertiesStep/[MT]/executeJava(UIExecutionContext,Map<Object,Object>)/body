@@ -23,6 +23,15 @@
     if (input.hasValue()) {
       String value=input.getValue().toString();
       if (value != null) {
+        boolean matchDefault=isDefaultValue(camelComponentName,key,value);
+        if (!matchDefault) {
+          options.put(key,value);
+        }
+      }
+    }
+ else     if (input.isRequired() && input.hasDefaultValue()) {
+      String value=input.getValue().toString();
+      if (value != null) {
         options.put(key,value);
       }
     }
@@ -37,33 +46,41 @@
     return Results.fail("RouteBuilder " + routeBuilder + " does not exist");
   }
   JavaClassSource clazz=existing.getJavaType();
-  MethodSource configure=clazz.getMethod("configure");
-  String body=configure.getBody();
-  clazz.addImport("org.apache.camel.Endpoint");
-  if (body == null) {
-    body="";
+  boolean updated=true;
+  boolean cdi=findCamelArtifactDependency(project,"camel-cdi") != null;
+  FieldSource field=clazz.getField(endpointInstanceName);
+  AnnotationSource annotation;
+  if (field == null) {
+    field=clazz.addField();
+    field.setName(endpointInstanceName);
+    field.setType("org.apache.camel.Endpoint");
+    field.setPrivate();
+    updated=false;
   }
-  String match=String.format("Endpoint %s=",endpointInstanceName);
-  List<String> lines=LineNumberHelper.readLines(new StringReader(body));
-  int index=-1;
-  for (int i=0; i < lines.size(); i++) {
-    String line=lines.get(i);
-    if (line.trim().startsWith(match)) {
-      index=i;
-      break;
+  if (cdi) {
+    annotation=field.getAnnotation("org.apache.camel.cdi.Uri");
+    if (annotation == null) {
+      if (!field.hasAnnotation("javax.inject.Inject")) {
+        field.addAnnotation("javax.inject.Inject");
+      }
+      annotation=field.addAnnotation("org.apache.camel.cdi.Uri");
     }
   }
-  String line=String.format("Endpoint %s = endpoint(\"%s\");\n\n",endpointInstanceName,uri);
-  if (index == -1) {
-    lines.add(0,line);
+ else {
+    annotation=field.getAnnotation("org.apache.camel.EndpointInject");
+  }
+  annotation.removeAllValues();
+  annotation.setStringValue(uri);
+  clazz.addImport("org.apache.camel.Endpoint");
+  if (cdi) {
+    clazz.addImport("javax.inject.Inject");
+    clazz.addImport("org.apache.camel.cdi.Uri");
   }
  else {
-    lines.set(index,line);
+    clazz.addImport("org.apache.camel.EndpointInject");
   }
-  String content=LineNumberHelper.linesToString(lines);
-  configure.setBody(content);
   facet.saveJavaSource(clazz);
-  if (index == -1) {
+  if (updated) {
     return Results.success("Updated endpoint " + endpointInstanceName + " in "+ routeBuilder);
   }
  else {
