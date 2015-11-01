@@ -1,0 +1,37 @@
+{
+  try {
+    JavaClassSource clazz=resource.getJavaType();
+    String superType=clazz.getSuperType();
+    if (superType != null && !RouteBuilder.class.getName().equals(superType)) {
+      return;
+    }
+    for (    FieldSource<JavaClassSource> field : clazz.getFields()) {
+      String uri=null;
+      for (      Annotation ann : field.getAnnotations()) {
+        if ("org.apache.camel.EndpointInject".equals(ann.getQualifiedName())) {
+          uri=ann.getStringValue();
+        }
+ else         if ("org.apache.camel.cdi.Uri".equals(ann.getQualifiedName())) {
+          uri=ann.getStringValue();
+        }
+      }
+      if (uri != null) {
+        String baseDir=facet.getSourceDirectory().getFullyQualifiedName();
+        String fileName=resource.getFullyQualifiedName();
+        if (fileName.startsWith(baseDir)) {
+          fileName=fileName.substring(baseDir.length() + 1);
+        }
+        String id=field.getName();
+        CamelEndpointDetails detail=new CamelEndpointDetails();
+        detail.setResource(resource);
+        detail.setFileName(fileName);
+        detail.setEndpointInstance(id);
+        detail.setEndpointUri(uri);
+        detail.setEndpointComponentName(endpointComponentName(uri));
+        endpoints.add(detail);
+      }
+    }
+  }
+ catch (  Exception e) {
+  }
+}
