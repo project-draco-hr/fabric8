@@ -1,4 +1,8 @@
 {
-  String protocol=protocolConfig.getProtocol();
-  return new URL(protocol + "://" + service.substring(service.lastIndexOf("/")));
+  String sourceProtocol=protocolConfig.getSourceProtocol();
+  String targetProtocol=protocolConfig.getTargetProtocol();
+  if (sourceProtocol != null && targetProtocol != null && !sourceProtocol.equals(targetProtocol) && service.startsWith(sourceProtocol)) {
+    return new URL(service.replaceFirst(sourceProtocol,targetProtocol));
+  }
+  return new URL(service);
 }

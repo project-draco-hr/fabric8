@@ -3,13 +3,15 @@
   for (  AnnotatedParameter<X> parameter : factoryMethod.getParameters()) {
     Type type=parameter.getBaseType();
     ServiceName serviceName=parameter.getAnnotation(ServiceName.class);
+    Protocol protocol=parameter.getAnnotation(Protocol.class);
     Configuration configuration=parameter.getAnnotation(Configuration.class);
+    String actualProtocol=(protocol != null && Strings.isNotBlank(protocol.value())) ? protocol.value() : serviceProtocol;
     if (serviceName != null && String.class.equals(type)) {
-      String serviceUrl=getServiceUrl(serviceId,serviceProtocol,servicePort,ctx);
+      String serviceUrl=getServiceUrl(serviceId,actualProtocol,servicePort,ctx);
       arguments.add(serviceUrl);
     }
  else     if (serviceName != null && !String.class.equals(type)) {
-      Object serviceBean=getServiceBean(serviceId,serviceProtocol,servicePort,(Class<Object>)type,ctx);
+      Object serviceBean=getServiceBean(serviceId,actualProtocol,servicePort,(Class<Object>)type,ctx);
       arguments.add(serviceBean);
     }
  else     if (configuration != null) {
