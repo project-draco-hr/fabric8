@@ -2,11 +2,11 @@
   this.name=name;
   ParameterizedType genericSuperclass=(ParameterizedType)getClass().getGenericSuperclass();
   this.beanType=(Class<T>)genericSuperclass.getActualTypeArguments()[0];
-  List<Type> allTypes=new ArrayList<>();
+  Set<Type> allTypes=new LinkedHashSet<>();
   allTypes.add(beanType);
-  for (Type t=Types.superClassOf(beanType); !allTypes.contains(Object.class) && t != null; t=Types.superClassOf(beanType)) {
+  for (Type t=Types.superClassOf(beanType); !allTypes.contains(Object.class) && t != null; t=Types.superClassOf(t)) {
     allTypes.add(t);
   }
-  types=Collections.unmodifiableSet(new HashSet<>(allTypes));
+  types=Collections.unmodifiableSet(allTypes);
   qualifiers=Collections.unmodifiableSet(new HashSet<>(Arrays.asList(annotations)));
 }
