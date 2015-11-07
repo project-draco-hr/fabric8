@@ -21,28 +21,6 @@
     }
   }
 );
-  instanceName.setDefaultValue(new Callable<String>(){
-    @Override public String call() throws Exception {
-      String value=componentName.getValue();
-      if (value != null) {
-        value=value.replaceAll("-","");
-      }
-      List<CamelEndpointDetails> endpoints=new ArrayList<>();
-      ResourceVisitor visitor=new XmlResourcesCamelEndpointsVisitor(resourcesFacet,endpoints);
-      resourcesFacet.visitResources(visitor);
-      Iterator<CamelEndpointDetails> it=endpoints.iterator();
-      while (it.hasNext()) {
-        CamelEndpointDetails det=it.next();
-        if (det.getEndpointInstance() != null) {
-          if (det.getEndpointInstance().equals(instanceName)) {
-            return null;
-          }
-        }
-      }
-      return value;
-    }
-  }
-);
   xml.setValueChoices(new XmlFileCompleter(resourcesFacet,webResourcesFacet).getFiles());
   builder.add(componentNameFilter).add(componentName).add(instanceName).add(xml);
 }
