@@ -60,12 +60,11 @@
     }
     input=ui;
   }
-  if (input != null) {
-    if (Objects.equals("true",required)) {
-      input.setRequired(true);
-    }
-    input.setLabel(name);
-    input.setDescription(description != null ? description : "");
+  if (Objects.equals("true",required)) {
+    input.setRequired(true);
   }
+  String label=asTitleCase(name);
+  input.setLabel(label);
+  input.setDescription(description != null ? description : "");
   return input;
 }
