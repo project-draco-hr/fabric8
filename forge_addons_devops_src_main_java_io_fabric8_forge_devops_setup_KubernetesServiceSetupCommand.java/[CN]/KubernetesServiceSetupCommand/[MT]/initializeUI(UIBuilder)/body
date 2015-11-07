@@ -8,5 +8,6 @@
     servicePort.setDefaultValue(properties.getProperty("fabric8.service.port",""));
     containerPort.setDefaultValue(properties.getProperty("fabric8.service.containerPort",""));
   }
+  serviceName.addValidator(new MaxLengthValidator(24));
   builder.add(serviceName).add(servicePort).add(containerPort);
 }
