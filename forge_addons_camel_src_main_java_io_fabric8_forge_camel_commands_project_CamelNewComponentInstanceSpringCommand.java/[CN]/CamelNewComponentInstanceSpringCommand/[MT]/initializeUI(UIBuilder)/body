@@ -4,6 +4,19 @@
   componentNameFilter.setValueChoices(CamelCommandsHelper.createComponentNameValues(project));
   componentNameFilter.setDefaultValue("<all>");
   componentName.setValueChoices(CamelCommandsHelper.createComponentNameValues(project,componentNameFilter,false));
+  componentName.addValueChangeListener(new ValueChangeListener(){
+    @Override public void valueChanged(    ValueChangeEvent event){
+      String component=event.getNewValue() != null ? event.getNewValue().toString() : null;
+      if (component != null) {
+        String description=CamelCatalogHelper.getComponentDescription(component);
+        componentName.setNote(description != null ? description : "");
+      }
+ else {
+        componentName.setNote("");
+      }
+    }
+  }
+);
   instanceName.setDefaultValue(new Callable<String>(){
     @Override public String call() throws Exception {
       String value=componentName.getValue();
