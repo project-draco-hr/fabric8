@@ -1,5 +1,5 @@
 {
-  WeldContainer weld=new Weld().disableDiscovery().extensions(new Fabric8Extension()).beanClasses(ClientProducer.class,MyFactory.class,MyBean.class).alternatives(ClientProducer.class).initialize();
+  weld=new Weld().disableDiscovery().extensions(new Fabric8Extension()).beanClasses(ClientProducer.class,type).alternatives(ClientProducer.class).initialize();
   CreationalContext ctx=weld.getBeanManager().createCreationalContext(null);
   for (  Bean bean : weld.getBeanManager().getBeans(type)) {
     weld.getBeanManager().getReference(bean,type,ctx);

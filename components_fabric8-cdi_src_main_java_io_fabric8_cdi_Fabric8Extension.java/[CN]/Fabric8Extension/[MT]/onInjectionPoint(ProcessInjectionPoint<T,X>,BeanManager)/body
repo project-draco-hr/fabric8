@@ -18,20 +18,23 @@
       type=((ParameterizedType)type).getActualTypeArguments()[0];
     }
     if (type.equals(String.class)) {
-      ServiceUrlBean.getBean(serviceName,serviceProtocol,serviceAlias,servicePort,serviceExternal);
+      ServiceUrlBean.getBean(serviceName,serviceProtocol,serviceAlias,servicePort,serviceEndpoint,serviceExternal);
     }
- else     if (serviceEndpoint && isGenericOf(type,List.class,String.class)) {
+ else     if (isGenericOf(type,List.class,String.class)) {
       ServiceUrlCollectionBean.getBean(serviceName,serviceProtocol,serviceAlias,servicePort,serviceEndpoint,Types.LIST_OF_STRINGS);
     }
- else     if (serviceEndpoint && isGenericOf(type,List.class,null)) {
+ else     if (isGenericOf(type,List.class,null)) {
     }
- else     if (serviceEndpoint && isGenericOf(type,Set.class,String.class)) {
+ else     if (isGenericOf(type,Set.class,String.class)) {
       ServiceUrlCollectionBean.getBean(serviceName,serviceProtocol,serviceAlias,servicePort,serviceEndpoint,Types.SET_OF_STRINGS);
     }
- else     if (serviceEndpoint && isGenericOf(type,Set.class,null)) {
+ else     if (isGenericOf(type,Set.class,null)) {
+    }
+ else     if (type instanceof Class) {
+      ServiceBean.getBean(serviceName,serviceProtocol,serviceAlias,servicePort,serviceExternal,(Class)type);
     }
  else {
-      ServiceBean.getBean(serviceName,serviceProtocol,serviceAlias,servicePort,serviceExternal,(Class)type);
+      throw new RuntimeException(String.format(INJECTION_POINT_UNKNOWN_TYPE,injectionPoint.getBean().getBeanClass(),type));
     }
     if (protocol == null) {
       setDefaultProtocol(event);
