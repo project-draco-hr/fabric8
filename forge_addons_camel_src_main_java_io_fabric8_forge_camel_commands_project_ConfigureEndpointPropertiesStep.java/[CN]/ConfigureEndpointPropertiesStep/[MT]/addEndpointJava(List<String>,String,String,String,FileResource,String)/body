@@ -1,0 +1,9 @@
+{
+  int idx=Integer.valueOf(lineNumber) - 1;
+  String line=lines.get(idx);
+  line=StringHelper.replaceAll(line,endpointUrl,uri);
+  lines.set(idx,line);
+  String content=LineNumberHelper.linesToString(lines);
+  file.setContents(content);
+  return Results.success("Update endpoint uri: " + uri + " in XML file "+ xml);
+}

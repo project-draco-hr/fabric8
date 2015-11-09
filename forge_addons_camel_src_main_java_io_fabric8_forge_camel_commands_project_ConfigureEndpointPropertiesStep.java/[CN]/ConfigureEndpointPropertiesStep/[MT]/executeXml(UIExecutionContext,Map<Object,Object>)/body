@@ -1,7 +1,16 @@
 {
-  String camelComponentName=mandatoryAttributeValue(attributeMap,"componentName");
-  String endpointInstanceName=mandatoryAttributeValue(attributeMap,"instanceName");
+  String camelComponentName=optionalAttributeValue(attributeMap,"componentName");
+  String endpointInstanceName=optionalAttributeValue(attributeMap,"instanceName");
+  String endpointUrl=mandatoryAttributeValue(attributeMap,"endpointUri");
+  String mode=mandatoryAttributeValue(attributeMap,"mode");
   String xml=mandatoryAttributeValue(attributeMap,"xml");
+  String lineNumber;
+  if ("edit".equals(mode)) {
+    lineNumber=mandatoryAttributeValue(attributeMap,"lineNumber");
+  }
+ else {
+    lineNumber=optionalAttributeValue(attributeMap,"lineNumber");
+  }
   Project project=getSelectedProject(context);
   ResourcesFacet facet=project.getFacet(ResourcesFacet.class);
   WebResourcesFacet webResourcesFacet=null;
@@ -27,19 +36,24 @@
     if (input.hasValue()) {
       String value=input.getValue().toString();
       if (value != null) {
+        boolean matchDefault=isDefaultValue(camelComponentName,key,value);
+        if (!matchDefault) {
+          options.put(key,value);
+        }
+      }
+    }
+ else     if (input.isRequired() && input.hasDefaultValue()) {
+      String value=input.getValue().toString();
+      if (value != null) {
         options.put(key,value);
       }
     }
   }
   CamelCatalog catalog=new DefaultCamelCatalog();
-  String uri=catalog.asEndpointUri(camelComponentName,options);
+  String uri=catalog.asEndpointUriXml(camelComponentName,options);
   if (uri == null) {
     return Results.fail("Cannot create endpoint uri");
   }
-  uri=StringHelper.replaceAll(uri,"&amp;","&");
-  uri=StringHelper.replaceAll(uri,"&","&amp;");
-  uri=StringHelper.replaceAll(uri,"<","&lt;");
-  uri=StringHelper.replaceAll(uri,">","&gt;");
   FileResource file=facet != null ? facet.getResource(xml) : null;
   if (file == null || !file.exists()) {
     file=webResourcesFacet != null ? webResourcesFacet.getWebResource(xml) : null;
@@ -47,70 +61,12 @@
   if (file == null || !file.exists()) {
     return Results.fail("Cannot find XML file " + xml);
   }
-  Document root=XmlLineNumberParser.parseXml(file.getResourceInputStream());
-  String lineNumber;
-  if (root != null) {
-    NodeList camels=root.getElementsByTagName("camelContext");
-    if (camels != null && camels.getLength() == 1) {
-      Node camel=camels.item(0);
-      Node camelContext=null;
-      boolean created=false;
-      Node found=null;
-      for (int i=0; i < camel.getChildNodes().getLength(); i++) {
-        if ("camelContext".equals(camel.getNodeName())) {
-          camelContext=camel;
-        }
-        Node child=camel.getChildNodes().item(i);
-        if ("camelContext".equals(child.getNodeName())) {
-          camelContext=child;
-        }
-        if ("endpoint".equals(child.getNodeName())) {
-          String id=child.getAttributes().getNamedItem("id").getNodeValue();
-          if (endpointInstanceName.equals(id)) {
-            found=child;
-            break;
-          }
-        }
-      }
-      int extraSpaces=0;
-      int extraLines=0;
-      if (found == null) {
-        created=true;
-        found=insertEndpointBefore(camel);
-        if (found == null) {
-          found=camelContext;
-          extraSpaces=2;
-          extraLines=1;
-        }
-      }
-      if (found == null) {
-        return Results.fail("Cannot find <camelContext> in XML file " + xml);
-      }
-      lineNumber=(String)found.getUserData(XmlLineNumberParser.LINE_NUMBER);
-      List<String> lines=LineNumberHelper.readLines(file.getResourceInputStream());
-      String line=String.format("<endpoint id=\"%s\" uri=\"%s\"/>",endpointInstanceName,uri);
-      int idx=lineNumber != null ? Integer.valueOf(lineNumber) - 1 : 0;
-      idx+=extraLines;
-      int spaces=LineNumberHelper.leadingSpaces(lines,idx) + extraSpaces;
-      line=LineNumberHelper.padString(line,spaces);
-      if (created) {
-        lines.add(idx,line);
-      }
- else {
-        lines.set(idx,line);
-      }
-      String content=LineNumberHelper.linesToString(lines);
-      file.setContents(content);
-      if (created) {
-        return Results.success("Added endpoint: " + endpointInstanceName + " with uri: "+ uri);
-      }
- else {
-        return Results.success("Update endpoint: " + endpointInstanceName + " with uri: "+ uri);
-      }
-    }
-    return Results.fail("Cannot find <camelContext> in XML file " + xml);
+  if (lineNumber != null) {
+    List<String> lines=LineNumberHelper.readLines(file.getResourceInputStream());
+    return addEndpointJava(lines,lineNumber,endpointUrl,uri,file,xml);
   }
  else {
-    return Results.fail("Cannot parse XML file " + xml);
+    Document root=XmlLineNumberParser.parseXml(file.getResourceInputStream());
+    return addEndpointXml(root,endpointInstanceName,uri,file,xml);
   }
 }
