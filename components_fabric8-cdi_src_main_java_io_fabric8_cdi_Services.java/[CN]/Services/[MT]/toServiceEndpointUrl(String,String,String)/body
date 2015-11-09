@@ -17,7 +17,11 @@
     if (item.getMetadata().getName().equals(serviceId) && (namespace == null || namespace.equals(item.getMetadata().getNamespace()))) {
       for (      EndpointSubset subset : item.getSubsets()) {
         for (        EndpointAddress address : subset.getAddresses()) {
-          endpoints.add(serviceProto + "://" + address.getIp());
+          for (          EndpointPort endpointPort : subset.getPorts()) {
+            if (servicePort == null || servicePort.equals(endpointPort.getName())) {
+              endpoints.add(serviceProto + "://" + address.getIp()+ ":"+ endpointPort.getPort());
+            }
+          }
         }
       }
       break;
