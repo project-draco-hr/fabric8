@@ -1,4 +1,5 @@
 {
-  String serviceNamespace=KubernetesHelper.defaultNamespace();
-  return KubernetesHelper.getServiceURL(KubernetesHolder.getClient(),serviceName,serviceNamespace,serviceProtocol,servicePortName,serviceExternal);
+  KubernetesClient client=KubernetesHolder.getClient();
+  String serviceNamespace=client.getNamespace();
+  return KubernetesHelper.getServiceURL(client,serviceName,serviceNamespace,serviceProtocol,servicePortName,serviceExternal);
 }

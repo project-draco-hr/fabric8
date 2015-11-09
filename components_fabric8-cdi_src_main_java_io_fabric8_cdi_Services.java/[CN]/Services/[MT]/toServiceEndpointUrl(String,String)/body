@@ -1,6 +1,7 @@
 {
   List<String> endpoints=new ArrayList<>();
-  String namespace=KubernetesHelper.defaultNamespace();
+  KubernetesClient client=KubernetesHolder.getClient();
+  String namespace=client.getNamespace();
   String serviceProto=serviceProtocol != null ? serviceProtocol : DEFAULT_PROTO;
   try {
     for (    String endpoint : KubernetesHelper.lookupServiceInDns(serviceId)) {
