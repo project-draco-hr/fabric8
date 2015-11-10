@@ -1,4 +1,13 @@
 {
-  List<Pod> pods=KubernetesHelper.getPodsForReplicationController(replicationController,kubernetes.pods().inNamespace(replicationController.getMetadata().getNamespace()).list().getItems());
+  Objects.requireNonNull(replicationController,"ReplicationController");
+  PodList podList=kubernetes.pods().inNamespace(replicationController.getMetadata().getNamespace()).list();
+  List<Pod> items=null;
+  if (podList != null) {
+    items=podList.getItems();
+  }
+  if (items == null || items.isEmpty()) {
+    throw new IllegalArgumentException("No pods found for ReplicationController " + KubernetesHelper.summaryText(replicationController));
+  }
+  List<Pod> pods=KubernetesHelper.getPodsForReplicationController(replicationController,items);
   return clientForPod(pods);
 }

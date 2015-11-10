@@ -1,0 +1,16 @@
+{
+  String name=method.getName();
+  int length=name.length();
+  Class<?>[] parameterTypes=method.getParameterTypes();
+  Class<?> returnType=method.getReturnType();
+  if (parameterTypes.length == 0 && !Void.class.equals(returnType)) {
+    boolean returnsBool=returnType.equals(Boolean.class) || returnType.equals(boolean.class);
+    if (name.startsWith("get") && length > 3) {
+      return name.substring(3);
+    }
+ else     if (returnsBool && name.startsWith("is") && length > 2) {
+      return name.substring(2);
+    }
+  }
+  return null;
+}

@@ -1,4 +1,5 @@
 {
-  List<Pod> pods=KubernetesHelper.getPodsForReplicationController(kubernetes.replicationControllers().inNamespace(namespace).withName(replicationControllerId).get(),kubernetes.pods().inNamespace(namespace).list().getItems());
+  ReplicationController replicationController=requireReplicationController(replicationControllerName,namespace);
+  List<Pod> pods=KubernetesHelper.getPodsForReplicationController(replicationController,kubernetes.pods().inNamespace(namespace).list().getItems());
   return clientsForPod(pods);
 }

@@ -1,0 +1,31 @@
+{
+  String name=method.getName();
+  String attribute;
+  AbtractJ4pMBeanRequest request;
+  if ((attribute=getterAttributeName(method)) != null) {
+    request=new J4pReadRequest(objectName,attribute);
+  }
+ else   if ((attribute=setterAttributeName(method)) != null) {
+    request=new J4pWriteRequest(objectName,attribute,args[0]);
+  }
+ else {
+    name=executeMethodName(method);
+    if (args == null | method.getParameterTypes().length == 0) {
+      request=new J4pExecRequest(objectName,name);
+    }
+ else {
+      request=new J4pExecRequest(objectName,name,args);
+    }
+  }
+  try {
+    request.setPreferredHttpMethod("POST");
+    J4pResponse response=jolokia.execute(request);
+    Object value=response.getValue();
+    return JolokiaHelpers.convertJolokiaToJavaType(method.getReturnType(),value);
+  }
+ catch (  J4pException e) {
+    List<Object> argsList=args == null ? null : Arrays.asList(args);
+    LOG.warn("Failed to invoke " + objectName + " method: "+ name+ " with arguments: "+ argsList+ ". "+ e,e);
+    throw e;
+  }
+}

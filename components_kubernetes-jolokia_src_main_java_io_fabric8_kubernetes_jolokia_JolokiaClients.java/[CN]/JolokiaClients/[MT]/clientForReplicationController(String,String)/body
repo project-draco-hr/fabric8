@@ -1,3 +1,4 @@
 {
-  return clientForReplicationController(kubernetes.replicationControllers().inNamespace(namespace).withName(replicationControllerId).get());
+  ReplicationController replicationController=requireReplicationController(replicationControllerName,namespace);
+  return clientForReplicationController(replicationController);
 }

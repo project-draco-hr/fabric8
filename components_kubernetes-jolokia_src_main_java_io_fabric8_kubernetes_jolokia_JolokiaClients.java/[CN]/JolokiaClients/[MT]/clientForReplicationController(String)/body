@@ -1,0 +1,5 @@
+{
+  ReplicationController replicationController=kubernetes.replicationControllers().withName(replicationControllerName).get();
+  Objects.requireNonNull(replicationController,"No ReplicationController found for name: " + replicationControllerName);
+  return clientForReplicationController(replicationController);
+}

@@ -1,0 +1,11 @@
+{
+  Class<?>[] parameterTypes=method.getParameterTypes();
+  if (parameterTypes.length == 1) {
+    String name=method.getName();
+    int nameLength=name.length();
+    if (name.startsWith("set") && nameLength > 3) {
+      return name.substring(3);
+    }
+  }
+  return null;
+}

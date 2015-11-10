@@ -1,0 +1,16 @@
+{
+  int answer=0;
+  Method[] declaredMethods=clazz.getDeclaredMethods();
+  for (  Method method : declaredMethods) {
+    if (name.equals(method.getName())) {
+      answer++;
+    }
+  }
+  if (!clazz.equals(Object.class)) {
+    Class<?> superclass=clazz.getSuperclass();
+    if (superclass != null && !superclass.equals(Object.class)) {
+      answer+=methodCount(superclass,name);
+    }
+  }
+  return answer;
+}

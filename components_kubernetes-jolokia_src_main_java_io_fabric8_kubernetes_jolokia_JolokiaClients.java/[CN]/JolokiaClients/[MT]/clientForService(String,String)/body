@@ -1,4 +1,4 @@
 {
-  List<Pod> pods=KubernetesHelper.getPodsForService(kubernetes.services().inNamespace(namespace).withName(serviceId).get(),kubernetes.pods().inNamespace(namespace).list().getItems());
+  List<Pod> pods=KubernetesHelper.getPodsForService(requireService(serviceName,namespace),kubernetes.pods().inNamespace(namespace).list().getItems());
   return clientForPod(pods);
 }
