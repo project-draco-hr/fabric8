@@ -11,8 +11,8 @@
             ObjectMeta metadata=pod.getMetadata();
             String namespace=metadata.getNamespace();
             String podName=metadata.getName();
-            String jolokiaUrl=URLUtils.join(masterUrl.toString(),"/api/v1/namespaces/" + namespace + "/pods/"+ podName+ ":8778/proxy/jolokia/");
-            System.out.println("Using jolokia URL: " + jolokiaUrl);
+            String jolokiaUrl=URLUtils.join(masterUrl.toString(),"/api/v1/namespaces/" + namespace + "/pods/https:"+ podName+ ":8778/proxy/jolokia/");
+            LOG.info("Using jolokia URL: " + jolokiaUrl);
             return createJolokiaClient(container,jolokiaUrl);
           }
           PodStatus currentState=pod.getStatus();
