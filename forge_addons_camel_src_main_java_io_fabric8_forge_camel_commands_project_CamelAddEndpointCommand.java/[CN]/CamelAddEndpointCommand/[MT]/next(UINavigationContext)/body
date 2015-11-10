@@ -5,5 +5,25 @@
   attributeMap.put("routeBuilder",routeBuilder.getValue());
   attributeMap.put("mode","add");
   attributeMap.put("kind","java");
-  return Results.navigateTo(ConfigureEndpointPropertiesStep.class);
+  String camelComponentName=componentName.getValue();
+  CamelCatalog catalog=new DefaultCamelCatalog();
+  String json=catalog.componentJSonSchema(camelComponentName);
+  if (json == null) {
+    throw new IllegalArgumentException("Could not find catalog entry for component name: " + camelComponentName);
+  }
+  List<Map<String,String>> data=JSonSchemaHelper.parseJsonSchema("properties",json,true);
+  List<InputComponent> allInputs=createUIInputsForCamelComponent(camelComponentName,null,componentFactory,converterFactory);
+  int size=allInputs.size();
+  NavigationResultBuilder builder=Results.navigationBuilder();
+  int pages=size / 10 + 1;
+  for (int i=0; i < pages; i++) {
+    int from=i * 10;
+    int delta=Math.min(10,size - from);
+    int to=from + delta;
+    boolean last=i == pages - 1;
+    List<InputComponent> inputs=allInputs.subList(from,to);
+    ConfigureEndpointPropertiesStep step=new ConfigureEndpointPropertiesStep(projectFactory,dependencyInstaller,allInputs,inputs,last);
+    builder.add(step);
+  }
+  return builder.build();
 }

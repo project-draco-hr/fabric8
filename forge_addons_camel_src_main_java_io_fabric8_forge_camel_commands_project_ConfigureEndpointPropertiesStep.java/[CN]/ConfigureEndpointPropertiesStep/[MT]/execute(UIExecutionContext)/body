@@ -1,10 +1,17 @@
 {
   Map<Object,Object> attributeMap=context.getUIContext().getAttributeMap();
-  String kind=mandatoryAttributeValue(attributeMap,"kind");
-  if ("xml".equals(kind)) {
-    return executeXml(context,attributeMap);
+  if (!last) {
+  }
+  if (last) {
+    String kind=mandatoryAttributeValue(attributeMap,"kind");
+    if ("xml".equals(kind)) {
+      return executeXml(context,attributeMap);
+    }
+ else {
+      return executeJava(context,attributeMap);
+    }
   }
  else {
-    return executeJava(context,attributeMap);
+    return null;
   }
 }
