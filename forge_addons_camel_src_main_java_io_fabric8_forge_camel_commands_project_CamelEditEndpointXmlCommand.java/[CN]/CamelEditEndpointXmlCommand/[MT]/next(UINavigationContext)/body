@@ -1,5 +1,9 @@
 {
   Map<Object,Object> attributeMap=context.getUIContext().getAttributeMap();
+  NavigationResult navigationResult=(NavigationResult)attributeMap.get("navigationResult");
+  if (navigationResult != null) {
+    return navigationResult;
+  }
   String selectedUri=endpoints.getValue();
   CamelEndpointDetails detail=completer.getEndpointDetail(selectedUri);
   if (detail == null) {
@@ -12,5 +16,27 @@
   attributeMap.put("xml",detail.getFileName());
   attributeMap.put("mode","edit");
   attributeMap.put("kind","xml");
-  return Results.navigateTo(ConfigureEndpointPropertiesStep.class);
+  String camelComponentName=detail.getEndpointComponentName();
+  String uri=detail.getEndpointUri();
+  CamelCatalog catalog=new DefaultCamelCatalog();
+  String json=catalog.componentJSonSchema(camelComponentName);
+  if (json == null) {
+    throw new IllegalArgumentException("Could not find catalog entry for component name: " + camelComponentName);
+  }
+  List<InputComponent> allInputs=createUIInputsForCamelComponent(camelComponentName,uri,componentFactory,converterFactory);
+  int size=allInputs.size();
+  NavigationResultBuilder builder=Results.navigationBuilder();
+  int pages=size / 10 + 1;
+  for (int i=0; i < pages; i++) {
+    int from=i * 10;
+    int delta=Math.min(10,size - from);
+    int to=from + delta;
+    boolean last=i == pages - 1;
+    List<InputComponent> inputs=allInputs.subList(from,to);
+    ConfigureEndpointPropertiesStep step=new ConfigureEndpointPropertiesStep(projectFactory,dependencyInstaller,allInputs,inputs,last);
+    builder.add(step);
+  }
+  navigationResult=builder.build();
+  attributeMap.put("navigationResult",navigationResult);
+  return navigationResult;
 }
