@@ -12,7 +12,7 @@
         arguments.add(serviceUrl);
       }
  catch (      Throwable t) {
-        throw new RuntimeException(String.format(SERVICE_LOOKUP_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),serviceId));
+        throw new RuntimeException(String.format(SERVICE_LOOKUP_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),serviceId),t);
       }
     }
  else     if (serviceName != null && !String.class.equals(type)) {
@@ -21,7 +21,7 @@
         arguments.add(serviceBean);
       }
  catch (      Throwable t) {
-        throw new RuntimeException(String.format(BEAN_LOOKUP_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),type,serviceId));
+        throw new RuntimeException(String.format(BEAN_LOOKUP_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),type,serviceId),t);
       }
     }
  else     if (configuration != null) {
@@ -30,7 +30,7 @@
         arguments.add(config);
       }
  catch (      Throwable t) {
-        throw new RuntimeException(String.format(CONF_LOOKUP_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),serviceId));
+        throw new RuntimeException(String.format(CONF_LOOKUP_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),serviceId),t);
       }
     }
  else {
@@ -39,7 +39,7 @@
         arguments.add(other);
       }
  catch (      Throwable t) {
-        throw new RuntimeException(String.format(PARAMETER_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),parameter.getPosition()));
+        throw new RuntimeException(String.format(PARAMETER_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),parameter.getPosition()),t);
       }
     }
   }
