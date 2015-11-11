@@ -21,10 +21,10 @@
   List<InputComponent> allInputs=createUIInputsForCamelComponent(camelComponentName,null,componentFactory,converterFactory);
   int size=allInputs.size();
   NavigationResultBuilder builder=Results.navigationBuilder();
-  int pages=size % 10 == 0 ? size / 10 : size / 10 + 1;
+  int pages=size % MAX_OPTIONS == 0 ? size / MAX_OPTIONS : size / MAX_OPTIONS + 1;
   for (int i=0; i < pages; i++) {
-    int from=i * 10;
-    int delta=Math.min(10,size - from);
+    int from=i * MAX_OPTIONS;
+    int delta=Math.min(MAX_OPTIONS,size - from);
     int to=from + delta;
     boolean last=i == pages - 1;
     List<InputComponent> inputs=allInputs.subList(from,to);
