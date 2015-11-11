@@ -1,0 +1,18 @@
+{
+  for (  Annotation[] annotations : method.getParameterAnnotations()) {
+    Boolean hasServiceName=false;
+    String port=null;
+    for (    Annotation annotation : annotations) {
+      if (annotation.annotationType().equals(ServiceName.class)) {
+        hasServiceName=true;
+      }
+ else       if (annotation.annotationType().equals(ServicePort.class)) {
+        port=readAnnotationValue(annotation.toString());
+      }
+      if (hasServiceName && port != null) {
+        return port;
+      }
+    }
+  }
+  return null;
+}

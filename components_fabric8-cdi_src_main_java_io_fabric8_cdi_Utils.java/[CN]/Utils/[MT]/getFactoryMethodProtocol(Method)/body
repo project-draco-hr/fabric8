@@ -1,0 +1,18 @@
+{
+  for (  Annotation[] annotations : method.getParameterAnnotations()) {
+    Boolean hasServiceName=false;
+    String protocol=null;
+    for (    Annotation annotation : annotations) {
+      if (annotation.annotationType().equals(ServiceName.class)) {
+        hasServiceName=true;
+      }
+ else       if (annotation.annotationType().equals(Protocol.class)) {
+        protocol=readAnnotationValue(annotation.toString());
+      }
+      if (hasServiceName && protocol != null) {
+        return protocol;
+      }
+    }
+  }
+  return null;
+}

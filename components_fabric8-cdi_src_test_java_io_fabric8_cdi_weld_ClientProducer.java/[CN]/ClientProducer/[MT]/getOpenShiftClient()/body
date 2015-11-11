@@ -1,5 +1,6 @@
 {
   OpenShiftMockClient mock=new OpenShiftMockClient();
   mock.routes().inNamespace("default").list().andReturn(new RouteListBuilder().build()).anyTimes();
+  mock.routes().inNamespace("default").withName(EasyMock.<String>anyObject()).get().andReturn(null).anyTimes();
   return mock.replay();
 }
