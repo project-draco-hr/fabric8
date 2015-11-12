@@ -13,7 +13,7 @@
         String servicePort=or(bean.getServicePort(),getFactoryMethodPort(factoryMethodContext.getFactoryMethod().getJavaMember()));
         Boolean serviceExternal=bean.getServiceExternal();
         if (!String.class.equals(factoryMethodContext.getSourceType())) {
-          ServiceBean.getBean(serviceId,serviceProtocol,null,servicePort,serviceExternal,(Class<Object>)factoryMethodContext.getSourceType());
+          ServiceBean.getBean(serviceId,serviceProtocol,servicePort,null,serviceExternal,(Class<Object>)factoryMethodContext.getSourceType());
         }
         return bean.withProducer(new FactoryMethodProducer(factoryMethodContext.getBean(),factoryMethodContext.getFactoryMethod(),serviceId,serviceProtocol,servicePort,serviceExternal));
       }
