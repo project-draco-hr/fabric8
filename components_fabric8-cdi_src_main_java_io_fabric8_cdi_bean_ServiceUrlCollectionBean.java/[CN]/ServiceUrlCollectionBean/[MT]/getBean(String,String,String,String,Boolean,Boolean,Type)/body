@@ -1,5 +1,5 @@
 {
-  String serviceAlias=alias != null ? alias : name + "-" + protocol+ (endpoint ? ENDPOINT_SUFFIX : SUFFIX);
+  String serviceAlias=alias != null ? alias : Utils.toAlias(name,protocol,port,endpoint,external,SUFFIX);
   Key key=new Key(name,protocol,port,serviceAlias,endpoint,external,collectionType);
   if (BEANS.containsKey(key)) {
     return BEANS.get(key);

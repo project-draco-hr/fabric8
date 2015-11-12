@@ -9,7 +9,7 @@
     ServiceBean.doWith(factoryMethodContext.getReturnType(),new ServiceBean.Callback(){
       @Override public ServiceBean apply(      ServiceBean bean){
         String serviceId=bean.getServiceName();
-        String serviceProtocol=or(bean.getServiceProtocol(),getFactoryMethodProtocol(factoryMethodContext.getFactoryMethod().getJavaMember()),"tcp");
+        String serviceProtocol=or(bean.getServiceProtocol(),getFactoryMethodProtocol(factoryMethodContext.getFactoryMethod().getJavaMember()));
         String servicePort=or(bean.getServicePort(),getFactoryMethodPort(factoryMethodContext.getFactoryMethod().getJavaMember()));
         Boolean serviceExternal=bean.getServiceExternal();
         Boolean serviceEndpoint=bean.getServiceEndpoint();

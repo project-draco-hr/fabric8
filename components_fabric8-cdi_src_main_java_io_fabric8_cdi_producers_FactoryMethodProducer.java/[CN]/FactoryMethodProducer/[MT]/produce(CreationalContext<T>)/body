@@ -8,10 +8,10 @@
     Endpoint paramEndpoint=parameter.getAnnotation(Endpoint.class);
     External paramExternal=parameter.getAnnotation(External.class);
     Configuration configuration=parameter.getAnnotation(Configuration.class);
-    String serviceProtocol=(paramterProtocol != null && Strings.isNotBlank(paramterProtocol.value())) ? paramterProtocol.value() : "tcp";
-    String servicePort=(parameterPortName != null && Strings.isNotBlank(parameterPortName.value())) ? parameterPortName.value() : "";
-    Boolean serviceEndpoint=paramEndpoint != null ? true : false;
-    Boolean serviceExternal=paramExternal != null ? true : false;
+    String serviceProtocol=paramterProtocol != null ? paramterProtocol.value() : null;
+    String servicePort=parameterPortName != null ? parameterPortName.value() : null;
+    Boolean serviceEndpoint=paramEndpoint != null ? paramEndpoint.value() : false;
+    Boolean serviceExternal=paramExternal != null ? paramExternal.value() : false;
     if (parameterServiceName != null && String.class.equals(type)) {
       try {
         String serviceUrl=getServiceUrl(serviceId,serviceProtocol,servicePort,serviceEndpoint,serviceExternal,ctx);
