@@ -21,17 +21,17 @@
       ServiceUrlBean.getBean(serviceName,serviceProtocol,servicePort,serviceAlias,serviceEndpoint,serviceExternal);
     }
  else     if (isGenericOf(type,List.class,String.class)) {
-      ServiceUrlCollectionBean.getBean(serviceName,serviceProtocol,servicePort,serviceAlias,serviceEndpoint,Types.LIST_OF_STRINGS);
+      ServiceUrlCollectionBean.getBean(serviceName,serviceProtocol,servicePort,serviceAlias,serviceEndpoint,serviceExternal,Types.LIST_OF_STRINGS);
     }
  else     if (isGenericOf(type,List.class,null)) {
     }
  else     if (isGenericOf(type,Set.class,String.class)) {
-      ServiceUrlCollectionBean.getBean(serviceName,serviceProtocol,servicePort,serviceAlias,serviceEndpoint,Types.SET_OF_STRINGS);
+      ServiceUrlCollectionBean.getBean(serviceName,serviceProtocol,servicePort,serviceAlias,serviceEndpoint,serviceExternal,Types.SET_OF_STRINGS);
     }
  else     if (isGenericOf(type,Set.class,null)) {
     }
  else     if (type instanceof Class) {
-      ServiceBean.getBean(serviceName,serviceProtocol,servicePort,serviceAlias,serviceExternal,(Class)type);
+      ServiceBean.getBean(serviceName,serviceProtocol,servicePort,serviceAlias,serviceExternal,serviceExternal,(Class)type);
     }
  else {
       throw new RuntimeException(String.format(INJECTION_POINT_UNKNOWN_TYPE,injectionPoint.getBean().getBeanClass(),type));

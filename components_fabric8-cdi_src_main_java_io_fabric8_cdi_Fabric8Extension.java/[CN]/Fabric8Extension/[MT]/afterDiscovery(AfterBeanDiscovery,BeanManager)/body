@@ -12,10 +12,11 @@
         String serviceProtocol=or(bean.getServiceProtocol(),getFactoryMethodProtocol(factoryMethodContext.getFactoryMethod().getJavaMember()),"tcp");
         String servicePort=or(bean.getServicePort(),getFactoryMethodPort(factoryMethodContext.getFactoryMethod().getJavaMember()));
         Boolean serviceExternal=bean.getServiceExternal();
+        Boolean serviceEndpoint=bean.getServiceEndpoint();
         if (!String.class.equals(factoryMethodContext.getSourceType())) {
-          ServiceBean.getBean(serviceId,serviceProtocol,servicePort,null,serviceExternal,(Class<Object>)factoryMethodContext.getSourceType());
+          ServiceBean.getBean(serviceId,serviceProtocol,servicePort,null,serviceEndpoint,serviceExternal,(Class<Object>)factoryMethodContext.getSourceType());
         }
-        return bean.withProducer(new FactoryMethodProducer(factoryMethodContext.getBean(),factoryMethodContext.getFactoryMethod(),serviceId,serviceProtocol,servicePort,serviceExternal));
+        return bean.withProducer(new FactoryMethodProducer(factoryMethodContext.getBean(),factoryMethodContext.getFactoryMethod(),serviceId));
       }
     }
 );
