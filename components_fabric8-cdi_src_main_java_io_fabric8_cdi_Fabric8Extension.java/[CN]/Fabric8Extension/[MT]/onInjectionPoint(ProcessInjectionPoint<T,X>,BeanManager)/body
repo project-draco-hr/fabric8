@@ -5,12 +5,14 @@
     ServiceName name=annotated.getAnnotation(ServiceName.class);
     Protocol protocol=annotated.getAnnotation(Protocol.class);
     PortName port=annotated.getAnnotation(PortName.class);
+    Path path=annotated.getAnnotation(Path.class);
     Alias alias=annotated.getAnnotation(Alias.class);
     Endpoint endpoint=annotated.getAnnotation(Endpoint.class);
     External external=annotated.getAnnotation(External.class);
     String serviceName=name.value();
     String serviceProtocol=protocol != null ? protocol.value() : null;
     String servicePort=port != null ? port.value() : null;
+    String servicePath=path != null ? path.value() : null;
     String serviceAlias=alias != null ? alias.value() : null;
     Boolean serviceExternal=external != null ? external.value() : false;
     Boolean serviceEndpoint=endpoint != null ? endpoint.value() : false;
@@ -19,20 +21,20 @@
       type=((ParameterizedType)type).getActualTypeArguments()[0];
     }
     if (type.equals(String.class)) {
-      ServiceUrlBean.getBean(serviceName,serviceProtocol,servicePort,serviceAlias,serviceEndpoint,serviceExternal);
+      ServiceUrlBean.getBean(serviceName,serviceProtocol,servicePort,servicePath,serviceAlias,serviceEndpoint,serviceExternal);
     }
  else     if (isGenericOf(type,List.class,String.class)) {
-      ServiceUrlCollectionBean.getBean(serviceName,serviceProtocol,servicePort,serviceAlias,serviceEndpoint,serviceExternal,Types.LIST_OF_STRINGS);
+      ServiceUrlCollectionBean.getBean(serviceName,serviceProtocol,servicePort,servicePath,serviceAlias,serviceEndpoint,serviceExternal,Types.LIST_OF_STRINGS);
     }
  else     if (isGenericOf(type,List.class,null)) {
     }
  else     if (isGenericOf(type,Set.class,String.class)) {
-      ServiceUrlCollectionBean.getBean(serviceName,serviceProtocol,servicePort,serviceAlias,serviceEndpoint,serviceExternal,Types.SET_OF_STRINGS);
+      ServiceUrlCollectionBean.getBean(serviceName,serviceProtocol,servicePort,servicePath,serviceAlias,serviceEndpoint,serviceExternal,Types.SET_OF_STRINGS);
     }
  else     if (isGenericOf(type,Set.class,null)) {
     }
  else     if (type instanceof Class) {
-      ServiceBean.getBean(serviceName,serviceProtocol,servicePort,serviceAlias,serviceEndpoint,serviceExternal,(Class)type);
+      ServiceBean.getBean(serviceName,serviceProtocol,servicePort,servicePath,serviceAlias,serviceEndpoint,serviceExternal,(Class)type);
     }
  else {
       throw new RuntimeException(String.format(INJECTION_POINT_UNKNOWN_TYPE,injectionPoint.getBean().getBeanClass(),type));
@@ -42,6 +44,9 @@
     }
     if (port == null) {
       setDefaultPort(event);
+    }
+    if (path == null) {
+      setDefaultPath(event);
     }
     if (endpoint == null) {
       setDefaultEndpoint(event);

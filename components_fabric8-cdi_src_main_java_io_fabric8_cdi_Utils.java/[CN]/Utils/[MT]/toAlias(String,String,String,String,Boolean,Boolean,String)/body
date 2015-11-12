@@ -1,0 +1,37 @@
+{
+  StringBuilder sb=new StringBuilder();
+  if (external) {
+    sb.append("external");
+  }
+ else {
+    sb.append("internal");
+  }
+  sb.append("-");
+  if (endpoint) {
+    sb.append("endpoint");
+  }
+ else {
+    sb.append("service");
+  }
+  sb.append("-").append(serviceName);
+  if (Strings.isNotBlank(serviceProtocol)) {
+    sb.append("-").append(serviceProtocol);
+  }
+ else {
+    sb.append("-").append("tcp");
+  }
+  if (Strings.isNotBlank(servicePort)) {
+    sb.append("-").append(serviceProtocol);
+  }
+ else {
+    sb.append("-").append("single");
+  }
+  if (Strings.isNotBlank(servicePath)) {
+    sb.append("-").append(servicePath);
+  }
+ else {
+    sb.append("-").append("root");
+  }
+  sb.append("-").append(suffix);
+  return sb.toString();
+}

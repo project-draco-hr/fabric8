@@ -1,0 +1,18 @@
+{
+  for (  Annotation[] annotations : method.getParameterAnnotations()) {
+    Boolean hasServiceName=false;
+    String path=null;
+    for (    Annotation annotation : annotations) {
+      if (annotation.annotationType().equals(ServiceName.class)) {
+        hasServiceName=true;
+      }
+ else       if (annotation.annotationType().equals(Path.class)) {
+        path=readAnnotationValue(annotation.toString());
+      }
+      if (hasServiceName && path != null) {
+        return path;
+      }
+    }
+  }
+  return null;
+}

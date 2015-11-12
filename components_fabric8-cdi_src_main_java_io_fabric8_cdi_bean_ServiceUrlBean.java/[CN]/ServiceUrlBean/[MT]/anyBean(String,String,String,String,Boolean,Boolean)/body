@@ -1,0 +1,9 @@
+{
+  for (  Map.Entry<Key,ServiceUrlBean> entry : BEANS.entrySet()) {
+    Key key=entry.getKey();
+    if (Objects.equal(key.serviceName,id) && Objects.equal(key.serviceProtocol,protocol) && Objects.equal(key.servicePort,port)&& Objects.equal(key.serviceEndpoint,endpoint)&& Objects.equal(key.serviceExternal,external)) {
+      return entry.getValue();
+    }
+  }
+  return getBean(id,protocol,port,path,null,endpoint,external);
+}

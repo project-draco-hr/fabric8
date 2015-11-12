@@ -5,16 +5,18 @@
     ServiceName parameterServiceName=parameter.getAnnotation(ServiceName.class);
     Protocol paramterProtocol=parameter.getAnnotation(Protocol.class);
     PortName parameterPortName=parameter.getAnnotation(PortName.class);
+    Path parameterPath=parameter.getAnnotation(Path.class);
     Endpoint paramEndpoint=parameter.getAnnotation(Endpoint.class);
     External paramExternal=parameter.getAnnotation(External.class);
     Configuration configuration=parameter.getAnnotation(Configuration.class);
     String serviceProtocol=paramterProtocol != null ? paramterProtocol.value() : null;
     String servicePort=parameterPortName != null ? parameterPortName.value() : null;
+    String servicePath=parameterPath != null ? parameterPath.value() : null;
     Boolean serviceEndpoint=paramEndpoint != null ? paramEndpoint.value() : false;
     Boolean serviceExternal=paramExternal != null ? paramExternal.value() : false;
     if (parameterServiceName != null && String.class.equals(type)) {
       try {
-        String serviceUrl=getServiceUrl(serviceId,serviceProtocol,servicePort,serviceEndpoint,serviceExternal,ctx);
+        String serviceUrl=getServiceUrl(serviceId,serviceProtocol,servicePort,servicePath,serviceEndpoint,serviceExternal,ctx);
         arguments.add(serviceUrl);
       }
  catch (      Throwable t) {
@@ -23,7 +25,7 @@
     }
  else     if (parameterServiceName != null && !String.class.equals(type)) {
       try {
-        Object serviceBean=getServiceBean(serviceId,serviceProtocol,servicePort,serviceEndpoint,serviceExternal,(Class<Object>)type,ctx);
+        Object serviceBean=getServiceBean(serviceId,serviceProtocol,servicePort,servicePath,serviceEndpoint,serviceExternal,(Class<Object>)type,ctx);
         arguments.add(serviceBean);
       }
  catch (      Throwable t) {
