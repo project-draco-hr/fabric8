@@ -9,36 +9,37 @@
     Endpoint paramEndpoint=parameter.getAnnotation(Endpoint.class);
     External paramExternal=parameter.getAnnotation(External.class);
     Configuration configuration=parameter.getAnnotation(Configuration.class);
-    String serviceProtocol=paramterProtocol != null ? paramterProtocol.value() : null;
-    String servicePort=parameterPortName != null ? parameterPortName.value() : null;
-    String servicePath=parameterPath != null ? parameterPath.value() : null;
+    String serviceName=pointName;
+    String serviceProtocol=or(pointProtocol,paramterProtocol != null ? paramterProtocol.value() : null);
+    String servicePort=or(pointPort,parameterPortName != null ? parameterPortName.value() : null);
+    String servicePath=or(pointPath,parameterPath != null ? parameterPath.value() : null);
     Boolean serviceEndpoint=paramEndpoint != null ? paramEndpoint.value() : false;
     Boolean serviceExternal=paramExternal != null ? paramExternal.value() : false;
     if (parameterServiceName != null && String.class.equals(type)) {
       try {
-        String serviceUrl=getServiceUrl(serviceId,serviceProtocol,servicePort,servicePath,serviceEndpoint,serviceExternal,ctx);
+        String serviceUrl=getServiceUrl(serviceName,serviceProtocol,servicePort,servicePath,serviceEndpoint,serviceExternal,ctx);
         arguments.add(serviceUrl);
       }
  catch (      Throwable t) {
-        throw new RuntimeException(String.format(SERVICE_LOOKUP_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),serviceId),t);
+        throw new RuntimeException(String.format(SERVICE_LOOKUP_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),serviceName),t);
       }
     }
  else     if (parameterServiceName != null && !String.class.equals(type)) {
       try {
-        Object serviceBean=getServiceBean(serviceId,serviceProtocol,servicePort,servicePath,serviceEndpoint,serviceExternal,(Class<Object>)type,ctx);
+        Object serviceBean=getServiceBean(serviceName,serviceProtocol,servicePort,servicePath,serviceEndpoint,serviceExternal,(Class<Object>)type,ctx);
         arguments.add(serviceBean);
       }
  catch (      Throwable t) {
-        throw new RuntimeException(String.format(BEAN_LOOKUP_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),type,serviceId),t);
+        throw new RuntimeException(String.format(BEAN_LOOKUP_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),type,serviceName),t);
       }
     }
  else     if (configuration != null) {
       try {
-        Object config=getConfiguration(serviceId,(Class<Object>)type,ctx);
+        Object config=getConfiguration(serviceName,(Class<Object>)type,ctx);
         arguments.add(config);
       }
  catch (      Throwable t) {
-        throw new RuntimeException(String.format(CONF_LOOKUP_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),serviceId),t);
+        throw new RuntimeException(String.format(CONF_LOOKUP_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),serviceName),t);
       }
     }
  else {
@@ -55,6 +56,6 @@
     return (T)factoryMethod.getJavaMember().invoke(bean.create(ctx),arguments.toArray());
   }
  catch (  Throwable t) {
-    throw new RuntimeException(String.format(INVOCATION_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),arguments));
+    throw new RuntimeException(String.format(INVOCATION_ERROR_FORMAT,factoryMethod.getJavaMember().getName(),factoryMethod.getJavaMember().getDeclaringClass().getName(),arguments),t);
   }
 }
