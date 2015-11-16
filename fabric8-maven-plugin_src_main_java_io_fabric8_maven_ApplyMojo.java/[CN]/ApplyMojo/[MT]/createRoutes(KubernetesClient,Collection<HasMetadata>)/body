@@ -1,10 +1,6 @@
 {
   String routeDomainPostfix=this.routeDomain;
   Log log=getLog();
-  if (Strings.isNullOrBlank(routeDomainPostfix)) {
-    log.warn("No fabric8.domain property or $KUBERNETES_DOMAIN environment variable so cannot create any OpenShift Routes");
-    return;
-  }
   String namespace=getNamespace();
   try {
     RouteList routes=kubernetes.adapt(OpenShiftClient.class).routes().inNamespace(namespace).list();

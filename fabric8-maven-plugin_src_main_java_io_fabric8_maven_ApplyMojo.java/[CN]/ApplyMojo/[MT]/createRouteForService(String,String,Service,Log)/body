@@ -10,8 +10,13 @@
     objectRef.setName(id);
     objectRef.setNamespace(namespace);
     routeSpec.setTo(objectRef);
-    String host=Strings.stripSuffix(Strings.stripSuffix(id,"-service"),".");
-    routeSpec.setHost(host + "." + Strings.stripPrefix(routeDomainPostfix,"."));
+    if (!Strings.isNullOrBlank(routeDomainPostfix)) {
+      String host=Strings.stripSuffix(Strings.stripSuffix(id,"-service"),".");
+      routeSpec.setHost(host + "." + Strings.stripPrefix(routeDomainPostfix,"."));
+    }
+ else {
+      routeSpec.setHost("");
+    }
     route.setSpec(routeSpec);
     String json;
     try {
