@@ -1,0 +1,37 @@
+{
+  RevCommit baseCommit=doGetCommit(git,commitId);
+  if (baseCommit == null) {
+    return null;
+  }
+ else {
+    List<DiffInfo> diffs=new ArrayList<>();
+    ByteArrayOutputStream buffer=new ByteArrayOutputStream();
+    Repository r=git.getRepository();
+    DiffFormatter formatter=createDiffFormatter(r,buffer);
+    RevTree commitTree=baseCommit.getTree();
+    RevTree baseTree=null;
+    if (baseCommit.getParentCount() > 0) {
+      final RevWalk rw=new RevWalk(r);
+      RevCommit parent=rw.parseCommit(baseCommit.getParent(0).getId());
+      rw.dispose();
+      baseTree=parent.getTree();
+    }
+ else {
+      baseTree=commitTree;
+    }
+    if (baseTree == null) {
+      baseTree=baseCommit.getTree();
+    }
+    List<DiffEntry> diffEntries=formatter.scan(baseTree,commitTree);
+    for (    DiffEntry diffEntry : diffEntries) {
+      formatter.format(diffEntry);
+      formatter.flush();
+      String diff=buffer.toString();
+      buffer.reset();
+      DiffInfo diffInfo=createDiffInfo(diffEntry,diff);
+      diffs.add(diffInfo);
+    }
+    CommitInfo commitInfo=createCommitInfo(baseCommit);
+    return new CommitDetail(commitInfo,diffs);
+  }
+}

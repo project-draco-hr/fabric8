@@ -13,11 +13,7 @@
     baseCommit=CommitUtils.getCommit(r,baseObjectId);
   }
   ByteArrayOutputStream buffer=new ByteArrayOutputStream();
-  RawTextComparator cmp=RawTextComparator.DEFAULT;
-  DiffFormatter formatter=new DiffFormatter(buffer);
-  formatter.setRepository(r);
-  formatter.setDiffComparator(cmp);
-  formatter.setDetectRenames(true);
+  DiffFormatter formatter=createDiffFormatter(r,buffer);
   RevTree commitTree=commit.getTree();
   RevTree baseTree;
   if (baseCommit == null) {
