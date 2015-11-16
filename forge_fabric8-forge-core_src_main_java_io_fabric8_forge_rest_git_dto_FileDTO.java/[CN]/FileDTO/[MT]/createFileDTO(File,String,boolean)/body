@@ -5,14 +5,14 @@
   if (includeContent && isFile) {
     try {
       byte[] bytes=Files.readBytes(file);
-      content=new String(Base64Encoder.encode(bytes));
-      encoding="base64";
+      content=toBase64(bytes);
+      encoding=DEFAULT_ENCODING;
     }
  catch (    IOException e) {
       LOG.warn("Failed to load: " + file.getPath() + ". "+ e,e);
     }
   }
-  String type=file.isDirectory() ? "dir" : "file";
+  String type=file.isDirectory() ? DIR_TYPE : FILE_TYPE;
   long size=0;
   if (isFile) {
     size=file.length();
