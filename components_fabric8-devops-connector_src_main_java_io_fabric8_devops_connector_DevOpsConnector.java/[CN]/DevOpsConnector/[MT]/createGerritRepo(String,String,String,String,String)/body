@@ -11,8 +11,8 @@
   if (Strings.isNullOrBlank(gerritAddress)) {
     throw new Exception("No address for service " + ServiceNames.GERRIT + " in namespace: "+ namespace+ " on Kubernetes address: "+ kubernetes.getMasterUrl());
   }
-  DefaultHttpClient httpclient=new DefaultHttpClient();
-  DefaultHttpClient httpclientPost=new DefaultHttpClient();
+  CloseableHttpClient httpclient=HttpClients.createDefault();
+  CloseableHttpClient httpclientPost=HttpClients.createDefault();
   String GERRIT_URL=gerritAddress + "/a/projects/" + repoName;
   HttpGet httpget=new HttpGet(GERRIT_URL);
   System.out.println("Requesting : " + httpget.getURI());
@@ -56,7 +56,7 @@ catch (  HttpResponseException e) {
     throw new Exception("Repository " + repoName + " already exists !");
   }
  finally {
-    httpclient.getConnectionManager().shutdown();
-    httpclientPost.getConnectionManager().shutdown();
+    httpclient.close();
+    httpclientPost.close();
   }
 }
