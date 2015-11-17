@@ -48,8 +48,10 @@
     }
     if (combinedJson instanceof Template) {
       Template template=(Template)combinedJson;
-      setName(template,getProjectName());
+      String templateName=getProjectName();
+      setName(template,templateName);
       configureTemplateDescriptionAndIcon(template,getIconUrl());
+      addLabelIntoObjects(template.getObjects(),"group",templateName);
       if (pureKubernetes) {
         combinedJson=applyTemplates(template);
       }

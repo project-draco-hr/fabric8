@@ -1,0 +1,27 @@
+{
+  for (  HasMetadata object : objects) {
+    addLabelIfNotExist(object,label,value);
+    if (object instanceof ReplicationController) {
+      ReplicationController entity=(ReplicationController)object;
+      ReplicationControllerSpec spec=entity.getSpec();
+      if (spec != null) {
+        final PodTemplateSpec template=spec.getTemplate();
+        if (template != null) {
+          HasMetadata hasMetadata=new HasMetadata(){
+            @Override public ObjectMeta getMetadata(){
+              return template.getMetadata();
+            }
+            @Override public void setMetadata(            ObjectMeta objectMeta){
+              template.setMetadata(objectMeta);
+            }
+            @Override public String getKind(){
+              return "PodTemplateSpec";
+            }
+          }
+;
+          addLabelIfNotExist(hasMetadata,label,value);
+        }
+      }
+    }
+  }
+}
