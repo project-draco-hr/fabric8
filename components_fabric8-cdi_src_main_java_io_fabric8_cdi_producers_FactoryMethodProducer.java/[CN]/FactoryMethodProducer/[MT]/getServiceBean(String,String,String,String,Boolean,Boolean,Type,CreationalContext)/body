@@ -1,0 +1,14 @@
+{
+  try {
+    return BeanProvider.getContextualReference(Types.asClass(serviceType),Qualifiers.create(serviceId,serviceProtocol,servicePort,servicePath,serviceEndpoint,serviceExternal));
+  }
+ catch (  IllegalStateException e) {
+    Producer producer=ServiceBean.anyBean(serviceId,serviceProtocol,servicePort,servicePath,serviceEndpoint,serviceExternal,serviceType).getProducer();
+    if (producer != null) {
+      return producer.produce(context);
+    }
+ else {
+      throw new IllegalStateException("Could not find producer for service:" + serviceId + " type:"+ serviceType+ " protocol:"+ serviceProtocol);
+    }
+  }
+}

@@ -34,7 +34,7 @@
  else     if (isGenericOf(type,Set.class,null)) {
     }
  else     if (type instanceof Class) {
-      ServiceBean.getBean(serviceName,serviceProtocol,servicePort,servicePath,serviceAlias,serviceEndpoint,serviceExternal,(Class)type);
+      ServiceBean.getBean(serviceName,serviceProtocol,servicePort,servicePath,serviceAlias,serviceEndpoint,serviceExternal,type);
     }
  else {
       throw new RuntimeException(String.format(INJECTION_POINT_UNKNOWN_TYPE,injectionPoint.getBean().getBeanClass(),type));
@@ -60,6 +60,6 @@
     Configuration configuration=annotated.getAnnotation(Configuration.class);
     Type type=injectionPoint.getType();
     String configurationId=configuration.value();
-    ConfigurationBean.getBean(configurationId,(Class)type);
+    ConfigurationBean.getBean(configurationId,type);
   }
 }

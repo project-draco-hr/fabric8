@@ -1,6 +1,6 @@
 {
   try {
-    return (String)BeanProvider.getContextualReference((Class)String.class,Qualifiers.create(serviceId,serviceProtocol,servicePort,servicePath,serviceEndpoint,serviceExternal));
+    return BeanProvider.getContextualReference(String.class,Qualifiers.create(serviceId,serviceProtocol,servicePort,servicePath,serviceEndpoint,serviceExternal));
   }
  catch (  IllegalStateException e) {
     Producer<String> producer=ServiceUrlBean.anyBean(serviceId,serviceProtocol,servicePort,servicePath,serviceEndpoint,serviceExternal).getProducer();
