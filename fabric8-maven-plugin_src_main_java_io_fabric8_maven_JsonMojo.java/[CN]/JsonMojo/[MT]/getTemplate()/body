@@ -1,7 +1,7 @@
 {
   List<io.fabric8.openshift.api.model.Parameter> parameters=new ArrayList<>();
   MavenProject project=getProject();
-  Properties projectProperties=project.getProperties();
+  Properties projectProperties=getProjectAndFabric8Properties(getProject());
   Set<String> paramNames=new HashSet<>();
   if (templateParametersPropertiesFile != null && templateParametersPropertiesFile.isFile() && templateParametersPropertiesFile.exists()) {
     final String valuePostfix=".value";

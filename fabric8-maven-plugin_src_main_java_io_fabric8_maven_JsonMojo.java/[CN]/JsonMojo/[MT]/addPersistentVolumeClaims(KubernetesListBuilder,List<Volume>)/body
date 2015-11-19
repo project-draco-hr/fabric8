@@ -13,7 +13,7 @@
  else {
           accessModes="ReadWriteMany";
         }
-        Properties properties=getProject().getProperties();
+        Properties properties=getProjectAndFabric8Properties(getProject());
         String requestStorageProperty=String.format(VolumeType.VOLUME_PROPERTY,name,VolumeType.VOLUME_PVC_REQUEST_STORAGE);
         String amount=properties.getProperty(requestStorageProperty);
         if (Strings.isNullOrBlank(amount)) {
