@@ -1,5 +1,6 @@
 {
   KubernetesClient client=KubernetesHolder.getClient();
   String serviceNamespace=client.getNamespace();
-  return URLUtils.pathJoin(KubernetesHelper.getServiceURL(client,serviceName,serviceNamespace,serviceProtocol,servicePortName,serviceExternal),servicePath);
+  String actualProtocol=Strings.isNullOrBlank(serviceProtocol) ? DEFAULT_PROTO : serviceProtocol;
+  return URLUtils.pathJoin(KubernetesHelper.getServiceURL(client,serviceName,serviceNamespace,actualProtocol,servicePortName,serviceExternal),servicePath);
 }
