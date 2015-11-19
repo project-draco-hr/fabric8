@@ -36,13 +36,16 @@
   String gitUrl=null;
   Object object=attributeMap.get(Project.class);
   String user=getStringAttribute(attributeMap,"gitUser");
-  String named=null;
+  String named=getStringAttribute(attributeMap,"projectName");
+  ;
   File basedir=CommandHelpers.getBaseDir(project);
   if (object instanceof Project) {
     Project newProject=(Project)object;
     MetadataFacet facet=newProject.getFacet(MetadataFacet.class);
     if (facet != null) {
-      named=facet.getProjectName();
+      if (Strings.isNullOrBlank(named)) {
+        named=facet.getProjectName();
+      }
       String email=getStringAttribute(attributeMap,"gitAuthorEmail");
       String address=getStringAttribute(attributeMap,"gitAddress");
       String htmlUrl=address + user + "/"+ named;
@@ -56,13 +59,16 @@
  else {
     gitUrl=GitHelpers.extractGitUrl(basedir);
     if (basedir != null) {
-      named=basedir.getName();
+      if (Strings.isNullOrBlank(named)) {
+        named=basedir.getName();
+      }
     }
   }
   ProjectConfigs.defaultEnvironments(config);
   String projectName=config.getBuildName();
   if (Strings.isNullOrBlank(projectName)) {
     projectName=named;
+    config.setBuildName(projectName);
   }
   LOG.info("Project name is: " + projectName);
   if (Strings.isNotBlank(projectName)) {
