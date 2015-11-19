@@ -1,0 +1,15 @@
+{
+  final Boolean serviceEndpoint=true;
+  try {
+    return BeanProvider.getContextualReference(List.class,Qualifiers.create(serviceId,serviceProtocol,servicePort,servicePath,serviceEndpoint,serviceExternal));
+  }
+ catch (  IllegalStateException e) {
+    Producer<String> producer=ServiceUrlBean.anyBean(serviceId,serviceProtocol,servicePort,servicePath,serviceEndpoint,serviceExternal).getProducer();
+    if (producer != null) {
+      return ServiceUrlCollectionBean.anyBean(serviceId,serviceProtocol,servicePort,servicePath,serviceEndpoint,serviceExternal,Types.LIST_OF_STRINGS).getProducer().produce(context);
+    }
+ else {
+      throw new IllegalStateException("Could not find producer for endpoints of service:" + serviceId + " protocol:"+ serviceProtocol);
+    }
+  }
+}
