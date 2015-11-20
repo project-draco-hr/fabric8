@@ -71,6 +71,16 @@
             }
           }
         }
+ else {
+          String cName=e.getNodeName();
+          if (isValidRequiredPropertyName(cName) && isSpecialPropertyName(cName)) {
+            String value=e.getTextContent();
+            if (value != null) {
+              value=value.trim();
+              propertyNameSet.put(cName,value);
+            }
+          }
+        }
       }
     }
     List<String> beforeNames=Arrays.asList("artifactId","version","packaging","name","properties");
