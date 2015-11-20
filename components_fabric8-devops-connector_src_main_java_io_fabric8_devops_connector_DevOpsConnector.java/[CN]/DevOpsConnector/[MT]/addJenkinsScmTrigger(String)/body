@@ -1,0 +1,36 @@
+{
+  if (Strings.isNullOrBlank(jenkinsJobTemplate)) {
+    getLog().warn("Cannot add SCM trigger to jenkins job at " + jenkinsJobUrl + " as there is no cached template");
+  }
+ else   if (!localJenkinsFlow) {
+    getLog().info("Not adding an SCM trigger to jenkins job at " + jenkinsJobUrl + " as it is not using a local Jenkinsfile");
+  }
+ else {
+    getLog().info("Adding adding an SCM trigger to jenkins job at " + jenkinsJobUrl);
+    String template=null;
+    try {
+      template=jenkinsJobTemplate;
+      Document doc=parseXmlText(template);
+      Element rootElement=doc.getDocumentElement();
+      Element triggerElement=null;
+      NodeList triggers=rootElement.getElementsByTagName("triggers");
+      if (triggers == null || triggers.getLength() == 0) {
+        triggerElement=DomHelper.addChildElement(rootElement,"triggers");
+      }
+ else {
+        triggerElement=(Element)triggers.item(0);
+      }
+      Element scmTrigger=DomHelper.addChildElement(triggerElement,"hudson.triggers.SCMTrigger");
+      DomHelper.addChildElement(scmTrigger,"spec","* * * * * ");
+      DomHelper.addChildElement(scmTrigger,"ignorePostCommitHooks","false");
+      template=DomHelper.toXml(doc);
+    }
+ catch (    Exception e) {
+      getLog().warn("Failed to add the SCM trigger to jenkins job at " + jenkinsJobUrl + ". Reason: "+ e,e);
+      template=null;
+    }
+    if (Strings.isNotBlank(template)) {
+      postJenkinsBuild(jenkinsJobName,template,false);
+    }
+  }
+}

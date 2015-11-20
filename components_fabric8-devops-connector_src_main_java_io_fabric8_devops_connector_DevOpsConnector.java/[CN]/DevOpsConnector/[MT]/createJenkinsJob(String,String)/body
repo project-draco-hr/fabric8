@@ -1,4 +1,5 @@
 {
+  String answer=null;
   if (projectConfig != null) {
     String flow=projectConfig.getPipeline();
     String flowGitUrlValue=null;
@@ -15,6 +16,7 @@
  else {
       getLog().info("Not creating Jenkins job as no pipeline defined for project configuration!");
     }
+    this.localJenkinsFlow=localFlow;
     String versionPrefix=Systems.getSystemPropertyOrEnvVar("VERSION_PREFIX","VERSION_PREFIX","1.0");
     if (Strings.isNotBlank(flow) && Strings.isNotBlank(projectGitUrl) && Strings.isNotBlank(flowGitUrlValue)) {
       String template=loadJenkinsBuildTemplate(getLog());
@@ -29,8 +31,10 @@
         if (localFlow) {
           template=removeBuildParameter(getLog(),template,"GIT_URL");
         }
-        postJenkinsBuild(buildName,template);
+        postJenkinsBuild(buildName,template,true);
+        answer=template;
       }
     }
   }
+  return answer;
 }

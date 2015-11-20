@@ -1,7 +1,13 @@
 {
   String address=getServiceUrl(ServiceNames.JENKINS,false,namespace,jenkinsNamespace);
   if (Strings.isNotBlank(address)) {
-    String jobUrl=URLUtils.pathJoin(address,"/createItem") + "?name=" + jobName;
+    String jobUrl;
+    if (create) {
+      jobUrl=URLUtils.pathJoin(address,"/createItem") + "?name=" + jobName;
+    }
+ else {
+      jobUrl=URLUtils.pathJoin(address,"/job",jobName,"config.xml");
+    }
     getLog().info("POSTING the jenkins job to: " + jobUrl);
     getLog().debug("Jenkins XML: " + xml);
     HttpURLConnection connection=null;

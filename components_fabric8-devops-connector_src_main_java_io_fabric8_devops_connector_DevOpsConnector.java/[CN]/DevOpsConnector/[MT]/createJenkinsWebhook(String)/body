@@ -13,6 +13,9 @@
       jenkinsWebHook+="WithParameters?" + postfix;
     }
     boolean created=createWebhook(jenkinsWebHook,this.secret);
+    if (!created) {
+      addJenkinsScmTrigger(jenkinsJobUrl);
+    }
     if (triggerJenkinsJob || !created) {
       triggerJenkinsWebHook(jenkinsJobUrl,jenkinsWebHook,this.secret);
     }
