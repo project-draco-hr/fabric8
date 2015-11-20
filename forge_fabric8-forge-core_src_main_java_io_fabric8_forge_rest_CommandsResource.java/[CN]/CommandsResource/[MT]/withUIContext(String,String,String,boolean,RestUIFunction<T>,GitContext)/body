@@ -15,7 +15,8 @@
           File directory=gitDir.getParentFile();
           LOG.debug("using repository directory: " + directory.getAbsolutePath());
           Resource<?> selection=resourceFactory.create(directory);
-          try (RestUIContext context=new RestUIContext(selection,namespace,projectName)){
+          String cloneUrl=projectResource.getCloneUrl();
+          try (RestUIContext context=new RestUIContext(selection,namespace,projectName,cloneUrl)){
             T answer=function.apply(context);
             String commitMessage=context.getCommitMessage();
             if (Strings.isNotBlank(commitMessage)) {
