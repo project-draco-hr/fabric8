@@ -4,5 +4,23 @@
     printSummary(json);
     getLog().info("Attaching kubernetes json file: " + json + " to the build");
     projectHelper.attachArtifact(getProject(),artifactType,artifactClassifier,json);
+    if (generateYaml) {
+      Object savedObjects=null;
+      try {
+        savedObjects=KubernetesHelper.loadJson(json);
+      }
+ catch (      IOException e) {
+        throw new MojoExecutionException("Failed to load saved json file " + json + ". Reason: "+ e,e);
+      }
+      if (savedObjects != null) {
+        try {
+          KubernetesHelper.saveYaml(savedObjects,kubernetesYaml);
+        }
+ catch (        IOException e) {
+          throw new MojoExecutionException("Failed to save YAML file " + kubernetesYaml + ". Reason: "+ e,e);
+        }
+      }
+      projectHelper.attachArtifact(getProject(),yamlArtifactType,artifactClassifier,kubernetesYaml);
+    }
   }
 }
