@@ -2,11 +2,15 @@
   MavenProject project=getProject();
   Map<String,String> labelMap=getLabels();
   String name=getProjectName();
+  String group=getGroupName();
   if (!labelMap.containsKey("version")) {
     labelMap.put("version",project.getVersion());
   }
   if (!labelMap.containsKey("project") && Strings.isNotBlank(name)) {
     labelMap.put("project",name);
+  }
+  if (!labelMap.containsKey("group") && Strings.isNotBlank(group)) {
+    labelMap.put("group",group);
   }
   if (!labelMap.containsKey("provider") && Strings.isNotBlank(provider)) {
     labelMap.put("provider",provider);
