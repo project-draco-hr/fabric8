@@ -1,0 +1,8 @@
+{
+  String portEnvVar=toServicePortEnvironmentVariable(serviceName,portName);
+  String answer=Systems.getEnvVarOrSystemProperty(portEnvVar,"");
+  if (Strings.isNullOrBlank(answer)) {
+    throw new KubernetesServiceNotFoundException(serviceName,portEnvVar);
+  }
+  return answer;
+}

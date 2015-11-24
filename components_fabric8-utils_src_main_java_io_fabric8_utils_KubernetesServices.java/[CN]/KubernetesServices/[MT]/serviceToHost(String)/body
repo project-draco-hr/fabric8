@@ -1,0 +1,10 @@
+{
+  String hostEnvVar=toServiceHostEnvironmentVariable(serviceName);
+  String answer=Systems.getEnvVarOrSystemProperty(hostEnvVar,"");
+  if (Strings.isNullOrBlank(answer)) {
+    throw new KubernetesServiceNotFoundException(serviceName,hostEnvVar);
+  }
+ else {
+    return answer;
+  }
+}

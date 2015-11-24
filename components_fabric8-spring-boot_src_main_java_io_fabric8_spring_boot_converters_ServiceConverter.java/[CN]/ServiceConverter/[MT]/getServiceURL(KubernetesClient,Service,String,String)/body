@@ -1,6 +1,6 @@
 {
   String serviceName=KubernetesHelper.getName(srv);
-  String serviceProto=serviceProtocol != null ? serviceProtocol : KubernetesHelper.serviceToProtocol(serviceName,servicePortName);
+  String serviceProto=serviceProtocol != null ? serviceProtocol : KubernetesServices.serviceToProtocol(serviceName,servicePortName);
   if (Strings.isNullOrBlank(servicePortName) && KubernetesHelper.isOpenShift(client)) {
     OpenShiftClient openShiftClient=client.adapt(OpenShiftClient.class);
     RouteList routeList=openShiftClient.routes().list();

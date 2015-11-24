@@ -1,0 +1,9 @@
+{
+  String expectedHost="dummy.acme.com";
+  String expectedPort="8080";
+  setEnvVarSystemProperty(KubernetesServices.toServiceHostEnvironmentVariable(serviceName),expectedHost);
+  setEnvVarSystemProperty(KubernetesServices.toServicePortEnvironmentVariable(serviceName,servicePort),expectedPort);
+  String actual=KubernetesServices.serviceToHostAndPort(serviceName,servicePort);
+  assertThat(actual).isEqualTo(expectedHost + ":" + expectedPort);
+  LOG.info("Found service host and port: " + actual);
+}

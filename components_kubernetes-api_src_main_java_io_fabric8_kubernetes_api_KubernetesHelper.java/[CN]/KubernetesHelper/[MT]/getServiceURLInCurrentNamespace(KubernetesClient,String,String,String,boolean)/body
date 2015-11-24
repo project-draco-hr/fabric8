@@ -1,8 +1,8 @@
 {
   Service srv=null;
-  String serviceHost=serviceToHost(serviceName);
-  String servicePort=serviceToPort(serviceName,servicePortName);
-  String serviceProto=serviceProtocol != null ? serviceProtocol : serviceToProtocol(serviceName,servicePort);
+  String serviceHost=KubernetesServices.serviceToHostOrBlank(serviceName);
+  String servicePort=KubernetesServices.serviceToPortOrBlank(serviceName,servicePortName);
+  String serviceProto=serviceProtocol != null ? serviceProtocol : KubernetesServices.serviceToProtocol(serviceName,servicePort);
   if (!serviceExternal && Strings.isNotBlank(serviceHost) && Strings.isNotBlank(servicePort)&& Strings.isNotBlank(serviceProtocol)) {
     return serviceProtocol + "://" + serviceHost+ ":"+ servicePort;
   }

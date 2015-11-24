@@ -1,0 +1,9 @@
+{
+  try {
+    String actual=KubernetesServices.serviceToHostAndPort(serviceNotExistName,servicePort);
+    fail("Should have thrown KubernetesServiceNotFoundException as we should not have found a host and port: " + actual);
+  }
+ catch (  KubernetesServiceNotFoundException e) {
+    assertThat(e.getServiceName()).isEqualTo(serviceNotExistName);
+  }
+}
