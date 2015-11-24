@@ -12,6 +12,6 @@
   String port=Systems.getEnvVarOrSystemProperty(portEnvVar,portEnvVar,DEFAULT_PORT);
   LOG.info("Connecting to ActiveMQ broker on " + host + ":"+ port+ " from $"+ hostEnvVar+ " and $"+ portEnvVar+ ". To use a different broker service please specify $"+ SERVICE_NAME_ENV_VAR+ "=someBrokerServiceName where 'someBrokerServiceName' is a defined ActiveMQ broker service in Kubernetes");
   String answer="failover:(tcp://" + host + ":"+ port+ ")"+ parameters;
-  LOG.info("BrokerURL is: " + answer);
+  LOG.info("BrokerURL is: {}",answer);
   return answer;
 }
