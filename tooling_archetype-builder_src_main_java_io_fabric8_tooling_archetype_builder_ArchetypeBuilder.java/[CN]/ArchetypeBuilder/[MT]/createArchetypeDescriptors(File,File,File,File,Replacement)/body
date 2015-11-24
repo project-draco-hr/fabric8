@@ -67,6 +67,7 @@
               if (value == null) {
                 value=versionProperties.get(name);
               }
+              name=name.replace('.','-');
               propertyNameSet.put(name,value);
             }
           }
@@ -77,7 +78,10 @@
             String value=e.getTextContent();
             if (value != null) {
               value=value.trim();
+              cName=cName.replace('.','-');
               propertyNameSet.put(cName,value);
+              String token="${" + cName + "}";
+              e.setTextContent(token);
             }
           }
         }
