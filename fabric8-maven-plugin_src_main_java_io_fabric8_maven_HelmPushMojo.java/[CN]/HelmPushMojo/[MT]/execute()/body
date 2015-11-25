@@ -1,0 +1,49 @@
+{
+  if (!isRootReactorBuild()) {
+    getLog().info("Not the root reactor build so not committing changes");
+    return;
+  }
+  File outputDir=getHelmRepoFolder();
+  if (!Files.isDirectory(outputDir)) {
+    throw new MojoExecutionException("No helm repository exists for " + outputDir + ". Did you run `mvn fabric8:helm` yet?");
+  }
+  File gitFolder=new File(outputDir,".git");
+  if (!Files.isDirectory(gitFolder)) {
+    throw new MojoExecutionException("No helm git repository exists for " + gitFolder + ". Did you run `mvn fabric8:helm` yet?");
+  }
+  FileRepositoryBuilder builder=new FileRepositoryBuilder();
+  Git git=null;
+  try {
+    Repository repository=builder.setGitDir(gitFolder).readEnvironment().findGitDir().build();
+    git=new Git(repository);
+    git.add().addFilepattern(".").call();
+  }
+ catch (  Exception e) {
+    throw new MojoExecutionException("Failed to add files to the helm git repository: " + e,e);
+  }
+  CommitCommand commit=git.commit().setAll(true).setMessage(commitMessage);
+  PersonIdent author=null;
+  if (Strings.isNotBlank(userName) && Strings.isNotBlank(emailAddress)) {
+    author=new PersonIdent(userName,emailAddress);
+  }
+  if (author != null) {
+    commit=commit.setAuthor(author);
+  }
+  try {
+    RevCommit answer=commit.call();
+    getLog().info("Committed " + answer.getId() + " "+ answer.getFullMessage());
+  }
+ catch (  GitAPIException e) {
+    throw new MojoExecutionException("Failed to commit changes to help repository: " + e,e);
+  }
+  if (pushChanges) {
+    PushCommand push=git.push();
+    try {
+      push.setRemote(remoteRepoName).call();
+      getLog().info("Pushed commits upstream to " + getHelmGitUrl());
+    }
+ catch (    GitAPIException e) {
+      throw new MojoExecutionException("Failed to push helm git changes to remote repository " + remoteRepoName + ": "+ e,e);
+    }
+  }
+}

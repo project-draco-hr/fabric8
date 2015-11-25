@@ -1,21 +1,16 @@
 {
-  if (helmCloneDir == null) {
-    File rootProjectFolder=getRootProjectFolder();
-    if (rootProjectFolder != null) {
-      helmCloneDir=new File(rootProjectFolder,"target/helm-repo");
-    }
-  }
-  if (helmCloneDir == null) {
+  File helmRepoDir=getHelmRepoFolder();
+  if (helmRepoDir == null) {
     return null;
   }
   if (Strings.isNullOrBlank(helmGitUrl)) {
     getLog().warn("No git url so cannot clone a Helm repository. Please specify the `" + PROPERTY_HELM_GIT_URL + "` property");
   }
  else {
-    cloneGitRepository(helmCloneDir,helmGitUrl);
+    cloneGitRepository(helmRepoDir,helmGitUrl);
   }
   if (Strings.isNullOrBlank(chartName)) {
     throw new MojoExecutionException("No Chart name defined! Please specify the `" + PROPERTY_HELM_CHART_NAME + "` property");
   }
-  return new File(helmCloneDir,chartName);
+  return new File(helmRepoDir,chartName);
 }

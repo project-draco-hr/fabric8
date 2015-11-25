@@ -1,0 +1,15 @@
+{
+  if (reactorProjects == null || reactorProjects.size() <= 1) {
+    return true;
+  }
+  MavenProject project=getProject();
+  if (project != null) {
+    MavenProject parent=project.getParent();
+    if (parent != null) {
+      if (!containsProject(reactorProjects,parent)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
