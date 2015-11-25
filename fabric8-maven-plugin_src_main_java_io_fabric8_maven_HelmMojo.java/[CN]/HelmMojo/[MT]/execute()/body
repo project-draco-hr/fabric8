@@ -5,6 +5,9 @@
     File outputDir=getOutputDir();
     if (outputDir != null) {
       File manifestsDir=new File(outputDir,"manifests");
+      if (Files.isDirectory(manifestsDir)) {
+        Files.recursiveDelete(manifestsDir);
+      }
       manifestsDir.mkdirs();
       File outputYamlFile=new File(manifestsDir,chartName + HELM_YAML_EXTENSION);
       try {
