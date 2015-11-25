@@ -1,0 +1,27 @@
+{
+  File yaml=getKubernetesYaml();
+  if (Files.isFile(yaml)) {
+    getLog().info("Creating Helm Chart for kubernetes yaml file: " + yaml);
+    File outputDir=getOutputDir();
+    if (outputDir != null) {
+      File manifestsDir=new File(outputDir,"manifests");
+      manifestsDir.mkdirs();
+      File outputYamlFile=new File(manifestsDir,chartName + HELM_YAML_EXTENSION);
+      try {
+        Files.copy(yaml,outputYamlFile);
+      }
+ catch (      IOException e) {
+        throw new MojoExecutionException("Failed to copy file " + yaml + " to chart manifest file: "+ outputYamlFile+ ". Reason: "+ e,e);
+      }
+      File outputChartFile=new File(outputDir,"Chart" + HELM_YAML_EXTENSION);
+      Chart chart=createChart();
+      try {
+        KubernetesHelper.saveYaml(chart,outputChartFile);
+      }
+ catch (      IOException e) {
+        throw new MojoExecutionException("Failed to save chart " + outputChartFile + ". Reason: "+ e,e);
+      }
+      getLog().info("Generated Helm Chart " + chartName + " at "+ outputDir);
+    }
+  }
+}

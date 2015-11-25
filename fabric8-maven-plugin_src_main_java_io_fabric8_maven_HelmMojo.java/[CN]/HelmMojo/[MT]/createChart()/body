@@ -1,0 +1,32 @@
+{
+  Chart answer=new Chart();
+  answer.setName(chartName);
+  MavenProject project=getProject();
+  if (project != null) {
+    answer.setVersion(project.getVersion());
+    answer.setDescription(project.getDescription());
+    answer.setHome(project.getUrl());
+    List<Developer> developers=project.getDevelopers();
+    if (developers != null) {
+      List<String> maintainers=new ArrayList<>();
+      for (      Developer developer : developers) {
+        String email=developer.getEmail();
+        String name=developer.getName();
+        String text=Strings.defaultIfEmpty(name,"");
+        if (Strings.isNotBlank(email)) {
+          if (Strings.isNotBlank(text)) {
+            text=text + " <" + email+ ">";
+          }
+ else {
+            text=email;
+          }
+        }
+        if (Strings.isNotBlank(text)) {
+          maintainers.add(text);
+        }
+      }
+      answer.setMaintainers(maintainers);
+    }
+  }
+  return answer;
+}
