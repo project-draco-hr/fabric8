@@ -12,6 +12,7 @@
     getLog().warn("No git url so cannot clone a Helm repository. Please specify the `" + PROPERTY_HELM_GIT_URL + "` property");
   }
  else {
+    cloneGitRepository(helmCloneDir,helmGitUrl);
   }
   if (Strings.isNullOrBlank(chartName)) {
     throw new MojoExecutionException("No Chart name defined! Please specify the `" + PROPERTY_HELM_CHART_NAME + "` property");

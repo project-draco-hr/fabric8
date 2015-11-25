@@ -1,0 +1,15 @@
+{
+  File gitFolder=new File(outputFolder,".git");
+  if (Files.isDirectory(gitFolder)) {
+  }
+ else {
+    CloneCommand command=Git.cloneRepository();
+    command=command.setURI(gitUrl).setDirectory(outputFolder).setRemote("origin");
+    try {
+      Git git=command.call();
+    }
+ catch (    Throwable e) {
+      throw new RuntimeException("Failed to clone chart repo " + gitUrl + " due: "+ e.getMessage());
+    }
+  }
+}
