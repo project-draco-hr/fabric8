@@ -1,17 +1,11 @@
 {
-  if (sshPrivateKey != null) {
-    return new CredentialsProvider(){
-      @Override public boolean isInteractive(){
-        return false;
-      }
-      @Override public boolean supports(      CredentialItem... items){
-        return true;
-      }
-      @Override public boolean get(      URIish uri,      CredentialItem... items) throws UnsupportedCredentialItem {
-        return true;
-      }
+  return new UsernamePasswordCredentialsProvider(user,password){
+    @Override public boolean isInteractive(){
+      return false;
     }
-;
+    @Override public String toString(){
+      return "UsernamePasswordCredentialsProvider{user: " + getUser() + ", password length: "+ (Strings.isNotBlank(password) ? 0 : password.length())+ "}";
+    }
   }
-  return new UsernamePasswordCredentialsProvider(user,password);
+;
 }
