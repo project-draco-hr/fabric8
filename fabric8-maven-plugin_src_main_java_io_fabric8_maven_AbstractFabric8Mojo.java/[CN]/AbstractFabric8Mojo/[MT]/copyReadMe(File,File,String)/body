@@ -1,0 +1,18 @@
+{
+  File[] files=src.listFiles(new FilenameFilter(){
+    @Override public boolean accept(    File dir,    String name){
+      return name.toLowerCase(Locale.ENGLISH).startsWith("readme.");
+    }
+  }
+);
+  if (files != null && files.length == 1) {
+    File readme=files[0];
+    if (Strings.isNullOrBlank(outputFileName)) {
+      outputFileName=readme.getName();
+    }
+    File outFile=new File(appBuildDir,outputFileName);
+    Files.copy(readme,outFile);
+    return outFile;
+  }
+  return null;
+}
