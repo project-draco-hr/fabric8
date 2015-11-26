@@ -1,4 +1,8 @@
 {
+  int idx=javaType.indexOf('<');
+  if (idx > 0) {
+    javaType=javaType.substring(0,idx);
+  }
   try {
     Class<Object> clazz=getPrimitiveWrapperClassType(type);
     if (clazz == null) {
@@ -18,6 +22,10 @@
       }
     }
     if (clazz != null && (clazz.equals(String.class) || clazz.equals(Date.class) || clazz.equals(Boolean.class)|| clazz.isPrimitive()|| Number.class.isAssignableFrom(clazz))) {
+      return clazz;
+    }
+    if ("object".equals(type)) {
+      clazz=loadPrimitiveWrapperType("java.lang.String");
       return clazz;
     }
   }
