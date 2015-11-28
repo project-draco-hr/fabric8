@@ -1,6 +1,6 @@
 {
   String camelComponentName=mandatoryAttributeValue(attributeMap,"componentName");
-  String endpointInstanceName=mandatoryAttributeValue(attributeMap,"instanceName");
+  String endpointInstanceName=optionalAttributeValue(attributeMap,"instanceName");
   String routeBuilder=mandatoryAttributeValue(attributeMap,"routeBuilder");
   Project project=getSelectedProject(context);
   JavaSourceFacet facet=project.getFacet(JavaSourceFacet.class);
@@ -47,43 +47,58 @@
   }
   JavaClassSource clazz=existing.getJavaType();
   boolean updated=true;
-  boolean cdi=findCamelArtifactDependency(project,"camel-cdi") != null;
-  FieldSource field=clazz.getField(endpointInstanceName);
-  AnnotationSource annotation;
-  if (field == null) {
-    field=clazz.addField();
-    field.setName(endpointInstanceName);
-    field.setType("org.apache.camel.Endpoint");
-    field.setPrivate();
-    updated=false;
-  }
-  if (cdi) {
-    annotation=field.getAnnotation("org.apache.camel.cdi.Uri");
-    if (annotation == null) {
-      if (!field.hasAnnotation("javax.inject.Inject")) {
-        field.addAnnotation("javax.inject.Inject");
+  if (endpointInstanceName != null) {
+    FieldSource field=clazz.getField(endpointInstanceName);
+    AnnotationSource annotation;
+    if (field == null) {
+      field=clazz.addField();
+      field.setName(endpointInstanceName);
+      field.setType("org.apache.camel.Endpoint");
+      field.setPrivate();
+      updated=false;
+    }
+    boolean cdi=findCamelArtifactDependency(project,"camel-cdi") != null;
+    if (cdi) {
+      annotation=field.getAnnotation("org.apache.camel.cdi.Uri");
+      if (annotation == null) {
+        if (!field.hasAnnotation("javax.inject.Inject")) {
+          field.addAnnotation("javax.inject.Inject");
+        }
+        annotation=field.addAnnotation("org.apache.camel.cdi.Uri");
       }
-      annotation=field.addAnnotation("org.apache.camel.cdi.Uri");
+    }
+ else {
+      annotation=field.getAnnotation("org.apache.camel.EndpointInject");
+    }
+    annotation.removeAllValues();
+    annotation.setStringValue(uri);
+    clazz.addImport("org.apache.camel.Endpoint");
+    if (cdi) {
+      clazz.addImport("javax.inject.Inject");
+      clazz.addImport("org.apache.camel.cdi.Uri");
+    }
+ else {
+      clazz.addImport("org.apache.camel.EndpointInject");
+    }
+    facet.saveJavaSource(clazz);
+    if (updated) {
+      return Results.success("Updated endpoint " + endpointInstanceName + " in "+ routeBuilder);
+    }
+ else {
+      return Results.success("Added endpoint " + endpointInstanceName + " in "+ routeBuilder);
     }
   }
  else {
-    annotation=field.getAnnotation("org.apache.camel.EndpointInject");
+    MethodSource<JavaClassSource> method=CamelJavaParserHelper.findConfigureMethod(clazz);
+    if (method != null) {
+      String endpointUrl=mandatoryAttributeValue(attributeMap,"endpointUri");
+      String body=method.getBody();
+      String find=Pattern.quote(endpointUrl);
+      body=body.replaceFirst(find,uri);
+      method.setBody(body);
+      facet.saveJavaSource(clazz);
+      return Results.success("Updated endpoint " + endpointUrl + " -> "+ uri+ " in "+ routeBuilder);
+    }
   }
-  annotation.removeAllValues();
-  annotation.setStringValue(uri);
-  clazz.addImport("org.apache.camel.Endpoint");
-  if (cdi) {
-    clazz.addImport("javax.inject.Inject");
-    clazz.addImport("org.apache.camel.cdi.Uri");
-  }
- else {
-    clazz.addImport("org.apache.camel.EndpointInject");
-  }
-  facet.saveJavaSource(clazz);
-  if (updated) {
-    return Results.success("Updated endpoint " + endpointInstanceName + " in "+ routeBuilder);
-  }
- else {
-    return Results.success("Added endpoint " + endpointInstanceName + " in "+ routeBuilder);
-  }
+  return Results.fail("Cannot update endpoint");
 }

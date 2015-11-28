@@ -31,8 +31,8 @@
         endpoints.add(detail);
       }
     }
-    MethodSource<JavaClassSource> method=clazz.getMethod("configure");
-    if (method != null && method.isPublic() && method.getParameters().isEmpty() && method.getReturnType().isType("void")) {
+    MethodSource<JavaClassSource> method=CamelJavaParserHelper.findConfigureMethod(clazz);
+    if (method != null) {
       List<String> uris=CamelJavaParserHelper.parseCamelUris(method);
       for (      String uri : uris) {
         String baseDir=facet.getSourceDirectory().getFullyQualifiedName();
