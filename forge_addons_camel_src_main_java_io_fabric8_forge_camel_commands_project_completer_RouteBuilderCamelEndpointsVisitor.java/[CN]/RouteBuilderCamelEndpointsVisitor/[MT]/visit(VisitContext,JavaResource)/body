@@ -2,8 +2,11 @@
   try {
     JavaClassSource clazz=resource.getJavaType();
     String superType=clazz.getSuperType();
-    if (superType != null && !RouteBuilder.class.getName().equals(superType)) {
-      return;
+    if (superType != null) {
+      boolean valid="org.apache.camel.builder.RouteBuilder".equals(superType) || "org.apache.camel.spring.boot.FatJarRouter".equals(superType);
+      if (!valid) {
+        return;
+      }
     }
     for (    FieldSource<JavaClassSource> field : clazz.getFields()) {
       String uri=null;
