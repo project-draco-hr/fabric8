@@ -3,6 +3,8 @@
   JavaSourceFacet facet=project.getFacet(JavaSourceFacet.class);
   targetPackage.setCompleter(new PackageNameCompleter(facet));
   targetPackage.addValidator(new PackageNameValidator());
+  targetPackage.getFacet(HintsFacet.class).setInputType(InputType.JAVA_PACKAGE_PICKER);
   name.addValidator(new ClassNameValidator(false));
+  name.getFacet(HintsFacet.class).setInputType(InputType.JAVA_CLASS_PICKER);
   builder.add(targetPackage).add(name);
 }
