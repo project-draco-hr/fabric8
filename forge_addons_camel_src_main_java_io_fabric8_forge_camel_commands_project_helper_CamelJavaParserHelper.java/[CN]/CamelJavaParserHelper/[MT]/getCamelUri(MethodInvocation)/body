@@ -1,0 +1,13 @@
+{
+  String name=mi.getName().getIdentifier();
+  if ("to".equals(name) || "from".equals(name)) {
+    List args=mi.arguments();
+    if (args != null && args.size() == 1) {
+      Object arg=args.get(0);
+      if (arg instanceof StringLiteral) {
+        return ((StringLiteral)arg).getLiteralValue();
+      }
+    }
+  }
+  return null;
+}

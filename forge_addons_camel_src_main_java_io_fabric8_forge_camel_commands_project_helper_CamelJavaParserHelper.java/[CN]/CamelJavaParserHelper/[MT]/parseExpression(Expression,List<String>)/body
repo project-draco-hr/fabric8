@@ -1,0 +1,14 @@
+{
+  if (exp == null) {
+    return;
+  }
+  if (exp instanceof MethodInvocation) {
+    MethodInvocation mi=(MethodInvocation)exp;
+    String camelUri=getCamelUri(mi);
+    if (camelUri != null) {
+      uris.add(camelUri);
+    }
+    exp=mi.getExpression();
+    parseExpression(exp,uris);
+  }
+}

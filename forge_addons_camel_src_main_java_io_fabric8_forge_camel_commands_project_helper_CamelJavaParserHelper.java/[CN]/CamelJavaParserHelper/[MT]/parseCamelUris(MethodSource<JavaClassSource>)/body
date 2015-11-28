@@ -1,0 +1,10 @@
+{
+  List<String> uris=new ArrayList<String>();
+  MethodDeclaration md=(MethodDeclaration)method.getInternal();
+  for (  Object statement : md.getBody().statements()) {
+    ExpressionStatement es=(ExpressionStatement)statement;
+    Expression exp=es.getExpression();
+    parseExpression(exp,uris);
+  }
+  return uris;
+}

@@ -31,7 +31,25 @@
         endpoints.add(detail);
       }
     }
+    MethodSource<JavaClassSource> method=clazz.getMethod("configure");
+    if (method != null && method.isPublic() && method.getParameters().isEmpty() && method.getReturnType() == null) {
+      List<String> uris=CamelJavaParserHelper.parseCamelUris(method);
+      for (      String uri : uris) {
+        String baseDir=facet.getSourceDirectory().getFullyQualifiedName();
+        String fileName=resource.getFullyQualifiedName();
+        if (fileName.startsWith(baseDir)) {
+          fileName=fileName.substring(baseDir.length() + 1);
+        }
+        CamelEndpointDetails detail=new CamelEndpointDetails();
+        detail.setResource(resource);
+        detail.setFileName(fileName);
+        detail.setEndpointInstance(null);
+        detail.setEndpointUri(uri);
+        detail.setEndpointComponentName(endpointComponentName(uri));
+        endpoints.add(detail);
+      }
+    }
   }
- catch (  Exception e) {
+ catch (  Throwable e) {
   }
 }
