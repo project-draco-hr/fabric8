@@ -1,0 +1,49 @@
+{
+  String name=mi.getName().getIdentifier();
+  if (consumers) {
+    if ("from".equals(name)) {
+      List args=mi.arguments();
+      if (args != null) {
+        for (        Object arg : args) {
+          if (arg instanceof StringLiteral) {
+            String uri=((StringLiteral)arg).getLiteralValue();
+            uris.add(uri);
+          }
+        }
+      }
+    }
+    if ("pollEnrich".equals(name)) {
+      List args=mi.arguments();
+      if (args != null && args.size() >= 1) {
+        Object arg=args.get(0);
+        if (arg instanceof StringLiteral) {
+          String uri=((StringLiteral)arg).getLiteralValue();
+          uris.add(uri);
+        }
+      }
+    }
+  }
+  if (producers) {
+    if ("to".equals(name) || "toD".equals(name)) {
+      List args=mi.arguments();
+      if (args != null) {
+        for (        Object arg : args) {
+          if (arg instanceof StringLiteral) {
+            String uri=((StringLiteral)arg).getLiteralValue();
+            uris.add(uri);
+          }
+        }
+      }
+    }
+    if ("enrich".equals(name) || "wireTap".equals(name)) {
+      List args=mi.arguments();
+      if (args != null && args.size() >= 1) {
+        Object arg=args.get(0);
+        if (arg instanceof StringLiteral) {
+          String uri=((StringLiteral)arg).getLiteralValue();
+          uris.add(uri);
+        }
+      }
+    }
+  }
+}
