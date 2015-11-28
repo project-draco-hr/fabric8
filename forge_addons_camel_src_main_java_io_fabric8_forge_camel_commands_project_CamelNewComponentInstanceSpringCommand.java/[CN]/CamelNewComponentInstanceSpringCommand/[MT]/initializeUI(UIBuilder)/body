@@ -19,7 +19,7 @@
 );
   targetPackage.setCompleter(new PackageNameCompleter(facet));
   targetPackage.addValidator(new PackageNameValidator());
-  targetPackage.setDefaultValue("org.apache.camel.spring.components");
+  targetPackage.getFacet(HintsFacet.class).setInputType(InputType.JAVA_PACKAGE_PICKER);
   className.addValidator(new ClassNameValidator(false));
   className.setDefaultValue(new Callable<String>(){
     @Override public String call() throws Exception {
@@ -27,5 +27,6 @@
     }
   }
 );
+  className.getFacet(HintsFacet.class).setInputType(InputType.JAVA_CLASS_PICKER);
   builder.add(componentNameFilter).add(componentName).add(instanceName).add(targetPackage).add(className);
 }
