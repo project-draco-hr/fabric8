@@ -1,8 +1,18 @@
 {
   String name=mi.getName().getIdentifier();
-  if ("to".equals(name) || "from".equals(name)) {
+  if ("to".equals(name) || "toD".equals(name) || "from".equals(name)) {
     List args=mi.arguments();
-    if (args != null && args.size() == 1) {
+    if (args != null) {
+      for (      Object arg : args) {
+        if (arg instanceof StringLiteral) {
+          return ((StringLiteral)arg).getLiteralValue();
+        }
+      }
+    }
+  }
+ else   if ("enrich".equals(name) || "pollEnrich".equals(name) || "wireTap".equals(name)) {
+    List args=mi.arguments();
+    if (args != null && args.size() >= 1) {
       Object arg=args.get(0);
       if (arg instanceof StringLiteral) {
         return ((StringLiteral)arg).getLiteralValue();
