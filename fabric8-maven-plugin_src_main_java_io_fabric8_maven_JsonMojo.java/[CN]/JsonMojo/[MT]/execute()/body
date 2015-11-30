@@ -6,11 +6,11 @@
   }
   if (shouldGenerateForThisProject()) {
     if (!isIgnoreProject() || combineDependencies) {
-      if (combineDependencies) {
-        combineDependentJsonFiles(json);
-      }
- else       if (generateJson) {
+      if (generateJson) {
         generateKubernetesJson(json);
+        if (combineDependencies) {
+          combineDependentJsonFiles(json);
+        }
         if (kubernetesExtraJson != null && kubernetesExtraJson.exists()) {
           combineJsonFiles(json,kubernetesExtraJson);
         }
