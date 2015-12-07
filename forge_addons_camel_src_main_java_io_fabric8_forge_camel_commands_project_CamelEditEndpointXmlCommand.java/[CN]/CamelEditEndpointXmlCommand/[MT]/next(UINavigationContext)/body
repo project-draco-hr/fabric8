@@ -1,8 +1,11 @@
 {
   Map<Object,Object> attributeMap=context.getUIContext().getAttributeMap();
-  NavigationResult navigationResult=(NavigationResult)attributeMap.get("navigationResult");
-  if (navigationResult != null) {
-    return navigationResult;
+  String previous=(String)attributeMap.get("endpointUri");
+  if (previous != null && previous.equals(endpoints.getValue())) {
+    NavigationResult navigationResult=(NavigationResult)attributeMap.get("navigationResult");
+    if (navigationResult != null) {
+      return navigationResult;
+    }
   }
   String selectedUri=endpoints.getValue();
   CamelEndpointDetails detail=completer.getEndpointDetail(selectedUri);
@@ -38,7 +41,7 @@
     ConfigureEndpointPropertiesStep step=new ConfigureEndpointPropertiesStep(projectFactory,dependencyInstaller,camelComponentName,current.getGroup(),allInputs,current.getInputs(),last,i,pages);
     builder.add(step);
   }
-  navigationResult=builder.build();
+  NavigationResult navigationResult=builder.build();
   attributeMap.put("navigationResult",navigationResult);
   return navigationResult;
 }
