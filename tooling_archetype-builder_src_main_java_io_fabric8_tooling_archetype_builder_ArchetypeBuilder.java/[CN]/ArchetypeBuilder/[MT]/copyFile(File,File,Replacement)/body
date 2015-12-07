@@ -1,12 +1,16 @@
 {
   if (replaceFn != null && isSourceFile(src)) {
     String original=IOHelpers.readFully(src);
-    String escapeDollarSquiggly=original;
+    String escapedContent=original;
     if (original.contains("${")) {
-      String replaced=original.replaceAll(Pattern.quote("${"),"\\${D}{");
-      escapeDollarSquiggly="#set( $D = '$' )\n" + replaced;
+      String replaced=escapedContent.replaceAll(Pattern.quote("${"),"\\${D}{");
+      escapedContent="#set( $D = '$' )\n" + replaced;
     }
-    String text=replaceFn.replace(escapeDollarSquiggly);
+    if (original.contains("##")) {
+      String replaced=escapedContent.replaceAll(Pattern.quote("##"),"\\${H}");
+      escapedContent="#set( $H = '##' )\n" + replaced;
+    }
+    String text=replaceFn.replace(escapedContent);
     IOHelpers.writeFully(dest,text);
   }
  else {
