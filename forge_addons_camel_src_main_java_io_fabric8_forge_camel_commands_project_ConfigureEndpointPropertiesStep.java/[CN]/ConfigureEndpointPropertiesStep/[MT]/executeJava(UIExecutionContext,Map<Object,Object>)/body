@@ -70,8 +70,10 @@
  else {
       annotation=field.getAnnotation("org.apache.camel.EndpointInject");
     }
-    annotation.removeAllValues();
-    annotation.setStringValue(uri);
+    if (annotation != null) {
+      annotation.removeAllValues();
+      annotation.setStringValue(uri);
+    }
     clazz.addImport("org.apache.camel.Endpoint");
     if (cdi) {
       clazz.addImport("javax.inject.Inject");
