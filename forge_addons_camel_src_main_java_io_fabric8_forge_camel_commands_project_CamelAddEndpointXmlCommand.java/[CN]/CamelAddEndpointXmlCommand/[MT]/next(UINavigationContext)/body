@@ -1,13 +1,15 @@
 {
   Map<Object,Object> attributeMap=context.getUIContext().getAttributeMap();
   String previous=(String)attributeMap.get("componentName");
-  if (previous != null && previous.equals(componentName.getValue())) {
+  String previous2=(String)attributeMap.get("endpointType");
+  if (previous != null && previous.equals(componentName.getValue()) && previous2 != null && previous2.equals(endpointType.getValue())) {
     NavigationResult navigationResult=(NavigationResult)attributeMap.get("navigationResult");
     if (navigationResult != null) {
       return navigationResult;
     }
   }
   attributeMap.put("componentName",componentName.getValue());
+  attributeMap.put("endpointType",endpointType.getValue());
   attributeMap.put("instanceName",instanceName.getValue());
   attributeMap.put("xml",xml.getValue());
   attributeMap.put("mode","add");
