@@ -20,6 +20,13 @@
   }
   boolean consumerOnly=false;
   boolean producerOnly=false;
+  String type=endpointType.getValue();
+  if ("Consumer".equals(type)) {
+    consumerOnly=true;
+  }
+ else   if ("Producer".equals(type)) {
+    producerOnly=true;
+  }
   List<EndpointOptionByGroup> groups=createUIInputsForCamelComponent(camelComponentName,null,MAX_OPTIONS,consumerOnly,producerOnly,componentFactory,converterFactory);
   List<InputComponent> allInputs=new ArrayList<>();
   for (  EndpointOptionByGroup group : groups) {

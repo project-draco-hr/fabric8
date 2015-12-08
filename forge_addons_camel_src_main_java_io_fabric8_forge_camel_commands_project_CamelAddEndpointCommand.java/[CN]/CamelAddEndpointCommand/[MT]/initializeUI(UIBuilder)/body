@@ -16,9 +16,40 @@
  else {
         componentName.setNote("");
       }
+      if (component != null) {
+        boolean consumerOnly=CamelCatalogHelper.isComponentConsumerOnly(component);
+        boolean producerOnly=CamelCatalogHelper.isComponentConsumerOnly(component);
+        if (consumerOnly) {
+          String[] types=new String[]{"Consumer"};
+          endpointType.setValueChoices(Arrays.asList(types));
+          endpointType.setValue("Consumer");
+          endpointType.setDefaultValue("Consumer");
+        }
+ else         if (producerOnly) {
+          String[] types=new String[]{"Producer"};
+          endpointType.setValueChoices(Arrays.asList(types));
+          endpointType.setValue("Producer");
+          endpointType.setDefaultValue("Producer");
+        }
+ else {
+          String[] types=new String[]{"<any>","Consumer","Producer"};
+          endpointType.setValueChoices(Arrays.asList(types));
+          endpointType.setValue("<any>");
+          endpointType.setDefaultValue("<any>");
+        }
+      }
+ else {
+        String[] types=new String[]{"<any>","Consumer","Producer"};
+        endpointType.setValueChoices(Arrays.asList(types));
+        endpointType.setValue("<any>");
+        endpointType.setDefaultValue("<any>");
+      }
     }
   }
 );
+  String[] types=new String[]{"<any>","Consumer","Producer"};
+  endpointType.setValueChoices(Arrays.asList(types));
+  endpointType.setDefaultValue("<any>");
   routeBuilder.setValueChoices(new RouteBuilderCompleter(facet).getRouteBuilders());
-  builder.add(componentNameFilter).add(componentName).add(instanceName).add(routeBuilder);
+  builder.add(componentNameFilter).add(componentName).add(endpointType).add(instanceName).add(routeBuilder);
 }
