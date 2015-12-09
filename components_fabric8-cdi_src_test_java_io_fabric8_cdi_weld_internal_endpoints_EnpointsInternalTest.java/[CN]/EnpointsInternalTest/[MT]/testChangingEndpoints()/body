@@ -1,0 +1,9 @@
+{
+  ServiceListInstanceWithEndpoint2 obj=createInstance(ServiceListInstanceWithEndpoint2.class);
+  List<String> endpoints=new ArrayList<>(obj.getService().get());
+  Assert.assertTrue(endpoints.contains("tcp://10.0.0.1:8080"));
+  Assert.assertTrue(endpoints.contains("tcp://10.0.0.2:8080"));
+  endpoints=new ArrayList<>(obj.getService().get());
+  Assert.assertTrue(endpoints.contains("tcp://10.0.0.1:8080"));
+  Assert.assertFalse(endpoints.contains("tcp://10.0.0.2:8080"));
+}

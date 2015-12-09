@@ -2,5 +2,11 @@
   if (serviceId == null) {
     throw new IllegalArgumentException("No service id has been specified.");
   }
-  return Services.toServiceEndpointUrl(serviceId,serviceProtocol,servicePort).iterator().next();
+  List<String> endpoints=Services.toServiceEndpointUrl(serviceId,serviceProtocol,servicePort);
+  if (endpoints == null || endpoints.isEmpty()) {
+    return null;
+  }
+ else {
+    return endpoints.get(0);
+  }
 }
