@@ -36,7 +36,7 @@
     }
     MethodSource<JavaClassSource> method=CamelJavaParserHelper.findConfigureMethod(clazz);
     if (method != null) {
-      List<String> uris=CamelJavaParserHelper.parseCamelUris(method,true,false);
+      List<String> uris=CamelJavaParserHelper.parseCamelConsumerUris(method);
       for (      String uri : uris) {
         String baseDir=facet.getSourceDirectory().getFullyQualifiedName();
         String fileName=resource.getFullyQualifiedName();
@@ -53,7 +53,7 @@
         detail.setProducerOnly(false);
         endpoints.add(detail);
       }
-      uris=CamelJavaParserHelper.parseCamelUris(method,false,true);
+      uris=CamelJavaParserHelper.parseCamelProducerUris(method);
       for (      String uri : uris) {
         String baseDir=facet.getSourceDirectory().getFullyQualifiedName();
         String fileName=resource.getFullyQualifiedName();
