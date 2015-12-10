@@ -1,0 +1,24 @@
+{
+  if (project != null) {
+    Resource<?> root=project.getRoot();
+    if (root == null) {
+      return null;
+    }
+    Resource<?> configFileResource=root.getChild(ProjectConfigs.FILE_NAME);
+    if (configFileResource == null) {
+      return null;
+    }
+    return ResourceUtil.getContextFile(configFileResource);
+  }
+  UISelection<Object> selection=context.getSelection();
+  if (selection != null) {
+    Object object=selection.get();
+    if (object instanceof Resource) {
+      File folder=ResourceUtil.getContextFile((Resource<?>)object);
+      if (folder != null && Files.isDirectory(folder)) {
+        return new File(folder,ProjectConfigs.FILE_NAME);
+      }
+    }
+  }
+  return null;
+}

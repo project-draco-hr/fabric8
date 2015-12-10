@@ -2,9 +2,9 @@
   LOG.info("Creating the fabric8.yml file");
   String fileName=ProjectConfigs.FILE_NAME;
   Project project=getSelectedProject(context);
-  File configFile=getProjectConfigFile(project);
+  File configFile=getProjectConfigFile(context.getUIContext(),getSelectedProject(context));
   if (configFile == null) {
-    return Results.fail("This command requires a project");
+    return Results.success();
   }
   ProjectConfig config=null;
   boolean hasFile=false;
@@ -42,6 +42,9 @@
   String named=getStringAttribute(attributeMap,"projectName");
   ;
   File basedir=CommandHelpers.getBaseDir(project);
+  if (basedir == null && configFile != null) {
+    basedir=configFile.getParentFile();
+  }
   if (object instanceof Project) {
     Project newProject=(Project)object;
     MetadataFacet facet=newProject.getFacet(MetadataFacet.class);
@@ -75,7 +78,7 @@
     config.setBuildName(projectName);
   }
   LOG.info("Project name is: " + projectName);
-  if (Strings.isNotBlank(projectName)) {
+  if (Strings.isNotBlank(projectName) && project != null) {
     MavenFacet maven=project.getFacet(MavenFacet.class);
     Model pom=maven.getModel();
     if (pom != null) {
@@ -97,7 +100,7 @@
   }
   Boolean copyFlowToProjectValue=copyFlowToProject.getValue();
   if (copyFlowToProjectValue != null && copyFlowToProjectValue.booleanValue()) {
-    if (basedir == null && !basedir.isDirectory()) {
+    if (basedir == null || !basedir.isDirectory()) {
       LOG.warn("Cannot copy the pipeline to the project as no basedir!");
     }
  else {
