@@ -1,0 +1,26 @@
+{
+  if (strings && arg instanceof StringLiteral) {
+    String uri=((StringLiteral)arg).getLiteralValue();
+    uris.add(uri);
+  }
+ else   if (fields && arg instanceof SimpleName) {
+    String fieldName=((SimpleName)arg).getIdentifier();
+    if (fieldName != null) {
+      FieldSource field=method.getOrigin().getField(fieldName);
+      if (field != null) {
+        String uri=null;
+        AnnotationSource annotation=field.getAnnotation("org.apache.camel.cdi.Uri");
+        if (annotation != null) {
+          uri=annotation.getStringValue();
+        }
+        annotation=field.getAnnotation("org.apache.camel.EndpointInject");
+        if (annotation != null) {
+          uri=annotation.getStringValue("uri");
+        }
+        if (uri != null) {
+          uris.add(uri);
+        }
+      }
+    }
+  }
+}

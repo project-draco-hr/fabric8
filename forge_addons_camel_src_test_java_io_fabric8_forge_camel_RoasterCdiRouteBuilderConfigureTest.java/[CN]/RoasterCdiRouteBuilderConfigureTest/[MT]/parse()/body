@@ -1,0 +1,12 @@
+{
+  JavaClassSource clazz=(JavaClassSource)Roaster.parse(new File("src/test/java/io/fabric8/forge/camel/MyCdiRouteBuilder.java"));
+  MethodSource<JavaClassSource> method=clazz.getMethod("configure");
+  List<String> list=CamelJavaParserHelper.parseCamelConsumerUris(method,true,true);
+  for (  String uri : list) {
+    System.out.println("Consumer: " + uri);
+  }
+  list=CamelJavaParserHelper.parseCamelProducerUris(method,true,true);
+  for (  String uri : list) {
+    System.out.println("Producer: " + uri);
+  }
+}
