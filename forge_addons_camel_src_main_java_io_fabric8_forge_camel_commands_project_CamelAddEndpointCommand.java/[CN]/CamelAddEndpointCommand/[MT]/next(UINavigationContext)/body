@@ -1,5 +1,9 @@
 {
   Map<Object,Object> attributeMap=context.getUIContext().getAttributeMap();
+  attributeMap.put("instanceName",instanceName.getValue());
+  attributeMap.put("routeBuilder",routeBuilder.getValue());
+  attributeMap.put("mode","add");
+  attributeMap.put("kind","java");
   String previous=(String)attributeMap.get("componentName");
   String previous2=(String)attributeMap.get("endpointType");
   if (previous != null && previous.equals(componentName.getValue()) && previous2 != null && previous2.equals(endpointType.getValue())) {
@@ -10,10 +14,6 @@
   }
   attributeMap.put("componentName",componentName.getValue());
   attributeMap.put("endpointType",endpointType.getValue());
-  attributeMap.put("instanceName",instanceName.getValue());
-  attributeMap.put("routeBuilder",routeBuilder.getValue());
-  attributeMap.put("mode","add");
-  attributeMap.put("kind","java");
   String camelComponentName=componentName.getValue();
   CamelCatalog catalog=new DefaultCamelCatalog();
   String json=catalog.componentJSonSchema(camelComponentName);
