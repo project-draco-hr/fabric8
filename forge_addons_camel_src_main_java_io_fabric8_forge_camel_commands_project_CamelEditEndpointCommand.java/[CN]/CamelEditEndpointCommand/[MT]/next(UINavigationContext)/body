@@ -28,7 +28,8 @@
   }
   boolean consumerOnly=detail.isConsumerOnly();
   boolean producerOnly=detail.isProducerOnly();
-  List<EndpointOptionByGroup> groups=createUIInputsForCamelComponent(camelComponentName,uri,MAX_OPTIONS,consumerOnly,producerOnly,componentFactory,converterFactory);
+  UIContext ui=context.getUIContext();
+  List<EndpointOptionByGroup> groups=createUIInputsForCamelComponent(camelComponentName,uri,MAX_OPTIONS,consumerOnly,producerOnly,componentFactory,converterFactory,ui);
   List<InputComponent> allInputs=new ArrayList<>();
   for (  EndpointOptionByGroup group : groups) {
     allInputs.addAll(group.getInputs());

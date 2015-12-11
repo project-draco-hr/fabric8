@@ -61,6 +61,10 @@
         Class<Object> inputClazz=CamelCommandsHelper.loadValidInputTypes(javaType,type);
         if (inputClazz != null) {
           if (namesAdded.add(name)) {
+            boolean gui=ui.getProvider().isGUI();
+            if (!gui) {
+              description="";
+            }
             InputComponent input=createUIInput(componentFactory,converterFactory,name,inputClazz,required,currentValue,defaultValue,enums,description);
             if (input != null) {
               inputs.add(input);
