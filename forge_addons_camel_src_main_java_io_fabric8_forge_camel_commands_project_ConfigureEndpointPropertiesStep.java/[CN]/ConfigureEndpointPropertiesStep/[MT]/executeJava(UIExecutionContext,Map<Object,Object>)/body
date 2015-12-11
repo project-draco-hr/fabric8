@@ -93,12 +93,11 @@
  else {
     MethodSource<JavaClassSource> method=CamelJavaParserHelper.findConfigureMethod(clazz);
     if (method != null) {
+      String code=clazz.toUnformattedString();
       String endpointUrl=mandatoryAttributeValue(attributeMap,"endpointUri");
-      String body=method.getBody();
       String find=Pattern.quote(endpointUrl);
-      body=body.replaceFirst(find,uri);
-      method.setBody(body);
-      facet.saveJavaSource(clazz);
+      code=code.replaceFirst(find,uri);
+      existing.setContents(new ByteArrayInputStream(code.getBytes()),null);
       return Results.success("Updated endpoint " + endpointUrl + " -> "+ uri+ " in "+ routeBuilder);
     }
   }
