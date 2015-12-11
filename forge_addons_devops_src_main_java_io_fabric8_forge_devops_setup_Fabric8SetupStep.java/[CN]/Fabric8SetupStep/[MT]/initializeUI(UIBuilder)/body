@@ -8,7 +8,13 @@
   boolean springBoot=hasSpringBootMavenPlugin(project);
   final List<String> choices=new ArrayList<String>();
   if (packaging == null || springBoot || "jar".equals(packaging)) {
-    choices.addAll(Arrays.asList(jarImages));
+    String currentImage=getDockerFromImage(project);
+    if (currentImage != null) {
+      choices.add(currentImage);
+    }
+ else {
+      choices.addAll(Arrays.asList(jarImages));
+    }
   }
   if (packaging == null || "bundle".equals(packaging)) {
     choices.add(bundleImages[0]);
