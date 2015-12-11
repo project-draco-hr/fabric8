@@ -65,6 +65,14 @@
             if (!gui) {
               description="";
             }
+            if (enums != null && required == null || "false".equals(required)) {
+              if (defaultValue == null || defaultValue.isEmpty()) {
+                defaultValue="none";
+              }
+              if (!enums.startsWith("none,")) {
+                enums="none," + enums;
+              }
+            }
             InputComponent input=createUIInput(componentFactory,converterFactory,name,inputClazz,required,currentValue,defaultValue,enums,description);
             if (input != null) {
               inputs.add(input);
