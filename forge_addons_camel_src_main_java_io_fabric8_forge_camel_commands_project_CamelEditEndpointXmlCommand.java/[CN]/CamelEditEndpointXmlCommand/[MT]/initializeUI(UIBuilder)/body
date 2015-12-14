@@ -8,6 +8,8 @@
     webResourcesFacet=project.getFacet(WebResourcesFacet.class);
   }
   completer=new XmlEndpointsCompleter(resourcesFacet,webResourcesFacet);
-  endpoints.setValueChoices(completer.getEndpointUris());
+  List<String> uris=completer.getEndpointUris();
+  uris.add(0,"<select>");
+  endpoints.setValueChoices(uris);
   builder.add(endpoints);
 }
