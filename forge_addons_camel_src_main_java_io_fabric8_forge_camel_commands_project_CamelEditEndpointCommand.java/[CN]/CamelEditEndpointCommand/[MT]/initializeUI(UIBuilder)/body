@@ -4,6 +4,8 @@
   Project project=getSelectedProject(builder.getUIContext());
   JavaSourceFacet facet=project.getFacet(JavaSourceFacet.class);
   completer=new RouteBuilderEndpointsCompleter(facet);
-  endpoints.setValueChoices(completer.getEndpointUris());
+  List<String> uris=completer.getEndpointUris();
+  uris.add(0,"<select>");
+  endpoints.setValueChoices(uris);
   builder.add(endpoints);
 }
