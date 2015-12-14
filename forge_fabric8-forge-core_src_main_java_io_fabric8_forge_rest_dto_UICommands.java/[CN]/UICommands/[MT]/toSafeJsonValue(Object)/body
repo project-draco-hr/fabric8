@@ -3,10 +3,7 @@
     return null;
   }
  else {
-    if (value instanceof Boolean) {
-      return value;
-    }
-    if (value instanceof Number) {
+    if (value instanceof Boolean || value instanceof String || value instanceof Number) {
       return value;
     }
     if (value instanceof ProjectProvider) {
@@ -16,6 +13,16 @@
     if (value instanceof ProjectType) {
       ProjectType projectType=(ProjectType)value;
       return projectType.getType();
+    }
+    Class<?> aClass=value.getClass();
+    Annotation[] annotations=aClass.getAnnotations();
+    if (annotations != null) {
+      for (      Annotation annotation : annotations) {
+        String text=annotation.toString();
+        if (text.indexOf("com.fasterxml.jackson.") >= 0) {
+          return value;
+        }
+      }
     }
     return value.toString();
   }

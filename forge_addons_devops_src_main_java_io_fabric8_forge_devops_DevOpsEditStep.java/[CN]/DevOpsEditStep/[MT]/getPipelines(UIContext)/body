@@ -1,0 +1,60 @@
+{
+  File dir=getJenkinsWorkflowFolder(context);
+  if (dir != null) {
+    Filter<File> filter=new Filter<File>(){
+      @Override public boolean matches(      File file){
+        return file.isFile() && Objects.equal(JENKINSFILE,file.getName());
+      }
+    }
+;
+    Set<File> files=Files.findRecursive(dir,filter);
+    Map<String,PipelineDTO> nameMap=new TreeMap<>();
+    for (    File file : files) {
+      try {
+        String relativePath=Files.getRelativePath(dir,file);
+        String value=Strings.stripPrefix(relativePath,"/");
+        String label=value;
+        String postfix="/" + JENKINSFILE;
+        if (label.endsWith(postfix)) {
+          label=label.substring(0,label.length() - postfix.length());
+        }
+        if (label.startsWith(jenkinsFilePrefix)) {
+          label=label.substring(jenkinsFilePrefix.length());
+        }
+        String builder=null;
+        int idx=label.indexOf("/");
+        if (idx > 0) {
+          builder=label.substring(0,idx);
+        }
+        String descriptionMarkdown=null;
+        File markdownFile=new File(file.getParentFile(),"ReadMe.md");
+        if (Files.isFile(markdownFile)) {
+          descriptionMarkdown=IOHelpers.readFully(markdownFile);
+        }
+        PipelineDTO pipeline=new PipelineDTO(value,label,builder,descriptionMarkdown);
+        File yamlFile=new File(file.getParentFile(),"metadata.yml");
+        if (Files.isFile(yamlFile)) {
+          PipelineMetadata metadata=null;
+          try {
+            metadata=loadYaml(yamlFile,PipelineMetadata.class);
+          }
+ catch (          IOException e) {
+            LOG.warn("Failed to parse yaml file " + yamlFile + ". "+ e,e);
+          }
+          if (metadata != null) {
+            metadata.configurePipeline(pipeline);
+          }
+        }
+        nameMap.put(pipeline.getLabel(),pipeline);
+      }
+ catch (      IOException e) {
+        LOG.warn("Failed to find relative path for folder " + dir + " and file "+ file+ ". "+ e,e);
+      }
+    }
+    return new ArrayList<>(nameMap.values());
+  }
+ else {
+    LOG.warn("No jenkinsWorkflowFolder!");
+    return new ArrayList<>();
+  }
+}

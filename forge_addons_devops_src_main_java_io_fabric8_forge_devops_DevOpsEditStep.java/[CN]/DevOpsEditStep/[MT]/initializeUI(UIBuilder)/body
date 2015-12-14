@@ -1,9 +1,15 @@
 {
   final UIContext context=builder.getUIContext();
   copyFlowToProject.setValue(Boolean.TRUE);
-  pipeline.setCompleter(new UICompleter<String>(){
-    @Override public Iterable<String> getCompletionProposals(    UIContext context,    InputComponent<?,String> input,    String value){
-      return filterCompletions(getFlowURIs(context),value);
+  pipeline.setCompleter(new UICompleter<PipelineDTO>(){
+    @Override public Iterable<PipelineDTO> getCompletionProposals(    UIContext context,    InputComponent<?,PipelineDTO> input,    String value){
+      return getPipelines(context);
+    }
+  }
+);
+  pipeline.setValueConverter(new Converter<String,PipelineDTO>(){
+    @Override public PipelineDTO convert(    String text){
+      return getPipelineForValue(context,text);
     }
   }
 );
@@ -23,8 +29,11 @@
   }
 );
   if (getCurrentSelectedProject(context) != null) {
-    pipeline.setDefaultValue(DEFAULT_MAVEN_FLOW);
-    pipeline.setValue(DEFAULT_MAVEN_FLOW);
+    PipelineDTO defaultValue=getPipelineForValue(context,DEFAULT_MAVEN_FLOW);
+    if (defaultValue != null) {
+      pipeline.setDefaultValue(defaultValue);
+      pipeline.setValue(defaultValue);
+    }
   }
   chatRoom.setCompleter(new UICompleter<String>(){
     @Override public Iterable<String> getCompletionProposals(    UIContext context,    InputComponent<?,String> input,    String value){
@@ -71,8 +80,8 @@
     config=ProjectConfigs.parseProjectConfig(configFile);
   }
   if (config != null) {
-    String flow=config.getPipeline();
-    if (Strings.isNotBlank(flow)) {
+    PipelineDTO flow=getPipelineForValue(context,config.getPipeline());
+    if (flow != null) {
       CommandHelpers.setInitialComponentValue(this.pipeline,flow);
     }
     CommandHelpers.setInitialComponentValue(chatRoom,config.getChatRoom());

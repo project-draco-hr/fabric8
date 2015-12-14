@@ -104,7 +104,11 @@
       LOG.warn("Cannot copy the pipeline to the project as no basedir!");
     }
  else {
-      String flow=this.pipeline.getValue();
+      String flow=null;
+      PipelineDTO pipelineDTO=pipeline.getValue();
+      if (pipelineDTO != null) {
+        flow=pipelineDTO.getValue();
+      }
       if (Strings.isNullOrBlank(flow)) {
         LOG.warn("Cannot copy the pipeline to the project as no pipeline selected!");
       }
