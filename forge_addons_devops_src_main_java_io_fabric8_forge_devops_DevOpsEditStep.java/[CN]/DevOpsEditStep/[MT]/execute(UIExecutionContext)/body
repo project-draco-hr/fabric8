@@ -71,6 +71,28 @@
       }
     }
   }
+  PipelineDTO pipelineValue=pipeline.getValue();
+  String buildName=config.getBuildName();
+  if (Strings.isNotBlank(buildName)) {
+    if (pipelineValue != null) {
+      List<String> environments=pipelineValue.getEnvironments();
+      if (environments == null) {
+        environments=new ArrayList<>();
+      }
+      LinkedHashMap<String,String> environmentMap=new LinkedHashMap<>();
+      if (environments.isEmpty()) {
+        environmentMap.put("Current",namespace);
+      }
+ else {
+        for (        String environment : environments) {
+          String envNamespace=buildName + "-" + environment.toLowerCase();
+          environmentMap.put(environment,envNamespace);
+        }
+      }
+      config.setEnvironments(environmentMap);
+    }
+  }
+  LOG.info("Configured project " + buildName + " environments: "+ config.getEnvironments());
   ProjectConfigs.defaultEnvironments(config);
   String projectName=config.getBuildName();
   if (Strings.isNullOrBlank(projectName)) {
@@ -105,7 +127,7 @@
     }
  else {
       String flow=null;
-      PipelineDTO pipelineDTO=pipeline.getValue();
+      PipelineDTO pipelineDTO=pipelineValue;
       if (pipelineDTO != null) {
         flow=pipelineDTO.getValue();
       }
