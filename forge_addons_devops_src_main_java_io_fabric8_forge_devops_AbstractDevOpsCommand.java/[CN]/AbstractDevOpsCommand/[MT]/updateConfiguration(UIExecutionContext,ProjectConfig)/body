@@ -1,0 +1,11 @@
+{
+  Map<Object,Object> attributeMap=context.getUIContext().getAttributeMap();
+  ProjectConfigs.configureProperties(config,attributeMap);
+  Object pipelineValue=attributeMap.get("pipeline");
+  if (pipelineValue instanceof PipelineDTO) {
+    PipelineDTO pipeline=(PipelineDTO)pipelineValue;
+    if (pipeline != null) {
+      config.setPipeline(pipeline.getValue());
+    }
+  }
+}
