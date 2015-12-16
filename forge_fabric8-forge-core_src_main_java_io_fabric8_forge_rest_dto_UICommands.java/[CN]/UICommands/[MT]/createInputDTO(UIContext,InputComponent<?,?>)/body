@@ -21,8 +21,15 @@
     SelectComponent selectComponent=(SelectComponent)input;
     Iterable valueChoices=selectComponent.getValueChoices();
     Converter converter=selectComponent.getItemLabelConverter();
+    boolean isJson=isJsonDTO(javaType);
     for (    Object valueChoice : valueChoices) {
-      Object jsonValue=convertValueToSafeJson(converter,valueChoice);
+      Object jsonValue;
+      if (isJson) {
+        jsonValue=Proxies.unwrap(valueChoice);
+      }
+ else {
+        jsonValue=convertValueToSafeJson(converter,valueChoice);
+      }
       enumValues.add(jsonValue);
     }
   }
