@@ -1,0 +1,23 @@
+{
+  Dependency core=CamelProjectHelper.findCamelCoreDependency(project);
+  if (core == null) {
+    return null;
+  }
+  CamelCatalog catalog=new DefaultCamelCatalog();
+  List<String> names=catalog.findComponentNames();
+  List<String> filtered=new ArrayList<String>();
+  for (  String name : names) {
+    if (value == null || name.startsWith(value)) {
+      filtered.add(name);
+    }
+  }
+  filtered=filterByName(filtered);
+  filtered=filterByLabel(filtered,filter.getValue());
+  List<ComponentDto> answer=new ArrayList<>();
+  for (  String filter : filtered) {
+    String json=catalog.componentJSonSchema(filter);
+    ComponentDto dto=createComponentDto(json);
+    answer.add(dto);
+  }
+  return answer;
+}
