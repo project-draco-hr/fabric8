@@ -4,19 +4,20 @@
   attributeMap.put("routeBuilder",routeBuilder.getValue());
   attributeMap.put("mode","add");
   attributeMap.put("kind","java");
+  ComponentDto component=componentName.getValue();
+  String camelComponentName=component.getScheme();
   String previous=(String)attributeMap.get("componentName");
   String previous2=(String)attributeMap.get("endpointType");
-  if (previous != null && previous.equals(componentName.getValue()) && previous2 != null && previous2.equals(endpointType.getValue())) {
+  if (previous != null && previous.equals(camelComponentName) && previous2 != null && previous2.equals(endpointType.getValue())) {
     NavigationResult navigationResult=(NavigationResult)attributeMap.get("navigationResult");
     if (navigationResult != null) {
       return navigationResult;
     }
   }
-  attributeMap.put("componentName",componentName.getValue().getScheme());
+  attributeMap.put("componentName",camelComponentName);
   attributeMap.put("endpointType",endpointType.getValue());
-  String camelComponentName=componentName.getValue().getScheme();
-  boolean consumerOnly=false;
-  boolean producerOnly=false;
+  boolean consumerOnly=component.isConsumerOnly();
+  boolean producerOnly=component.isProducerOnly();
   String type=endpointType.getValue();
   if ("Consumer".equals(type)) {
     consumerOnly=true;
