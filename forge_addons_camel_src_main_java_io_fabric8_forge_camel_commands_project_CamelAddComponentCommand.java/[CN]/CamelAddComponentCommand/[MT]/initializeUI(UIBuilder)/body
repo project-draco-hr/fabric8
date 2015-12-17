@@ -3,12 +3,6 @@
   filter.setValueChoices(CamelCommandsHelper.createComponentLabelValues(project));
   filter.setDefaultValue("<all>");
   name.setValueChoices(CamelCommandsHelper.createComponentDtoValues(project,filter,false));
-  name.setValueConverter(new Converter<String,ComponentDto>(){
-    @Override public ComponentDto convert(    String name){
-      return createComponentDto(name);
-    }
-  }
-);
   name.addValueChangeListener(new ValueChangeListener(){
     @Override public void valueChanged(    ValueChangeEvent event){
       ComponentDto component=(ComponentDto)event.getNewValue();
