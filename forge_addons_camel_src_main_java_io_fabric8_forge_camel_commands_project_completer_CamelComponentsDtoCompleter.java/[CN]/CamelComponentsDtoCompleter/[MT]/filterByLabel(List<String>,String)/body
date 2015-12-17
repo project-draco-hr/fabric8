@@ -3,9 +3,8 @@
     return choices;
   }
   List<String> answer=new ArrayList<String>();
-  CamelCatalog catalog=new DefaultCamelCatalog();
   for (  String name : choices) {
-    String json=catalog.componentJSonSchema(name);
+    String json=camelCatalog.componentJSonSchema(name);
     String labels=findLabel(json);
     if (labels != null) {
       for (      String target : labels.split(",")) {
