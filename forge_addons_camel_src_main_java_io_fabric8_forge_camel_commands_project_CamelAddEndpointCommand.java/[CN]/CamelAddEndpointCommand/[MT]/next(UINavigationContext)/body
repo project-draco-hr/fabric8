@@ -12,14 +12,9 @@
       return navigationResult;
     }
   }
-  attributeMap.put("componentName",componentName.getValue());
+  attributeMap.put("componentName",componentName.getValue().getScheme());
   attributeMap.put("endpointType",endpointType.getValue());
-  String camelComponentName=componentName.getValue();
-  CamelCatalog catalog=new DefaultCamelCatalog();
-  String json=catalog.componentJSonSchema(camelComponentName);
-  if (json == null) {
-    throw new IllegalArgumentException("Could not find catalog entry for component name: " + camelComponentName);
-  }
+  String camelComponentName=componentName.getValue().getScheme();
   boolean consumerOnly=false;
   boolean producerOnly=false;
   String type=endpointType.getValue();
