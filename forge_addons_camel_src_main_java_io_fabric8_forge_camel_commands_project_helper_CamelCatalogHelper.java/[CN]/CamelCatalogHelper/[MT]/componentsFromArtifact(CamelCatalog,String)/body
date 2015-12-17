@@ -1,8 +1,7 @@
 {
   Set<String> answer=new TreeSet<String>();
-  CamelCatalog catalog=new DefaultCamelCatalog();
-  for (  String name : catalog.findComponentNames()) {
-    String json=catalog.componentJSonSchema(name);
+  for (  String name : camelCatalog.findComponentNames()) {
+    String json=camelCatalog.componentJSonSchema(name);
     if (json != null) {
       List<Map<String,String>> data=JSonSchemaHelper.parseJsonSchema("component",json,false);
       String scheme=null;

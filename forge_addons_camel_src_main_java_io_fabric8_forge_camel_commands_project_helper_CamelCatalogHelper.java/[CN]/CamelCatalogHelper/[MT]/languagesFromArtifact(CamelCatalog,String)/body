@@ -1,8 +1,7 @@
 {
   Set<String> answer=new TreeSet<String>();
-  CamelCatalog catalog=new DefaultCamelCatalog();
-  for (  String name : catalog.findLanguageNames()) {
-    String json=catalog.languageJSonSchema(name);
+  for (  String name : camelCatalog.findLanguageNames()) {
+    String json=camelCatalog.languageJSonSchema(name);
     if (json != null) {
       List<Map<String,String>> data=JSonSchemaHelper.parseJsonSchema("language",json,false);
       String lan=null;

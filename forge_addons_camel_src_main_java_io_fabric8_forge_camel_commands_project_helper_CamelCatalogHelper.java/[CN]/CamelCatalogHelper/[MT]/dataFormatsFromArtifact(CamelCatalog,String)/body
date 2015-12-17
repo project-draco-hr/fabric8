@@ -1,8 +1,7 @@
 {
   Set<String> answer=new TreeSet<String>();
-  CamelCatalog catalog=new DefaultCamelCatalog();
-  for (  String name : catalog.findDataFormatNames()) {
-    String json=catalog.dataFormatJSonSchema(name);
+  for (  String name : camelCatalog.findDataFormatNames()) {
+    String json=camelCatalog.dataFormatJSonSchema(name);
     if (json != null) {
       List<Map<String,String>> data=JSonSchemaHelper.parseJsonSchema("dataformat",json,false);
       String df=null;

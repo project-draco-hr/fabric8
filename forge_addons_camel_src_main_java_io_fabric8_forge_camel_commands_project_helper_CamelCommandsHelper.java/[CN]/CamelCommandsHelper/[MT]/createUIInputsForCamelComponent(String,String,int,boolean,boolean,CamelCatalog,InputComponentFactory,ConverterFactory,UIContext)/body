@@ -3,19 +3,18 @@
   if (camelComponentName == null && uri != null) {
     camelComponentName=endpointComponentName(uri);
   }
-  CamelCatalog catalog=new DefaultCamelCatalog();
-  String json=catalog.componentJSonSchema(camelComponentName);
+  String json=camelCatalog.componentJSonSchema(camelComponentName);
   if (json == null) {
     throw new IllegalArgumentException("Could not find catalog entry for component name: " + camelComponentName);
   }
-  boolean componentConsumerOnly=CamelCatalogHelper.isComponentConsumerOnly(camelComponentName);
-  boolean componentProducerOnly=CamelCatalogHelper.isComponentProducerOnly(camelComponentName);
+  boolean componentConsumerOnly=CamelCatalogHelper.isComponentConsumerOnly(camelCatalog,camelComponentName);
+  boolean componentProducerOnly=CamelCatalogHelper.isComponentProducerOnly(camelCatalog,camelComponentName);
   if (componentConsumerOnly || componentProducerOnly) {
     consumerOnly=false;
     producerOnly=false;
   }
   List<Map<String,String>> data=JSonSchemaHelper.parseJsonSchema("properties",json,true);
-  Map<String,String> currentValues=uri != null ? catalog.endpointProperties(uri) : Collections.EMPTY_MAP;
+  Map<String,String> currentValues=uri != null ? camelCatalog.endpointProperties(uri) : Collections.EMPTY_MAP;
   if (data != null) {
     List<InputComponent> inputs=new ArrayList<>();
     EndpointOptionByGroup current=new EndpointOptionByGroup();
