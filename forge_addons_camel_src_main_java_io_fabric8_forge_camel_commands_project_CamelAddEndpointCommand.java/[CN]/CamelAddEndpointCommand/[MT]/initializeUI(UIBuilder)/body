@@ -3,9 +3,9 @@
   attributeMap.remove("navigationResult");
   Project project=getSelectedProject(builder.getUIContext());
   JavaSourceFacet facet=project.getFacet(JavaSourceFacet.class);
-  componentNameFilter.setValueChoices(CamelCommandsHelper.createComponentLabelValues(project));
+  componentNameFilter.setValueChoices(CamelCommandsHelper.createComponentLabelValues(project,getCamelCatalog()));
   componentNameFilter.setDefaultValue("<all>");
-  componentName.setValueChoices(CamelCommandsHelper.createComponentDtoValues(project,componentNameFilter,false));
+  componentName.setValueChoices(CamelCommandsHelper.createComponentDtoValues(project,getCamelCatalog(),componentNameFilter,false));
   componentName.addValueChangeListener(new ValueChangeListener(){
     @Override public void valueChanged(    ValueChangeEvent event){
       ComponentDto component=(ComponentDto)event.getNewValue();

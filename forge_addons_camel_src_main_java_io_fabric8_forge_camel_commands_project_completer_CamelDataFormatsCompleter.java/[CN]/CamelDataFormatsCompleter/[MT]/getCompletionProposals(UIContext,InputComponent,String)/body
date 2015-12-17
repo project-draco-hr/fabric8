@@ -1,11 +1,9 @@
 {
   List<String> answer=new ArrayList<String>();
-  Dependency core=CamelProjectHelper.findCamelCoreDependency(project);
   if (core == null) {
     return null;
   }
-  CamelCatalog catalog=new DefaultCamelCatalog();
-  List<String> names=catalog.findDataFormatNames();
+  List<String> names=camelCatalog.findDataFormatNames();
   List<String> filtered=new ArrayList<String>();
   for (  String name : names) {
     if (value == null || name.startsWith(value)) {
@@ -13,7 +11,7 @@
     }
   }
   for (  String name : filtered) {
-    String json=catalog.dataFormatJSonSchema(name);
+    String json=camelCatalog.dataFormatJSonSchema(name);
     String artifactId=findArtifactId(json);
     boolean already=false;
     if (artifactId != null) {
