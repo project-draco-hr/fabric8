@@ -1,10 +1,9 @@
 {
   List<String> answer=new ArrayList<String>();
-  CamelCatalog catalog=new DefaultCamelCatalog();
   for (  String name : choices) {
     boolean already=false;
     if (excludeComponentsOnClasspath) {
-      String json=catalog.componentJSonSchema(name);
+      String json=camelCatalog.componentJSonSchema(name);
       String artifactId=findArtifactId(json);
       if (artifactId != null) {
         already=CamelProjectHelper.hasDependency(project,"org.apache.camel",artifactId);
