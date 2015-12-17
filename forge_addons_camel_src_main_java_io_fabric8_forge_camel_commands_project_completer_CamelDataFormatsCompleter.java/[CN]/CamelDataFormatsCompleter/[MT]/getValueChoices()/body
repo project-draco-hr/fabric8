@@ -1,5 +1,4 @@
 {
-  Dependency core=CamelProjectHelper.findCamelCoreDependency(project);
   if (core == null) {
     return null;
   }
@@ -9,5 +8,11 @@
     Set<String> languages=dataFormatsFromArtifact(camelCatalog,dep.getCoordinate().getArtifactId());
     names.removeAll(languages);
   }
-  return names;
+  List<DataFormatDto> answer=new ArrayList<>();
+  for (  String name : names) {
+    String json=camelCatalog.dataFormatJSonSchema(name);
+    DataFormatDto dto=createDataFormatDto(camelCatalog,json);
+    answer.add(dto);
+  }
+  return answer;
 }

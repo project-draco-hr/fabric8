@@ -3,9 +3,9 @@
   name.setValueChoices(new CamelDataFormatsCompleter(project,getCamelCatalog()).getValueChoices());
   name.addValueChangeListener(new ValueChangeListener(){
     @Override public void valueChanged(    ValueChangeEvent event){
-      String dataFormat=event.getNewValue() != null ? event.getNewValue().toString() : null;
+      DataFormatDto dataFormat=(DataFormatDto)event.getNewValue();
       if (dataFormat != null) {
-        String description=CamelCatalogHelper.getDataFormatDescription(dataFormat);
+        String description=dataFormat.getDescription();
         name.setNote(description != null ? description : "");
       }
  else {

@@ -1,5 +1,5 @@
 {
-  List<String> answer=new ArrayList<String>();
+  List<DataFormatDto> answer=new ArrayList<>();
   if (core == null) {
     return null;
   }
@@ -18,7 +18,8 @@
       already=CamelProjectHelper.hasDependency(project,"org.apache.camel",artifactId);
     }
     if (!already) {
-      answer.add(name);
+      DataFormatDto dto=createDataFormatDto(camelCatalog,json);
+      answer.add(dto);
     }
   }
   return answer;

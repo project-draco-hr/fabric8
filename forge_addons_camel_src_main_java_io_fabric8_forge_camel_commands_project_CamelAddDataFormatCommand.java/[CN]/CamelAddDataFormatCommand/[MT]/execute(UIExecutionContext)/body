@@ -4,11 +4,13 @@
   if (core == null) {
     return Results.fail("The project does not include camel-core");
   }
-  String artifactId=findDataFormatArchetype(name.getValue());
-  if (artifactId == null) {
-    return Results.fail("Camel dataformat " + name.getValue() + " is unknown.");
+  DataFormatDto dto=name.getValue();
+  if (dto != null) {
+    DependencyBuilder component=DependencyBuilder.create().setGroupId(dto.getGroupId()).setArtifactId(dto.getArtifactId()).setVersion(core.getCoordinate().getVersion());
+    dependencyInstaller.install(project,component);
+    return Results.success("Added Camel dataformat " + name.getValue().getName() + " ("+ dto.getArtifactId()+ ") to the project");
   }
-  DependencyBuilder component=DependencyBuilder.create().setGroupId("org.apache.camel").setArtifactId(artifactId).setVersion(core.getCoordinate().getVersion());
-  dependencyInstaller.install(project,component);
-  return Results.success("Added Camel dataformat " + name.getValue() + " ("+ artifactId+ ") to the project");
+ else {
+    return Results.fail("Unknown Camel dataformat");
+  }
 }
