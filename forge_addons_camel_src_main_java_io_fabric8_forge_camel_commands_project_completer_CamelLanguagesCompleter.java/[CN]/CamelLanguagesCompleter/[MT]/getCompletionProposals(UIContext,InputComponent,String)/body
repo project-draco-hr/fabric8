@@ -1,8 +1,8 @@
 {
-  List<String> answer=new ArrayList<String>();
   if (core == null) {
     return null;
   }
+  List<LanguageDto> answer=new ArrayList<>();
   List<String> names=camelCatalog.findLanguageNames();
   List<String> filtered=new ArrayList<String>();
   for (  String name : names) {
@@ -18,7 +18,8 @@
       already=CamelProjectHelper.hasDependency(project,"org.apache.camel",artifactId);
     }
     if (!already) {
-      answer.add(name);
+      LanguageDto dto=createLanguageDto(camelCatalog,json);
+      answer.add(dto);
     }
   }
   return answer;

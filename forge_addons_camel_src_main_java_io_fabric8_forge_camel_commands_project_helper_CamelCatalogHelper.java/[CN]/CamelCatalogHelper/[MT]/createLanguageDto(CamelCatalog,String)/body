@@ -1,0 +1,41 @@
+{
+  String json=camelCatalog.languageJSonSchema(name);
+  if (json == null) {
+    return null;
+  }
+  LanguageDto dto=new LanguageDto();
+  List<Map<String,String>> data=JSonSchemaHelper.parseJsonSchema("language",json,false);
+  for (  Map<String,String> row : data) {
+    if (row.get("name") != null) {
+      dto.setName(row.get("name"));
+    }
+ else     if (row.get("modelName") != null) {
+      dto.setModelName(row.get("modelName"));
+    }
+ else     if (row.get("title") != null) {
+      dto.setTitle(row.get("title"));
+    }
+ else     if (row.get("description") != null) {
+      dto.setDescription(row.get("description"));
+    }
+ else     if (row.get("label") != null) {
+      dto.setLabel(row.get("label"));
+    }
+ else     if (row.get("javaType") != null) {
+      dto.setJavaType(row.get("javaType"));
+    }
+ else     if (row.get("modelJavaType") != null) {
+      dto.setModelJavaType(row.get("modelJavaType"));
+    }
+ else     if (row.get("groupId") != null) {
+      dto.setGroupId(row.get("groupId"));
+    }
+ else     if (row.get("artifactId") != null) {
+      dto.setArtifactId(row.get("artifactId"));
+    }
+ else     if (row.get("version") != null) {
+      dto.setVersion(row.get("version"));
+    }
+  }
+  return dto;
+}
