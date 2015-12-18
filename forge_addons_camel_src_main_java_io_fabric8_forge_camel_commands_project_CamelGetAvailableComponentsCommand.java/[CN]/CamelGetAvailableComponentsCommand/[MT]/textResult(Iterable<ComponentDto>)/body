@@ -1,0 +1,19 @@
+{
+  StringBuilder buffer=new StringBuilder();
+  TablePrinter table=new TablePrinter();
+  Boolean verboseValue=verbose.getValue();
+  if (verboseValue != null && verboseValue.booleanValue()) {
+    table.columns("name","description","tags","syntax","artifact");
+    for (    ComponentDto component : components) {
+      table.row(component.getScheme(),component.getDescription(),component.getLabel(),component.getSyntax(),component.getGroupId() + ":" + component.getArtifactId()+ ":"+ component.getVersion());
+    }
+  }
+ else {
+    table.columns("name","description");
+    for (    ComponentDto component : components) {
+      table.row(component.getScheme(),component.getDescription());
+    }
+  }
+  OutputFormatHelper.addTableTextOutput(buffer,"Components",table);
+  return buffer.toString();
+}

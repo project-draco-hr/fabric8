@@ -1,0 +1,13 @@
+{
+  StringBuilder buffer=new StringBuilder();
+  List<EndpointDto> endpoints=camelProject.getEndpoints();
+  if (!endpoints.isEmpty()) {
+    TablePrinter table=new TablePrinter();
+    table.columns("uri","instance name","file name");
+    for (    EndpointDto endpoint : endpoints) {
+      table.row(endpoint.getEndpointComponentName(),endpoint.getEndpointInstance(),endpoint.getFileName());
+    }
+    addTableTextOutput(buffer,"Endpoints",table);
+  }
+  return buffer.toString();
+}
