@@ -1,6 +1,12 @@
 {
   Project project=getSelectedProject(builder);
   name.setValueChoices(new CamelLanguagesCompleter(project,getCamelCatalog()).getValueChoices());
+  name.setValueConverter(new Converter<String,LanguageDto>(){
+    @Override public LanguageDto convert(    String text){
+      return createLanguageDto(getCamelCatalog(),text);
+    }
+  }
+);
   name.addValueChangeListener(new ValueChangeListener(){
     @Override public void valueChanged(    ValueChangeEvent event){
       LanguageDto language=(LanguageDto)event.getNewValue();

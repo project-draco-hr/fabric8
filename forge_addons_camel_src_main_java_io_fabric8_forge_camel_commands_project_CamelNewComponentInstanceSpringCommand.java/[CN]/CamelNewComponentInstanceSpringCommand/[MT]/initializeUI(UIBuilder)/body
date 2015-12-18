@@ -4,6 +4,12 @@
   componentNameFilter.setValueChoices(CamelCommandsHelper.createComponentLabelValues(project,getCamelCatalog()));
   componentNameFilter.setDefaultValue("<all>");
   componentName.setValueChoices(CamelCommandsHelper.createComponentDtoValues(project,getCamelCatalog(),componentNameFilter,false));
+  componentName.setValueConverter(new Converter<String,ComponentDto>(){
+    @Override public ComponentDto convert(    String text){
+      return createComponentDto(getCamelCatalog(),text);
+    }
+  }
+);
   componentName.addValueChangeListener(new ValueChangeListener(){
     @Override public void valueChanged(    ValueChangeEvent event){
       ComponentDto component=(ComponentDto)event.getNewValue();

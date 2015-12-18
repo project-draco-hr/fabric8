@@ -11,6 +11,12 @@
   componentNameFilter.setDefaultValue("<all>");
   componentName.setValueChoices(CamelCommandsHelper.createComponentDtoValues(project,getCamelCatalog(),componentNameFilter,false));
   componentName.setValueConverter(new Converter<String,ComponentDto>(){
+    @Override public ComponentDto convert(    String text){
+      return createComponentDto(getCamelCatalog(),text);
+    }
+  }
+);
+  componentName.setValueConverter(new Converter<String,ComponentDto>(){
     @Override public ComponentDto convert(    String name){
       return createComponentDto(getCamelCatalog(),name);
     }
