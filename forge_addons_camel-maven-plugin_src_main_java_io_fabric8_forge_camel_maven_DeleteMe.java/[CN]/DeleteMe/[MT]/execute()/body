@@ -1,0 +1,18 @@
+{
+  furnace=FurnaceFactory.getInstance();
+  furnace.addRepository(AddonRepositoryMode.MUTABLE,new File(OperatingSystemUtils.getUserForgeDir(),"addons"));
+  furnace.startAsync();
+  AddonManager manager=new AddonManagerImpl(furnace,new MavenAddonDependencyResolver());
+  AddonId projects=AddonId.from("org.jboss.forge.addon:projects","2.20.1.Final");
+  AddonId maven=AddonId.from("org.jboss.forge.addon:maven","2.20.1.Final");
+  manager.install(projects).perform();
+  manager.install(maven).perform();
+  AddonRegistry registry=furnace.getAddonRegistry();
+  Addons.waitUntilStarted(registry.getAddon(projects));
+  Addons.waitUntilStarted(registry.getAddon(maven));
+  resourceFactory=registry.getServices(ResourceFactory.class).get();
+  projectFactory=registry.getServices(ProjectFactory.class).get();
+  Resource<File> root=resourceFactory.create(new File("."));
+  Project project=projectFactory.findProject(root);
+  System.out.println("Found Maven Project " + project);
+}
