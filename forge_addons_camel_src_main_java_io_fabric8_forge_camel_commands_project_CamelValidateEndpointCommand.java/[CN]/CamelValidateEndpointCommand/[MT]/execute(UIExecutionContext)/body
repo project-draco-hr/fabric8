@@ -1,0 +1,35 @@
+{
+  Project project=getSelectedProject(context);
+  Dependency core=findCamelCoreDependency(project);
+  if (core == null) {
+    return Results.success("Cannot find Apache Camel");
+  }
+  ResourcesFacet resourcesFacet=project.getFacet(ResourcesFacet.class);
+  WebResourcesFacet webResourcesFacet=null;
+  if (project.hasFacet(WebResourcesFacet.class)) {
+    webResourcesFacet=project.getFacet(WebResourcesFacet.class);
+  }
+  XmlEndpointsCompleter xmlEndpointCompleter=new XmlEndpointsCompleter(resourcesFacet,webResourcesFacet);
+  JavaSourceFacet javaSourceFacet=project.getFacet(JavaSourceFacet.class);
+  RouteBuilderEndpointsCompleter javaEndpointsCompleter=new RouteBuilderEndpointsCompleter(javaSourceFacet);
+  List<CamelEndpointDetails> javaEndpoints=javaEndpointsCompleter.getEndpoints();
+  List<CamelEndpointDetails> xmlEndpoints=xmlEndpointCompleter.getEndpoints();
+  StringBuilder sb=new StringBuilder();
+  int count=0;
+  for (  CamelEndpointDetails detail : javaEndpoints) {
+    String uri=detail.getEndpointUri();
+    String msg=null;
+    count++;
+  }
+  for (  CamelEndpointDetails detail : xmlEndpoints) {
+    String uri=detail.getEndpointUri();
+    String msg=null;
+    count++;
+  }
+  if (sb.length() > 0) {
+    return Results.fail("Camel endpoint validation failed\n" + sb.toString());
+  }
+ else {
+    return Results.success("Camel endpoint validation success");
+  }
+}
