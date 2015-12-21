@@ -1,8 +1,7 @@
 {
   StringBuilder buffer=new StringBuilder();
   TablePrinter table=new TablePrinter();
-  Boolean verboseValue=verbose.getValue();
-  if (verboseValue != null && verboseValue.booleanValue()) {
+  if (isValueTrue(this.verbose)) {
     table.columns("name","description","tags","syntax","artifact");
     for (    ComponentDto component : components) {
       table.row(component.getScheme(),component.getDescription(),component.getLabel(),component.getSyntax(),component.getGroupId() + ":" + component.getArtifactId()+ ":"+ component.getVersion());
