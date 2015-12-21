@@ -1,10 +1,18 @@
 {
+  String groupId=details.getGroupId();
   String artifactId=details.getArtifactId();
   Dependency core=CamelProjectHelper.findCamelCoreDependency(project);
   if (core == null) {
     return Results.fail("The project does not include camel-core");
   }
-  DependencyBuilder component=DependencyBuilder.create().setGroupId("org.apache.camel").setArtifactId(artifactId).setVersion(core.getCoordinate().getVersion());
+  String version;
+  if ("org.apache.camel".equals(groupId)) {
+    version=core.getCoordinate().getVersion();
+  }
+ else {
+    version=details.getVersion();
+  }
+  DependencyBuilder component=DependencyBuilder.create().setGroupId(groupId).setArtifactId(artifactId).setVersion(version);
   dependencyInstaller.install(project,component);
   return null;
 }

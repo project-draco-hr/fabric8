@@ -1,7 +1,22 @@
 {
   String answer=componentJSonSchema.get(name);
   if (answer == null) {
-    answer=super.componentJSonSchema(name);
+    if ("activemq".equals(name)) {
+      String file="org/apache/activemq/camel/component/activemq.json";
+      InputStream is=DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(file);
+      if (is != null) {
+        try {
+          answer=CatalogHelper.loadText(is);
+        }
+ catch (        IOException e) {
+        }
+      }
+    }
+ else {
+      answer=super.componentJSonSchema(name);
+    }
+  }
+  if (answer != null) {
     componentJSonSchema.put(name,answer);
   }
   return answer;

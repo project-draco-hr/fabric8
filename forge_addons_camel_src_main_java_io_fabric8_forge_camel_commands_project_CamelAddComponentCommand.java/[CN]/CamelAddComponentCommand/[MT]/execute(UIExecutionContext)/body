@@ -6,7 +6,14 @@
   }
   ComponentDto dto=name.getValue();
   if (dto != null) {
-    DependencyBuilder component=DependencyBuilder.create().setGroupId(dto.getGroupId()).setArtifactId(dto.getArtifactId()).setVersion(core.getCoordinate().getVersion());
+    String version;
+    if ("org.apache.camel".equals(dto.getGroupId())) {
+      version=core.getCoordinate().getVersion();
+    }
+ else {
+      version=dto.getVersion();
+    }
+    DependencyBuilder component=DependencyBuilder.create().setGroupId(dto.getGroupId()).setArtifactId(dto.getArtifactId()).setVersion(version);
     dependencyInstaller.install(project,component);
     return Results.success("Added Camel component " + dto.getScheme() + " ("+ dto.getArtifactId()+ ") to the project");
   }
