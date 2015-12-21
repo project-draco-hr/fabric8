@@ -4,7 +4,12 @@
   if (isValueTrue(this.verbose)) {
     table.columns("name","description","tags","syntax","artifact");
     for (    ComponentDto component : components) {
-      table.row(component.getScheme(),component.getDescription(),component.getLabel(),component.getSyntax(),component.getGroupId() + ":" + component.getArtifactId()+ ":"+ component.getVersion());
+      String tags="";
+      String[] tagArray=component.getTags();
+      if (tagArray != null) {
+        tags=Strings.join(Arrays.asList(tagArray),", ");
+      }
+      table.row(component.getScheme(),component.getDescription(),tags,component.getSyntax(),component.getGroupId() + ":" + component.getArtifactId()+ ":"+ component.getVersion());
     }
   }
  else {
