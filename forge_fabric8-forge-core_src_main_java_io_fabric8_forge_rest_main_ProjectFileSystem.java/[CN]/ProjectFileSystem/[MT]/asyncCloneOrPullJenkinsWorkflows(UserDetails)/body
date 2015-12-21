@@ -3,8 +3,14 @@
   if (Strings.isNotBlank(jenkinsWorkflowGitUrl)) {
     executorService.execute(new Runnable(){
       @Override public void run(){
-        LOG.debug("Cloning or pulling jenkins workflow repo from " + jenkinsWorkflowGitUrl + " to "+ folder);
-        cloneOrPullRepo(userDetails,folder,jenkinsWorkflowGitUrl,null,null);
+        try {
+          LOG.debug("Cloning or pulling jenkins workflow repo from " + jenkinsWorkflowGitUrl + " to "+ folder);
+          UserDetails anonymous=userDetails.createAnonymousDetails();
+          cloneOrPullRepo(anonymous,folder,jenkinsWorkflowGitUrl,null,null);
+        }
+ catch (        Exception e) {
+          LOG.error("Failed to clone jenkins workflow repo from : " + jenkinsWorkflowGitUrl + ". "+ e,e);
+        }
       }
     }
 );
