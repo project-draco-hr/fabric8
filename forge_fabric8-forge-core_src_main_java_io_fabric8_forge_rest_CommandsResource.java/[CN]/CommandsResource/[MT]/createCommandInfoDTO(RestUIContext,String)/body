@@ -1,8 +1,10 @@
 {
-  UICommand command=getCommandByName(context,name);
   CommandInfoDTO answer=null;
-  if (command != null) {
-    answer=UICommands.createCommandInfoDTO(context,command);
+  if (isValidCommandName(name)) {
+    UICommand command=getCommandByName(context,name);
+    if (command != null) {
+      answer=UICommands.createCommandInfoDTO(context,command);
+    }
   }
   return answer;
 }
