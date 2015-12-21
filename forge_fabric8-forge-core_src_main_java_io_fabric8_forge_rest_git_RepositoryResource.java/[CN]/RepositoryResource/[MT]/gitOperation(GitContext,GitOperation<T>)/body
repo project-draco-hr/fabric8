@@ -40,7 +40,7 @@
       if (Strings.isNullOrBlank(message)) {
         message="";
       }
-      if (context.isRequireCommit()) {
+      if (context.isRequireCommit() && hasGitChanges(git)) {
         doAddCommitAndPushFiles(git,userDetails,personIdent,branch,origin,message,isPushOnCommit());
       }
       return result;
