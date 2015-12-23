@@ -1,0 +1,17 @@
+{
+  CamelCatalog catalog=new DefaultCamelCatalog();
+  catalog.setSuggestionStrategy(new LuceneSuggestionStrategy());
+  JavaClassSource clazz=(JavaClassSource)Roaster.parse(new File("src/main/java/io/fabric8/forge/camel/maven/MyRouteBuilder.java"));
+  List<CamelEndpointDetails> endpoints=new ArrayList<>();
+  String fqn="src/main/java/io/fabric8/forge/camel/maven/MyRouteBuilder.java";
+  String baseDir=".";
+  RouteBuilderParser.parseRouteBuilder(clazz,baseDir,fqn,endpoints);
+  System.out.println(endpoints);
+  for (  CamelEndpointDetails detail : endpoints) {
+    EndpointValidationResult result=catalog.validateEndpointProperties(detail.getEndpointUri());
+    if (!result.isSuccess()) {
+      String out=result.summaryErrorMessage();
+      System.out.println(out);
+    }
+  }
+}
