@@ -1,5 +1,14 @@
 {
-  StringBuilder buffer=new StringBuilder();
+  StringBuilder buffer=new StringBuilder("\n\n");
+  List<ComponentDto> components=camelProject.getComponents();
+  if (!components.isEmpty()) {
+    TablePrinter table=new TablePrinter();
+    table.columns("scheme","syntax","description");
+    for (    ComponentDto component : components) {
+      table.row(component.getScheme(),component.getSyntax(),component.getDescription());
+    }
+    addTableTextOutput(buffer,"Components",table);
+  }
   List<EndpointDto> endpoints=camelProject.getEndpoints();
   if (!endpoints.isEmpty()) {
     TablePrinter table=new TablePrinter();
