@@ -15,19 +15,15 @@
   List<CamelEndpointDetails> javaEndpoints=javaEndpointsCompleter.getEndpoints();
   List<CamelEndpointDetails> xmlEndpoints=xmlEndpointCompleter.getEndpoints();
   StringBuilder sb=new StringBuilder();
-  int count=0;
+  boolean failed=false;
   for (  CamelEndpointDetails detail : javaEndpoints) {
     String uri=detail.getEndpointUri();
-    String msg=null;
-    count++;
   }
   for (  CamelEndpointDetails detail : xmlEndpoints) {
     String uri=detail.getEndpointUri();
-    String msg=null;
-    count++;
   }
-  if (sb.length() > 0) {
-    return Results.fail("Camel endpoint validation failed\n" + sb.toString());
+  if (failed) {
+    return Results.fail("Camel endpoint validation failed:\n" + sb.toString());
   }
  else {
     return Results.success("Camel endpoint validation success");
