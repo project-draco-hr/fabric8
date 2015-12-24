@@ -4,40 +4,12 @@
     boolean camel=resource.getContents().contains("<camelContext");
     if (camel) {
       try {
-        Document dom=XmlLineNumberParser.parseXml(resource.getResourceInputStream());
-        if (dom != null) {
-          List<Node> nodes=CamelXmlHelper.findAllEndpoints(dom);
-          for (          Node node : nodes) {
-            String uri=getSafeAttribute(node,"uri");
-            String id=getSafeAttribute(node,"id");
-            String lineNumber=(String)node.getUserData(XmlLineNumberParser.LINE_NUMBER);
-            String baseDir=facet.getWebRootDirectory().getFullyQualifiedName();
-            String fileName=resource.getFullyQualifiedName();
-            if (fileName.startsWith(baseDir)) {
-              fileName=fileName.substring(baseDir.length() + 1);
-            }
-            boolean consumerOnly=false;
-            boolean producerOnly=false;
-            String nodeName=node.getNodeName();
-            if ("from".equals(nodeName) || "pollEnrich".equals(nodeName)) {
-              consumerOnly=true;
-            }
- else             if ("to".equals(nodeName) || "enrich".equals(nodeName) || "wireTap".equals(nodeName)) {
-              producerOnly=true;
-            }
-            CamelEndpointDetails detail=new CamelEndpointDetails();
-            detail.setFileName(fileName);
-            detail.setLineNumber(lineNumber);
-            detail.setEndpointInstance(id);
-            detail.setEndpointUri(uri);
-            detail.setEndpointComponentName(endpointComponentName(uri));
-            detail.setConsumerOnly(consumerOnly);
-            detail.setProducerOnly(producerOnly);
-            endpoints.add(detail);
-          }
-        }
+        InputStream is=resource.getResourceInputStream();
+        String fqn=resource.getFullyQualifiedName();
+        String baseDir=facet.getWebRootDirectory().getFullyQualifiedName();
+        XmlRouteParser.parseXmlRoute(is,baseDir,fqn,endpoints);
       }
- catch (      Exception e) {
+ catch (      Throwable e) {
       }
     }
   }
