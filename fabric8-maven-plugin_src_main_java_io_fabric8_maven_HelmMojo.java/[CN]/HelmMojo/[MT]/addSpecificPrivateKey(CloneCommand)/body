@@ -1,0 +1,24 @@
+{
+  command.setTransportConfigCallback(new TransportConfigCallback(){
+    @Override public void configure(    Transport transport){
+      SshTransport sshTransport=(SshTransport)transport;
+      sshTransport.setSshSessionFactory(new JschConfigSessionFactory(){
+        @Override protected void configure(        OpenSshConfig.Host host,        Session session){
+        }
+        @Override protected JSch createDefaultJSch(        FS fs) throws JSchException {
+          JSch rc=super.createDefaultJSch(fs);
+          rc.removeAllIdentity();
+          if (!Strings.isNullOrBlank(privateKeyPassphrase)) {
+            rc.addIdentity(privateKeyPath,privateKeyPassphrase);
+          }
+ else {
+            rc.addIdentity(privateKeyPath);
+          }
+          return rc;
+        }
+      }
+);
+    }
+  }
+);
+}

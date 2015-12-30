@@ -5,11 +5,14 @@
  else {
     CloneCommand command=Git.cloneRepository();
     command=command.setURI(gitUrl).setDirectory(outputFolder).setRemote(remoteRepoName);
+    if (!Strings.isNullOrBlank(privateKeyPath)) {
+      addSpecificPrivateKey(command);
+    }
     try {
       Git git=command.call();
     }
  catch (    Throwable e) {
-      throw new RuntimeException("Failed to clone chart repo " + gitUrl + " due: "+ e.getMessage());
+      throw new RuntimeException("Failed to clone chart repo " + gitUrl + " due: ",e);
     }
   }
 }
