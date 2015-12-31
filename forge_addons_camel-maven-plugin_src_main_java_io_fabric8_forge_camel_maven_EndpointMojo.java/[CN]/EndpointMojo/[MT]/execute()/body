@@ -25,28 +25,32 @@
     }
   }
   for (  File file : javaFiles) {
-    try {
-      String fqn=file.getPath();
-      String baseDir=".";
-      JavaClassSource clazz=(JavaClassSource)Roaster.parse(file);
-      if (clazz != null) {
-        RouteBuilderParser.parseRouteBuilder(clazz,baseDir,fqn,endpoints);
+    if (matchFile(file)) {
+      try {
+        String fqn=file.getPath();
+        String baseDir=".";
+        JavaClassSource clazz=(JavaClassSource)Roaster.parse(file);
+        if (clazz != null) {
+          RouteBuilderParser.parseRouteBuilder(clazz,baseDir,fqn,endpoints);
+        }
       }
-    }
- catch (    Exception e) {
-      getLog().warn("Error parsing java file " + file + " code due "+ e.getMessage());
+ catch (      Exception e) {
+        getLog().warn("Error parsing java file " + file + " code due "+ e.getMessage());
+      }
     }
   }
   for (  File file : xmlFiles) {
-    try {
-      String fqn=file.getPath();
-      String baseDir=".";
-      InputStream is=new FileInputStream(file);
-      XmlRouteParser.parseXmlRoute(is,baseDir,fqn,endpoints);
-      is.close();
-    }
- catch (    Exception e) {
-      getLog().warn("Error parsing xml file " + file + " code due "+ e.getMessage());
+    if (matchFile(file)) {
+      try {
+        String fqn=file.getPath();
+        String baseDir=".";
+        InputStream is=new FileInputStream(file);
+        XmlRouteParser.parseXmlRoute(is,baseDir,fqn,endpoints);
+        is.close();
+      }
+ catch (      Exception e) {
+        getLog().warn("Error parsing xml file " + file + " code due "+ e.getMessage());
+      }
     }
   }
   boolean allOk=true;
