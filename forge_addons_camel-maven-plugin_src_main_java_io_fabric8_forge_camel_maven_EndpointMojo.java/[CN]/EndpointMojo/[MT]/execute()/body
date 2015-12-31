@@ -29,13 +29,14 @@
       try {
         String fqn=file.getPath();
         String baseDir=".";
-        JavaClassSource clazz=(JavaClassSource)Roaster.parse(file);
-        if (clazz != null) {
+        JavaType out=Roaster.parse(file);
+        if (out != null && out instanceof JavaClassSource) {
+          JavaClassSource clazz=(JavaClassSource)out;
           RouteBuilderParser.parseRouteBuilder(clazz,baseDir,fqn,endpoints);
         }
       }
  catch (      Exception e) {
-        getLog().warn("Error parsing java file " + file + " code due "+ e.getMessage());
+        getLog().warn("Error parsing java file " + file + " code due "+ e.getMessage(),e);
       }
     }
   }
@@ -49,17 +50,17 @@
         is.close();
       }
  catch (      Exception e) {
-        getLog().warn("Error parsing xml file " + file + " code due "+ e.getMessage());
+        getLog().warn("Error parsing xml file " + file + " code due "+ e.getMessage(),e);
       }
     }
   }
-  boolean allOk=true;
+  int errors=0;
   for (  CamelEndpointDetails detail : endpoints) {
     EndpointValidationResult result=catalog.validateEndpointProperties(detail.getEndpointUri());
     if (!result.isSuccess()) {
-      allOk=false;
+      errors++;
       StringBuilder sb=new StringBuilder();
-      sb.append("Camel endpoint validation error: ").append(asRelativeFile(detail.getFileName()));
+      sb.append("Endpoint validation error in file: ").append(asRelativeFile(detail.getFileName()));
       if (detail.getLineNumber() != null) {
         sb.append(" at line: ").append(detail.getLineNumber());
       }
@@ -70,10 +71,22 @@
       getLog().warn(sb.toString());
     }
   }
-  if (failOnError && !allOk) {
-    throw new MojoExecutionException("Camel endpoint validation failed");
+  String summary;
+  if (errors == 0) {
+    int ok=endpoints.size() - errors;
+    summary=String.format("Endpoint validation success: (%s = passed, %s = invalid)",ok,errors);
   }
-  if (allOk) {
-    getLog().info("Camel endpoint validation successful");
+ else {
+    int ok=endpoints.size() - errors;
+    summary=String.format("Endpoint validation error: (%s = passed, %s = invalid)",ok,errors);
+  }
+  if (failOnError && errors > 0) {
+    throw new MojoExecutionException(summary);
+  }
+  if (errors > 0) {
+    getLog().warn(summary);
+  }
+ else {
+    getLog().info(summary);
   }
 }
