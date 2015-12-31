@@ -4,11 +4,9 @@
   final Set<File> javaFiles=new LinkedHashSet<File>();
   for (  String dir : project.getCompileSourceRoots()) {
     findJavaFiles(new File(dir),javaFiles);
-    getLog().info("Found " + javaFiles.size() + " .java files");
   }
   for (  File file : javaFiles) {
     try {
-      getLog().info("Inspecting " + file + " .java file");
       String fqn=file.getPath();
       String baseDir=".";
       JavaClassSource clazz=(JavaClassSource)Roaster.parse(file);
@@ -20,12 +18,17 @@
       getLog().warn("Error parsing java file " + file + " code due "+ e.getMessage());
     }
   }
-  getLog().info("Found " + endpoints.size() + " Camel endpoints");
+  boolean allOk=true;
   for (  CamelEndpointDetails detail : endpoints) {
     EndpointValidationResult result=catalog.validateEndpointProperties(detail.getEndpointUri());
     if (!result.isSuccess()) {
+      allOk=false;
+      String source=String.format("File: %s",detail.getFileName());
       String out=result.summaryErrorMessage();
-      getLog().warn(out);
+      getLog().warn(source + "\n" + out);
     }
+  }
+  if (allOk) {
+    getLog().info("Camel endpoint validation successful");
   }
 }
