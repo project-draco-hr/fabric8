@@ -5,6 +5,11 @@
   for (  String dir : project.getCompileSourceRoots()) {
     findJavaFiles(new File(dir),javaFiles);
   }
+  if (includeTest) {
+    for (    String dir : project.getTestCompileSourceRoots()) {
+      findJavaFiles(new File(dir),javaFiles);
+    }
+  }
   for (  File file : javaFiles) {
     try {
       String fqn=file.getPath();
