@@ -1,0 +1,31 @@
+{
+  CamelCatalog catalog=new DefaultCamelCatalog();
+  final List<CamelEndpointDetails> endpoints=new ArrayList<>();
+  final Set<File> javaFiles=new LinkedHashSet<File>();
+  for (  String dir : project.getCompileSourceRoots()) {
+    findJavaFiles(new File(dir),javaFiles);
+    getLog().info("Found " + javaFiles.size() + " .java files");
+  }
+  for (  File file : javaFiles) {
+    try {
+      getLog().info("Inspecting " + file + " .java file");
+      String fqn=file.getPath();
+      String baseDir=".";
+      JavaClassSource clazz=(JavaClassSource)Roaster.parse(file);
+      if (clazz != null) {
+        RouteBuilderParser.parseRouteBuilder(clazz,baseDir,fqn,endpoints);
+      }
+    }
+ catch (    Exception e) {
+      getLog().warn("Error parsing java file " + file + " code due "+ e.getMessage());
+    }
+  }
+  getLog().info("Found " + endpoints.size() + " Camel endpoints");
+  for (  CamelEndpointDetails detail : endpoints) {
+    EndpointValidationResult result=catalog.validateEndpointProperties(detail.getEndpointUri());
+    if (!result.isSuccess()) {
+      String out=result.summaryErrorMessage();
+      getLog().warn(out);
+    }
+  }
+}

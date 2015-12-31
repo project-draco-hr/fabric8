@@ -1,0 +1,13 @@
+{
+  File[] files=dir.isDirectory() ? dir.listFiles() : null;
+  if (files != null) {
+    for (    File file : files) {
+      if (file.getName().endsWith(".java")) {
+        javaFiles.add(file);
+      }
+ else       if (file.isDirectory()) {
+        findJavaFiles(file,javaFiles);
+      }
+    }
+  }
+}
