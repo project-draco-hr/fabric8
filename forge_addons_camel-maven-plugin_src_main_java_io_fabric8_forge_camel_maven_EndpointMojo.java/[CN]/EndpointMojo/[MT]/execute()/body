@@ -65,6 +65,9 @@
       getLog().warn(sb.toString());
     }
   }
+  if (failOnError && !allOk) {
+    throw new MojoExecutionException("Camel endpoint validation failed");
+  }
   if (allOk) {
     getLog().info("Camel endpoint validation successful");
   }
