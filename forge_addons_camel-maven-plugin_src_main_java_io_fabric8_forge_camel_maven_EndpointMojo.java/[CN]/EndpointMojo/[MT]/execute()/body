@@ -10,6 +10,15 @@
       findJavaFiles(new File(dir),javaFiles);
     }
   }
+  final Set<File> xmlFiles=new LinkedHashSet<File>();
+  for (  Resource dir : project.getResources()) {
+    findXmlFiles(new File(dir.getDirectory()),xmlFiles);
+  }
+  if (includeTest) {
+    for (    Resource dir : project.getTestResources()) {
+      findXmlFiles(new File(dir.getDirectory()),xmlFiles);
+    }
+  }
   for (  File file : javaFiles) {
     try {
       String fqn=file.getPath();
@@ -21,6 +30,18 @@
     }
  catch (    Exception e) {
       getLog().warn("Error parsing java file " + file + " code due "+ e.getMessage());
+    }
+  }
+  for (  File file : xmlFiles) {
+    try {
+      String fqn=file.getPath();
+      String baseDir=".";
+      InputStream is=new FileInputStream(file);
+      XmlRouteParser.parseXmlRoute(is,baseDir,fqn,endpoints);
+      is.close();
+    }
+ catch (    Exception e) {
+      getLog().warn("Error parsing xml file " + file + " code due "+ e.getMessage());
     }
   }
   boolean allOk=true;
