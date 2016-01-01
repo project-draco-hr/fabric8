@@ -1,27 +1,3 @@
 {
-  for (  String dir : project.getCompileSourceRoots()) {
-    dir=asRelativeFile(dir);
-    if (name.startsWith(dir)) {
-      return name.substring(dir.length() + 1);
-    }
-  }
-  for (  String dir : project.getTestCompileSourceRoots()) {
-    dir=asRelativeFile(dir);
-    if (name.startsWith(dir)) {
-      return name.substring(dir.length() + 1);
-    }
-  }
-  for (  Resource resource : project.getResources()) {
-    String dir=asRelativeFile(resource.getDirectory());
-    if (name.startsWith(dir)) {
-      return name.substring(dir.length() + 1);
-    }
-  }
-  for (  Resource resource : project.getTestResources()) {
-    String dir=asRelativeFile(resource.getDirectory());
-    if (name.startsWith(dir)) {
-      return name.substring(dir.length() + 1);
-    }
-  }
-  return name;
+  return name.replace(File.separator,".");
 }

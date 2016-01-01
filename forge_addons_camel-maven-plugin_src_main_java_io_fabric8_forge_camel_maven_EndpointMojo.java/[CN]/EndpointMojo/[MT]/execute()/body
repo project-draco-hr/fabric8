@@ -65,9 +65,27 @@
     if (!result.isSuccess()) {
       endpointErrors++;
       StringBuilder sb=new StringBuilder();
-      sb.append("Endpoint validation error in file: ").append(asRelativeFile(detail.getFileName()));
-      if (detail.getLineNumber() != null) {
-        sb.append(" at line: ").append(detail.getLineNumber());
+      sb.append("Endpoint validation error at: ");
+      if (detail.getClassName() != null && detail.getLineNumber() != null) {
+        sb.append(detail.getClassName());
+        if (detail.getMethodName() != null) {
+          sb.append(".").append(detail.getMethodName());
+        }
+        sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
+        sb.append(detail.getLineNumber()).append(")");
+      }
+ else       if (detail.getLineNumber() != null) {
+        String fqn=stripRootPath(asRelativeFile(detail.getFileName()));
+        if (fqn.endsWith(".xml")) {
+          fqn=fqn.substring(0,fqn.length() - 4);
+          fqn=asPackageName(fqn);
+        }
+        sb.append(fqn);
+        sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
+        sb.append(detail.getLineNumber()).append(")");
+      }
+ else {
+        sb.append(detail.getFileName());
       }
       sb.append("\n\n");
       String out=result.summaryErrorMessage(false);
@@ -97,9 +115,27 @@
     if (!result.isSuccess()) {
       simpleErrors++;
       StringBuilder sb=new StringBuilder();
-      sb.append("Simple validation error in file: ").append(asRelativeFile(detail.getFileName()));
-      if (detail.getLineNumber() != null) {
-        sb.append(" at line: ").append(detail.getLineNumber());
+      sb.append("Simple validation error at: ");
+      if (detail.getClassName() != null && detail.getLineNumber() != null) {
+        sb.append(detail.getClassName());
+        if (detail.getMethodName() != null) {
+          sb.append(".").append(detail.getMethodName());
+        }
+        sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
+        sb.append(detail.getLineNumber()).append(")");
+      }
+ else       if (detail.getLineNumber() != null) {
+        String fqn=stripRootPath(asRelativeFile(detail.getFileName()));
+        if (fqn.endsWith(".xml")) {
+          fqn=fqn.substring(0,fqn.length() - 4);
+          fqn=asPackageName(fqn);
+        }
+        sb.append(fqn);
+        sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
+        sb.append(detail.getLineNumber()).append(")");
+      }
+ else {
+        sb.append(detail.getFileName());
       }
       sb.append("\n");
       String[] lines=result.getError().split("\n");

@@ -5,7 +5,7 @@
   if (excludes != null) {
     for (    String exclude : excludes.split(",")) {
       exclude=exclude.trim();
-      String fqn=asPackageName(asRelativeFile(file.getAbsolutePath()));
+      String fqn=stripRootPath(asRelativeFile(file.getAbsolutePath()));
       boolean match=EndpointHelper.matchPattern(fqn,exclude) || EndpointHelper.matchPattern(file.getName(),exclude);
       if (match) {
         return false;
@@ -15,7 +15,7 @@
   if (includes != null) {
     for (    String include : includes.split(",")) {
       include=include.trim();
-      String fqn=asPackageName(asRelativeFile(file.getAbsolutePath()));
+      String fqn=stripRootPath(asRelativeFile(file.getAbsolutePath()));
       boolean match=EndpointHelper.matchPattern(fqn,include) || EndpointHelper.matchPattern(file.getName(),include);
       if (match) {
         return true;

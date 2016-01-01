@@ -24,6 +24,7 @@
       String id=field.getName();
       CamelEndpointDetails detail=new CamelEndpointDetails();
       detail.setFileName(fileName);
+      detail.setClassName(clazz.getQualifiedName());
       detail.setEndpointInstance(id);
       detail.setEndpointUri(uri);
       detail.setEndpointComponentName(endpointComponentName(uri));
@@ -60,6 +61,8 @@
       }
       CamelEndpointDetails detail=new CamelEndpointDetails();
       detail.setFileName(fileName);
+      detail.setClassName(clazz.getQualifiedName());
+      detail.setMethodName("configure");
       detail.setEndpointInstance(null);
       detail.setEndpointUri(result.getElement());
       int line=findLineNumber(fullyQualifiedFileName,result.getPosition());
@@ -81,6 +84,8 @@
         }
         detail=new CamelEndpointDetails();
         detail.setFileName(fileName);
+        detail.setClassName(clazz.getQualifiedName());
+        detail.setMethodName("configure");
         detail.setEndpointInstance(null);
         detail.setEndpointUri(result.getElement());
         int line=findLineNumber(fullyQualifiedFileName,result.getPosition());

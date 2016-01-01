@@ -15,12 +15,14 @@
         fileName=fileName.substring(baseDir.length() + 1);
       }
       CamelSimpleDetails details=new CamelSimpleDetails();
+      details.setFileName(fileName);
+      details.setClassName(clazz.getQualifiedName());
+      details.setMethodName("configure");
       int line=findLineNumber(fullyQualifiedFileName,result.getPosition());
       if (line > -1) {
         details.setLineNumber("" + line);
       }
       details.setSimple(result.getElement());
-      details.setFileName(fileName);
       simpleExpressions.add(details);
     }
   }
