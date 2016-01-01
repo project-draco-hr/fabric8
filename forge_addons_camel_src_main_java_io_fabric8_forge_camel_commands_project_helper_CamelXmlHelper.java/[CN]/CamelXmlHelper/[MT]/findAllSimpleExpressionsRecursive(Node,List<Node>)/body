@@ -1,5 +1,5 @@
 {
-  if ("simple".equals(node.getLocalName())) {
+  if ("simple".equals(node.getNodeName())) {
     nodes.add(node);
   }
   NodeList children=node.getChildNodes();
@@ -7,7 +7,7 @@
     for (int i=0; i < children.getLength(); i++) {
       Node child=children.item(i);
       if (child.getNodeType() == Node.ELEMENT_NODE) {
-        findAllUrisRecursive(child,nodes);
+        findAllSimpleExpressionsRecursive(child,nodes);
       }
     }
   }
