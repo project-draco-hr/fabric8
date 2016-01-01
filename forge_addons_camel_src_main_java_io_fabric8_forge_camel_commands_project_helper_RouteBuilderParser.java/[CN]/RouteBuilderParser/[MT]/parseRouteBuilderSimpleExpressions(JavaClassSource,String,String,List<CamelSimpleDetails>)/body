@@ -1,0 +1,23 @@
+{
+  String superType=clazz.getSuperType();
+  if (superType != null) {
+    boolean valid="org.apache.camel.builder.RouteBuilder".equals(superType) || "org.apache.camel.spring.boot.FatJarRouter".equals(superType);
+    if (!valid) {
+      return;
+    }
+  }
+  MethodSource<JavaClassSource> method=CamelJavaParserHelper.findConfigureMethod(clazz);
+  if (method != null) {
+    List<String> expressions=CamelJavaParserHelper.parseCamelSimpleExpressions(method);
+    for (    String simple : expressions) {
+      String fileName=fullyQualifiedFileName;
+      if (fileName.startsWith(baseDir)) {
+        fileName=fileName.substring(baseDir.length() + 1);
+      }
+      CamelSimpleDetails details=new CamelSimpleDetails();
+      details.setSimple(simple);
+      details.setFileName(fileName);
+      simpleExpressions.add(details);
+    }
+  }
+}

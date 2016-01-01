@@ -1,0 +1,19 @@
+{
+  Document dom=XmlLineNumberParser.parseXml(xml);
+  if (dom != null) {
+    List<Node> nodes=CamelXmlHelper.findAllSimpleExpressions(dom);
+    for (    Node node : nodes) {
+      String simple=node.getTextContent();
+      String lineNumber=(String)node.getUserData(XmlLineNumberParser.LINE_NUMBER);
+      String fileName=fullyQualifiedFileName;
+      if (fileName.startsWith(baseDir)) {
+        fileName=fileName.substring(baseDir.length() + 1);
+      }
+      CamelSimpleDetails detail=new CamelSimpleDetails();
+      detail.setFileName(fileName);
+      detail.setLineNumber(lineNumber);
+      detail.setSimple(simple);
+      simpleExpressions.add(detail);
+    }
+  }
+}
