@@ -1,0 +1,17 @@
+{
+  List<String> answer=new ArrayList<String>();
+  MethodDeclaration md=(MethodDeclaration)method.getInternal();
+  for (  Object statement : md.getBody().statements()) {
+    if (statement instanceof ExpressionStatement) {
+      ExpressionStatement es=(ExpressionStatement)statement;
+      Expression exp=es.getExpression();
+      List<String> expressions=new ArrayList<String>();
+      parseExpression(method,exp,expressions);
+      if (!expressions.isEmpty()) {
+        Collections.reverse(expressions);
+        answer.addAll(expressions);
+      }
+    }
+  }
+  return answer;
+}

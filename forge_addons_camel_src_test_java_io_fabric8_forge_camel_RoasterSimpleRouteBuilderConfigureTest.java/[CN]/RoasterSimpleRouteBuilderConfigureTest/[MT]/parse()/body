@@ -1,0 +1,8 @@
+{
+  JavaClassSource clazz=(JavaClassSource)Roaster.parse(new File("src/test/java/io/fabric8/forge/camel/MySimpleRouteBuilder.java"));
+  MethodSource<JavaClassSource> method=clazz.getMethod("configure");
+  List<String> list=CamelJavaParserHelper.parseCamelSimpleExpressions(method);
+  for (  String simple : list) {
+    System.out.println("Simple: " + simple);
+  }
+}

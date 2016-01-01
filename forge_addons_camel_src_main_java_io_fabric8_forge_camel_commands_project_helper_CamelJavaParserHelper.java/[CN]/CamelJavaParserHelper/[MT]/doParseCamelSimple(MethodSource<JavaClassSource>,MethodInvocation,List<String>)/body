@@ -1,0 +1,22 @@
+{
+  String name=mi.getName().getIdentifier();
+  if ("simple".equals(name)) {
+    List args=mi.arguments();
+    if (args != null && args.size() >= 1) {
+      Object arg=args.get(0);
+      if (arg instanceof StringLiteral) {
+        String simple=((StringLiteral)arg).getLiteralValue();
+        expressions.add(simple);
+      }
+    }
+  }
+  List args=mi.arguments();
+  if (args != null) {
+    for (    Object arg : args) {
+      if (arg instanceof MethodInvocation) {
+        MethodInvocation ami=(MethodInvocation)arg;
+        doParseCamelSimple(method,ami,expressions);
+      }
+    }
+  }
+}
