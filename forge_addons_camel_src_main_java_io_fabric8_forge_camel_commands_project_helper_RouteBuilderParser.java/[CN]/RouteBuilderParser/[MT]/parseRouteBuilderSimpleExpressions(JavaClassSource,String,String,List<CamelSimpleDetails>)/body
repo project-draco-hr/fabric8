@@ -8,14 +8,18 @@
   }
   MethodSource<JavaClassSource> method=CamelJavaParserHelper.findConfigureMethod(clazz);
   if (method != null) {
-    List<String> expressions=CamelJavaParserHelper.parseCamelSimpleExpressions(method);
-    for (    String simple : expressions) {
+    List<ParserResult> expressions=CamelJavaParserHelper.parseCamelSimpleExpressions(method);
+    for (    ParserResult result : expressions) {
       String fileName=fullyQualifiedFileName;
       if (fileName.startsWith(baseDir)) {
         fileName=fileName.substring(baseDir.length() + 1);
       }
       CamelSimpleDetails details=new CamelSimpleDetails();
-      details.setSimple(simple);
+      int line=findLineNumber(fullyQualifiedFileName,result.getPosition());
+      if (line > -1) {
+        details.setLineNumber("" + line);
+      }
+      details.setSimple(result.getElement());
       details.setFileName(fileName);
       simpleExpressions.add(details);
     }

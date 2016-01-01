@@ -6,7 +6,8 @@
       Object arg=args.get(0);
       if (arg instanceof StringLiteral) {
         String simple=((StringLiteral)arg).getLiteralValue();
-        expressions.add(simple);
+        int position=((StringLiteral)arg).getStartPosition();
+        expressions.add(new ParserResult(position,simple));
       }
     }
   }

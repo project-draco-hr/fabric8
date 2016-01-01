@@ -32,16 +32,16 @@
   }
   MethodSource<JavaClassSource> method=CamelJavaParserHelper.findConfigureMethod(clazz);
   if (method != null) {
-    List<String> uris=CamelJavaParserHelper.parseCamelConsumerUris(method,false,true);
-    for (    String uri : uris) {
-      CamelEndpointDetails detail=findEndpointByUri(endpoints,uri);
+    List<ParserResult> uris=CamelJavaParserHelper.parseCamelConsumerUris(method,false,true);
+    for (    ParserResult uri : uris) {
+      CamelEndpointDetails detail=findEndpointByUri(endpoints,uri.getElement());
       if (detail != null) {
         detail.setConsumerOnly(true);
       }
     }
     uris=CamelJavaParserHelper.parseCamelProducerUris(method,false,true);
-    for (    String uri : uris) {
-      CamelEndpointDetails detail=findEndpointByUri(endpoints,uri);
+    for (    ParserResult result : uris) {
+      CamelEndpointDetails detail=findEndpointByUri(endpoints,result.getElement());
       if (detail != null) {
         if (detail.isConsumerOnly()) {
           detail.setConsumerOnly(false);
@@ -53,7 +53,7 @@
       }
     }
     uris=CamelJavaParserHelper.parseCamelConsumerUris(method,true,false);
-    for (    String uri : uris) {
+    for (    ParserResult result : uris) {
       String fileName=fullyQualifiedFileName;
       if (fileName.startsWith(baseDir)) {
         fileName=fileName.substring(baseDir.length() + 1);
@@ -61,15 +61,19 @@
       CamelEndpointDetails detail=new CamelEndpointDetails();
       detail.setFileName(fileName);
       detail.setEndpointInstance(null);
-      detail.setEndpointUri(uri);
-      detail.setEndpointComponentName(endpointComponentName(uri));
+      detail.setEndpointUri(result.getElement());
+      int line=findLineNumber(fullyQualifiedFileName,result.getPosition());
+      if (line > -1) {
+        detail.setLineNumber("" + line);
+      }
+      detail.setEndpointComponentName(endpointComponentName(result.getElement()));
       detail.setConsumerOnly(true);
       detail.setProducerOnly(false);
       endpoints.add(detail);
     }
     uris=CamelJavaParserHelper.parseCamelProducerUris(method,true,false);
-    for (    String uri : uris) {
-      CamelEndpointDetails detail=findEndpointByUri(endpoints,uri);
+    for (    ParserResult result : uris) {
+      CamelEndpointDetails detail=findEndpointByUri(endpoints,result.getElement());
       if (detail == null) {
         String fileName=fullyQualifiedFileName;
         if (fileName.startsWith(baseDir)) {
@@ -78,8 +82,12 @@
         detail=new CamelEndpointDetails();
         detail.setFileName(fileName);
         detail.setEndpointInstance(null);
-        detail.setEndpointUri(uri);
-        detail.setEndpointComponentName(endpointComponentName(uri));
+        detail.setEndpointUri(result.getElement());
+        int line=findLineNumber(fullyQualifiedFileName,result.getPosition());
+        if (line > -1) {
+          detail.setLineNumber("" + line);
+        }
+        detail.setEndpointComponentName(endpointComponentName(result.getElement()));
         detail.setConsumerOnly(false);
         detail.setProducerOnly(true);
         endpoints.add(detail);

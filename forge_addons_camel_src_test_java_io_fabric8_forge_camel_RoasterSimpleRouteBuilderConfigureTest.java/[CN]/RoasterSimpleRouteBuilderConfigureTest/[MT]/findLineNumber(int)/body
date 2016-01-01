@@ -1,0 +1,16 @@
+{
+  int lines=0;
+  int current=0;
+  File file=new File("src/test/java/io/fabric8/forge/camel/MySimpleRouteBuilder.java");
+  try (BufferedReader br=new BufferedReader(new FileReader(file))){
+    String line;
+    while ((line=br.readLine()) != null) {
+      lines++;
+      current+=line.length();
+      if (current > pos) {
+        return lines;
+      }
+    }
+  }
+   return -1;
+}

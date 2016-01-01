@@ -1,7 +1,8 @@
 {
   if (strings && arg instanceof StringLiteral) {
+    int position=((StringLiteral)arg).getStartPosition();
     String uri=((StringLiteral)arg).getLiteralValue();
-    uris.add(uri);
+    uris.add(new ParserResult(position,uri));
   }
  else   if (fields && arg instanceof SimpleName) {
     String fieldName=((SimpleName)arg).getIdentifier();
@@ -18,7 +19,8 @@
           uri=annotation.getStringValue("uri");
         }
         if (uri != null) {
-          uris.add(uri);
+          int position=((SimpleName)arg).getStartPosition();
+          uris.add(new ParserResult(position,uri));
         }
       }
     }

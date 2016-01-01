@@ -1,0 +1,20 @@
+{
+  int lines=0;
+  try {
+    int current=0;
+    try (BufferedReader br=new BufferedReader(new FileReader(new File(fullyQualifiedFileName)))){
+      String line;
+      while ((line=br.readLine()) != null) {
+        lines++;
+        current+=line.length() + 1;
+        if (current >= position) {
+          return lines;
+        }
+      }
+    }
+   }
+ catch (  Exception e) {
+    return -1;
+  }
+  return lines;
+}

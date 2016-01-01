@@ -1,11 +1,11 @@
 {
-  List<String> answer=new ArrayList<String>();
+  List<ParserResult> answer=new ArrayList<ParserResult>();
   MethodDeclaration md=(MethodDeclaration)method.getInternal();
   for (  Object statement : md.getBody().statements()) {
     if (statement instanceof ExpressionStatement) {
       ExpressionStatement es=(ExpressionStatement)statement;
       Expression exp=es.getExpression();
-      List<String> uris=new ArrayList<String>();
+      List<ParserResult> uris=new ArrayList<ParserResult>();
       parseExpression(method,exp,uris,consumers,producers,strings,fields);
       if (!uris.isEmpty()) {
         Collections.reverse(uris);
