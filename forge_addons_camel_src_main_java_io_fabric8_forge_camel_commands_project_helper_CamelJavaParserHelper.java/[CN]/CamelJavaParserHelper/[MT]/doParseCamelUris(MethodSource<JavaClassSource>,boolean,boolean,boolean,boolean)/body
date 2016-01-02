@@ -1,15 +1,17 @@
 {
   List<ParserResult> answer=new ArrayList<ParserResult>();
   MethodDeclaration md=(MethodDeclaration)method.getInternal();
-  for (  Object statement : md.getBody().statements()) {
-    if (statement instanceof ExpressionStatement) {
-      ExpressionStatement es=(ExpressionStatement)statement;
-      Expression exp=es.getExpression();
-      List<ParserResult> uris=new ArrayList<ParserResult>();
-      parseExpression(method.getOrigin(),exp,uris,consumers,producers,strings,fields);
-      if (!uris.isEmpty()) {
-        Collections.reverse(uris);
-        answer.addAll(uris);
+  if (md.getBody() != null) {
+    for (    Object statement : md.getBody().statements()) {
+      if (statement instanceof ExpressionStatement) {
+        ExpressionStatement es=(ExpressionStatement)statement;
+        Expression exp=es.getExpression();
+        List<ParserResult> uris=new ArrayList<ParserResult>();
+        parseExpression(method.getOrigin(),exp,uris,consumers,producers,strings,fields);
+        if (!uris.isEmpty()) {
+          Collections.reverse(uris);
+          answer.addAll(uris);
+        }
       }
     }
   }
