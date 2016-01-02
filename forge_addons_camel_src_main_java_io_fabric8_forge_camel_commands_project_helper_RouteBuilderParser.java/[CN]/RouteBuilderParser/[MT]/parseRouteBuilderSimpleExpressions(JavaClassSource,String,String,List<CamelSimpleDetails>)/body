@@ -1,11 +1,4 @@
 {
-  String superType=clazz.getSuperType();
-  if (superType != null) {
-    boolean valid="org.apache.camel.builder.RouteBuilder".equals(superType) || "org.apache.camel.spring.boot.FatJarRouter".equals(superType);
-    if (!valid) {
-      return;
-    }
-  }
   MethodSource<JavaClassSource> method=CamelJavaParserHelper.findConfigureMethod(clazz);
   if (method != null) {
     List<ParserResult> expressions=CamelJavaParserHelper.parseCamelSimpleExpressions(method);
