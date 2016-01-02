@@ -1,6 +1,12 @@
 {
+  if (expression instanceof ParenthesizedExpression) {
+    expression=((ParenthesizedExpression)expression).getExpression();
+  }
   if (expression instanceof StringLiteral) {
     return ((StringLiteral)expression).getLiteralValue();
+  }
+ else   if (expression instanceof NumberLiteral) {
+    return ((NumberLiteral)expression).getToken();
   }
  else   if (expression instanceof SimpleName) {
     FieldSource field=getField(clazz,(SimpleName)expression);
@@ -14,14 +20,28 @@
     if (InfixExpression.Operator.PLUS.equals(ie.getOperator())) {
       String val1=getLiteralValue(clazz,ie.getLeftOperand());
       String val2=getLiteralValue(clazz,ie.getRightOperand());
-      answer=(val1 != null ? val1 : "") + (val2 != null ? val2 : "");
+      boolean numeric=isNumericOperator(clazz,ie.getLeftOperand()) && isNumericOperator(clazz,ie.getRightOperand());
+      if (numeric) {
+        Long num1=(val1 != null ? Long.valueOf(val1) : 0);
+        Long num2=(val2 != null ? Long.valueOf(val2) : 0);
+        answer="" + (num1 + num2);
+      }
+ else {
+        answer=(val1 != null ? val1 : "") + (val2 != null ? val2 : "");
+      }
       if (!answer.isEmpty()) {
-        int position=ie.getStartPosition();
         List extended=ie.extendedOperands();
         if (extended != null) {
           for (          Object ext : extended) {
             String val3=getLiteralValue(clazz,(Expression)ext);
-            answer+=val3 != null ? val3 : "";
+            if (numeric) {
+              Long num3=(val3 != null ? Long.valueOf(val3) : 0);
+              Long num=Long.valueOf(answer);
+              answer="" + (num + num3);
+            }
+ else {
+              answer+=val3 != null ? val3 : "";
+            }
           }
         }
       }

@@ -1,0 +1,12 @@
+{
+  if (expression instanceof NumberLiteral) {
+    return true;
+  }
+ else   if (expression instanceof SimpleName) {
+    FieldSource field=getField(clazz,(SimpleName)expression);
+    if (field != null) {
+      return field.getType().isType("int") || field.getType().isType("long") || field.getType().isType("Integer")|| field.getType().isType("Long");
+    }
+  }
+  return false;
+}
