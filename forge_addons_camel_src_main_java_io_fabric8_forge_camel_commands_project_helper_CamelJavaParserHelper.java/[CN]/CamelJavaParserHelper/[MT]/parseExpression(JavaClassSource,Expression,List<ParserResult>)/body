@@ -1,0 +1,11 @@
+{
+  if (exp == null) {
+    return;
+  }
+  if (exp instanceof MethodInvocation) {
+    MethodInvocation mi=(MethodInvocation)exp;
+    doParseCamelSimple(clazz,mi,expressions);
+    exp=mi.getExpression();
+    parseExpression(clazz,exp,expressions);
+  }
+}

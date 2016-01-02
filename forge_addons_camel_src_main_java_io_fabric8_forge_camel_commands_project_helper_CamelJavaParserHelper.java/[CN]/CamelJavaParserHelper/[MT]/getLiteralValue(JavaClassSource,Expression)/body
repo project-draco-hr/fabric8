@@ -1,0 +1,32 @@
+{
+  if (expression instanceof StringLiteral) {
+    return ((StringLiteral)expression).getLiteralValue();
+  }
+ else   if (expression instanceof SimpleName) {
+    FieldSource field=getField(clazz,(SimpleName)expression);
+    if (field != null) {
+      return field.getStringInitializer();
+    }
+  }
+ else   if (expression instanceof InfixExpression) {
+    String answer=null;
+    InfixExpression ie=(InfixExpression)expression;
+    if (InfixExpression.Operator.PLUS.equals(ie.getOperator())) {
+      String val1=getLiteralValue(clazz,ie.getLeftOperand());
+      String val2=getLiteralValue(clazz,ie.getRightOperand());
+      answer=(val1 != null ? val1 : "") + (val2 != null ? val2 : "");
+      if (!answer.isEmpty()) {
+        int position=ie.getStartPosition();
+        List extended=ie.extendedOperands();
+        if (extended != null) {
+          for (          Object ext : extended) {
+            String val3=getLiteralValue(clazz,(Expression)ext);
+            answer+=val3 != null ? val3 : "";
+          }
+        }
+      }
+    }
+    return answer;
+  }
+  return null;
+}

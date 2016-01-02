@@ -1,0 +1,17 @@
+{
+  JavaClassSource clazz=(JavaClassSource)Roaster.parse(new File("src/test/java/io/fabric8/forge/camel/MyCdiConcatRouteBuilder.java"));
+  MethodSource<JavaClassSource> method=clazz.getMethod("configure");
+  List<ParserResult> list=CamelJavaParserHelper.parseCamelConsumerUris(method,true,true);
+  for (  ParserResult result : list) {
+    System.out.println("Consumer: " + result.getElement());
+  }
+  list=CamelJavaParserHelper.parseCamelProducerUris(method,true,true);
+  for (  ParserResult result : list) {
+    System.out.println("Producer: " + result.getElement());
+  }
+  List<CamelEndpointDetails> details=new ArrayList<CamelEndpointDetails>();
+  RouteBuilderParser.parseRouteBuilderEndpoints(clazz,".","src/test/java/io/fabric8/forge/camel/MyCdiConcatRouteBuilder.java",details);
+  for (  CamelEndpointDetails detail : details) {
+    System.out.println("Endpoint: " + detail);
+  }
+}

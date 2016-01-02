@@ -1,0 +1,40 @@
+{
+  if (strings) {
+    String uri=getLiteralValue(clazz,(Expression)arg);
+    if (uri != null) {
+      int position=((Expression)arg).getStartPosition();
+      uris.add(new ParserResult(position,uri));
+    }
+  }
+  if (fields && arg instanceof SimpleName) {
+    FieldSource field=getField(clazz,(SimpleName)arg);
+    if (field != null) {
+      String uri=null;
+      AnnotationSource annotation=field.getAnnotation("org.apache.camel.cdi.Uri");
+      if (annotation == null) {
+        annotation=field.getAnnotation("org.apache.camel.EndpointInject");
+      }
+      if (annotation != null) {
+        Expression exp=(Expression)annotation.getInternal();
+        if (exp instanceof SingleMemberAnnotation) {
+          exp=((SingleMemberAnnotation)exp).getValue();
+        }
+ else         if (exp instanceof NormalAnnotation) {
+          List values=((NormalAnnotation)exp).values();
+          for (          Object value : values) {
+            MemberValuePair pair=(MemberValuePair)value;
+            if ("uri".equals(pair.getName().toString())) {
+              exp=pair.getValue();
+              break;
+            }
+          }
+        }
+        uri=CamelJavaParserHelper.getLiteralValue(clazz,exp);
+      }
+      if (uri != null) {
+        int position=((SimpleName)arg).getStartPosition();
+        uris.add(new ParserResult(position,uri));
+      }
+    }
+  }
+}
