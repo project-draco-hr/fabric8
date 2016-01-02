@@ -7,7 +7,7 @@
  else   if (fields && arg instanceof SimpleName) {
     String fieldName=((SimpleName)arg).getIdentifier();
     if (fieldName != null) {
-      FieldSource field=method.getOrigin().getField(fieldName);
+      FieldSource field=method.getOrigin() != null ? method.getOrigin().getField(fieldName) : null;
       if (field != null) {
         String uri=null;
         AnnotationSource annotation=field.getAnnotation("org.apache.camel.cdi.Uri");
