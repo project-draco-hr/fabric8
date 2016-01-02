@@ -7,18 +7,16 @@
  else   if (strings && arg instanceof InfixExpression) {
     InfixExpression ie=(InfixExpression)arg;
     if (InfixExpression.Operator.PLUS.equals(ie.getOperator())) {
-      Expression left=ie.getLeftOperand();
-      Expression right=ie.getRightOperand();
-      if (left instanceof StringLiteral && right instanceof StringLiteral) {
-        String uri=((StringLiteral)left).getLiteralValue() + ((StringLiteral)right).getLiteralValue();
+      String val1=getLiteralValue(method,ie.getLeftOperand());
+      String val2=getLiteralValue(method,ie.getRightOperand());
+      String uri=(val1 != null ? val1 : "") + (val2 != null ? val2 : "");
+      if (!uri.isEmpty()) {
         int position=ie.getStartPosition();
         List extended=ie.extendedOperands();
         if (extended != null) {
-          for (int i=0; i < extended.size(); i++) {
-            Object ext=extended.get(i);
-            if (ext instanceof StringLiteral) {
-              uri+=((StringLiteral)ext).getLiteralValue();
-            }
+          for (          Object ext : extended) {
+            String val3=getLiteralValue(method,(Expression)ext);
+            uri+=val3 != null ? val3 : "";
           }
         }
         uris.add(new ParserResult(position,uri));
@@ -26,23 +24,20 @@
     }
   }
  else   if (fields && arg instanceof SimpleName) {
-    String fieldName=((SimpleName)arg).getIdentifier();
-    if (fieldName != null) {
-      FieldSource field=method.getOrigin() != null ? method.getOrigin().getField(fieldName) : null;
-      if (field != null) {
-        String uri=null;
-        AnnotationSource annotation=field.getAnnotation("org.apache.camel.cdi.Uri");
-        if (annotation != null) {
-          uri=annotation.getStringValue();
-        }
-        annotation=field.getAnnotation("org.apache.camel.EndpointInject");
-        if (annotation != null) {
-          uri=annotation.getStringValue("uri");
-        }
-        if (uri != null) {
-          int position=((SimpleName)arg).getStartPosition();
-          uris.add(new ParserResult(position,uri));
-        }
+    FieldSource field=getField(method,(SimpleName)arg);
+    if (field != null) {
+      String uri=null;
+      AnnotationSource annotation=field.getAnnotation("org.apache.camel.cdi.Uri");
+      if (annotation != null) {
+        uri=annotation.getStringValue();
+      }
+      annotation=field.getAnnotation("org.apache.camel.EndpointInject");
+      if (annotation != null) {
+        uri=annotation.getStringValue("uri");
+      }
+      if (uri != null) {
+        int position=((SimpleName)arg).getStartPosition();
+        uris.add(new ParserResult(position,uri));
       }
     }
   }
