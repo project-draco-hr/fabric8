@@ -9,7 +9,6 @@
   if (fields && arg instanceof SimpleName) {
     FieldSource field=getField(clazz,(SimpleName)arg);
     if (field != null) {
-      String uri=null;
       AnnotationSource annotation=field.getAnnotation("org.apache.camel.cdi.Uri");
       if (annotation == null) {
         annotation=field.getAnnotation("org.apache.camel.EndpointInject");
@@ -29,18 +28,22 @@
             }
           }
         }
-        uri=CamelJavaParserHelper.getLiteralValue(clazz,exp,false);
+        String uri=CamelJavaParserHelper.getLiteralValue(clazz,exp,false);
+        if (uri != null) {
+          int position=((SimpleName)arg).getStartPosition();
+          uris.add(new ParserResult(position,uri));
+        }
       }
  else {
         Object fi=field.getInternal();
         if (fi instanceof VariableDeclaration) {
           Expression exp=((VariableDeclaration)fi).getInitializer();
-          uri=CamelJavaParserHelper.getLiteralValue(clazz,exp,false);
+          String uri=CamelJavaParserHelper.getLiteralValue(clazz,exp,false);
+          if (uri != null) {
+            int position=((VariableDeclaration)fi).getStartPosition();
+            uris.add(new ParserResult(position,uri));
+          }
         }
-      }
-      if (uri != null) {
-        int position=((SimpleName)arg).getStartPosition();
-        uris.add(new ParserResult(position,uri));
       }
     }
   }
