@@ -1,6 +1,6 @@
 {
   if (strings) {
-    String uri=getLiteralValue(clazz,(Expression)arg);
+    String uri=getLiteralValue(clazz,(Expression)arg,true);
     if (uri != null) {
       int position=((Expression)arg).getStartPosition();
       uris.add(new ParserResult(position,uri));
@@ -29,7 +29,14 @@
             }
           }
         }
-        uri=CamelJavaParserHelper.getLiteralValue(clazz,exp);
+        uri=CamelJavaParserHelper.getLiteralValue(clazz,exp,false);
+      }
+ else {
+        Object fi=field.getInternal();
+        if (fi instanceof VariableDeclaration) {
+          Expression exp=((VariableDeclaration)fi).getInitializer();
+          uri=CamelJavaParserHelper.getLiteralValue(clazz,exp,false);
+        }
       }
       if (uri != null) {
         int position=((SimpleName)arg).getStartPosition();

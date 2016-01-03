@@ -8,18 +8,25 @@
  else   if (expression instanceof NumberLiteral) {
     return ((NumberLiteral)expression).getToken();
   }
- else   if (expression instanceof SimpleName) {
+  if (literalOnly) {
+    return null;
+  }
+  if (expression instanceof SimpleName) {
     FieldSource field=getField(clazz,(SimpleName)expression);
     if (field != null) {
-      return field.getStringInitializer();
+      Object fi=field.getInternal();
+      if (fi instanceof VariableDeclaration) {
+        Expression exp=((VariableDeclaration)fi).getInitializer();
+        return getLiteralValue(clazz,exp,literalOnly);
+      }
     }
   }
  else   if (expression instanceof InfixExpression) {
     String answer=null;
     InfixExpression ie=(InfixExpression)expression;
     if (InfixExpression.Operator.PLUS.equals(ie.getOperator())) {
-      String val1=getLiteralValue(clazz,ie.getLeftOperand());
-      String val2=getLiteralValue(clazz,ie.getRightOperand());
+      String val1=getLiteralValue(clazz,ie.getLeftOperand(),literalOnly);
+      String val2=getLiteralValue(clazz,ie.getRightOperand(),literalOnly);
       boolean numeric=isNumericOperator(clazz,ie.getLeftOperand()) && isNumericOperator(clazz,ie.getRightOperand());
       if (numeric) {
         Long num1=(val1 != null ? Long.valueOf(val1) : 0);
@@ -33,7 +40,7 @@
         List extended=ie.extendedOperands();
         if (extended != null) {
           for (          Object ext : extended) {
-            String val3=getLiteralValue(clazz,(Expression)ext);
+            String val3=getLiteralValue(clazz,(Expression)ext,literalOnly);
             if (numeric) {
               Long num3=(val3 != null ? Long.valueOf(val3) : 0);
               Long num=Long.valueOf(answer);
