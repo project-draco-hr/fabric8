@@ -4,6 +4,7 @@
     List<Node> nodes=CamelXmlHelper.findAllEndpoints(dom);
     for (    Node node : nodes) {
       String uri=getSafeAttribute(node,"uri");
+      uri=trimEndpointUri(uri);
       String id=getSafeAttribute(node,"id");
       String lineNumber=(String)node.getUserData(XmlLineNumberParser.LINE_NUMBER);
       String fileName=fullyQualifiedFileName;
