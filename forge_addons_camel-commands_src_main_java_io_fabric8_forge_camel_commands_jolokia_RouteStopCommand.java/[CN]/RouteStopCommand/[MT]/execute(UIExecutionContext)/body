@@ -1,9 +1,0 @@
-{
-  String url=getJolokiaUrl();
-  if (url == null) {
-    return Results.fail("Not connected to remote jolokia agent. Use camel-connect command first");
-  }
-  org.apache.camel.commands.RouteStopCommand command=new org.apache.camel.commands.RouteStopCommand(route.getValue(),name.getValue());
-  command.execute(getController(),getOutput(context),getError(context));
-  return Results.success("Stopped " + route.getValue());
-}
