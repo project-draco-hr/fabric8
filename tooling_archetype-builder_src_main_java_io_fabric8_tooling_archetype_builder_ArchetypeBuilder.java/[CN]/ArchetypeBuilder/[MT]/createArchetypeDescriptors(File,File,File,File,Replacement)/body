@@ -123,6 +123,18 @@
     IOHelpers.copy(new InputStreamReader(getClass().getResourceAsStream("default-archetype-pom.xml")),sw);
     Document pomDocument=archetypeUtils.parseXml(new InputSource(new StringReader(sw.toString())));
     List<String> emptyList=Collections.emptyList();
+    String projectVersion=System.getProperty("project.version");
+    if (Strings.isNotBlank(projectVersion)) {
+      Element parent=DomHelper.firstChild(pomDocument.getDocumentElement(),"parent");
+      if (parent != null) {
+        Element version=DomHelper.firstChild(parent,"version");
+        if (version != null) {
+          if (!Objects.equal(version.getTextContent(),projectVersion)) {
+            version.setTextContent(projectVersion);
+          }
+        }
+      }
+    }
     Element artifactId=replaceOrAddElement(pomDocument,pomDocument.getDocumentElement(),"artifactId",emptyList);
     artifactId.setTextContent(archetypeDir.getName());
     Element name=replaceOrAddElement(pomDocument,pomDocument.getDocumentElement(),"name",emptyList);
