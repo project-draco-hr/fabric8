@@ -27,45 +27,7 @@
   }
   builder.addNewReplicationControllerItem().withNewMetadata().withName(KubernetesHelper.validateKubernetesId(replicationControllerName,"fabric8.replicationController.name")).withLabels(labelMap).withAnnotations(rcAnnotations).endMetadata().withNewSpec().withReplicas(replicaCount).withSelector(labelMap).withNewTemplate().withNewMetadata().withLabels(labelMap).withAnnotations(podSpecAnnotations).endMetadata().withNewSpec().withServiceAccountName(serviceAccount).addNewContainer().withName(getKubernetesContainerName()).withImage(getDockerImage()).withImagePullPolicy(getImagePullPolicy()).withEnv(getEnvironmentVariables()).withNewSecurityContext().withPrivileged(containerPrivileged).endSecurityContext().withPorts(getContainerPorts()).withVolumeMounts(volumeMounts).withLivenessProbe(getLivenessProbe()).withReadinessProbe(getReadinessProbe()).endContainer().withVolumes(volumes).endSpec().endTemplate().endSpec().endReplicationControllerItem();
   addPersistentVolumeClaims(builder,volumes);
-  if (serviceName != null) {
-    Map<String,String> metricsAnnotations=new HashMap<>();
-    if (metricsScrape) {
-      metricsAnnotations.put(metricsScrapeAnnotation,Boolean.toString(metricsScrape));
-      if (metricsPort != null) {
-        metricsAnnotations.put(metricsPortAnnotation,metricsPort.toString());
-      }
-      if (metricsScheme != null) {
-        metricsAnnotations.put(metricsSchemeAnnotation,metricsScheme);
-      }
-    }
-    Map<String,String> serviceAnnotations=getServiceAnnotations();
-    serviceAnnotations.putAll(metricsAnnotations);
-    Map<String,String> selector=new HashMap<>(labelMap);
-    if (removeVersionLabelFromServiceSelector) {
-      if (selector.remove("version") != null) {
-        getLog().info("Removed 'version' label from service selector for service `" + serviceName + "`");
-      }
-    }
-    ServiceBuilder serviceBuilder=new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labelMap).withAnnotations(serviceAnnotations).endMetadata();
-    ServiceFluent.SpecNested<ServiceBuilder> serviceSpecBuilder=serviceBuilder.withNewSpec().withSelector(selector);
-    List<ServicePort> servicePorts=getServicePorts();
-    getLog().info("Generated ports: " + servicePorts);
-    boolean hasPorts=servicePorts != null & !servicePorts.isEmpty();
-    if (hasPorts) {
-      serviceSpecBuilder.withPorts(servicePorts);
-    }
- else {
-      serviceSpecBuilder.withClusterIP("None");
-      serviceSpecBuilder.withPorts(new ServicePort(null,null,1,null,null));
-    }
-    if (Strings.isNotBlank(serviceType)) {
-      serviceSpecBuilder.withType(serviceType);
-    }
-    serviceSpecBuilder.endSpec();
-    if (headlessServices || hasPorts) {
-      builder=builder.addToServiceItems(serviceBuilder.build());
-    }
-  }
+  addServices(builder,labelMap);
   Template template=getTemplate();
   String iconUrl=getIconUrl();
   if (!template.getParameters().isEmpty() || Strings.isNotBlank(iconUrl)) {

@@ -1,0 +1,30 @@
+{
+  Map<String,String> metricsAnnotations=new HashMap<>();
+  boolean tempMetricsScrape;
+  Integer tempMetricsPort=null;
+  String tempMetricsScheme;
+  if (Strings.isNotBlank(serviceName)) {
+    Properties properties=getProjectAndFabric8Properties(getProject());
+    tempMetricsScrape=Boolean.parseBoolean(properties.getProperty(buildServicePrefix(serviceName,"fabric8.service","metrics.scrape")));
+    tempMetricsScheme=properties.getProperty(buildServicePrefix(serviceName,"fabric8.service","metrics.scheme"));
+    String port=properties.getProperty(buildServicePrefix(serviceName,"fabric8.service","metrics.port"));
+    if (port != null) {
+      tempMetricsPort=Integer.parseInt(port);
+    }
+  }
+ else {
+    tempMetricsScrape=metricsScrape;
+    tempMetricsScheme=metricsScheme;
+    tempMetricsPort=metricsPort;
+  }
+  if (tempMetricsScrape) {
+    metricsAnnotations.put(metricsScrapeAnnotation,Boolean.toString(tempMetricsScrape));
+    if (tempMetricsPort != null) {
+      metricsAnnotations.put(metricsPortAnnotation,tempMetricsPort.toString());
+    }
+    if (tempMetricsScheme != null) {
+      metricsAnnotations.put(metricsSchemeAnnotation,tempMetricsScheme);
+    }
+  }
+  return metricsAnnotations;
+}

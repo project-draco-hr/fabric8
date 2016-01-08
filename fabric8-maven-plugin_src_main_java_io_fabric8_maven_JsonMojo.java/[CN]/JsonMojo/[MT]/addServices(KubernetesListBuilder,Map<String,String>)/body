@@ -1,0 +1,64 @@
+{
+  MavenProject project=getProject();
+  Properties properties=getProjectAndFabric8Properties(project);
+  Set<String> serviceNames=new HashSet<>(Arrays.asList(""));
+  for (  Map.Entry<Object,Object> entry : properties.entrySet()) {
+    Object key=entry.getKey();
+    if (key instanceof String) {
+      String s=(String)key;
+      Matcher m=SERVICE_PATTERN.matcher(s);
+      if (m.matches()) {
+        String name=m.group(NAME);
+        serviceNames.add(name);
+      }
+    }
+  }
+  for (  String serviceName : serviceNames) {
+    Map<String,String> serviceAnnotations=getServiceAnnotations();
+    serviceAnnotations.putAll(getMetricsAnnotations(serviceName));
+    Map<String,String> selector=new HashMap<>(labelMap);
+    if (removeVersionLabelFromServiceSelector) {
+      if (selector.remove("version") != null) {
+        getLog().info("Removed 'version' label from service selector for service `" + serviceName + "`");
+      }
+    }
+    String tempServiceName=serviceName;
+    if (Strings.isNullOrBlank(tempServiceName)) {
+      tempServiceName=this.serviceName;
+    }
+    ServiceBuilder serviceBuilder=new ServiceBuilder().withNewMetadata().withName(tempServiceName).withLabels(labelMap).withAnnotations(serviceAnnotations).endMetadata();
+    ServiceFluent.SpecNested<ServiceBuilder> serviceSpecBuilder=serviceBuilder.withNewSpec().withSelector(selector);
+    List<ServicePort> servicePorts=getServicePorts(serviceName);
+    getLog().info("Generated ports: " + servicePorts);
+    boolean hasPorts=servicePorts != null && !servicePorts.isEmpty();
+    if (hasPorts) {
+      serviceSpecBuilder.withPorts(servicePorts);
+    }
+    String headlessPrefix=buildServicePrefix(serviceName,"fabric8.service","headless");
+    Boolean tempHeadlessService=Boolean.valueOf(properties.getProperty(headlessPrefix));
+    if (tempHeadlessService) {
+      serviceSpecBuilder.withClusterIP("None");
+      if (!hasPorts && Boolean.parseBoolean(serviceAnnotations.get(metricsScrapeAnnotation))) {
+        try {
+          String port=serviceAnnotations.get(metricsPortAnnotation);
+          Integer metricsPort=Integer.parseInt(port);
+          if (metricsPort != null) {
+            ServicePort servicePort=new ServicePort();
+            servicePort.setPort(metricsPort);
+            servicePort.setTargetPort(new IntOrString(metricsPort));
+            serviceSpecBuilder.withPorts(Arrays.asList(servicePort));
+          }
+        }
+ catch (        NumberFormatException e) {
+        }
+      }
+    }
+    if (Strings.isNotBlank(serviceType)) {
+      serviceSpecBuilder.withType(serviceType);
+    }
+    serviceSpecBuilder.endSpec();
+    if (tempHeadlessService || hasPorts) {
+      builder=builder.addToServiceItems(serviceBuilder.build());
+    }
+  }
+}

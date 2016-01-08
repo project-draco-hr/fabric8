@@ -1,0 +1,76 @@
+{
+  String servicePortPrefix=buildServicePrefix(serviceName,"fabric8.service","port");
+  String serviceContainerPortPrefix=buildServicePrefix(serviceName,"fabric8.service","containerPort");
+  String serviceNodePortPrefix=buildServicePrefix(serviceName,"fabric8.service","nodePort");
+  String serviceProtocolPrefix=buildServicePrefix(serviceName,"fabric8.service","protocol");
+  Properties properties1=getProjectAndFabric8Properties(getProject());
+  List<ServicePort> servicePorts=new ArrayList<>();
+  Map<String,String> servicePortProperties=findPropertiesWithPrefix(properties1,servicePortPrefix + ".");
+  Map<String,String> serviceContainerPortProperties=findPropertiesWithPrefix(properties1,serviceContainerPortPrefix + ".");
+  Map<String,String> serviceNodePortProperties=findPropertiesWithPrefix(properties1,serviceNodePortPrefix + ".");
+  Map<String,String> serviceProtocolProperties=findPropertiesWithPrefix(properties1,serviceProtocolPrefix + ".");
+  for (  Map.Entry<String,String> entry : servicePortProperties.entrySet()) {
+    String name=entry.getKey();
+    String servicePortText=entry.getValue();
+    Integer servicePortNumber=parsePort(servicePortText,servicePortPrefix + name);
+    if (servicePortNumber != null) {
+      String containerPort=serviceContainerPortProperties.get(name);
+      if (Strings.isNullOrBlank(containerPort)) {
+        getLog().warn("Missing container port for service - need to specify " + serviceContainerPortPrefix + name+ " property");
+      }
+ else {
+        ServicePort servicePort=new ServicePort();
+        servicePort.setName(name);
+        servicePort.setPort(servicePortNumber);
+        IntOrString containerPortSpec=getPortSpec(containerPort,serviceContainerPortPrefix,name);
+        servicePort.setTargetPort(containerPortSpec);
+        String nodePort=serviceNodePortProperties.get(name);
+        if (nodePort != null) {
+          IntOrString nodePortSpec=getPortSpec(nodePort,serviceNodePortPrefix,name);
+          Integer nodePortInt=nodePortSpec.getIntVal();
+          if (nodePortInt != null) {
+            servicePort.setNodePort(nodePortInt);
+          }
+        }
+        String portProtocol=serviceProtocolProperties.get(name);
+        if (portProtocol != null) {
+          servicePort.setProtocol(portProtocol);
+        }
+        servicePorts.add(servicePort);
+      }
+    }
+  }
+  Integer tempPort;
+  String tempContainerPort;
+  Integer tempNodePort;
+  String tempServiceProtocol;
+  if (Strings.isNotBlank(serviceName)) {
+    tempPort=parsePort(properties1.getProperty(servicePortPrefix),servicePortPrefix);
+    tempContainerPort=properties1.getProperty(serviceContainerPortPrefix);
+    tempNodePort=parsePort(properties1.getProperty(serviceNodePortPrefix),serviceNodePortPrefix);
+    tempServiceProtocol=properties1.getProperty(serviceProtocolPrefix,"TCP");
+  }
+ else {
+    tempPort=servicePort;
+    tempContainerPort=serviceContainerPort;
+    tempNodePort=serviceNodePort;
+    tempServiceProtocol=serviceProtocol;
+  }
+  if (tempContainerPort != null || tempPort != null) {
+    if (servicePorts.size() > 0) {
+      throw new MojoExecutionException("Multi-port services must use the " + servicePortPrefix + "<name> format");
+    }
+    ServicePort actualServicePort=new ServicePort();
+    IntOrString containerPort=getPortSpec(tempContainerPort,serviceContainerPortPrefix,null);
+    actualServicePort.setTargetPort(containerPort);
+    actualServicePort.setPort(tempPort);
+    if (tempNodePort != null) {
+      actualServicePort.setNodePort(tempNodePort);
+    }
+    if (tempServiceProtocol != null) {
+      actualServicePort.setProtocol(tempServiceProtocol);
+      servicePorts.add(actualServicePort);
+    }
+  }
+  return servicePorts;
+}
