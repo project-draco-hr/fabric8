@@ -1,0 +1,19 @@
+{
+  if (!isPodRunning(pod)) {
+    return false;
+  }
+  PodStatus podStatus=pod.getStatus();
+  if (podStatus == null) {
+    return true;
+  }
+  List<PodCondition> conditions=podStatus.getConditions();
+  if (conditions == null || conditions.isEmpty()) {
+    return true;
+  }
+  for (  PodCondition condition : conditions) {
+    if ("ready".equalsIgnoreCase(condition.getType())) {
+      return Boolean.parseBoolean(condition.getStatus());
+    }
+  }
+  return true;
+}
