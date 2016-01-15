@@ -1,0 +1,16 @@
+{
+  ArtifactFilter filter=new ScopeArtifactFilter(scope);
+  DependencyNode rootNode=dependencyGraphBuilder.buildDependencyGraph(project,filter);
+  final ArrayList<Artifact> artifacts=new ArrayList<>();
+  rootNode.accept(new DependencyNodeVisitor(){
+    @Override public boolean visit(    DependencyNode dependencyNode){
+      artifacts.add(dependencyNode.getArtifact());
+      return true;
+    }
+    @Override public boolean endVisit(    DependencyNode dependencyNode){
+      return true;
+    }
+  }
+);
+  return artifacts;
+}

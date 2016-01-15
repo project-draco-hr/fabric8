@@ -1,10 +1,17 @@
 {
-  DependencyStatusSets results=this.getDependencySets(false,false);
   File libDir=new File(assembly,"lib");
   libDir.mkdirs();
   File binDir=new File(assembly,"bin");
   binDir.mkdirs();
   ArrayList<String> classpath=new ArrayList<String>();
+  ArrayList<Artifact> artifacts=null;
+  try {
+    artifacts=collectClassPath();
+  }
+ catch (  DependencyGraphBuilderException e) {
+    throw new MojoExecutionException("Could not get classpath",e);
+  }
+  System.out.println(artifacts);
   if (project.getArtifact().getFile() != null) {
     File target=new File(libDir,project.getArtifact().getFile().getName());
     classpath.add(target.getName());
@@ -15,7 +22,12 @@
       throw new MojoExecutionException("Could not copy artifact to lib dir",e);
     }
   }
-  for (  Artifact artifact : results.getResolvedDependencies()) {
+  Map artifactMap=project.getArtifactMap();
+  for (  Artifact x : artifacts) {
+    Artifact artifact=(Artifact)artifactMap.get(ArtifactUtils.versionlessKey(x));
+    if (artifact == null || artifact.getFile() == null) {
+      continue;
+    }
     File file=artifact.getFile().getAbsoluteFile();
     try {
       File target=new File(libDir,file.getName());
