@@ -1,0 +1,10 @@
+{
+  FileObject fileObject=processingEnv.getFiler().getResource(StandardLocation.CLASS_OUTPUT,"",fileName);
+  Path path=Paths.get(fileObject.toUri());
+  File file=path.toFile();
+  if (file.exists() && !file.delete()) {
+    throw new IOException("Failed to delete old kubernetes json file: " + fileName);
+  }
+  fileObject=processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT,"",fileName);
+  return fileObject;
+}

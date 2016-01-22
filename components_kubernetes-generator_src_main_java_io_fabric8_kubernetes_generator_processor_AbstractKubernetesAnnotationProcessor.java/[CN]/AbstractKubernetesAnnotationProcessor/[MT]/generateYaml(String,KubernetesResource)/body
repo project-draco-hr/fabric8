@@ -1,10 +1,8 @@
 {
   try {
     FileObject fileObject=getFileObject(fileName);
-    try (Writer writer=fileObject.openWriter()){
-      MAPPER.writeValue(writer,resource);
-    }
-   }
+    KubernetesHelper.saveYaml(resource,fileObject);
+  }
  catch (  IOException e) {
     processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Error generating json " + fileName);
   }

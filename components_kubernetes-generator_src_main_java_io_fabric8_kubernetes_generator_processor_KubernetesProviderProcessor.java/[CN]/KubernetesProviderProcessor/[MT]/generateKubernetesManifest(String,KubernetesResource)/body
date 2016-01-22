@@ -1,0 +1,13 @@
+{
+  FileExtension ext=FileExtension.determineExtension(Files.getFileExtension(new File(fileName)));
+switch (ext) {
+case JSON:
+    generateJson(fileName,resource);
+  break;
+case YAML:
+generateYaml(fileName,resource);
+break;
+case UNDEFINED:
+processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"could not determine file extension for " + fileName + ". Is it .json, .yaml, or .yml?");
+}
+}
