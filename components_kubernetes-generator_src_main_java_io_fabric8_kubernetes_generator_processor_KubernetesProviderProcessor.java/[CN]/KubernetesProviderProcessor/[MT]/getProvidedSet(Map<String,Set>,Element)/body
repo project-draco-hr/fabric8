@@ -1,0 +1,10 @@
+{
+  KubernetesProvider providerAnnotation=element.getAnnotation(KubernetesProvider.class);
+  String kubernetesFile=providerAnnotation.value().trim();
+  if (providedMap.containsKey(kubernetesFile)) {
+    return providedMap.get(kubernetesFile);
+  }
+  LinkedHashSet rc=new LinkedHashSet();
+  providedMap.put(kubernetesFile,rc);
+  return rc;
+}
