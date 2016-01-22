@@ -4,7 +4,7 @@
     Path path=Paths.get(fileObject.toUri());
     File file=path.toFile();
     if (file.exists() && !file.delete()) {
-      throw new IOException("Failed to delete old kubernetes json.");
+      throw new IOException("Failed to delete old kubernetes json file: " + fileName);
     }
     fileObject=processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT,"",fileName);
     try (Writer writer=fileObject.openWriter()){
@@ -12,6 +12,6 @@
     }
    }
  catch (  IOException e) {
-    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Error generating json.");
+    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Error generating json " + fileName);
   }
 }

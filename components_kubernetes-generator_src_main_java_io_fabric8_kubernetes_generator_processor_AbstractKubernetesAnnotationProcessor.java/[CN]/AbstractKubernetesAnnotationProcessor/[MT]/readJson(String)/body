@@ -1,0 +1,12 @@
+{
+  try {
+    FileObject fileObject=processingEnv.getFiler().getResource(StandardLocation.CLASS_OUTPUT,"",(fileName == null ? KUBERNETES_JSON : fileName));
+    try (Reader reader=fileObject.openReader(false)){
+      return MAPPER.readValue(reader,KubernetesResource.class);
+    }
+   }
+ catch (  IOException e) {
+    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,fileName + " JSON not found.");
+  }
+  return null;
+}

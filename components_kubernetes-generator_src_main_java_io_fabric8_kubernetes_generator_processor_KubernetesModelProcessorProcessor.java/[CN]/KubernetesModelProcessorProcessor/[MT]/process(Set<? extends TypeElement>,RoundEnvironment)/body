@@ -27,7 +27,9 @@
     processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE,"Fabric8 model generator compiler output:" + output);
   }
   for (  Element element : roundEnv.getElementsAnnotatedWith(KubernetesModelProcessor.class)) {
-    KubernetesResource json=readJson();
+    KubernetesModelProcessor annotation=element.getAnnotation(KubernetesModelProcessor.class);
+    String kubernetesJsonFileName=annotation.value();
+    KubernetesResource json=readJson(kubernetesJsonFileName);
     Builder<? extends KubernetesResource> builder;
     if (json instanceof KubernetesList) {
       builder=new KubernetesListBuilder((KubernetesList)json);
@@ -81,7 +83,7 @@ catch (                  InvocationTargetException e) {
         }
       }
       json=builder.build();
-      generateJson(json);
+      generateJson(kubernetesJsonFileName,json);
     }
  catch (    Exception ex) {
       processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"Error creating Kubernetes configuration:" + ex.getMessage());
