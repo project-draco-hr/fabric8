@@ -1,0 +1,37 @@
+{
+  command.setTransportConfigCallback(new TransportConfigCallback(){
+    @Override public void configure(    Transport transport){
+      SshTransport sshTransport=(SshTransport)transport;
+      sshTransport.setSshSessionFactory(new JschConfigSessionFactory(){
+        @Override protected void configure(        OpenSshConfig.Host host,        Session session){
+        }
+        @Override protected JSch createDefaultJSch(        FS fs) throws JSchException {
+          JSch jsch=super.createDefaultJSch(fs);
+          try {
+            ConnectorFactory cf=ConnectorFactory.getDefault();
+            Connector con=cf.createConnector();
+            IdentityRepository irepo=new RemoteIdentityRepository(con);
+            jsch.setIdentityRepository(irepo);
+            getLog().debug("helm: Using ssh-agent");
+          }
+ catch (          AgentProxyException e) {
+            getLog().debug("helm: No ssh-agent available");
+            if (!Strings.isNullOrBlank(privateKeyPath)) {
+              getLog().debug("helm: Using SSH private key from " + privateKeyPath);
+              jsch.removeAllIdentity();
+              if (!Strings.isNullOrBlank(privateKeyPassphrase)) {
+                jsch.addIdentity(privateKeyPath,privateKeyPassphrase);
+              }
+ else {
+                jsch.addIdentity(privateKeyPath);
+              }
+            }
+          }
+          return jsch;
+        }
+      }
+);
+    }
+  }
+);
+}

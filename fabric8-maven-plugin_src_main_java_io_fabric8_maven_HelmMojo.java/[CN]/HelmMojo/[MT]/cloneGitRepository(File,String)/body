@@ -5,9 +5,7 @@
  else {
     CloneCommand command=Git.cloneRepository();
     command=command.setURI(gitUrl).setDirectory(outputFolder).setRemote(remoteRepoName);
-    if (!Strings.isNullOrBlank(privateKeyPath)) {
-      addSpecificPrivateKey(command);
-    }
+    setupCredentials(command);
     try {
       Git git=command.call();
     }
