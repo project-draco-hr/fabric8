@@ -1,0 +1,10 @@
+{
+  if (Files.isDirectory(p)) {
+    try (DirectoryStream<Path> directoryStream=Files.newDirectoryStream(p)){
+      for (      Path path : directoryStream) {
+        recusiveDeleteIfExists(path);
+      }
+    }
+   }
+  Files.deleteIfExists(p);
+}

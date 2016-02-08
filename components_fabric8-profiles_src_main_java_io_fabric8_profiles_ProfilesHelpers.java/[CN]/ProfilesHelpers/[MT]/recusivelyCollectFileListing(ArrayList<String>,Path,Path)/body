@@ -1,0 +1,12 @@
+{
+  try (DirectoryStream<Path> directoryStream=Files.newDirectoryStream(directory)){
+    for (    Path path : directoryStream) {
+      if (Files.isDirectory(path)) {
+        recusivelyCollectFileListing(rc,base,path);
+      }
+ else {
+        rc.add(base.relativize(path).toString());
+      }
+    }
+  }
+ }

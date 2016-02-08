@@ -1,0 +1,17 @@
+{
+  ArrayList<String> profileSearchOrder=new ArrayList<>();
+  for (  String profileName : profileNames) {
+    collectProfileNames(profileSearchOrder,profileName);
+  }
+  HashSet<String> files=new HashSet<>();
+  for (  String profileName : profileSearchOrder) {
+    files.addAll(listFiles(profileName));
+  }
+  System.out.println("profile search order" + profileSearchOrder);
+  System.out.println("files: " + files);
+  for (  String file : files) {
+    try (InputStream is=materializeFile(file,profileSearchOrder)){
+      Files.copy(is,target.resolve(file),StandardCopyOption.REPLACE_EXISTING);
+    }
+   }
+}

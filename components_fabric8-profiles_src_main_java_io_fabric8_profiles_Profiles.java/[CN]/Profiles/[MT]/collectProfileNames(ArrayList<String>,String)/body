@@ -1,0 +1,22 @@
+{
+  if (target.contains(profileName)) {
+    return;
+  }
+  Path path=getProfilePath(profileName);
+  if (!Files.exists(path)) {
+    throw new IOException("Profile directory does not exists: " + path);
+  }
+  Properties props=new Properties();
+  Path agentProperties=path.resolve("io.fabric8.agent.properties");
+  if (Files.exists(agentProperties)) {
+    props=readPropertiesFile(agentProperties);
+  }
+  String parents=props.getProperty("attribute.parents","default".equals(profileName) ? "" : "default");
+  for (  String parent : parents.split(",")) {
+    parent=parent.trim();
+    if (!parent.isEmpty()) {
+      collectProfileNames(target,parent);
+    }
+  }
+  target.add(profileName);
+}

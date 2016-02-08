@@ -1,0 +1,22 @@
+{
+  if (fileName.endsWith(".properties")) {
+    Properties properties=new Properties();
+    for (    String profile : profileSearchOrder) {
+      Path path=getProfilePath(profile).resolve(fileName);
+      if (Files.exists(path)) {
+        merge(properties,readPropertiesFile(path));
+      }
+    }
+    return new ByteArrayInputStream(toBytes(properties));
+  }
+ else {
+    Path last=null;
+    for (    String profile : profileSearchOrder) {
+      Path path=getProfilePath(profile).resolve(fileName);
+      if (Files.exists(path)) {
+        last=path;
+      }
+    }
+    return Files.newInputStream(last);
+  }
+}

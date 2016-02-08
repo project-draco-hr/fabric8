@@ -1,0 +1,14 @@
+{
+  Path target=PROJECT_BASE_DIR.resolve("target/test-data/materialize1");
+  recusiveDeleteIfExists(target);
+  Files.createDirectories(target);
+  Path repository=PROJECT_BASE_DIR.resolve("src/test/profiles");
+  new Profiles(repository).materialize(target,"d");
+  Assert.assertEquals("d",readTextFile(target.resolve("test.txt")));
+  Properties properties=readPropertiesFile(target.resolve("test.properties"));
+  Assert.assertEquals("d",properties.getProperty("name"));
+  Assert.assertEquals("a",readTextFile(target.resolve("a.txt")));
+  Assert.assertEquals("b",readTextFile(target.resolve("b.txt")));
+  Assert.assertEquals("c",readTextFile(target.resolve("c.txt")));
+  Assert.assertEquals("d",readTextFile(target.resolve("d.txt")));
+}
