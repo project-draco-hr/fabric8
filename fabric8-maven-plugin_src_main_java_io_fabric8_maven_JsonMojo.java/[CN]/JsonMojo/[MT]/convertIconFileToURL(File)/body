@@ -45,10 +45,9 @@
       }
     }
  else {
-      String commonRef=asCommonIconRef(iconRef);
-      if (commonRef != null) {
-        String answer=URLUtils.pathJoin("https://cdn.rawgit.com/fabric8io/fabric8",iconBranch,"/fabric8-maven-plugin/src/main/resources/",commonRef);
-        return answer;
+      String embeddedIcon=embeddedIconsInConsole(iconRef,"img/icons/");
+      if (embeddedIcon != null) {
+        return embeddedIcon;
       }
  else {
         getLog().warn("Cannot find url for icon to use " + iconUrl);
