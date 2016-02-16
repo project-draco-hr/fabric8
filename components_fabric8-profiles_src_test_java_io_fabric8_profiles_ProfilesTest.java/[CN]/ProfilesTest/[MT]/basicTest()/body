@@ -11,4 +11,8 @@
   Assert.assertEquals("b",readTextFile(target.resolve("b.txt")));
   Assert.assertEquals("c",readTextFile(target.resolve("c.txt")));
   Assert.assertEquals("d",readTextFile(target.resolve("d.txt")));
+  JsonNode jsonNode=readYamlFile(target.resolve("test.yml"));
+  Assert.assertEquals("d",jsonNode.get("name").textValue());
+  Assert.assertEquals("maybe",jsonNode.get("attributes").get("awesome").textValue());
+  Assert.assertEquals(4,jsonNode.get("pods").size());
 }

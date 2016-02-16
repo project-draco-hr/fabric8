@@ -4,10 +4,30 @@
     for (    String profile : profileSearchOrder) {
       Path path=getProfilePath(profile).resolve(fileName);
       if (Files.exists(path)) {
-        merge(properties,readPropertiesFile(path));
+        ProfilesHelpers.merge(properties,readPropertiesFile(path));
       }
     }
     return new ByteArrayInputStream(toBytes(properties));
+  }
+ else   if (fileName.endsWith(".json")) {
+    JsonNode node=null;
+    for (    String profile : profileSearchOrder) {
+      Path path=getProfilePath(profile).resolve(fileName);
+      if (Files.exists(path)) {
+        node=ProfilesHelpers.merge(node,readJsonFile(path));
+      }
+    }
+    return new ByteArrayInputStream(toJsonBytes(node));
+  }
+ else   if (fileName.endsWith(".yml")) {
+    JsonNode node=null;
+    for (    String profile : profileSearchOrder) {
+      Path path=getProfilePath(profile).resolve(fileName);
+      if (Files.exists(path)) {
+        node=ProfilesHelpers.merge(node,readYamlFile(path));
+      }
+    }
+    return new ByteArrayInputStream(toYamlBytes(node));
   }
  else {
     Path last=null;

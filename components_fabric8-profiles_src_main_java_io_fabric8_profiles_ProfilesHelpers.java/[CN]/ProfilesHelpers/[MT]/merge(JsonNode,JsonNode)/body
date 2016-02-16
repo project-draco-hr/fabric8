@@ -1,0 +1,44 @@
+{
+  if (target == null) {
+    return source;
+  }
+  if (target.isArray() && source.isArray()) {
+    ArrayNode copy=(ArrayNode)target.deepCopy();
+    for (    JsonNode n : source) {
+      if ((n.isTextual() && DELETED.equals(n.textValue()))) {
+        copy=JsonNodeFactory.instance.arrayNode();
+      }
+ else {
+        copy.add(n);
+      }
+    }
+    return copy;
+  }
+ else   if (target.isObject() && source.isObject()) {
+    ObjectNode copy=(ObjectNode)target.deepCopy();
+    if (source.get(DELETED) != null) {
+      copy=JsonNodeFactory.instance.objectNode();
+    }
+ else {
+      Iterator<String> iterator=source.fieldNames();
+      while (iterator.hasNext()) {
+        String key=iterator.next();
+        if (!DELETED.equals(key)) {
+          JsonNode value=source.get(key);
+          if ((value.isTextual() && DELETED.equals(value.textValue()))) {
+            copy.remove(key);
+          }
+ else {
+            JsonNode original=target.get(key);
+            value=merge(original,value);
+            copy.set(key,value);
+          }
+        }
+      }
+    }
+    return copy;
+  }
+ else {
+    return source;
+  }
+}
