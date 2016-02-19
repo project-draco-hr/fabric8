@@ -4,7 +4,12 @@
     if (interpolations != null) {
       content=StringUtils.interpolate(content,interpolations);
     }
-    content=content.replaceAll("\\r?\\n",Matcher.quoteReplacement("\n"));
+    if (unixLinedEndings) {
+      content=content.replaceAll("\\r?\\n",Matcher.quoteReplacement("\n"));
+    }
+ else {
+      content=content.replaceAll("\\r?\\n",Matcher.quoteReplacement("\r\n"));
+    }
     FileUtils.fileWrite(target,content);
   }
  catch (  IOException e) {
