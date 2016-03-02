@@ -11,7 +11,7 @@
  catch (  DependencyGraphBuilderException e) {
     throw new MojoExecutionException("Could not get classpath",e);
   }
-  System.out.println(artifacts);
+  getLog().debug("Classpath for " + scope + ":\n"+ artifactsToString(artifacts));
   if (project.getArtifact().getFile() != null) {
     File target=new File(libDir,project.getArtifact().getFile().getName());
     classpath.add(target.getName());
