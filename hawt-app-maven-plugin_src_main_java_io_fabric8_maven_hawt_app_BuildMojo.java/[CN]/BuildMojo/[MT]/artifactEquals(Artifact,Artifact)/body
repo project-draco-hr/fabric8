@@ -1,0 +1,21 @@
+{
+  if (a1 == a2) {
+    return true;
+  }
+  if (!a1.getGroupId().equals(a2.getGroupId())) {
+    return false;
+  }
+ else   if (!a1.getArtifactId().equals(a2.getArtifactId())) {
+    return false;
+  }
+ else   if (!a1.getVersion().equals(a2.getVersion())) {
+    return false;
+  }
+ else   if (!a1.getType().equals(a2.getType())) {
+    return false;
+  }
+  if (a1.getClassifier() == null || a1.getClassifier().isEmpty()) {
+    return a2.getClassifier() == null || a2.getClassifier().isEmpty();
+  }
+  return a1.getClassifier().equals(a2.getClassifier());
+}

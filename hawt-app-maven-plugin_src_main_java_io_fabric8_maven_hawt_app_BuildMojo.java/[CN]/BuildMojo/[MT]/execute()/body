@@ -22,12 +22,13 @@
       throw new MojoExecutionException("Could not copy artifact to lib dir",e);
     }
   }
-  Map artifactMap=project.getArtifactMap();
+  Map artifactMap=getArtifactMap();
   for (  Artifact x : artifacts) {
-    Artifact artifact=(Artifact)artifactMap.get(ArtifactUtils.versionlessKey(x));
-    if (artifact == null || artifact.getFile() == null) {
+    Artifact artifact=(Artifact)artifactMap.get(versionlessKey(x));
+    if (artifact == null || artifact.getFile() == null || !artifactEquals(artifact,x)) {
       continue;
     }
+    getLog().debug("Copying " + artifact.toString());
     File file=artifact.getFile().getAbsoluteFile();
     try {
       File target=new File(libDir,file.getName());

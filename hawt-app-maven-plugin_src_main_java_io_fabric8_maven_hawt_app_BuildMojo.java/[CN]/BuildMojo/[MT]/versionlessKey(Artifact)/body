@@ -1,0 +1,19 @@
+{
+  String groupId=artifact.getGroupId();
+  String artifactId=artifact.getArtifactId();
+  String type=artifact.getType();
+  String classifier=artifact.getClassifier();
+  if (groupId == null) {
+    throw new NullPointerException("groupId is null");
+  }
+ else   if (artifactId == null) {
+    throw new NullPointerException("artifactId is null");
+  }
+ else   if (type == null) {
+    throw new NullPointerException("type is null");
+  }
+  if (classifier == null || classifier.isEmpty()) {
+    return groupId + ":" + artifactId+ ":"+ type;
+  }
+  return groupId + ":" + artifactId+ ":"+ type+ ":"+ classifier;
+}
