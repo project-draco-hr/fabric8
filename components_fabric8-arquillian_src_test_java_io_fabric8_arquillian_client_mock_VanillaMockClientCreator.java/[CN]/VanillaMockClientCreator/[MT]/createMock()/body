@@ -38,6 +38,5 @@
   mock.replicationControllers().inNamespace("arquillian").withName("test-controller").get().andReturn(null).once();
   mock.replicationControllers().inNamespace("arquillian").create(EasyMock.<ReplicationController>anyObject()).andReturn(testReplicationController).anyTimes();
   mock.replicationControllers().inNamespace("arquillian").list().andReturn(new ReplicationControllerListBuilder().addToItems(testReplicationController).build()).anyTimes();
-  mock.adapt(OpenShiftClient.class).andReturn(createOpenshiftClient()).anyTimes();
-  kubernetes.set(mock.replay());
+  return mock;
 }

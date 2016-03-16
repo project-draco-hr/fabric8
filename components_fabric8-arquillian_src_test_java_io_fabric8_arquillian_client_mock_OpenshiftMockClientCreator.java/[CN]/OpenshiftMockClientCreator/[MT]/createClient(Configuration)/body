@@ -1,0 +1,6 @@
+{
+  KubernetesMockClient mock=createMock();
+  mock.isAdaptable(OpenShiftClient.class).andReturn(true).anyTimes();
+  mock.adapt(OpenShiftClient.class).andReturn(createOpenshiftClient()).anyTimes();
+  kubernetes.set(mock.replay());
+}
