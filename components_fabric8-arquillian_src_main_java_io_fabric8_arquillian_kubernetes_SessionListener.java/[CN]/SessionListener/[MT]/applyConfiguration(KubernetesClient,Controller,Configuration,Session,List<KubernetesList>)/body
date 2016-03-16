@@ -21,6 +21,7 @@
     }
   }
 );
+  boolean isOpenshift=client.isAdaptable(OpenShiftClient.class);
   String namespace=session.getNamespace();
   String routePrefix=namespace + "." + configuration.getKubernetesDomain();
   preprocessEnvironment(client,controller,configuration,session);
@@ -43,11 +44,13 @@
       log.status("Applying service:" + serviceName);
       controller.applyService(service,session.getId());
       conditions.put(2,servicesReady);
-      Route route=Routes.createRouteForService(routePrefix,namespace,service,log);
-      if (route != null) {
-        log.status("Applying route for:" + serviceName);
-        controller.applyRoute(route,"route for " + serviceName);
-        extraEntities.add(route);
+      if (isOpenshift) {
+        Route route=Routes.createRouteForService(routePrefix,namespace,service,log);
+        if (route != null) {
+          log.status("Applying route for:" + serviceName);
+          controller.applyRoute(route,"route for " + serviceName);
+          extraEntities.add(route);
+        }
       }
     }
  else     if (entity instanceof ReplicationController) {
@@ -65,31 +68,33 @@
       OAuthClient oc=(OAuthClient)entity;
       ObjectMeta metadata=KubernetesHelper.getOrCreateMetadata(oc);
       String name=metadata.getName();
-      OpenShiftClient openShiftClient=client.adapt(OpenShiftClient.class);
-      OAuthClient current=openShiftClient.oAuthClients().withName(name).get();
-      boolean create=false;
-      if (current == null) {
-        current=oc;
-        create=true;
-      }
-      boolean updated=false;
-      List<String> redirectURIs=current.getRedirectURIs();
-      String redirectUri="http://" + name + "."+ routePrefix;
-      if (!redirectURIs.contains(redirectUri)) {
-        redirectURIs.add(redirectUri);
-        updated=true;
-      }
-      current.setRedirectURIs(redirectURIs);
-      log.status("Applying OAuthClient:" + name);
-      controller.setSupportOAuthClients(true);
-      if (create) {
-        openShiftClient.oAuthClients().create(current);
-      }
- else {
-        if (updated) {
-          openShiftClient.oAuthClients().withName(name).delete();
-          current.getMetadata().setResourceVersion(null);
+      if (isOpenshift) {
+        OpenShiftClient openShiftClient=client.adapt(OpenShiftClient.class);
+        OAuthClient current=openShiftClient.oAuthClients().withName(name).get();
+        boolean create=false;
+        if (current == null) {
+          current=oc;
+          create=true;
+        }
+        boolean updated=false;
+        List<String> redirectURIs=current.getRedirectURIs();
+        String redirectUri="http://" + name + "."+ routePrefix;
+        if (!redirectURIs.contains(redirectUri)) {
+          redirectURIs.add(redirectUri);
+          updated=true;
+        }
+        current.setRedirectURIs(redirectURIs);
+        log.status("Applying OAuthClient:" + name);
+        controller.setSupportOAuthClients(true);
+        if (create) {
           openShiftClient.oAuthClients().create(current);
+        }
+ else {
+          if (updated) {
+            openShiftClient.oAuthClients().withName(name).delete();
+            current.getMetadata().setResourceVersion(null);
+            openShiftClient.oAuthClients().create(current);
+          }
         }
       }
     }
