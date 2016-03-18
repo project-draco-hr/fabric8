@@ -15,7 +15,7 @@
     ObjectReference secretRef=new ObjectReferenceBuilder().withName(secretName).build();
     secrets.add(secretRef);
   }
-  if (!secrets.isEmpty()) {
+  if (!secrets.isEmpty() || createServiceAccount) {
     if (Strings.isNullOrBlank(serviceAccount)) {
       serviceAccount=getProject().getArtifactId();
     }
