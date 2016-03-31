@@ -51,16 +51,16 @@
       Template template=(Template)dto;
       dto=applyTemplates(template,kubernetes,controller,fileName);
     }
-    Set<KubernetesList> kubeConfigs=new LinkedHashSet<>();
+    Set<KubernetesResource> resources=new LinkedHashSet<>();
     if (!combineDependencies) {
       for (      File dependency : getDependencies()) {
         getLog().info("Found dependency: " + dependency);
-        loadDependency(getLog(),kubeConfigs,dependency);
+        loadDependency(getLog(),resources,dependency);
       }
     }
     Set<HasMetadata> entities=new TreeSet<>(new HasMetadataComparator());
-    for (    KubernetesList c : kubeConfigs) {
-      entities.addAll(c.getItems());
+    for (    KubernetesResource resource : resources) {
+      entities.addAll(KubernetesHelper.toItemList(resource));
     }
     entities.addAll(KubernetesHelper.toItemList(dto));
     if (createRoutes) {

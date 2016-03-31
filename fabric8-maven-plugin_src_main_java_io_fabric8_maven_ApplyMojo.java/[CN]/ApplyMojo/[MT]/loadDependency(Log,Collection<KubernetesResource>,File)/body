@@ -1,7 +1,7 @@
 {
   if (file.isFile()) {
     log.debug("Loading file " + file);
-    addConfig(kubeConfigs,loadJson(file));
+    addConfig(resources,loadJson(file));
   }
  else {
     File[] children=file.listFiles();
@@ -9,7 +9,7 @@
       for (      File child : children) {
         String name=child.getName().toLowerCase();
         if (name.endsWith(".json") || name.endsWith(".yaml")) {
-          loadDependency(log,kubeConfigs,child);
+          loadDependency(log,resources,child);
         }
       }
     }
