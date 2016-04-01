@@ -1,0 +1,15 @@
+{
+  Asserts.assertWaitFor(timeMillis,new Block(){
+    @Override public void invoke() throws Exception {
+      JobWithDetails job=assertJobExists(jenkins,jobName);
+      Build lastBuild=job.getLastBuild();
+      assertNotNull("No lastBuild for job `" + jobName + "`",lastBuild);
+      System.out.println("Last build of `" + jobName + "` at "+ lastBuild.getUrl());
+      Build lastSuccessfulBuild=job.getLastSuccessfulBuild();
+      assertNotNull("No lastSuccessfulBuild for job `" + jobName + "` at: "+ lastBuild.getUrl(),lastSuccessfulBuild);
+      assertEquals("Last successful build number was not the last build number: " + lastBuild.getUrl(),lastBuild.getNumber(),lastSuccessfulBuild.getNumber());
+      System.out.println("Successful build of `" + jobName + "` at "+ lastSuccessfulBuild.getUrl());
+    }
+  }
+);
+}

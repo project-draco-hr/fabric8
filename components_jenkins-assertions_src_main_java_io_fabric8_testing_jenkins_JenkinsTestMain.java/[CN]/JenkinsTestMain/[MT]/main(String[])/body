@@ -1,0 +1,28 @@
+{
+  if (args.length == 0) {
+    System.out.println("Usage: [jenkinsServerUrl] [jobName]");
+    return;
+  }
+  String jenkinsUrl="http://jenkins.vagrant.f8/";
+  String job=null;
+  if (args.length > 0) {
+    jenkinsUrl=args[0];
+  }
+  if (args.length > 1) {
+    job=args[1];
+  }
+  try {
+    JenkinsServer jenkins=JenkinsAsserts.createJenkinsServer(jenkinsUrl);
+    Map<String,Job> jobs=jenkins.getJobs();
+    Set<Map.Entry<String,Job>> entries=jobs.entrySet();
+    for (    Map.Entry<String,Job> entry : entries) {
+      System.out.println("Job " + entry.getKey() + " = "+ entry.getValue());
+    }
+    if (job != null) {
+      JenkinsAsserts.assertJobLastBuildIsSuccessful(jenkins,job);
+    }
+  }
+ catch (  Exception e) {
+    logError(e.getMessage(),e);
+  }
+}
