@@ -1,0 +1,7 @@
+{
+  BuildList listObject=client.builds().list();
+  assertThat(listObject).describedAs("No BuildList found!").isNotNull();
+  List<Build> list=listObject.getItems();
+  assertThat(list).describedAs("No Build Items found!").isNotNull();
+  return new BuildsAssert(list,client);
+}

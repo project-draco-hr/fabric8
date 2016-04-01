@@ -1,0 +1,11 @@
+{
+  return new Condition<T>(){
+    @Override public String toString(){
+      return "hasNamespace(" + namespace + ")";
+    }
+    @Override public boolean matches(    T resource){
+      return Objects.equals(namespace,resource.getMetadata().getNamespace());
+    }
+  }
+;
+}

@@ -1,0 +1,7 @@
+{
+  BuildConfigList listObject=client.buildConfigs().list();
+  assertThat(listObject).describedAs("No BuildConfigsList found!").isNotNull();
+  List<BuildConfig> list=listObject.getItems();
+  assertThat(list).describedAs("No BuildConfig Items found!").isNotNull();
+  return new BuildConfigsAssert(list,client);
+}

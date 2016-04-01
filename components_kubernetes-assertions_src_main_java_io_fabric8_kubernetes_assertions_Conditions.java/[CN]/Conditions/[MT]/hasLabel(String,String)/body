@@ -1,0 +1,11 @@
+{
+  return new Condition<T>(){
+    @Override public String toString(){
+      return "hasLabel(" + key + " = "+ value+ ")";
+    }
+    @Override public boolean matches(    T resource){
+      return matchesLabel(resource.getMetadata().getLabels(),key,value);
+    }
+  }
+;
+}
