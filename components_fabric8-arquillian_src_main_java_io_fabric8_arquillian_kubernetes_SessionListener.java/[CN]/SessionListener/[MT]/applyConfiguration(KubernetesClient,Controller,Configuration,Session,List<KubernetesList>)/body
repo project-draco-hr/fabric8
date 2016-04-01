@@ -5,7 +5,7 @@
   Callable<Boolean> servicesReady=new SessionServicesAreReady(client,session,configuration);
   List<Object> entities=new ArrayList<>();
   for (  KubernetesList c : kubeConfigs) {
-    entities.addAll(c.getItems());
+    entities.addAll(enhance(session,configuration,c).getItems());
   }
   Collections.sort(entities,new Comparator<Object>(){
     @Override public int compare(    Object left,    Object right){

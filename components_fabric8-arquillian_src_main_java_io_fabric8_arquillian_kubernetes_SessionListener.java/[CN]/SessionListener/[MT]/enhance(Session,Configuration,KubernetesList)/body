@@ -1,0 +1,38 @@
+{
+  if (configuration == null || configuration.getProperties() == null || !configuration.getProperties().containsKey(Constants.KUBERNETES_MODEL_PROCESSOR_CLASS)) {
+    return kubernetesList;
+  }
+  String processorClassName=configuration.getProperties().get(Constants.KUBERNETES_MODEL_PROCESSOR_CLASS);
+  try {
+    final Object instance=SessionListener.class.getClassLoader().loadClass(processorClassName).newInstance();
+    KubernetesListBuilder builder=new KubernetesListBuilder(kubernetesList);
+    ((Visitable)builder).accept(new Visitor(){
+      @Override public void visit(      Object o){
+        for (        Method m : findMethods(instance,o.getClass())) {
+          Named named=m.getAnnotation(Named.class);
+          if (named != null && !Strings.isNullOrBlank(named.value())) {
+            String objectName=o instanceof ObjectMeta ? getName((ObjectMeta)o) : getName((HasMetadata)o);
+            if (!named.value().equals(objectName)) {
+              session.getLogger().warn("Named method:" + m.getName() + " with name:"+ named.value()+ " doesn't match: "+ objectName+ ", ignoring");
+              return;
+            }
+          }
+          try {
+            m.invoke(instance,o);
+          }
+ catch (          IllegalAccessException e) {
+          }
+catch (          InvocationTargetException e) {
+            session.getLogger().error("Error invoking visitor method:" + m.getName() + " on:"+ instance+ "with argument:"+ o);
+          }
+        }
+      }
+    }
+);
+    return builder.build();
+  }
+ catch (  Exception e) {
+    session.getLogger().warn("Failed to load processor class:" + processorClassName + ". Ignoring");
+    return kubernetesList;
+  }
+}
