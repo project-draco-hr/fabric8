@@ -1,0 +1,12 @@
+{
+  URLStreamHandlerFactory factory=new URLStreamHandlerFactory(){
+    @Override public URLStreamHandler createURLStreamHandler(    String protocol){
+      if (protocol.equals("mvn")) {
+        return new org.ops4j.pax.url.mvn.Handler();
+      }
+      return null;
+    }
+  }
+;
+  return doWithCustomURLHandlerFactory(factory,block);
+}

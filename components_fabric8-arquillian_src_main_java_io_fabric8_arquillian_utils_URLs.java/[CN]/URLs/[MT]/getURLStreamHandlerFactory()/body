@@ -1,0 +1,16 @@
+{
+  String fieldName="factory";
+  Class<URL> clazz=URL.class;
+  try {
+    Field field=clazz.getDeclaredField(fieldName);
+    field.setAccessible(true);
+    return (URLStreamHandlerFactory)field.get(null);
+  }
+ catch (  NoSuchFieldException e) {
+    LOG.error("Could not find field " + fieldName + " in class "+ clazz.getName()+ ". "+ e,e);
+  }
+catch (  IllegalAccessException e) {
+    LOG.error("Could not access field " + fieldName + " in class "+ clazz.getName()+ ". "+ e,e);
+  }
+  return null;
+}

@@ -1,0 +1,20 @@
+{
+  final URLStreamHandlerFactory oldFactory=getURLStreamHandlerFactory();
+  try {
+    URLStreamHandlerFactory newFactory=new URLStreamHandlerFactory(){
+      @Override public URLStreamHandler createURLStreamHandler(      String protocol){
+        URLStreamHandler answer=customFactory.createURLStreamHandler(protocol);
+        if (answer == null && oldFactory != null) {
+          answer=oldFactory.createURLStreamHandler(protocol);
+        }
+        return answer;
+      }
+    }
+;
+    setURLStreamHandlerFactory(newFactory);
+    return block.call();
+  }
+  finally {
+    setURLStreamHandlerFactory(oldFactory);
+  }
+}
