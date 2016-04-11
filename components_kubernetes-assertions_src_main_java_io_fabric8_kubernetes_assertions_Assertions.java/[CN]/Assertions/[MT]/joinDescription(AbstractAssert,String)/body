@@ -1,0 +1,11 @@
+{
+  String text=asserter.descriptionText();
+  if (text == null || text.length() == 0) {
+    text=asserter.getClass().getSimpleName();
+    String postfix="Assert";
+    if (text.endsWith(postfix)) {
+      text=text.substring(0,text.length() - postfix.length());
+    }
+  }
+  return text + "." + propertyName;
+}
