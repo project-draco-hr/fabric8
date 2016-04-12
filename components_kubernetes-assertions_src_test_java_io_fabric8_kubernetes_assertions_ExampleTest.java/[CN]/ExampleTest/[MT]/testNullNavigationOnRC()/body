@@ -1,0 +1,9 @@
+{
+  final ReplicationController rc=new ReplicationController();
+  assertAssertionError(new Block(){
+    @Override public void invoke() throws Exception {
+      assertThat(rc).spec().template().spec().containers().first().image().isEqualTo("someDockerImageName");
+    }
+  }
+);
+}
