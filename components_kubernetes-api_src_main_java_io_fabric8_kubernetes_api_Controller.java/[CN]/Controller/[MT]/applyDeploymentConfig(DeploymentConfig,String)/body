@@ -1,8 +1,11 @@
 {
-  try {
-    kubernetesClient.adapt(OpenShiftClient.class).deploymentConfigs().inNamespace(getNamespace()).create(entity);
-  }
- catch (  Exception e) {
-    onApplyError("Failed to create DeploymentConfig from " + sourceName + ". "+ e,e);
+  OpenShiftClient openShiftClient=getOpenShiftClientOrNull();
+  if (openShiftClient != null) {
+    try {
+      openShiftClient.deploymentConfigs().inNamespace(getNamespace()).create(entity);
+    }
+ catch (    Exception e) {
+      onApplyError("Failed to create DeploymentConfig from " + sourceName + ". "+ e,e);
+    }
   }
 }

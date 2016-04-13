@@ -1,19 +1,21 @@
 {
-  OpenShiftClient openShiftClient=kubernetesClient.adapt(OpenShiftClient.class);
-  String id=getName(entity);
-  Objects.notNull(id,"No name for " + entity + " "+ sourceName);
-  String namespace=KubernetesHelper.getNamespace(entity);
-  if (Strings.isNullOrBlank(namespace)) {
-    namespace=getNamespace();
-  }
-  Route route=openShiftClient.routes().inNamespace(namespace).withName(id).get();
-  if (route == null) {
-    try {
-      LOG.info("Creating Route " + namespace + ":"+ id+ " "+ KubernetesHelper.summaryText(entity));
-      openShiftClient.routes().inNamespace(namespace).create(entity);
+  OpenShiftClient openShiftClient=getOpenShiftClientOrNull();
+  if (openShiftClient != null) {
+    String id=getName(entity);
+    Objects.notNull(id,"No name for " + entity + " "+ sourceName);
+    String namespace=KubernetesHelper.getNamespace(entity);
+    if (Strings.isNullOrBlank(namespace)) {
+      namespace=getNamespace();
     }
- catch (    Exception e) {
-      onApplyError("Failed to create Route from " + sourceName + ". "+ e+ ". "+ entity,e);
+    Route route=openShiftClient.routes().inNamespace(namespace).withName(id).get();
+    if (route == null) {
+      try {
+        LOG.info("Creating Route " + namespace + ":"+ id+ " "+ KubernetesHelper.summaryText(entity));
+        openShiftClient.routes().inNamespace(namespace).create(entity);
+      }
+ catch (      Exception e) {
+        onApplyError("Failed to create Route from " + sourceName + ". "+ e+ ". "+ entity,e);
+      }
     }
   }
 }

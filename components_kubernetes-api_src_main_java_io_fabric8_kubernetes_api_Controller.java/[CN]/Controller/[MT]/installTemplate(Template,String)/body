@@ -1,5 +1,8 @@
 {
-  OpenShiftClient openShiftClient=kubernetesClient.adapt(OpenShiftClient.class);
+  OpenShiftClient openShiftClient=getOpenShiftClientOrNull();
+  if (openShiftClient == null) {
+    return;
+  }
   if (!isProcessTemplatesLocally()) {
     String namespace=getNamespace();
     String id=getName(entity);

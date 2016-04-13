@@ -1,9 +1,12 @@
 {
-  Object result=null;
-  try {
-    result=kubernetesClient.adapt(OpenShiftClient.class).oAuthClients().create(entity);
-  }
- catch (  Exception e) {
-    onApplyError("Failed to create OAuthClient from " + sourceName + ". "+ e+ ". "+ entity,e);
+  OpenShiftClient openShiftClient=getOpenShiftClientOrNull();
+  if (openShiftClient != null) {
+    Object result=null;
+    try {
+      result=openShiftClient.oAuthClients().create(entity);
+    }
+ catch (    Exception e) {
+      onApplyError("Failed to create OAuthClient from " + sourceName + ". "+ e+ ". "+ entity,e);
+    }
   }
 }
