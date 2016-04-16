@@ -1,0 +1,19 @@
+{
+  if (args.length < 1) {
+    System.out.println("Usage nameOfBuildConfig");
+    return;
+  }
+  try {
+    KubernetesClient kube=new DefaultKubernetesClient();
+    String name=args[0];
+    BuildConfig buildConfig=new BuildConfigBuilder().withNewMetadata().withName(name).endMetadata().withNewSpec().withNewSource().withType("Git").withNewGit().withUri("http://gogs.vagrant.f8/gogsadmin/" + name + ".git").endGit().endSource().endSpec().build();
+    System.out.println("Creating BuildConfig: " + buildConfig);
+    Controller controller=new Controller(kube);
+    controller.applyBuildConfig(buildConfig,"Generated!");
+    System.out.println("Applied!: " + name);
+  }
+ catch (  Exception e) {
+    System.out.println("FAILED: " + e);
+    e.printStackTrace();
+  }
+}

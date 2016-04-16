@@ -1,0 +1,16 @@
+{
+  if (args.length < 1) {
+    System.out.println("Usage nameOfService");
+    return;
+  }
+  try {
+    String name=args[0];
+    KubernetesClient kube=new DefaultKubernetesClient();
+    String url=KubernetesHelper.getServiceURL(kube,name,kube.getNamespace(),"http",true);
+    System.out.println("Service " + name + " has external URL: "+ url);
+  }
+ catch (  Exception e) {
+    System.out.println("FAILED: " + e);
+    e.printStackTrace();
+  }
+}

@@ -16,6 +16,12 @@
     }
   }
   if (srv == null) {
+    String hostAndPort=Systems.getServiceHostAndPort(serviceName,"","");
+    if (!hostAndPort.startsWith(":")) {
+      return serviceProto + "://" + hostAndPort;
+    }
+  }
+  if (srv == null) {
     throw new IllegalArgumentException("No kubernetes service could be found for name: " + serviceName + " in namespace: "+ actualNamespace);
   }
   try {
@@ -42,5 +48,33 @@
   if ("None".equals(srv.getSpec().getClusterIP())) {
     throw new IllegalStateException("Service: " + serviceName + " in namespace:"+ serviceNamespace+ "is head-less. Search for endpoints instead.");
   }
-  return (serviceProto + "://" + srv.getSpec().getPortalIP()+ ":"+ port.getPort()).toLowerCase();
+  String portalIP=srv.getSpec().getPortalIP();
+  Integer portNumber=port.getPort();
+  if (Strings.isNullOrBlank(portalIP)) {
+    Integer nodePort=port.getNodePort();
+    if (nodePort != null) {
+      try {
+        NodeList nodeList=client.nodes().list();
+        if (nodeList != null) {
+          List<Node> items=nodeList.getItems();
+          if (items != null) {
+            for (            Node item : items) {
+              NodeSpec spec=item.getSpec();
+              if (spec != null) {
+                portalIP=spec.getExternalID();
+                if (Strings.isNotBlank(portalIP)) {
+                  portNumber=nodePort;
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+ catch (      Exception e) {
+        LOG.warn("Could not find a node!: " + e,e);
+      }
+    }
+  }
+  return (serviceProto + "://" + portalIP+ ":"+ portNumber).toLowerCase();
 }
