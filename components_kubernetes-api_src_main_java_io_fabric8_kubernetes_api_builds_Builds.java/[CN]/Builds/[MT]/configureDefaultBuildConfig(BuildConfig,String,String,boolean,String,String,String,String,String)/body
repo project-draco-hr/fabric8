@@ -39,6 +39,9 @@
     customStrategy.setFrom(new ObjectReferenceBuilder().withKind("DockerImage").withName(s2iCustomBuilderImage).build());
   }
   List<BuildTriggerPolicy> triggers=spec.getTriggers();
+  if (triggers == null) {
+    triggers=new ArrayList<>();
+  }
   if (triggers.isEmpty()) {
     triggers.add(new BuildTriggerPolicyBuilder().withType("GitHub").withNewGithub().withSecret(secret).endGithub().build());
     triggers.add(new BuildTriggerPolicyBuilder().withType("Generic").withNewGeneric().withSecret(secret).endGeneric().build());
