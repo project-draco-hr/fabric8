@@ -103,15 +103,17 @@
   }
   addLink("Git",getGitUrl());
   Controller controller=createController();
-  OpenShiftClient openShiftClient=getKubernetes().adapt(OpenShiftClient.class);
+  OpenShiftClient openShiftClient=controller.getOpenShiftClientOrJenkinshift();
   BuildConfig buildConfig=null;
-  try {
-    buildConfig=openShiftClient.inNamespace(namespace).buildConfigs().withName(projectName).get();
+  if (openShiftClient != null) {
+    try {
+      buildConfig=openShiftClient.inNamespace(namespace).buildConfigs().withName(projectName).get();
+    }
+ catch (    Exception e) {
+      log.error("Failed to load build config for " + namespace + "/"+ projectName+ ". "+ e,e);
+    }
+    log.info("Loaded build config for " + namespace + "/"+ projectName+ " "+ buildConfig);
   }
- catch (  Exception e) {
-    log.error("Failed to load build config for " + namespace + "/"+ projectName+ ". "+ e,e);
-  }
-  log.info("Loaded build config for " + namespace + "/"+ projectName+ " "+ buildConfig);
   boolean foundExistingGitUrl=false;
   if (buildConfig != null) {
     BuildConfigSpec spec=buildConfig.getSpec();
