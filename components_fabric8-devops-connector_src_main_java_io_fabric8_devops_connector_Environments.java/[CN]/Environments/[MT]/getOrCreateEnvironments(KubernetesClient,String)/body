@@ -1,0 +1,13 @@
+{
+  ConfigMap answer=null;
+  try {
+    answer=client.inNamespace(namespace).configMaps().withName(ENVIRONMENTS_CONFIG_MAP_NAME).get();
+  }
+ catch (  Exception e) {
+    LOG.info("Failed to find ConfigMap " + namespace + "."+ ENVIRONMENTS_CONFIG_MAP_NAME+ ". "+ e,e);
+  }
+  if (answer == null || KubernetesHelper.getName(answer) == null) {
+    answer=new ConfigMapBuilder().withNewMetadata().withName(ENVIRONMENTS_CONFIG_MAP_NAME).addToLabels("kind","environments").addToLabels("provider","fabric8.io").endMetadata().build();
+  }
+  return answer;
+}

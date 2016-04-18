@@ -1,0 +1,18 @@
+{
+  boolean answer=false;
+  Map<String,String> data=environmentsConfigMap.getData();
+  if (data == null) {
+    data=new HashMap<>();
+    answer=true;
+  }
+  String yaml=data.get(key);
+  if (Strings.isNullOrBlank(yaml)) {
+    yaml="name: " + label + "\nnamespace: "+ namespace;
+    data.put(key,yaml);
+    answer=true;
+  }
+  if (answer) {
+    environmentsConfigMap.setData(data);
+  }
+  return answer;
+}
