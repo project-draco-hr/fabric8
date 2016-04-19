@@ -25,13 +25,16 @@
   if (addedServiceAcount) {
     addServiceConstraints(builder,volumes,containerPrivileged != null && containerPrivileged.booleanValue());
   }
+  String iconUrl=getIconUrl();
+  if (Strings.isNotBlank(iconUrl)) {
+    rcAnnotations.put(FABRIC8_ICON_URL_ANNOTATION,iconUrl);
+  }
   if (Utils.isNotNullOrEmpty(getDockerImage())) {
     builder.addNewReplicationControllerItem().withNewMetadata().withName(KubernetesHelper.validateKubernetesId(replicationControllerName,"fabric8.replicationController.name")).withLabels(labelMap).withAnnotations(rcAnnotations).endMetadata().withNewSpec().withReplicas(replicaCount).withSelector(labelMap).withNewTemplate().withNewMetadata().withLabels(labelMap).withAnnotations(podSpecAnnotations).endMetadata().withNewSpec().withServiceAccountName(serviceAccount).addNewContainer().withName(getKubernetesContainerName()).withImage(getDockerImage()).withImagePullPolicy(getImagePullPolicy()).withEnv(getEnvironmentVariables()).withNewSecurityContext().withPrivileged(containerPrivileged).endSecurityContext().withPorts(getContainerPorts()).withVolumeMounts(volumeMounts).withLivenessProbe(getLivenessProbe()).withReadinessProbe(getReadinessProbe()).endContainer().withVolumes(volumes).endSpec().endTemplate().endSpec().endReplicationControllerItem();
   }
   addPersistentVolumeClaims(builder,volumes);
-  addServices(builder,labelMap);
+  addServices(builder,labelMap,iconUrl);
   Template template=getTemplate();
-  String iconUrl=getIconUrl();
   if (!template.getParameters().isEmpty() || Strings.isNotBlank(iconUrl)) {
     configureTemplateDescriptionAndIcon(template,iconUrl);
     builder=builder.addToTemplateItems(template);
@@ -43,6 +46,7 @@
   Object result=Templates.combineTemplates(kubernetesList);
   if (result instanceof Template) {
     Template resultTemplate=(Template)result;
+    defaultIconUrl(resultTemplate.getObjects());
     configureTemplateDescriptionAndIcon(resultTemplate,iconUrl);
     if (pureKubernetes) {
       try {
@@ -54,6 +58,7 @@
     }
   }
   try {
+    defaultIconUrl(KubernetesHelper.toItemList(result));
     if (pureKubernetes) {
       result=filterPureKubernetes(result);
     }

@@ -1,0 +1,13 @@
+{
+  String iconUrl=getIconUrl();
+  if (Strings.isNotBlank(iconUrl)) {
+    for (    HasMetadata entity : hasMetadatas) {
+      if (entity instanceof Service || entity instanceof ServiceAccount) {
+        Map<String,String> annotations=KubernetesHelper.getOrCreateAnnotations(entity);
+        if (Strings.isNullOrBlank(annotations.get(FABRIC8_ICON_URL_ANNOTATION))) {
+          annotations.put(FABRIC8_ICON_URL_ANNOTATION,iconUrl);
+        }
+      }
+    }
+  }
+}

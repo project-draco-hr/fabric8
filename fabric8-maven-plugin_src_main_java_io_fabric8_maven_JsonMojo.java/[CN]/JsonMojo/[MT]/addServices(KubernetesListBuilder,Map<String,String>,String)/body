@@ -16,6 +16,9 @@
   for (  String serviceName : serviceNames) {
     Map<String,String> serviceAnnotations=getServiceAnnotations();
     serviceAnnotations.putAll(getMetricsAnnotations(serviceName));
+    if (Strings.isNotBlank(this.iconUrl)) {
+      serviceAnnotations.put(FABRIC8_ICON_URL_ANNOTATION,this.iconUrl);
+    }
     Map<String,String> selector=new HashMap<>(labelMap);
     if (removeVersionLabelFromServiceSelector) {
       if (selector.remove("version") != null) {
