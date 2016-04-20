@@ -1,5 +1,10 @@
 {
   Namespace entity=new Namespace();
-  getOrCreateMetadata(entity).setName(namespaceName);
+  ObjectMeta metadata=getOrCreateMetadata(entity);
+  metadata.setName(namespaceName);
+  String namespace=kubernetesClient.getNamespace();
+  if (Strings.isNotBlank(namespace)) {
+    getOrCreateLabels(entity).put("project",namespace);
+  }
   applyNamespace(entity);
 }
