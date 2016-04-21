@@ -1,0 +1,34 @@
+{
+  if (args.length < 1) {
+    System.out.println("Usage nameOfBuildConfig");
+    return;
+  }
+  try {
+    String name=args[0];
+    System.out.println("Deleting BuildConfig: " + name);
+    KubernetesClient kube=new DefaultKubernetesClient();
+    String namespace=kube.getNamespace();
+    System.out.println("Using namespace: " + namespace);
+    kube=kube.inNamespace(namespace);
+    Controller controller=new Controller(kube);
+    OpenShiftClient openshift=controller.getOpenShiftClientOrJenkinshift();
+    if (openshift == null) {
+      System.err.println("Cannot connect to OpenShift or Jenkinshift!");
+      return;
+    }
+    BuildConfig buildConfig=openshift.buildConfigs().withName(name).get();
+    if (buildConfig != null) {
+      System.out.println("Managed to load BuildConfig with resourceVersion " + KubernetesHelper.getResourceVersion(buildConfig));
+    }
+ else {
+      System.err.println("Could not find BuildConfig called: " + name);
+      return;
+    }
+    Boolean result=openshift.buildConfigs().withName(name).delete();
+    System.out.println("Deleted BuildConfig with name " + name + " result: "+ result);
+  }
+ catch (  Exception e) {
+    System.out.println("FAILED: " + e);
+    e.printStackTrace();
+  }
+}
