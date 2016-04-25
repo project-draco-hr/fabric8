@@ -51,6 +51,44 @@
   String portalIP=srv.getSpec().getPortalIP();
   Integer portNumber=port.getPort();
   if (Strings.isNullOrBlank(portalIP)) {
+    IngressList ingresses=client.extensions().ingresses().inNamespace(serviceNamespace).list();
+    if (ingresses != null) {
+      List<Ingress> items=ingresses.getItems();
+      if (items != null) {
+        for (        Ingress item : items) {
+          IngressSpec spec=item.getSpec();
+          if (spec != null) {
+            List<IngressRule> rules=spec.getRules();
+            if (rules != null) {
+              for (              IngressRule rule : rules) {
+                HTTPIngressRuleValue http=rule.getHttp();
+                if (http != null) {
+                  List<HTTPIngressPath> paths=http.getPaths();
+                  if (paths != null) {
+                    for (                    HTTPIngressPath path : paths) {
+                      IngressBackend backend=path.getBackend();
+                      if (backend != null) {
+                        String backendServiceName=backend.getServiceName();
+                        if (serviceName.equals(backendServiceName) && portsMatch(port,backend.getServicePort())) {
+                          String answer=rule.getHost();
+                          if (Strings.isNotBlank(answer)) {
+                            String pathPostfix=path.getPath();
+                            if (Strings.isNullOrBlank(pathPostfix)) {
+                              pathPostfix="/";
+                            }
+                            return "http://" + URLUtils.pathJoin(answer,pathPostfix);
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
     Integer nodePort=port.getNodePort();
     if (nodePort != null) {
       try {
