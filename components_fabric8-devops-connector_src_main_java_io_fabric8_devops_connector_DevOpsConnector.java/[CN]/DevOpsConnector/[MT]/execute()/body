@@ -91,7 +91,7 @@
     Map<String,String> environments=projectConfig.getEnvironments();
     if (environments != null && !environments.isEmpty()) {
       getLog().info("Ensuring ConfigMap " + Environments.ENVIRONMENTS_CONFIG_MAP_NAME + " is populated with enviroments: "+ environments);
-      ConfigMap environmentsConfigMap=Environments.getOrCreateEnvironments(kubernetes,namespace);
+      ConfigMap environmentsConfigMap=Environments.getOrCreateEnvironments(kubernetes);
       boolean updatedEnvConfigMap=false;
       for (      Map.Entry<String,String> entry : environments.entrySet()) {
         String label=entry.getKey();
@@ -110,10 +110,10 @@
       if (updatedEnvConfigMap) {
         getLog().info("Updating ConfigMap " + Environments.ENVIRONMENTS_CONFIG_MAP_NAME + " with data: "+ environmentsConfigMap.getData());
         if (KubernetesHelper.getResourceVersion(environmentsConfigMap) == null) {
-          kubernetes.inNamespace(namespace).configMaps().create(environmentsConfigMap);
+          kubernetes.configMaps().create(environmentsConfigMap);
         }
  else {
-          kubernetes.inNamespace(namespace).configMaps().replace(environmentsConfigMap);
+          kubernetes.configMaps().replace(environmentsConfigMap);
         }
       }
  else {
@@ -127,7 +127,7 @@
   BuildConfig buildConfig=null;
   if (openShiftClient != null) {
     try {
-      buildConfig=openShiftClient.inNamespace(namespace).buildConfigs().withName(projectName).get();
+      buildConfig=openShiftClient.buildConfigs().withName(projectName).get();
     }
  catch (    Exception e) {
       log.error("Failed to load build config for " + namespace + "/"+ projectName+ ". "+ e,e);

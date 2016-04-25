@@ -1,6 +1,7 @@
 {
   if (kubernetes == null) {
-    kubernetes=new DefaultKubernetesClient();
+    Config config=new ConfigBuilder().withNamespace(namespace).build();
+    kubernetes=new DefaultKubernetesClient(config);
   }
   return kubernetes;
 }
