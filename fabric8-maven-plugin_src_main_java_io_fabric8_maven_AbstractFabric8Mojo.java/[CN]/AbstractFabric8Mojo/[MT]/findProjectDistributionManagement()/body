@@ -1,0 +1,11 @@
+{
+  MavenProject project=getProject();
+  while (project != null) {
+    DistributionManagement distributionManagement=project.getDistributionManagement();
+    if (distributionManagement != null) {
+      return distributionManagement;
+    }
+    project=project.getParent();
+  }
+  return null;
+}
