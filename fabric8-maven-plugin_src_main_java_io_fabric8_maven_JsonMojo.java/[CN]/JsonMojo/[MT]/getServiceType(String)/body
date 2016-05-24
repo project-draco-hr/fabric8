@@ -1,0 +1,9 @@
+{
+  String serviceSpecificTypeName=buildServicePrefix(serviceName,"fabric8.service","type");
+  Properties properties=getProjectAndFabric8Properties(getProject());
+  String serviceSpecificType=properties.getProperty(serviceSpecificTypeName);
+  if (Strings.isNullOrBlank(serviceSpecificType)) {
+    serviceSpecificType=this.serviceType;
+  }
+  return serviceSpecificType;
+}
