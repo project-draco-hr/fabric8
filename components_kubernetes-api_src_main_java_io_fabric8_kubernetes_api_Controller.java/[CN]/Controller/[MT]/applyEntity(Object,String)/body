@@ -41,6 +41,9 @@
  else   if (dto instanceof DaemonSet) {
     applyResource((DaemonSet)dto,sourceName,kubernetesClient.extensions().daemonSets());
   }
+ else   if (dto instanceof Ingress) {
+    applyResource((Ingress)dto,sourceName,kubernetesClient.extensions().ingresses());
+  }
  else {
     throw new IllegalArgumentException("Unknown entity type " + dto);
   }
