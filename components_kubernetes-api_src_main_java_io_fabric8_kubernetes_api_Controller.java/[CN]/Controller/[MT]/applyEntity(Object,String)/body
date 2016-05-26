@@ -26,9 +26,6 @@
  else   if (dto instanceof OAuthClient) {
     applyOAuthClient((OAuthClient)dto,sourceName);
   }
- else   if (dto instanceof PersistentVolumeClaim) {
-    applyResource((PersistentVolumeClaim)dto,sourceName,kubernetesClient.persistentVolumeClaims());
-  }
  else   if (dto instanceof Template) {
     applyTemplate((Template)dto,sourceName);
   }
@@ -41,8 +38,14 @@
  else   if (dto instanceof DaemonSet) {
     applyResource((DaemonSet)dto,sourceName,kubernetesClient.extensions().daemonSets());
   }
+ else   if (dto instanceof Deployment) {
+    applyResource((Deployment)dto,sourceName,kubernetesClient.extensions().deployments());
+  }
  else   if (dto instanceof Ingress) {
     applyResource((Ingress)dto,sourceName,kubernetesClient.extensions().ingresses());
+  }
+ else   if (dto instanceof PersistentVolumeClaim) {
+    applyResource((PersistentVolumeClaim)dto,sourceName,kubernetesClient.persistentVolumeClaims());
   }
  else {
     throw new IllegalArgumentException("Unknown entity type " + dto);
