@@ -1,34 +1,4 @@
 {
   WebDriver driver=createWebDriver();
-  try {
-    WebDriverFacade facade=new WebDriverFacade(driver,client,namespace);
-    facade.navigateToService(serviceName);
-    T apply=block.apply(facade);
-    String property=Systems.getEnvVarOrSystemProperty(WAIT_AFTER_SELENIUM);
-    if (property != null) {
-      long millis=0;
-      try {
-        millis=Long.parseLong(property);
-      }
- catch (      NumberFormatException e) {
-        logWarn("Env var / system property " + WAIT_AFTER_SELENIUM + " is not a long value: "+ property+ ". "+ e,e);
-      }
-      if (millis > 0) {
-        logInfo("Sleeping for " + millis + " millis before tearning down the test case");
-        try {
-          Thread.sleep(millis);
-        }
- catch (        InterruptedException e) {
-        }
-      }
-    }
-    return apply;
-  }
- catch (  Exception e) {
-    logError("Failed with exception: ",e);
-    throw e;
-  }
- finally {
-    driver.quit();
-  }
+  return assertWebDriverForService(client,namespace,serviceName,driver,block);
 }
