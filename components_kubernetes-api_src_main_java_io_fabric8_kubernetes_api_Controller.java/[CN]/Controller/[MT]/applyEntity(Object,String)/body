@@ -35,6 +35,9 @@
  else   if (dto instanceof Secret) {
     applySecret((Secret)dto,sourceName);
   }
+ else   if (dto instanceof ConfigMap) {
+    applyResource((ConfigMap)dto,sourceName,kubernetesClient.configMaps());
+  }
  else   if (dto instanceof DaemonSet) {
     applyResource((DaemonSet)dto,sourceName,kubernetesClient.extensions().daemonSets());
   }
