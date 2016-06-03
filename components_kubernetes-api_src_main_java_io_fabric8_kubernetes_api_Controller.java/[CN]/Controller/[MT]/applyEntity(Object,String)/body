@@ -18,7 +18,14 @@
     applyBuildConfig((BuildConfig)dto,sourceName);
   }
  else   if (dto instanceof DeploymentConfig) {
-    applyDeploymentConfig((DeploymentConfig)dto,sourceName);
+    DeploymentConfig resource=(DeploymentConfig)dto;
+    OpenShiftClient openShiftClient=getOpenShiftClientOrNull();
+    if (openShiftClient != null) {
+      applyResource(resource,sourceName,openShiftClient.deploymentConfigs());
+    }
+ else {
+      LOG.warn("Not connected to OpenShift cluster so cannot create entity " + dto);
+    }
   }
  else   if (dto instanceof ImageStream) {
     applyImageStream((ImageStream)dto,sourceName);
