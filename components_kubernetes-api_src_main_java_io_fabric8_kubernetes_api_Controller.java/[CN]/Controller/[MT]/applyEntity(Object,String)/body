@@ -24,7 +24,17 @@
       applyResource(resource,sourceName,openShiftClient.deploymentConfigs());
     }
  else {
-      LOG.warn("Not connected to OpenShift cluster so cannot create entity " + dto);
+      LOG.warn("Not connected to OpenShift cluster so cannot apply entity " + dto);
+    }
+  }
+ else   if (dto instanceof RoleBinding) {
+    RoleBinding resource=(RoleBinding)dto;
+    OpenShiftClient openShiftClient=getOpenShiftClientOrNull();
+    if (openShiftClient != null) {
+      applyResource(resource,sourceName,openShiftClient.roleBindings());
+    }
+ else {
+      LOG.warn("Not connected to OpenShift cluster so cannot apply entity " + dto);
     }
   }
  else   if (dto instanceof ImageStream) {
