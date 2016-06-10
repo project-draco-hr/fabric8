@@ -37,7 +37,6 @@
   Template template=getTemplate();
   if (!template.getParameters().isEmpty() || Strings.isNotBlank(iconUrl)) {
     configureTemplateDescriptionAndIcon(template,iconUrl);
-    builder=builder.addToTemplateItems(template);
   }
   KubernetesList kubernetesList;
   List<HasMetadata> items=null;
@@ -45,6 +44,7 @@
     items=builder.getItems();
   }
  catch (  Exception e) {
+    getLog().warn("Caught: " + e,e);
   }
   if (Lists.isNullOrEmpty(items)) {
     getLog().warn("No Kubernetes resources found! Skipping...");
@@ -53,7 +53,7 @@
  else {
     kubernetesList=builder.build();
   }
-  Object result=Templates.combineTemplates(kubernetesList);
+  Object result=Templates.combineTemplates(kubernetesList,template);
   if (result instanceof Template) {
     Template resultTemplate=(Template)result;
     defaultIconUrl(resultTemplate.getObjects());
