@@ -39,9 +39,19 @@
     configureTemplateDescriptionAndIcon(template,iconUrl);
     builder=builder.addToTemplateItems(template);
   }
-  KubernetesList kubernetesList=builder.build();
-  if (kubernetesList.getItems().isEmpty()) {
+  KubernetesList kubernetesList;
+  List<HasMetadata> items=null;
+  try {
+    items=builder.getItems();
+  }
+ catch (  Exception e) {
+  }
+  if (Lists.isNullOrEmpty(items)) {
     getLog().warn("No Kubernetes resources found! Skipping...");
+    kubernetesList=new KubernetesList();
+  }
+ else {
+    kubernetesList=builder.build();
   }
   Object result=Templates.combineTemplates(kubernetesList);
   if (result instanceof Template) {
