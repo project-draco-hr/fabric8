@@ -1,0 +1,23 @@
+{
+  String namespace=getOrCreateMetadata(entity).getName();
+  LOG.info("Using project: " + namespace);
+  String name=getName(entity);
+  Objects.notNull(name,"No name for " + entity);
+  OpenShiftClient openshiftClient=getOpenShiftClientOrNull();
+  if (openshiftClient == null) {
+    LOG.warn("Cannot check for Project " + namespace + " as not running against OpenShift!");
+    return false;
+  }
+  Project old=openshiftClient.projects().withName(name).get();
+  if (!isRunning(old)) {
+    try {
+      Object answer=openshiftClient.projects().create(entity);
+      logGeneratedEntity("Created project: ",namespace,entity,answer);
+      return true;
+    }
+ catch (    Exception e) {
+      onApplyError("Failed to create project: " + name + " due "+ e.getMessage(),e);
+    }
+  }
+  return false;
+}

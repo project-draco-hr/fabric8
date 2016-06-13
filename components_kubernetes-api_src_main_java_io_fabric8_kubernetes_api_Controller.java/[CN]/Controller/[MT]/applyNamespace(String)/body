@@ -1,10 +1,24 @@
 {
-  Namespace entity=new Namespace();
-  ObjectMeta metadata=getOrCreateMetadata(entity);
-  metadata.setName(namespaceName);
-  String namespace=kubernetesClient.getNamespace();
-  if (Strings.isNotBlank(namespace)) {
-    getOrCreateLabels(entity).put("project",namespace);
+  OpenShiftClient openshiftClient=getOpenShiftClientOrNull();
+  if (openshiftClient != null) {
+    Project entity=new Project();
+    ObjectMeta metadata=getOrCreateMetadata(entity);
+    metadata.setName(namespaceName);
+    String namespace=kubernetesClient.getNamespace();
+    if (Strings.isNotBlank(namespace)) {
+      getOrCreateLabels(entity).put("project",namespace);
+    }
+    applyProject(entity);
+    ensureRoleBindingExists(openshiftClient,namespaceName,"system:deployers","system:deployer","deployer");
   }
-  applyNamespace(entity);
+ else {
+    Namespace entity=new Namespace();
+    ObjectMeta metadata=getOrCreateMetadata(entity);
+    metadata.setName(namespaceName);
+    String namespace=kubernetesClient.getNamespace();
+    if (Strings.isNotBlank(namespace)) {
+      getOrCreateLabels(entity).put("project",namespace);
+    }
+    applyNamespace(entity);
+  }
 }
