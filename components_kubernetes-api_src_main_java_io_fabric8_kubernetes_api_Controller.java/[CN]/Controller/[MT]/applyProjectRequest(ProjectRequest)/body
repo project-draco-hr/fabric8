@@ -11,12 +11,12 @@
   Project old=openshiftClient.projects().withName(name).get();
   if (!isRunning(old)) {
     try {
-      Object answer=openshiftClient.projects().create(entity);
-      logGeneratedEntity("Created project: ",namespace,entity,answer);
+      Object answer=openshiftClient.projectrequests().create(entity);
+      logGeneratedEntity("Created ProjectRequest: ",namespace,entity,answer);
       return true;
     }
  catch (    Exception e) {
-      onApplyError("Failed to create project: " + name + " due "+ e.getMessage(),e);
+      onApplyError("Failed to create ProjectRequest: " + name + " due "+ e.getMessage(),e);
     }
   }
   return false;

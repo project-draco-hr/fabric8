@@ -1,15 +1,14 @@
 {
   OpenShiftClient openshiftClient=getOpenShiftClientOrNull();
   if (openshiftClient != null) {
-    Project entity=new Project();
+    ProjectRequest entity=new ProjectRequest();
     ObjectMeta metadata=getOrCreateMetadata(entity);
     metadata.setName(namespaceName);
     String namespace=kubernetesClient.getNamespace();
     if (Strings.isNotBlank(namespace)) {
       getOrCreateLabels(entity).put("project",namespace);
     }
-    applyProject(entity);
-    ensureRoleBindingExists(openshiftClient,namespaceName,"system:deployers","system:deployer","deployer");
+    applyProjectRequest(entity);
   }
  else {
     Namespace entity=new Namespace();
