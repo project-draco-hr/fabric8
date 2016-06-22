@@ -13,10 +13,10 @@
   controller.setIgnoreRunningOAuthClients(true);
   String namespaceToUse=configuration.getNamespaceToUse();
   if (Strings.isNullOrBlank(namespaceToUse)) {
-    createNamespace(client,session);
+    createNamespace(client,controller,session);
   }
  else {
-    checkNamespace(client,session,configuration);
+    checkNamespace(client,controller,session,configuration);
     updateNamespaceStatus(client,session,Constants.RUNNING_STATUS);
     namespace=namespaceToUse;
     controller.setNamespace(namespace);
@@ -32,9 +32,24 @@
         log.info("Found dependency: " + dependency);
         loadDependency(log,kubeConfigs,dependency,controller,configuration,namespace);
       }
+      if (configUrl == null) {
+        String resourceName="kubernetes.yml";
+        if (controller.getOpenShiftClientOrNull() != null) {
+          resourceName="openshift.yml";
+        }
+        configUrl=findConfigResource("/META-INF/fabric8/" + resourceName);
+      }
       if (configUrl != null) {
         log.status("Applying kubernetes configuration from: " + configUrl);
-        Object dto=loadJson(readAsString(configUrl));
+        String configText=readAsString(configUrl);
+        Object dto=null;
+        String configPath=configUrl.getPath();
+        if (configPath.endsWith(".yml") || configPath.endsWith(".yaml")) {
+          dto=loadYaml(configText,KubernetesResource.class);
+        }
+ else {
+          dto=loadJson(configText);
+        }
         dto=expandTemplate(controller,configuration,log,namespace,configUrl.toString(),dto);
         KubernetesList kubeList=KubernetesHelper.asKubernetesList(dto);
         List<HasMetadata> items=kubeList.getItems();

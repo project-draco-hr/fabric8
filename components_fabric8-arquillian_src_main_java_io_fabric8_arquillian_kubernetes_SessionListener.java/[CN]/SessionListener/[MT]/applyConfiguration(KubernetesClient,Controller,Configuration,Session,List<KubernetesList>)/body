@@ -64,6 +64,11 @@
       controller.applyReplicationController(replicationController,session.getId());
       conditions.put(1,sessionPodsReady);
     }
+ else     if (entity instanceof ReplicaSet || entity instanceof Deployment || entity instanceof DeploymentConfig) {
+      log.status("Applying " + entity.getClass().getSimpleName() + ".");
+      controller.apply(entity,session.getId());
+      conditions.put(1,sessionPodsReady);
+    }
  else     if (entity instanceof OAuthClient) {
       OAuthClient oc=(OAuthClient)entity;
       ObjectMeta metadata=KubernetesHelper.getOrCreateMetadata(oc);

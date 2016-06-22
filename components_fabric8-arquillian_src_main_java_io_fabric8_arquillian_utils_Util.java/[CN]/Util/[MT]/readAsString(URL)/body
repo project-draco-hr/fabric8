@@ -1,13 +1,8 @@
 {
-  StringBuilder response=new StringBuilder();
-  String line;
-  try (InputStreamReader isr=new InputStreamReader(url.openStream());BufferedReader br=new BufferedReader(isr)){
-    while ((line=br.readLine()) != null) {
-      response.append(line);
-    }
+  try {
+    return IOHelpers.readFully(url);
   }
  catch (  IOException e) {
     throw new RuntimeException(e);
   }
-  return response.toString();
 }

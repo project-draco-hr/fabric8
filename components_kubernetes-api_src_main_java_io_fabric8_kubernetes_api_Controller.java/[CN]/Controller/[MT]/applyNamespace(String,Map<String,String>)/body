@@ -1,0 +1,35 @@
+{
+  OpenShiftClient openshiftClient=getOpenShiftClientOrNull();
+  if (openshiftClient != null) {
+    ProjectRequest entity=new ProjectRequest();
+    ObjectMeta metadata=getOrCreateMetadata(entity);
+    metadata.setName(namespaceName);
+    String namespace=kubernetesClient.getNamespace();
+    if (Strings.isNotBlank(namespace)) {
+      Map<String,String> entityLabels=getOrCreateLabels(entity);
+      if (labels != null) {
+        entityLabels.putAll(labels);
+      }
+ else {
+        entityLabels.put("project",namespace);
+      }
+    }
+    applyProjectRequest(entity);
+  }
+ else {
+    Namespace entity=new Namespace();
+    ObjectMeta metadata=getOrCreateMetadata(entity);
+    metadata.setName(namespaceName);
+    String namespace=kubernetesClient.getNamespace();
+    if (Strings.isNotBlank(namespace)) {
+      Map<String,String> entityLabels=getOrCreateLabels(entity);
+      if (labels != null) {
+        entityLabels.putAll(labels);
+      }
+ else {
+        entityLabels.put("project",namespace);
+      }
+    }
+    applyNamespace(entity);
+  }
+}

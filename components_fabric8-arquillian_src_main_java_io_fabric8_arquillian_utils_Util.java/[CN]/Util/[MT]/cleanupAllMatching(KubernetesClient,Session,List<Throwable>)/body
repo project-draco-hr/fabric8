@@ -1,30 +1,64 @@
 {
   for (int i=0; i < 10; i++) {
+    OpenShiftClient openShiftClient=new Controller(client).getOpenShiftClientOrNull();
+    String sessionNamespace=session.getNamespace();
+    if (openShiftClient != null) {
+      try {
+        openShiftClient.deploymentConfigs().inNamespace(sessionNamespace).delete();
+      }
+ catch (      KubernetesClientException e) {
+        errors.add(e);
+      }
+      try {
+        openShiftClient.routes().inNamespace(sessionNamespace).delete();
+      }
+ catch (      KubernetesClientException e) {
+        errors.add(e);
+      }
+    }
     try {
-      client.replicationControllers().inNamespace(session.getNamespace()).delete();
+      client.extensions().deployments().inNamespace(sessionNamespace).delete();
     }
  catch (    KubernetesClientException e) {
       errors.add(e);
     }
     try {
-      client.pods().inNamespace(session.getNamespace()).delete();
+      client.extensions().replicaSets().inNamespace(sessionNamespace).delete();
     }
  catch (    KubernetesClientException e) {
       errors.add(e);
     }
     try {
-      client.services().inNamespace(session.getNamespace()).delete();
+      client.replicationControllers().inNamespace(sessionNamespace).delete();
     }
  catch (    KubernetesClientException e) {
       errors.add(e);
     }
     try {
-      client.securityContextConstraints().withName(session.getNamespace()).delete();
+      client.pods().inNamespace(sessionNamespace).delete();
     }
  catch (    KubernetesClientException e) {
       errors.add(e);
     }
-    List<Pod> filteredPods=client.pods().inNamespace(session.getNamespace()).list().getItems();
+    try {
+      client.extensions().ingresses().inNamespace(sessionNamespace).delete();
+    }
+ catch (    KubernetesClientException e) {
+      errors.add(e);
+    }
+    try {
+      client.services().inNamespace(sessionNamespace).delete();
+    }
+ catch (    KubernetesClientException e) {
+      errors.add(e);
+    }
+    try {
+      client.securityContextConstraints().withName(sessionNamespace).delete();
+    }
+ catch (    KubernetesClientException e) {
+      errors.add(e);
+    }
+    List<Pod> filteredPods=client.pods().inNamespace(sessionNamespace).list().getItems();
     if (filteredPods.isEmpty()) {
       return;
     }
