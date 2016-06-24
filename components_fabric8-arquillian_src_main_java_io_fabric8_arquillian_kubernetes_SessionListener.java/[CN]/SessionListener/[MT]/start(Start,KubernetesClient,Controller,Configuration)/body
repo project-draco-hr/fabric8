@@ -21,6 +21,22 @@
     namespace=namespaceToUse;
     controller.setNamespace(namespace);
   }
+  if (client instanceof BaseClient) {
+    BaseClient defaultKubernetesClient=(BaseClient)client;
+    Class<? extends BaseClient> clazz=BaseClient.class;
+    String fieldName="namespace";
+    try {
+      Field field=clazz.getDeclaredField(fieldName);
+      field.setAccessible(true);
+      field.set(defaultKubernetesClient,namespace);
+    }
+ catch (    NoSuchFieldException e) {
+      log.error("Could not find field " + fieldName + " in class "+ clazz.getName()+ ". "+ e);
+    }
+catch (    IllegalAccessException e) {
+      log.error("Could not access field " + fieldName + " in class "+ clazz.getName()+ ". "+ e);
+    }
+  }
   shutdownHook=new ShutdownHook(client,configuration,session);
   Runtime.getRuntime().addShutdownHook(shutdownHook);
   try {
