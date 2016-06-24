@@ -1,0 +1,13 @@
+{
+  for (  PropertiesFunction function : functions.values()) {
+    String token=function.getName() + ":";
+    if (key.startsWith(token)) {
+      String remainder=key.substring(token.length());
+      String value=function.apply(remainder);
+      if (value != null) {
+        return value;
+      }
+    }
+  }
+  return dictionary.get(key);
+}

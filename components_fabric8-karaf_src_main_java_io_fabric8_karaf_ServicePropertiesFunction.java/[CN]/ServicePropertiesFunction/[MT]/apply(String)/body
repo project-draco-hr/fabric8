@@ -1,0 +1,20 @@
+{
+  String key=remainder;
+  String defaultValue=null;
+  if (remainder.contains(":")) {
+    key=before(remainder,":");
+    defaultValue=after(remainder,":");
+  }
+  if (key != null) {
+    key=key.toUpperCase(Locale.ENGLISH).replace('-','_');
+    String host=System.getenv(key + HOST_PREFIX);
+    String port=System.getenv(key + PORT_PREFIX);
+    if (host != null && port != null) {
+      return host + ":" + port;
+    }
+ else {
+      return defaultValue;
+    }
+  }
+  return defaultValue;
+}
