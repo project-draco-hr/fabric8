@@ -1,0 +1,15 @@
+{
+  String namespace=client.getNamespace();
+  String qualifiedName=namespace + "." + deploymentName;
+  OpenShiftClient openShiftClient=new Controller(client).getOpenShiftClientOrNull();
+  if (openShiftClient != null) {
+    DeploymentConfig deployment=openShiftClient.deploymentConfigs().inNamespace(namespace).withName(deploymentName).get();
+    assertThat(deployment).describedAs("DeploymentConfig: " + qualifiedName).isNotNull().metadata().name().isEqualTo(deploymentName);
+    return new DeploymentConfigPodsAssert(client,deployment);
+  }
+ else {
+    Deployment deployment=client.extensions().deployments().inNamespace(namespace).withName(deploymentName).get();
+    assertThat(deployment).describedAs("Deployment: " + qualifiedName).isNotNull().metadata().name().isEqualTo(deploymentName);
+    return new DeploymentPodsAssert(client,deployment);
+  }
+}

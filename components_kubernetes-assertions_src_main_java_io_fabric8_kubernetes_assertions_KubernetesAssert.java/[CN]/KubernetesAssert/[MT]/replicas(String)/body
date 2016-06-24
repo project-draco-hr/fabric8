@@ -1,0 +1,15 @@
+{
+  String namespace=client.getNamespace();
+  String qualifiedName=namespace + "." + replicaName;
+  ReplicaSet replicasSet=client.extensions().replicaSets().withName(replicaName).get();
+  if (replicasSet != null) {
+    assertThat(replicasSet).describedAs("ReplicaSet: " + qualifiedName).metadata().name().isEqualTo(replicaName);
+    return new ReplicaSetPodsAssert(client,replicasSet);
+  }
+ else {
+    ReplicationController replicationController=client.replicationControllers().withName(replicaName).get();
+    assertThat(replicationController).describedAs("No ReplicaSet or ReplicationController called: " + qualifiedName).isNotNull();
+    assertThat(replicationController).describedAs("ReplicationController: " + qualifiedName).metadata().name().isEqualTo(replicaName);
+    return new ReplicationControllerPodsAssert(client,replicationController);
+  }
+}

@@ -1,0 +1,12 @@
+{
+  String name=getName(pod);
+  if (action.equals(Action.ERROR)) {
+    LOG.warn("Got error for pod " + name);
+  }
+ else   if (action.equals(Action.DELETED)) {
+    closeAsserter(name);
+  }
+ else {
+    onPod(name,pod);
+  }
+}

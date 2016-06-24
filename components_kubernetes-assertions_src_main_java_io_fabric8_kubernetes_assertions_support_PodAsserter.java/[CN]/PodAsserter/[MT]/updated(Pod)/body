@@ -1,0 +1,16 @@
+{
+  String statusText=KubernetesHelper.getPodStatusText(pod);
+  boolean ready=KubernetesHelper.isPodReady(pod);
+  String message="Pod " + name + " has status: "+ statusText+ " isReady: "+ ready;
+  LOG.info(ansi().fg(YELLOW).a(message).reset().toString());
+  if (ready) {
+    watcher.podIsReady(name,pod);
+    if (timer == null) {
+      timer=new Timer(watcher.getDescription());
+      timer.schedule(task,watcher.getReadyPeriodMS());
+    }
+  }
+ else {
+    cancelTimer();
+  }
+}

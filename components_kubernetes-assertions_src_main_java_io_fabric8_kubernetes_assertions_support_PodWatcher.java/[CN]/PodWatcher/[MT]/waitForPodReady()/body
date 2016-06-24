@@ -1,0 +1,23 @@
+{
+  boolean ready=false;
+  try {
+    ready=podReady.await(readyTimeoutMS,TimeUnit.MILLISECONDS);
+  }
+ catch (  InterruptedException e) {
+    LOG.warn("Interupted waiting for podReady: " + e);
+    ready=podReady.getCount() == 0L;
+  }
+  if (!ready) {
+    fail(podSelectionAssert.getDescription() + " did not have a pod become Ready within " + readyTimeoutMS+ " millis");
+  }
+  try {
+    ready=podReadyForEntireDuration.await(readyPeriodMS * 2,TimeUnit.MILLISECONDS);
+  }
+ catch (  InterruptedException e) {
+    LOG.warn("Interupted waiting for podReadyForEntireDuration: " + e);
+    ready=podReadyForEntireDuration.getCount() == 0L;
+  }
+  if (!ready) {
+    fail(podSelectionAssert.getDescription() + " did not have a pod Ready fora duration of " + readyPeriodMS+ " millis");
+  }
+}

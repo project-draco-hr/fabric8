@@ -1,0 +1,11 @@
+{
+  if (replicas.intValue() <= 0) {
+    LOG.warn("Not that the pod selection for: " + description + " has no replicas defined so we cannot assert there is a pod ready");
+    return this;
+  }
+  try (PodWatcher podWatcher=new PodWatcher(this,notReadyTimeoutMS,readyPeriodMS);Watch watch=client.pods().withLabels(matchLabels).watch(podWatcher)){
+    podWatcher.loadCurrentPods();
+    podWatcher.waitForPodReady();
+  }
+   return this;
+}
