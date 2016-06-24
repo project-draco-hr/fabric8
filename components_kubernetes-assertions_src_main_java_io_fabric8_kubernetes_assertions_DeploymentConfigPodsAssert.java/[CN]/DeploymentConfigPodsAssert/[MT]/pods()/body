@@ -1,0 +1,8 @@
+{
+  spec().isNotNull().selector().isNotNull();
+  DeploymentConfigSpec spec=this.actual.getSpec();
+  Integer replicas=spec.getReplicas();
+  Map<String,String> matchLabels=spec.getSelector();
+  List<LabelSelectorRequirement> matchExpressions=new ArrayList<>();
+  return new PodSelectionAssert(client,replicas,matchLabels,matchExpressions,"DeploymentConfig " + KubernetesHelper.getName(actual));
+}
