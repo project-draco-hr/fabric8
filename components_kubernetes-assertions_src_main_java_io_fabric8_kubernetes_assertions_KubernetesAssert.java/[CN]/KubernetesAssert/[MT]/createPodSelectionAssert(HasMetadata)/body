@@ -1,0 +1,21 @@
+{
+  if (resource instanceof DeploymentConfig) {
+    DeploymentConfig deployment=(DeploymentConfig)resource;
+    return new DeploymentConfigPodsAssert(client,deployment);
+  }
+ else   if (resource instanceof Deployment) {
+    Deployment deployment=(Deployment)resource;
+    return new DeploymentPodsAssert(client,deployment);
+  }
+ else   if (resource instanceof ReplicaSet) {
+    ReplicaSet replica=(ReplicaSet)resource;
+    return new ReplicaSetPodsAssert(client,replica);
+  }
+ else   if (resource instanceof ReplicationController) {
+    ReplicationController replica=(ReplicationController)resource;
+    return new ReplicationControllerPodsAssert(client,replica);
+  }
+ else {
+    return null;
+  }
+}

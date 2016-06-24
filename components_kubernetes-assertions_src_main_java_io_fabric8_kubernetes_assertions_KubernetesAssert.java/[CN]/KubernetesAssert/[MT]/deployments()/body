@@ -1,0 +1,19 @@
+{
+  List<HasPodSelectionAssert> asserters=new ArrayList<>();
+  List<HasMetadata> resources=new ArrayList<>();
+  try {
+    resources=KubernetesHelper.findKubernetesResourcesOnClasspath(new Controller(client));
+  }
+ catch (  IOException e) {
+    fail("Failed to load kubernetes resources on the classpath: " + e,e);
+  }
+  for (  HasMetadata resource : resources) {
+    HasPodSelectionAssert asserter=createPodSelectionAssert(resource);
+    if (asserter != null) {
+      asserters.add(asserter);
+    }
+  }
+  String message="No pod selection kinds found on the classpath such as Deployment, DeploymentConfig, ReplicaSet, ReplicationController";
+  assertThat(asserters).describedAs(message).isNotEmpty().hasSize(1);
+  return asserters.get(0);
+}

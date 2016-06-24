@@ -1,0 +1,27 @@
+{
+  String resourceName="kubernetes.yml";
+  if (controller.getOpenShiftClientOrNull() != null) {
+    resourceName="openshift.yml";
+  }
+  URL configUrl=findConfigResource("/META-INF/fabric8/" + resourceName);
+  if (configUrl == null) {
+    configUrl=findConfigResource("kubernetes.json");
+  }
+  if (configUrl != null) {
+    String configText=IOHelpers.loadFully(configUrl);
+    Object dto=null;
+    String configPath=configUrl.getPath();
+    if (configPath.endsWith(".yml") || configPath.endsWith(".yaml")) {
+      dto=loadYaml(configText,KubernetesResource.class);
+    }
+ else {
+      dto=loadJson(configText);
+    }
+    KubernetesList kubeList=KubernetesHelper.asKubernetesList(dto);
+    List<HasMetadata> items=kubeList.getItems();
+    return items;
+  }
+ else {
+    return new ArrayList<>();
+  }
+}
