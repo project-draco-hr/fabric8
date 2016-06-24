@@ -9,8 +9,10 @@
     configuration.namespaceLazyCreateEnabled=getBooleanProperty(NAMESPACE_LAZY_CREATE_ENABLED,map,DEFAULT_NAMESPACE_LAZY_CREATE_ENABLED);
     String existingNamespace=getStringProperty(NAMESPACE_TO_USE,map,null);
     String environmentNamespace=findNamespaceForEnvironment(configuration.environment,map);
-    configuration.namespaceToUse=selectNamespace(environmentNamespace,existingNamespace);
-    configuration.namespaceCleanupEnabled=getBooleanProperty(NAMESPACE_CLEANUP_ENABLED,map,Strings.isNullOrBlank(configuration.namespaceToUse));
+    String providedNamespace=selectNamespace(environmentNamespace,existingNamespace);
+    configuration.sessionId=UUID.randomUUID().toString();
+    configuration.namespace=Strings.isNotBlank(providedNamespace) ? providedNamespace : NAMESPACE_PREFIX + configuration.sessionId;
+    configuration.namespaceCleanupEnabled=getBooleanProperty(NAMESPACE_CLEANUP_ENABLED,map,Strings.isNullOrBlank(providedNamespace));
     configuration.namespaceCleanupConfirmationEnabled=getBooleanProperty(NAMESPACE_CLEANUP_CONFIRM_ENABLED,map,false);
     configuration.namespaceCleanupTimeout=getLongProperty(NAMESPACE_CLEANUP_TIMEOUT,map,DEFAULT_NAMESPACE_CLEANUP_TIMEOUT);
     configuration.waitTimeout=getLongProperty(WAIT_TIMEOUT,map,DEFAULT_WAIT_TIMEOUT);

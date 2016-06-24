@@ -1,11 +1,5 @@
 {
-  UUID uuid=UUID.randomUUID();
-  if (Strings.isNotBlank(configuration.getNamespaceToUse())) {
-    session=new Session(uuid.toString(),configuration.getNamespaceToUse(),logger);
-  }
- else {
-    session=new Session(uuid.toString(),logger);
-  }
+  session=new Session(configuration.getSessionId(),configuration.getNamespace(),logger);
   session.init();
   sessionProducer.set(session);
   controlEvent.fire(new Start(session));
