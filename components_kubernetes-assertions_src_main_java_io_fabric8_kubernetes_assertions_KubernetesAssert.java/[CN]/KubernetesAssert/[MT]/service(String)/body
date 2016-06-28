@@ -1,0 +1,5 @@
+{
+  Service service=client.services().inNamespace(namespace()).withName(serviceName).get();
+  assertThat(service).describedAs("No service exists for name: " + serviceName).isNotNull();
+  return new ServicePodsAssert(client,service);
+}

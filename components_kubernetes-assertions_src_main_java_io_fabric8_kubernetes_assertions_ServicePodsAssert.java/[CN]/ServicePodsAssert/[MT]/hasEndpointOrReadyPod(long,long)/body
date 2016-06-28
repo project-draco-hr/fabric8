@@ -1,0 +1,11 @@
+{
+  EndpointsList list=client.endpoints().withLabels(getLabels(actual)).list();
+  if (list != null) {
+    List<Endpoints> items=list.getItems();
+    if (items.size() > 0) {
+      return this;
+    }
+  }
+  pods().isPodReadyForPeriod(notReadyTimeoutMS,readyPeriodMS);
+  return this;
+}

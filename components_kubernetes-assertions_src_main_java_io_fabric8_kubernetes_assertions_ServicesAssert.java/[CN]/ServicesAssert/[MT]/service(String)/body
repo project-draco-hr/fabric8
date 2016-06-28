@@ -1,0 +1,11 @@
+{
+  Service service=null;
+  for (  Service aService : actual) {
+    String name=getName(aService);
+    if (Objects.equals(name,serviceName)) {
+      service=aService;
+    }
+  }
+  assertThat(service).describedAs("No service could be found for name: " + serviceName).isNotNull();
+  return new ServicePodsAssert(client,service);
+}

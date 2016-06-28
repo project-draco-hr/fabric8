@@ -1,0 +1,9 @@
+{
+  spec().isNotNull().selector().isNotNull();
+  ServiceSpec spec=this.actual.getSpec();
+  int replicas=1;
+  LabelSelector selector=null;
+  Map<String,String> matchLabels=spec.getSelector();
+  List<LabelSelectorRequirement> matchExpressions=selector.getMatchExpressions();
+  return new PodSelectionAssert(client,replicas,matchLabels,matchExpressions,"Service " + KubernetesHelper.getName(actual));
+}

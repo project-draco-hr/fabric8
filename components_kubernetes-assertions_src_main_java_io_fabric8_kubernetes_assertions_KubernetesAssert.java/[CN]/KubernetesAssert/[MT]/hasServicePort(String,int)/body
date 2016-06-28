@@ -1,0 +1,21 @@
+{
+  ServiceSpec spec=getServiceSpec(serviceId,namespace());
+  boolean found=false;
+  List<ServicePort> ports=spec.getPorts();
+  List<Integer> portNumbers=new ArrayList<>();
+  if (ports != null) {
+    for (    ServicePort servicePort : ports) {
+      Integer aPort=servicePort.getPort();
+      if (aPort != null) {
+        if (aPort == port) {
+          found=true;
+          break;
+        }
+ else {
+          portNumbers.add(aPort);
+        }
+      }
+    }
+  }
+  assertThat(found).describedAs("No port found for " + port + " but found ports: "+ portNumbers).isTrue();
+}
