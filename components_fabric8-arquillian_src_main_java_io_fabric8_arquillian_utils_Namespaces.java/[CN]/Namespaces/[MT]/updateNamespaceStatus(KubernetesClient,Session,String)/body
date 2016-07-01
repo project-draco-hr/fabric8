@@ -1,3 +1,9 @@
 {
-  return client.namespaces().withName(session.getNamespace()).edit().editMetadata().addToAnnotations(createNamespaceAnnotations(session,status)).endMetadata().done();
+  try {
+    return client.namespaces().withName(session.getNamespace()).edit().editMetadata().addToAnnotations(createNamespaceAnnotations(session,status)).endMetadata().done();
+  }
+ catch (  Exception e) {
+    LOG.warn("failed to update namespace: " + e,e);
+    return null;
+  }
 }
