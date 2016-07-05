@@ -1,0 +1,34 @@
+{
+  if (items != null) {
+    for (    HasMetadata item : items) {
+      if (item instanceof KubernetesList) {
+        KubernetesList list=(KubernetesList)item;
+        addRegistryToImageNameIfNotPresent(list.getItems(),registry);
+      }
+ else       if (item instanceof Template) {
+        Template template=(Template)item;
+        addRegistryToImageNameIfNotPresent(template.getObjects(),registry);
+      }
+ else       if (item instanceof Pod) {
+        List<Container> containers=((Pod)item).getSpec().getContainers();
+        prefixRegistryIfNotPresent(containers,registry);
+      }
+ else       if (item instanceof ReplicationController) {
+        List<Container> containers=((ReplicationController)item).getSpec().getTemplate().getSpec().getContainers();
+        prefixRegistryIfNotPresent(containers,registry);
+      }
+ else       if (item instanceof ReplicaSet) {
+        List<Container> containers=((ReplicaSet)item).getSpec().getTemplate().getSpec().getContainers();
+        prefixRegistryIfNotPresent(containers,registry);
+      }
+ else       if (item instanceof DeploymentConfig) {
+        List<Container> containers=((DeploymentConfig)item).getSpec().getTemplate().getSpec().getContainers();
+        prefixRegistryIfNotPresent(containers,registry);
+      }
+ else       if (item instanceof Deployment) {
+        List<Container> containers=((Deployment)item).getSpec().getTemplate().getSpec().getContainers();
+        prefixRegistryIfNotPresent(containers,registry);
+      }
+    }
+  }
+}

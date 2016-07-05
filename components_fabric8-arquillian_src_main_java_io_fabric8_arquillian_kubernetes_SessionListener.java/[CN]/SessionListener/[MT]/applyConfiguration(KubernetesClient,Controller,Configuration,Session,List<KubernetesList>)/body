@@ -3,11 +3,18 @@
   Map<Integer,Callable<Boolean>> conditions=new TreeMap<>();
   Callable<Boolean> sessionPodsReady=new SessionPodsAreReady(client,session);
   Callable<Boolean> servicesReady=new SessionServicesAreReady(client,session,configuration);
-  List<Object> entities=new ArrayList<>();
+  Set<HasMetadata> entities=new TreeSet<>(new HasMetadataComparator());
   for (  KubernetesList c : kubeConfigs) {
     entities.addAll(enhance(session,configuration,c).getItems());
   }
-  Collections.sort(entities,new Comparator<Object>(){
+  String registry=getLocalDockerRegistry();
+  if (Strings.isNotBlank(registry)) {
+    log.status("Adapting resources to pull images from registry: " + registry);
+    addRegistryToImageNameIfNotPresent(entities,registry);
+  }
+  List<Object> items=new ArrayList<>();
+  items.addAll(entities);
+  Collections.sort(items,new Comparator<Object>(){
     @Override public int compare(    Object left,    Object right){
       if (left instanceof Service) {
         return -1;
@@ -25,8 +32,8 @@
   String namespace=session.getNamespace();
   String routePrefix=namespace + "." + configuration.getKubernetesDomain();
   preprocessEnvironment(client,controller,configuration,session);
-  List<Object> extraEntities=new ArrayList<>();
-  for (  Object entity : entities) {
+  Set<HasMetadata> extraEntities=new TreeSet<>(new HasMetadataComparator());
+  for (  Object entity : items) {
     if (entity instanceof Pod) {
       Pod pod=(Pod)entity;
       log.status("Applying pod:" + getName(pod));
