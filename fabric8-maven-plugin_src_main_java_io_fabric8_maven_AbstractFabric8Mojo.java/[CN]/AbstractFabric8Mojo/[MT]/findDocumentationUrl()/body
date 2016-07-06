@@ -27,6 +27,12 @@
             String publicUrl=KubernetesHelper.getServiceURL(kubernetes,host,ns,u.getProtocol(),true);
             return URLUtils.pathJoin(publicUrl,u.getPath());
           }
+ else {
+            if (host.indexOf('.') < 0) {
+              getLog().info("Not generating a documentation link annotation as the service " + host + " is not running!");
+              return null;
+            }
+          }
         }
  catch (        MalformedURLException e) {
           getLog().error("Failed to parse URL: " + url,e);
