@@ -1,3 +1,9 @@
 {
+  if (Strings.isNullOrBlank(dockerImage)) {
+    MavenProject project=getProject();
+    if (project != null) {
+      dockerImage=project.getProperties().getProperty("docker.image");
+    }
+  }
   return dockerImage;
 }
