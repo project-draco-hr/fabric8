@@ -1,0 +1,11 @@
+{
+  HTTPConduit conduit=WebClient.getConfig(webClient).getHttpConduit();
+  if (Strings.isNotBlank(username)) {
+    conduit.getAuthorization().setUserName(username);
+  }
+  if (Strings.isNotBlank(authorizationType) && Strings.isNotBlank(authorization)) {
+    conduit.getAuthorization().setUserName(username);
+    conduit.getAuthorization().setAuthorizationType(authorizationType);
+    conduit.getAuthorization().setAuthorization(authorization);
+  }
+}
