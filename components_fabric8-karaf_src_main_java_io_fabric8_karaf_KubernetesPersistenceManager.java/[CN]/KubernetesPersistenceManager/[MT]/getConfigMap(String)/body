@@ -1,0 +1,12 @@
+{
+  ConfigMapList list=getConfigMapList();
+  if (list != null) {
+    for (    ConfigMap map : list.getItems()) {
+      String mapPid=map.getMetadata().getLabels().get(pidLabel);
+      if (pid.equals(mapPid)) {
+        return map;
+      }
+    }
+  }
+  return null;
+}

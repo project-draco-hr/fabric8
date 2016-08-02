@@ -1,0 +1,22 @@
+{
+  final ConfigMapList list=getConfigMapList();
+  final List<ConfigMap> maps=list.getItems();
+  final Iterator<ConfigMap> it=maps.iterator();
+  if (!maps.isEmpty()) {
+    return new Enumeration(){
+      @Override public boolean hasMoreElements(){
+        return it.hasNext();
+      }
+      @Override public Object nextElement(){
+        final ConfigMap map=it.next();
+        final Hashtable dict=new Hashtable(map.getData());
+        dict.put("kubernetes.metadata.name",map.getMetadata().getName());
+        dict.put("kubernetes.metadata.namespace",map.getMetadata().getNamespace());
+        dict.put(Constants.SERVICE_PID,map.getMetadata().getLabels().get(pidLabel));
+        return dict;
+      }
+    }
+;
+  }
+  return Collections.emptyEnumeration();
+}
