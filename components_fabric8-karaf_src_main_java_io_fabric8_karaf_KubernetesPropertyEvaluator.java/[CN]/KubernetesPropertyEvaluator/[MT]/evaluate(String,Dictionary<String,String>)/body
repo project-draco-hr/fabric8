@@ -1,0 +1,31 @@
+{
+  String value=null;
+  final String[] items=key.split(":");
+  final KubernetesClient client=kubernetesClient.get();
+  if (client != null && items.length == 3 && "k8s".equalsIgnoreCase(items[0])) {
+    if ("secret".equalsIgnoreCase(items[1])) {
+      String[] tokens=items[2].split("/");
+      if (tokens.length == 2) {
+        Secret resource=client.secrets().withName(tokens[0]).get();
+        Map<String,String> data=(resource != null) ? resource.getData() : null;
+        if (data != null) {
+          value=data.get(tokens[1]);
+        }
+      }
+      if (value != null) {
+        value=new String(Base64.decodeBase64(value));
+      }
+    }
+ else     if ("map".equalsIgnoreCase(items[1])) {
+      String[] tokens=items[2].split("/");
+      if (tokens.length == 2) {
+        ConfigMap resource=client.configMaps().withName(tokens[0]).get();
+        Map<String,String> data=(resource != null) ? resource.getData() : null;
+        if (data != null) {
+          value=data.get(tokens[1]);
+        }
+      }
+    }
+  }
+  return value != null ? value : dictionary.get(key);
+}
