@@ -4,7 +4,7 @@
   MOCK.expect().withPath("/api/v1/namespaces/arquillian/pods").andReturn(200,new PodListBuilder().addNewItem().withNewMetadata().withName("pod1").endMetadata().endItem().build()).always();
   MOCK.expect().withPath("/api/v1/namespaces/arquillian/services").andReturn(200,new ServiceListBuilder().addNewItem().withNewMetadata().withName("service1").endMetadata().endItem().build()).always();
   MOCK.init();
-  String masterUrl=MOCK.getServer().getUrl("/").toString();
+  String masterUrl=MOCK.getServer().url("/").toString();
   System.setProperty(Config.KUBERNETES_MASTER_SYSTEM_PROPERTY,masterUrl);
   System.setProperty(Config.KUBERNETES_NAMESPACE_SYSTEM_PROPERTY,"arquillian");
   System.setProperty(Constants.NAMESPACE_TO_USE,"arquillian");
