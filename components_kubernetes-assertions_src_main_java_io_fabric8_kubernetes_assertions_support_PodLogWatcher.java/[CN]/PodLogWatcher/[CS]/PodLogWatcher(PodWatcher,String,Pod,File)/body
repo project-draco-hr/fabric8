@@ -1,0 +1,6 @@
+{
+  KubernetesClient client=podWatcher.getClient();
+  ObjectMeta metadata=pod.getMetadata();
+  logFile.getParentFile().mkdirs();
+  this.logWatch=client.pods().inNamespace(metadata.getNamespace()).withName(name).watchLog(new FileOutputStream(logFile));
+}

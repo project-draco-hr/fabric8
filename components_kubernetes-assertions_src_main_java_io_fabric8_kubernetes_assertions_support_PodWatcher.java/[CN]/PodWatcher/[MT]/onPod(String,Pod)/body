@@ -7,4 +7,25 @@
  else {
     asserter.updated(pod);
   }
+  PodLogWatcher logWatcher=podLogWatchers.get(name);
+  if (logWatcher == null) {
+    String logName=name;
+    int counter=2;
+    File logFile;
+    while (true) {
+      logFile=new File(getBaseDir(),"target/test-pod-logs/" + logName + ".log");
+      if (!logFile.exists()) {
+        break;
+      }
+      logName=name + "-" + counter++;
+    }
+    try {
+      logWatcher=new PodLogWatcher(this,name,pod,logFile);
+      podLogWatchers.put(name,logWatcher);
+      LOG.info("Watching pod " + name + " log at file: "+ logFile.getAbsolutePath());
+    }
+ catch (    FileNotFoundException e) {
+      LOG.warn("Failed to create PodLogWatcher: " + e,e);
+    }
+  }
 }

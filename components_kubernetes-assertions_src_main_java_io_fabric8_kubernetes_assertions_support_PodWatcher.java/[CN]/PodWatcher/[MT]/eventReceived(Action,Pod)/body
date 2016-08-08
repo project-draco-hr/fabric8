@@ -4,7 +4,8 @@
     LOG.warn("Got error for pod " + name);
   }
  else   if (action.equals(Action.DELETED)) {
-    closeAsserter(name);
+    closeCloser(name,this.podAsserts);
+    closeCloser(name,this.podLogWatchers);
   }
  else {
     onPod(name,pod);
