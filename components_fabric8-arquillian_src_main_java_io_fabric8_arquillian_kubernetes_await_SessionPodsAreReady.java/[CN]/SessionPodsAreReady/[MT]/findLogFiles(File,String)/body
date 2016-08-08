@@ -1,0 +1,16 @@
+{
+  SortedMap<String,File> answer=new TreeMap<>();
+  File[] files=logDir.listFiles();
+  if (files != null) {
+    for (    File file : files) {
+      String fileName=file.getName();
+      if (fileName.endsWith(LOG_FILE_POSTFIX)) {
+        fileName=Strings.stripSuffix(fileName,LOG_FILE_POSTFIX);
+        if (fileName.startsWith(name)) {
+          answer.put(fileName,file);
+        }
+      }
+    }
+  }
+  return answer;
+}

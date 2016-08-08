@@ -28,4 +28,12 @@
       LOG.warn("Failed to create PodLogWatcher: " + e,e);
     }
   }
+  File yamlFile=new File(getBaseDir(),"target/test-pod-status/" + name + ".yml");
+  yamlFile.getParentFile().mkdirs();
+  try {
+    KubernetesHelper.saveYaml(pod,yamlFile);
+  }
+ catch (  IOException e) {
+    LOG.warn("Failed to write " + yamlFile + ". "+ e,e);
+  }
 }
