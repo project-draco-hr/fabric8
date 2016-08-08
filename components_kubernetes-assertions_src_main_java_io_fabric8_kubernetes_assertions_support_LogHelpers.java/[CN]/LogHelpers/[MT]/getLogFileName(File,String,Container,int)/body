@@ -1,0 +1,12 @@
+{
+  File logDir=new File(baseDir,"target/test-pod-logs/");
+  String containerName=container.getName();
+  String restartCountText="";
+  if (restartCount > 0) {
+    restartCountText="-" + restartCount;
+  }
+  String logFileName=podName + "-" + containerName+ restartCountText+ LOG_FILE_POSTFIX;
+  File logFile=new File(logDir,logFileName);
+  logFile.getParentFile().mkdirs();
+  return logFile;
+}

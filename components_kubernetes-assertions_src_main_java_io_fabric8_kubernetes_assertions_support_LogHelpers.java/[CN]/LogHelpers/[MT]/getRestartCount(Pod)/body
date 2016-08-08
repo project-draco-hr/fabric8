@@ -1,0 +1,16 @@
+{
+  int restartCount=0;
+  PodStatus podStatus=pod.getStatus();
+  if (podStatus != null) {
+    List<ContainerStatus> containerStatuses=podStatus.getContainerStatuses();
+    for (    ContainerStatus containerStatus : containerStatuses) {
+      if (restartCount == 0) {
+        Integer restartCountValue=containerStatus.getRestartCount();
+        if (restartCountValue != null) {
+          restartCount=restartCountValue.intValue();
+        }
+      }
+    }
+  }
+  return restartCount;
+}
