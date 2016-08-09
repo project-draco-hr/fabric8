@@ -1,0 +1,19 @@
+{
+  String key=remainder;
+  String defaultValue=null;
+  if (remainder.contains(":")) {
+    key=Support.before(remainder,":");
+    defaultValue=Support.after(remainder,":");
+  }
+  if (key != null) {
+    key=key.toUpperCase(Locale.ENGLISH).replace('-','_');
+    String host=System.getenv(key + HOST_PREFIX);
+    if (host != null) {
+      return host;
+    }
+ else {
+      return defaultValue;
+    }
+  }
+  return defaultValue;
+}

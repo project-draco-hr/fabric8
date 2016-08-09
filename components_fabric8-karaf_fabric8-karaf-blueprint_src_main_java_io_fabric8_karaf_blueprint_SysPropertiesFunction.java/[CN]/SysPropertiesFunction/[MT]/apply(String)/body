@@ -1,0 +1,10 @@
+{
+  String key=remainder;
+  String defaultValue=null;
+  if (remainder.contains(":")) {
+    key=Support.before(remainder,":");
+    defaultValue=Support.after(remainder,":");
+  }
+  String value=System.getProperty(key);
+  return value != null ? value : defaultValue;
+}
