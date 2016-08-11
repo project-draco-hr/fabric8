@@ -10,6 +10,7 @@
         throw new MojoFailureException("Cannot load kubernetes json: " + json);
       }
       Set<HasMetadata> entities=new TreeSet<>(new HasMetadataComparator());
+      ConfigMap parameterConfigMap=null;
       if (dto instanceof Template) {
         Template template=(Template)dto;
         List<HasMetadata> objects=template.getObjects();
@@ -17,12 +18,24 @@
           entities.addAll(objects);
         }
         List<io.fabric8.openshift.api.model.Parameter> parameters=template.getParameters();
+        if (parameters != null && parameters.size() > 0) {
+          parameterConfigMap=new ConfigMapBuilder().withNewMetadataLike(template.getMetadata()).endMetadata().build();
+          Map<String,String> configMapData=new HashMap<>();
+          for (          io.fabric8.openshift.api.model.Parameter parameter : parameters) {
+            String name=parameter.getName();
+            String value=parameter.getValue();
+            configMapData.put(convertToConfigMapKey(name),value);
+          }
+          parameterConfigMap.setData(configMapData);
+          migrateEntity(parameterConfigMap,parameterConfigMap);
+          entities.add(parameterConfigMap);
+        }
       }
  else {
         entities.addAll(KubernetesHelper.toItemList(dto));
       }
       for (      HasMetadata entity : entities) {
-        entity=migrateEntity(entity);
+        entity=migrateEntity(entity,parameterConfigMap);
         String name=KubernetesHelper.getName(entity);
         String kind=shortenKind(KubernetesHelper.getKind(entity).toLowerCase());
         File outFile=new File(outputDir,name + "-" + kind+ ".yml");

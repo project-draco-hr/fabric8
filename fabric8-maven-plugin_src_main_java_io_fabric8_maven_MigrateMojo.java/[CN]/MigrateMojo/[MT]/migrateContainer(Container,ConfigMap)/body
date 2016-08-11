@@ -1,0 +1,38 @@
+{
+  String image=container.getImage();
+  if (image != null) {
+    MavenProject project=getProject();
+    String version=project.getVersion();
+    if (version != null) {
+      String label=":" + version;
+      if (image.endsWith(label)) {
+        image=Strings.stripSuffix(image,label) + ":${project.version}";
+        container.setImage(image);
+      }
+ else {
+        getLog().warn("Image does not end with " + label + " as image is: "+ image);
+      }
+    }
+  }
+  if (parameterConfigMap != null) {
+    Map<String,String> parameters=parameterConfigMap.getData();
+    if (parameters != null) {
+      String configMapName=KubernetesHelper.getName(parameterConfigMap);
+      List<EnvVar> env=container.getEnv();
+      for (      EnvVar envVar : env) {
+        String value=envVar.getValue();
+        if (value != null) {
+          String name=envVar.getName();
+          if (value.startsWith("${") && value.endsWith("}")) {
+            String variableName=Strings.stripPrefix(Strings.stripSuffix(name,"}"),"${");
+            String expression=convertToConfigMapKey(variableName);
+            if (parameters.containsKey(expression)) {
+              envVar.setValue(null);
+              envVar.setValueFrom(new EnvVarSourceBuilder().withNewConfigMapKeyRef().withName(configMapName).withKey(expression).endConfigMapKeyRef().build());
+            }
+          }
+        }
+      }
+    }
+  }
+}

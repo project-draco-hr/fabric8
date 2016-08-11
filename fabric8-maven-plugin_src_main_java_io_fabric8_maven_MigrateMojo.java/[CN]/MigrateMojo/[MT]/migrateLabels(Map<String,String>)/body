@@ -1,7 +1,15 @@
 {
   if (labels != null) {
     MavenProject project=getProject();
-    replaceKeyValueWith(labels,"project",project.getArtifactId(),"${project.artifactId}");
+    boolean alwaysUseArtifactIdForProject=true;
+    if (alwaysUseArtifactIdForProject) {
+      if (labels.containsKey("project")) {
+        labels.put("project","${project.artifactId}");
+      }
+    }
+ else {
+      replaceKeyValueWith(labels,"project",project.getArtifactId(),"${project.artifactId}");
+    }
     replaceKeyValueWith(labels,"version",project.getVersion(),"${project.version}");
   }
 }

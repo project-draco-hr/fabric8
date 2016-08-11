@@ -8,6 +8,10 @@
     if (rcSpec != null) {
       DeploymentSpec deploymentSpec=new DeploymentSpec();
       Map<String,String> selector=rcSpec.getSelector();
+      if (selector != null) {
+        selector=new LinkedHashMap<>(selector);
+        selector.remove("version");
+      }
       migrateLabels(selector);
       deploymentSpec.setReplicas(rcSpec.getReplicas());
       if (selector != null) {
@@ -20,7 +24,7 @@
           List<Container> containers=podSpec.getContainers();
           if (containers != null) {
             for (            Container container : containers) {
-              migrate(container);
+              migrateContainer(container,parameterConfigMap);
             }
           }
         }
