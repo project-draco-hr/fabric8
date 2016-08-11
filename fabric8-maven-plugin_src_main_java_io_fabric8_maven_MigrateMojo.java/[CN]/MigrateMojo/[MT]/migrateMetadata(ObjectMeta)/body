@@ -1,0 +1,14 @@
+{
+  if (metadata == null) {
+    return;
+  }
+  Map<String,String> annotations=metadata.getAnnotations();
+  if (annotations != null) {
+    annotations.remove(Annotations.Builds.BUILD_ID);
+    annotations.remove(Annotations.Builds.BUILD_URL);
+    annotations.remove(Annotations.Builds.GIT_BRANCH);
+    annotations.remove(Annotations.Builds.GIT_COMMIT);
+    annotations.remove(Annotations.Builds.GIT_URL);
+  }
+  migrateLabels(metadata.getLabels());
+}

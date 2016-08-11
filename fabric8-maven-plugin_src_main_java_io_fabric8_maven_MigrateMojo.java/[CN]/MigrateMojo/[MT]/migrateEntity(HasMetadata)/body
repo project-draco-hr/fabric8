@@ -1,0 +1,38 @@
+{
+  migrateMetadata(entity.getMetadata());
+  if (entity instanceof ReplicationController) {
+    ReplicationController rc=(ReplicationController)entity;
+    ReplicationControllerSpec rcSpec=rc.getSpec();
+    Deployment deployment=new Deployment();
+    deployment.setMetadata(entity.getMetadata());
+    if (rcSpec != null) {
+      DeploymentSpec deploymentSpec=new DeploymentSpec();
+      Map<String,String> selector=rcSpec.getSelector();
+      migrateLabels(selector);
+      deploymentSpec.setReplicas(rcSpec.getReplicas());
+      if (selector != null) {
+        deploymentSpec.setSelector(new LabelSelectorBuilder().withMatchLabels(selector).build());
+      }
+      PodTemplateSpec podTemplateSpec=rcSpec.getTemplate();
+      if (podTemplateSpec != null) {
+        PodSpec podSpec=podTemplateSpec.getSpec();
+        if (podSpec != null) {
+          List<Container> containers=podSpec.getContainers();
+          if (containers != null) {
+            for (            Container container : containers) {
+              migrate(container);
+            }
+          }
+        }
+      }
+      PodTemplateSpec template=rcSpec.getTemplate();
+      if (template != null) {
+        migrateMetadata(template.getMetadata());
+        deploymentSpec.setTemplate(template);
+      }
+      deployment.setSpec(deploymentSpec);
+    }
+    return deployment;
+  }
+  return entity;
+}

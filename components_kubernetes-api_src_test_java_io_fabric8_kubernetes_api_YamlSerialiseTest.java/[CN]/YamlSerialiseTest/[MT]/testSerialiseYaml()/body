@@ -1,0 +1,8 @@
+{
+  Deployment deployment=new DeploymentBuilder().withNewMetadata().withName("foo").endMetadata().withNewSpec().withReplicas(1).withNewTemplate().withNewSpec().addNewContainer().withImage("cheese").endContainer().endSpec().endTemplate().endSpec().build();
+  File outFile=new File(new File(basedir),"target/test-data/deployment.yml");
+  outFile.getParentFile().mkdirs();
+  KubernetesHelper.saveYamlNotEmpty(deployment,outFile);
+  String yaml=IOHelpers.readFully(outFile);
+  System.out.println("YAML: " + yaml);
+}

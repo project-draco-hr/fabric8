@@ -1,0 +1,37 @@
+{
+  init();
+  File json=getKubernetesJson();
+  if (Files.isFile(json)) {
+    getLog().info("Kubernetes JSON: " + json);
+    try {
+      String fileName=json.getName();
+      Object dto=KubernetesHelper.loadJson(json);
+      if (dto == null) {
+        throw new MojoFailureException("Cannot load kubernetes json: " + json);
+      }
+      Set<HasMetadata> entities=new TreeSet<>(new HasMetadataComparator());
+      if (dto instanceof Template) {
+        Template template=(Template)dto;
+        List<HasMetadata> objects=template.getObjects();
+        if (objects != null) {
+          entities.addAll(objects);
+        }
+        List<io.fabric8.openshift.api.model.Parameter> parameters=template.getParameters();
+      }
+ else {
+        entities.addAll(KubernetesHelper.toItemList(dto));
+      }
+      for (      HasMetadata entity : entities) {
+        entity=migrateEntity(entity);
+        String name=KubernetesHelper.getName(entity);
+        String kind=shortenKind(KubernetesHelper.getKind(entity).toLowerCase());
+        File outFile=new File(outputDir,name + "-" + kind+ ".yml");
+        KubernetesHelper.saveYamlNotEmpty(entity,outFile);
+        getLog().info("Generated migration file: " + outFile);
+      }
+    }
+ catch (    Exception e) {
+      throw new MojoExecutionException(e.getMessage(),e);
+    }
+  }
+}
