@@ -1,0 +1,21 @@
+{
+  if (value.isArray()) {
+    int size=value.size();
+    return size == 0;
+  }
+  if (value.isTextual()) {
+    String text=value.textValue();
+    return isNullOrBlank(text);
+  }
+  if (value.isObject()) {
+    removeNullOrEmptyValues(value);
+    Iterator<String> iter=value.fieldNames();
+    int count=0;
+    while (iter.hasNext()) {
+      iter.next();
+      count++;
+    }
+    return count == 0;
+  }
+  return false;
+}

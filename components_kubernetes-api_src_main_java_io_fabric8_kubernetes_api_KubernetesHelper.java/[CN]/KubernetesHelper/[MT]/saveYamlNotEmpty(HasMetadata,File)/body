@@ -1,0 +1,7 @@
+{
+  String yaml=toYaml(entity);
+  ObjectMapper objectMapper=createYamlObjectMapper();
+  JsonNode jsonNode=objectMapper.readTree(yaml);
+  removeNullOrEmptyValues(jsonNode);
+  objectMapper.writeValue(outFile,jsonNode);
+}

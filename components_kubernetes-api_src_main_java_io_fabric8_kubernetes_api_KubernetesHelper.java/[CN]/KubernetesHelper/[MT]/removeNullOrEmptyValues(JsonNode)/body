@@ -1,0 +1,27 @@
+{
+  if (jsonNode instanceof ObjectNode) {
+    List<String> removeFields=new ArrayList<>();
+    ObjectNode object=(ObjectNode)jsonNode;
+    for (Iterator<String> iter=object.fieldNames(); iter.hasNext(); ) {
+      String field=iter.next();
+      JsonNode value=object.get(field);
+      if (isEmptyValue(value)) {
+        removeFields.add(field);
+      }
+ else {
+        removeNullOrEmptyValues(value);
+        ;
+      }
+    }
+    for (    String field : removeFields) {
+      object.remove(field);
+    }
+  }
+ else   if (jsonNode instanceof ArrayNode) {
+    ArrayNode arrayNode=(ArrayNode)jsonNode;
+    for (int i=0, size=arrayNode.size(); i < size; i++) {
+      JsonNode value=arrayNode.get(i);
+      removeNullOrEmptyValues(value);
+    }
+  }
+}
