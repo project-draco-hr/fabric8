@@ -1,0 +1,61 @@
+{
+  boolean updated=false;
+  Document doc;
+  try {
+    doc=XmlUtils.parseDoc(pom);
+  }
+ catch (  Exception e) {
+    getLog().error("Failed to parse pom " + pom + ". "+ e,e);
+    throw new MojoExecutionException(e.getMessage(),e);
+  }
+  Map<String,String> propertyMap=new HashMap<>();
+  Element properties=firstChild(doc.getDocumentElement(),"properties");
+  if (properties != null) {
+    NodeList childNodes=properties.getChildNodes();
+    if (childNodes != null) {
+      boolean lastRemoved=false;
+      for (int i=0; i < childNodes.getLength(); i++) {
+        Node item=childNodes.item(i);
+        if (item instanceof Element) {
+          Element property=(Element)item;
+          String tagName=property.getTagName();
+          String value=property.getTextContent();
+          propertyMap.put(tagName,value);
+          if (removePropertyName(tagName,value)) {
+            properties.removeChild(property);
+            i--;
+            lastRemoved=true;
+            updated=true;
+          }
+        }
+ else         if (item instanceof Text) {
+          Text text=(Text)item;
+          if (lastRemoved) {
+            properties.removeChild(text);
+            i--;
+            lastRemoved=false;
+          }
+        }
+      }
+    }
+  }
+  if (removeProfiles(doc,"docker-build","docker-push","jube")) {
+    updated=true;
+  }
+  if (removePlugin(doc,"io.fabric8.jube","jube-maven-plugin")) {
+    updated=true;
+  }
+  if (migrateDockerMavenPluginConfiguration(doc,propertyMap)) {
+    updated=true;
+  }
+  if (updated) {
+    getLog().info("Updating the pom " + pom);
+    try {
+      DomHelper.save(doc,pom);
+    }
+ catch (    Exception e) {
+      getLog().error("Failed to update pom " + pom + ". "+ e,e);
+      throw new MojoExecutionException(e.getMessage(),e);
+    }
+  }
+}

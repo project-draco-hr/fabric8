@@ -1,0 +1,12 @@
+{
+  Element plugin=findPlugin(doc,groupId,artifactId);
+  if (plugin != null) {
+    Node nextSibling=plugin.getNextSibling();
+    DomHelper.detach(plugin);
+    if (nextSibling instanceof TextNode) {
+      DomHelper.detach(nextSibling);
+    }
+    return true;
+  }
+  return false;
+}

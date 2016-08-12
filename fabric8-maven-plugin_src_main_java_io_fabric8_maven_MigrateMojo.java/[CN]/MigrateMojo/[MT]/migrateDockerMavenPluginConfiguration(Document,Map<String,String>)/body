@@ -1,0 +1,23 @@
+{
+  boolean updated=false;
+  Element configuration=null;
+  Element dmpPlugin=findPlugin(doc,"io.fabric8","docker-maven-plugin");
+  if (dmpPlugin != null) {
+    configuration=firstChild(dmpPlugin,"configuration");
+    if (configuration != null) {
+      DomHelper.detach(configuration);
+    }
+    Node nextSibling=dmpPlugin.getNextSibling();
+    if (nextSibling instanceof TextNode) {
+      DomHelper.detach(nextSibling);
+    }
+    DomHelper.detach(dmpPlugin);
+    updated=true;
+  }
+  Element fmpPlugin=findPlugin(doc,"io.fabric8","fabric8-maven-plugin");
+  if (fmpPlugin == null) {
+    findOrAddPlugin(doc,"io.fabric8","fabric8-maven-plugin","${fabric8.maven.plugin.version}",configuration);
+    updated=true;
+  }
+  return updated;
+}

@@ -1,0 +1,36 @@
+{
+  Set<String> profileIdSet=new HashSet<>(Arrays.asList(profileIds));
+  boolean updated=false;
+  Element profiles=firstChild(doc.getDocumentElement(),"profiles");
+  if (profiles != null) {
+    NodeList childNodes=profiles.getChildNodes();
+    if (childNodes != null) {
+      boolean lastRemoved=false;
+      for (int i=0; i < childNodes.getLength(); i++) {
+        Node item=childNodes.item(i);
+        if (item instanceof Element) {
+          Element profile=(Element)item;
+          Element idElement=firstChild(profile,"id");
+          if (idElement != null) {
+            String id=idElement.getTextContent();
+            if (id != null && profileIdSet.contains(id)) {
+              profiles.removeChild(profile);
+              i--;
+              lastRemoved=true;
+              updated=true;
+            }
+          }
+        }
+ else         if (item instanceof Text) {
+          Text text=(Text)item;
+          if (lastRemoved) {
+            profiles.removeChild(text);
+            i--;
+            lastRemoved=false;
+          }
+        }
+      }
+    }
+  }
+  return updated;
+}

@@ -2,9 +2,7 @@
   init();
   File json=getKubernetesJson();
   if (Files.isFile(json)) {
-    getLog().info("Kubernetes JSON: " + json);
     try {
-      String fileName=json.getName();
       Object dto=KubernetesHelper.loadJson(json);
       if (dto == null) {
         throw new MojoFailureException("Cannot load kubernetes json: " + json);
@@ -41,6 +39,14 @@
         File outFile=new File(outputDir,name + "-" + kind+ ".yml");
         KubernetesHelper.saveYamlNotEmpty(entity,outFile);
         getLog().info("Generated migration file: " + outFile);
+      }
+      tryAddFilesToGit(".");
+      if (updatePom) {
+        updatePomFile(new File(getProject().getBasedir(),"pom.xml"));
+      }
+      File useFmp2File=new File(getProject().getBasedir(),"uses.fmp2");
+      if (useFmp2File.exists()) {
+        useFmp2File.delete();
       }
     }
  catch (    Exception e) {

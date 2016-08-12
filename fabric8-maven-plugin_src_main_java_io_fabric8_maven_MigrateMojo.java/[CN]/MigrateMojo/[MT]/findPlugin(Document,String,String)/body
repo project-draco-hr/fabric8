@@ -1,0 +1,22 @@
+{
+  Element build=firstChild(doc.getDocumentElement(),"build");
+  if (build != null) {
+    Element plugins=firstChild(build,"plugins");
+    if (plugins != null) {
+      NodeList childNodes=plugins.getChildNodes();
+      if (childNodes != null) {
+        boolean lastRemoved=false;
+        for (int i=0; i < childNodes.getLength(); i++) {
+          Node item=childNodes.item(i);
+          if (item instanceof Element) {
+            Element plugin=(Element)item;
+            if (Objects.equals(DomHelper.firstChildTextContent(plugin,"groupId"),groupId) && Objects.equals(DomHelper.firstChildTextContent(plugin,"artifactId"),artifactId)) {
+              return plugin;
+            }
+          }
+        }
+      }
+    }
+  }
+  return null;
+}

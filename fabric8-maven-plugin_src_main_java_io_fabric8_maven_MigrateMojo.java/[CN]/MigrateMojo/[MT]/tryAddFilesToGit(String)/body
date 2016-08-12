@@ -1,0 +1,11 @@
+{
+  FileRepositoryBuilder builder=new FileRepositoryBuilder();
+  try {
+    Repository repository=builder.readEnvironment().findGitDir().build();
+    Git git=new Git(repository);
+    git.add().addFilepattern(filePattern).call();
+  }
+ catch (  Exception e) {
+    getLog().warn("Failed to add generated files to the git repository: " + e,e);
+  }
+}

@@ -1,0 +1,30 @@
+{
+  Element plugin=findPlugin(doc,groupId,artifactId);
+  if (plugin != null) {
+    return plugin;
+  }
+  Element documentElement=doc.getDocumentElement();
+  Element build=firstChild(documentElement,"build");
+  if (build == null) {
+    build=DomHelper.addChildElement(documentElement,"build");
+  }
+  Element plugins=firstChild(build,"plugins");
+  if (plugins == null) {
+    plugins=DomHelper.addChildElement(build,"plugins");
+  }
+  plugins.appendChild(doc.createTextNode("\n      "));
+  plugin=DomHelper.addChildElement(plugins,"plugin");
+  plugin.appendChild(doc.createTextNode("\n        "));
+  DomHelper.addChildElement(plugin,"groupId",groupId);
+  plugin.appendChild(doc.createTextNode("\n        "));
+  DomHelper.addChildElement(plugin,"artifactId",artifactId);
+  plugin.appendChild(doc.createTextNode("\n        "));
+  DomHelper.addChildElement(plugin,"version",version);
+  plugin.appendChild(doc.createTextNode("\n        "));
+  if (configuration != null) {
+    plugin.appendChild(configuration);
+  }
+  plugin.appendChild(doc.createTextNode("\n      "));
+  plugins.appendChild(doc.createTextNode("\n      "));
+  return plugin;
+}
