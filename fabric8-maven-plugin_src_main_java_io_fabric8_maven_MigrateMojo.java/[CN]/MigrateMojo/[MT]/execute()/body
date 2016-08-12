@@ -68,16 +68,18 @@
         getLog().info("Generated migration file: " + outFile);
       }
       tryAddFilesToGit(".");
+      File basedir=getProject().getBasedir();
       if (updatePom) {
-        updatePomFile(new File(getProject().getBasedir(),"pom.xml"));
+        updatePomFile(new File(basedir,"pom.xml"));
       }
       String[] filesToDelete={"uses.fmp2","src/main/fabric8/templateParameters.properties","src/main/fabric8/env.properties"};
       for (      String fileName : filesToDelete) {
-        File file=new File(getProject().getBasedir(),fileName);
+        File file=new File(basedir,fileName);
         if (file.exists()) {
           file.delete();
         }
       }
+      deleteModelProcessorJavaFiles(new File(basedir,"src/main/java"));
     }
  catch (    Exception e) {
       throw new MojoExecutionException(e.getMessage(),e);
