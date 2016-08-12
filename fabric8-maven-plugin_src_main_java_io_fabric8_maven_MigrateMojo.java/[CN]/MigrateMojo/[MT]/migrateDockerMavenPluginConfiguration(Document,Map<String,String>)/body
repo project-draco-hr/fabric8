@@ -16,7 +16,32 @@
   }
   Element fmpPlugin=findPlugin(doc,"io.fabric8","fabric8-maven-plugin");
   if (fmpPlugin == null) {
-    findOrAddPlugin(doc,"io.fabric8","fabric8-maven-plugin","${fabric8.maven.plugin.version}",configuration);
+    fmpPlugin=findOrAddPlugin(doc,"io.fabric8","fabric8-maven-plugin","${fabric8.maven.plugin.version}",configuration);
+    updated=true;
+  }
+  if (updateExecutions) {
+    Element executions=firstChild(fmpPlugin,"executions");
+    if (executions == null) {
+      executions=DomHelper.addChildElement(fmpPlugin,"executions");
+      fmpPlugin.appendChild(doc.createTextNode("\n      "));
+    }
+ else {
+      DomHelper.removeChildren(executions);
+    }
+    executions.appendChild(doc.createTextNode("\n        "));
+    Element execution=DomHelper.addChildElement(executions,"execution");
+    execution.appendChild(doc.createTextNode("\n          "));
+    DomHelper.addChildElement(execution,"id","fmp");
+    execution.appendChild(doc.createTextNode("\n          "));
+    Element goals=DomHelper.addChildElement(execution,"goals");
+    execution.appendChild(doc.createTextNode("\n          "));
+    String[] goalNames={"resource","helm","build"};
+    for (    String goalName : goalNames) {
+      goals.appendChild(doc.createTextNode("\n            "));
+      DomHelper.addChildElement(goals,"goal",goalName);
+    }
+    goals.appendChild(doc.createTextNode("\n          "));
+    executions.appendChild(doc.createTextNode("\n      "));
     updated=true;
   }
   return updated;

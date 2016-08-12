@@ -22,6 +22,9 @@
           for (          io.fabric8.openshift.api.model.Parameter parameter : parameters) {
             String name=parameter.getName();
             String value=parameter.getValue();
+            if (value == null) {
+              value="";
+            }
             configMapData.put(convertToConfigMapKey(name),value);
           }
           parameterConfigMap.setData(configMapData);
@@ -37,7 +40,12 @@
         String name=KubernetesHelper.getName(entity);
         String kind=shortenKind(KubernetesHelper.getKind(entity).toLowerCase());
         File outFile=new File(outputDir,name + "-" + kind+ ".yml");
-        KubernetesHelper.saveYamlNotEmpty(entity,outFile);
+        if (entity instanceof ConfigMap || entity instanceof Secret) {
+          KubernetesHelper.saveYaml(entity,outFile);
+        }
+ else {
+          KubernetesHelper.saveYamlNotEmpty(entity,outFile);
+        }
         getLog().info("Generated migration file: " + outFile);
       }
       tryAddFilesToGit(".");
