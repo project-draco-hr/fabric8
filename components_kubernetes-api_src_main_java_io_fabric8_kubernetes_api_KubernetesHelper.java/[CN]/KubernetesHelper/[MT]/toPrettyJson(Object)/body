@@ -1,0 +1,9 @@
+{
+  if (dto == null) {
+    return "null";
+  }
+  Class<?> clazz=dto.getClass();
+  ObjectMapper objectMapper=new ObjectMapper();
+  objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+  return objectMapper.writerFor(clazz).writeValueAsString(dto);
+}
