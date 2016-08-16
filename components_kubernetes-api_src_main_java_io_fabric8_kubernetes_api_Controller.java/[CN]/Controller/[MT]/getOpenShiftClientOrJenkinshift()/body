@@ -2,7 +2,11 @@
   OpenShiftClient openShiftClient=getOpenShiftClientOrNull();
   if (openShiftClient == null) {
     String jenkinshiftUrl=Systems.getEnvVar("JENKINSHIFT_URL","http://jenkinshift/");
-    openShiftClient=new DefaultOpenShiftClient(jenkinshiftUrl);
+    System.out.println("Using jenknshift URL: " + jenkinshiftUrl);
+    Config config=createJenkinshiftConfig(jenkinshiftUrl);
+    JenkinShiftClient jenkinShiftClient=new JenkinShiftClient(config);
+    jenkinShiftClient.updateHttpClient(config);
+    openShiftClient=jenkinShiftClient;
   }
   return openShiftClient;
 }

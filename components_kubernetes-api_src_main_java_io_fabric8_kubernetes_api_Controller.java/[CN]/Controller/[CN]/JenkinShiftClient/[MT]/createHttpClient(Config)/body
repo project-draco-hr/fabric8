@@ -1,0 +1,58 @@
+{
+  try {
+    OkHttpClient.Builder httpClientBuilder=new OkHttpClient.Builder();
+    httpClientBuilder.followRedirects(true);
+    httpClientBuilder.followSslRedirects(true);
+    if (config.isTrustCerts()) {
+      httpClientBuilder.hostnameVerifier(new HostnameVerifier(){
+        @Override public boolean verify(        String s,        SSLSession sslSession){
+          return true;
+        }
+      }
+);
+    }
+    if (isNotNullOrEmpty(config.getUsername()) && isNotNullOrEmpty(config.getPassword())) {
+      httpClientBuilder.addInterceptor(new Interceptor(){
+        @Override public Response intercept(        Chain chain) throws IOException {
+          Request authReq=chain.request().newBuilder().addHeader("Authorization",Credentials.basic(config.getUsername(),config.getPassword())).build();
+          return chain.proceed(authReq);
+        }
+      }
+);
+    }
+ else     if (config.getOauthToken() != null) {
+      httpClientBuilder.addInterceptor(new Interceptor(){
+        @Override public Response intercept(        Chain chain) throws IOException {
+          Request authReq=chain.request().newBuilder().addHeader("Authorization","Bearer " + config.getOauthToken()).build();
+          return chain.proceed(authReq);
+        }
+      }
+);
+    }
+    Logger reqLogger=LoggerFactory.getLogger(HttpLoggingInterceptor.class);
+    if (reqLogger.isTraceEnabled()) {
+      HttpLoggingInterceptor loggingInterceptor=new HttpLoggingInterceptor();
+      loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+      httpClientBuilder.addNetworkInterceptor(loggingInterceptor);
+    }
+    if (config.getConnectionTimeout() > 0) {
+      httpClientBuilder.connectTimeout(config.getConnectionTimeout(),TimeUnit.MILLISECONDS);
+    }
+    if (config.getRequestTimeout() > 0) {
+      httpClientBuilder.readTimeout(config.getRequestTimeout(),TimeUnit.MILLISECONDS);
+    }
+    if (config.getUserAgent() != null && !config.getUserAgent().isEmpty()) {
+      httpClientBuilder.addNetworkInterceptor(new Interceptor(){
+        @Override public Response intercept(        Chain chain) throws IOException {
+          Request agent=chain.request().newBuilder().header("User-Agent",config.getUserAgent()).build();
+          return chain.proceed(agent);
+        }
+      }
+);
+    }
+    return httpClientBuilder.build();
+  }
+ catch (  Exception e) {
+    throw KubernetesClientException.launderThrowable(e);
+  }
+}
