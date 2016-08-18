@@ -1,0 +1,19 @@
+{
+  if (bundle.getHeaders().get("Service-Component") == null) {
+    return null;
+  }
+  ScrService svc=tracker.getService();
+  if (svc == null) {
+    return new Check("scr-state","No ScrService found");
+  }
+  Component[] components=svc.getComponents(bundle);
+  if (components != null) {
+    for (    Component component : components) {
+      int state=component.getState();
+      if (state != Component.STATE_ACTIVE && state != Component.STATE_REGISTERED && state != Component.STATE_FACTORY) {
+        return new Check("scr-state","SCR bundle " + bundle.getBundleId() + " is in state "+ getState(state));
+      }
+    }
+  }
+  return null;
+}

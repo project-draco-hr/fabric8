@@ -1,0 +1,7 @@
+{
+  BlueprintEvent event=states.get(bundle.getBundleId());
+  if (event != null && event.getType() != BlueprintEvent.CREATED && isActive(bundle)) {
+    return new Check("blueprint-state","Blueprint bundle " + bundle.getBundleId() + " is in state "+ getState(event));
+  }
+  return null;
+}

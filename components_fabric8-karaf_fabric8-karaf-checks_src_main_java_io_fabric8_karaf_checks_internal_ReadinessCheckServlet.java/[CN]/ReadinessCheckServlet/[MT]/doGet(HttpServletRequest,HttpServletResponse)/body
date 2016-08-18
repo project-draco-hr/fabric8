@@ -1,9 +1,16 @@
 {
-  if (isReady()) {
-    resp.getWriter().print("READY");
+  List<Check> checks=new ArrayList<>();
+  for (  ReadinessChecker checker : checkers) {
+    checks.addAll(checker.getFailingReadinessChecks());
+  }
+  if (checks.isEmpty()) {
+    resp.getWriter().println("READY");
   }
  else {
     resp.setStatus(503);
-    resp.getWriter().print("NOT READY");
+    resp.getWriter().println("NOT READY");
+    for (    Check check : checks) {
+      resp.getWriter().println(check.getName() + ": " + check.getLongDescription());
+    }
   }
 }

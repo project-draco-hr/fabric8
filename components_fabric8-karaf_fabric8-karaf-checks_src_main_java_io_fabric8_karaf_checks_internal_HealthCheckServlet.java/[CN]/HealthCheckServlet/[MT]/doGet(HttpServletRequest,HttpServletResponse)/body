@@ -1,9 +1,16 @@
 {
-  if (isHealthy()) {
-    resp.getWriter().print("HEALTHY");
+  List<Check> checks=new ArrayList<>();
+  for (  HealthChecker checker : checkers) {
+    checks.addAll(checker.getFailingHeathChecks());
+  }
+  if (checks.isEmpty()) {
+    resp.getWriter().println("HEALTHY");
   }
  else {
     resp.setStatus(503);
-    resp.getWriter().print("NOT HEALTHY");
+    resp.getWriter().println("NOT HEALTHY");
+    for (    Check check : checks) {
+      resp.getWriter().println(check.getName() + ": " + check.getLongDescription());
+    }
   }
 }

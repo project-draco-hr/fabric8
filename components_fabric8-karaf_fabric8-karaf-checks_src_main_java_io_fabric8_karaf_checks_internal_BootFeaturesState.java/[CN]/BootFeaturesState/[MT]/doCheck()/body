@@ -1,0 +1,10 @@
+{
+  for (  Bundle bundle : systemBundleContext.getBundles()) {
+    if (bundle.getSymbolicName().equals("org.apache.karaf.features.core")) {
+      if (!bootFeaturesInstalled(bundle)) {
+        return Collections.singletonList(new Check("boot-features-state","Boot Features are not yet installed"));
+      }
+    }
+  }
+  return Collections.emptyList();
+}

@@ -1,0 +1,12 @@
+{
+  if (bundle.getState() == Bundle.ACTIVE) {
+    return true;
+  }
+  if (bundle.getState() == Bundle.STARTING) {
+    String activationPolicyHeader=bundle.getHeaders().get(Constants.BUNDLE_ACTIVATIONPOLICY);
+    if (activationPolicyHeader != null && activationPolicyHeader.startsWith(Constants.ACTIVATION_LAZY)) {
+      return true;
+    }
+  }
+  return false;
+}

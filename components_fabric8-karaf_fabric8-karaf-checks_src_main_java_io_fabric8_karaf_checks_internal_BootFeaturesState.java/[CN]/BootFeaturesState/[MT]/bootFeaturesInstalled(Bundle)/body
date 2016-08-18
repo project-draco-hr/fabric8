@@ -1,0 +1,20 @@
+{
+  if (bundle.getVersion().getMajor() < 4) {
+    File file=bundle.getBundleContext().getDataFile("FeaturesServiceState.properties");
+    if (!file.exists()) {
+      return false;
+    }
+    Properties props=new Properties();
+    try (InputStream is=new FileInputStream(file)){
+      props.load(is);
+    }
+ catch (    IOException e) {
+      return false;
+    }
+    return Boolean.parseBoolean((String)props.get("bootFeaturesInstalled"));
+  }
+ else {
+    ServiceReference<?> ref=bundleContext.getServiceReference("org.apache.karaf.features.BootFinished");
+    return ref != null;
+  }
+}
