@@ -2,7 +2,7 @@
   pidLabel=Utils.getSystemPropertyOrEnvVar("fabric8.karaf.pid.label","pid");
   filters=new HashMap<>();
   String filterList=Utils.getSystemPropertyOrEnvVar("fabric8.karaf.pid.filters");
-  if (!Utils.isNullOrEmpty(filterList)) {
+  if (Utils.isNotNullOrEmpty(filterList)) {
     for (    String filter : filterList.split(",")) {
       String[] kv=filter.split("=");
       if (kv.length == 2) {
