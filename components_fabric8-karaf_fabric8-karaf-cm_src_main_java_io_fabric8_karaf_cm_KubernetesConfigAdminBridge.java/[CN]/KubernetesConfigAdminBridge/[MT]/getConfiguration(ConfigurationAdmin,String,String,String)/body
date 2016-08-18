@@ -1,0 +1,10 @@
+{
+  String filter="(" + FABRIC8_PID + "="+ fabric8pid+ ")";
+  Configuration[] oldConfiguration=configAdmin.listConfigurations(filter);
+  if (oldConfiguration != null && oldConfiguration.length > 0) {
+    return oldConfiguration[0];
+  }
+ else {
+    return factoryPid != null ? configAdmin.createFactoryConfiguration(pid,null) : configAdmin.getConfiguration(pid,null);
+  }
+}

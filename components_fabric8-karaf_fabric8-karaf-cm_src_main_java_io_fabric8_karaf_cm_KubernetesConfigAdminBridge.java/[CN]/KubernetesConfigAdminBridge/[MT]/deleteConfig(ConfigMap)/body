@@ -1,0 +1,21 @@
+{
+  String pid=map.getMetadata().getLabels().get(pidLabel);
+  String[] p=parsePid(pid);
+  try {
+    Configuration config=getConfiguration(configAdmin.get(),pid,p[0],p[1]);
+    Dictionary<String,Object> props=config.getProperties();
+    if (props != null) {
+      String merge=(String)props.get(FABRIC8_CONFIG_MERGE);
+      if (merge == null) {
+        merge=configMerge;
+      }
+      if ("false".equals(merge)) {
+        LOGGER.debug("Delete configuration {}",config.getPid());
+        config.delete();
+      }
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.warn("",e);
+  }
+}

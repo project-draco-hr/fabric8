@@ -1,0 +1,56 @@
+{
+  Long ver=Long.parseLong(map.getMetadata().getResourceVersion());
+  String pid=map.getMetadata().getLabels().get(pidLabel);
+  String[] p=parsePid(pid);
+  try {
+    Configuration config=getConfiguration(configAdmin.get(),pid,p[0],p[1]);
+    Dictionary<String,Object> props=config.getProperties();
+    Hashtable<String,Object> old=props != null ? new Hashtable<String,Object>() : null;
+    Hashtable<String,Object> cnf=new Hashtable<>();
+    for (    Map.Entry<String,String> entry : map.getData().entrySet()) {
+      cnf.put(entry.getKey(),entry.getValue());
+    }
+    String meta=(String)cnf.get(FABRIC8_CONFIG_META);
+    if (meta == null) {
+      meta=configMeta;
+    }
+    String merge=(String)cnf.get(FABRIC8_CONFIG_MERGE);
+    if (merge == null) {
+      merge=configMerge;
+    }
+    if (old != null) {
+      Long oldVer=(Long)props.get(FABRIC8_K8S_META_RESOURCE_VERSION);
+      if (oldVer != null && oldVer.equals(ver)) {
+        LOGGER.debug("Ignoring configuration pid={}, resourceVersion={} (no changes)",config.getPid(),oldVer);
+        return;
+      }
+      for (Enumeration<String> e=props.keys(); e.hasMoreElements(); ) {
+        String key=e.nextElement();
+        Object val=props.get(key);
+        old.put(key,val);
+      }
+    }
+    cleanDictionaryMeta(old);
+    cleanDictionaryMeta(cnf);
+    if (!cnf.equals(old)) {
+      LOGGER.debug("Updating configuration pid={}",config.getPid());
+      if ("true".equals(meta)) {
+        cnf.put(FABRIC8_PID,pid);
+        cnf.put(FABRIC8_K8S_META_RESOURCE_VERSION,ver);
+        cnf.put(FABRIC8_K8S_META_NAME,map.getMetadata().getName());
+        cnf.put(FABRIC8_K8S_META_NAMESPACE,map.getMetadata().getNamespace());
+      }
+      if ("true".equals(merge) && old != null) {
+        old.putAll(cnf);
+        cnf=old;
+      }
+      config.update(cnf);
+    }
+ else {
+      LOGGER.debug("Ignoring configuration pid={} (no changes)",config.getPid());
+    }
+  }
+ catch (  Exception e) {
+    LOGGER.warn("",e);
+  }
+}

@@ -1,0 +1,24 @@
+{
+  pidLabel=Utils.getSystemPropertyOrEnvVar(FABRIC8_PID_LABEL,FABRIC8_PID_LABEL_DEFAULT);
+  configMerge=Utils.getSystemPropertyOrEnvVar(FABRIC8_CONFIG_MERGE,FABRIC8_CONFIG_MERGE_DEFAULT);
+  configMeta=Utils.getSystemPropertyOrEnvVar(FABRIC8_CONFIG_META,FABRIC8_CONFIG_META_DEFAULT);
+  filters=new HashMap<>();
+  String filterList=Utils.getSystemPropertyOrEnvVar(FABRIC8_PID_FILTERS);
+  if (!Utils.isNullOrEmpty(filterList)) {
+    for (    String filter : filterList.split(",")) {
+      String[] kv=filter.split("=");
+      if (kv.length == 2) {
+        filters.put(kv[0].trim(),kv[1].trim());
+      }
+    }
+  }
+synchronized (lock) {
+    watchConfigMapList();
+    ConfigMapList list=getConfigMapList();
+    if (list != null) {
+      for (      ConfigMap map : list.getItems()) {
+        updateConfig(map);
+      }
+    }
+  }
+}
