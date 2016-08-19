@@ -1,9 +1,11 @@
 {
-  KubernetesClient client=kubernetesClient.get();
-  if (client != null) {
-    watch=client.configMaps().withLabel(pidLabel).withLabels(filters).watch(this);
-  }
+  if ("true".equals(configWatch)) {
+    KubernetesClient client=kubernetesClient.get();
+    if (client != null) {
+      watch=client.configMaps().withLabel(pidLabel).withLabels(filters).watch(this);
+    }
  else {
-    throw new RuntimeException("KubernetesClient not set");
+      throw new RuntimeException("KubernetesClient not set");
+    }
   }
 }
