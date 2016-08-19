@@ -1,0 +1,21 @@
+{
+  MBeanServer server=this.mbeanServer.getService();
+  if (server != null) {
+    try {
+      List<Check> checks=new ArrayList<>();
+      Set<ObjectName> contexts=server.queryNames(new ObjectName("org.apache.camel:type=context,*"),null);
+      for (      ObjectName ctxName : contexts) {
+        String state=server.getAttribute(ctxName,"State").toString();
+        if (!"Started".equals(state)) {
+          String name=ctxName.getKeyProperty("name");
+          checks.add(new Check("camel-state","Camel context " + name + " is in state "+ state));
+        }
+      }
+      return checks;
+    }
+ catch (    Exception e) {
+      return Collections.singletonList(new Check("camel-state","Unable to check camel contexts: " + e.toString()));
+    }
+  }
+  return Collections.emptyList();
+}

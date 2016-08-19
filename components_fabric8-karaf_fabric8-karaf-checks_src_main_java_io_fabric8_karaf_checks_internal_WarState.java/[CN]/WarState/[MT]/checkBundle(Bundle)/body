@@ -1,0 +1,7 @@
+{
+  WebEvent event=states.get(bundle.getBundleId());
+  if (event != null && event.getType() != WebEvent.DEPLOYED && isActive(bundle)) {
+    return new Check("war-state","War bundle " + bundle.getBundleId() + " is in state "+ getState(event));
+  }
+  return null;
+}
