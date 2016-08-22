@@ -1,0 +1,18 @@
+{
+  if (configAdmCfg == null) {
+    return true;
+  }
+  for (  Map.Entry<String,Object> entry : configMapCfg.entrySet()) {
+    if (FABRIC8_META_KEYS.contains(entry.getKey())) {
+      continue;
+    }
+    Object value=configAdmCfg.get(entry.getKey());
+    if (value == null) {
+      return true;
+    }
+    if (!value.equals(entry.getValue())) {
+      return true;
+    }
+  }
+  return false;
+}
