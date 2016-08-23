@@ -1,0 +1,15 @@
+{
+  if (!enabled) {
+    return;
+  }
+  for (Enumeration<String> keys=dictionary.keys(); keys.hasMoreElements(); ) {
+    final String key=keys.nextElement();
+    final Object val=dictionary.get(key);
+    if (val instanceof String) {
+      StringBuilder sb=Support.acquireStringBuilder((String)val);
+      if (substitutor.replaceIn(sb)) {
+        dictionary.put(key,sb.toString());
+      }
+    }
+  }
+}

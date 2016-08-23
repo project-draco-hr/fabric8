@@ -1,0 +1,15 @@
+{
+  this.resolver=new AtomicReference<>();
+  this.substitutor=new StrSubstitutor();
+  this.substitutor.setEnableSubstitutionInVariables(true);
+  this.substitutor.setVariablePrefix(PLACEHOLDER_PREFIX);
+  this.substitutor.setVariableSuffix(PLACEHOLDER_SUFFIX);
+  this.substitutor.setVariableResolver(new StrLookup<String>(){
+    @Override public String lookup(    String value){
+      Fabric8PlaceholderResolver res=resolver.get();
+      return res != null ? res.resolve(value) : null;
+    }
+  }
+);
+  this.enabled=false;
+}

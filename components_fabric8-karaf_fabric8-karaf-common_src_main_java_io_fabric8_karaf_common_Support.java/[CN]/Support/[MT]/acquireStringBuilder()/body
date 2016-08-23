@@ -1,0 +1,12 @@
+{
+  WeakReference<StringBuilder> ref=SBPOOL.get();
+  StringBuilder sb=null;
+  if (ref != null) {
+    sb=ref.get();
+  }
+  if (sb == null) {
+    sb=new StringBuilder(1024);
+    SBPOOL.set(new WeakReference<>(sb));
+  }
+  return sb;
+}

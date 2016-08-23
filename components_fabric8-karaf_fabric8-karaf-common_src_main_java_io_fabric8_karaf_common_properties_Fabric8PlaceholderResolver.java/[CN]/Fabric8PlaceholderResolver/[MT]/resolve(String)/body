@@ -1,0 +1,19 @@
+{
+  String[] resolvers=Support.before(value,":").split("\\+");
+  String remainder=Support.after(value,":");
+  for (  String resolver : resolvers) {
+    PropertiesFunction function=findFunction(resolver);
+    if (function == null) {
+      value=null;
+      break;
+    }
+    value=function.apply(remainder);
+    if (value != null) {
+      remainder=value;
+    }
+ else {
+      break;
+    }
+  }
+  return value;
+}
