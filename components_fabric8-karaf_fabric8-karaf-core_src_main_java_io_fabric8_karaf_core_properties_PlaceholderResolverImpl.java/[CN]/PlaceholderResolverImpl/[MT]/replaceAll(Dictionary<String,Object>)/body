@@ -1,0 +1,16 @@
+{
+  int replacedCount=0;
+  Enumeration<String> keys=dictionary.keys();
+  while (keys.hasMoreElements()) {
+    final String key=keys.nextElement();
+    final Object val=dictionary.get(key);
+    if (val instanceof String) {
+      StringBuilder sb=Support.acquireStringBuilder((String)val);
+      if (substitutor.replaceIn(sb)) {
+        replacedCount++;
+        dictionary.put(key,sb.toString());
+      }
+    }
+  }
+  return replacedCount > 0;
+}

@@ -1,0 +1,14 @@
+{
+  int replacedCount=0;
+  for (  String key : dictionary.keySet()) {
+    final Object val=dictionary.get(key);
+    if (val instanceof String) {
+      StringBuilder sb=Support.acquireStringBuilder((String)val);
+      if (substitutor.replaceIn(sb)) {
+        replacedCount++;
+        dictionary.put(key,sb.toString());
+      }
+    }
+  }
+  return replacedCount > 0;
+}

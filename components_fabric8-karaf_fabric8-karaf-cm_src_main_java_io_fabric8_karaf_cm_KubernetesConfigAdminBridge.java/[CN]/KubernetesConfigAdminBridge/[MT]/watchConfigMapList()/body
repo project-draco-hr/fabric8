@@ -1,5 +1,5 @@
 {
-  if ("true".equals(configWatch)) {
+  if (configWatch) {
     KubernetesClient client=kubernetesClient.get();
     if (client != null) {
       watch=client.configMaps().withLabel(pidLabel).withLabels(filters).watch(this);

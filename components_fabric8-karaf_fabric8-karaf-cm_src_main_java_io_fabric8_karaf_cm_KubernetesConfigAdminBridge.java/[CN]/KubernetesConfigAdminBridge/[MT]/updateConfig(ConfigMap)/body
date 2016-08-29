@@ -29,14 +29,8 @@
         configMapCfg.put(entry.getKey(),entry.getValue());
       }
     }
-    String meta=configMapData.get(FABRIC8_CONFIG_META);
-    if (meta == null) {
-      meta=configMeta;
-    }
-    String merge=configMapData.get(FABRIC8_CONFIG_MERGE);
-    if (merge == null) {
-      merge=configMerge;
-    }
+    boolean meta=configMapData.containsKey(FABRIC8_CONFIG_META) ? Boolean.valueOf(configMapData.get(FABRIC8_CONFIG_META)) : configMeta;
+    boolean merge=configMapData.containsKey(FABRIC8_CONFIG_MERGE) ? Boolean.valueOf(configMapData.get(FABRIC8_CONFIG_MERGE)) : configMerge;
     if (configAdmCfg != null) {
       Long oldVer=(Long)props.get(FABRIC8_K8S_META_RESOURCE_VERSION);
       if (oldVer != null && (oldVer >= ver)) {
@@ -51,13 +45,13 @@
     }
     if (shouldUpdate(configAdmCfg,configMapCfg)) {
       LOGGER.debug("Updating configuration pid={}",config.getPid());
-      if ("true".equals(meta)) {
+      if (meta) {
         configMapCfg.put(FABRIC8_PID,pid);
         configMapCfg.put(FABRIC8_K8S_META_RESOURCE_VERSION,ver);
         configMapCfg.put(FABRIC8_K8S_META_NAME,map.getMetadata().getName());
         configMapCfg.put(FABRIC8_K8S_META_NAMESPACE,map.getMetadata().getNamespace());
       }
-      if ("true".equals(merge) && configAdmCfg != null) {
+      if (merge && configAdmCfg != null) {
         for (        Map.Entry<String,Object> entry : configMapCfg.entrySet()) {
           if (!CM_META_KEYS.contains(entry.getKey())) {
             configAdmCfg.put(entry.getKey(),entry.getValue());

@@ -1,8 +1,9 @@
 {
-  pidLabel=getSystemPropertyOrEnvVar(FABRIC8_PID_LABEL,FABRIC8_PID_LABEL_DEFAULT);
-  configMerge=getSystemPropertyOrEnvVar(FABRIC8_CONFIG_MERGE,FABRIC8_CONFIG_MERGE_DEFAULT);
-  configMeta=getSystemPropertyOrEnvVar(FABRIC8_CONFIG_META,FABRIC8_CONFIG_META_DEFAULT);
-  configWatch=getSystemPropertyOrEnvVar(FABRIC8_CONFIG_WATCH,FABRIC8_CONFIG_WATCH_DEFAULT);
+  enabled=getSystemPropertyOrEnvVar(FABRIC8_CM_BRIDGE_ENABLED,enabled);
+  pidLabel=getSystemPropertyOrEnvVar(FABRIC8_PID_LABEL,pidLabel);
+  configMerge=getSystemPropertyOrEnvVar(FABRIC8_CONFIG_MERGE,configMerge);
+  configMeta=getSystemPropertyOrEnvVar(FABRIC8_CONFIG_META,configMeta);
+  configWatch=getSystemPropertyOrEnvVar(FABRIC8_CONFIG_WATCH,configWatch);
   filters=new HashMap<>();
   String filterList=getSystemPropertyOrEnvVar(FABRIC8_PID_FILTERS);
   if (!Utils.isNullOrEmpty(filterList)) {
@@ -13,12 +14,14 @@
       }
     }
   }
+  if (enabled) {
 synchronized (lock) {
-    watchConfigMapList();
-    ConfigMapList list=getConfigMapList();
-    if (list != null) {
-      for (      ConfigMap map : list.getItems()) {
-        updateConfig(map);
+      watchConfigMapList();
+      ConfigMapList list=getConfigMapList();
+      if (list != null) {
+        for (        ConfigMap map : list.getItems()) {
+          updateConfig(map);
+        }
       }
     }
   }

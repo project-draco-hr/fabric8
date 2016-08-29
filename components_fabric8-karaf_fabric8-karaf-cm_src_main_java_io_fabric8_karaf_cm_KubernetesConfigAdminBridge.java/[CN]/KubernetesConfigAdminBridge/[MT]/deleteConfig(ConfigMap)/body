@@ -2,14 +2,11 @@
   String pid=map.getMetadata().getLabels().get(pidLabel);
   String[] p=parsePid(pid);
   try {
+    Map<String,String> configMapData=map.getData();
     Configuration config=getConfiguration(configAdmin.get(),pid,p[0],p[1]);
-    Dictionary<String,Object> props=config.getProperties();
-    if (props != null) {
-      String merge=(String)props.get(FABRIC8_CONFIG_MERGE);
-      if (merge == null) {
-        merge=configMerge;
-      }
-      if ("false".equals(merge)) {
+    if (configMapData != null) {
+      boolean merge=configMapData.containsKey(FABRIC8_CONFIG_MERGE) ? Boolean.valueOf(configMapData.get(FABRIC8_CONFIG_MERGE)) : configMerge;
+      if (!merge) {
         LOGGER.debug("Delete configuration {}",config.getPid());
         config.delete();
       }
