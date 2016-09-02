@@ -1,0 +1,14 @@
+{
+  Map<String,Object> map=new HashMap<>();
+  map.put("key1","$[map1:prop1] $[map2:prop2]");
+  map.put("key2","$[map2:prop1] $[map1:prop2]");
+  map.put("key3","$[map2:prop-$[map1:prop5]]");
+  map.put("key4",1);
+  map.put("key5","no replace");
+  Assert.assertTrue(resolver.replaceAll(map));
+  Assert.assertEquals("hello1 world2",map.get("key1"));
+  Assert.assertEquals("hello2 world1",map.get("key2"));
+  Assert.assertEquals("hello nested world!",map.get("key3"));
+  Assert.assertEquals(1,map.get("key4"));
+  Assert.assertEquals("no replace",map.get("key5"));
+}
