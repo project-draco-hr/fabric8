@@ -1,5 +1,9 @@
 {
   if (service != null) {
+    String answer=getOrCreateAnnotations(service).get(Annotations.Service.EXPOSE_URL);
+    if (Strings.isNotBlank(answer)) {
+      return answer;
+    }
     ServiceSpec spec=service.getSpec();
     if (spec != null) {
       String portalIP=spec.getClusterIP();
