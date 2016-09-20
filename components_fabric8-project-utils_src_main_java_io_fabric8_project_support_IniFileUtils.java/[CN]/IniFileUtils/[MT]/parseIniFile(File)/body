@@ -1,0 +1,40 @@
+{
+  Map<String,Properties> answer=new HashMap<>();
+  String section=null;
+  Properties properties=new Properties();
+  try (BufferedReader reader=new BufferedReader(new FileReader(file))){
+    while (true) {
+      String line=reader.readLine();
+      if (line == null) {
+        break;
+      }
+      if (line.trim().length() == 0) {
+        continue;
+      }
+      if (line.startsWith("[")) {
+        line=line.trim();
+        if (!line.endsWith("]")) {
+          LOG.warn("Invalid section header in file: " + file + ". Line: "+ line);
+          continue;
+        }
+        section=line.substring(1,line.length() - 1);
+        properties=answer.get(section);
+        if (properties == null) {
+          properties=new Properties();
+          answer.put(section,properties);
+        }
+      }
+ else {
+        String[] parts=line.split("=",2);
+        if (parts == null && parts.length != 2) {
+          LOG.warn("Invalid property in section: " + section + " file: "+ file+ ". Line: "+ line);
+          continue;
+        }
+        String key=parts[0].trim();
+        String value=parts[1].trim();
+        properties.setProperty(key,value);
+      }
+    }
+  }
+   return answer;
+}

@@ -1,0 +1,21 @@
+{
+  if (dir != null && dir.isDirectory()) {
+    File[] children=dir.listFiles();
+    if (children == null || children.length == 0) {
+      File dummyFile=new File(dir,".gitkeep");
+      try {
+        IOHelpers.writeFully(dummyFile,"This file is only here to avoid git removing empty folders\nOnce there are files in this folder feel free to delete this file!");
+      }
+ catch (      IOException e) {
+        LOG.warn("Failed to write file " + dummyFile + ". "+ e,e);
+      }
+    }
+ else {
+      for (      File child : children) {
+        if (child.isDirectory()) {
+          addDummyFileToEmptyFolders(child);
+        }
+      }
+    }
+  }
+}

@@ -1,9 +1,14 @@
 {
   OpenShiftClient openShiftClient=null;
-  try {
-    openShiftClient=kubernetesClient.adapt(OpenShiftClient.class);
+  if (kubernetesClient instanceof OpenShiftClient) {
+    openShiftClient=(OpenShiftClient)kubernetesClient;
   }
- catch (  OpenShiftNotAvailableException e) {
+  if (openShiftClient == null) {
+    try {
+      openShiftClient=kubernetesClient.adapt(OpenShiftClient.class);
+    }
+ catch (    OpenShiftNotAvailableException e) {
+    }
   }
   return openShiftClient;
 }

@@ -1,0 +1,11 @@
+{
+  File basedir=new File(System.getProperty("basedir","."));
+  File file=new File(basedir,"src/test/resources/sample.gitconfig");
+  assertThat(file).isFile().exists();
+  Map<String,Properties> map=IniFileUtils.parseIniFile(file);
+  System.out.println("Loaded: " + map);
+  assertThat(map).containsKeys("user","alias","color");
+  assertThat(map).hasSize(3);
+  Properties user=map.get("user");
+  assertThat(user).isNotNull().containsEntry("email","fabric8@googlegroups.com");
+}

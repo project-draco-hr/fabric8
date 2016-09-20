@@ -3,10 +3,7 @@
   if (openShiftClient == null) {
     String jenkinshiftUrl=Systems.getEnvVar("JENKINSHIFT_URL","http://jenkinshift/");
     LOG.debug("Using jenknshift URL: " + jenkinshiftUrl);
-    Config config=createJenkinshiftConfig(jenkinshiftUrl);
-    JenkinShiftClient jenkinShiftClient=new JenkinShiftClient(config);
-    jenkinShiftClient.updateHttpClient(config);
-    openShiftClient=jenkinShiftClient;
+    openShiftClient=KubernetesHelper.createJenkinshiftOpenShiftClient(jenkinshiftUrl);
   }
   return openShiftClient;
 }
