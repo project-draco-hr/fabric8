@@ -1,0 +1,17 @@
+{
+  Config config=parseConfigs();
+  if (config != null) {
+    Context context=getCurrentContext(config);
+    if (context != null) {
+      String user=context.getUser();
+      if (user != null) {
+        String[] parts=user.split("/");
+        if (parts != null && parts.length > 0) {
+          return parts[0];
+        }
+        return user;
+      }
+    }
+  }
+  return null;
+}

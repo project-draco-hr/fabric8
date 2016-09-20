@@ -1,0 +1,10 @@
+{
+  String homeDir=System.getProperty("user.home",".");
+  File file=new File(homeDir,".gitconfig");
+  if (file.exists() && file.isFile()) {
+    return IniFileUtils.parseIniFile(file);
+  }
+ else {
+    return new HashMap<>();
+  }
+}

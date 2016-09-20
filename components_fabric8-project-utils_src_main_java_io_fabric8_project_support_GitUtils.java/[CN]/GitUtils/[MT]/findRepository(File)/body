@@ -1,0 +1,9 @@
+{
+  File gitFolder=io.fabric8.utils.GitHelpers.findGitFolder(baseDir);
+  if (gitFolder == null) {
+    return null;
+  }
+  FileRepositoryBuilder builder=new FileRepositoryBuilder();
+  Repository repository=builder.readEnvironment().setGitDir(gitFolder).build();
+  return repository;
+}

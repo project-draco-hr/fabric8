@@ -1,0 +1,7 @@
+{
+  BuildConfig buildConfig=createBuildConfig(kubernetesClient,namespace,projectName,cloneUrl);
+  Controller controller=new Controller(kubernetesClient);
+  controller.setNamespace(namespace);
+  controller.applyBuildConfig(buildConfig,"from project " + projectName);
+  return buildConfig;
+}

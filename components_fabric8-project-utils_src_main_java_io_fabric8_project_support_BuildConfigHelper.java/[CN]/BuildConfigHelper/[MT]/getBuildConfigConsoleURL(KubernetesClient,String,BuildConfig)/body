@@ -1,0 +1,15 @@
+{
+  String name=getName(buildConfig);
+  String namespace=getNamespace(buildConfig);
+  if (Strings.isNullOrBlank(namespace)) {
+    namespace=consoleNamespace;
+  }
+  String consoleURL=getFabric8ConsoleServiceUrl(kubernetes,namespace);
+  if (Strings.isNotBlank(consoleURL)) {
+    if (Strings.isNotBlank(name)) {
+      return URLUtils.pathJoin(consoleURL,"workspaces",namespace,"projects",name);
+    }
+    return URLUtils.pathJoin(consoleURL,"workspaces",namespace);
+  }
+  return null;
+}

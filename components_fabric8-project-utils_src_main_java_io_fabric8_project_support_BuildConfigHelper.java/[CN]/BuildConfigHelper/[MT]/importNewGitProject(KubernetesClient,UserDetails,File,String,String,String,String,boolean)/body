@@ -1,0 +1,42 @@
+{
+  GitUtils.disableSslCertificateChecks();
+  InitCommand initCommand=Git.init();
+  initCommand.setDirectory(basedir);
+  Git git=initCommand.call();
+  LOG.info("Initialised an empty git configuration repo at {}",basedir.getAbsolutePath());
+  PersonIdent personIdent=userDetails.createPersonIdent();
+  String user=userDetails.getUser();
+  String address=userDetails.getAddress();
+  String internalAddress=userDetails.getInternalAddress();
+  String branch=userDetails.getBranch();
+  GitRepoClient repoClient=userDetails.createRepoClient();
+  CreateRepositoryDTO createRepository=new CreateRepositoryDTO();
+  createRepository.setName(projectName);
+  String fullName=null;
+  RepositoryDTO repository=repoClient.createRepository(createRepository);
+  if (repository != null) {
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Got repository: " + toJson(repository));
+    }
+    fullName=repository.getFullName();
+  }
+  if (Strings.isNullOrBlank(fullName)) {
+    fullName=user + "/" + projectName;
+  }
+  String htmlUrl=URLUtils.pathJoin(address,user,projectName);
+  String remoteUrl=URLUtils.pathJoin(internalAddress,user,projectName + ".git");
+  String cloneUrl=htmlUrl + ".git";
+  LOG.info("Using remoteUrl: " + remoteUrl + " and remote name "+ origin);
+  GitUtils.configureBranch(git,branch,origin,remoteUrl);
+  GitUtils.addDummyFileToEmptyFolders(basedir);
+  LOG.info("About to git commit and push to: " + remoteUrl + " and remote name "+ origin);
+  GitUtils.doAddCommitAndPushFiles(git,userDetails,personIdent,branch,origin,message,true);
+  BuildConfig buildConfig;
+  if (apply) {
+    buildConfig=createAndApplyBuildConfig(kubernetesClient,namespace,projectName,cloneUrl);
+  }
+ else {
+    buildConfig=createBuildConfig(kubernetesClient,namespace,projectName,cloneUrl);
+  }
+  return new CreateGitProjectResults(buildConfig,fullName,htmlUrl,remoteUrl,cloneUrl);
+}

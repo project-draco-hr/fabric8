@@ -1,0 +1,25 @@
+{
+  try {
+    System.out.println("Current username: " + currentUserName());
+    Config config=Configs.parseConfigs();
+    if (config == null) {
+      System.out.println("No Config loaded!");
+    }
+ else {
+      Context context=Configs.getCurrentContext(config);
+      if (context != null) {
+        System.out.println("context:   " + config.getCurrentContext());
+        System.out.println("cluster:   " + context.getCluster());
+        System.out.println("user:      " + context.getUser());
+        System.out.println("namespace: " + context.getNamespace());
+      }
+ else {
+        System.out.println("No current context!");
+      }
+    }
+  }
+ catch (  Exception e) {
+    System.out.println("Caught: " + e);
+    e.printStackTrace();
+  }
+}

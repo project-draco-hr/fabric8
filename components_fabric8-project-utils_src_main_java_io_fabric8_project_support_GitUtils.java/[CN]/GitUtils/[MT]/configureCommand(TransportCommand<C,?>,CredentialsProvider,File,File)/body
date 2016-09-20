@@ -1,0 +1,38 @@
+{
+  LOG.info("Using " + credentialsProvider);
+  if (sshPrivateKey != null) {
+    final CredentialsProvider provider=credentialsProvider;
+    command.setTransportConfigCallback(new TransportConfigCallback(){
+      @Override public void configure(      Transport transport){
+        if (transport instanceof SshTransport) {
+          SshTransport sshTransport=(SshTransport)transport;
+          SshSessionFactory sshSessionFactory=new JschConfigSessionFactory(){
+            @Override protected void configure(            OpenSshConfig.Host host,            Session session){
+              session.setConfig("StrictHostKeyChecking","no");
+              UserInfo userInfo=new CredentialsProviderUserInfo(session,provider);
+              session.setUserInfo(userInfo);
+            }
+            @Override protected JSch createDefaultJSch(            FS fs) throws JSchException {
+              JSch jsch=super.createDefaultJSch(fs);
+              jsch.removeAllIdentity();
+              String absolutePath=sshPrivateKey.getAbsolutePath();
+              if (LOG.isDebugEnabled()) {
+                LOG.debug("Adding identity privateKey: " + sshPrivateKey + " publicKey: "+ sshPublicKey);
+              }
+              if (sshPublicKey != null) {
+                jsch.addIdentity(absolutePath,sshPublicKey.getAbsolutePath(),null);
+              }
+ else {
+                jsch.addIdentity(absolutePath);
+              }
+              return jsch;
+            }
+          }
+;
+          sshTransport.setSshSessionFactory(sshSessionFactory);
+        }
+      }
+    }
+);
+  }
+}
