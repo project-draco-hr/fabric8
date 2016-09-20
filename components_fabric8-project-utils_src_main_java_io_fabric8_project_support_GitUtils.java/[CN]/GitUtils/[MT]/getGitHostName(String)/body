@@ -1,0 +1,20 @@
+{
+  try {
+    URI uri=new URI(gitUrl);
+    return uri.getHost();
+  }
+ catch (  URISyntaxException e) {
+  }
+  String[] split=gitUrl.split(":");
+  if (split.length > 1) {
+    String prefix=split[0];
+    int idx=prefix.indexOf('@');
+    if (idx >= 0) {
+      return prefix.substring(idx + 1);
+    }
+ else {
+      return prefix;
+    }
+  }
+  return null;
+}
