@@ -6,9 +6,7 @@
     String routeId=id;
     KubernetesHelper.setName(route,namespace,routeId);
     RouteSpec routeSpec=new RouteSpec();
-    ObjectReference objectRef=new ObjectReference();
-    objectRef.setName(id);
-    objectRef.setNamespace(namespace);
+    RouteTargetReference objectRef=new RouteTargetReferenceBuilder().withName(id).build();
     routeSpec.setTo(objectRef);
     if (!Strings.isNullOrBlank(routeDomainPostfix)) {
       String host=Strings.stripSuffix(Strings.stripSuffix(id,"-service"),".");
