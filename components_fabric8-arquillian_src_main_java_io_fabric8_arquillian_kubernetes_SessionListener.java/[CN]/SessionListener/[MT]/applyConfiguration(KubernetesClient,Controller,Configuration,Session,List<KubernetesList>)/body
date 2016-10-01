@@ -7,13 +7,17 @@
   for (  KubernetesList c : kubeConfigs) {
     entities.addAll(enhance(session,configuration,c).getItems());
   }
-  String registry=getLocalDockerRegistry();
-  if (Strings.isNotBlank(registry)) {
-    log.status("Adapting resources to pull images from registry: " + registry);
-    addRegistryToImageNameIfNotPresent(entities,registry);
+  if (isOpenShift(client) && containsImageStreamResources(entities)) {
   }
  else {
-    log.status("No local fabric8 docker registry found");
+    String registry=getLocalDockerRegistry();
+    if (Strings.isNotBlank(registry)) {
+      log.status("Adapting resources to pull images from registry: " + registry);
+      addRegistryToImageNameIfNotPresent(entities,registry);
+    }
+ else {
+      log.status("No local fabric8 docker registry found");
+    }
   }
   List<Object> items=new ArrayList<>();
   items.addAll(entities);
