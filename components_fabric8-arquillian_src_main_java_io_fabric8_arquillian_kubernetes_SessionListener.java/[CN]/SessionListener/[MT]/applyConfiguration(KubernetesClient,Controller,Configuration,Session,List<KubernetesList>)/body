@@ -7,7 +7,7 @@
   for (  KubernetesList c : kubeConfigs) {
     entities.addAll(enhance(session,configuration,c).getItems());
   }
-  if (isOpenShift(client) && containsImageStreamResources(entities)) {
+  if (client != null && isOpenShift(client) && containsImageStreamResources(entities)) {
   }
  else {
     String registry=getLocalDockerRegistry();
