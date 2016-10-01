@@ -1,12 +1,25 @@
 {
   OpenShiftClient openShiftClient=getOpenShiftClientOrNull();
   if (openShiftClient != null) {
+    String kind=getKind(entity);
+    String name=getName(entity);
+    String namespace=getNamespace();
     try {
-      LOG.info("Applying " + getKind(entity) + " "+ getName(entity)+ " from "+ sourceName);
-      openShiftClient.resource(entity).inNamespace(getNamespace()).apply();
+      ClientResource<ImageStream,DoneableImageStream> resource=openShiftClient.imageStreams().inNamespace(namespace).withName(name);
+      ImageStream old=resource.get();
+      if (old == null) {
+        LOG.info("Creating " + kind + " "+ name+ " from "+ sourceName);
+        resource.create(entity);
+      }
+ else {
+        LOG.info("Updating " + kind + " "+ name+ " from "+ sourceName);
+        copyAllImageStreamTags(entity,old);
+        resource.replace(old);
+      }
+      openShiftClient.resource(entity).inNamespace(namespace).apply();
     }
  catch (    Exception e) {
-      onApplyError("Failed to create " + getKind(entity) + " from "+ sourceName+ ". "+ e,e);
+      onApplyError("Failed to create " + kind + " from "+ sourceName+ ". "+ e,e);
     }
   }
 }

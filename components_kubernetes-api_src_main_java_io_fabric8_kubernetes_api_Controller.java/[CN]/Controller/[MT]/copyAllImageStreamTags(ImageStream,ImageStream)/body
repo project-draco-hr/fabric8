@@ -1,0 +1,24 @@
+{
+  ImageStreamSpec toSpec=to.getSpec();
+  if (toSpec == null) {
+    toSpec=new ImageStreamSpec();
+    to.setSpec(toSpec);
+  }
+  List<TagReference> toTags=toSpec.getTags();
+  if (toTags == null) {
+    toTags=new ArrayList<>();
+    toSpec.setTags(toTags);
+  }
+  ImageStreamSpec fromSpec=from.getSpec();
+  if (fromSpec != null) {
+    List<TagReference> fromTags=fromSpec.getTags();
+    if (fromTags != null) {
+      for (      TagReference tag : fromTags) {
+        removeTagByName(toTags,tag.getName());
+      }
+      for (      TagReference tag : fromTags) {
+        toTags.add(tag);
+      }
+    }
+  }
+}
