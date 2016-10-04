@@ -1,7 +1,21 @@
 {
-  String value=super.get(client,name,key);
-  if (value != null) {
-    value=new String(Base64.decodeBase64(value));
+  String value=null;
+  for (  Path path : this.paths) {
+    Path secretPath=path.resolve(name).resolve(key);
+    if (Files.exists(secretPath) && Files.isRegularFile(secretPath)) {
+      try {
+        value=new String(Files.readAllBytes(secretPath)).trim();
+      }
+ catch (      IOException e) {
+        LOGGER.warn("",e);
+      }
+    }
+  }
+  if (this.useApi && Utils.isNullOrEmpty(value)) {
+    value=super.get(client,name,key);
+    if (Utils.isNotNullOrEmpty(value)) {
+      value=new String(Base64.decodeBase64(value));
+    }
   }
   return value;
 }
