@@ -7,10 +7,12 @@
   }
   for (  Pod pod : pods) {
     if (!KubernetesHelper.isPodReady(pod)) {
-      result=false;
       PodStatus podStatus=pod.getStatus();
       int restartCount=0;
-      if (podStatus != null && !"Succeeded".equals(podStatus.getPhase())) {
+      if (podStatus != null) {
+        if ("Succeeded".equals(podStatus.getPhase())) {
+          continue;
+        }
         List<ContainerStatus> containerStatuses=podStatus.getContainerStatuses();
         for (        ContainerStatus containerStatus : containerStatuses) {
           if (restartCount == 0) {
@@ -32,6 +34,7 @@
           }
         }
       }
+      result=false;
       String name=KubernetesHelper.getName(pod);
       File yamlFile=new File(session.getBaseDir(),"target/test-pod-status/" + name + ".yml");
       yamlFile.getParentFile().mkdirs();
