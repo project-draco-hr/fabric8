@@ -10,7 +10,7 @@
       result=false;
       PodStatus podStatus=pod.getStatus();
       int restartCount=0;
-      if (podStatus != null) {
+      if (podStatus != null && !"Succeeded".equals(podStatus.getPhase())) {
         List<ContainerStatus> containerStatuses=podStatus.getContainerStatuses();
         for (        ContainerStatus containerStatus : containerStatuses) {
           if (restartCount == 0) {
